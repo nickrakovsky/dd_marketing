@@ -17,8 +17,8 @@ export const POST: APIRoute = async ({ request }) => {
     const bento = new Analytics({
       siteUuid: "b4cb9a34a989bcc643714151df7b7154",
       authentication: {
-          secretKey: "import.meta.env.BENTO_SECRET_KEY",
-          publishableKey: "import.meta.env.PUBLIC_BENTO_KEY"
+          secretKey: import.meta.env.BENTO_SECRET_KEY,
+          publishableKey: import.meta.env.PUBLIC_BENTO_KEY
       }
     });
 

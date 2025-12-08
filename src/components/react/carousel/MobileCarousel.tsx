@@ -41,12 +41,13 @@ export const MobileCarousel = ({ images }: MobileCarouselProps) => {
     });
   };
 
-  // Safety check if images array is empty
   if (!images || images.length === 0) return null;
 
   return (
-    <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-100">
-      <AnimatePresence initial={false} custom={direction}>
+    // FIX 1: Removed bg-secondary/20 (made transparent) to prevent "container in container" look
+    // FIX 2: aspect-video + object-contain ensures the WHOLE image is seen without cropping
+    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-transparent shadow-sm border border-border">
+      <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.img
           key={current}
           src={images[current].src}
@@ -71,28 +72,29 @@ export const MobileCarousel = ({ images }: MobileCarouselProps) => {
               paginate(-1);
             }
           }}
-          className="absolute inset-0 w-full h-full object-cover"
+          // FIX 3: object-contain ensures no edges are cut off
+          className="absolute inset-0 w-full h-full object-contain"
         />
       </AnimatePresence>
 
       {/* Navigation Buttons */}
       <button
         onClick={() => paginate(-1)}
-        className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-black hover:bg-white transition-colors"
+        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow-sm flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors border border-border z-10"
         aria-label="Previous image"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
       <button
         onClick={() => paginate(1)}
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-black hover:bg-white transition-colors"
+        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow-sm flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors border border-border z-10"
         aria-label="Next image"
       >
         <ChevronRight className="w-5 h-5" />
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {images.map((_, index) => (
           <button
             key={index}
@@ -100,12 +102,11 @@ export const MobileCarousel = ({ images }: MobileCarouselProps) => {
               setDirection(index > current ? 1 : -1);
               setCurrent(index);
             }}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            className={`h-1.5 rounded-full transition-all duration-300 ${
               index === current
-                ? "bg-white w-6"
-                : "bg-white/40 hover:bg-white/60"
+                ? "bg-primary w-6"
+                : "bg-black/20 w-1.5 hover:bg-black/40" // Darker dots for better contrast on transparent bg
             }`}
-            aria-label={`Go to image ${index + 1}`}
           />
         ))}
       </div>

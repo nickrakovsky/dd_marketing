@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ZoomIn, ArrowLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { MobileCarousel } from "./MobileCarousel"; 
 
-// 1. FIX: Define a type that matches Astro's raw imports (No 'alt')
 interface AstroInputImage {
   src: string;
   width: number;
@@ -19,116 +18,155 @@ interface DigitizeGalleryProps {
 export default function DigitizeGallery({ headerImage, gridImages }: DigitizeGalleryProps) {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
-  // 2. NORMALIZE: We add the 'alt' tag here, inside the component
-  const allImages = [headerImage, ...gridImages].map((img, i) => ({
+  const focusableImages = gridImages.map((img, i) => ({
     src: img.src,
-    // Auto-generate alt text since raw imports don't have it
-    alt: i === 0 ? "Dashboard Header" : `Detail View ${i}`,
+    alt: `Detail View ${i}`,
     width: img.width,
     height: img.height
   }));
 
-  // Navigation Logic
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (focusedIndex === null) return;
-    setFocusedIndex((prev) => (prev === allImages.length - 1 ? 0 : (prev || 0) + 1));
+    setFocusedIndex((prev) => (prev === focusableImages.length - 1 ? 0 : (prev || 0) + 1));
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (focusedIndex === null) return;
-    setFocusedIndex((prev) => (prev === 0 ? allImages.length - 1 : (prev || 0) - 1));
+    setFocusedIndex((prev) => (prev === 0 ? focusableImages.length - 1 : (prev || 0) - 1));
+  };
+
+  // Shared animation variants to ensure 'hidden' state is robust
+  const fadeVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 }
   };
 
   return (
     <>
-      {/* MOBILE VIEW (< md) */}
-      <div className="block md:hidden w-full max-w-sm mx-auto mt-8">
-        {/* MobileCarousel accepts the normalized 'allImages' which now has 'alt' */}
-        <MobileCarousel images={allImages} />
+      {/* --- MOBILE VIEW (< md) --- */}
+      {/* FIX 1: Removed mt-8 to kill top whitespace */}
+      <div className="block md:hidden w-full mt-0">
+        <MobileCarousel images={gridImages.map(img => ({ ...img, alt: 'Gallery Image' }))} />
       </div>
 
-      {/* DESKTOP VIEW (md+) */}
-      <div className="hidden md:block relative w-full max-w-5xl mx-auto mt-12 h-[600px]">
+
+      {/* --- DESKTOP VIEW (md+) --- */}
+      <div className="hidden md:block relative w-full max-w-6xl mx-auto mt-0">
         
-        <div className="absolute inset-0 rounded-2xl border border-primary-foreground/20 bg-primary-foreground/5 shadow-custom-lg backdrop-blur-sm overflow-hidden">
+        {/* Navigation Arrows */}
+        <AnimatePresence>
+          {focusedIndex !== null && (
+            <>
+              <motion.button
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                onClick={prevImage}
+                // FIX 2: Responsive positioning
+                // md/lg: Inside (left-4) | xl: Outside (-left-16)
+                className="absolute top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-primary hover:text-white text-primary transition-all z-30 
+                           left-4 xl:-left-16"
+              >
+                <ChevronLeft size={32} />
+              </motion.button>
+
+              <motion.button
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                onClick={nextImage}
+                // FIX 2: Responsive positioning
+                // md/lg: Inside (right-4) | xl: Outside (-right-16)
+                className="absolute top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-primary hover:text-white text-primary transition-all z-30 
+                           right-4 xl:-right-16"
+              >
+                <ChevronRight size={32} />
+              </motion.button>
+            </>
+          )}
+        </AnimatePresence>
+
+
+        {/* Main Content Box */}
+        <div className="relative w-full rounded-2xl border border-primary/20 bg-white/50 shadow-custom-lg backdrop-blur-sm overflow-hidden leading-none text-[0px]">
           
-          {focusedIndex !== null ? (
+          <AnimatePresence mode="popLayout">
             
-            // FOCUSED VIEW
-            <div className="w-full h-full bg-white relative flex items-center justify-center animate-in fade-in zoom-in duration-300">
+            {focusedIndex !== null ? (
               
-              <AnimatePresence mode="wait">
+              // --- FOCUSED VIEW ---
+              <motion.div
+                key="focused-view"
+                variants={fadeVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="w-full relative"
+                // FIX 3: Force CSS opacity:0 to prevent "Flash of Unstyled Content" before JS loads
+                style={{ opacity: 0 }} 
+              >
                 <motion.img
                   key={focusedIndex}
-                  src={allImages[focusedIndex].src}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="max-w-full max-h-full object-contain p-8"
+                  src={focusableImages[focusedIndex].src}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full h-auto block"
                 />
-              </AnimatePresence>
 
-              <button 
-                onClick={() => setFocusedIndex(null)}
-                className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-full text-sm font-medium transition-colors z-20"
+                <button 
+                  onClick={() => setFocusedIndex(null)}
+                  className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white border border-border shadow-sm text-base text-foreground rounded-full font-medium transition-all z-20"
+                >
+                  <ArrowLeft size={16} className="text-primary" /> Back
+                </button>
+              </motion.div>
+
+            ) : (
+
+              // --- GRID VIEW ---
+              <motion.div
+                key="grid-view"
+                variants={fadeVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ duration: 0.3 }}
+                className="w-full flex flex-col"
+                // FIX 3: Force CSS opacity:0
+                style={{ opacity: 0 }}
               >
-                <ArrowLeft size={16} /> Back to Grid
-              </button>
-
-              <button 
-                onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/5 hover:bg-black/10 text-black transition-colors z-20"
-              >
-                <ChevronLeft size={24} />
-              </button>
-
-              <button 
-                onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/5 hover:bg-black/10 text-black transition-colors z-20"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-
-          ) : (
-
-            // GRID VIEW
-            <div className="w-full h-full flex flex-col bg-white animate-in fade-in duration-500">
-              
-              {/* Header Image */}
-              <div 
-                className="relative flex-[0.8] overflow-hidden cursor-pointer group border-b border-gray-100"
-                onClick={() => setFocusedIndex(0)}
-              >
-                <img src={headerImage.src} className="w-full h-full object-cover object-top" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <span className="bg-white/90 text-black px-3 py-1 rounded-full text-xs font-medium shadow-sm flex items-center gap-2">
-                    <ZoomIn size={14} /> Expand
-                  </span>
+                <div className="w-full relative">
+                  <img 
+                    src={headerImage.src} 
+                    className="w-full h-auto block" 
+                    alt="Dashboard Header"
+                  />
                 </div>
-              </div>
 
-              {/* Grid Items */}
-              <div className="flex-1 grid grid-cols-3 grid-rows-2">
-                {gridImages.map((img, i) => (
-                  <div 
-                    key={i} 
-                    className="relative group cursor-pointer overflow-hidden border-r border-b border-gray-100 last:border-0"
-                    onClick={() => setFocusedIndex(i + 1)} 
-                  >
-                    <img src={img.src} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <ZoomIn className="text-white drop-shadow-md" size={24} />
+                <div className="grid grid-cols-3 gap-0 w-full">
+                  {gridImages.map((img, i) => (
+                    <div 
+                      key={i} 
+                      className="relative group cursor-pointer overflow-hidden"
+                      onClick={() => setFocusedIndex(i)} 
+                    >
+                      <img 
+                          src={img.src} 
+                          className="w-full h-auto block transition-all duration-300 group-hover:brightness-110" 
+                          alt={`Slice ${i}`}
+                      />
+                      <div className="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/50 transition-colors pointer-events-none" />
                     </div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-          )}
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
       </div>
