@@ -10,15 +10,11 @@ import type { HeroContent, HeroSlide, DigitizeGalleryData } from "@/data/pagesDa
 
 interface Props {
   content: HeroContent;
-  // Add the optional prop for Digitize page
   digitizeGallery?: DigitizeGalleryData;
 }
 
-// 1. FIX: Destructure 'digitizeGallery' so it is defined in this scope
 const { content, digitizeGallery } = Astro.props;
 
-// 2. FIX: Create a fallback that matches the 'HeroSlide' structure (not the old GalleryItem structure)
-// The Facade expects an array of slides with a 'type', not just images.
 const defaultSlides: HeroSlide[] = [
   {
     type: "single",
@@ -26,11 +22,10 @@ const defaultSlides: HeroSlide[] = [
   }
 ];
 
-// Use the content from pagesData, or fall back to the default single slide
 const slidesToRender = content.heroSlides || defaultSlides;
 ---
 
-<section class="relative overflow-hidden bg-gradient-hero py-16 px-4 sm:px-6 lg:px-8">
+<section class="relative bg-gradient-hero py-16 px-4 sm:px-6 lg:px-8">
   <div class="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px]"></div>
   
   <div class="relative mx-auto max-w-7xl">
@@ -57,23 +52,14 @@ const slidesToRender = content.heroSlides || defaultSlides;
         placeholder={content.emailPlaceholder}
       >
         
-        {/* LOGIC SWITCH: Digitize Gallery vs Standard Layouts */}
-        
         {digitizeGallery ? (
-           
-           // 1. DIGITIZE PAGE (React Grid + Lightbox)
            <DigitizeGallery 
-             client:visible 
+             client:visible={{ rootMargin: "200px" }} 
              headerImage={digitizeGallery.header} 
              gridImages={digitizeGallery.gridImages} 
            />
-
         ) : (
-           
-           // 2. STANDARD PAGES (YardApp, Carriers, Capacity)
-           // We use the Static Facade Carousel here
            <div class="w-full h-full">
-             {/* FIX: Pass 'slides' instead of 'items' */}
              <HeroCarousel slides={slidesToRender} />
            </div>
         )}
@@ -86,7 +72,7 @@ const slidesToRender = content.heroSlides || defaultSlides;
 
 <style>
   .responsive-headline {
-    font-size: 9vw; 
+    font-size: 9vw;
     max-width: 100%;
   }
   @media (min-width: 640px) {
