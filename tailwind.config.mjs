@@ -23,6 +23,7 @@ export default {
         recoleta: ['Recoleta', 'Georgia', 'serif'],
       },
       colors: {
+        
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -57,6 +58,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',

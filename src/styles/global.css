@@ -44,46 +44,48 @@ All colors MUST be HSL.
 */
 
 @layer base {
-  :root {
+:root {
     /* Brand Colors */
-    --background: 35 100% 97%; /* #FFF8EE */
-    --foreground: 0 0% 0%; /* #000000 */
+    --background: 35 100% 97%; /* Old Lace #FFF8E9 */
+    --foreground: 0 0% 0%; /* Black */
 
-    --card: 35 100% 97%; /* #FFF8EE */
-    --card-foreground: 0 0% 0%; /* #000000 */
+    --card: 35 100% 97%; 
+    --card-foreground: 0 0% 0%; 
 
-    --popover: 35 100% 97%; /* #FFF8EE */
-    --popover-foreground: 0 0% 0%; /* #000000 */
+    --popover: 35 100% 97%; 
+    --popover-foreground: 0 0% 0%; 
 
-    --primary: 19 100% 50%; /* #FE5000 */
-    --primary-foreground: 35 100% 97%; /* #FFF8EE */
-    --primary-glow: 19 100% 60%;
+    /* UPDATED: Lovable Orange (#FF5507) */
+    --primary: 19 100% 51%; 
+    --primary-foreground: 0 0% 100%; /* White text on orange button */
+    --primary-glow: 19 100% 61%;
 
-    --secondary: 33 48% 88%; /* #EFE2D2 */
-    --secondary-foreground: 0 0% 0%; /* #000000 */
+    --secondary: 33 48% 88%; /* Light Beige #EFE2D2 */
+    --secondary-foreground: 0 0% 0%; 
 
-    --muted: 33 48% 88%; /* #EFE2D2 */
-    --muted-foreground: 0 0% 30%;
+    /* UPDATED: Dark Beige (#8d785c) - For placeholders & secondary text */
+    --muted: 33 48% 88%; 
+    --muted-foreground: 34 21% 46%; 
 
-    --accent: 19 100% 50%; /* #FE5000 */
-    --accent-foreground: 35 100% 97%; /* #FFF8EE */
+    --accent: 14 100% 57%; /* Sync with Primary */
+    --accent-foreground: 35 100% 97%; 
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 33 48% 88%; /* #EFE2D2 */
-    --input: 33 48% 88%; /* #EFE2D2 */
-    --ring: 19 100% 50%; /* #FE5000 */
+    --border: 33 48% 88%; /* Light Beige #EFE2D2 */
+    --input: 33 48% 88%; 
+    --ring: 14 100% 57%; /* Sync with Primary */
 
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(19 100% 50%), hsl(19 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 67%));
     --gradient-subtle: linear-gradient(180deg, hsl(35 100% 97%), hsl(33 48% 88%));
 
     /* Shadows */
-    --shadow-lg: 0 20px 60px -15px hsl(19 100% 50% / 0.2);
-    --shadow-glow: 0 0 40px hsl(19 100% 60% / 0.3);
+    --shadow-lg: 0 20px 60px -15px hsl(14 100% 57% / 0.2);
+    --shadow-glow: 0 0 40px hsl(14 100% 67% / 0.3);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
