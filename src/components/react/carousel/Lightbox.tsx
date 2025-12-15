@@ -51,29 +51,20 @@ export default function Lightbox({ image, onNext, onPrev, onClose }: LightboxPro
         ref={imgRef}
         src={image.src}
         alt={image.alt}
-        // FIX: Removed 'drop-shadow-2xl'
+        // FIX: Removed 'drop-shadow-2xl' below
         className={`w-full h-full object-contain transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={() => setIsLoaded(true)}
       />
 
-      <button 
-        onClick={onClose}
-        className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-white border border-border shadow-sm text-sm text-foreground rounded-full font-medium transition-all z-50"
-      >
+      <button onClick={onClose} className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-white border border-border shadow-sm text-sm text-foreground rounded-full font-medium transition-all z-50">
         <ArrowLeft size={14} className="text-primary" /> Back
       </button>
 
-      <button
-        onClick={onPrev}
-        className="absolute top-1/2 -translate-y-1/2 left-4 p-2 rounded-full bg-white/90 shadow-md border border-gray-100 text-primary hover:scale-105 transition-all z-50"
-      >
+      <button onClick={onPrev} className="absolute top-1/2 -translate-y-1/2 left-4 p-2 rounded-full bg-white/90 shadow-md border border-gray-100 text-primary hover:scale-105 transition-all z-50">
         <ChevronLeft size={24} />
       </button>
 
-      <button
-        onClick={onNext}
-        className="absolute top-1/2 -translate-y-1/2 right-4 p-2 rounded-full bg-white/90 shadow-md border border-gray-100 text-primary hover:scale-105 transition-all z-50"
-      >
+      <button onClick={onNext} className="absolute top-1/2 -translate-y-1/2 right-4 p-2 rounded-full bg-white/90 shadow-md border border-gray-100 text-primary hover:scale-105 transition-all z-50">
         <ChevronRight size={24} />
       </button>
     </motion.div>
