@@ -6,31 +6,22 @@ interface Props {
 }
 
 const { title } = Astro.props;
+// Retrieve the correct UUID from environment variables
+const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="DataDocks - Yard Management Solution" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-        <script is:inline>
-          // 1. Settings FIRST
-          window.bentoSettings = { uuid: "b4cb9a34a989bcc643714151df7b7154" };
-
-          // 2. Logic SECOND
-          (function(b,e,n,t,o){var a,c,s;b[o]||(a=e.createElement(n),
-          a.src=t,c=e.getElementsByTagName(n)[0],c.parentNode.insertBefore(a,c),
-          b[o]={id:b.bentoSettings.uuid,apiHost:b.bentoSettings.apiHost,ver:1.2},
-          b[o].track=function(){(b[o].q=b[o].q||[]).push(arguments)})
-          })(window,document,'script','https://fast.bentonow.com?v=1.2','bento');
-          
-          console.log("🚀 Bento Script Loaded via Layout");
+        <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
+            window.bentoSettings = {
+              uuid: PUBLIC_BENTO_UUID
+            };
         </script>
+
+        <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
 	</head>
 	<body>
 		<slot />

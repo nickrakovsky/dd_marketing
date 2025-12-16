@@ -3,16 +3,14 @@
 @tailwind utilities;
 
 /* Font Face Declarations */
-/* 1. Bruta Extra Bold */
 @font-face {
   font-family: 'Bruta';
   src: url('/fonts/Bruta-ExtraBold.otf') format('opentype');
-  font-weight: 800; /* Extra Bold */
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 
-/* 1. Recoleta Regular (Weight 400) - For Navigation */
 @font-face {
   font-family: 'Recoleta';
   src: url('/fonts/Recoleta-Regular.woff2') format('woff2');
@@ -21,7 +19,6 @@
   font-display: swap;
 }
 
-/* 2. Recoleta Medium (Weight 500) - For FAQs */
 @font-face {
   font-family: 'Recoleta';
   src: url('/fonts/Recoleta-Medium.woff2') format('woff2');
@@ -30,7 +27,6 @@
   font-display: swap;
 }
 
-/* 3. Recoleta SemiBold (Weight 600) - For Testimonials/Integrations */
 @font-face {
   font-family: 'Recoleta';
   src: url('/fonts/Recoleta-SemiBold.woff2') format('woff2');
@@ -38,10 +34,6 @@
   font-style: normal;
   font-display: swap;
 }
-
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
 
 @layer base {
 :root {
@@ -55,70 +47,72 @@ All colors MUST be HSL.
     --popover: 35 100% 97%; 
     --popover-foreground: 0 0% 0%; 
 
-    /* UPDATED: Lovable Orange (#FF5507) */
+    /* UPDATED: Lovable Orange #FF5507 */
     --primary: 19 100% 51%; 
-    --primary-foreground: 0 0% 100%; /* White text on orange button */
+    --primary-foreground: 0 0% 100%; /* White text */
     --primary-glow: 19 100% 61%;
 
     --secondary: 33 48% 88%; /* Light Beige #EFE2D2 */
     --secondary-foreground: 0 0% 0%; 
 
-    /* UPDATED: Dark Beige (#8d785c) - For placeholders & secondary text */
+    /* UPDATED: Dark Beige #8d785c */
     --muted: 33 48% 88%; 
     --muted-foreground: 34 21% 46%; 
 
-    --accent: 14 100% 57%; /* Sync with Primary */
+    /* SYNCED: All accents now match Primary (Hue 19) */
+    --accent: 19 100% 51%; 
     --accent-foreground: 35 100% 97%; 
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 33 48% 88%; /* Light Beige #EFE2D2 */
+    --border: 33 48% 88%; 
     --input: 33 48% 88%; 
-    --ring: 14 100% 57%; /* Sync with Primary */
+    
+    /* SYNCED: Ring now matches Primary (Hue 19) */
+    --ring: 19 100% 51%; 
 
     --radius: 0.75rem;
 
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(14 100% 57%), hsl(14 100% 67%));
+    /* SYNCED: Gradients using the new orange */
+    --gradient-hero: linear-gradient(135deg, hsl(19 100% 51%), hsl(19 100% 61%));
     --gradient-subtle: linear-gradient(180deg, hsl(35 100% 97%), hsl(33 48% 88%));
 
-    /* Shadows */
-    --shadow-lg: 0 20px 60px -15px hsl(14 100% 57% / 0.2);
-    --shadow-glow: 0 0 40px hsl(14 100% 67% / 0.3);
+    /* SYNCED: Shadows using the new orange */
+    --shadow-lg: 0 20px 60px -15px hsl(19 100% 51% / 0.2);
+    --shadow-glow: 0 0 40px hsl(19 100% 61% / 0.3);
 
-    /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 0 0% 0%; /* #000000 */
-    --foreground: 35 100% 97%; /* #FFF8EE */
+    --background: 0 0% 0%; 
+    --foreground: 35 100% 97%; 
 
     --card: 0 0% 5%;
-    --card-foreground: 35 100% 97%; /* #FFF8EE */
+    --card-foreground: 35 100% 97%; 
 
     --popover: 0 0% 5%;
-    --popover-foreground: 35 100% 97%; /* #FFF8EE */
+    --popover-foreground: 35 100% 97%; 
 
-    --primary: 19 100% 50%; /* #FE5000 */
-    --primary-foreground: 35 100% 97%; /* #FFF8EE */
+    --primary: 19 100% 51%; 
+    --primary-foreground: 35 100% 97%; 
 
     --secondary: 33 48% 20%;
-    --secondary-foreground: 35 100% 97%; /* #FFF8EE */
+    --secondary-foreground: 35 100% 97%; 
 
     --muted: 0 0% 15%;
     --muted-foreground: 33 48% 88%;
 
-    --accent: 19 100% 50%; /* #FE5000 */
-    --accent-foreground: 35 100% 97%; /* #FFF8EE */
+    --accent: 19 100% 51%; 
+    --accent-foreground: 35 100% 97%; 
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 35 100% 97%;
 
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 19 100% 50%;
+    --ring: 19 100% 51%;
   }
 }
 
@@ -126,7 +120,6 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
   }
@@ -136,12 +129,10 @@ All colors MUST be HSL.
   .hexagon-clip {
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   }
-
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }

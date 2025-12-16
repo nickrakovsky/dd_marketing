@@ -1,53 +1,64 @@
+export const prerender = false;
 import type { APIRoute } from "astro";
-import { Analytics } from "@bentonow/bento-node-sdk";
 
-const BENTO_KEY = import.meta.env.BENTO_API_KEY;
-const BENTO_SITE_UUID = "b4cb9a34a989bcc643714151df7b7154"; // Your actual UUID
+const PUB_KEY = import.meta.env.PUBLIC_BENTO_KEY;
+const SECRET_KEY = import.meta.env.SECRET_BENTO_KEY;
+const SITE_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 
 export const POST: APIRoute = async ({ request }) => {
-  if (!BENTO_KEY) {
-    return new Response(
-      JSON.stringify({ message: "Server configuration error" }),
-      { status: 500 }
-    );
+  if (!PUB_KEY || !SECRET_KEY || !SITE_UUID) {
+    return new Response(JSON.stringify({ message: "Server Config Error" }), { status: 500 });
   }
 
   try {
     const body = await request.json();
-    const { email } = body;
+    
+    // AUTH: Base64 encode "PublishableKey:SecretKey"
+    const authString = btoa(`${PUB_KEY}:${SECRET_KEY}`);
 
-    if (!email) {
-      return new Response(
-        JSON.stringify({ message: "Email is required" }),
-        { status: 400 }
-      );
+    console.log(`[Bento] Triggering 'Demo Subscriber' for ${body.email}...`);
+
+    const response = await fetch(
+      `https://app.bentonow.com/api/v1/batch/events?site_uuid=${SITE_UUID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Basic ${authString}`,
+          "User-Agent": "DataDocks-App/1.0"
+        },
+        body: JSON.stringify({
+          events: [
+            {
+              // 1. MATCH EXISTING DATA: Use the exact event name your system expects
+              type: "Demo Subscriber", 
+              email: body.email,
+              
+              // 2. ADD METADATA: Keep this! It helps distinguish this API source 
+              // from other API integrations without affecting deliverability.
+              fields: {
+                source: "Astro Server Island" 
+              }
+            }
+          ]
+        })
+      }
+    );
+
+    const resultText = await response.text();
+    console.log("[Bento] Response:", response.status, resultText);
+
+    if (!response.ok) {
+      return new Response(resultText, { status: response.status });
     }
 
-    // FIX 1: Pass a dummy publishableKey to satisfy the Strict Type requirement
-    // The SDK requires the key to be present in the type, but doesn't use it when secretKey is present.
-    const bento = new Analytics({
-      authentication: {
-        secretKey: BENTO_KEY,
-        publishableKey: "ignored", 
-      },
-      siteUuid: BENTO_SITE_UUID,
-    });
-
-    // FIX 2: Cast to 'any' to bypass the "Property Subscribers does not exist" error
-    // The type definition in the library is slightly out of sync with the actual methods.
-    await (bento as any).Subscribers.importSubscribers({
-      subscribers: [{ email: email }],
-    });
-
     return new Response(
-      JSON.stringify({ message: "Successfully subscribed!" }),
+      JSON.stringify({ message: "Success" }),
       { status: 200 }
     );
+
   } catch (error) {
-    console.error("Bento Error:", error);
-    return new Response(
-      JSON.stringify({ message: "Failed to subscribe" }),
-      { status: 500 }
-    );
+    console.error("[Bento] Error:", error);
+    return new Response(JSON.stringify({ message: "Server Error" }), { status: 500 });
   }
 };
