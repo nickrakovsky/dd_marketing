@@ -3,10 +3,6 @@ import { Mail, Phone, Linkedin, Twitter } from "lucide-react";
 
 const MAIN_SITE = "https://www.datadocks.com";
 
-// 1. THE "SLIDING UNDERLINE" ANIMATION CLASS
-// - text-gray-100: Whiter text
-// - hover:text-[#FF5722]: Turns orange
-// - after:... : Creates the line that slides in from the left
 const hoverLinkClass = `
   relative inline-block text-base text-gray-100 transition-colors duration-300
   hover:text-[#FF5722]
@@ -72,10 +68,10 @@ const columns = {
     title: "Quick Links",
     links: [
       { label: "Login", href: "https://app.datadocks.com" },
-      { label: "Support", href: `${MAIN_SITE}/support` },
-      { label: "FAQs", href: `${MAIN_SITE}/faqs` },
+      { label: "Support", href: "https://datadocks.com/support" },
+      { label: "FAQs", href: "https://datadocks.com/support" }, 
       { label: "DataDocks Vs. OpenDock", href: `${MAIN_SITE}/datadocks-vs-opendock` },
-      { label: "Privacy Policy", href: `${MAIN_SITE}/privacy-policy` },
+      { label: "Privacy Policy", href: "https://datadocks.com/privacy-policy-datadocks" }, 
     ]
   }
 };
@@ -89,10 +85,7 @@ const columns = {
       
       {/* 1. CONTACT */}
       <div class="col-span-1">
-        {/* Larger Headers (text-xl) */}
         <h3 class="font-recoleta font-bold text-xl mb-4 text-white">Contact Us</h3>
-        
-        {/* Tighter Spacing (space-y-0) and Whiter Text */}
         <div class="text-base text-gray-100 space-y-0 leading-snug mb-4">
           {columns.contact.address.map(line => <p>{line}</p>)}
         </div>
@@ -135,7 +128,7 @@ const columns = {
         </ul>
       </div>
 
-      {/* 4. FEATURES (Right - Pushed down to align with list) */}
+      {/* 4. FEATURES (Right) */}
       <div class="col-span-1 pt-0 lg:pt-[2.75rem]">
         <ul class="space-y-2">
           {columns.features2.links.map(link => (
@@ -169,16 +162,19 @@ const columns = {
       
       {/* Left: Datadocks Logo Icon & SOC2 */}
       <div class="flex items-center gap-8">
-        {/* Larger Logos as requested */}
         <img 
           src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg" 
           alt="DataDocks Logo" 
+          width="56"
+          height="56"
           class="w-14 h-14"
         />
 
         <img 
           src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/68dab1e8ae9ca364bfad2f88_21972-312_SOC_NonCPA.png" 
           alt="AICPA SOC2 Certified" 
+          width="80"
+          height="80"
           class="h-20 w-auto" 
         />
       </div>
@@ -189,9 +185,12 @@ const columns = {
           Funded by the Federal Economic Development<br/>Agency for Southern Ontario
         </div>
         <div class="h-8 w-px bg-white/30 hidden md:block"></div>
+        
         <img 
           src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/68a32b9c786c9e8f5dc00ad0_26c8fadd7f470d46cdb99000ad17ca50_canada.png" 
           alt="Government of Canada" 
+          width="80"
+          height="32"
           class="h-8 w-auto"
         />
       </div>
@@ -200,7 +199,7 @@ const columns = {
       <div class="flex flex-col items-end gap-2">
         <div class="flex items-center gap-4">
           <a href="https://linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#0077b5] transition-colors">
-            <Linkedin className="w-5 h-5" />
+             <Linkedin className="w-5 h-5" />
             <span class="sr-only">LinkedIn</span>
           </a>
           <a href="https://twitter.com/datadocks" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#1DA1F2] transition-colors">

@@ -36,9 +36,11 @@ export const POST: APIRoute = async ({ request }) => {
               type: eventType, 
               email: body.email,
               fields: {
-                source: "Astro Server Island" 
+                source: "Astro Server Island",
+                // ADDED: Capture the page URL path
+                page: body.page || "Unknown" 
               },
-              // ADDED: Capture the message in the event details
+              // Capture the message in the event details if present
               details: body.message ? { message: body.message } : undefined
             }
           ]

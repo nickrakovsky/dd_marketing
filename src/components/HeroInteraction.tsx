@@ -5,7 +5,7 @@ interface HeroInteractionProps {
   buttonText?: string;
   placeholder?: string;
   children: ReactNode;
-  fitContent?: boolean; // FIX: Added this to solve the TS error
+  fitContent?: boolean;
 }
 
 export default function HeroInteraction({ 
@@ -18,21 +18,24 @@ export default function HeroInteraction({
   const [showCalendar, setShowCalendar] = useState(false);
 
   return (
-    <>
+    <div className="flex flex-col items-center w-full">
       <CTAForm 
         buttonText={buttonText} 
         placeholder={placeholder} 
         onSuccess={() => setShowCalendar(true)} 
       />
 
-      {/* Container Logic:
-          - Default: w-full (expands to max-w-5xl)
-          - fitContent: w-fit (shrinks to image width). 
-            Note: We keep min-w properties to prevent it collapsing too small on load.
+      {/* Logic Update:
+         1. 'w-fit': Tells container to shrink to the size of its content (the image).
+         2. '2xl:max-w-[75%]': Allows it to grow larger than the standard constraint on big screens, 
+             but doesn't force it to be 75% wide if the image is smaller.
       */}
       <div className={`
-        relative mx-auto mt-8 transition-all duration-700 ease-in-out
-        ${fitContent ? 'w-full md:w-fit' : 'w-full max-w-md md:max-w-5xl'} 
+        relative mt-8 transition-all duration-700 ease-in-out
+        ${fitContent 
+          ? 'w-full md:w-fit' 
+          : 'w-full max-w-md md:max-w-5xl 2xl:max-w-[75%] 2xl:w-fit'
+        } 
       `}>
         
         <div className="absolute -inset-4 rounded-2xl bg-primary-foreground/20 blur-3xl block"></div>
@@ -44,8 +47,8 @@ export default function HeroInteraction({
             rounded-2xl border border-primary-foreground/20 bg-primary-foreground/5 p-0 sm:p-2 shadow-custom-lg backdrop-blur-sm
 
             ${showCalendar 
-              ? 'h-[850px] sm:h-[700px] overflow-hidden' 
-              : 'h-auto overflow-visible'
+              ? 'h-[850px] sm:h-[700px] w-full overflow-hidden' 
+              : 'h-auto w-full overflow-visible'
             }
           `}
         >
@@ -67,6 +70,6 @@ export default function HeroInteraction({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,13 @@ export function ContactDialog() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [pagePath, setPagePath] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPagePath(window.location.pathname);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,11 +32,11 @@ export function ContactDialog() {
     setError("");
 
     try {
-      // Sends 'ContactUs' event with message details
       const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, message, type: "ContactUs" }),
+        // Sending page path here too
+        body: JSON.stringify({ email, message, type: "ContactUs", page: pagePath }),
       });
 
       if (!response.ok) throw new Error("Something went wrong");
@@ -51,7 +58,6 @@ export function ContactDialog() {
           Get in touch with our team
         </span>
       </DialogTrigger>
-      {/* ADDED: sm:rounded-none for square corners */}
       <DialogContent className="sm:max-w-[425px] sm:rounded-none">
         <DialogHeader>
           <DialogTitle>Get in touch</DialogTitle>
@@ -84,7 +90,7 @@ export function ContactDialog() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
-                className="rounded-none" // Optional: Square inputs too?
+                className="rounded-none"
               />
             </div>
             

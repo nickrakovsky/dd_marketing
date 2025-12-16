@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -13,17 +13,25 @@ interface CTAFormProps {
 export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "Enter your work email", onSuccess }: CTAFormProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [pagePath, setPagePath] = useState("");
+
+  // Capture current page path on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPagePath(window.location.pathname);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
 
     try {
-      // FIX: Pointing to local server route (proxies to Bento securely)
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        // Sending page path
+        body: JSON.stringify({ email, page: pagePath }),
       });
 
       if (!res.ok) {
@@ -62,9 +70,6 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
           placeholder={placeholder} 
           required 
           disabled={status === 'loading'}
-          // FINAL DESIGN SPECS:
-          // Mobile: h-10 (40px) & text-sm
-          // Desktop: md:h-16 (64px) & md:text-xl
           className="w-full h-10 md:h-16 border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 md:px-6 font-recoleta font-normal text-sm md:text-xl bg-background text-muted-foreground placeholder:text-muted-foreground/60" 
         />
       </div>
