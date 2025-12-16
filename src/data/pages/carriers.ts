@@ -98,8 +98,22 @@ export const carriersContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { company: "Vee Express, LLC", industry: "3PL Warehouse", metricValue: "90%", metricLabel: "Reduction in Vendor Disputes", challenge: "Manually tracking appointments made it difficult to prove exactly when a driver arrived late.", result: "Automated timestamps provide irrefutable proof of driver lateness, completely removing the 3PL's liability for missed appointments.", },
-      { company: "Nick Steinman", industry: "Warehouse Manager, Food Wholesale", metricValue: "40+", metricLabel: "Weekly Admin Hours Saved", challenge: "Staff lost valuable hours manually contacting drivers and chasing down status updates via phone or text.", result: "The direct driver messaging feature centralized communication, eliminating manual outreach and resulting in huge time savings for the floor team.", },
+      { 
+        company: "Vee Express", 
+        industry: "3PL & Packaging", 
+        metricValue: "0", 
+        metricLabel: "Late Disputes", 
+        challenge: "Vee Express struggled with a lack of accountability when carriers arrived late. Without an objective system to track appointment times versus actual arrival times, the warehouse often faced disputes and liability for delays.", 
+        result: "DataDocks provided an indisputable audit trail. By automatically emailing trucking companies the moment a driver is late, the system creates objective proof of performance, shifting responsibility back to the carriers and eliminating arguments.", 
+      },
+      { 
+        company: "Nick Steinman", 
+        industry: "Food Wholesale", 
+        metricValue: "75%", 
+        metricLabel: "Self-Service Bookings", 
+        challenge: "Booking a single appointment was an administrative nightmare, requiring an average of five emails—and sometimes as many as 17—to finalize. This inefficient back-and-forth drained over 40 hours of admin time every week.", 
+        result: "By shifting 75% of bookings to the self-service portal, the team virtually eliminated the email burden. This transition, combined with direct driver messaging, recovered a full work week’s worth of labor for the staff.", 
+      },
     ],
   },
   faq: {

@@ -38,7 +38,7 @@
 @layer base {
 :root {
     /* Brand Colors */
-    --background: 35 100% 97%; /* Old Lace #FFF8E9 */
+    --background: 35 100% 97%; /* Old Lace #FFF8E9 (Light Beige) */
     --foreground: 0 0% 0%; /* Black */
 
     --card: 35 100% 97%; 
@@ -47,19 +47,18 @@
     --popover: 35 100% 97%; 
     --popover-foreground: 0 0% 0%; 
 
-    /* UPDATED: Lovable Orange #FF5507 */
+    /* Lovable Orange #FF5507 */
     --primary: 19 100% 51%; 
     --primary-foreground: 0 0% 100%; /* White text */
     --primary-glow: 19 100% 61%;
 
-    --secondary: 33 48% 88%; /* Light Beige #EFE2D2 */
+    --secondary: 33 48% 88%; /* Light Beige #EFE2D2 (Darker Beige) */
     --secondary-foreground: 0 0% 0%; 
 
-    /* UPDATED: Dark Beige #8d785c */
+    /* Dark Beige #8d785c */
     --muted: 33 48% 88%; 
     --muted-foreground: 34 21% 46%; 
 
-    /* SYNCED: All accents now match Primary (Hue 19) */
     --accent: 19 100% 51%; 
     --accent-foreground: 35 100% 97%; 
 
@@ -69,16 +68,17 @@
     --border: 33 48% 88%; 
     --input: 33 48% 88%; 
     
-    /* SYNCED: Ring now matches Primary (Hue 19) */
     --ring: 19 100% 51%; 
 
     --radius: 0.75rem;
 
-    /* SYNCED: Gradients using the new orange */
-    --gradient-hero: linear-gradient(135deg, hsl(19 100% 51%), hsl(19 100% 61%));
+    /* UPDATED: Hero Gradient = Orange -> Light Beige (#FFF8E9) */
+    /* Keeps the top 25% solid orange, then fades to the page background color */
+    --gradient-hero: linear-gradient(180deg, hsl(19 100% 51%) 25%, hsl(35 100% 97%) 100%);
+    
+    /* Subtle Gradient = Light Beige -> Darker Beige */
     --gradient-subtle: linear-gradient(180deg, hsl(35 100% 97%), hsl(33 48% 88%));
 
-    /* SYNCED: Shadows using the new orange */
     --shadow-lg: 0 20px 60px -15px hsl(19 100% 51% / 0.2);
     --shadow-glow: 0 0 40px hsl(19 100% 61% / 0.3);
 
@@ -135,5 +135,10 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Fix for Hero Grid Pattern */
+  .bg-grid-white\/10 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='white' stroke-opacity='0.1'%3e%3cpath d='M0 .5H31.5V32'/%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
   }
 }

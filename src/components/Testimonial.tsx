@@ -7,7 +7,7 @@ interface TestimonialProps {
 
 const Testimonial = ({ content }: TestimonialProps) => {
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-subtle">
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="mx-auto max-w-4xl">
         <div className="relative rounded-2xl bg-card border border-border p-6 sm:p-8 lg:p-12 shadow-custom-lg">
           <div className="flex gap-1 mb-4 sm:mb-6">

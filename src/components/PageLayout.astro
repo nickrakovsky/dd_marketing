@@ -3,7 +3,6 @@
 import Navigation from "./Navigation"; 
 import FAQ from "./FAQ";
 import { Toaster } from "@/components/ui/sonner";
-
 // 2. Static-Capable Components
 import Testimonial from "./Testimonial";
 import Benefits from "./Benefits";
@@ -13,8 +12,7 @@ import CaseStudies from "./CaseStudies";
 import Integrations from "./Integrations";
 
 // 3. The Astro Native Component
-import Hero from "./Hero.astro";       
-
+import Hero from "./Hero.astro";
 import type { PageContent } from "@/data/pagesData";
 import Footer from "./Footer.astro";
 
@@ -50,7 +48,8 @@ const { content } = Astro.props;
   
   <Integrations client:visible />
   
-  <FAQ client:visible content={content.faq} />
+  {/* CHANGED: client:visible -> client:idle to prevent pop-in effect */}
+  <FAQ client:idle content={content.faq} />
 
   <Footer />
 </div>

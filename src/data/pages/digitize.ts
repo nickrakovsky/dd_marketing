@@ -82,8 +82,22 @@ export const defaultContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { company: "Honeyville, Inc.", industry: "Food Wholesale", metricValue: "x%", metricLabel: "xyz improvement", challenge: "Struggling with manual data entry and disconnected systems slowing down supply chain decision making.", result: "Automated workflows reduced cycle time by x% and increased xyz by 85%.", },
-      { company: "ShipMonk", industry: "E-commerce 3PL", metricValue: "90%", metricLabel: "of Manual Calculations Eliminated", challenge: "Need to maximize utilization, forcing manual calculations for each facility type and appointment rejections in crunch moments.", result: "'The portal produced a ripple effect across our network. freed up bandwidth, allowing our team to focus on elevating the merchant experience, and the reporting capabilities drive quality assurance.' - Colleen Germain, Senior Coordinator.", },
+      { 
+        company: "Honeyville, Inc.", 
+        industry: "Food Wholesale", 
+        metricValue: "80%", 
+        metricLabel: "Fewer Emails", 
+        challenge: "The logistics coordinator was swamped with emails and calls, operating in a purely reactive mode. There was no time to optimize schedules or focus on value-added activities for the growing manufacturer.", 
+        result: "By adopting DataDocks, Honeyville transitioned from reactive to proactive logistics. The coordinator eliminated manual scheduling tasks, gaining the freedom to analyze data, improve dock efficiency, and focus on strategic improvements.", 
+      },
+      { 
+        company: "ShipMonk", 
+        industry: "E-commerce 3PL", 
+        metricValue: "90%", 
+        metricLabel: "Calcs Eliminated", 
+        challenge: "To maximize dock utilization, coordinators were forced to manually calculate capacity limits and appointment durations for every single booking. This manual math was slow, prone to error, and led to appointment rejections during crunch times.", 
+        result: "DataDocks automated the logic. The system now instantly calculates the perfect slot length for every load type based on ShipMonk's specific rules. This eliminated 90% of manual computations, freeing the team to focus on merchant experience instead of spreadsheet math.", 
+      },
     ],
   },
   faq: {

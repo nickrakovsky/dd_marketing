@@ -31,7 +31,6 @@ const integrations = [
   },
 ];
 
-// 1. Define interface to accept 'content' prop (even if unused) to fix TS error
 interface IntegrationsProps {
   content?: any;
 }
@@ -46,7 +45,6 @@ const Integrations = ({ content }: IntegrationsProps) => {
       rel="noopener noreferrer"
       className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-card border border-border/80 rounded-md hover:border-primary transition-colors group flex-shrink-0 cursor-pointer no-underline select-none"
     >
-      {/* Clean Icon: No bg, no circle, no border */}
       <div className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
         <img
           src={integration.icon}
@@ -54,8 +52,6 @@ const Integrations = ({ content }: IntegrationsProps) => {
           className="h-full w-full object-contain opacity-90 group-hover:opacity-100 transition-opacity"
         />
       </div>
-
-      {/* Flat Text Style */}
       <h3 className="font-recoleta font-semibold text-muted-foreground group-hover:text-foreground text-xs sm:text-sm whitespace-nowrap transition-colors">
         {integration.name}
       </h3>
@@ -85,19 +81,16 @@ const Integrations = ({ content }: IntegrationsProps) => {
 
         <div className="relative w-full overflow-hidden mask-fade-sides">
           <div className="flex w-max animate-marquee-integrations hover:[animation-play-state:paused]">
-            {/* Set 1 */}
             <div className="flex gap-3 px-1.5">
               {integrations.map((integration, index) => (
                 <IntegrationCard key={`a-${index}`} integration={integration} />
               ))}
             </div>
-            {/* Set 2 (Duplicate for loop) */}
             <div className="flex gap-3 px-1.5">
               {integrations.map((integration, index) => (
                 <IntegrationCard key={`b-${index}`} integration={integration} />
               ))}
             </div>
-            {/* Set 3 (Buffer) */}
             <div className="flex gap-3 px-1.5">
               {integrations.map((integration, index) => (
                 <IntegrationCard key={`c-${index}`} integration={integration} />
@@ -106,16 +99,18 @@ const Integrations = ({ content }: IntegrationsProps) => {
           </div>
         </div>
 
+        {/* UPDATED: Link styling to match surrounding text color (text-muted-foreground) */}
         <p className="text-center text-xs sm:text-sm text-muted-foreground mt-6 max-w-2xl mx-auto">
           Don't see your platform listed?{" "}
           <a 
             href="https://datadocks.com/integrations"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground hover:text-primary transition-colors underline"
+            className="font-bold text-muted-foreground hover:text-primary transition-colors underline"
           >
-            We likely support it already. If not, we'll build the integration you need to ensure seamless connectivity with your existing stack.
-          </a>
+            We likely support it already.
+          </a>{" "}
+          If not, we'll build the integration you need to ensure seamless connectivity with your existing stack.
         </p>
       </div>
     </section>

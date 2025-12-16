@@ -72,8 +72,22 @@ export const yardappContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { company: "Honeyville, Inc.", industry: "Food Wholesale", metricValue: "1", metricLabel: "Unified System", challenge: "Critical scheduling information was trapped in isolated systems.", result: "Removed all visibility barriers, giving every team member instant access to the real-time data they need.", },
-      { company: "TBC", industry: "TBC Industry", metricValue: "xx%", metricLabel: "of xyz improved", challenge: "Challenge TBC", result: "Result TBC", },
+      { 
+        company: "Verst Group", 
+        industry: "Contract Logistics", 
+        metricValue: "0", 
+        metricLabel: "Radio Chatter", 
+        challenge: "The warehouse relied on physical whiteboards and constant radio communication to manage dock activity. This analog approach created information lags, resulting in confusion on the floor and endless noise just to confirm bay status.", 
+        result: "By replacing the whiteboard with a large TV display powered by DataDocks, the entire hub gained instant, live updates. This digital shift silenced the radios and ensured the floor team acts on up-to-the-second data without verbal confirmation.", 
+      },
+      { 
+        company: "ShipMonk", 
+        industry: "E-commerce 3PL", 
+        metricValue: "12", 
+        metricLabel: "Locations Managed", 
+        challenge: "Managing inbound freight across 12 locations was chaotic without data validation. Carriers frequently booked slots against incorrect or non-existent POs, leading to receiving errors and a flood of emails to verify deliveries.", 
+        result: "DataDocks implemented an API bulk upload that restricts carriers to booking only against valid, real-time POs. This 'gatekeeper' function eliminated invalid bookings, drastically reduced email traffic, and provided leadership with high-level quality assurance.", 
+      },
     ],
   },
   faq: {

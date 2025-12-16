@@ -13,10 +13,13 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     
+    // Default to "Demo Subscriber" if not specified
+    const eventType = body.type || "Demo Subscriber";
+
     // AUTH: Base64 encode "PublishableKey:SecretKey"
     const authString = btoa(`${PUB_KEY}:${SECRET_KEY}`);
 
-    console.log(`[Bento] Triggering 'Demo Subscriber' for ${body.email}...`);
+    console.log(`[Bento] Triggering '${eventType}' for ${body.email}...`);
 
     const response = await fetch(
       `https://app.bentonow.com/api/v1/batch/events?site_uuid=${SITE_UUID}`,
@@ -30,15 +33,13 @@ export const POST: APIRoute = async ({ request }) => {
         body: JSON.stringify({
           events: [
             {
-              // 1. MATCH EXISTING DATA: Use the exact event name your system expects
-              type: "Demo Subscriber", 
+              type: eventType, 
               email: body.email,
-              
-              // 2. ADD METADATA: Keep this! It helps distinguish this API source 
-              // from other API integrations without affecting deliverability.
               fields: {
                 source: "Astro Server Island" 
-              }
+              },
+              // ADDED: Capture the message in the event details
+              details: body.message ? { message: body.message } : undefined
             }
           ]
         })

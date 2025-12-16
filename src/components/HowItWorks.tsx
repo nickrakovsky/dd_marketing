@@ -34,7 +34,7 @@ const BackgroundPattern = () => (
     <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg" opacity="0.4">
       <defs>
         <pattern id="matrix-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="1.5" fill="#FF9E7D" opacity="0.3" />
+          <circle cx="2" cy="2" r="1.5" fill="#FF9E7D" opacity="0.4" />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#matrix-dots)" />

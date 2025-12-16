@@ -65,6 +65,26 @@ export const capacityContent: PageContent = {
       { icon: "archive", title: "Absorb the Shock", description: "Handle disruptions and seasonal spikes without changing plans.", },
     ],
   },
+  caseStudies: {
+    caseStudies: [
+      { 
+        company: "Quality Distribution, LLC", 
+        industry: "3PL & Warehousing", 
+        metricValue: "5", 
+        metricLabel: "Unified Locations", 
+        challenge: "Managing multiple warehouses, each with its own disconnected spreadsheet, meant data silos and operational inconsistency. The team struggled to forecast labor needs accurately or track performance issues, such as carrier no-shows, across the network.", 
+        result: "DataDocks centralized scheduling, replacing fragmented processes with a standardized digital workflow. This clarity enabled precise labor planning, real-time visibility into every facility, and the ability to capture and act on critical data like carrier attendance.", 
+      },
+      { 
+        company: "TNT Express", 
+        industry: "Delivery Services", 
+        metricValue: "100%", 
+        metricLabel: "Self-Booking", 
+        challenge: "Manual scheduling was prone to error, particularly when heavy or oversize pallets required more time than standard slots allowed. These variable loads caused bottlenecks, and the team struggled to align capacity with strict KPIs.", 
+        result: "TNT moved to a self-service portal where carriers request their own slots, but the team retains final approval rights on every booking. 'Kyle' (the AI assistant) automatically adjusts appointment durations for heavy loads, ensuring the schedule reflects operational reality without manual intervention.", 
+      },
+    ],
+  },
   faq: {
     faqs: [
       { question: "How can a dock scheduling system help balance labor and dock utilization more effectively?", answer: "It smooths out the peaks. You can set appointment caps per hour to prevent morning rushes or evening spikes.", },

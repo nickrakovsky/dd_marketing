@@ -40,7 +40,8 @@ const CaseStudies = ({ content }: CaseStudiesProps) => {
                     <span className="font-semibold text-card-foreground">Result:</span> {caseStudy.result}
                   </p>
                 </div>
-                <Button variant="link" className="p-0 h-auto text-xs font-semibold group">
+                {/* HIDDEN: Button hidden temporarily as requested */}
+                <Button variant="link" className="p-0 h-auto text-xs font-semibold group hidden">
                   Read Full Case Study
                   <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
                 </Button>
@@ -71,7 +72,8 @@ const CaseStudies = ({ content }: CaseStudiesProps) => {
                     <p className="text-muted-foreground">{caseStudy.result}</p>
                   </div>
                 </div>
-                <Button variant="link" className="p-0 h-auto font-semibold group">
+                {/* HIDDEN: Button hidden temporarily as requested */}
+                <Button variant="link" className="p-0 h-auto font-semibold group hidden">
                   Read Full Case Study
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>

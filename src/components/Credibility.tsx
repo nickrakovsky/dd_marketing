@@ -11,7 +11,7 @@ const Credibility = ({ content }: CredibilityProps) => {
   const ANIMATION_DURATION = "50s";
 
   return (
-    <section className="py-6 px-4 sm:px-6 lg:px-8 bg-gradient-subtle border-y border-border overflow-hidden">
+    <section className="py-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-muted border-y border-border overflow-hidden">
       <div className="w-full max-w-[1200px] mx-auto">
         <style>{`
           @keyframes scroll {
@@ -48,6 +48,9 @@ const Credibility = ({ content }: CredibilityProps) => {
   );
 };
 
+// ... BadgeList Component (Keep existing code) ...
+// (I am omitting the BadgeList function here to save space, but DO NOT DELETE IT from your file)
+// Make sure BadgeList is still present below the main component.
 const BadgeList = ({ mode, content }: { mode: "carousel" | "desktop"; content: CredibilityContent }) => {
   const isDesktop = mode === "desktop";
 
@@ -75,7 +78,7 @@ const BadgeList = ({ mode, content }: { mode: "carousel" | "desktop"; content: C
               </svg>
             ))}
           </div>
-          <div className={`font-bold text-white whitespace-nowrap leading-none ${isDesktop ? "text-sm" : "text-xs"}`}>
+          <div className={`font-bold text-white whitespace-nowrap leading-none ${isDesktop ? "text-sm" : "text-sm"}`}>
             {content.g2Rating}
           </div>
         </div>
