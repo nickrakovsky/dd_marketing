@@ -4,6 +4,9 @@ import type { PageContent } from "@/data/types";
 // Specific Assets
 import dashboardPreview from "@/assets/dashboard-preview.webp";
 import capSchedule from "@/assets/solutionsscreenshots/capacity/scheduleview.webp";
+// NEW IMPORTS
+import capMobile from "@/assets/solutionsscreenshots/capacity/mobileschedule.webp";
+import capOverlay from "@/assets/solutionsscreenshots/capacity/capacity1.webp";
 
 export const capacityContent: PageContent = {
   ...defaultContent,
@@ -12,13 +15,16 @@ export const capacityContent: PageContent = {
     ...defaultContent.hero,
     headline: "ELIMINATE BOTTLENECKS IN YOUR LOADING DOCK, SLASH OVERTIME AND UNLOCK CAPACITY",
     desktopImage: dashboardPreview,
+    // UPDATED: Specific mobile gallery images
     mobileGallery: [
-      { src: dashboardPreview, alt: "Dashboard", style: 'centered' },
-      { src: dashboardPreview, alt: "Dashboard", style: 'centered' }
+      { src: capMobile, alt: "Mobile Schedule View", style: 'centered' },
+      { src: capOverlay, alt: "Capacity Planning View", style: 'centered' }
     ]
   },
   capacityGallery: {
-    staticImage: capSchedule
+    staticImage: capSchedule,
+    // ADDED: Overlay image for desktop effect
+    overlayImage: capOverlay 
   },
   howItWorks: {
     title: "HOW IT WORKS",

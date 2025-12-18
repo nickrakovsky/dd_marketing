@@ -31,7 +31,6 @@ const slidesToRender = content.heroSlides || defaultSlides;
 
 <section class="relative bg-gradient-hero py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
   
-  {/* RESTORED: Dot Pattern Background (White dots for Orange background) */}
   <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
     <svg class="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg" opacity="0.2">
       <defs>
@@ -90,6 +89,8 @@ const slidesToRender = content.heroSlides || defaultSlides;
              <CapacityGallery 
                client:visible={{ rootMargin: "200px" }}
                image={capacityGallery.staticImage}
+               overlayImage={capacityGallery.overlayImage}
+               mobileImages={content.mobileGallery} 
              />
           ) : digitizeGallery ? (
              <DigitizeGallery 

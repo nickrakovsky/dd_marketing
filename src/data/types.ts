@@ -1,4 +1,20 @@
-export type GalleryStyle = 'bottom-flush' | 'top-flush' | 'centered' | 'pan-horizontal';
+import type { ImageMetadata } from "astro";
+
+export interface HeroSlide {
+  type: "single" | "carousel";
+  images: ImageMetadata[];
+}
+
+export interface HeroContent {
+  badgeText: string;
+  headline: string;
+  emailPlaceholder: string;
+  buttonText: string;
+  dashboardAlt: string;
+  heroSlides?: HeroSlide[];
+  desktopImage?: ImageMetadata;
+  mobileGallery?: { src: ImageMetadata; alt: string; style?: 'centered' | 'full' }[];
+}
 
 export interface DigitizeGalleryData {
   header: ImageMetadata;
@@ -11,15 +27,16 @@ export interface VisibilityGalleryData {
   galleryImages: ImageMetadata[];
 }
 
+// UPDATED INTERFACE
 export interface CapacityGalleryData {
   staticImage: ImageMetadata;
+  overlayImage?: ImageMetadata; // Added this optional property
 }
 
-// FIX: Expanded Interface for Hotspots
 export interface CarriersGalleryData {
   masterImage: ImageMetadata;
-  galleryImages: ImageMetadata[];
   mobileImages: ImageMetadata[];
+  galleryImages: ImageMetadata[];
   hotspots: {
     left: string;
     top: string;
@@ -28,33 +45,6 @@ export interface CarriersGalleryData {
     targetIndex: number;
   }[];
 }
-
-export type SlideLayoutType = "single" | "double" | "triple" | "quad" | "overlay";
-
-export interface HeroSlide {
-  type: "single" | "double" | "triple" | "quad" | "overlay";
-  images: ImageMetadata[];
-}
-
-export interface DesktopComposition {
-  baseImage: ImageMetadata;
-  floatingImage: ImageMetadata;
-  floatPosition: 'right' | 'left';
-}
-
-export interface HeroContent {
-  badgeText: string;
-  headline: string;
-  emailPlaceholder: string;
-  buttonText: string;
-  dashboardAlt: string;
-  desktopImage?: ImageMetadata;
-  mobileGallery?: HeroGalleryItem[];
-  desktopComposition?: DesktopComposition;
-  heroSlides?: HeroSlide[];
-}
-
-export interface HeroGalleryItem { src: ImageMetadata; alt: string; style: GalleryStyle; }
 
 export interface CredibilityContent {
   g2Rating: string;
@@ -74,33 +64,42 @@ export interface CredibilityContent {
   };
 }
 
-export interface HowItWorksContent {
-  title: string;
-  subtitle: string;
-  steps: {
-    stepNumber: number;
-    title: string;
-    description: string;
-    icon: "upload" | "toggle" | "refresh";
-    desktopAnnotation?: string;
-    mobileAnnotation?: string;
-    visualTags?: string[];
-    highlight?: boolean;
-  }[];
-  footerAnnotation?: string;
+export interface TestimonialContent {
+  quote: string;
+  name: string;
+  role: string;
+  image: string;
 }
 
-export interface TestimonialContent { quote: string; name: string; role: string; image: string; }
-
-export interface BenefitItem {
-  icon: "calendar" | "database" | "barChart" | "users" | "fileCheck" | "archive";
+export interface Benefit {
+  icon: string;
   title: string;
   description: string;
 }
 
-export interface BenefitsContent { benefits: BenefitItem[]; }
+export interface BenefitsContent {
+  benefits: Benefit[];
+}
 
-export interface CaseStudyContent {
+export interface Step {
+  stepNumber: number;
+  title: string;
+  description: string;
+  icon: string;
+  desktopAnnotation?: string;
+  mobileAnnotation?: string;
+  visualTags?: string[];
+  highlight?: boolean;
+}
+
+export interface HowItWorksContent {
+  title: string;
+  subtitle: string;
+  steps: Step[];
+  footerAnnotation?: string;
+}
+
+export interface CaseStudy {
   company: string;
   industry: string;
   metricValue: string;
@@ -109,21 +108,29 @@ export interface CaseStudyContent {
   result: string;
 }
 
-export interface CaseStudiesContent { caseStudies: CaseStudyContent[]; }
+export interface CaseStudiesContent {
+  caseStudies: CaseStudy[];
+}
 
-export interface FAQItem { question: string; answer: string; }
-export interface FAQContent { faqs: FAQItem[]; }
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface FAQContent {
+  faqs: FAQItem[];
+}
 
 export interface PageContent {
   hero: HeroContent;
+  digitizeGallery?: DigitizeGalleryData;
+  visibilityGallery?: VisibilityGalleryData;
+  capacityGallery?: CapacityGalleryData;
+  carriersGallery?: CarriersGalleryData;
   credibility: CredibilityContent;
   testimonial: TestimonialContent;
   benefits: BenefitsContent;
   howItWorks: HowItWorksContent;
   caseStudies: CaseStudiesContent;
   faq: FAQContent;
-  digitizeGallery?: DigitizeGalleryData;
-  visibilityGallery?: VisibilityGalleryData;
-  capacityGallery?: CapacityGalleryData;
-  carriersGallery?: CarriersGalleryData;
 }
