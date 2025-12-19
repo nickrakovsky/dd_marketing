@@ -29,7 +29,7 @@ export const capacityContent: PageContent = {
   },
   howItWorks: {
     title: "HOW IT WORKS",
-    subtitle: "Turn historical data into future capacity.",
+    subtitle: "Spread your appointments throughout the day.",
     steps: [
       {
         stepNumber: 1,

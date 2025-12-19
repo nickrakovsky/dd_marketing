@@ -52,7 +52,7 @@ export const carriersContent: PageContent = {
   },
   howItWorks: {
     title: "HOW IT WORKS",
-    subtitle: "Automate coordination with your external partners.",
+    subtitle: "They book the appointments, you stay in control.",
     steps: [
       {
         stepNumber: 1,

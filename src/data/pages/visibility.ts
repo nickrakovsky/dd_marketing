@@ -26,7 +26,7 @@ export const yardappContent: PageContent = {
   },
   howItWorks: {
     title: "HOW IT WORKS",
-    subtitle: "Better data in, better visibility out.",
+    subtitle: "Spot the bottlenecks in your docks and yard.",
     steps: [
       {
         stepNumber: 1,
@@ -55,7 +55,7 @@ export const yardappContent: PageContent = {
     footerAnnotation: "💡 Result: Your gate, yard, and dock teams finally see the same reality."
   },
   testimonial: {
-    quote: "We work out of several facilities, and until we implemented DataDocks, each of them relied on a different scheduling system. This provided us with some standardization.",
+    quote: "We can look ahead at what’s scheduled, prepare any required documentation in advance, and appropriately staff our team. It’s already saved us so much time.",
     name: "Marcasa Ahlstrom",
     role: "Transportation Manager, Honeyville Inc.",
     image: "/src/assets/honeyvillelogo.webp",
@@ -75,10 +75,10 @@ export const yardappContent: PageContent = {
       { 
         company: "Verst Group", 
         industry: "Contract Logistics", 
-        metricValue: "0", 
+        metricValue: "Zero", 
         metricLabel: "Radio Chatter", 
         challenge: "The warehouse relied on physical whiteboards and constant radio communication to manage dock activity. This analog approach created information lags, resulting in confusion on the floor and endless noise just to confirm bay status.", 
-        result: "By replacing the whiteboard with a large TV display powered by DataDocks, the entire hub gained instant, live updates. This digital shift silenced the radios and ensured the floor team acts on up-to-the-second data without verbal confirmation.", 
+        result: "By replacing the whiteboard with a large TV display powered by DataDocks, the team gained instant, live updates. This digital shift silenced the radios and ensured the floor team acts on live data, a change the Operations Manager describes as 'transformative' for daily operations.", 
       },
       { 
         company: "ShipMonk", 

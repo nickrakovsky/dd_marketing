@@ -24,7 +24,6 @@ const { content } = Astro.props;
 ---
 
 <div class="min-h-screen">
-  <Toaster client:idle />
   
   <Navigation client:load />
   
@@ -52,4 +51,7 @@ const { content } = Astro.props;
   <FAQ client:idle content={content.faq} />
 
   <Footer />
+
+  {/* MOVED: Toaster to bottom to fix the 'tabindex' audit error */}
+  <Toaster client:idle />
 </div>

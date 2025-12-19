@@ -52,7 +52,7 @@ export const defaultContent: PageContent = {
   },
   howItWorks: {
     title: "HOW IT WORKS",
-    subtitle: "From messy inputs to automated outputs.",
+    subtitle: "Say goodbye to spreadsheets, calls and emails.",
     steps: [
       {
         stepNumber: 1,
@@ -85,10 +85,10 @@ export const defaultContent: PageContent = {
       { 
         company: "Honeyville, Inc.", 
         industry: "Food Wholesale", 
-        metricValue: "80%", 
+        metricValue: "83%", 
         metricLabel: "Fewer Emails", 
-        challenge: "The logistics coordinator was swamped with emails and calls, operating in a purely reactive mode. There was no time to optimize schedules or focus on value-added activities for the growing manufacturer.", 
-        result: "By adopting DataDocks, Honeyville transitioned from reactive to proactive logistics. The coordinator eliminated manual scheduling tasks, gaining the freedom to analyze data, improve dock efficiency, and focus on strategic improvements.", 
+        challenge: "The logistics coordinator was swamped with calls and upwards of 120 emails a day, managing the schedule from an Outlook calendar. This reactive process left no time to optimize schedules or prepare the receiving team for incoming shipments.", 
+        result: "DataDocks centralized the schedule, cutting daily email volume to less than 20. This clarity allows the team to staff appropriately and prepare documentation in advance, transitioning the department from reactive fire-fighting to proactive logistics planning.", 
       },
       { 
         company: "ShipMonk", 
