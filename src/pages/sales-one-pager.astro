@@ -1,0 +1,204 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/datadocks-logo.svg";
+
+// Import Data
+import { 
+  defaultContent, 
+  capacityContent, 
+  carriersContent, 
+  yardappContent 
+} from "@/data/pagesData";
+
+// Import Images
+import imgNick from "../assets/nick-steinman.jpg";
+import imgIsaac from "../assets/isaacmorley.webp";
+import imgLandon from "../assets/landonmoreno.webp";
+import imgHoneyville from "../assets/honeyvillelogo.webp";
+
+// --- DATA GROUPING ---
+const sections = [
+  {
+    id: "digitize",
+    title: "Digitize Operations",
+    subtitle: "Get actionable data on every load",
+    content: defaultContent,
+    testimonialImg: imgNick,
+    caseStudies: defaultContent.caseStudies.caseStudies
+  },
+  {
+    id: "capacity",
+    title: "Increase Capacity",
+    subtitle: "Eliminate bottlenecks and slash overtime",
+    content: capacityContent,
+    testimonialImg: imgIsaac,
+    caseStudies: capacityContent.caseStudies.caseStudies
+  },
+  {
+    id: "carriers",
+    title: "Delight Carriers",
+    subtitle: "Make it effortless to book appointments",
+    content: carriersContent,
+    testimonialImg: imgLandon,
+    caseStudies: carriersContent.caseStudies.caseStudies
+  },
+  {
+    id: "visibility",
+    title: "See Everything",
+    subtitle: "Manage your yard and dock from one app",
+    content: yardappContent,
+    testimonialImg: imgHoneyville,
+    caseStudies: yardappContent.caseStudies.caseStudies
+  }
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DataDocks - Customer Success</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body class="bg-white text-slate-900 antialiased font-sans print-body">
+    
+    <div class="page-container first-page">
+      <header class="flex justify-between items-center mb-16 border-b-4 border-primary pb-6">
+        <Image src={logo} alt="DataDocks Logo" class="h-12 w-auto" />
+        <div class="text-right">
+          <h1 class="font-['Bruta'] text-4xl text-slate-900 uppercase tracking-wide leading-tight">
+            Proven Results
+          </h1>
+          <p class="font-['Recoleta'] text-slate-500 text-xl italic mt-1">
+            Real outcomes from the loading dock
+          </p>
+        </div>
+      </header>
+
+      <div class="flex flex-col gap-16">
+        
+        {sections.map((section, index) => (
+          <section class="break-inside-avoid mb-8">
+            
+            <div class="flex items-baseline gap-4 mb-6">
+              <h2 class="font-['Bruta'] text-3xl text-primary uppercase">
+                {section.title}
+              </h2>
+              <span class="h-px bg-slate-200 flex-grow"></span>
+              <span class="text-slate-400 font-['Recoleta'] text-sm uppercase tracking-wider">
+                0{index + 1}
+              </span>
+            </div>
+
+            <div class="bg-amber-50 rounded-xl p-6 border border-amber-100 mb-8 flex gap-6 items-center shadow-sm">
+              <div class="w-24 h-24 shrink-0 rounded-full overflow-hidden border-4 border-white shadow-md">
+                <Image src={section.testimonialImg} alt={section.content.testimonial.name} class="w-full h-full object-cover" />
+              </div>
+              <div>
+                <p class="font-['Recoleta'] text-xl text-slate-800 italic leading-relaxed mb-2">
+                  "{section.content.testimonial.quote}"
+                </p>
+                <div class="flex items-baseline gap-2">
+                  <span class="font-['Recoleta'] font-bold text-slate-900 text-lg">
+                    {section.content.testimonial.name}
+                  </span>
+                  <span class="text-slate-500 text-sm font-sans">
+                     — {section.content.testimonial.role}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8">
+              {section.caseStudies.map((cs) => (
+                <div class="bg-white rounded-lg border border-slate-200 p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] h-full">
+                  
+                  <div class="flex justify-between items-start mb-5 pb-4 border-b border-slate-100">
+                    <div>
+                      <h3 class="font-['Bruta'] text-xl text-slate-900 uppercase leading-none mb-1">
+                        {cs.company}
+                      </h3>
+                      <p class="text-xs text-slate-400 font-sans uppercase tracking-wider">{cs.industry}</p>
+                    </div>
+                    <div class="text-right flex flex-col items-end">
+                       <span class="block font-['Bruta'] text-3xl text-primary leading-none">
+                        {cs.metricValue}
+                      </span>
+                      <span class="text-[10px] text-slate-500 uppercase font-bold leading-none mt-1">
+                        {cs.metricLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap-4 text-sm">
+                    
+                    <div>
+                      <span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">The Challenge</span>
+                      <p class="text-slate-600 leading-snug text-xs">
+                        {cs.challenge}
+                      </p>
+                    </div>
+
+                    <div>
+                      <span class="block text-[10px] uppercase font-bold text-primary mb-1">The Result</span>
+                      <p class="text-slate-800 font-medium leading-snug text-xs">
+                        {cs.result}
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </section>
+        ))}
+
+      </div>
+      
+      <div class="mt-16 pt-8 border-t border-slate-200 flex justify-between items-center text-sm text-slate-400 font-sans">
+        <p>© DataDocks Inc.</p>
+        <p>www.datadocks.com</p>
+      </div>
+
+    </div>
+
+  </body>
+</html>
+
+<style>
+  @page {
+    size: letter;
+    margin: 0;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .page-container {
+    width: 8.5in;
+    min-height: 11in; 
+    padding: 0.75in;
+    margin: 0 auto;
+    background: white;
+    box-sizing: border-box;
+  }
+
+  section {
+    page-break-inside: avoid;
+  }
+
+  @media screen {
+    body {
+      background: #f1f5f9;
+      padding: 40px 0;
+      display: flex;
+      justify-content: center;
+    }
+    .page-container {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>
