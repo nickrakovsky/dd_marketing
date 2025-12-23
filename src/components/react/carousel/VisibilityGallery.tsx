@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomIn } from "lucide-react";
 import { MobileCarousel } from "./MobileCarousel"; 
-import Lightbox from "./Lightbox";
+// FIX: Named import
+import { Lightbox } from "./Lightbox";
 
 interface AstroInputImage {
   src: string;
@@ -25,19 +26,9 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
     alt: `Detail View ${i}`,
   }));
 
-  const nextImage = (e: any) => {
-    e?.stopPropagation();
-    setFocusedIndex((prev) => (prev === focusableImages.length - 1 ? 0 : (prev || 0) + 1));
-  };
-
-  const prevImage = (e: any) => {
-    e?.stopPropagation();
-    setFocusedIndex((prev) => (prev === 0 ? focusableImages.length - 1 : (prev || 0) - 1));
-  };
-
   return (
     <>
-      {/* --- MOBILE VIEW --- */}
+      {/* MOBILE VIEW */}
       <div className="block md:hidden w-full mt-0">
         <MobileCarousel 
           images={[...galleryImages, baseImage].map((img, i) => ({ 
@@ -49,11 +40,11 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
         />
       </div>
 
-      {/* --- DESKTOP VIEW --- */}
+      {/* DESKTOP VIEW */}
       <div className="hidden md:block relative w-full h-full">
         <div className="relative w-full max-w-2xl mx-auto">
           
-          {/* 1. THE ANCHOR (Base Image) */}
+          {/* 1. THE ANCHOR */}
           <motion.img 
             src={baseImage.src} 
             alt="Property Overview" 
@@ -62,7 +53,7 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
             transition={{ duration: 0.3 }}
           />
 
-          {/* 2. THE OVERLAY (Interactive Mobile Cutout) */}
+          {/* 2. THE OVERLAY */}
           <AnimatePresence>
             {focusedIndex === null && (
               <motion.div 
@@ -86,17 +77,14 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
             )}
           </AnimatePresence>
 
-          {/* 3. THE LIGHTBOX (Shared Component) */}
-          <AnimatePresence>
-            {focusedIndex !== null && (
-              <Lightbox 
-                image={focusableImages[focusedIndex]}
-                onNext={nextImage}
-                onPrev={prevImage}
-                onClose={() => setFocusedIndex(null)}
-              />
-            )}
-          </AnimatePresence>
+          {/* 3. LIGHTBOX (Updated Interface) */}
+          <Lightbox 
+            images={focusableImages}
+            currentIndex={focusedIndex || 0}
+            isOpen={focusedIndex !== null}
+            onClose={() => setFocusedIndex(null)}
+            onNavigate={setFocusedIndex}
+          />
 
         </div>
       </div>

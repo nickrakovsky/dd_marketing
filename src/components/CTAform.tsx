@@ -1,94 +1,68 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
 
 interface CTAFormProps {
   buttonText?: string;
   placeholder?: string;
-  onSuccess?: () => void;
 }
 
-export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "Enter your work email", onSuccess }: CTAFormProps) {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [pagePath, setPagePath] = useState("");
+export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "Enter your work email" }: CTAFormProps) {
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Capture current page path on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setPagePath(window.location.pathname);
-    }
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
-
-    try {
-      const res = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Sending page path
-        body: JSON.stringify({ email, page: pagePath }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || "Server error");
-      }
-
-      setStatus('success');
-      toast.success("Success! Please select a time below.");
-      
-      if (onSuccess) onSuccess();
-      
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong. Please try again.");
-      setStatus('idle');
-    }
-  };
-
-  if (status === 'success') {
-    return (
-      <div className="mx-auto max-w-md flex items-center justify-center gap-2 mb-4 sm:mb-6 h-10 md:h-16 bg-background border border-primary/20 animate-in fade-in zoom-in font-recoleta font-normal rounded-none">
-        <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-        <span className="text-sm md:text-xl text-muted-foreground">Details received! Select a time below ↓</span>
-      </div>
-    );
-  }
+  // FIXED: Using the URL-encoded Event Name string.
+  // This will log the event as "Demo Subscriber" in Bento.
+  const bentoAction = "https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/Demo%20Subscriber?hardened=true";
+  
+  const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-lg flex flex-row items-stretch gap-0 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 shadow-none">
-      <div className="relative flex-1">
-        <Input 
-          type="email" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
-          placeholder={placeholder} 
-          required 
-          disabled={status === 'loading'}
-          className="w-full h-10 md:h-16 border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 md:px-6 font-recoleta font-normal text-sm md:text-xl bg-background text-muted-foreground placeholder:text-muted-foreground/60" 
-        />
+    <div className="mx-auto max-w-lg mb-8">
+      
+      {/* SUCCESS STATE */}
+      <div className={`${isSubmitted ? 'flex' : 'hidden'} flex-col items-center justify-center gap-2 h-16 bg-background/50 border border-primary/20 animate-in fade-in zoom-in rounded-none p-4`}>
+        <div className="flex items-center gap-2 text-primary">
+          <CheckCircle2 className="h-5 w-5" />
+          <span className="font-recoleta text-lg">Opening calendar in a new tab...</span>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Popup blocked? <a href={calendlyUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-primary">Click here to book</a>
+        </p>
       </div>
-      <Button 
-        type="submit" 
-        variant="default" 
-        size="lg" 
-        disabled={status === 'loading'}
-        className="whitespace-nowrap h-10 md:h-16 bg-black hover:bg-primary text-white font-recoleta font-normal transition-colors duration-300 rounded-none px-6 md:px-8 text-sm md:text-xl shadow-none border-0"
+
+      {/* FORM STATE */}
+      <form 
+        action={bentoAction}
+        method="POST"
+        target="_blank"
+        encType="multipart/form-data"
+        onSubmit={() => setIsSubmitted(true)}
+        className={`${isSubmitted ? 'hidden' : 'flex'} flex-row items-stretch gap-0 animate-in fade-in slide-in-from-bottom-4 duration-1000 shadow-none`}
       >
-        {status === 'loading' ? (
-           <Loader2 className="mr-2 h-4 w-4 md:h-5 md:w-5 animate-spin" />
-        ) : (
+        <input type="hidden" name="redirect" value={calendlyUrl} />
+
+        <div className="relative flex-1">
+          <Input 
+            type="email" 
+            name="email"
+            placeholder={placeholder} 
+            required 
+            className="w-full h-10 md:h-16 border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 md:px-6 font-recoleta font-normal text-sm md:text-xl bg-background text-muted-foreground placeholder:text-muted-foreground/60" 
+          />
+        </div>
+        <Button 
+          type="submit" 
+          variant="default" 
+          size="lg" 
+          className="whitespace-nowrap h-10 md:h-16 bg-black hover:bg-primary text-white font-recoleta font-normal transition-colors duration-300 rounded-none px-6 md:px-8 text-sm md:text-xl shadow-none border-0"
+        >
           <div className="flex items-center gap-2">
             {buttonText}
             <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
           </div>
-        )}
-      </Button>
-    </form>
+        </Button>
+      </form>
+    </div>
   );
 }

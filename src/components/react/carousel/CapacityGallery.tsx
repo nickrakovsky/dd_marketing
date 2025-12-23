@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomIn } from "lucide-react";
 import { MobileCarousel } from "./MobileCarousel"; 
-import Lightbox from "./Lightbox";
+// FIX: Named import
+import { Lightbox } from "./Lightbox";
 import type { ImageMetadata } from "astro";
 
 interface CapacityGalleryProps {
@@ -20,16 +21,6 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
     alt: img.alt || `Detail View ${i}`,
   })) : [{ src: image.src, alt: "Schedule View" }];
 
-  const nextImage = (e: any) => {
-    e?.stopPropagation();
-    setFocusedIndex((prev) => (prev === focusableImages.length - 1 ? 0 : (prev || 0) + 1));
-  };
-
-  const prevImage = (e: any) => {
-    e?.stopPropagation();
-    setFocusedIndex((prev) => (prev === 0 ? focusableImages.length - 1 : (prev || 0) - 1));
-  };
-
   // Prepare images for MobileCarousel
   const carouselImages = mobileImages ? mobileImages.map((img) => ({
     src: img.src.src,
@@ -40,9 +31,7 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
 
   return (
     <>
-      {/* ---------------------------------------------------------------------------
-          MOBILE VIEW: Shared MobileCarousel
-          --------------------------------------------------------------------------- */}
+      {/* MOBILE VIEW */}
       <div className="block md:hidden w-full mt-0">
         <MobileCarousel images={carouselImages.length > 0 ? carouselImages : [{ 
             src: image.src, 
@@ -53,13 +42,11 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
         />
       </div>
 
-      {/* ---------------------------------------------------------------------------
-          DESKTOP VIEW: VisibilityGallery-style Layout
-          --------------------------------------------------------------------------- */}
+      {/* DESKTOP VIEW */}
       <div className="hidden md:block relative w-full h-full">
         <div className="relative w-full max-w-5xl mx-auto">
           
-          {/* 1. Base Image (Schedule View) */}
+          {/* 1. Base Image */}
           <motion.div
              animate={{ opacity: focusedIndex !== null ? 0 : 1 }}
              transition={{ duration: 0.3 }}
@@ -74,7 +61,7 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
             </div>
           </motion.div>
 
-          {/* 2. Overlay Image (Interactive) */}
+          {/* 2. Overlay Image */}
           <AnimatePresence>
             {overlayImage && focusedIndex === null && (
               <motion.div 
@@ -83,7 +70,6 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
-                // UPDATED: Significantly smaller width and max-width as requested
                 className="absolute z-20 bottom-0 right-8 w-[18%] max-w-[200px] cursor-pointer"
                 onClick={() => setFocusedIndex(1)} 
               >
@@ -94,8 +80,6 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
                     className="w-full h-auto block"
                     loading="eager"
                   />
-                  
-                  {/* Hover Icon Overlay */}
                   <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center group">
                     <div className="bg-white/90 backdrop-blur rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                       <ZoomIn className="text-primary w-5 h-5" />
@@ -106,17 +90,14 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
             )}
           </AnimatePresence>
 
-          {/* 3. LIGHTBOX */}
-          <AnimatePresence>
-            {focusedIndex !== null && (
-              <Lightbox 
-                image={focusableImages[focusedIndex]}
-                onNext={nextImage}
-                onPrev={prevImage}
-                onClose={() => setFocusedIndex(null)}
-              />
-            )}
-          </AnimatePresence>
+          {/* 3. LIGHTBOX (Updated Interface) */}
+          <Lightbox 
+            images={focusableImages}
+            currentIndex={focusedIndex || 0}
+            isOpen={focusedIndex !== null}
+            onClose={() => setFocusedIndex(null)}
+            onNavigate={setFocusedIndex}
+          />
 
         </div>
       </div>

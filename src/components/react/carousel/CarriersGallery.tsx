@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MobileCarousel } from "./MobileCarousel"; 
-import Lightbox from "./Lightbox";
+// FIX: Named import
+import { Lightbox } from "./Lightbox";
 
 interface AstroInputImage {
   src: string;
@@ -33,16 +34,6 @@ export default function CarriersGallery({ masterImage, mobileImages, galleryImag
     alt: `Detail View ${i}`,
   }));
 
-  const nextImage = (e: any) => {
-    e?.stopPropagation();
-    setFocusedIndex((prev) => (prev === focusableImages.length - 1 ? 0 : (prev || 0) + 1));
-  };
-
-  const prevImage = (e: any) => {
-    e?.stopPropagation();
-    setFocusedIndex((prev) => (prev === 0 ? focusableImages.length - 1 : (prev || 0) - 1));
-  };
-
   return (
     <>
       {/* MOBILE: Standard Carousel */}
@@ -59,7 +50,7 @@ export default function CarriersGallery({ masterImage, mobileImages, galleryImag
       <div className="hidden md:block relative w-full max-w-6xl mx-auto mt-0">
         <div className="relative w-full rounded-2xl border border-primary/20 bg-white shadow-custom-lg overflow-hidden leading-none text-[0px]">
           
-          {/* 1. MASTER IMAGE (The Anchor) */}
+          {/* 1. MASTER IMAGE */}
           <motion.div
             animate={{ opacity: focusedIndex !== null ? 0 : 1 }}
             transition={{ duration: 0.3 }}
@@ -72,7 +63,7 @@ export default function CarriersGallery({ masterImage, mobileImages, galleryImag
               loading="eager"
             />
 
-            {/* 2. HOTSPOTS (Invisible Buttons) */}
+            {/* 2. HOTSPOTS */}
             {hotspots.map((spot, i) => (
               <div
                 key={i}
@@ -85,23 +76,19 @@ export default function CarriersGallery({ masterImage, mobileImages, galleryImag
                 }}
                 onClick={() => setFocusedIndex(spot.targetIndex)}
               >
-                {/* Hover Effect: Show border/glow when hovering this zone */}
                 <div className="w-full h-full border-2 border-transparent group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-200 rounded-sm" />
               </div>
             ))}
           </motion.div>
 
-          {/* 3. LIGHTBOX */}
-          <AnimatePresence>
-            {focusedIndex !== null && (
-              <Lightbox 
-                image={focusableImages[focusedIndex]}
-                onNext={nextImage}
-                onPrev={prevImage}
-                onClose={() => setFocusedIndex(null)}
-              />
-            )}
-          </AnimatePresence>
+          {/* 3. LIGHTBOX (Updated Interface) */}
+          <Lightbox 
+            images={focusableImages}
+            currentIndex={focusedIndex || 0}
+            isOpen={focusedIndex !== null}
+            onClose={() => setFocusedIndex(null)}
+            onNavigate={setFocusedIndex}
+          />
 
         </div>
       </div>
