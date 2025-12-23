@@ -8,11 +8,10 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   // ADD THIS LINE:
   site: 'https://datadocks.com',
+  base: '/',
 
   integrations: [
     tailwind(), 
     react()
   ],
-
-  adapter: vercel()
 });
