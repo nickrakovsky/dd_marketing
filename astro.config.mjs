@@ -7,8 +7,8 @@ export default defineConfig({
   // ADD THIS LINE:
   //site: 'https://datadocks.com',
   //base: '/',
-  site: 'https://datadocks.com',
-  base: '/benefits/see-everything-now',
+  site: 'https://nickrakovsky.github.io',
+  base: '/dd_marketing',
 
   integrations: [
     tailwind(), 
