@@ -1,10 +1,10 @@
 ---
-// 1. Interactive Components (Need JS for state/toggles)
+// 1. Interactive Components
 import Navigation from "./Navigation"; 
 import FAQ from "./FAQ";
 import { Toaster } from "@/components/ui/sonner";
 
-// 2. Static-Capable Components (Rendered as HTML on server)
+// 2. Static-Capable Components
 import Testimonial from "./Testimonial";
 import Benefits from "./Benefits";
 import Credibility from "./Credibility";
@@ -12,16 +12,26 @@ import HowItWorks from "./HowItWorks";
 import CaseStudies from "./CaseStudies";
 import Integrations from "./Integrations";
 
-// 3. The Astro Native Components
+// 3. The Astro Native Component
 import Hero from "./Hero.astro";
-import Footer from "./Footer.astro";
 import type { PageContent } from "@/data/pagesData";
+import Footer from "./Footer.astro";
+
+// --- IMAGE IMPORTS ---
+import { getImage } from "astro:assets";
+import capterraSrc from "@/assets/capterra-logo.png";
+import g2Src from "@/assets/g2-logo.webp";
 
 interface Props {
   content: PageContent;
 }
 
 const { content } = Astro.props;
+
+// --- IMAGE PROCESSING ---
+// This runs on the server to create small, optimized thumbnails
+const optimizedCapterra = await getImage({ src: capterraSrc, format: 'webp', width: 100 });
+const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
 ---
 
 <div class="min-h-screen">
@@ -45,7 +55,13 @@ const { content } = Astro.props;
   <Benefits content={content.benefits} />
   
   {/* Static HTML: Infinite marquee works via CSS animation. */}
-  <Credibility content={content.credibility} />
+  <Credibility 
+    content={content.credibility} 
+    images={{
+      capterra: optimizedCapterra.src,
+      g2: optimizedG2.src
+    }}
+  />
   
   {/* Static HTML: Responsive grid works via CSS media queries. */}
   <HowItWorks content={content.howItWorks} />

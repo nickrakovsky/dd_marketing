@@ -1,5 +1,5 @@
-import { Calendar, Database, BarChart3, Users, FileCheck, Archive } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { getIcon } from "@/utils/iconRegistry";
 import type { BenefitsContent } from "@/data/pagesData";
 
 interface BenefitsProps {
@@ -7,19 +7,8 @@ interface BenefitsProps {
 }
 
 const Benefits = ({ content }: BenefitsProps) => {
-  const getIcon = (iconName: 'calendar' | 'database' | 'barChart' | 'users' | 'fileCheck' | 'archive') => {
-    const iconMap = {
-      calendar: Calendar,
-      database: Database,
-      barChart: BarChart3,
-      users: Users,
-      fileCheck: FileCheck,
-      archive: Archive,
-    };
-    return iconMap[iconName];
-  };
 
-  return (
+ return (
     <section className="py-12 px-2 sm:px-6 lg:px-8 bg-background">
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-2 sm:gap-6 grid-cols-2 md:grid-cols-3">

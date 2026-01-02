@@ -1,13 +1,15 @@
 import { Clock, CheckCircle2, Shield, Globe, Lock } from "lucide-react";
-import capterraLogo from "@/assets/capterra-logo.png";
-import g2Logo from "@/assets/g2-logo.webp";
 import type { CredibilityContent } from "@/data/pagesData";
 
 interface CredibilityProps {
   content: CredibilityContent;
+  images: {
+    capterra: string;
+    g2: string;
+  };
 }
 
-const Credibility = ({ content }: CredibilityProps) => {
+const Credibility = ({ content, images }: CredibilityProps) => {
   const ANIMATION_DURATION = "50s";
 
   return (
@@ -29,17 +31,17 @@ const Credibility = ({ content }: CredibilityProps) => {
 
         {/* --- DESKTOP VIEW (Static Banner) --- */}
         <div className="hidden lg:flex justify-between items-stretch w-full gap-3">
-          <BadgeList mode="desktop" content={content} />
+          <BadgeList mode="desktop" content={content} images={images} />
         </div>
 
         {/* --- MOBILE & TABLET VIEW (Infinite Carousel) --- */}
         <div className="lg:hidden relative w-[calc(100%+2rem)] -mx-4 overflow-hidden mask-fade-edges">
           <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
             <div className="flex gap-3 px-4">
-              <BadgeList mode="carousel" content={content} />
+              <BadgeList mode="carousel" content={content} images={images} />
             </div>
             <div className="flex gap-3 px-4">
-              <BadgeList mode="carousel" content={content} />
+              <BadgeList mode="carousel" content={content} images={images} />
             </div>
           </div>
         </div>
@@ -51,7 +53,7 @@ const Credibility = ({ content }: CredibilityProps) => {
 // ... BadgeList Component (Keep existing code) ...
 // (I am omitting the BadgeList function here to save space, but DO NOT DELETE IT from your file)
 // Make sure BadgeList is still present below the main component.
-const BadgeList = ({ mode, content }: { mode: "carousel" | "desktop"; content: CredibilityContent }) => {
+const BadgeList = ({ mode, content, images }: { mode: "carousel" | "desktop"; content: CredibilityContent; images: { capterra: string; g2: string } }) => {
   const isDesktop = mode === "desktop";
 
   const cardContainerClass = `relative rounded-xl flex items-center transition-all hover:opacity-90 select-none
@@ -67,7 +69,7 @@ const BadgeList = ({ mode, content }: { mode: "carousel" | "desktop"; content: C
         className={`${cardContainerClass} bg-[#FF492C] gap-3`}
       >
         <div className={`flex items-center justify-center flex-shrink-0 ${isDesktop ? "h-10 w-10" : "h-8 w-8"}`}>
-          <img src={g2Logo.src} alt="G2" className="w-full h-full object-contain" />
+          <img src={images.g2} alt="G2" className="w-full h-full object-contain" />
         </div>
 
         <div className="flex-1 min-w-0 flex flex-col justify-center items-start">
@@ -112,7 +114,7 @@ const BadgeList = ({ mode, content }: { mode: "carousel" | "desktop"; content: C
         rel="noopener noreferrer"
         className={`${cardContainerClass} bg-[#134B70] gap-2 xl:gap-3 pr-4`}
       >
-        <img src={capterraLogo.src} alt="Capterra" className={`${isDesktop ? "h-6 w-6" : "h-6 w-6"} flex-shrink-0`} />
+        <img src={images.capterra} alt="Capterra" className={`${isDesktop ? "h-6 w-6" : "h-6 w-6"} flex-shrink-0`} />
 
         <div className="flex-1 min-w-0 flex flex-col justify-center">
           <div className={`text-white font-bold whitespace-nowrap leading-tight ${isDesktop ? "text-sm" : "text-sm"}`}>
