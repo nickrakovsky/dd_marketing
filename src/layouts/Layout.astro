@@ -6,7 +6,6 @@ interface Props {
 }
 
 const { title } = Astro.props;
-// Retrieve the correct UUID from environment variables
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 ---
 
@@ -17,6 +16,46 @@ const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
         <meta name="viewport" content="width=device-width" />
         
 		<title>{title}</title>
+
+        {/* --- PRECISION PERFORMANCE FIXES --- */}
+
+        {/* 1. Preload the Critical Fonts (Starts download immediately) */}
+        <link rel="preload" href="/fonts/BrutaGlbCompressed-ExtraBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+        <link rel="preload" href="/fonts/Recoleta-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+        {/* 2. Inline Font Definitions (Browser finds them instantly) */}
+        <style is:inline>
+            @font-face {
+                font-family: 'Bruta';
+                src: url('/fonts/BrutaGlbCompressed-ExtraBold.woff2') format('woff2');
+                font-weight: 800;
+                font-style: normal;
+                font-display: swap;
+            }
+            @font-face {
+                font-family: 'Recoleta';
+                src: url('/fonts/Recoleta-Regular.woff2') format('woff2');
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+            @font-face {
+                font-family: 'Recoleta';
+                src: url('/fonts/Recoleta-Medium.woff2') format('woff2');
+                font-weight: 500;
+                font-style: normal;
+                font-display: swap;
+            }
+            @font-face {
+                font-family: 'Recoleta';
+                src: url('/fonts/Recoleta-SemiBold.woff2') format('woff2');
+                font-weight: 600;
+                font-style: normal;
+                font-display: swap;
+            }
+        </style>
+
+        {/* --- END PERFORMANCE FIXES --- */}
 
         <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
             window.bentoSettings = {
