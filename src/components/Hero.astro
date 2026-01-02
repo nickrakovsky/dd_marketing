@@ -72,14 +72,14 @@ const slidesToRender = content.heroSlides || defaultSlides;
           
           {visibilityGallery ? (
              <VisibilityGallery 
-               client:visible={{ rootMargin: "200px" }}
+               client:load
                baseImage={visibilityGallery.baseImage}
                overlayImage={visibilityGallery.overlayImage}
                galleryImages={visibilityGallery.galleryImages}
              />
           ) : carriersGallery ? (
              <CarriersGallery
-               client:visible={{ rootMargin: "200px" }}
+               client:load
                masterImage={carriersGallery.masterImage}
                mobileImages={carriersGallery.mobileImages}
                galleryImages={carriersGallery.galleryImages}
@@ -87,14 +87,14 @@ const slidesToRender = content.heroSlides || defaultSlides;
              />
           ) : capacityGallery ? (
              <CapacityGallery 
-               client:visible={{ rootMargin: "200px" }}
+               client:load
                image={capacityGallery.staticImage}
                overlayImage={capacityGallery.overlayImage}
                mobileImages={content.mobileGallery} 
              />
           ) : digitizeGallery ? (
              <DigitizeGallery 
-               client:visible={{ rootMargin: "200px" }} 
+               client:load 
                headerImage={digitizeGallery.header} 
                gridImages={digitizeGallery.gridImages} 
              />

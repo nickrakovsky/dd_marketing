@@ -24,6 +24,8 @@ jobs:
       # Detects your package manager (npm/pnpm/yarn) automatically
       - name: Install, build, and upload your site
         uses: withastro/action@v2
+        env:
+          PUBLIC_BENTO_SITE_UUID: ${{ secrets.PUBLIC_BENTO_SITE_UUID }}
 
   deploy:
     needs: build
