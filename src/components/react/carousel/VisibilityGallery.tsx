@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, lazy, Suspense } from "react"; // Added hooks
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomIn } from "lucide-react";
-import { MobileCarousel } from "./MobileCarousel"; 
-// FIX: Named import
-import { Lightbox } from "./Lightbox";
+import { MobileCarousel } from "./MobileCarousel";
+const Lightbox = lazy(() => import("./Lightbox").then(module => ({ default: module.Lightbox })));
 
 interface AstroInputImage {
   src: string;
@@ -20,6 +19,23 @@ interface VisibilityGalleryProps {
 
 export default function VisibilityGallery({ baseImage, overlayImage, galleryImages }: VisibilityGalleryProps) {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+// 2. THE "COMPROMISE-LOAD" TRICK
+  // We wait for the component to mount (FCP is done), then trigger the import
+  // in the background so it's ready BEFORE the user clicks.
+  useEffect(() => {
+    const prefetchLightbox = async () => {
+      try {
+        await import("./Lightbox");
+      } catch (e) {
+        console.error("Failed to prefetch Lightbox", e);
+      }
+    };
+
+    // Wait 2.5s (after initial load) then fetch
+    const timer = setTimeout(prefetchLightbox, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const focusableImages = galleryImages.map((img, i) => ({
     src: img.src,
@@ -44,7 +60,7 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
       <div className="hidden md:block relative w-full h-full">
         <div className="relative w-full max-w-2xl mx-auto">
           
-          {/* 1. THE ANCHOR */}
+          {/* Main images load immediately (Eager) */}
           <motion.img 
             src={baseImage.src} 
             alt="Property Overview" 
@@ -53,7 +69,6 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
             transition={{ duration: 0.3 }}
           />
 
-          {/* 2. THE OVERLAY */}
           <AnimatePresence>
             {focusedIndex === null && (
               <motion.div 
@@ -77,14 +92,18 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
             )}
           </AnimatePresence>
 
-          {/* 3. LIGHTBOX (Updated Interface) */}
-          <Lightbox 
-            images={focusableImages}
-            currentIndex={focusedIndex || 0}
-            isOpen={focusedIndex !== null}
-            onClose={() => setFocusedIndex(null)}
-            onNavigate={setFocusedIndex}
-          />
+          {/* Lightbox loads lazily but is likely pre-fetched by the time this renders */}
+          {focusedIndex !== null && (
+            <Suspense fallback={null}>
+              <Lightbox 
+                images={focusableImages}
+                currentIndex={focusedIndex || 0}
+                isOpen={focusedIndex !== null}
+                onClose={() => setFocusedIndex(null)}
+                onNavigate={setFocusedIndex}
+              />
+            </Suspense>
+          )}
 
         </div>
       </div>

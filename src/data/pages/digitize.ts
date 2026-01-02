@@ -9,6 +9,7 @@ import digi3 from "@/assets/solutionsscreenshots/digitization/combinedontime.web
 import digi4 from "@/assets/solutionsscreenshots/digitization/completedontime.webp";
 import digi5 from "@/assets/solutionsscreenshots/digitization/earlyappointments.webp";
 import digi6 from "@/assets/solutionsscreenshots/digitization/lateappointments.webp";
+import nickSteinman from "@/assets/nick-steinman.jpg";
 
 export const defaultContent: PageContent = {
   hero: {
@@ -38,7 +39,7 @@ export const defaultContent: PageContent = {
     quote: "A little over a year in and I couldn't imagine going back to the old ways of using spreadsheets to manage our shipping schedule.",
     name: "Nick Steinman",
     role: "Warehouse Supervisor, Food Industry",
-    image: "/src/assets/nick-steinman.jpg",
+    image: nickSteinman,
   },
   benefits: {
     benefits: [

@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { motion } from "framer-motion";
 import { MobileCarousel } from "./MobileCarousel"; 
-// FIX: Named import
-import { Lightbox } from "./Lightbox";
+
+// 1. Lazy load
+const Lightbox = lazy(() => import("./Lightbox").then(module => ({ default: module.Lightbox })));
 
 interface AstroInputImage {
   src: string;
@@ -18,6 +19,19 @@ interface DigitizeGalleryProps {
 
 export default function DigitizeGallery({ headerImage, gridImages }: DigitizeGalleryProps) {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+  // 2. Prefetch
+  useEffect(() => {
+    const prefetchLightbox = async () => {
+      try {
+        await import("./Lightbox");
+      } catch (e) {
+        console.error("Failed to prefetch Lightbox", e);
+      }
+    };
+    const timer = setTimeout(prefetchLightbox, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const focusableImages = gridImages.map((img, i) => ({
     src: img.src,
@@ -72,14 +86,18 @@ export default function DigitizeGallery({ headerImage, gridImages }: DigitizeGal
             </div>
           </motion.div>
 
-          {/* 2. LIGHTBOX (Updated Interface) */}
-          <Lightbox 
-            images={focusableImages}
-            currentIndex={focusedIndex || 0}
-            isOpen={focusedIndex !== null}
-            onClose={() => setFocusedIndex(null)}
-            onNavigate={setFocusedIndex}
-          />
+          {/* 2. LIGHTBOX (Lazy + Suspense) */}
+          {focusedIndex !== null && (
+            <Suspense fallback={null}>
+              <Lightbox 
+                images={focusableImages}
+                currentIndex={focusedIndex || 0}
+                isOpen={focusedIndex !== null}
+                onClose={() => setFocusedIndex(null)}
+                onNavigate={setFocusedIndex}
+              />
+            </Suspense>
+          )}
 
         </div>
       </div>

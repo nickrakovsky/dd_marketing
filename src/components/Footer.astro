@@ -1,5 +1,9 @@
 ---
 import { Mail, Phone, Linkedin, Twitter } from "lucide-react";
+import { Image } from "astro:assets";
+import capterraBadge from "@/assets/capterra-logo.png";
+import soc2Badge from "@/assets/soc2-badge.png";
+import canadaBadge from "@/assets/canada-badge.png";
 
 const MAIN_SITE = "https://www.datadocks.com";
 
@@ -162,6 +166,7 @@ const columns = {
       
       {/* Left: Datadocks Logo Icon & SOC2 */}
       <div class="flex items-center gap-8">
+        {/* Note: If you have the orange logo locally, convert it too! For now we focus on the reported ones */}
         <img 
           src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg" 
           alt="DataDocks Logo" 
@@ -170,12 +175,12 @@ const columns = {
           class="w-14 h-14"
         />
 
-        <img 
-          src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/68dab1e8ae9ca364bfad2f88_21972-312_SOC_NonCPA.png" 
+        {/* UPDATED: SOC2 Badge */}
+        <Image 
+          src={soc2Badge} 
           alt="AICPA SOC2 Certified" 
-          width="80"
-          height="80"
-          class="h-20 w-auto" 
+          width={80} 
+          class="h-20 w-auto object-contain" 
         />
       </div>
 
@@ -186,12 +191,12 @@ const columns = {
         </div>
         <div class="h-8 w-px bg-white/30 hidden md:block"></div>
         
-        <img 
-          src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/68a32b9c786c9e8f5dc00ad0_26c8fadd7f470d46cdb99000ad17ca50_canada.png" 
+        {/* UPDATED: Canada Badge */}
+        <Image 
+          src={canadaBadge} 
           alt="Government of Canada" 
-          width="80"
-          height="32"
-          class="h-8 w-auto"
+          width={80} 
+          class="h-8 w-auto object-contain"
         />
       </div>
 

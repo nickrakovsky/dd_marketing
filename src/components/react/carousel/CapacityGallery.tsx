@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomIn } from "lucide-react";
 import { MobileCarousel } from "./MobileCarousel"; 
-// FIX: Named import
-import { Lightbox } from "./Lightbox";
 import type { ImageMetadata } from "astro";
+
+// 1. Lazy load the Lightbox
+const Lightbox = lazy(() => import("./Lightbox").then(module => ({ default: module.Lightbox })));
 
 interface CapacityGalleryProps {
   image: ImageMetadata;
@@ -14,6 +15,19 @@ interface CapacityGalleryProps {
 
 export default function CapacityGallery({ image, overlayImage, mobileImages }: CapacityGalleryProps) {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+
+  // 2. Prefetch Lightbox after FCP (2.5s delay)
+  useEffect(() => {
+    const prefetchLightbox = async () => {
+      try {
+        await import("./Lightbox");
+      } catch (e) {
+        console.error("Failed to prefetch Lightbox", e);
+      }
+    };
+    const timer = setTimeout(prefetchLightbox, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Prepare images for Lightbox
   const focusableImages = mobileImages ? mobileImages.map((img, i) => ({
@@ -90,14 +104,18 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
             )}
           </AnimatePresence>
 
-          {/* 3. LIGHTBOX (Updated Interface) */}
-          <Lightbox 
-            images={focusableImages}
-            currentIndex={focusedIndex || 0}
-            isOpen={focusedIndex !== null}
-            onClose={() => setFocusedIndex(null)}
-            onNavigate={setFocusedIndex}
-          />
+          {/* 3. LIGHTBOX (Lazy + Suspense) */}
+          {focusedIndex !== null && (
+            <Suspense fallback={null}>
+              <Lightbox 
+                images={focusableImages}
+                currentIndex={focusedIndex || 0}
+                isOpen={focusedIndex !== null}
+                onClose={() => setFocusedIndex(null)}
+                onNavigate={setFocusedIndex}
+              />
+            </Suspense>
+          )}
 
         </div>
       </div>

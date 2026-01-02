@@ -1,9 +1,10 @@
 ---
-// 1. Interactive Components (Need JS)
+// 1. Interactive Components (Need JS for state/toggles)
 import Navigation from "./Navigation"; 
 import FAQ from "./FAQ";
 import { Toaster } from "@/components/ui/sonner";
-// 2. Static-Capable Components
+
+// 2. Static-Capable Components (Rendered as HTML on server)
 import Testimonial from "./Testimonial";
 import Benefits from "./Benefits";
 import Credibility from "./Credibility";
@@ -11,10 +12,10 @@ import HowItWorks from "./HowItWorks";
 import CaseStudies from "./CaseStudies";
 import Integrations from "./Integrations";
 
-// 3. The Astro Native Component
+// 3. The Astro Native Components
 import Hero from "./Hero.astro";
-import type { PageContent } from "@/data/pagesData";
 import Footer from "./Footer.astro";
+import type { PageContent } from "@/data/pagesData";
 
 interface Props {
   content: PageContent;
@@ -25,8 +26,10 @@ const { content } = Astro.props;
 
 <div class="min-h-screen">
   
+  {/* Needs client:load for mobile menu toggling */}
   <Navigation client:load />
   
+  {/* Hero contains internal islands like the Gallery that manage their own loading */}
   <Hero 
     content={content.hero} 
     digitizeGallery={content.digitizeGallery}
@@ -35,23 +38,29 @@ const { content } = Astro.props;
     carriersGallery={content.carriersGallery}
   />
   
-  <Testimonial client:visible content={content.testimonial} />
+  {/* Static HTML: Zero JS payload. Image loads normally. */}
+  <Testimonial content={content.testimonial} />
   
-  <Benefits client:visible content={content.benefits} />
+  {/* Static HTML: Hover effects work via CSS. */}
+  <Benefits content={content.benefits} />
   
-  <Credibility client:visible content={content.credibility} />
+  {/* Static HTML: Infinite marquee works via CSS animation. */}
+  <Credibility content={content.credibility} />
   
-  <HowItWorks client:visible content={content.howItWorks} />
+  {/* Static HTML: Responsive grid works via CSS media queries. */}
+  <HowItWorks content={content.howItWorks} />
   
-  <CaseStudies client:visible content={content.caseStudies} />
+  {/* Static HTML: Renders list/grid layout server-side. */}
+  <CaseStudies content={content.caseStudies} />
   
-  <Integrations client:visible />
+  {/* Static HTML */}
+  <Integrations />
   
-  {/* CHANGED: client:visible -> client:idle to prevent pop-in effect */}
+  {/* Needs client:idle for Accordion open/close state */}
   <FAQ client:idle content={content.faq} />
 
   <Footer />
 
-  {/* MOVED: Toaster to bottom to fix the 'tabindex' audit error */}
+  {/* Needs client:idle to listen for toast events */}
   <Toaster client:idle />
 </div>

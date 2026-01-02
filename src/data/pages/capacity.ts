@@ -8,6 +8,7 @@ import capMobile from "@/assets/solutionsscreenshots/capacity/mobileschedule.web
 import capOverlay from "@/assets/solutionsscreenshots/capacity/capacity1.webp";
 // NEW IMPORT
 import capMobile2 from "@/assets/solutionsscreenshots/capacity/mobileschedule2.webp";
+import isaacMorley from "@/assets/isaacmorley.webp";
 
 export const capacityContent: PageContent = {
   ...defaultContent,
@@ -60,7 +61,7 @@ export const capacityContent: PageContent = {
     quote: "The automation features that we're using will literally save our company hundreds of labor hours each year",
     name: "Isaac Morley",
     role: "Director of Operations, Quality Distribution LLC",
-    image: "/src/assets/isaacmorley.webp",
+    image: isaacMorley,
   },
   benefits: {
     benefits: [

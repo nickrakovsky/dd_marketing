@@ -68,7 +68,7 @@ export interface TestimonialContent {
   quote: string;
   name: string;
   role: string;
-  image: string;
+  image: ImageMetadata; 
 }
 
 export interface Benefit {

@@ -15,6 +15,7 @@ import gal5 from "@/assets/solutionsscreenshots/carriers/carriergallery5.webp";
 
 // Placeholder for Dashboard
 import dashboardPreview from "@/assets/dashboard-preview.webp";
+import landonMoreno from "@/assets/landonmoreno.webp";
 
 export const carriersContent: PageContent = {
   ...defaultContent,
@@ -84,7 +85,7 @@ export const carriersContent: PageContent = {
     quote: "A great help with keeping track of our appointments. I like that automatic email reminders and notices are sent to the trucking company that sets their appointments.",
     name: "Landon Moreno",
     role: "Logistics Operations Manager, Vee Express, LLC",
-    image: "/src/assets/landonmoreno.webp",
+    image: landonMoreno,
   },
   benefits: {
     benefits: [
