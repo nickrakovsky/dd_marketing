@@ -52,6 +52,7 @@ export const MobileCarousel = ({ images }: MobileCarouselProps) => {
           alt="Anchor"
           className="w-full h-auto opacity-0 pointer-events-none relative z-0"
           aria-hidden="true"
+          loading="eager"       
         />
 
         {/* 2. THE ANIMATION LAYER (Absolute)
@@ -69,6 +70,8 @@ export const MobileCarousel = ({ images }: MobileCarouselProps) => {
                 initial="enter"
                 animate="center"
                 exit="exit"
+                loading="eager"       
+                fetchPriority="high" 
                 transition={{
                   x: { type: "spring", stiffness: 300, damping: 30 },
                   opacity: { duration: 0.2 },

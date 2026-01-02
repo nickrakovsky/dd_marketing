@@ -75,6 +75,7 @@ export default function CarriersGallery({ masterImage, mobileImages, galleryImag
               alt="Carrier Portal Dashboard" 
               className="w-full h-auto block" 
               loading="eager"
+              fetchPriority="high"
             />
 
             {/* 2. HOTSPOTS */}

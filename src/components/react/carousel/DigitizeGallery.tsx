@@ -64,6 +64,7 @@ export default function DigitizeGallery({ headerImage, gridImages }: DigitizeGal
                 alt="Dashboard Header" 
                 className="w-full h-auto block" 
                 loading="eager"
+                fetchPriority="high"
               />
             </div>
 

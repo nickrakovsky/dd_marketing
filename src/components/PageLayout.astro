@@ -37,7 +37,7 @@ const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
 <div class="min-h-screen">
   
   {/* Needs client:load for mobile menu toggling */}
-  <Navigation client:load />
+  <Navigation client:idle />
   
   {/* Hero contains internal islands like the Gallery that manage their own loading */}
   <Hero 

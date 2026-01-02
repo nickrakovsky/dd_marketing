@@ -71,6 +71,7 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
                 alt="Capacity Schedule View"
                 className="w-full h-auto block"
                 loading="eager"
+                fetchPriority="high"
               />
             </div>
           </motion.div>

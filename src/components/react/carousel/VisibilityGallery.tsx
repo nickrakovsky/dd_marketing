@@ -67,6 +67,8 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
             className="w-full h-auto block rounded-lg shadow-xl"
             animate={{ opacity: focusedIndex !== null ? 0 : 1 }}
             transition={{ duration: 0.3 }}
+            loading="eager"
+            fetchPriority="high"
           />
 
           <AnimatePresence>
