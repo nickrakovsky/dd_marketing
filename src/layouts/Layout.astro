@@ -1,8 +1,12 @@
 ---
 import '../styles/global.css';
+import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
+import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
+import recoletaMed from '../assets/fonts/Recoleta-Medium.woff2';
+import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
 
 interface Props {
-	title: string;
+    title: string;
 }
 
 const { title } = Astro.props;
@@ -11,48 +15,42 @@ const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 
 <!doctype html>
 <html lang="en">
-	<head>
+    <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         
-		<title>{title}</title>
+        <title>{title}</title>
 
- <style is:inline>
-            @font-face {
+        <style is:inline set:html={`
+  @font-face {
                 font-family: 'Bruta';
-                /* Add /dd_marketing prefix */
-                src: url('/dd_marketing/fonts/BrutaGlbCompressed-ExtraBold.woff2') format('woff2');
+                src: url('${brutaFont}') format('woff2');
                 font-weight: 800;
                 font-style: normal;
                 font-display: swap;
             }
             @font-face {
                 font-family: 'Recoleta';
-                /* Add /dd_marketing prefix */
-                src: url('/dd_marketing/fonts/Recoleta-Regular.woff2') format('woff2');
+                src: url('${recoletaReg}') format('woff2');
                 font-weight: 400;
                 font-style: normal;
                 font-display: swap;
             }
             @font-face {
                 font-family: 'Recoleta';
-                /* Add /dd_marketing prefix */
-                src: url('/dd_marketing/fonts/Recoleta-Medium.woff2') format('woff2');
+                src: url('${recoletaMed}') format('woff2');
                 font-weight: 500;
                 font-style: normal;
                 font-display: swap;
             }
             @font-face {
                 font-family: 'Recoleta';
-                /* Add /dd_marketing prefix */
-                src: url('/dd_marketing/fonts/Recoleta-SemiBold.woff2') format('woff2');
+                src: url('${recoletaSemi}') format('woff2');
                 font-weight: 600;
                 font-style: normal;
                 font-display: swap;
             }
-        </style>
-
-        {/* --- END PERFORMANCE FIXES --- */}
+        `} />
 
         <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
             window.bentoSettings = {
@@ -61,17 +59,17 @@ const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
         </script>
 
         <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
-	</head>
-	<body>
-		<slot />
-	</body>
+    </head>
+    <body>
+        <slot />
+    </body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+    html,
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
 </style>

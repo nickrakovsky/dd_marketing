@@ -1,21 +1,24 @@
 import { Button } from "./ui/button";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import datadocksLogo from "../assets/datadocks-logo.svg"; // Changed @ to ..
+import datadocksLogo from "../assets/datadocks-logo.svg";
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef(null);
+
+  const base = import.meta.env.BASE_URL;
+  const cleanBase = base.replace(/\/$/, '');
+
   const dropdownItems = [
-    { label: "Increase Capacity", href: "/benefits/increase-capacity" },
-    { label: "See Everything", href: "/benefits/see-everything" },
-    { label: "Delight Carriers", href: "/benefits/delight-carriers" },
-    { label: "Digitize Operations", href: "/benefits/digitize-operations" },
+    { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity` },
+    { label: "See Everything", href: `${cleanBase}/benefits/see-everything` },
+    { label: "Delight Carriers", href: `${cleanBase}/benefits/delight-carriers` },
+    { label: "Digitize Operations", href: `${cleanBase}/benefits/digitize-operations` },
   ];
 
-  // 2. DEFINE YOUR MAIN SITE URL (The Webflow site)
-  const MAIN_SITE = "https://www.datadocks.com"; // <--- CHANGE THIS!
+  const MAIN_SITE = "https://www.datadocks.com";
 
   const handleMouseEnter = () => {
     if (dropdownTimeoutRef.current) {
@@ -43,18 +46,14 @@ const Navigation = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center justify-between h-16 gap-4">
           
-          {/* Logo - Linked back to Main Webflow Home */}
           <div className="flex items-center flex-shrink-0">
             <a href={MAIN_SITE}>
-                {/* Fixed: Added .src for Astro image handling */}
                 <img src={datadocksLogo.src} alt="DataDocks Logo" className="h-10 sm:h-12 w-auto" />
             </a>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center lg:space-x-6 xl:space-x-8 flex-1 justify-end">
             
-            {/* Dropdown */}
             <div
               className="relative"
               onMouseEnter={handleMouseEnter}
@@ -81,7 +80,6 @@ const Navigation = () => {
               )}
             </div>
 
-            {/* HYBRID LINKS: Pointing back to Webflow */}
             <a
               href={`${MAIN_SITE}/#features`}
               className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
@@ -104,7 +102,7 @@ const Navigation = () => {
             </a>
 
             <a
-              href={`${MAIN_SITE}/login`} // Assuming login is on main site
+              href={`${MAIN_SITE}/login`} 
               className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
             >
               Login
@@ -121,7 +119,6 @@ const Navigation = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             className="lg:hidden text-foreground p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -130,7 +127,6 @@ const Navigation = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-border bg-[#FFF8E9]">
             <div className="flex flex-col space-y-4">
