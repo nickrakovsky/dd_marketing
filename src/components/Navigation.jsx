@@ -8,8 +8,7 @@ const Navigation = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef(null);
 
-  const base = import.meta.env.BASE_URL;
-  const cleanBase = base.replace(/\/$/, '');
+  const cleanBase = "";
 
   const dropdownItems = [
     { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity` },
