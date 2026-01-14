@@ -4,11 +4,12 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  // ADD THIS LINE:
-  //site: 'https://datadocks.com',
-  //base: '/',
-  site: 'https://nickrakovsky.github.io',
-  base: '/dd_marketing',
+  // PRODUCTION CONFIGURATION:
+  site: 'https://datadocks.com',
+  base: '/',
+  //TEST CONFIGURATION FOR GITHUB PAGES:
+  //site: 'https://nickrakovsky.github.io',
+  //base: '/dd_marketing',
 
   integrations: [
     tailwind(), 
