@@ -101,7 +101,7 @@ const Navigation = () => {
             </a>
 
             <a
-              href={`${MAIN_SITE}/login`} 
+              href="https://booking.datadocks.com/sessions/new" 
               className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
             >
               Login
@@ -182,7 +182,7 @@ const Navigation = () => {
               </a>
 
               <a
-                href={`${MAIN_SITE}/login`}
+                href="https://booking.datadocks.com/sessions/new"
                 className="text-foreground px-2 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

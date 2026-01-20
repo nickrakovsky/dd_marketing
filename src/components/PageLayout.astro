@@ -36,6 +36,13 @@ const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
 
 <div class="min-h-screen">
   
+  <a 
+    href="#main-content" 
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:font-bold focus:rounded-md focus:shadow-lg"
+  >
+    Skip to main content
+  </a>
+
   {/* Needs client:load for mobile menu toggling */}
   <Navigation client:idle />
   
