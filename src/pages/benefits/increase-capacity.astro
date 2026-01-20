@@ -2,8 +2,22 @@
 import Layout from '../../layouts/Layout.astro';
 import PageLayout from '../../components/PageLayout.astro'; 
 import { capacityContent } from '../../data/pagesData';
+
+// FIXED: Define the schemaData variable using the imported content
+const schemaData = {
+  faq: capacityContent.faq?.faqs,
+  reviews: capacityContent.testimonial ? [{
+    author: capacityContent.testimonial.name,
+    quote: capacityContent.testimonial.quote,
+    role: capacityContent.testimonial.role
+  }] : []
+};
 ---
 
-<Layout title="Increase Capacity | DataDocks">
+<Layout 
+  title="Increase Capacity | DataDocks"
+  description="Eliminate bottlenecks and slash overtime costs. DataDocks optimizes your appointment slots based on actual load times."
+  schemaData={schemaData} 
+>
   <PageLayout content={capacityContent} />
 </Layout>

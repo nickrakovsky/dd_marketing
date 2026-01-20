@@ -2,8 +2,22 @@
 import Layout from '../../layouts/Layout.astro';
 import PageLayout from '../../components/PageLayout.astro'; 
 import { yardappContent } from '../../data/pagesData';
+
+// FIXED: Define the schemaData variable
+const schemaData = {
+  faq: yardappContent.faq?.faqs,
+  reviews: yardappContent.testimonial ? [{
+    author: yardappContent.testimonial.name,
+    quote: yardappContent.testimonial.quote,
+    role: yardappContent.testimonial.role
+  }] : []
+};
 ---
 
-<Layout title="See Everything | DataDocks">
+<Layout 
+  title="Dock & Yard Visibility | DataDocks"
+  description="See exactly what is at your docks, in the yard, or on the way. Manage gate check-ins and live ETAs from a single dashboard."
+  schemaData={schemaData} 
+>
   <PageLayout content={yardappContent} />
 </Layout>

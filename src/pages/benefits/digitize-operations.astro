@@ -2,8 +2,22 @@
 import Layout from '../../layouts/Layout.astro';
 import PageLayout from '../../components/PageLayout.astro'; 
 import { defaultContent } from '../../data/pagesData';
+
+// FIXED: Define the schemaData variable
+const schemaData = {
+  faq: defaultContent.faq?.faqs,
+  reviews: defaultContent.testimonial ? [{
+    author: defaultContent.testimonial.name,
+    quote: defaultContent.testimonial.quote,
+    role: defaultContent.testimonial.role
+  }] : []
+};
 ---
 
-<Layout title="Digitize Operations | DataDocks">
+<Layout 
+  title="Digitize Dock Operations | DataDocks"
+  description="Replace spreadsheets with a digital audit trail. Sync dock data with your WMS/TMS automatically."
+  schemaData={schemaData} 
+>
   <PageLayout content={defaultContent} />
 </Layout>

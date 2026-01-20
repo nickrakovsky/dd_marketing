@@ -7,59 +7,156 @@ import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
 
 interface Props {
     title: string;
+    description?: string;
+    image?: string;
+    type?: "website" | "article";
+    noindex?: boolean; 
+    schemaData?: {
+        faq?: { question: string; answer: string }[];
+        reviews?: { author: string; quote: string; role?: string }[];
+    };
 }
 
-const { title } = Astro.props;
+const { 
+  title, 
+  description = "Optimize your dock scheduling and yard management with DataDocks. Reduce wait times, digitize operations, and delight your carriers.",
+  image = "/og-default.jpg",
+  type = "website",
+  noindex = false,
+  schemaData
+} = Astro.props;
+
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(image, Astro.url);
+
+// --- SEMANTIC SCHEMA GENERATION ---
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    // 1. Organization (Identity)
+    {
+      "@type": "Organization",
+      "@id": "https://datadocks.com/#organization",
+      "name": "DataDocks",
+      "url": "https://datadocks.com",
+      "logo": "https://datadocks.com/logo.png",
+      "sameAs": [
+        "https://linkedin.com/company/datadocks",
+        "https://twitter.com/datadocks",
+        "https://www.youtube.com/@DataDocks",
+        "https://www.capterra.com/p/179266/DataDocks/"
+      ]
+    },
+    // 2. WebPage (Accessibility & Context)
+    {
+      "@type": "ItemPage",
+      "@id": canonicalURL.toString(),
+      "url": canonicalURL.toString(),
+      "name": title,
+      "description": description,
+      "isPartOf": { "@id": "https://datadocks.com/#website" },
+      "primaryImageOfPage": { "@id": socialImageURL.toString() },
+      "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
+      "accessibilityFeature": ["alternativeText", "ARIA"],
+      "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` }
+    },
+    // 3. SoftwareApplication (Industry Specificity)
+    {
+      "@type": "SoftwareApplication",
+      "name": "DataDocks",
+      "applicationCategory": "BusinessApplication",
+      "applicationSubCategory": "Dock Scheduling",
+      "operatingSystem": "Cloud-based",
+      "description": "Dock scheduling and yard management software for logistics facilities.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      },
+      // CORRECTED SEMANTIC ANCHORS
+      "sameAs": [
+        "https://www.wikidata.org/wiki/Q6667674", // Logistics Automation
+        "https://www.wikidata.org/wiki/Q4781631"  // Appointment Scheduling Software
+      ]
+    },
+    // 4. Breadcrumbs (Structure)
+    {
+        "@type": "BreadcrumbList",
+        "@id": `${canonicalURL.toString()}#breadcrumb`,
+        "itemListElement": Astro.url.pathname.split('/').filter(Boolean).map((path, index, arr) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "name": path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
+        }))
+    },
+    // 5. FAQ (Safe to include on Solutions pages)
+    ...(schemaData?.faq ? [{
+      "@type": "FAQPage",
+      "mainEntity": schemaData.faq.map(item => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": { "@type": "Answer", "text": item.answer }
+      }))
+    }] : [])
+  ]
+};
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
+        {/* TIER 1: ESSENTIALS */}
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalURL} />
+        <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+        <meta name="generator" content={Astro.generator} />
+        
+        {/* INDUSTRY CLARITY */}
+        <meta name="keywords" content="dock scheduling software, yard management system, logistics SaaS, supply chain automation" />
+
+        {/* TIER 2: SOCIAL GRAPH */}
+        <meta property="og:type" content={type} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={socialImageURL} />
+        <meta property="og:site_name" content="DataDocks" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={canonicalURL} />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={description} />
+        <meta property="twitter:image" content={socialImageURL} />
+        <meta name="twitter:creator" content="@datadocks" />
+
+        {/* TIER 4: POLISH */}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="sitemap" href="/sitemap-index.xml" />
+        <meta name="theme-color" content="#FFF8E9" />
+
+        {/* TIER 3: DEEP SCHEMA */}
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+        {/* PERFORMANCE & ANALYTICS */}
         <link rel="preconnect" href="https://app.bentonow.com" />
         <link rel="preconnect" href="https://fast.bentonow.com" />
         
-        <title>{title}</title>
-
         <style is:inline set:html={`
-  @font-face {
-                font-family: 'Bruta';
-                src: url('${brutaFont}') format('woff2');
-                font-weight: 800;
-                font-style: normal;
-                font-display: swap;
-            }
-            @font-face {
-                font-family: 'Recoleta';
-                src: url('${recoletaReg}') format('woff2');
-                font-weight: 400;
-                font-style: normal;
-                font-display: swap;
-            }
-            @font-face {
-                font-family: 'Recoleta';
-                src: url('${recoletaMed}') format('woff2');
-                font-weight: 500;
-                font-style: normal;
-                font-display: swap;
-            }
-            @font-face {
-                font-family: 'Recoleta';
-                src: url('${recoletaSemi}') format('woff2');
-                font-weight: 600;
-                font-style: normal;
-                font-display: swap;
-            }
+            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaMed}') format('woff2'); font-weight: 500; font-display: swap; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
         `} />
 
         <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
-            window.bentoSettings = {
-              uuid: PUBLIC_BENTO_UUID
-            };
+            window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
         </script>
-
         <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
     </head>
     <body>
@@ -68,10 +165,5 @@ const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 </html>
 
 <style>
-    html,
-    body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-    }
+    html, body { margin: 0; width: 100%; height: 100%; }
 </style>
