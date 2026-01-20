@@ -136,8 +136,8 @@ const jsonLd = {
         <meta name="twitter:creator" content="@datadocks" />
 
         {/* TIER 4: POLISH */}
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="sitemap" href="/sitemap-index.xml" />
+        <link rel="icon" href="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d25ab9ed0aca15eca65b16_Favicon.png" />
+        <link rel="sitemap" href="https://datadocks.com/benefits/sitemap-index.xml" />
         <meta name="theme-color" content="#FFF8E9" />
 
         {/* TIER 3: DEEP SCHEMA */}
@@ -153,6 +153,15 @@ const jsonLd = {
             @font-face { font-family: 'Recoleta'; src: url('${recoletaMed}') format('woff2'); font-weight: 500; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
         `} />
+
+        {/* Google Analytics 4 */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-EZMTT6QYLJ"></script>
+        <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EZMTT6QYLJ');
+        </script>
 
         <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
             window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
