@@ -1,0 +1,62 @@
+---
+// Final Hero Component (v5)
+// - No Badge
+// - Uppercase Bruta Headers
+// - Centered Layout
+---
+
+<section class="relative pt-32 pb-16 overflow-hidden bg-[#FFF8E9] text-black">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
+      
+      {/* 1. Main Heading */}
+      <div class="relative mb-8 w-full max-w-4xl mx-auto">
+         <h1 class="font-bruta text-6xl md:text-8xl leading-[0.9] uppercase relative z-0 text-[#FF5507]">
+            {/* Note: I added text-[#FF5507] (Orange) just in case, but usually it's black in your design? 
+                index.html shows standard text color. If it should be black, remove text-[#FF5507] */}
+            <span class="block text-black">YOUR LOADING DOCK,</span>
+            <span class="block text-black">YOUR RULES</span>
+         </h1>
+      </div>
+
+      {/* 2. Subheading */}
+      <p class="font-recoleta text-xl md:text-2xl text-gray-700 mb-10 max-w-2xl mx-auto leading-relaxed">
+        Our dock scheduling software is known for having the easiest interface and the most helpful team in the industry.
+        <br />
+        <strong class="text-black block mt-4">Start turning trucks around faster today.</strong>
+      </p>
+
+      {/* 3. Form Area */}
+      <div class="w-full max-w-md mx-auto mb-16">
+        <form 
+          action="https://calendly.com/nick-rakovsky/datadocks-demo" 
+          target="_blank"
+          class="flex flex-col sm:flex-row gap-3"
+        >
+          <input 
+            type="email" 
+            placeholder="Enter your email" 
+            class="flex-1 h-12 px-4 rounded-lg border border-[#EFE2D2] bg-white text-black focus:outline-none focus:ring-2 focus:ring-[#FF5507]"
+            required
+          />
+          <button 
+            type="submit"
+            class="h-12 px-8 bg-[#FF5507] hover:bg-[#ff6a2b] text-white font-bold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl whitespace-nowrap uppercase tracking-wide text-sm"
+          >
+            Schedule a Demo
+          </button>
+        </form>
+      </div>
+
+      {/* 4. Hero Image */}
+      <div class="relative w-full rounded-xl shadow-2xl overflow-hidden border border-[#EFE2D2] bg-white">
+        <img 
+          src="/images/DataDocks-Calendar-Screenshot.webp" 
+          alt="DataDocks Calendar Interface" 
+          class="w-full h-auto object-cover"
+        />
+      </div>
+
+    </div>
+  </div>
+</section>
