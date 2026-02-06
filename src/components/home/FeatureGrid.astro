@@ -1,0 +1,98 @@
+---
+// src/components/home/FeatureGrid.astro
+
+const features = [
+  {
+    title: "Carrier Portal",
+    text: "Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d7697c25c16a4676e57014_Checked%20Laptop.svg" 
+  },
+  {
+    title: "Yard Management",
+    text: "Get real-time yard visibility. Track trailers, reduce congestion, and streamline dock operations for peak efficiency.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d769a3debdd51479a68da3_Vision.svg"
+  },
+  {
+    title: "Documentation",
+    text: "Access comprehensive product documentation and developer guides to help you integrate and configure DataDocks.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d769d316c8c04184d4fa8b_Submit%20Document.svg"
+  },
+  {
+    title: "Capacity Limits",
+    text: "Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safety.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76a0f318b0b5862ac459c_Partially%20Shipped.svg"
+  },
+  {
+    title: "Custom Rules",
+    text: "Create flexible business rules for scheduling, approvals, and compliance to match your site's unique workflow.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76eb2737d36f11badfafb_Delivery.svg"
+  },
+  {
+    title: "Data Validation",
+    text: "Ensure cleaner data with built-in validation for appointments and inputs - reducing errors and rework.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76ecb3d52f553d8721f73_Data%20Quality.svg"
+  },
+  {
+    title: "Efficiency Reports",
+    text: "Track performance metrics like dwell time and appointment adherence to identify bottlenecks.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76ee554c09df7ad89d0d2_Linechart%20File.svg"
+  },
+  {
+    title: "Notifications",
+    text: "Stay ahead of delays and changes with automatic alerts and real-time notifications for teams and drivers.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76f232fb109864899efaf_Push%20Notifications.svg"
+  },
+  {
+    title: "Access Anywhere",
+    text: "Use DataDocks from any device, anywhere. No downloads required - just simple, secure, browser-based access.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76f3e20934a027d4ca0ec_Multiple%20Devices.svg"
+  },
+  {
+    title: "Live Editing",
+    text: "Make real-time edits to schedules, trailers, and contact info with collaborative tools that keep everyone updated.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76f6c2fb1095c4499f1ff_People.svg"
+  },
+  {
+    title: "Integration",
+    text: "Integrate seamlessly with your WMS/TMS to eliminate double entry and streamline operations.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76f8d30313d7992525cb5_Automation.svg"
+  },
+  {
+    title: "Dock Dashboard",
+    text: "Manage appointments in real-time with an intuitive dashboard designed to reduce congestion and delays.",
+    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/63d76fa62fb109775099f66e_Dashboard%20Layout.svg"
+  }
+];
+---
+
+<section class="py-24 bg-white">
+  <div class="container mx-auto px-4 max-w-7xl">
+    
+    <div class="text-center mb-16 max-w-4xl mx-auto">
+      <h2 class="font-bruta text-4xl md:text-5xl uppercase leading-none mb-4 text-black">
+        Much More than just <span class="text-[#FF5507]">Dock Scheduling Software</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+      {features.map((feature) => (
+        <div class="group p-8 rounded-2xl border border-transparent hover:border-[#EFE2D2] hover:shadow-lg transition-all duration-300 bg-white">
+          <div class="w-12 h-12 mb-6">
+            <img 
+              src={feature.icon} 
+              alt={feature.title} 
+              class="w-full h-full object-contain"
+            />
+          </div>
+          <h3 class="font-bruta text-2xl uppercase mb-3 text-black group-hover:text-[#FF5507] transition-colors">
+            {feature.title}
+          </h3>
+          <p class="font-recoleta text-gray-600 leading-relaxed">
+            {feature.text}
+          </p>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>

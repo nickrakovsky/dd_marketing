@@ -1,0 +1,45 @@
+---
+// src/components/home/CTA.astro
+---
+
+<section class="py-24 bg-black text-white">
+  <div class="container mx-auto px-4 max-w-5xl">
+    
+    <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+      
+      {/* Headlines: Split into two lines as per design */}
+      <div class="flex-1 space-y-2">
+        <h3 class="font-bruta text-3xl md:text-5xl uppercase leading-tight text-center md:text-left">
+          Let us help you decide if DataDocks is a good
+        </h3>
+        <h3 class="font-bruta text-3xl md:text-5xl uppercase leading-tight text-center md:text-left text-[#FF5507]">
+          fit for your needs
+        </h3>
+      </div>
+
+      {/* Form Area */}
+      <div class="w-full max-w-md bg-white/5 p-8 rounded-2xl border border-white/10">
+        <form 
+          action="https://calendly.com/nick-rakovsky/datadocks-demo" 
+          target="_blank"
+          class="flex flex-col gap-4"
+        >
+          <input 
+            type="email" 
+            placeholder="Enter your email" 
+            class="w-full h-12 px-4 rounded-lg bg-white text-black border-none focus:ring-2 focus:ring-[#FF5507] outline-none"
+            required
+          />
+          <button 
+            type="submit"
+            class="w-full h-12 bg-[#FF5507] hover:bg-[#ff6a2b] text-white font-bold rounded-lg transition-all duration-300 uppercase tracking-wide text-sm"
+          >
+            Schedule a Demo
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+</section>

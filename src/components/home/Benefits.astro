@@ -1,0 +1,73 @@
+---
+// src/components/home/Features.astro
+const features = [
+  {
+    title: "Spot Bottlenecks in your Docks and Yard",
+    description: "See exactly what's in your loading dock and yard at a glance, and estimate the loading time for each truck.",
+    link: "/benefits/see-everything",
+    // Filename from your Webflow export list
+    image: "/images/de6c1a54b92ec0cc6a5fe48c9ab2a390_Managers-Office-p-500.webp",
+    alt: "Manager overlooking loading dock operations"
+  },
+  {
+    title: "Incentivize Carrier Punctuality",
+    description: "Show them, with data, how sticking to your schedule gets their trucks in and out of your facility faster.",
+    link: "/benefits/delight-carriers",
+    image: "/images/7b6dcc2c228a4f21953e11ac0efd4c2d_Dock-Interior-p-500.webp",
+    alt: "Inside view of a busy loading dock"
+  },
+  {
+    title: "Spread Your Appointments Throughout the Day",
+    description: "Predict how much manpower you'll need and optimize your operations over time.",
+    link: "/benefits/increase-capacity",
+    image: "/images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-500.webp",
+    alt: "Warehouse interior with organized cargo"
+  },
+  {
+    title: "Say Goodbye to Spreadsheets & Paper",
+    description: "Carriers book and you stay in control. Replace calls and emails with an easy interface that sends automatic notifications.",
+    link: "/benefits/digitize-operations",
+    image: "/images/77558bf99568593951c2f7f59bda11ae_Dock-Exterior-p-500.webp",
+    alt: "Exterior view of loading docks"
+  }
+];
+---
+
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col gap-20 max-w-6xl mx-auto">
+      
+      {features.map((feature, index) => (
+        <div class={`flex flex-col md:flex-row items-center gap-10 md:gap-16 ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+          
+          {/* Text Side */}
+          <div class="flex-1 space-y-6">
+            <h2 class="font-bruta text-3xl md:text-4xl text-black uppercase leading-tight">
+              {feature.title}
+            </h2>
+            <div class="w-16 h-1 bg-[#FF5507]"></div>
+            <p class="font-recoleta text-lg text-gray-700 leading-relaxed">
+              {feature.description}
+            </p>
+            <a href={feature.link} class="inline-block px-8 py-3 bg-black text-white font-bold rounded-lg hover:bg-[#FF5507] transition-colors duration-300 uppercase tracking-wide text-sm">
+              Learn More
+            </a>
+          </div>
+
+          {/* Image Side */}
+          <div class="flex-1 w-full">
+            <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-[4/3]">
+              <img 
+                src={feature.image} 
+                alt={feature.alt}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
