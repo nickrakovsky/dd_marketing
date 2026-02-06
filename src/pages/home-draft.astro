@@ -1,23 +1,34 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.jsx';
 import Hero from '../components/home/Hero.astro'; 
-import Clients from '../components/home/Clients.astro'; // <--- NEW IMPORT
+import Clients from '../components/home/Clients.astro';
 
-import '../styles/webflow-legacy.css';
+// We are keeping this commented out to prevent the "CSS Civil War."
+// If the page looks totally broken later, we can try uncommenting it.
+// import '../styles/webflow-legacy.css';
 ---
 
 <Layout title="Dock Scheduling Software for Warehouses | DataDocks">
   
-  <div class="navbar w-nav">...</div>
+  {/* client:load is critical here. It tells Astro to "turn on" the React code 
+      immediately so the dropdown menus and mobile menu buttons work.
+  */}
+  <Navigation client:load />
 
-  <main class="body">
+  <main class="bg-[#FFF8E9] min-h-screen">
     
     <Hero />
 
     <Clients />
 
-    <div class="animated-bleeder_section">...</div>
+    {/* This is just a placeholder so you can see where the next section will go */}
+    <div class="py-20 text-center border-t border-[#EFE2D2]">
+      <p class="text-gray-500 font-recoleta text-xl">
+        Next Section: Features (Coming Soon)
+      </p>
+    </div>
     
-    </main>
+  </main>
   
-  </Layout>
+</Layout>
