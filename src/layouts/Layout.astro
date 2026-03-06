@@ -27,7 +27,9 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Remove trailing slash from pathname to match sitemap format
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
 // --- SEMANTIC SCHEMA GENERATION ---
