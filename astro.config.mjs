@@ -6,23 +6,17 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // "PRODUCTION" CONFIGURATION BREAKS THE SITE::
-  //site: 'https://datadocks.com',
-  //base: '/',
-  //GITHUB PAGES CONFIGURATION:
-  site: 'https://nickrakovsky.github.io',
+  // Canonical URLs use datadocks.com for SEO
+  site: 'https://datadocks.com',
+  // Asset paths use /dd_marketing/ for GitHub Pages hosting
   base: '/dd_marketing',
 
-  integrations: [tailwind(), 
-    react(), 
+  integrations: [tailwind(),
+    react(),
    sitemap({
-      // 2. THE FIX: Manually rewrite URLs for the sitemap only
+      // Strip /dd_marketing/ from sitemap URLs
       serialize(item) {
-        // Replace the GitHub URL with the Production URL
-        item.url = item.url.replace(
-          'https://nickrakovsky.github.io/dd_marketing', 
-          'https://datadocks.com'
-        );
+        item.url = item.url.replace('/dd_marketing/', '/');
         return item;
       }
     })
