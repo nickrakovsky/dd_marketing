@@ -43,21 +43,21 @@ export default function Testimonials() {
   return (
     <section className="py-24 bg-[#FFF8E9] overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
-        
+
         <div className="flex justify-between items-end mb-12">
           <h2 className="font-bruta text-4xl md:text-5xl uppercase text-black">
             What our <span className="text-[#FF5507]">Customers Say</span>
           </h2>
-          
+
           {/* Navigation Buttons */}
           <div className="hidden md:flex gap-4">
-            <button 
+            <button
               onClick={scrollPrev}
               className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <button 
+            <button
               onClick={scrollNext}
               className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors"
             >
@@ -71,21 +71,21 @@ export default function Testimonials() {
           <div className="flex gap-6">
             {testimonials.map((item, index) => (
               <div key={index} className="flex-[0_0_100%] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0">
-                <div className="bg-white p-8 rounded-2xl border border-[#EFE2D2] h-full flex flex-col shadow-sm">
-                  
+                <div className="bg-white p-6 md:p-8 rounded-2xl border border-[#EFE2D2] h-full flex flex-col shadow-sm">
+
                   {/* Header: Image + Logo */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-100">
-                      <img 
-                        src={item.image} 
-                        alt={item.author} 
+                      <img
+                        src={item.image}
+                        alt={item.author}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="h-8">
-                      <img 
-                        src={item.logo} 
-                        alt="Company Logo" 
+                      <img
+                        src={item.logo}
+                        alt="Company Logo"
                         className="h-full w-auto object-contain"
                       />
                     </div>
@@ -113,18 +113,18 @@ export default function Testimonials() {
 
         {/* Mobile Navigation (Visible only on small screens) */}
         <div className="flex md:hidden justify-center gap-4 mt-8">
-            <button 
-              onClick={scrollPrev}
-              className="w-12 h-12 rounded-full border border-black flex items-center justify-center bg-white"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button 
-              onClick={scrollNext}
-              className="w-12 h-12 rounded-full border border-black flex items-center justify-center bg-white"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+          <button
+            onClick={scrollPrev}
+            className="w-12 h-12 rounded-full border border-black flex items-center justify-center bg-white"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={scrollNext}
+            className="w-12 h-12 rounded-full border border-black flex items-center justify-center bg-white"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
 
       </div>

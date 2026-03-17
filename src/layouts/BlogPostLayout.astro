@@ -1,0 +1,157 @@
+---
+// 1. Imports
+import Layout from './Layout.astro';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+
+const { frontmatter } = Astro.props;
+
+// 2. Date Formatting
+const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
+
+const formattedUpdatedDate = frontmatter.updatedDate 
+  ? new Date(frontmatter.updatedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  : null;
+---
+
+<Layout 
+  title={`${frontmatter.title} | DataDocks Blog`}
+  description={frontmatter.description}
+  image={frontmatter.coverImage}
+  type="article"
+>
+  <div class="min-h-screen flex flex-col">
+    
+    <Navigation client:idle />
+
+    <main class="flex-grow w-full bg-[#FFF8E9] font-recoleta text-gray-800">
+      
+  <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pt-12 lg:pt-16 pb-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+         <div class="flex flex-col text-left md:col-span-7 xl:col-span-8 lg:mt-32 order-2 md:order-1">
+            
+            <div class="font-recoleta text-black text-xl md:text-2xl font-bold mb-4">
+              {frontmatter.category || "Logistics & Supply Chain"}
+            </div>
+            
+            <div class="relative inline-block mb-6">
+              <h1 class="text-5xl md:text-6xl lg:text-7xl font-bruta uppercase text-[#fd4f00] leading-[1.05] break-words">
+                {frontmatter.title}
+              </h1>
+              
+              <img 
+                src="/assets/animated-badge.svg" 
+                alt="Badge" 
+                class="absolute -top-10 -right-10 w-20 h-20 animate-[spin_10s_linear_infinite] hidden md:block"
+                onerror="this.style.display='none'" 
+              />
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-4 py-5 border-y-2 border-[#E5D3B3] mt-2">
+              <div class="font-bold text-black text-lg">{frontmatter.author}</div>
+              
+              <div class="flex flex-col text-sm text-gray-600">
+                <span>Published: {formattedDate}</span>
+                {formattedUpdatedDate && (
+                  <span>Updated: {formattedUpdatedDate}</span>
+                )}
+              </div>
+              
+              <div class="text-sm font-bold text-gray-500 bg-[#F8EDD9] px-3 py-1 rounded-full">
+                {frontmatter.readTime || "5 min read"}
+              </div>
+              
+              <div class="ml-auto flex gap-2">
+                <button class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] flex items-center justify-center hover:bg-white transition-colors" title="Toggle Theme">
+                  <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] flex items-center justify-center hover:bg-white transition-colors font-bruta font-bold text-gray-700" title="Text Size">
+                  Aa
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="w-full md:col-span-5 relative order-1 md:order-2 mb-8 md:mb-0">
+            {frontmatter.coverImage ? (
+              <div class="w-full aspect-[4/5] rounded-xl overflow-hidden mix-blend-multiply">
+                <Image 
+                  src={frontmatter.coverImage} 
+                  alt={`Cover for ${frontmatter.title}`}
+                  class="w-full h-full object-cover" 
+                />
+              </div>
+            ) : (
+              <div class="w-full aspect-[4/5] rounded-xl bg-[#F8EDD9] flex items-center justify-center">
+                <span class="font-bruta text-gray-400 uppercase tracking-widest">No Image</span>
+              </div>
+            )}
+          </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="w-full max-w-3xl mx-auto px-4 md:px-12 pb-24">
+        <article id="content" class="prose prose-base md:prose-lg w-full max-w-none break-words
+          prose-h1:font-bruta prose-h1:text-[#fd4f00] 
+          prose-h2:font-recoleta prose-h2:text-3xl prose-h2:font-bold prose-h2:text-black
+          prose-h3:font-recoleta prose-h3:text-2xl prose-h3:font-bold prose-h3:text-black
+          prose-p:font-recoleta prose-p:leading-relaxed 
+          prose-a:text-[#fd4f00] prose-a:font-semibold hover:prose-a:underline
+          prose-img:rounded-xl prose-img:w-full prose-img:border-0 prose-img:ring-0 prose-img:outline-none
+          prose-strong:text-gray-900 prose-strong:font-bold
+          prose-table:block prose-table:overflow-x-auto prose-table:w-full">
+          <slot />
+        </article>
+      </div>
+
+    </main>
+
+    <Footer />
+
+  </div>
+</Layout>
+
+<style is:global>
+  /* Table Wrapper & Mobile Scroll */
+  .prose table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch; 
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #E5D3B3;
+  }
+
+  /* Table Headers */
+  .prose th {
+    padding: 14px 18px !important;
+    height: 48px;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    color: rgb(43, 43, 43) !important;
+    background-color: #F8EDD9 !important;
+    border-bottom: 2px solid #fd4f00 !important;
+    white-space: nowrap;
+  }
+
+  /* Standard Cells */
+  .prose td {
+    min-width: 150px; 
+    padding: 14px 18px !important; 
+    border-bottom: 1px solid rgba(229, 211, 179, 0.5) !important;
+  }
+
+  /* Zebra Striping */
+  .prose tr:nth-child(even) td {
+    background-color: rgba(255, 255, 255, 0.4); 
+  }
+</style>

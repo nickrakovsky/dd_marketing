@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+
+// This grabs all your markdown files and generates a URL for each one
+export async function getStaticPaths() {
+  const postEntries = await getCollection('posts');
+  return postEntries.map(entry => ({
+    params: { slug: entry.slug }, 
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BlogPostLayout frontmatter={entry.data}>
+  <Content />
+</BlogPostLayout>
