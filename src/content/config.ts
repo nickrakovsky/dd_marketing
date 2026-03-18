@@ -14,6 +14,12 @@ const postsCollection = defineCollection({
         coverImage: image().optional(),
         readTime: z.string().optional(),
         showToc: z.boolean().optional(),
+
+        // --- THE NEW BENTO FIELDS ---
+        // 'article' is default. 'video' is 16:9. 'short' is 9:16.
+        contentType: z.enum(['article', 'video', 'short']).default('article'),
+        // The 11-character YouTube ID (e.g., "dQw4w9WgXcQ")
+        youtubeId: z.string().optional(),
     })
 });
 
