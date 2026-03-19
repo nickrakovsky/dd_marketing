@@ -8,7 +8,10 @@ const Navigation = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef(null);
 
-  const cleanBase = "";
+  // import.meta.env.BASE_URL has a trailing slash in Astro by default
+  const cleanBase = typeof import.meta !== 'undefined' && import.meta.env.BASE_URL 
+    ? import.meta.env.BASE_URL.replace(/\/$/, "") 
+    : "";
 
   const dropdownItems = [
     { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity` },
@@ -87,7 +90,7 @@ const Navigation = () => {
             </a>
 
             <a
-              href={`${MAIN_SITE}/posts`}
+              href={`${cleanBase}/posts`}
               className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
             >
               Research
@@ -165,7 +168,7 @@ const Navigation = () => {
               </a>
 
               <a
-                href={`${MAIN_SITE}/posts`}
+                href={`${cleanBase}/posts`}
                 className="text-foreground px-4 py-3 font-recoleta border-b border-[#e3d5c4a6]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

@@ -3,6 +3,7 @@
 // - No Badge
 // - Uppercase Bruta Headers
 // - Centered Layout
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black">
@@ -20,7 +21,7 @@
                 {/* Badge anchored to line 1 */}
                 <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-11 h-11 md:w-24 md:h-24">
                   <img 
-                    src="/images/hero-badge.png" 
+                    src={`${basePath}/images/hero-badge.png`}
                     alt="Save Time Make It Visible"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
@@ -66,7 +67,7 @@
     {/* 4. Hero Image - CSS Breakout Full Width */}
     <div class="relative w-screen ml-[calc(50%-50vw)] mt-16 shadow-2xl overflow-hidden border-y border-[#EFE2D2] bg-white">
       <img 
-        src="/images/DataDocks-Calendar-Screenshot.webp" 
+        src={`${basePath}/images/DataDocks-Calendar-Screenshot.webp`}
         alt="DataDocks Calendar Interface" 
         class="w-full h-auto object-cover"
       />

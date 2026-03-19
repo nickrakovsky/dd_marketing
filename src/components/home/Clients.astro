@@ -1,5 +1,6 @@
 ---
 // src/components/home/Clients.astro
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section class="py-16 bg-[#FFF8E9] border-t border-[#EFE2D2]">
@@ -13,19 +14,19 @@
     {/* Logo Grid */}
     <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-8 md:gap-8 items-center justify-items-center opacity-80 mb-12 max-w-5xl mx-auto">
       {/* 1. LG */}
-      <img src="/images/Layer_1-2.svg" alt="LG Logo" class="h-8 md:h-10 w-auto" />
+      <img src={`${basePath}/images/Layer_1-2.svg`} alt="LG Logo" class="h-8 md:h-10 w-auto" />
       
       {/* 2. ShipMonk */}
-      <img src="/images/shipmonk_.svg" alt="ShipMonk Logo" class="h-6 md:h-8 w-auto" />
+      <img src={`${basePath}/images/shipmonk_.svg`} alt="ShipMonk Logo" class="h-6 md:h-8 w-auto" />
       
       {/* 3. GSK */}
-      <img src="/images/Layer_2-2.svg" alt="GSK Logo" class="h-8 md:h-10 w-auto" />
+      <img src={`${basePath}/images/Layer_2-2.svg`} alt="GSK Logo" class="h-8 md:h-10 w-auto" />
       
       {/* 4. HelloFresh */}
-      <img src="/images/Group-1.svg" alt="HelloFresh Logo" class="h-8 md:h-10 w-auto" />
+      <img src={`${basePath}/images/Group-1.svg`} alt="HelloFresh Logo" class="h-8 md:h-10 w-auto" />
       
       {/* 5. Stitch Fix */}
-      <img src="/images/Group.svg" alt="Stitch Fix Logo" class="h-5 md:h-7 w-auto" />
+      <img src={`${basePath}/images/Group.svg`} alt="Stitch Fix Logo" class="h-5 md:h-7 w-auto" />
     </div>
 
     {/* Heading 2 */}

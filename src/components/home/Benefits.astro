@@ -1,33 +1,39 @@
 ---
-// src/components/home/Features.astro
+// src/components/home/Benefits.astro
+import { Image } from 'astro:assets';
+import managersOfficeImg from '../../assets/images/Managers-Office.png';
+import dockInteriorImg from '../../assets/images/Dock-Interior.png';
+import warehouseInteriorImg from '../../assets/images/Warehouse-Interior.png';
+import dockExteriorImg from '../../assets/images/Dock-Exterior.png';
+
 const features = [
   {
     title: "Spot Bottlenecks in your Docks and Yard",
     description: "See exactly what's in your loading dock and yard at a glance, and estimate the loading time for each truck.",
     link: "/benefits/see-everything",
     // Filename from your Webflow export list
-    image: "/images/de6c1a54b92ec0cc6a5fe48c9ab2a390_Managers-Office-p-500.webp",
+    image: managersOfficeImg,
     alt: "Manager overlooking loading dock operations"
   },
   {
     title: "Incentivize Carrier Punctuality",
     description: "Show them, with data, how sticking to your schedule gets their trucks in and out of your facility faster.",
     link: "/benefits/delight-carriers",
-    image: "/images/7b6dcc2c228a4f21953e11ac0efd4c2d_Dock-Interior-p-500.webp",
+    image: dockInteriorImg,
     alt: "Inside view of a busy loading dock"
   },
   {
     title: "Spread Your Appointments Throughout the Day",
     description: "Predict how much manpower you'll need and optimize your operations over time.",
     link: "/benefits/increase-capacity",
-    image: "/images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-500.webp",
+    image: warehouseInteriorImg,
     alt: "Warehouse interior with organized cargo"
   },
   {
     title: "Say Goodbye to Spreadsheets & Paper",
     description: "Carriers book and you stay in control. Replace calls and emails with an easy interface that sends automatic notifications.",
     link: "/benefits/digitize-operations",
-    image: "/images/77558bf99568593951c2f7f59bda11ae_Dock-Exterior-p-500.webp",
+    image: dockExteriorImg,
     alt: "Exterior view of loading docks"
   }
 ];
@@ -57,7 +63,7 @@ const features = [
           {/* Image Side */}
           <div class="flex-1 w-full">
             <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-[4/3]">
-              <img 
+              <Image 
                 src={feature.image} 
                 alt={feature.alt}
                 class="w-full h-full object-cover"
