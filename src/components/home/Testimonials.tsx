@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Autoplay from 'embla-carousel-autoplay';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 const testimonials = [
   {
@@ -22,7 +23,7 @@ const testimonials = [
     logo: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b6f5aa190d778d116c9e_stitch%20fix.svg"
   },
   {
-    quote: "It's not an expense but an investment. My team loves DataDocks. I don’t know how we lived without it.",
+    quote: "It's not an expense but an investment. My team loves DataDocks. I don't know how we lived without it.",
     author: "Andres Enderica, Atlantic Autocold",
     image: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b72b51a046e1545027f8_Andres%20Enderica.jpg",
     logo: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b73045179cf15ed30416_Atlantic%20Autocold.svg"
@@ -30,7 +31,10 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: 'start' },
+    [Autoplay({ delay: 4000, stopOnInteraction: true })]
+  );
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -45,11 +49,11 @@ export default function Testimonials() {
       <div className="container mx-auto px-4 max-w-7xl">
 
         <div className="flex justify-between items-end mb-12">
-          <h2 className="font-bruta text-4xl md:text-5xl uppercase text-black">
+          <h2 className="font-bruta text-[2.3rem] md:text-5xl uppercase text-black leading-tight">
             What our <span className="text-[#FF5507]">Customers Say</span>
           </h2>
 
-          {/* Navigation Buttons */}
+          {/* Desktop Navigation Buttons */}
           <div className="hidden md:flex gap-4">
             <button
               onClick={scrollPrev}
@@ -67,11 +71,27 @@ export default function Testimonials() {
         </div>
 
         {/* Carousel Viewport */}
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-6">
+        <div className="relative overflow-hidden" ref={emblaRef}>
+          <div className="flex">
             {testimonials.map((item, index) => (
-              <div key={index} className="flex-[0_0_100%] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0">
-                <div className="bg-white p-6 md:p-8 rounded-2xl border border-[#EFE2D2] h-full flex flex-col shadow-sm">
+              <div key={index} className="flex-[0_0_100%] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pr-6">
+                <div className="relative bg-[#EFE2D2] p-6 md:p-8 rounded-2xl h-full flex flex-col shadow-sm">
+
+                  {/* Mobile-only in-card navigation arrows */}
+                  <div className="md:hidden absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 pointer-events-none z-10">
+                    <button
+                      onClick={scrollPrev}
+                      className="pointer-events-auto w-10 h-10 rounded-full bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-md"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={scrollNext}
+                      className="pointer-events-auto w-10 h-10 rounded-full bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-md"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
 
                   {/* Header: Image + Logo */}
                   <div className="flex items-center justify-between mb-6">
@@ -86,21 +106,28 @@ export default function Testimonials() {
                       <img
                         src={item.logo}
                         alt="Company Logo"
-                        className="h-full w-auto object-contain"
+                        className="h-full w-auto object-contain brightness-0 flex-shrink-0"
                       />
                     </div>
                   </div>
 
+                  {/* Stars */}
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-black text-black" />
+                    ))}
+                  </div>
+
                   {/* Quote */}
                   <blockquote className="flex-grow mb-6">
-                    <p className="font-recoleta text-lg text-gray-800 leading-relaxed">
+                    <p className="font-recoleta text-lg text-black leading-relaxed">
                       "{item.quote}"
                     </p>
                   </blockquote>
 
                   {/* Author */}
                   <div className="pt-6 border-t border-gray-100">
-                    <p className="font-bold text-sm uppercase tracking-wider text-gray-500">
+                    <p className="font-bold text-sm uppercase tracking-wider text-black">
                       {item.author}
                     </p>
                   </div>
@@ -109,22 +136,6 @@ export default function Testimonials() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Mobile Navigation (Visible only on small screens) */}
-        <div className="flex md:hidden justify-center gap-4 mt-8">
-          <button
-            onClick={scrollPrev}
-            className="w-12 h-12 rounded-full border border-black flex items-center justify-center bg-white"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={scrollNext}
-            className="w-12 h-12 rounded-full border border-black flex items-center justify-center bg-white"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
         </div>
 
       </div>

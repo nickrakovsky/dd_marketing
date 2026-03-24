@@ -1,38 +1,140 @@
 ---
-// src/components/home/Clients.astro
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+/**
+ * Per-logo sizing from SVG ink-ratio + aspect-ratio analysis.
+ *
+ * KEY FIX: both width AND height are constrained, with object-contain.
+ * This prevents wide-aspect logos (Stitch Fix 8.3:1, Samsung 6.53:1)
+ * from horizontally dominating square emblems (Pepsi 1:1, Columbia 1.23:1).
+ *
+ * How each dimension was chosen:
+ *   w = the maximum horizontal footprint the logo should occupy
+ *   h = the row height available; object-contain scales the logo to fit both
+ *
+ * Wide wordmarks  → wide w, short h  (logo constrained by w, renders small height)
+ * Square emblems  → narrow w, tall h (logo constrained by h, renders full height)
+ * Mixed logos     → balanced w+h
+ *
+ * All class strings are written out in full so Tailwind's scanner includes them.
+ * object-position (CoG alignment) is inline since Tailwind has no clean utility.
+ *
+ * canvas ratios & ink analysis → see analyse-logos.mjs
+ */
+const logos = [
+  { src: "Layer_1-2.svg",     alt: "LG Logo",         cls: "w-[118px] h-[52px] object-contain", pos: "41% 51%" },   
+  { src: "shipmonk_.svg",     alt: "ShipMonk Logo",   cls: "w-[164px] h-[41px] object-contain", pos: "48% 49%" },
+  { src: "Layer_2-2.svg",     alt: "GSK Logo",        cls: "w-[140px] h-[42px] object-contain", pos: "47% 51%" },  
+  { src: "Group-1.svg",       alt: "HelloFresh Logo", cls: "w-[129px] h-[42px] object-contain", pos: "44% 50%" },
+  { src: "Group.svg",         alt: "StitchFix Logo",  cls: "w-[220px] h-[27px] object-contain", pos: "49% 47%" },
+  { src: "Pepsi_2023.svg",    alt: "Pepsi Logo",      cls: "w-[65px] h-[65px] object-contain",  pos: "50% 50%" },
+  { src: "Samsung.svg",       alt: "Samsung Logo",    cls: "w-[187px] h-[29px] object-contain", pos: "50% 50%" },
+  { src: "Toyota_Logo.svg",   alt: "Toyota Logo",     cls: "w-[90px] h-[65px] object-contain",  pos: "50% 51%" },
+  { src: "columbia-wide.svg", alt: "Columbia Logo",   cls: "w-[260px] h-[39px] object-contain", pos: "46% 52%" },
+];
 ---
 
-<section class="py-16 bg-[#FFF8E9] border-t border-[#EFE2D2]">
-  <div class="container mx-auto px-4 text-center">
-    
-    {/* Heading 1 */}
-    <h3 class="font-recoleta text-xl md:text-2xl text-[#8d785c] mb-12 max-w-3xl mx-auto">
-      Trusted by giants of industry and nimble up-and-comers
+
+<section class="py-16 bg-[#FFF8E9] border-t border-[#EFE2D2] overflow-hidden">
+  
+  {/* Heading stays in container */}
+  <div class="container mx-auto text-center">
+    <h3 class="font-recoleta text-xl md:text-2xl text-[#8d785c] mb-12 max-w-3xl mx-auto px-4">
+      Trusted by the world's most relentless supply chains
     </h3>
+  </div>
 
-    {/* Logo Grid */}
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-8 md:gap-8 items-center justify-items-center opacity-80 mb-12 max-w-5xl mx-auto">
-      {/* 1. LG */}
-      <img src={`${basePath}/images/Layer_1-2.svg`} alt="LG Logo" class="h-8 md:h-10 w-auto" />
-      
-      {/* 2. ShipMonk */}
-      <img src={`${basePath}/images/shipmonk_.svg`} alt="ShipMonk Logo" class="h-6 md:h-8 w-auto" />
-      
-      {/* 3. GSK */}
-      <img src={`${basePath}/images/Layer_2-2.svg`} alt="GSK Logo" class="h-8 md:h-10 w-auto" />
-      
-      {/* 4. HelloFresh */}
-      <img src={`${basePath}/images/Group-1.svg`} alt="HelloFresh Logo" class="h-8 md:h-10 w-auto" />
-      
-      {/* 5. Stitch Fix */}
-      <img src={`${basePath}/images/Group.svg`} alt="Stitch Fix Logo" class="h-5 md:h-7 w-auto" />
+  {/* Full-width marquee */}
+  <div id="clients-marquee" class="relative w-full flex overflow-hidden mb-12 opacity-80 cursor-grab active:cursor-grabbing">
+    <div id="clients-track" class="flex w-max items-center">
+      {/* 5x logos for plenty of content in both directions */}
+      {[...logos, ...logos, ...logos, ...logos, ...logos].map((logo) => (
+        <div class="flex-shrink-0 px-8 md:px-12 flex items-center justify-center">
+          <img
+            src={`${basePath}/images/${logo.src}`}
+            alt={logo.alt}
+            draggable="false"
+            class={logo.cls}
+            style={`object-position: ${logo.pos};`}
+          />
+        </div>
+      ))}
     </div>
+  </div>
 
-    {/* Heading 2 */}
-    <h3 class="font-recoleta text-xl md:text-2xl text-[#8d785c] max-w-3xl mx-auto">
+  {/* Trust statement stays in container */}
+  <div class="container mx-auto text-center">
+    <h3 class="font-recoleta text-xl md:text-2xl text-[#8d785c] max-w-3xl mx-auto px-4">
       Backed by SOC 2 compliance, we deliver the <strong class="font-bold text-black">most secure</strong> dock scheduling platform in the industry
     </h3>
-    
   </div>
+    
 </section>
+
+<script>
+  // JS-driven marquee: constant smooth scroll, drag to scrub, resumes from current position
+  const marquee = document.getElementById('clients-marquee');
+  const track = document.getElementById('clients-track');
+
+  if (marquee && track) {
+    const speed = 0.5; // pixels per frame (~30px/sec at 60fps)
+    let position = 0;
+    let isDragging = false;
+    let startX = 0;
+    let dragStartPos = 0;
+    let animating = true;
+    let rafId: number;
+
+    // Compute the width of one "set" of logos (total / 5)
+    function getSetWidth() {
+      return track.scrollWidth / 5;
+    }
+
+    // Start from -2 sets so there's content to the left
+    position = -(getSetWidth() * 2);
+    track.style.transform = `translateX(${position}px)`;
+
+    function animate() {
+      if (!isDragging) {
+        position -= speed;
+        // Wrap around: when we've scrolled past 3 sets, jump back by 1 set
+        const setW = getSetWidth();
+        if (position < -(setW * 4)) {
+          position += setW;
+        }
+        // If dragged right past the start, wrap forward
+        if (position > -setW) {
+          position -= setW;
+        }
+        track.style.transform = `translateX(${position}px)`;
+      }
+      rafId = requestAnimationFrame(animate);
+    }
+
+    rafId = requestAnimationFrame(animate);
+
+    marquee.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      dragStartPos = position;
+      marquee.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+
+    marquee.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      position = dragStartPos + dx;
+      track.style.transform = `translateX(${position}px)`;
+    });
+
+    marquee.addEventListener('pointerup', () => {
+      isDragging = false;
+      // Animation loop continues automatically from current position
+    });
+
+    marquee.addEventListener('pointercancel', () => {
+      isDragging = false;
+    });
+  }
+</script>

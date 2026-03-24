@@ -11,7 +11,26 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
 
 // Split posts: The newest post is the Hero, the rest go into the Bento Grid
 const highlightedPost = sortedPosts[0];
-const bentoPosts = sortedPosts.slice(1);
+const restPosts = sortedPosts.slice(1);
+
+// Group the rest of the posts by category
+const postsByCategory = restPosts.reduce((acc, post) => {
+  const category = post.data.category || 'Logistics';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(post);
+  return acc;
+}, {} as Record<string, typeof restPosts>);
+
+// Fallback background styles
+const fallbackGradients = [
+  "bg-gradient-to-br from-[#fd4f00] to-[#E5D3B3]",
+  "bg-gradient-to-tl from-black via-[#fd4f00] to-black",
+  "bg-gradient-to-tr from-[#E5D3B3] to-[#F8EDD9]",
+  "bg-gradient-to-bl from-[#fd4f00] to-black",
+  "bg-gradient-to-br from-gray-900 to-[#fd4f00]"
+];
 
 // Page metadata
 const title = "Shipping & Receiving Best Practice Research | DataDocks";
@@ -27,9 +46,9 @@ const description = "DataDocks is a dock appointment scheduling software, that h
       <div class="max-w-7xl mx-auto px-4 md:px-12">
         
         <div class="text-center mb-16 md:mb-24">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bruta uppercase leading-[1.1]">
+          <h1 class="text-4xl md:text-6xl lg:text-[76px] font-bruta uppercase leading-[0.85] tracking-tight w-full">
             <span class="text-[#fd4f00]">RESOURCE HUB:</span><br/>
-            <span class="text-black">Guides, Checklists & Insights</span>
+            <span class="text-black">Guides, Checklists & Insights<br class="hidden sm:block" /> for Operations Teams</span>
           </h1>
         </div>
 
@@ -38,15 +57,21 @@ const description = "DataDocks is a dock appointment scheduling software, that h
             <a href={`${import.meta.env.BASE_URL}/posts/${highlightedPost.slug}`.replace('//posts', '/posts')} class="group grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
               <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border-4 border-[#F8EDD9] transition-transform duration-300 group-hover:-translate-y-2 relative">
                 
-                {highlightedPost.data.coverImage ? (
+                {highlightedPost.data.youtubeId ? (
+                  <img 
+                    src={`https://img.youtube.com/vi/${highlightedPost.data.youtubeId}/maxresdefault.jpg`} 
+                    alt={highlightedPost.data.title} 
+                    class="w-full h-full object-cover" 
+                  />
+                ) : highlightedPost.data.cardImage ? (
                   <Image 
-                    src={highlightedPost.data.coverImage} 
+                    src={highlightedPost.data.cardImage} 
                     alt={highlightedPost.data.title} 
                     class="w-full h-full object-cover" 
                   />
                 ) : (
-                  <div class="bg-[#F8EDD9] w-full h-full flex items-center justify-center">
-                    <span class="font-bruta text-gray-400 uppercase tracking-widest">No Image</span>
+                  <div class={`w-full h-full flex items-center justify-center ${fallbackGradients[highlightedPost.slug.length % fallbackGradients.length]}`}>
+                    <span class="font-bruta text-white opacity-50 text-2xl uppercase tracking-widest">{highlightedPost.data.category || 'DataDocks'}</span>
                   </div>
                 )}
                 
@@ -56,10 +81,14 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                     <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video
                   </div>
                 )}
+                {highlightedPost.data.contentType === 'short' && (
+                  <div class="absolute top-4 left-4 bg-black text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 z-10">
+                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Short
+                  </div>
+                )}
 
               </div>
               <div class="flex flex-col text-left">
-                <div class="text-[#fd4f00] font-bold tracking-widest uppercase text-sm mb-4">Latest Release</div>
                 <h2 class="text-4xl md:text-5xl font-bruta uppercase text-black leading-[1.1] mb-6 group-hover:text-[#fd4f00] transition-colors">
                   {highlightedPost.data.title}
                 </h2>
@@ -68,7 +97,7 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                   {highlightedPost.data.description || 'Click to read this article.'}
                 </p>
                 <div class="inline-flex items-center font-bold text-black group-hover:text-[#fd4f00] transition-colors">
-                  {highlightedPost.data.contentType === 'video' ? 'Watch Video' : 'Read Article'} 
+                  {highlightedPost.data.contentType === 'video' || highlightedPost.data.contentType === 'short' ? 'Watch Video' : 'Read Article'} 
                   <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </div>
               </div>
@@ -78,70 +107,77 @@ const description = "DataDocks is a dock appointment scheduling software, that h
 
         <div class="w-full h-px bg-[#E5D3B3] mb-16"></div>
 
-        <div class="mb-20">
-          <div class="flex items-center justify-between mb-8">
-            <h3 class="font-bruta text-2xl uppercase text-black">Latest Resources</h3>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-[320px] gap-6 grid-flow-row-dense">
+        {Object.entries(postsByCategory).map(([category, posts]) => (
+          <div class="mb-20">
+            <div class="flex items-center justify-between mb-8">
+              <h3 class="font-bruta text-2xl md:text-3xl uppercase text-black">{category}</h3>
+            </div>
             
-            {bentoPosts.map((post) => {
-              // Determine the shape based on the CMS content type
-              const type = post.data.contentType || 'article';
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-[320px] gap-6 grid-flow-row-dense">
               
-              // Assign grid spans (The Lego Bricks)
-              let spanClass = "col-span-1 row-span-1"; // Standard Article (1:1ish)
-              if (type === 'video') spanClass = "col-span-1 md:col-span-2 row-span-1"; // Longform Video (16:9ish)
-              if (type === 'short') spanClass = "col-span-1 row-span-2"; // YouTube Short (9:16ish)
+              {posts.map((post) => {
+                // Determine the shape based on the CMS content type
+                const type = post.data.contentType || 'article';
+                
+                // Assign grid spans (The Lego Bricks)
+                let spanClass = "col-span-1 row-span-1"; // Standard Article (1:1ish)
+                if (type === 'video') spanClass = "col-span-1 md:col-span-2 row-span-1"; // Longform Video (16:9ish)
+                if (type === 'short') spanClass = "col-span-1 row-span-2"; // YouTube Short (9:16ish)
 
-              return (
-                <a 
-                  href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
-                  class={`group relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border-2 border-[#E5D3B3] ${spanClass}`}
-                >
-                  
-                  {/* Background Image / Thumbnail */}
-                  <div class="absolute inset-0 w-full h-full bg-[#F8EDD9]">
-                    {post.data.coverImage && (
-                      <Image 
-                        src={post.data.coverImage} 
-                        alt={post.data.title} 
-                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" 
-                      />
-                    )}
-                    {/* Dark gradient overlay to ensure text is always readable */}
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                  </div>
-
-                  {/* UI Badges (Top Left) */}
-                  <div class="absolute top-4 left-4 flex gap-2 z-10">
-                    {type === 'video' && (
-                      <span class="bg-[#fd4f00] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-md">
-                        <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video
-                      </span>
-                    )}
-                    {type === 'short' && (
-                      <span class="bg-black text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-md">
-                        <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Short
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Content (Bottom Anchored) */}
-                  <div class="relative z-10 mt-auto p-6 text-left">
-                    <div class="font-recoleta text-[#fd4f00] text-sm font-bold mb-2 drop-shadow-md">
-                      {post.data.category || "Logistics"}
+                return (
+                  <a 
+                    href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
+                    class={`group relative flex flex-col bg-white rounded-2xl overflow-hidden border-2 border-[#E5D3B3] shadow-sm transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] hover:border-[#fd4f00] ${spanClass}`}
+                  >
+                    
+                    {/* Background Image / Thumbnail */}
+                    <div class="absolute inset-0 w-full h-full bg-[#F8EDD9]">
+                      {post.data.youtubeId ? (
+                        <img 
+                          src={`https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`} 
+                          alt={post.data.title} 
+                          class="w-full h-full object-cover" 
+                        />
+                      ) : post.data.cardImage ? (
+                        <Image 
+                          src={post.data.cardImage} 
+                          alt={post.data.title} 
+                          class="w-full h-full object-cover" 
+                        />
+                      ) : (
+                        <div class={`w-full h-full opacity-80 ${fallbackGradients[post.slug.length % fallbackGradients.length]}`}></div>
+                      )}
+                      {/* Dark gradient overlay to ensure text is always readable */}
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                     </div>
-                    <h4 class="text-xl md:text-2xl font-bold text-white leading-tight line-clamp-3 group-hover:text-[#F8EDD9] transition-colors drop-shadow-md">
-                      {post.data.title}
-                    </h4>
-                  </div>
 
-                </a>
-              );
-            })}
+                    {/* UI Badges (Top Left) */}
+                    <div class="absolute top-4 left-4 flex gap-2 z-10">
+                      {type === 'video' && (
+                        <span class="bg-[#fd4f00] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-md">
+                          <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video
+                        </span>
+                      )}
+                      {type === 'short' && (
+                        <span class="bg-black text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-md">
+                          <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Short
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Content (Bottom Anchored) */}
+                    <div class="relative z-10 mt-auto p-6 text-left">
+                      <h4 class="text-xl md:text-2xl font-bold text-white leading-tight group-hover:text-[#F8EDD9] transition-colors drop-shadow-md">
+                        {post.data.title}
+                      </h4>
+                    </div>
+
+                  </a>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        ))}
 
       </div>
     </main>
