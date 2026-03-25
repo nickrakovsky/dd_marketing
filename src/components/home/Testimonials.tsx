@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 const testimonials = [
@@ -32,8 +31,17 @@ const testimonials = [
 
 export default function Testimonials() {
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: 'start' },
-    [Autoplay({ delay: 4000, stopOnInteraction: true })]
+    { 
+      loop: true, 
+      align: 'start',
+      watchDrag: (api, event) => {
+        if (event.target && 'closest' in event.target) {
+          // Type casting for safety, though DOM elements will have .closest
+          return !(event.target as HTMLElement).closest('.embla__no-drag');
+        }
+        return true;
+      }
+    }
   );
 
   const scrollPrev = useCallback(() => {
@@ -42,6 +50,37 @@ export default function Testimonials() {
 
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    let hasTriggered = false;
+    
+    // Auto-advance once beautifully each time cards enter viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!hasTriggered) {
+              setTimeout(() => {
+                if (emblaApi) emblaApi.scrollPrev();
+              }, 1200);
+              hasTriggered = true;
+            }
+          } else if (entry.intersectionRatio === 0) {
+            // Only reset if completely, 100% scrolled off the entire screen
+            hasTriggered = false;
+          }
+        });
+      },
+      { threshold: [0, 0.5] }
+    );
+
+    const node = emblaApi.rootNode();
+    if (node) observer.observe(node);
+
+    return () => observer.disconnect();
   }, [emblaApi]);
 
   return (
@@ -72,26 +111,10 @@ export default function Testimonials() {
 
         {/* Carousel Viewport */}
         <div className="relative overflow-hidden" ref={emblaRef}>
-          <div className="flex">
+          <div className="flex -ml-4 md:-ml-6">
             {testimonials.map((item, index) => (
-              <div key={index} className="flex-[0_0_100%] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pr-6">
+              <div key={index} className="flex-[0_0_100%] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pl-4 md:pl-6">
                 <div className="relative bg-[#EFE2D2] p-6 md:p-8 rounded-2xl h-full flex flex-col shadow-sm">
-
-                  {/* Mobile-only in-card navigation arrows */}
-                  <div className="md:hidden absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 pointer-events-none z-10">
-                    <button
-                      onClick={scrollPrev}
-                      className="pointer-events-auto w-10 h-10 rounded-full bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-md"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={scrollNext}
-                      className="pointer-events-auto w-10 h-10 rounded-full bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-md"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
 
                   {/* Header: Image + Logo */}
                   <div className="flex items-center justify-between mb-6">
@@ -119,17 +142,29 @@ export default function Testimonials() {
                   </div>
 
                   {/* Quote */}
-                  <blockquote className="flex-grow mb-6">
-                    <p className="font-recoleta text-lg text-black leading-relaxed">
+                  <blockquote className="flex-grow mb-6 relative z-10">
+                    <p className="font-recoleta text-lg text-black leading-relaxed select-text cursor-text embla__no-drag inline">
                       "{item.quote}"
                     </p>
                   </blockquote>
 
-                  {/* Author */}
-                  <div className="pt-6 border-t border-gray-100">
-                    <p className="font-bold text-sm uppercase tracking-wider text-black">
+                  {/* Author / Mobile Controls */}
+                  <div className="pt-6 border-t border-gray-100 flex items-center justify-between md:block relative">
+                    <button
+                      onClick={scrollPrev}
+                      className="md:hidden pointer-events-auto w-10 h-10 rounded-full flex-shrink-0 bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-sm"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <p className="font-bold text-sm uppercase tracking-wider text-black text-center md:text-left w-full md:w-auto px-2">
                       {item.author}
                     </p>
+                    <button
+                      onClick={scrollNext}
+                      className="md:hidden pointer-events-auto w-10 h-10 rounded-full flex-shrink-0 bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-sm"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
                   </div>
 
                 </div>

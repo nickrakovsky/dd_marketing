@@ -44,13 +44,13 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="relative z-50 bg-[#FFF8E9]">
+    <nav className="relative z-50 bg-[#FFF8E9] dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-0 md:px-8 pt-4 md:pt-12 pb-4 md:pb-6">
-        <div className="flex items-center justify-between h-16 gap-4 px-4 md:px-0">
+        <div className="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
 
-          <div className="flex items-center flex-shrink-0">
-            <a href={MAIN_SITE}>
-              <img src={datadocksLogo.src} alt="DataDocks Logo" className="h-10 sm:h-12 w-auto" />
+          <div className="flex items-center flex-shrink min-w-0">
+            <a href={MAIN_SITE} className="flex-shrink min-w-0">
+              <img src={datadocksLogo.src} alt="DataDocks Logo" className="h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain" />
             </a>
           </div>
 
@@ -61,18 +61,18 @@ const Navigation = () => {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button className="flex items-center gap-1 text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg">
+              <button className="flex items-center gap-1 text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg">
                 How DataDocks Helps
                 <ChevronDown className="w-4 h-4" />
               </button>
               {isDropdownOpen && (
                 <div className="absolute top-full left-0 mt-0 pt-2 w-56 z-50">
-                  <div className="bg-[#EFE2D2] border border-border rounded-lg overflow-hidden py-2">
+                  <div className="bg-[#EFE2D2] dark:bg-gray-800 border border-border dark:border-gray-700 rounded-lg overflow-hidden py-2 transition-colors duration-300">
                     {dropdownItems.map((item) => (
                       <a
                         key={item.href}
                         href={item.href}
-                        className="block px-4 py-1.5 text-foreground hover:pl-6 hover:translate-x-1 hover:text-[#665238] transition-all duration-300 font-recoleta text-base"
+                        className="block px-4 py-1.5 text-foreground dark:text-gray-200 hover:pl-6 hover:translate-x-1 hover:text-[#665238] dark:hover:text-[#ff7635] transition-all duration-300 font-recoleta text-base"
                       >
                         {item.label}
                       </a>
@@ -84,28 +84,28 @@ const Navigation = () => {
 
             <a
               href={`${MAIN_SITE}/#features`}
-              className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
+              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
             >
               Features
             </a>
 
             <a
               href={`${cleanBase}/posts`}
-              className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
+              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
             >
               Research
             </a>
 
             <a
               href={`${MAIN_SITE}/integrations`}
-              className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
+              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
             >
               Integrations
             </a>
 
             <a
               href="https://booking.datadocks.com/sessions/new"
-              className="text-foreground hover:text-foreground/70 transition-colors font-recoleta text-base xl:text-lg"
+              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
             >
               Login
             </a>
@@ -122,7 +122,7 @@ const Navigation = () => {
           </div>
 
           <button
-            className="lg:hidden text-foreground p-2"
+            className="lg:hidden shrink-0 text-foreground dark:text-gray-200 p-2 transition-colors duration-300"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -130,12 +130,12 @@ const Navigation = () => {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 border-t border-border bg-[#FFF8E9] z-50 shadow-xl">
+          <div className="lg:hidden absolute top-full left-0 right-0 border-t border-border dark:border-gray-700 bg-[#FFF8E9] dark:bg-gray-900 z-50 shadow-xl transition-colors duration-300">
             <div className="flex flex-col space-y-0">
               <div className="flex flex-col">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center justify-between text-foreground px-4 py-3 font-recoleta border-b border-[#e3d5c4a6]"
+                  className="flex items-center justify-between text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
                 >
                   How DataDocks Helps
                   <ChevronDown
@@ -144,12 +144,12 @@ const Navigation = () => {
                   />
                 </button>
                 {isDropdownOpen && (
-                  <div className="bg-[#EFE2D2] flex flex-col">
+                  <div className="bg-[#EFE2D2] dark:bg-gray-800 flex flex-col transition-colors duration-300">
                     {dropdownItems.map((item) => (
                       <a
                         key={item.href}
                         href={item.href}
-                        className="text-foreground px-8 py-3 font-recoleta border-b border-[#e3d5c4a6] last:border-0 hover:text-[#665238]"
+                        className="text-foreground dark:text-gray-200 px-8 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 last:border-0 hover:text-[#665238] dark:hover:text-[#ff7635] transition-colors duration-300"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}
@@ -161,7 +161,7 @@ const Navigation = () => {
 
               <a
                 href={`${MAIN_SITE}/#features`}
-                className="text-foreground px-4 py-3 font-recoleta border-b border-[#e3d5c4a6]"
+                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
@@ -169,7 +169,7 @@ const Navigation = () => {
 
               <a
                 href={`${cleanBase}/posts`}
-                className="text-foreground px-4 py-3 font-recoleta border-b border-[#e3d5c4a6]"
+                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Research
@@ -177,7 +177,7 @@ const Navigation = () => {
 
               <a
                 href={`${MAIN_SITE}/integrations`}
-                className="text-foreground px-4 py-3 font-recoleta border-b border-[#e3d5c4a6]"
+                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Integrations
@@ -185,7 +185,7 @@ const Navigation = () => {
 
               <a
                 href="https://booking.datadocks.com/sessions/new"
-                className="text-foreground px-4 py-3 font-recoleta border-b border-[#e3d5c4a6]"
+                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Login

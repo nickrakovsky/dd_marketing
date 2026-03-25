@@ -2,36 +2,43 @@
 // src/components/home/CTA.astro
 ---
 
-<section class="py-10 md:py-12 bg-[#FF5507]">
+<section class="py-10 md:py-[3.25rem] bg-[#FF5507]">
   <div class="container mx-auto px-6 md:px-8">
-    
-    {/* Center aligned heading + inline form that flows naturally with text. */}
-    <div class="text-left md:text-center w-full max-w-[1200px] mx-auto">
+    <div class="w-full text-center h-full flex flex-col justify-center items-center">
       
-      <h2 class="inline font-bruta text-[clamp(1.6rem,5vw,3rem)] uppercase leading-tight md:leading-[1.1] text-[#FFF8E9] align-middle">
-        Find out for yourself what DataDocks can do<br class="hidden md:inline" /> for your operations
-      </h2>
+      {/* 
+        Fully compliant, clean DOM layout.
+        Horizontal centralization handled via inline-block text-center wrapper on mobile/tablet, 
+        and text-left left-flow exclusively on widescreen elements!
+      */}
+      <div class="inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
+        <h2 class="inline font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9] align-middle">
+          Find out for yourself what DataDocks can do<br class="hidden min-[1020px]:inline" />
+          <span class="inline min-[1020px]:hidden"> </span>
+          for your operations
+        </h2>
 
-      <form
-        action="https://calendly.com/nick-rakovsky/datadocks-demo"
-        target="_blank"
-        class="flex flex-col md:flex-row md:inline-flex items-stretch w-full md:w-auto align-middle mt-5 md:mt-0 md:ml-3 gap-2 md:gap-0"
-      >
-        <input
-          type="email"
-          placeholder="Enter your email"
-          style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
-          class="h-12 w-full md:w-64 lg:w-[20rem] px-4 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none rounded-none"
-          required
-        />
-        <button
-          type="submit"
-          class="h-12 px-8 bg-black hover:bg-[#EFE2D2] hover:text-black md:hover:bg-[#FF5507] md:hover:text-white text-white font-bold transition-all duration-300 uppercase tracking-wide text-sm font-recoleta whitespace-nowrap rounded-none"
+        <form
+          action="https://calendly.com/nick-rakovsky/datadocks-demo"
+          target="_blank"
+          class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto align-middle min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0 translate-y-[2px] xl:translate-y-[-4px]"
         >
-          Get Free Demo
-        </button>
-      </form>
-    </div>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
+            class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none"
+            required
+          />
+          <button
+            type="submit"
+            class="h-12 lg:h-[3.35rem] px-6 lg:px-8 bg-black hover:bg-[#EFE2D2] hover:text-black md:hover:bg-[#FF5507] md:hover:text-white text-white font-bold transition-all duration-300 uppercase tracking-wide text-[14px] lg:text-[15px] font-recoleta whitespace-nowrap rounded-none flex-shrink-0"
+          >
+            Get Free Demo
+          </button>
+        </form>
+      </div>
 
+    </div>
   </div>
 </section>
