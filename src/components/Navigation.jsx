@@ -2,8 +2,9 @@ import { Button } from "./ui/button";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import datadocksLogo from "../assets/datadocks-logo.svg";
+import datadocksLogoWhite from "../assets/datadocks-logo-white.svg";
 
-const Navigation = () => {
+const Navigation = ({ isOrange = false }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownTimeoutRef = useRef(null);
@@ -44,13 +45,28 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="relative z-50 bg-[#FFF8E9] dark:bg-gray-900 transition-colors duration-300">
+    <nav className={`relative z-50 transition-colors duration-300 ${
+      isOrange ? "bg-[#fd4f00]" : "bg-[#FFF8E9] dark:bg-gray-900"
+    }`}>
       <div className="container mx-auto px-0 md:px-8 pt-4 md:pt-12 pb-4 md:pb-6">
         <div className="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
 
           <div className="flex items-center flex-shrink min-w-0">
             <a href={MAIN_SITE} className="flex-shrink min-w-0">
-              <img src={datadocksLogo.src} alt="DataDocks Logo" className="h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain" />
+              <img 
+                src={datadocksLogo.src} 
+                alt="DataDocks Logo" 
+                className={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${
+                  isOrange ? "hidden" : "block dark:hidden"
+                }`} 
+              />
+              <img 
+                src={datadocksLogoWhite.src} 
+                alt="DataDocks Logo" 
+                className={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${
+                  isOrange ? "block" : "hidden dark:block"
+                }`} 
+              />
             </a>
           </div>
 
@@ -61,7 +77,11 @@ const Navigation = () => {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button className="flex items-center gap-1 text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg">
+              <button className={`flex items-center gap-1 transition-colors font-recoleta text-base xl:text-lg ${
+                isOrange 
+                  ? "text-white hover:text-white/80" 
+                  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
+              }`}>
                 How DataDocks Helps
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -84,28 +104,44 @@ const Navigation = () => {
 
             <a
               href={`${MAIN_SITE}/#features`}
-              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
+              className={`transition-colors font-recoleta text-base xl:text-lg ${
+                isOrange 
+                  ? "text-white hover:text-white/80" 
+                  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
+              }`}
             >
               Features
             </a>
 
             <a
               href={`${cleanBase}/posts`}
-              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
+              className={`transition-colors font-recoleta text-base xl:text-lg ${
+                isOrange 
+                  ? "text-white hover:text-white/80" 
+                  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
+              }`}
             >
               Research
             </a>
 
             <a
               href={`${MAIN_SITE}/integrations`}
-              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
+              className={`transition-colors font-recoleta text-base xl:text-lg ${
+                isOrange 
+                  ? "text-white hover:text-white/80" 
+                  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
+              }`}
             >
               Integrations
             </a>
 
             <a
               href="https://booking.datadocks.com/sessions/new"
-              className="text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400 transition-colors font-recoleta text-base xl:text-lg"
+              className={`transition-colors font-recoleta text-base xl:text-lg ${
+                isOrange 
+                  ? "text-white hover:text-white/80" 
+                  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
+              }`}
             >
               Login
             </a>
@@ -113,7 +149,11 @@ const Navigation = () => {
             <Button
               asChild
               variant="default"
-              className="bg-[#FF5722] hover:bg-black text-white px-6 font-recoleta rounded-none text-base xl:text-lg border-b-4 border-transparent hover:border-b-[#FF5722] transition-all shadow-none"
+              className={`px-6 font-recoleta rounded-none text-base xl:text-lg border-b-4 transition-all shadow-none ${
+                isOrange 
+                  ? "bg-white text-[#fd4f00] hover:bg-black hover:text-white border-transparent hover:border-b-white" 
+                  : "bg-[#FF5722] hover:bg-black text-white border-transparent hover:border-b-[#FF5722]"
+              }`}
             >
               <a href="https://calendly.com/nick-rakovsky/datadocks-demo" target="_blank" rel="noopener noreferrer">
                 Schedule a Demo
@@ -122,7 +162,9 @@ const Navigation = () => {
           </div>
 
           <button
-            className="lg:hidden shrink-0 text-foreground dark:text-gray-200 p-2 transition-colors duration-300"
+            className={`lg:hidden shrink-0 p-2 transition-colors duration-300 ${
+              isOrange ? "text-white" : "text-foreground dark:text-gray-200"
+            }`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -130,12 +172,20 @@ const Navigation = () => {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 border-t border-border dark:border-gray-700 bg-[#FFF8E9] dark:bg-gray-900 z-50 shadow-xl transition-colors duration-300">
+          <div className={`lg:hidden absolute top-full left-0 right-0 border-t z-50 shadow-xl transition-colors duration-300 ${
+            isOrange 
+              ? "bg-[#fd4f00] border-white/20" 
+              : "bg-[#FFF8E9] dark:bg-gray-900 border-border dark:border-gray-700"
+          }`}>
             <div className="flex flex-col space-y-0">
               <div className="flex flex-col">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center justify-between text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
+                  className={`flex items-center justify-between px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
+                    isOrange 
+                      ? "text-white border-white/20" 
+                      : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
+                  }`}
                 >
                   How DataDocks Helps
                   <ChevronDown
@@ -149,7 +199,11 @@ const Navigation = () => {
                       <a
                         key={item.href}
                         href={item.href}
-                        className="text-foreground dark:text-gray-200 px-8 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 last:border-0 hover:text-[#665238] dark:hover:text-[#ff7635] transition-colors duration-300"
+                        className={`px-8 py-3 font-recoleta border-b last:border-0 transition-colors duration-300 ${
+                          isOrange 
+                            ? "text-white/90 border-white/10 hover:text-white" 
+                            : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700 hover:text-[#665238] dark:hover:text-[#ff7635]"
+                        }`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}
@@ -161,7 +215,11 @@ const Navigation = () => {
 
               <a
                 href={`${MAIN_SITE}/#features`}
-                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
+                className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
+                  isOrange 
+                    ? "text-white border-white/20" 
+                    : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
@@ -169,7 +227,11 @@ const Navigation = () => {
 
               <a
                 href={`${cleanBase}/posts`}
-                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
+                className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
+                  isOrange 
+                    ? "text-white border-white/20" 
+                    : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Research
@@ -177,7 +239,11 @@ const Navigation = () => {
 
               <a
                 href={`${MAIN_SITE}/integrations`}
-                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
+                className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
+                  isOrange 
+                    ? "text-white border-white/20" 
+                    : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Integrations
@@ -185,7 +251,11 @@ const Navigation = () => {
 
               <a
                 href="https://booking.datadocks.com/sessions/new"
-                className="text-foreground dark:text-gray-200 px-4 py-3 font-recoleta border-b border-[#e3d5c4a6] dark:border-gray-700 transition-colors duration-300"
+                className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
+                  isOrange 
+                    ? "text-white border-white/20" 
+                    : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Login
@@ -195,7 +265,11 @@ const Navigation = () => {
                 <Button
                   asChild
                   variant="default"
-                  className="bg-[#FF5722] hover:bg-black text-white w-full rounded-none border-b-4 border-transparent hover:border-b-[#FF5722] transition-all shadow-none font-recoleta py-8"
+                  className={`w-full rounded-none border-b-4 transition-all shadow-none font-recoleta py-8 ${
+                    isOrange 
+                      ? "bg-white text-[#fd4f00] hover:bg-black hover:text-white border-transparent hover:border-b-white" 
+                      : "bg-[#FF5722] hover:bg-black text-white border-transparent hover:border-b-[#FF5722]"
+                  }`}
                 >
                   <a href="https://calendly.com/nick-rakovsky/datadocks-demo" target="_blank" rel="noopener noreferrer">
                     Schedule a Demo

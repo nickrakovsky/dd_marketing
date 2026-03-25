@@ -24,9 +24,10 @@ import g2Src from "@/assets/g2-logo.webp";
 
 interface Props {
   content: PageContent;
+  isOrangeNav?: boolean;
 }
 
-const { content } = Astro.props;
+const { content, isOrangeNav = false } = Astro.props;
 
 // --- IMAGE PROCESSING ---
 // This runs on the server to create small, optimized thumbnails
@@ -44,7 +45,7 @@ const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
   </a>
 
   {/* Needs client:load for mobile menu toggling */}
-  <Navigation client:idle />
+  <Navigation client:idle isOrange={isOrangeNav} />
   
   {/* Hero contains internal islands like the Gallery that manage their own loading */}
   <Hero 
