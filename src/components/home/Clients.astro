@@ -35,7 +35,7 @@ const logos = [
 ---
 
 
-<section class="py-16 bg-[#FFF8E9] border-t border-[#EFE2D2] overflow-hidden">
+<section class="py-16 bg-[#FFF8E9] overflow-hidden">
   
   {/* Heading stays in container */}
   <div class="container mx-auto text-center">
@@ -87,7 +87,7 @@ const logos = [
 
     // Compute the width of one "set" of logos (total / 5)
     function getSetWidth() {
-      return track.scrollWidth / 5;
+      return track!.scrollWidth / 5;
     }
 
     // Start from -2 sets so there's content to the left
@@ -106,7 +106,7 @@ const logos = [
         if (position > -setW) {
           position -= setW;
         }
-        track.style.transform = `translateX(${position}px)`;
+        track!.style.transform = `translateX(${position}px)`;
       }
       rafId = requestAnimationFrame(animate);
     }
