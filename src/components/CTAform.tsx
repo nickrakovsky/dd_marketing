@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -10,12 +10,35 @@ interface CTAFormProps {
 
 export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "Enter your work email" }: CTAFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [pagePath, setPagePath] = useState("");
 
-  // FIXED: Using the URL-encoded Event Name string.
-  // This will log the event as "Demo Subscriber" in Bento.
-  const bentoAction = "https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/Demo%20Subscriber?hardened=true";
-  
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPagePath(window.location.pathname);
+    }
+  }, []);
+
+  const bentoAction = "https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/Demo%20Subscriber";
   const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Use FormData directly from the form element — reads all named inputs reliably
+    const formData = new FormData(e.currentTarget);
+    formData.set("redirect", calendlyUrl);
+    formData.set("source", pagePath);
+
+    console.log("[CTAform] Submitting to Bento:", formData.get("email"));
+
+    fetch(bentoAction, {
+      method: "POST",
+      body: formData,
+      mode: "no-cors",
+    }).catch(() => {});
+
+    setIsSubmitted(true);
+    window.open(calendlyUrl, "_blank", "noopener");
+  };
 
   return (
     <div className="mx-auto max-w-lg mb-8">
@@ -33,17 +56,15 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
 
       {/* FORM STATE */}
       <form 
-        action={bentoAction}
-        method="POST"
-        target="_blank"
-        encType="multipart/form-data"
-        onSubmit={() => setIsSubmitted(true)}
+        onSubmit={handleSubmit}
         className={`${isSubmitted ? 'hidden' : 'flex'} flex-row items-stretch gap-0 animate-in fade-in slide-in-from-bottom-4 duration-1000 shadow-none`}
       >
         <input type="hidden" name="redirect" value={calendlyUrl} />
+        <input type="hidden" name="source" value={pagePath} />
 
         <div className="relative flex-1">
           <Input 
+            id="hero-email"
             type="email" 
             name="email"
             placeholder={placeholder} 

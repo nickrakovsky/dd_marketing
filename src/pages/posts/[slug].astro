@@ -4,6 +4,7 @@ import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer.astro';
+import { getFriendlyDate } from '../../utils/dateFormatter';
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts');
@@ -24,10 +25,37 @@ const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric'
 });
+
+const allPosts = await getCollection('posts');
+const categoryPosts = allPosts
+  .filter(p => p.slug !== entry.slug && p.data.category === entry.data.category)
+  .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+
+let relatedPosts = categoryPosts.slice(0, 3);
+if (relatedPosts.length < 3) {
+  const otherPosts = allPosts
+    .filter(p => p.slug !== entry.slug && !relatedPosts.some(rp => rp.slug === p.slug))
+    .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
+    .slice(0, 3 - relatedPosts.length);
+  relatedPosts = [...relatedPosts, ...otherPosts];
+}
+
+const getReadTime = (body: string) => {
+  if (!body) return '1 min read';
+  const plainText = body.replace(/[^\w\s]/g, '').trim();
+  const wordCount = plainText ? plainText.split(/\s+/).length : 0;
+  const minReadingTime = Math.max(1, Math.floor(wordCount / 250));
+  const maxReadingTime = Math.max(1, Math.ceil(wordCount / 180));
+  return minReadingTime === maxReadingTime 
+    ? `${minReadingTime} min read` 
+    : `${minReadingTime}-${maxReadingTime} min read`;
+};
 ---
 
 {isVideo ? (
   <Layout title={entry.data.title} description={entry.data.description}>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
     <Navigation client:idle />
     
     <main class="bg-[#0f0f0f] min-h-screen text-white pt-28 pb-20 font-recoleta">
@@ -64,12 +92,76 @@ const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('en-US', {
           </div>
         </div>
 
-        <div class="w-full lg:w-96 flex-shrink-0">
-          <h3 class="text-xl font-bruta uppercase mb-4 text-white">More Resources</h3>
-          <div class="text-sm text-gray-500 bg-gray-900 p-8 rounded-xl border border-gray-800 text-center flex flex-col items-center justify-center">
-            <svg class="w-12 h-12 text-gray-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            <p>We can wire this sidebar up to suggest other videos later!</p>
-          </div>
+        <div class="w-full lg:w-96 flex-shrink-0 flex flex-col gap-6" style="margin-top: 0;">
+          <h3 class="text-xl font-bruta uppercase mb-2 text-white">More Resources</h3>
+          
+          {relatedPosts.map(post => {
+            const postType = post.data.contentType || 'article';
+            const finalReadTime = post.data.readTime || getReadTime(post.body || '');
+            
+            if ((postType === 'video' || postType === 'short') && post.data.youtubeId) {
+              const isShort = postType === 'short';
+              return (
+                <a 
+                  href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace('//posts', '/posts')} 
+                  class="group relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 border-white/20 hover:border-white w-full"
+                >
+                  {isShort ? (
+                    <>
+                      <div class="relative w-full aspect-[9/16] overflow-hidden shrink-0">
+                        <lite-youtube 
+                          videoid={post.data.youtubeId} 
+                          playlabel={post.data.title} 
+                          style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                          class="w-full h-full pointer-events-none" 
+                        ></lite-youtube>
+                        <div class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
+                          <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Short</span>
+                        </div>
+                      </div>
+                      <div class="flex-grow flex flex-col justify-center px-4 py-3 text-white border-t border-white/20 bg-black/5">
+                        <h4 class="text-sm md:text-base font-bold font-bruta uppercase leading-tight line-clamp-3 text-white">{post.data.title}</h4>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <lite-youtube 
+                        videoid={post.data.youtubeId} 
+                        playlabel={post.data.title} 
+                        style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                        class="w-full aspect-video pointer-events-none" 
+                      ></lite-youtube>
+                      <div class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
+                        <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Video</span>
+                        <h4 class="text-white text-center text-sm md:text-base font-bruta uppercase leading-[1.15] line-clamp-4">{post.data.title}</h4>
+                      </div>
+                    </>
+                  )}
+                </a>
+              );
+            }
+
+            return (
+              <a 
+                href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
+                class="group relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl bg-transparent border-2 border-white/20 hover:border-white w-full aspect-[4/5]"
+              >
+                <div class="w-full h-full p-4 md:p-5 flex flex-col justify-between transition-colors text-white">
+                   <div class="mb-3">
+                     <h4 class="text-lg md:text-xl font-bold font-bruta uppercase leading-[1.15] mb-3 line-clamp-3 text-white">{post.data.title}</h4>
+                   </div>
+                   <div class="mb-3 flex-grow flex flex-col justify-center">
+                     <p class="text-xs md:text-sm opacity-80 line-clamp-4 mb-3 text-white">{post.data.description || 'Click here to read the full article.'}</p>
+                     <span class="font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 mt-auto text-sm text-white">Read <span class="text-base leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
+                   </div>
+                   <div class="pt-3 border-t flex items-center justify-between text-[10px] font-bold uppercase tracking-wider border-white/20 border-opacity-30 text-white">
+                      <span class="opacity-70">{finalReadTime.replace(/ read$/i, '')}</span>
+                      <span class="opacity-70">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
+                   </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
         
       </div>
