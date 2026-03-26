@@ -10,8 +10,8 @@ const postsCollection = defineCollection({
         updatedDate: z.coerce.date().optional(),
         author: z.string(),
         category: z.string().optional(),
-        // The image() helper automatically resolves string paths into optimized Astro Image objects!
-        coverImage: image().optional(),
+        cardImage: image().optional(),
+        cardAlt: z.string().optional(),
         readTime: z.string().optional(),
         showToc: z.boolean().optional(),
 
@@ -20,6 +20,8 @@ const postsCollection = defineCollection({
         contentType: z.enum(['article', 'video', 'short']).default('article'),
         // The 11-character YouTube ID (e.g., "dQw4w9WgXcQ")
         youtubeId: z.string().optional(),
+        // Priority for sorting or hiding, but not displayed to end user.
+        priority: z.string().optional(),
     })
 });
 

@@ -1,0 +1,66 @@
+Post,Priority,Category
+src/content/posts/10-ways-logistics-coordinators-add-value.mdx,Low,Facility Ops
+src/content/posts/appointment-management-for-distribution-centers.mdx,Medium,Facility Ops
+src/content/posts/automated-yard-operations.mdx,Medium,Tech Integration
+src/content/posts/become-a-warehouse-director.mdx,Medium,Facility Ops
+src/content/posts/best-yard-management-options.mdx,High,Tech Integration
+src/content/posts/bring-tech-into-your-logistics-department.mdx,Low,Supply Chain Strategy
+src/content/posts/carrier-scorecards.mdx,Medium,Carrier Mgmt
+src/content/posts/cold-chain-compliance.mdx,High,Supply Chain Strategy
+src/content/posts/comprehensive-guide-to-manufacturing-logistics.mdx,Low,Facility Ops
+src/content/posts/crucial-components-to-successful-yard-management.mdx,Low,Facility Ops
+src/content/posts/custom-rules.mdx,Medium,Tech Integration
+src/content/posts/disadvantages-of-operating-without-dock-scheduling-software.mdx,Low,Facility Ops
+src/content/posts/drop-trailer-vs-live-unload.mdx,High,Carrier Mgmt
+src/content/posts/dwell-time-in-trucking.mdx,Medium,Carrier Mgmt
+src/content/posts/edi-vs-api.mdx,High,Tech Integration
+src/content/posts/enterprise-dock-scheduling.mdx,Medium,Tech Integration
+src/content/posts/how-to-avoid-demurrage-and-detention-charges-throughout-the-supply-chain.mdx,Medium,Supply Chain Strategy
+src/content/posts/how-to-build-your-logistics-tech-stack.mdx,Medium,Tech Integration
+src/content/posts/how-to-choose-a-warehouse-management-system.mdx,Low,Tech Integration
+src/content/posts/how-to-get-around-limitations-warehouse-management-system.mdx,Medium,Tech Integration
+src/content/posts/how-to-overcome-the-top-8-warehouse-management-challenges.mdx,Medium,Facility Ops
+src/content/posts/how-to-reduce-warehouse-turnover.mdx,Medium,Facility Ops
+src/content/posts/inbound-vs-outbound-logistics.mdx,Medium,Facility Ops
+src/content/posts/loading-dock-congestion.mdx,Medium,Facility Ops
+src/content/posts/loading-dock-maturity-stages.mdx,Medium,Tech Integration
+src/content/posts/logistics-coordinator-career-path.mdx,high,Carrier Mgmt
+src/content/posts/logistics-digital-twin.mdx,Medium,Tech Integration
+src/content/posts/lumper-services.mdx,high,Carrier Mgmt
+src/content/posts/machine-learning-in-supply-chains.mdx,Medium,Tech Integration
+src/content/posts/nearshoring-logistics.mdx,Medium,Supply Chain Strategy
+src/content/posts/negotiate-with-carriers.mdx,Medium,Carrier Mgmt
+src/content/posts/optimize-your-shipping-department.mdx,Low,Tech Integration
+src/content/posts/otif-supply-chain.mdx,High,Supply Chain Strategy
+src/content/posts/paperless-supply-chain.mdx,Medium,Tech Integration
+src/content/posts/peak-season-without-dock-chaos-a-complete-playbook.mdx,Medium,Facility Ops
+src/content/posts/practical-ways-to-reduce-turnaround-time.mdx,Medium,Facility Ops
+src/content/posts/reduced-headcount.mdx,Medium,Facility Ops
+src/content/posts/retail-case-studies.mdx,high,Supply Chain Strategy
+src/content/posts/robots-in-logistics.mdx,Medium,Tech Integration
+src/content/posts/supply-chain-kpis-you-need-to-track.mdx,low,Supply Chain Strategy
+src/content/posts/test-video.mdx,Medium,
+src/content/posts/the-overtime-trap.mdx,Medium,Facility Ops
+src/content/posts/time-slot-management.mdx,high,Carrier Mgmt
+src/content/posts/top-supply-chain-software-companies-2025.mdx,high,Tech Integration
+src/content/posts/truck-detention-accessorial-fees.mdx,high,Carrier Mgmt
+src/content/posts/ultimate-guide-to-supply-chain-visibility-for-industry-professionals.mdx,Medium,Tech Integration
+src/content/posts/warehouse-audit-checklist.mdx,high,Facility Ops
+src/content/posts/warehouse-kpis.mdx,high,Facility Ops
+src/content/posts/warehouse-management-career.mdx,high,Facility Ops
+src/content/posts/warehouse-motivation.mdx,high,Facility Ops
+src/content/posts/warehouse-optimization-strategies.mdx,low,Facility Ops
+src/content/posts/warehouse-receiving-process.mdx,high,Facility Ops
+src/content/posts/warehouse-recruiting.mdx,Medium,Facility Ops
+src/content/posts/warehouse-safety-checklist.mdx,Medium,Facility Ops
+src/content/posts/what-is-a-freight-management-system.mdx,low,Tech Integration
+src/content/posts/what-is-a-supply-chain-center-of-excellence.mdx,high,Supply Chain Strategy
+src/content/posts/what-is-a-warehouse-management-system-wms.mdx,low,Tech Integration
+src/content/posts/what-is-a-yard-management-system-yms.mdx,low,Tech Integration
+src/content/posts/what-is-dock-scheduling.mdx,high,Tech Integration
+src/content/posts/what-is-freight-transport-types-pricing-and-management-solutions.mdx,low,Carrier Mgmt
+src/content/posts/what-is-otif-and-why-is-it-valued-as-an-essential-supply-chain-metric.mdx,low,Supply Chain Strategy
+src/content/posts/what-is-real-time-inventory-tracking.mdx,Medium,Tech Integration
+src/content/posts/yard-management-process-flow.mdx,high,Facility Ops
+src/content/posts/yard-management-vs-dock-scheduling-vs-yms.mdx,low,Tech Integration
+src/content/posts/yard-visibility.mdx,Medium,Facility Ops

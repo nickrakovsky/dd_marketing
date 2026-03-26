@@ -45,8 +45,8 @@ const Navigation = ({ isOrange = false }) => {
   }, []);
 
   return (
-    <nav className={`relative z-50 transition-colors duration-300 ${
-      isOrange ? "bg-[#fd4f00]" : "bg-[#FFF8E9] dark:bg-gray-900"
+    <nav className={`z-50 transition-colors duration-300 ${
+      isOrange ? "relative bg-transparent" : "relative bg-[#FFF8E9] dark:bg-gray-900"
     }`}>
       <div className="container mx-auto px-0 md:px-8 pt-4 md:pt-12 pb-4 md:pb-6">
         <div className="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
@@ -103,7 +103,7 @@ const Navigation = ({ isOrange = false }) => {
             </div>
 
             <a
-              href={`${MAIN_SITE}/#features`}
+              href={`${cleanBase}/home-draft#features`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${
                 isOrange 
                   ? "text-white hover:text-white/80" 
@@ -214,7 +214,7 @@ const Navigation = ({ isOrange = false }) => {
               </div>
 
               <a
-                href={`${MAIN_SITE}/#features`}
+                href={`${cleanBase}/home-draft#features`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
                   isOrange 
                     ? "text-white border-white/20" 
