@@ -1,0 +1,78 @@
+---
+// src/components/home/Benefits.astro
+import { Image } from 'astro:assets';
+import managersOfficeImg from '../../assets/images/Managers-Office.png';
+import dockInteriorImg from '../../assets/images/Dock-Interior.png';
+import warehouseInteriorImg from '../../assets/images/Warehouse-Interior.png';
+import dockExteriorImg from '../../assets/images/Dock-Exterior.png';
+
+const features = [
+  {
+    title: "Spot Bottlenecks in your Docks and Yard",
+    description: "See exactly what's in your loading dock and yard at a glance, and estimate the loading time for each truck.",
+    link: "/benefits/see-everything",
+    image: managersOfficeImg,
+    alt: "Manager overlooking loading dock operations"
+  },
+  {
+    title: "Incentivize Carrier Punctuality",
+    description: "Show them, with data, how sticking to your schedule gets their trucks in and out of your facility faster.",
+    link: "/benefits/delight-carriers",
+    image: dockInteriorImg,
+    alt: "Inside view of a busy loading dock"
+  },
+  {
+    title: "Spread Your Appointments Throughout the Day",
+    description: "Predict how much manpower you'll need and optimize your operations over time.",
+    link: "/benefits/increase-capacity",
+    image: warehouseInteriorImg,
+    alt: "Warehouse interior with organized cargo"
+  },
+  {
+    title: "Say Goodbye to Spreadsheets & Paper",
+    description: "Carriers book and you stay in control. Replace calls and emails with an easy interface that sends automatic notifications.",
+    link: "/benefits/digitize-operations",
+    image: dockExteriorImg,
+    alt: "Exterior view of loading docks"
+  }
+];
+---
+
+<section class="py-20 bg-[#FFF8E9]">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col gap-16 max-w-7xl mx-auto">
+      
+      {features.map((feature, index) => (
+        <div class={`flex flex-col lg:flex-row items-center gap-10 lg:gap-16 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+          
+          {/* Text Side */}
+          <div class="w-full lg:w-5/12 flex-shrink-0 space-y-6">
+            <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl text-black uppercase leading-tight">
+              {feature.title}
+            </h2>
+            <div class="w-16 h-1 bg-[#FF5507]"></div>
+            <p class="font-recoleta text-lg md:text-xl text-gray-700 leading-relaxed">
+              {feature.description}
+            </p>
+            <a href={feature.link} class="inline-block w-full lg:w-auto text-center px-8 py-3 bg-[#FF5507] text-white font-recoleta font-medium rounded-none hover:bg-black transition-colors duration-300 tracking-wide text-lg">
+              Learn More
+            </a>
+          </div>
+
+          {/* Image Side */}
+          <div class="w-full lg:w-7/12 flex-shrink-0">
+            <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-[4/3]">
+              <Image 
+                src={feature.image} 
+                alt={feature.alt}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404: Page Not Found | DataDocks" noindex={true}>
+    <div class="w-full h-[100dvh] flex items-center justify-center p-4 md:p-8 bg-[#FFF8E9] overflow-hidden">
+        <div class="relative w-full h-full bg-[#fd4f00] rounded-[24px] p-8 md:p-12 overflow-hidden flex flex-col justify-between">
+            
+            <div class="flex justify-center md:justify-start h-8 md:h-10">
+                <a href="/">
+                    <img src="/images/Logo.svg" alt="DataDocks Logo" class="h-full w-auto block" />
+                </a>
+            </div>
+
+            <div class="flex-grow flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end w-full gap-12 md:gap-0">
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                    <div class="overflow-hidden"><h1 class="m-0 font-bruta font-extrabold text-[clamp(28px,5vw,48px)] leading-[1.1] uppercase tracking-[-0.01em] text-black animate-slideUp" style="animation-delay: 0.1s;">Whoops!</h1></div>
+                    <div class="overflow-hidden"><h1 class="m-0 font-bruta font-extrabold text-[clamp(28px,5vw,48px)] leading-[1.1] uppercase tracking-[-0.01em] text-black animate-slideUp" style="animation-delay: 0.2s;">This Page</h1></div>
+                    <div class="overflow-hidden"><h1 class="m-0 font-bruta font-extrabold text-[clamp(28px,5vw,48px)] leading-[1.1] uppercase tracking-[-0.01em] text-black animate-slideUp" style="animation-delay: 0.3s;">Doesn't exist!</h1></div>
+                </div>
+
+                <a href="/" class="relative inline-flex items-center justify-center px-6 py-2 bg-transparent rounded-none overflow-hidden transition-colors duration-300 group no-underline shrink-0">
+                    <span class="relative z-10 font-recoleta text-lg font-normal text-white pointer-events-none">Take Me Home</span>
+                    <div class="absolute bottom-0 left-0 w-full h-full bg-black translate-y-[105%] transition-transform duration-400 ease-[cubic-bezier(0.19,1,0.22,1)] z-0 group-hover:translate-y-0"></div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</Layout>
+
+<style>
+    @keyframes slideUp {
+        from { transform: translateY(110%); }
+        to { transform: translateY(0); }
+    }
+    .animate-slideUp {
+        animation: slideUp 0.8s cubic-bezier(0.19, 1, 0.22, 1) both;
+    }
+</style>

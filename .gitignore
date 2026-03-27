@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Ignore Webflow export to keep Agent context clean
+webflow-migration/

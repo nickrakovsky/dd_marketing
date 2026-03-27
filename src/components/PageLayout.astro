@@ -24,9 +24,10 @@ import g2Src from "@/assets/g2-logo.webp";
 
 interface Props {
   content: PageContent;
+  isOrangeNav?: boolean;
 }
 
-const { content } = Astro.props;
+const { content, isOrangeNav = false } = Astro.props;
 
 // --- IMAGE PROCESSING ---
 // This runs on the server to create small, optimized thumbnails
@@ -43,17 +44,44 @@ const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
     Skip to main content
   </a>
 
-  {/* Needs client:load for mobile menu toggling */}
-  <Navigation client:idle />
-  
-  {/* Hero contains internal islands like the Gallery that manage their own loading */}
-  <Hero 
-    content={content.hero} 
-    digitizeGallery={content.digitizeGallery}
-    visibilityGallery={content.visibilityGallery}
-    capacityGallery={content.capacityGallery}
-    carriersGallery={content.carriersGallery}
-  />
+  {isOrangeNav && (
+    <div class="relative bg-gradient-hero overflow-hidden">
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <svg class="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg" opacity="0.2">
+          <defs>
+            <pattern id="hero-matrix-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1.5" fill="white" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hero-matrix-dots)" />
+        </svg>
+      </div>
+      
+      <Navigation client:idle isOrange={isOrangeNav} />
+      
+      <Hero 
+        content={content.hero} 
+        digitizeGallery={content.digitizeGallery}
+        visibilityGallery={content.visibilityGallery}
+        capacityGallery={content.capacityGallery}
+        carriersGallery={content.carriersGallery}
+      />
+    </div>
+  )}
+
+  {!isOrangeNav && (
+    <Fragment>
+      <Navigation client:idle isOrange={isOrangeNav} />
+      
+      <Hero 
+        content={content.hero} 
+        digitizeGallery={content.digitizeGallery}
+        visibilityGallery={content.visibilityGallery}
+        capacityGallery={content.capacityGallery}
+        carriersGallery={content.carriersGallery}
+      />
+    </Fragment>
+  )}
   
   {/* Static HTML: Zero JS payload. Image loads normally. */}
   <Testimonial content={content.testimonial} />

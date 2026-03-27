@@ -4,23 +4,40 @@ import react from '@astrojs/react';
 
 import sitemap from '@astrojs/sitemap';
 
+import mdx from '@astrojs/mdx';
+
 // https://astro.build/config
 export default defineConfig({
-  // Canonical URLs use datadocks.com for SEO
-  site: 'https://datadocks.com',
-  // Asset paths use /dd_marketing/ for GitHub Pages hosting
-  base: '/dd_marketing',
 
-  integrations: [tailwind(),
-    react(),
-   sitemap({
-      // Strip /dd_marketing/ and trailing slashes from sitemap URLs
-      serialize(item) {
-        item.url = item.url.replace('/dd_marketing/', '/').replace(/\/$/, '');
-        // Keep root URL with slash
-        if (item.url === '') item.url = '/';
-        return item;
-      }
-    })
-  ],
+  site: 'https://datadocks.com',
+  base: '/',
+
+  integrations: [tailwind(), react(), sitemap({
+    customPages: [
+      // Webflow pages not yet migrated to Astro
+      'https://datadocks.com/datadocks-vs-opendock',
+      'https://datadocks.com/datadocks-vs/opendock',
+      'https://datadocks.com/support',
+      'https://datadocks.com/integrations',
+      'https://datadocks.com/integrations/microsoft-power-bi',
+      'https://datadocks.com/integrations/microsoft-sso-entra',
+      'https://datadocks.com/integrations/netsuite-erp',
+      'https://datadocks.com/integrations/oracle-fusion-cloud',
+      'https://datadocks.com/integrations/sap-business-bydesign',
+      'https://datadocks.com/integrations/sap-s-4hana',
+      'https://datadocks.com/datadocks-features/access-anywhere',
+      'https://datadocks.com/datadocks-features/capacity-limits',
+      'https://datadocks.com/datadocks-features/carrier-portal',
+      'https://datadocks.com/datadocks-features/custom-rules',
+      'https://datadocks.com/datadocks-features/data-validation',
+      'https://datadocks.com/datadocks-features/dock-dashboard',
+      'https://datadocks.com/datadocks-features/documentation',
+      'https://datadocks.com/datadocks-features/efficiency-reports',
+      'https://datadocks.com/datadocks-features/integration',
+      'https://datadocks.com/datadocks-features/live-editing',
+      'https://datadocks.com/datadocks-features/notifications',
+      'https://datadocks.com/datadocks-features/yard-management',
+    ],
+  }), mdx()],
+
 });

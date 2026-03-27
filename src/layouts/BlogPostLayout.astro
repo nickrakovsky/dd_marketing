@@ -1,0 +1,385 @@
+---
+// 1. Imports
+import Layout from './Layout.astro';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+import { getFriendlyDate } from '../utils/dateFormatter';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+const { frontmatter, headings = [] as Heading[] } = Astro.props;
+const h2Headings = headings.filter((h: Heading) => h.depth === 2);
+
+// 2. Date Formatting
+const formattedDate = getFriendlyDate(frontmatter.pubDate);
+
+const formattedUpdatedDate = frontmatter.updatedDate 
+  ? getFriendlyDate(frontmatter.updatedDate)
+  : null;
+
+// 3. Dynamic Reading Time Range Formula
+const htmlContent = await Astro.slots.render('default');
+const plainText = htmlContent.replace(/<[^>]+>/g, '').trim();
+const wordCount = plainText ? plainText.split(/\s+/).length : 0;
+// Using 250 wpm for fast readers, 180 wpm for relaxed readers
+const minReadingTime = Math.max(1, Math.floor(wordCount / 250));
+const maxReadingTime = Math.max(1, Math.ceil(wordCount / 180));
+const calculatedReadTime = minReadingTime === maxReadingTime 
+  ? `${minReadingTime} min read` 
+  : `${minReadingTime}-${maxReadingTime} min read`;
+
+const finalReadTime = frontmatter.readTime || calculatedReadTime;
+---
+
+<Layout 
+  title={`${frontmatter.title} | DataDocks Blog`}
+  description={frontmatter.description}
+  image={frontmatter.cardImage}
+  type="article"
+  articleData={{
+    author: frontmatter.author,
+    pubDate: frontmatter.pubDate,
+    updatedDate: frontmatter.updatedDate,
+    section: frontmatter.category
+  }}
+>
+  <div class="min-h-screen flex flex-col">
+    <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
+    <Navigation client:idle />
+
+    <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-gray-900 font-recoleta text-gray-800 dark:text-gray-200 transition-colors duration-300">
+      
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pt-12 lg:pt-16 pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          <div class={`flex flex-col text-left ${frontmatter.heroFigure ? 'lg:col-span-7' : 'lg:col-span-12 w-full'} items-start order-2 lg:order-1`}>
+            
+            <div class="font-recoleta text-black dark:text-gray-200 text-xl md:text-2xl font-bold mb-4 transition-colors duration-300">
+              {frontmatter.category || "Logistics & Supply Chain"}
+            </div>
+            
+            <div class="relative inline-block mb-6 w-full">
+              <h1 class="text-5xl md:text-6xl lg:text-7xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] leading-[1.05] break-words transition-colors duration-300 text-left w-full">
+                {frontmatter.title}
+              </h1>
+              
+
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
+              <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{frontmatter.author}</div>
+              
+              <div class="flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                <span>First Published: {formattedDate}</span>
+                {formattedUpdatedDate && (
+                  <span>Last Updated: {formattedUpdatedDate}</span>
+                )}
+              </div>
+              
+              <div class="text-sm font-bold text-gray-500 dark:text-gray-300 bg-[#F8EDD9] dark:bg-gray-800 px-3 py-1 rounded-full border border-transparent dark:border-gray-700 transition-colors duration-300">
+                {finalReadTime}
+              </div>
+              
+              <div class={`flex gap-2 ${frontmatter.heroFigure ? 'ml-auto' : ''}`}>
+                <button id="theme-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 group" title="Toggle Theme" aria-label="Toggle between dark and light mode">
+                  <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 block dark:hidden group-hover:text-[#fd4f00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                  <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 hidden dark:block group-hover:text-[#ff7635] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </button>
+                <button id="text-size-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 font-bruta font-bold text-gray-700 dark:text-gray-300 hover:text-[#fd4f00] dark:hover:text-[#ff7635]" title="Toggle Text Size" aria-label="Toggle between normal and larger text sizes">
+                  Aa
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {frontmatter.heroFigure && (
+            <div class="w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
+              <div class="w-full aspect-[4/5] flex items-center justify-center overflow-visible">
+                <Image 
+                  src={frontmatter.heroFigure} 
+                  alt={`Illustration for ${frontmatter.title}`}
+                  class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300" 
+                />
+              </div>
+            </div>
+          )}
+          
+        </div>
+      </div>
+      
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-12">
+        
+        {/* Desktop Side TOC (Visible on LG+) */}
+        <aside class="hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky top-32 z-20 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pr-4">
+          {h2Headings.length > 0 && (
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <h5 class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest">Contents</h5>
+                <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[#ff7635] opacity-30"></div>
+              </div>
+              <nav>
+                <ul class="space-y-4">
+                  {h2Headings.map((heading: Heading) => (
+                    <li>
+                      <a 
+                        href={`#${heading.slug}`} 
+                        class="toc-link block text-sm font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4"
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          )}
+        </aside>
+
+        {/* Main Content Area */}
+        <div class="w-full max-w-3xl mx-auto lg:mx-0 flex-grow">
+          {/* Static TOC for Mobile */}
+          {h2Headings.length > 0 && (
+            <div class="lg:hidden mb-12 bg-[#F8EDD9] dark:bg-gray-800 p-6 rounded-2xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300">
+              <details class="group">
+                <summary class="list-none cursor-pointer flex items-center justify-between outline-none">
+                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider">Table of Contents</span>
+                  <svg class="w-5 h-5 text-[#fd4f00] transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <nav class="mt-6 border-t border-[#E5D3B3] dark:border-gray-700 pt-4">
+                  <ul class="space-y-3">
+                    {h2Headings.map((heading: Heading) => (
+                      <li>
+                        <a href={`#${heading.slug}`} class="block text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] transition-colors">
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </details>
+            </div>
+          )}
+        <article id="content" class="prose prose-lg md:prose-xl w-full max-w-none break-words transition-all duration-500
+          dark:prose-invert 
+          prose-h1:font-bruta prose-h1:text-[#fd4f00] dark:prose-h1:text-[#ff7635]
+          prose-h2:font-recoleta prose-h2:text-3xl prose-h2:font-bold prose-h2:text-black dark:prose-h2:text-white
+          prose-h3:font-recoleta prose-h3:text-2xl prose-h3:font-bold prose-h3:text-black dark:prose-h3:text-white
+          prose-h4:font-bruta prose-h4:text-black dark:prose-h4:text-white prose-h4:text-xl
+          prose-p:font-recoleta prose-p:leading-relaxed 
+          prose-a:text-[#fd4f00] dark:prose-a:text-[#ff7635] prose-a:font-semibold hover:prose-a:underline
+          prose-img:rounded-xl prose-img:w-full prose-img:border-0 prose-img:ring-0 prose-img:outline-none
+          prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
+          prose-table:block prose-table:overflow-x-auto prose-table:w-full">
+          
+          {/* If there's a mobile view, we could also render the heroFigure inline before the content, but leaving it clean for now */}
+          {frontmatter.heroFigure && (
+            <div class="w-full mb-8 lg:hidden">
+              <Image 
+                src={frontmatter.heroFigure} 
+                alt={`Illustration for ${frontmatter.title}`}
+                class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300" 
+              />
+            </div>
+          )}
+          
+          <slot />
+        </article>
+      </div>
+    </div>
+
+    </main>
+
+    <Footer />
+
+  </div>
+</Layout>
+
+<style is:global>
+  /* Table Wrapper & Mobile Scroll */
+  .prose table {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch; 
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #E5D3B3;
+    transition: border-color 0.3s ease;
+  }
+
+  .dark .prose table {
+    border-color: #374151; /* gray-700 */
+  }
+
+  @media (min-width: 1024px) {
+    .prose table {
+      width: calc(100% + 10rem) !important;
+      margin-left: -5rem !important;
+    }
+  }
+
+  /* Table Headers */
+  .prose th {
+    padding: 14px 18px !important;
+    height: 48px;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    color: rgb(43, 43, 43) !important;
+    background-color: #F8EDD9 !important;
+    border-bottom: 2px solid #fd4f00 !important;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+  }
+
+  .dark .prose th {
+    background-color: #1f2937 !important; /* gray-800 */
+    color: #f3f4f6 !important; /* gray-100 */
+    border-bottom: 2px solid #ff7635 !important;
+  }
+
+  /* Standard Cells */
+  .prose td {
+    min-width: 150px; 
+    padding: 14px 18px !important; 
+    border-bottom: 1px solid rgba(229, 211, 179, 0.5) !important;
+    transition: border-color 0.3s ease;
+  }
+
+  .dark .prose td {
+    border-bottom: 1px solid rgba(55, 65, 81, 0.5) !important; /* gray-700 */
+  }
+
+  /* Zebra Striping */
+  .prose tr:nth-child(even) td {
+    background-color: rgba(255, 255, 255, 0.4); 
+    transition: background-color 0.3s ease;
+  }
+
+  .dark .prose tr:nth-child(even) td {
+    background-color: rgba(17, 24, 39, 0.4); /* gray-900 */
+  }
+
+  /* Active state for scroll spy */
+  .toc-link.active {
+    color: #fd4f00 !important;
+    border-left-color: #fd4f00 !important;
+    font-weight: 700;
+  }
+  .dark .toc-link.active {
+    color: #ff7635 !important;
+    border-left-color: #ff7635 !important;
+  }
+
+  /* Smooth transitions for text resizing */
+  article#content, 
+  article#content p, 
+  article#content li {
+    transition: font-size 0.3s ease, line-height 0.3s ease;
+  }
+
+  /* Scaled Text Logic for .text-scaled */
+  article.text-scaled,
+  article.text-scaled p,
+  article.text-scaled li {
+    font-size: 1.25rem !important; /* 20px mobile */
+    line-height: 1.8 !important;
+  }
+  @media (min-width: 768px) {
+    article.text-scaled,
+    article.text-scaled p,
+    article.text-scaled li {
+      font-size: 1.5rem !important; /* 24px desktop */
+      line-height: 1.85 !important;
+    }
+  }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
+
+<script is:inline>
+  // Immediately apply theme preference to avoid FOUC
+  (function() {
+    try {
+      const dflt = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || (!savedTheme && dflt === 'dark')) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {}
+  })();
+
+  function setupBlogInteractions() {
+    // Theme Toggle Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+      themeToggle.onclick = () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      };
+    }
+
+    // Text Size Toggle Logic
+    const textSizeToggle = document.getElementById('text-size-toggle');
+    const article = document.getElementById('content');
+    
+    // Check initial text scale
+    try {
+      if (localStorage.getItem('text-scaled') === 'true') {
+        article?.classList.add('text-scaled');
+      } else {
+        article?.classList.remove('text-scaled');
+      }
+    } catch (e) {}
+
+    if (textSizeToggle) {
+      textSizeToggle.onclick = () => {
+        article?.classList.toggle('text-scaled');
+        const isScaled = article?.classList.contains('text-scaled');
+        localStorage.setItem('text-scaled', isScaled ? 'true' : 'false');
+      };
+    }
+  }
+
+  // Run immediately for first load or when script is re-evaluated by Astro
+  setupBlogInteractions();
+
+  // Ensure it runs after View Transitions swap
+  if (typeof window !== 'undefined' && !window.blogInteractionsSetup) {
+    document.addEventListener('astro:after-swap', setupBlogInteractions);
+    window.blogInteractionsSetup = true;
+  }
+
+  function setupScrollSpy() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          if (!id) return;
+          
+          document.querySelectorAll('.toc-link').forEach(link => {
+            const isActive = link.getAttribute('href') === `#${id}`;
+            link.classList.toggle('active', isActive);
+          });
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px' });
+
+    document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
+  }
+  
+  if (typeof window !== 'undefined') {
+    setupScrollSpy();
+    document.addEventListener('astro:after-swap', setupScrollSpy);
+  }
+</script>

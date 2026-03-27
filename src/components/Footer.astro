@@ -85,7 +85,7 @@ const columns = {
   <div class="container mx-auto px-6 max-w-6xl">
     
     {/* TOP SECTION: LINKS */}
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4 mb-16">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-16 gap-x-8 lg:gap-4 mb-16">
       
       {/* 1. CONTACT */}
       <div class="col-span-1">
@@ -186,10 +186,9 @@ const columns = {
 
       {/* Center: Government Funding */}
       <div class="flex items-center gap-4 opacity-90 hover:opacity-100 transition-opacity">
-        <div class="text-[10px] leading-tight text-right text-gray-300 hidden md:block">
-          Funded by the Federal Economic Development<br/>Agency for Southern Ontario
+        <div class="sr-only">
+          Funded by the Federal Economic Development Agency for Southern Ontario
         </div>
-        <div class="h-8 w-px bg-white/30 hidden md:block"></div>
         
         {/* UPDATED: Canada Badge */}
         <Image 

@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
@@ -9,11 +10,21 @@ interface Props {
     title: string;
     description?: string;
     image?: string;
-    type?: "website" | "article";
+    type?: "website" | "article" | "video";
     noindex?: boolean; 
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
+    };
+    articleData?: {
+        author: string;
+        pubDate: Date;
+        updatedDate?: Date;
+        section?: string;
+    };
+    videoData?: {
+        youtubeId: string;
+        uploadDate: Date;
     };
 }
 
@@ -23,7 +34,9 @@ const {
   image = "/og-default.jpg",
   type = "website",
   noindex = false,
-  schemaData
+  schemaData,
+  articleData,
+  videoData
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
@@ -32,85 +45,123 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
-// --- SEMANTIC SCHEMA GENERATION ---
+// 5. Schema Assembly
+const graph: any[] = [
+  // 1. Organization (Identity)
+  {
+    "@type": "Organization",
+    "@id": "https://datadocks.com/#organization",
+    "name": "DataDocks",
+    "url": "https://datadocks.com",
+    "logo": "https://datadocks.com/logo.png",
+    "sameAs": [
+      "https://linkedin.com/company/datadocks",
+      "https://twitter.com/datadocks",
+      "https://www.youtube.com/@DataDocks",
+      "https://www.capterra.com/p/179266/DataDocks/"
+    ]
+  },
+  // 2. WebPage (Accessibility & Context)
+  {
+    "@type": "ItemPage",
+    "@id": canonicalURL.toString(),
+    "url": canonicalURL.toString(),
+    "name": title,
+    "description": description,
+    "isPartOf": { "@id": "https://datadocks.com/#website" },
+    "primaryImageOfPage": { "@id": socialImageURL.toString() },
+    "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
+    "accessibilityFeature": ["alternativeText", "ARIA"],
+    "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` }
+  },
+  // 3. SoftwareApplication (Industry Specificity)
+  {
+    "@type": "SoftwareApplication",
+    "name": "DataDocks",
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": "Dock Scheduling",
+    "operatingSystem": "Cloud-based",
+    "description": "Dock scheduling and yard management software for logistics facilities.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "sameAs": [
+      "https://www.wikidata.org/wiki/Q6667674",
+      "https://www.wikidata.org/wiki/Q4781631"
+    ]
+  },
+  // 4. Breadcrumbs (Structure)
+  {
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalURL.toString()}#breadcrumb`,
+    "itemListElement": Astro.url.pathname.split('/').filter(Boolean).map((path, index, arr) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
+    }))
+  }
+];
+
+if (schemaData?.faq) {
+  graph.push({
+    "@type": "FAQPage",
+    "mainEntity": schemaData.faq.map((item: any) => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": { "@type": "Answer", "text": item.answer }
+    }))
+  });
+}
+
+if (type === 'article' && articleData) {
+  graph.push({
+    "@type": "BlogPosting",
+    "@id": `${canonicalURL.toString()}#article`,
+    "mainEntityOfPage": { "@id": canonicalURL.toString() },
+    "headline": title,
+    "description": description,
+    "image": socialImageURL.toString(),
+    "datePublished": articleData.pubDate.toISOString(),
+    "dateModified": (articleData.updatedDate || articleData.pubDate).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": articleData.author,
+      "url": "https://datadocks.com/about"
+    },
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "articleSection": articleData.section
+  });
+}
+
+if (videoData) {
+  graph.push({
+    "@type": "VideoObject",
+    "name": title,
+    "description": description,
+    "thumbnailUrl": [
+      `https://img.youtube.com/vi/${videoData.youtubeId}/maxresdefault.jpg`,
+      `https://img.youtube.com/vi/${videoData.youtubeId}/hqdefault.jpg`
+    ],
+    "uploadDate": videoData.uploadDate.toISOString(),
+    "contentUrl": `https://www.youtube.com/watch?v=${videoData.youtubeId}`,
+    "embedUrl": `https://www.youtube.com/embed/${videoData.youtubeId}`,
+    "publisher": { "@id": "https://datadocks.com/#organization" }
+  });
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@graph": [
-    // 1. Organization (Identity)
-    {
-      "@type": "Organization",
-      "@id": "https://datadocks.com/#organization",
-      "name": "DataDocks",
-      "url": "https://datadocks.com",
-      "logo": "https://datadocks.com/logo.png",
-      "sameAs": [
-        "https://linkedin.com/company/datadocks",
-        "https://twitter.com/datadocks",
-        "https://www.youtube.com/@DataDocks",
-        "https://www.capterra.com/p/179266/DataDocks/"
-      ]
-    },
-    // 2. WebPage (Accessibility & Context)
-    {
-      "@type": "ItemPage",
-      "@id": canonicalURL.toString(),
-      "url": canonicalURL.toString(),
-      "name": title,
-      "description": description,
-      "isPartOf": { "@id": "https://datadocks.com/#website" },
-      "primaryImageOfPage": { "@id": socialImageURL.toString() },
-      "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
-      "accessibilityFeature": ["alternativeText", "ARIA"],
-      "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` }
-    },
-    // 3. SoftwareApplication (Industry Specificity)
-    {
-      "@type": "SoftwareApplication",
-      "name": "DataDocks",
-      "applicationCategory": "BusinessApplication",
-      "applicationSubCategory": "Dock Scheduling",
-      "operatingSystem": "Cloud-based",
-      "description": "Dock scheduling and yard management software for logistics facilities.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock"
-      },
-      // CORRECTED SEMANTIC ANCHORS
-      "sameAs": [
-        "https://www.wikidata.org/wiki/Q6667674", // Logistics Automation
-        "https://www.wikidata.org/wiki/Q4781631"  // Appointment Scheduling Software
-      ]
-    },
-    // 4. Breadcrumbs (Structure)
-    {
-        "@type": "BreadcrumbList",
-        "@id": `${canonicalURL.toString()}#breadcrumb`,
-        "itemListElement": Astro.url.pathname.split('/').filter(Boolean).map((path, index, arr) => ({
-            "@type": "ListItem",
-            "position": index + 1,
-            "name": path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-            "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
-        }))
-    },
-    // 5. FAQ (Safe to include on Solutions pages)
-    ...(schemaData?.faq ? [{
-      "@type": "FAQPage",
-      "mainEntity": schemaData.faq.map(item => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": { "@type": "Answer", "text": item.answer }
-      }))
-    }] : [])
-  ]
+  "@graph": graph
 };
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
-        {/* TIER 1: ESSENTIALS */}
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <title>{title}</title>
@@ -118,11 +169,8 @@ const jsonLd = {
         <link rel="canonical" href={canonicalURL} />
         <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
         <meta name="generator" content={Astro.generator} />
-        
-        {/* INDUSTRY CLARITY */}
         <meta name="keywords" content="dock scheduling software, yard management system, logistics SaaS, supply chain automation" />
 
-        {/* TIER 2: SOCIAL GRAPH */}
         <meta property="og:type" content={type} />
         <meta property="og:url" content={canonicalURL} />
         <meta property="og:title" content={title} />
@@ -137,15 +185,15 @@ const jsonLd = {
         <meta property="twitter:image" content={socialImageURL} />
         <meta name="twitter:creator" content="@datadocks" />
 
-        {/* TIER 4: POLISH */}
         <link rel="icon" href="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d25ab9ed0aca15eca65b16_Favicon.png" />
         <link rel="sitemap" href="https://datadocks.com/benefits/sitemap-index.xml" />
         <meta name="theme-color" content="#FFF8E9" />
 
-        {/* TIER 3: DEEP SCHEMA */}
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" is:inline defer></script>
 
-        {/* PERFORMANCE & ANALYTICS */}
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
         <link rel="preconnect" href="https://app.bentonow.com" />
         <link rel="preconnect" href="https://fast.bentonow.com" />
         
@@ -154,9 +202,8 @@ const jsonLd = {
             @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaMed}') format('woff2'); font-weight: 500; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
-        `} />
+        `}></style>
 
-        {/* Google Analytics 4 */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-EZMTT6QYLJ"></script>
         <script is:inline>
             window.dataLayer = window.dataLayer || [];
@@ -169,6 +216,7 @@ const jsonLd = {
             window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
         </script>
         <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
+        <ViewTransitions />
     </head>
     <body>
         <slot />
@@ -176,5 +224,5 @@ const jsonLd = {
 </html>
 
 <style>
-    html, body { margin: 0; width: 100%; height: 100%; }
+    html, body { margin: 0; width: 100%; overflow-x: hidden; }
 </style>

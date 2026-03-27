@@ -1,3 +1,35 @@
 ---
-return Astro.redirect('https://www.datadocks.com');
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.jsx';
+import Hero from '../components/home/Hero.astro';
+import Clients from '../components/home/Clients.astro';
+import Benefits from '../components/home/Benefits.astro';
+import FeatureGrid from '../components/home/FeatureGrid.astro';
+import Testimonials from '../components/home/Testimonials.tsx';
+import CTA from '../components/home/CTA.astro';
+import Footer from '../components/Footer.astro';
 ---
+
+<Layout title="Dock Scheduling Software for Warehouses | DataDocks">
+
+  <Navigation client:load />
+
+  <main class="bg-[#FFF8E9] min-h-screen">
+
+    <Hero />
+
+    <Clients />
+
+    <Benefits />
+
+    <FeatureGrid />
+
+    <Testimonials client:load />
+
+    <CTA />
+
+  </main>
+
+  <Footer />
+
+</Layout>
