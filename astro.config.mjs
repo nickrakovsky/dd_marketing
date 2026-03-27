@@ -11,6 +11,7 @@ export default defineConfig({
 
   site: 'https://datadocks.com',
   base: '/',
+  trailingSlash: 'never',
 
   integrations: [tailwind(), react(), sitemap({
     filter: (page) => !page.includes('/home-draft'),
