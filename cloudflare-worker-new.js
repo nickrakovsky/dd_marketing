@@ -62,8 +62,9 @@ async function rewriteWebflowHTML(response) {
 
   let html = await response.text();
 
-  // Replace Webflow staging URL with production URL
+  // Replace Webflow staging URL with production URL (with and without protocol)
   html = html.replace(/https:\/\/datadocks-staging\.webflow\.io/g, "https://datadocks.com");
+  html = html.replace(/datadocks-staging\.webflow\.io/g, "datadocks.com");
 
   // Inline Webflow CSS to eliminate render blocking
   const cssMatch = html.match(/<link[^>]*href="(https:\/\/cdn\.prod\.website-files\.com\/[^"']+\.css)"[^>]*>/);
