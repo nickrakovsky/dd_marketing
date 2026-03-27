@@ -33,6 +33,12 @@ export default {
       return fetch(request);
     }
 
+    // Redirect www to non-www
+    if (url.hostname === "www.datadocks.com") {
+      url.hostname = "datadocks.com";
+      return Response.redirect(url.toString(), 301);
+    }
+
     // Proxy Webflow paths
     if (shouldProxyToWebflow(url.pathname)) {
       const webflowUrl = new URL(url.pathname + url.search, WEBFLOW_ORIGIN);
