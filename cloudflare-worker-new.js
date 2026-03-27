@@ -14,9 +14,6 @@ const WEBFLOW_PATHS = [
   "/support",
 ];
 
-// Paths that should NOT have trailing slashes stripped (static files, api, etc.)
-const TRAILING_SLASH_IGNORE = ["/cdn-cgi/", "/_astro/"];
-
 function shouldProxyToWebflow(pathname) {
   return WEBFLOW_PATHS.some(path => {
     if (path.endsWith("/")) {
@@ -39,13 +36,6 @@ export default {
     // Redirect www to non-www
     if (url.hostname === "www.datadocks.com") {
       url.hostname = "datadocks.com";
-      return Response.redirect(url.toString(), 301);
-    }
-
-    // Strip trailing slashes (except root and static assets)
-    if (url.pathname !== "/" && url.pathname.endsWith("/") &&
-        !TRAILING_SLASH_IGNORE.some(p => url.pathname.startsWith(p))) {
-      url.pathname = url.pathname.replace(/\/+$/, "");
       return Response.redirect(url.toString(), 301);
     }
 
