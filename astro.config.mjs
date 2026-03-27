@@ -13,6 +13,7 @@ export default defineConfig({
   base: '/',
 
   integrations: [tailwind(), react(), sitemap({
+    filter: (page) => !page.includes('/home-draft'),
     customPages: [
       // Webflow pages not yet migrated to Astro
       'https://datadocks.com/datadocks-vs-opendock',

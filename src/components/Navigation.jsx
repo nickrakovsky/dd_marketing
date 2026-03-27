@@ -21,7 +21,7 @@ const Navigation = ({ isOrange = false }) => {
     { label: "Digitize Operations", href: `${cleanBase}/benefits/digitize-operations` },
   ];
 
-  const MAIN_SITE = "https://www.datadocks.com";
+  const MAIN_SITE = "";
 
   const handleMouseEnter = () => {
     if (dropdownTimeoutRef.current) {
@@ -103,7 +103,7 @@ const Navigation = ({ isOrange = false }) => {
             </div>
 
             <a
-              href={`${cleanBase}/home-draft#features`}
+              href={`/#features`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${
                 isOrange 
                   ? "text-white hover:text-white/80" 
@@ -214,7 +214,7 @@ const Navigation = ({ isOrange = false }) => {
               </div>
 
               <a
-                href={`${cleanBase}/home-draft#features`}
+                href={`/#features`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
                   isOrange 
                     ? "text-white border-white/20" 
