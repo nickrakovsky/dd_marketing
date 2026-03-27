@@ -39,7 +39,7 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 <Layout 
   title={`${frontmatter.title} | DataDocks Blog`}
   description={frontmatter.description}
-  image={frontmatter.cardImage}
+  image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
   articleData={{
     author: frontmatter.author,
