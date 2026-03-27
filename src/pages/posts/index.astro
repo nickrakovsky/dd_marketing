@@ -141,9 +141,6 @@ const description = "DataDocks is a dock appointment scheduling software, that h
 ---
 
 <Layout title={title} description={description}>
-  {/* Lite YouTube Embed */}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
 
   <div class="min-h-screen flex flex-col">
     
@@ -168,7 +165,7 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <span class="font-bruta uppercase text-sm md:text-base text-center text-gray-800 group-hover:text-[#fd4f00] transition-colors leading-tight">{category}</span>
+              <span class="font-bruta uppercase text-base md:text-lg text-center text-gray-800 group-hover:text-[#fd4f00] transition-colors leading-tight">{category}</span>
             </a>
           ))}
         </div>
@@ -186,131 +183,150 @@ const description = "DataDocks is a dock appointment scheduling software, that h
               <div class="flex items-center justify-between mb-12">
                 <h3 class={`font-bruta text-3xl md:text-5xl uppercase tracking-tiight ${theme.neutral}`}>{category}</h3>
               </div>
-              
-              {/* Scrollable Carousel Grid */}
-              <div class="grid grid-flow-col-dense grid-rows-2 auto-cols-[85vw] sm:auto-cols-[300px] lg:auto-cols-[calc((100%-4.5rem)/4)] gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide" style="-ms-overflow-style: none; scrollbar-width: none;">
+                           {/* Scrollable Carousel Wrapper */}
+              <div class="relative carousel-container group/carousel">
+                {/* Navigation Arrows */}
+                <button 
+                  class="absolute -left-4 md:-left-12 top-[calc(50%-2rem)] -translate-y-1/2 z-20 bg-white/90 dark:bg-black/90 hover:bg-[#fd4f00] hover:text-white text-black dark:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/10 dark:border-white/20 shadow-lg hidden md:flex items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:!opacity-0 focus:outline-none focus:ring-2 focus:ring-[#fd4f00]"
+                  aria-label="Scroll Left"
+                  data-carousel-prev
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
                 
-                {posts.map((post, postIdx) => {
-                  const type = post.data.contentType || 'article';
-                  // isFeatured must never be true for video or short
-                  const isFeatured = postIdx === 0 && type === 'article';
+                <button 
+                  class="absolute -right-4 md:-right-12 top-[calc(50%-2rem)] -translate-y-1/2 z-20 bg-white/90 dark:bg-black/90 hover:bg-[#fd4f00] hover:text-white text-black dark:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/10 dark:border-white/20 shadow-lg hidden md:flex items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:!opacity-0 focus:outline-none focus:ring-2 focus:ring-[#fd4f00]"
+                  aria-label="Scroll Right"
+                  data-carousel-next
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
+
+                {/* Scrollable Carousel Grid */}
+                <div class="grid grid-flow-col-dense grid-rows-2 auto-cols-[85vw] sm:auto-cols-[300px] lg:auto-cols-[calc((100%-4.5rem)/4)] gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide scroll-smooth" data-carousel style="-ms-overflow-style: none; scrollbar-width: none;">
                   
-                  // Aspect Ratios & Grid Spans
-                  let spanClass = "row-span-1 col-span-1 aspect-[4/5]";
-                  if (isFeatured) {
-                    spanClass = "row-span-2 col-span-2 aspect-[4/5] hidden sm:flex"; 
-                  } else if (type === 'video') {
-                    spanClass = "row-span-1 col-span-2 h-full";
-                  } else if (type === 'short') {
-                    spanClass = "row-span-2 col-span-1 h-full";
-                  }
+                  {posts.map((post, postIdx) => {
+                    const type = post.data.contentType || 'article';
+                    // isFeatured must never be true for video or short
+                    const isFeatured = postIdx === 0 && type === 'article';
+                    
+                    // Aspect Ratios & Grid Spans
+                    let spanClass = "row-span-1 col-span-1 aspect-[4/5]";
+                    if (isFeatured) {
+                      spanClass = "row-span-2 col-span-2 aspect-[4/5] hidden sm:flex"; 
+                    } else if (type === 'video') {
+                      spanClass = "row-span-1 col-span-2 h-full";
+                    } else if (type === 'short') {
+                      spanClass = "row-span-2 col-span-1 h-full";
+                    }
 
-                  const fallbackImg = getFirstImage(post.body || '');
-                  const finalReadTime = post.data.readTime || getReadTime(post.body || '');
+                    const fallbackImg = getFirstImage(post.body || '');
+                    const finalReadTime = post.data.readTime || getReadTime(post.body || '');
 
-                  // Pure Video Card Rendering
-                  if (!isFeatured && (type === 'video' || type === 'short') && post.data.youtubeId) {
-                    const isShort = type === 'short';
-                    return (
-                      <a 
-                        href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace('//posts', '/posts')} 
-                        class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 ${theme.border} ${theme.hoverBorder} ${spanClass}`}
-                        data-priority={post.data.priority}
-                      >
-                        {isShort ? (
-                          <>
-                            {/* Short: Fixed 9:16 aspect ratio for the frame to prevent zoom, banner gets the rest */}
-                            <div class="relative w-full aspect-[9/16] overflow-hidden shrink-0">
+                    // Pure Video Card Rendering
+                    if (!isFeatured && (type === 'video' || type === 'short') && post.data.youtubeId) {
+                      const isShort = type === 'short';
+                      return (
+                        <a 
+                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace('//posts', '/posts')} 
+                          class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 ${theme.border} ${theme.hoverBorder} ${spanClass}`}
+                          data-priority={post.data.priority}
+                        >
+                          {isShort ? (
+                            <>
+                              {/* Short: Fixed 9:16 aspect ratio for the frame to prevent zoom, banner gets the rest */}
+                              <div class="relative w-full aspect-[9/16] overflow-hidden shrink-0">
+                                <lite-youtube 
+                                  videoid={post.data.youtubeId} 
+                                  playlabel={post.data.title} 
+                                  style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                                  class="w-full h-full pointer-events-none" 
+                                />
+                                {/* Overlay: visible by default, hides on hover */}
+                                <div class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
+                                  <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Short</span>
+                                </div>
+                              </div>
+                              <div class={`flex-grow flex flex-col justify-center px-4 py-3 ${theme.neutral} border-t ${theme.border} bg-black/5`}>
+                                <h4 class={`text-xl md:text-[22px] font-bold font-bruta uppercase leading-tight line-clamp-3 ${theme.neutral}`}>{post.data.title}</h4>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              {/* Longform: edge-to-edge video, no padding */}
                               <lite-youtube 
                                 videoid={post.data.youtubeId} 
                                 playlabel={post.data.title} 
                                 style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
-                                class="w-full h-full pointer-events-none" 
+                                class="w-full h-full aspect-video pointer-events-none" 
                               />
                               {/* Overlay: visible by default, hides on hover */}
-                              <div class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
-                                <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Short</span>
+                              <div class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
+                                <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Video</span>
+                                 <h4 class="text-white text-center text-lg md:text-xl font-bruta uppercase leading-[1.15] line-clamp-4">{post.data.title}</h4>
                               </div>
+                            </>
+                          )}
+                        </a>
+                      );
+                    }
+
+                    // Non-Video and Featured Card Rendering
+                    return (
+                      <a 
+                        href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
+                        class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl ${spanClass} ${isFeatured ? 'bg-white border-0' : `bg-transparent border-2 ${theme.border} ${theme.hoverBorder}`}`}
+                        data-priority={post.data.priority}
+                      >
+                        {isFeatured ? (
+                          <>
+                            <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
+                              {post.data.youtubeId ? (
+                                 <img src={`https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" />
+                              ) : post.data.cardImage ? (
+                                <Image src={post.data.cardImage} alt={post.data.title} class="w-full h-full object-cover" />
+                              ) : fallbackImg ? (
+                                <Image src={fallbackImg} alt={post.data.title} class="w-full h-full object-cover" />
+                              ) : (
+                                <div class={`w-full h-full opacity-80 ${fallbackGradients[post.slug.length % fallbackGradients.length]}`}></div>
+                              )}
+                              {/* Badges (Video/Short cannot be featured, so no badges needed here) */}
                             </div>
-                            <div class={`flex-grow flex flex-col justify-center px-4 py-3 ${theme.neutral} border-t ${theme.border} bg-black/5`}>
-                              <h4 class={`text-sm md:text-base font-bold font-bruta uppercase leading-tight line-clamp-3 ${theme.neutral}`}>{post.data.title}</h4>
+                            <div class={`w-full flex-grow p-6 md:p-8 flex flex-col justify-between min-h-[33.33%] ${theme.accent}`}>
+                              <div>
+                                 <h4 class={`text-2xl md:text-4xl font-bold font-bruta uppercase mb-4 leading-[1.1] opacity-90 transition-opacity group-hover:opacity-100 line-clamp-3`}>{post.data.title}</h4>
+                                 <div class="w-12 h-[3px] bg-current opacity-30 mb-4"></div>
+                                 <p class="text-base md:text-lg opacity-80 line-clamp-2 md:line-clamp-3 mb-4">{post.data.description || 'Click here to read the full article.'}</p>
+                              </div>
+                              <div class="flex flex-col gap-3 md:gap-4 mt-auto">
+                                 <span class={`font-bold flex items-center gap-2 opacity-90 text-lg md:text-xl`}>Read More <span class="text-2xl leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
+                                 <div class="w-full h-px bg-current opacity-20"></div>
+                                 <div class="flex items-center justify-between">
+                                   <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">{finalReadTime}</span>
+                                   <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
+                                 </div>
+                              </div>
                             </div>
                           </>
                         ) : (
-                          <>
-                            {/* Longform: edge-to-edge video, no padding */}
-                            <lite-youtube 
-                              videoid={post.data.youtubeId} 
-                              playlabel={post.data.title} 
-                              style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
-                              class="w-full h-full aspect-video pointer-events-none" 
-                            />
-                            {/* Overlay: visible by default, hides on hover */}
-                            <div class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
-                              <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Video</span>
-                              <h4 class="text-white text-center text-sm md:text-base font-bruta uppercase leading-[1.15] line-clamp-4">{post.data.title}</h4>
-                            </div>
-                          </>
+                          <div class={`w-full h-full p-4 md:p-5 flex flex-col justify-between transition-colors ${theme.neutral}`}>
+                             <div class="mb-3">
+                               <h4 class={`text-xl md:text-[22px] font-bold font-bruta uppercase leading-[1.15] mb-3 line-clamp-3 ${theme.neutral}`}>{post.data.title}</h4>
+                             </div>
+                             <div class="mb-3 flex-grow flex flex-col justify-center">
+                               <p class={`text-xs md:text-sm opacity-80 line-clamp-4 mb-3 ${theme.neutral}`}>{post.data.description || 'Click here to read the full article.'}</p>
+                               <span class={`font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 mt-auto text-sm ${theme.neutral}`}>Read <span class="text-base leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
+                             </div>
+                             <div class={`pt-3 border-t flex items-center justify-between text-[10px] font-bold uppercase tracking-wider ${theme.border.replace('border-', 'border-')} border-opacity-30 ${theme.neutral}`}>
+                                <span class="opacity-70">{finalReadTime.replace(/ read$/i, '')}</span>
+                                <span class="opacity-70">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
+                             </div>
+                          </div>
                         )}
                       </a>
                     );
-                  }
-
-                  // Non-Video and Featured Card Rendering
-                  return (
-                    <a 
-                      href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
-                      class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl ${spanClass} ${isFeatured ? 'bg-white border-0' : `bg-transparent border-2 ${theme.border} ${theme.hoverBorder}`}`}
-                      data-priority={post.data.priority}
-                    >
-                      {isFeatured ? (
-                        <>
-                          <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
-                            {post.data.youtubeId ? (
-                              <img src={`https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" />
-                            ) : post.data.cardImage ? (
-                              <Image src={post.data.cardImage} alt={post.data.title} class="w-full h-full object-cover" />
-                            ) : fallbackImg ? (
-                              <Image src={fallbackImg} alt={post.data.title} class="w-full h-full object-cover" />
-                            ) : (
-                              <div class={`w-full h-full opacity-80 ${fallbackGradients[post.slug.length % fallbackGradients.length]}`}></div>
-                            )}
-                            {/* Badges (Video/Short cannot be featured, so no badges needed here) */}
-                          </div>
-                          <div class={`w-full flex-grow p-6 md:p-8 flex flex-col justify-between min-h-[33.33%] ${theme.accent}`}>
-                            <div>
-                               <h4 class={`text-2xl md:text-4xl font-bold font-bruta uppercase mb-4 leading-[1.1] opacity-90 transition-opacity group-hover:opacity-100 line-clamp-3`}>{post.data.title}</h4>
-                               <div class="w-12 h-[3px] bg-current opacity-30 mb-4"></div>
-                               <p class="text-base md:text-lg opacity-80 line-clamp-2 md:line-clamp-3 mb-4">{post.data.description || 'Click here to read the full article.'}</p>
-                            </div>
-                            <div class="flex flex-col gap-3 md:gap-4 mt-auto">
-                               <span class={`font-bold flex items-center gap-2 opacity-90 text-lg md:text-xl`}>Read More <span class="text-2xl leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
-                               <div class="w-full h-px bg-current opacity-20"></div>
-                               <div class="flex items-center justify-between">
-                                 <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">{finalReadTime}</span>
-                                 <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
-                               </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <div class={`w-full h-full p-4 md:p-5 flex flex-col justify-between transition-colors ${theme.neutral}`}>
-                           <div class="mb-3">
-                             <h4 class={`text-lg md:text-xl font-bold font-bruta uppercase leading-[1.15] mb-3 line-clamp-3 ${theme.neutral}`}>{post.data.title}</h4>
-                           </div>
-                           <div class="mb-3 flex-grow flex flex-col justify-center">
-                             <p class={`text-xs md:text-sm opacity-80 line-clamp-4 mb-3 ${theme.neutral}`}>{post.data.description || 'Click here to read the full article.'}</p>
-                             <span class={`font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 mt-auto text-sm ${theme.neutral}`}>Read <span class="text-base leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
-                           </div>
-                           <div class={`pt-3 border-t flex items-center justify-between text-[10px] font-bold uppercase tracking-wider ${theme.border.replace('border-', 'border-')} border-opacity-30 ${theme.neutral}`}>
-                              <span class="opacity-70">{finalReadTime.replace(/ read$/i, '')}</span>
-                              <span class="opacity-70">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
-                           </div>
-                        </div>
-                      )}
-                    </a>
-                  );
-                })}
+                  })}
+                </div>
               </div>
             </div>
           </section>
@@ -318,6 +334,74 @@ const description = "DataDocks is a dock appointment scheduling software, that h
       })}
 
     </main>
+    
+    <script is:inline>
+      (function() {
+        let hasAutoswiped = false;
+        let swipeObserver = null;
+
+        function initCarousels() {
+          const carousels = document.querySelectorAll('[data-carousel]');
+          
+          // 1. Initial State: All on "Page 2"
+          if (!hasAutoswiped) {
+            carousels.forEach(carousel => {
+              // Make sure to measure after layout
+              const scrollPos = carousel.offsetWidth * 0.6; // ~60% scroll for "Page 2" preview
+              carousel.scrollTo({ left: scrollPos, behavior: 'auto' });
+            });
+
+            // 2. Observer for ANY carousel entering viewport
+            if (swipeObserver) swipeObserver.disconnect();
+            swipeObserver = new IntersectionObserver((entries) => {
+              if (hasAutoswiped) return;
+              
+              if (entries.some(e => e.isIntersecting)) {
+                hasAutoswiped = true;
+                carousels.forEach(c => {
+                  c.scrollTo({ left: 0, behavior: 'smooth' });
+                });
+                swipeObserver.disconnect();
+              }
+            }, { threshold: 0.9 });
+
+            carousels.forEach(c => swipeObserver.observe(c));
+          }
+          
+          carousels.forEach(carousel => {
+            const container = carousel.closest('.carousel-container');
+            if (!container) return;
+            
+            const prevBtn = container.querySelector('[data-carousel-prev]');
+            const nextBtn = container.querySelector('[data-carousel-next]');
+
+            const getScrollAmount = () => carousel.offsetWidth * 0.8;
+
+            prevBtn?.addEventListener('click', () => {
+              carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+            });
+
+            nextBtn?.addEventListener('click', () => {
+              carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+            });
+
+            const updateButtons = () => {
+              if (prevBtn) prevBtn.disabled = carousel.scrollLeft <= 5;
+              if (nextBtn) nextBtn.disabled = carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth - 5);
+            };
+
+            carousel.addEventListener('scroll', updateButtons, { passive: true });
+            setTimeout(updateButtons, 100);
+          });
+        }
+
+        // Initialize
+        initCarousels();
+
+        // Support Astro View Transitions
+        document.addEventListener('astro:after-swap', initCarousels);
+      })();
+    </script>
 
     <Footer />
     

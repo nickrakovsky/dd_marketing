@@ -10,11 +10,21 @@ interface Props {
     title: string;
     description?: string;
     image?: string;
-    type?: "website" | "article";
+    type?: "website" | "article" | "video";
     noindex?: boolean; 
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
+    };
+    articleData?: {
+        author: string;
+        pubDate: Date;
+        updatedDate?: Date;
+        section?: string;
+    };
+    videoData?: {
+        youtubeId: string;
+        uploadDate: Date;
     };
 }
 
@@ -24,7 +34,9 @@ const {
   image = "/og-default.jpg",
   type = "website",
   noindex = false,
-  schemaData
+  schemaData,
+  articleData,
+  videoData
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
@@ -103,6 +115,42 @@ if (schemaData?.faq) {
   });
 }
 
+if (type === 'article' && articleData) {
+  graph.push({
+    "@type": "BlogPosting",
+    "@id": `${canonicalURL.toString()}#article`,
+    "mainEntityOfPage": { "@id": canonicalURL.toString() },
+    "headline": title,
+    "description": description,
+    "image": socialImageURL.toString(),
+    "datePublished": articleData.pubDate.toISOString(),
+    "dateModified": (articleData.updatedDate || articleData.pubDate).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": articleData.author,
+      "url": "https://datadocks.com/about"
+    },
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "articleSection": articleData.section
+  });
+}
+
+if (videoData) {
+  graph.push({
+    "@type": "VideoObject",
+    "name": title,
+    "description": description,
+    "thumbnailUrl": [
+      `https://img.youtube.com/vi/${videoData.youtubeId}/maxresdefault.jpg`,
+      `https://img.youtube.com/vi/${videoData.youtubeId}/hqdefault.jpg`
+    ],
+    "uploadDate": videoData.uploadDate.toISOString(),
+    "contentUrl": `https://www.youtube.com/watch?v=${videoData.youtubeId}`,
+    "embedUrl": `https://www.youtube.com/embed/${videoData.youtubeId}`,
+    "publisher": { "@id": "https://datadocks.com/#organization" }
+  });
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": graph
@@ -138,6 +186,9 @@ const jsonLd = {
         <link rel="icon" href="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d25ab9ed0aca15eca65b16_Favicon.png" />
         <link rel="sitemap" href="https://datadocks.com/benefits/sitemap-index.xml" />
         <meta name="theme-color" content="#FFF8E9" />
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" is:inline defer></script>
 
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 

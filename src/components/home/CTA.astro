@@ -19,12 +19,12 @@
         </h2>
 
         <form
-          action="https://calendly.com/nick-rakovsky/datadocks-demo"
-          target="_blank"
+          id="cta-bento-form"
           class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto align-middle min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0 translate-y-[2px] xl:translate-y-[-4px]"
         >
           <input
             type="email"
+            name="email"
             placeholder="Enter your email"
             style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
             class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none"
@@ -42,3 +42,22 @@
     </div>
   </div>
 </section>
+
+<script is:inline>
+  (function() {
+    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+    var form = document.getElementById('cta-bento-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = (form.querySelector('input[name="email"]') || {}).value;
+        if (email && window.bento) {
+          window.bento.identify(email);
+          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+        }
+        window.open(calendlyUrl, '_blank', 'noopener');
+        form.reset();
+      });
+    }
+  })();
+</script>

@@ -6,7 +6,14 @@ import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
 
-const { frontmatter } = Astro.props;
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+const { frontmatter, headings = [] as Heading[] } = Astro.props;
+const h2Headings = headings.filter((h: Heading) => h.depth === 2);
 
 // 2. Date Formatting
 const formattedDate = getFriendlyDate(frontmatter.pubDate);
@@ -34,9 +41,15 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
   description={frontmatter.description}
   image={frontmatter.cardImage}
   type="article"
+  articleData={{
+    author: frontmatter.author,
+    pubDate: frontmatter.pubDate,
+    updatedDate: frontmatter.updatedDate,
+    section: frontmatter.category
+  }}
 >
   <div class="min-h-screen flex flex-col">
-    
+    <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
     <Navigation client:idle />
 
     <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-gray-900 font-recoleta text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -73,11 +86,11 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
               </div>
               
               <div class={`flex gap-2 ${frontmatter.heroFigure ? 'ml-auto' : ''}`}>
-                <button id="theme-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 group" title="Toggle Theme">
+                <button id="theme-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 group" title="Toggle Theme" aria-label="Toggle between dark and light mode">
                   <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 block dark:hidden group-hover:text-[#fd4f00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                   <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 hidden dark:block group-hover:text-[#ff7635] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </button>
-                <button id="text-size-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 font-bruta font-bold text-gray-700 dark:text-gray-300 hover:text-[#fd4f00] dark:hover:text-[#ff7635]" title="Toggle Text Size">
+                <button id="text-size-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 font-bruta font-bold text-gray-700 dark:text-gray-300 hover:text-[#fd4f00] dark:hover:text-[#ff7635]" title="Toggle Text Size" aria-label="Toggle between normal and larger text sizes">
                   Aa
                 </button>
               </div>
@@ -99,7 +112,58 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
         </div>
       </div>
       
-      <div class="w-full max-w-3xl mx-auto px-4 md:px-12 pb-24">
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-12">
+        
+        {/* Desktop Side TOC (Visible on LG+) */}
+        <aside class="hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky top-32 z-20 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pr-4">
+          {h2Headings.length > 0 && (
+            <div class="space-y-6">
+              <div class="space-y-2">
+                <h5 class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest">Contents</h5>
+                <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[#ff7635] opacity-30"></div>
+              </div>
+              <nav>
+                <ul class="space-y-4">
+                  {h2Headings.map((heading: Heading) => (
+                    <li>
+                      <a 
+                        href={`#${heading.slug}`} 
+                        class="toc-link block text-sm font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4"
+                      >
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          )}
+        </aside>
+
+        {/* Main Content Area */}
+        <div class="w-full max-w-3xl mx-auto lg:mx-0 flex-grow">
+          {/* Static TOC for Mobile */}
+          {h2Headings.length > 0 && (
+            <div class="lg:hidden mb-12 bg-[#F8EDD9] dark:bg-gray-800 p-6 rounded-2xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300">
+              <details class="group">
+                <summary class="list-none cursor-pointer flex items-center justify-between outline-none">
+                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider">Table of Contents</span>
+                  <svg class="w-5 h-5 text-[#fd4f00] transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <nav class="mt-6 border-t border-[#E5D3B3] dark:border-gray-700 pt-4">
+                  <ul class="space-y-3">
+                    {h2Headings.map((heading: Heading) => (
+                      <li>
+                        <a href={`#${heading.slug}`} class="block text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] transition-colors">
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </details>
+            </div>
+          )}
         <article id="content" class="prose prose-lg md:prose-xl w-full max-w-none break-words transition-all duration-500
           dark:prose-invert 
           prose-h1:font-bruta prose-h1:text-[#fd4f00] dark:prose-h1:text-[#ff7635]
@@ -126,6 +190,7 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
           <slot />
         </article>
       </div>
+    </div>
 
     </main>
 
@@ -139,6 +204,7 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
   .prose table {
     display: block !important;
     width: 100% !important;
+    max-width: none !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch; 
     border-collapse: collapse;
@@ -150,6 +216,13 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 
   .dark .prose table {
     border-color: #374151; /* gray-700 */
+  }
+
+  @media (min-width: 1024px) {
+    .prose table {
+      width: calc(100% + 10rem) !important;
+      margin-left: -5rem !important;
+    }
   }
 
   /* Table Headers */
@@ -192,6 +265,17 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 
   .dark .prose tr:nth-child(even) td {
     background-color: rgba(17, 24, 39, 0.4); /* gray-900 */
+  }
+
+  /* Active state for scroll spy */
+  .toc-link.active {
+    color: #fd4f00 !important;
+    border-left-color: #fd4f00 !important;
+    font-weight: 700;
+  }
+  .dark .toc-link.active {
+    color: #ff7635 !important;
+    border-left-color: #ff7635 !important;
   }
 
   /* Smooth transitions for text resizing */
@@ -274,5 +358,28 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
   if (typeof window !== 'undefined' && !window.blogInteractionsSetup) {
     document.addEventListener('astro:after-swap', setupBlogInteractions);
     window.blogInteractionsSetup = true;
+  }
+
+  function setupScrollSpy() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          if (!id) return;
+          
+          document.querySelectorAll('.toc-link').forEach(link => {
+            const isActive = link.getAttribute('href') === `#${id}`;
+            link.classList.toggle('active', isActive);
+          });
+        }
+      });
+    }, { rootMargin: '0px 0px -75% 0px' });
+
+    document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
+  }
+  
+  if (typeof window !== 'undefined') {
+    setupScrollSpy();
+    document.addEventListener('astro:after-swap', setupScrollSpy);
   }
 </script>

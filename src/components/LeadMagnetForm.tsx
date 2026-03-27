@@ -34,7 +34,7 @@ export default function LeadMagnetForm({
     const formData = new FormData();
     formData.append("email", email);
     formData.append("redirect", redirectUrl);
-    formData.append("source", pagePath);
+    formData.append("fields[source]", pagePath);
 
     fetch(`https://track.bentonow.com/forms/${BENTO_UUID}/${eventName}`, {
       method: "POST",

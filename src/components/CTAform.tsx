@@ -18,31 +18,22 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     }
   }, []);
 
-  const bentoAction = "https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/Demo%20Subscriber";
   const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Use FormData directly from the form element — reads all named inputs reliably
-    const formData = new FormData(e.currentTarget);
-    formData.set("redirect", calendlyUrl);
-    formData.set("source", pagePath);
-
-    console.log("[CTAform] Submitting to Bento:", formData.get("email"));
-
-    fetch(bentoAction, {
-      method: "POST",
-      body: formData,
-      mode: "no-cors",
-    }).catch(() => {});
-
+    const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
+    if (email && (window as any).bento) {
+      (window as any).bento.identify(email);
+      (window as any).bento.track("Demo Subscriber", { source: pagePath });
+    }
     setIsSubmitted(true);
     window.open(calendlyUrl, "_blank", "noopener");
   };
 
   return (
     <div className="mx-auto max-w-lg mb-8">
-      
+
       {/* SUCCESS STATE */}
       <div className={`${isSubmitted ? 'flex' : 'hidden'} flex-col items-center justify-center gap-2 h-16 bg-background/50 border border-primary/20 animate-in fade-in zoom-in rounded-none p-4`}>
         <div className="flex items-center gap-2 text-primary">
@@ -55,27 +46,25 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
       </div>
 
       {/* FORM STATE */}
-      <form 
+      <form
         onSubmit={handleSubmit}
         className={`${isSubmitted ? 'hidden' : 'flex'} flex-row items-stretch gap-0 animate-in fade-in slide-in-from-bottom-4 duration-1000 shadow-none`}
       >
-        <input type="hidden" name="redirect" value={calendlyUrl} />
-        <input type="hidden" name="source" value={pagePath} />
 
         <div className="relative flex-1">
-          <Input 
+          <Input
             id="hero-email"
-            type="email" 
+            type="email"
             name="email"
-            placeholder={placeholder} 
-            required 
-            className="w-full h-10 md:h-16 border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 md:px-6 font-recoleta font-normal text-sm md:text-xl bg-background text-muted-foreground placeholder:text-muted-foreground/60" 
+            placeholder={placeholder}
+            required
+            className="w-full h-10 md:h-16 border-0 rounded-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 px-4 md:px-6 font-recoleta font-normal text-sm md:text-xl bg-background text-muted-foreground placeholder:text-muted-foreground/60"
           />
         </div>
-        <Button 
-          type="submit" 
-          variant="default" 
-          size="lg" 
+        <Button
+          type="submit"
+          variant="default"
+          size="lg"
           className="whitespace-nowrap h-10 md:h-16 bg-black hover:bg-primary text-white font-recoleta font-normal transition-colors duration-300 rounded-none px-6 md:px-8 text-sm md:text-xl shadow-none border-0"
         >
           <div className="flex items-center gap-2">

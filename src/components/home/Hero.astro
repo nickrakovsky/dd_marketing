@@ -1,5 +1,7 @@
 ---
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const bentoAction = "https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/Demo%20Subscriber?hardened=true";
+const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
 ---
 
 <section class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black">
@@ -55,12 +57,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       {/* 3. Form Area */}
       <div class="w-full max-w-[95%] md:max-w-2xl mx-auto mb-12 px-0">
         <form 
-          action="https://calendly.com/nick-rakovsky/datadocks-demo" 
-          target="_blank"
+          id="hero-bento-form"
           class="flex flex-col sm:flex-row items-stretch justify-center gap-0 bg-[#EFE2D2] sm:bg-transparent"
         >
           <input 
             type="email" 
+            name="email"
             placeholder="Enter your email" 
             style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
             class="!h-12 sm:!h-14 w-full sm:w-[22rem] px-4 text-center sm:text-left sm:hover:pl-5 sm:focus:pl-5 transition-all duration-300 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none"
@@ -123,6 +125,24 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
   }
 </style>
 
+<script is:inline>
+  (function() {
+    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+    var form = document.getElementById('hero-bento-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = (form.querySelector('input[name="email"]') || {}).value;
+        if (email && window.bento) {
+          window.bento.identify(email);
+          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+        }
+        window.open(calendlyUrl, '_blank', 'noopener');
+        form.reset();
+      });
+    }
+  })();
+</script>
 <script>
   const frame = document.getElementById('hero-mobile-frame');
   const img = document.getElementById('hero-mobile-img');
