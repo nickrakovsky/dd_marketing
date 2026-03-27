@@ -14,6 +14,9 @@ const WEBFLOW_PATHS = [
   "/support",
 ];
 
+// Paths that should NOT have trailing slashes stripped (static files, api, etc.)
+const TRAILING_SLASH_IGNORE = ["/cdn-cgi/", "/_astro/"];
+
 function shouldProxyToWebflow(pathname) {
   return WEBFLOW_PATHS.some(path => {
     if (path.endsWith("/")) {
@@ -39,6 +42,13 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    // Strip trailing slashes (except root and static assets)
+    if (url.pathname !== "/" && url.pathname.endsWith("/") &&
+        !TRAILING_SLASH_IGNORE.some(p => url.pathname.startsWith(p))) {
+      url.pathname = url.pathname.replace(/\/+$/, "");
+      return Response.redirect(url.toString(), 301);
+    }
+
     // Proxy Webflow paths
     if (shouldProxyToWebflow(url.pathname)) {
       const webflowUrl = new URL(url.pathname + url.search, WEBFLOW_ORIGIN);
@@ -48,7 +58,7 @@ export default {
       });
 
       const response = await fetch(webflowRequest);
-      return rewriteWebflowHTML(response);
+      return rewriteWebflowHTML(response, url.pathname);
     }
 
     // Everything else falls through to Cloudflare Pages (Astro)
@@ -56,7 +66,7 @@ export default {
   },
 };
 
-async function rewriteWebflowHTML(response) {
+async function rewriteWebflowHTML(response, pathname) {
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
 
@@ -65,6 +75,15 @@ async function rewriteWebflowHTML(response) {
   // Replace Webflow staging URL with production URL (with and without protocol)
   html = html.replace(/https:\/\/datadocks-staging\.webflow\.io/g, "https://datadocks.com");
   html = html.replace(/datadocks-staging\.webflow\.io/g, "datadocks.com");
+
+  // Inject canonical tag if missing
+  if (!html.includes('rel="canonical"')) {
+    const canonicalUrl = `https://datadocks.com${pathname}`;
+    html = html.replace(
+      '</title>',
+      `</title>\n    <link rel="canonical" href="${canonicalUrl}" />`
+    );
+  }
 
   // Inline Webflow CSS to eliminate render blocking
   const cssMatch = html.match(/<link[^>]*href="(https:\/\/cdn\.prod\.website-files\.com\/[^"']+\.css)"[^>]*>/);
