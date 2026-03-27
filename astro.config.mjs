@@ -8,6 +8,7 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
+
   site: 'https://datadocks.com',
   base: '/',
 
@@ -38,4 +39,5 @@ export default defineConfig({
       'https://datadocks.com/datadocks-features/yard-management',
     ],
   }), mdx()],
+
 });
