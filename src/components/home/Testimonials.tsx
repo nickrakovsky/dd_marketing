@@ -6,26 +6,26 @@ const testimonials = [
   {
     quote: "We've had great results and the DataDocks team has been accommodating in making the software fit with what we need. It has helped streamline things on our end so much.",
     author: "Carla Thorel, ClearTech",
-    image: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/645d08a96832e8883732d790_6453b6ddd92c58d0e657d749_carla-thorel%20(1).webp",
-    logo: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b6d83e05a6740876fce6_cleartech.svg"
+    image: "/images/testimonials/carla-thorel.webp",
+    logo: "/images/testimonials/cleartech.svg"
   },
   {
     quote: "DataDocks blew the competition out of the water. They are quick and timely in their responses, and very easy to work with. I recommend them for anyone who needs more than an off the shelf appointment scheduling solution.",
     author: "Salah El-Jamil, AJC Logistics",
-    image: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b6ccc2dfb5702a926669_Salah%20El-Jamil.jpg",
-    logo: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b6c5acd68a66697b90d8_AJC.svg"
+    image: "/images/testimonials/salah-el-jamil.jpg",
+    logo: "/images/testimonials/ajc.svg"
   },
   {
     quote: "The integration process has been seamless, and the tool is easy for our vendors to use. Whenever we need them, the team is quick to help us resolve any issues.",
     author: "Lina Wong, Stitch Fix",
-    image: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b6ece169146497ed9a14_lina%20wong.jpg",
-    logo: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b6f5aa190d778d116c9e_stitch%20fix.svg"
+    image: "/images/testimonials/lina-wong.jpg",
+    logo: "/images/testimonials/stitch-fix.svg"
   },
   {
     quote: "It's not an expense but an investment. My team loves DataDocks. I don't know how we lived without it.",
     author: "Andres Enderica, Atlantic Autocold",
-    image: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b72b51a046e1545027f8_Andres%20Enderica.jpg",
-    logo: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6453b73045179cf15ed30416_Atlantic%20Autocold.svg"
+    image: "/images/testimonials/andres-enderica.jpg",
+    logo: "/images/testimonials/atlantic-autocold.svg"
   }
 ];
 
@@ -132,6 +132,7 @@ export default function Testimonials() {
                       <img
                         src={item.logo}
                         alt="Company Logo"
+                        width="auto"
                         height="32"
                         loading="lazy"
                         className="h-full w-auto object-contain brightness-0 flex-shrink-0"

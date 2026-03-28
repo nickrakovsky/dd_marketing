@@ -40,10 +40,10 @@ const columns = {
   howItHelps: {
     title: "How DataDocks Helps",
     links: [
-      { label: "Increase Capacity", href: `${MAIN_SITE}/benefits/increase-capacity` },
-      { label: "See Everything", href: `${MAIN_SITE}/benefits/see-everything` },
-      { label: "Delight Carriers", href: `${MAIN_SITE}/benefits/delight-carriers` },
-      { label: "Digitize Operations", href: `${MAIN_SITE}/benefits/digitize-operations` },
+      { label: "Increase Capacity", href: `${MAIN_SITE}/benefits/increase-capacity/` },
+      { label: "See Everything", href: `${MAIN_SITE}/benefits/see-everything/` },
+      { label: "Delight Carriers", href: `${MAIN_SITE}/benefits/delight-carriers/` },
+      { label: "Digitize Operations", href: `${MAIN_SITE}/benefits/digitize-operations/` },
     ]
   },
   features1: {
@@ -75,7 +75,7 @@ const columns = {
       { label: "Support", href: "https://datadocks.com/support" },
       { label: "FAQs", href: "https://datadocks.com/support" }, 
       { label: "DataDocks Vs. OpenDock", href: `${MAIN_SITE}/datadocks-vs-opendock` },
-      { label: "Privacy Policy", href: "https://datadocks.com/privacy-policy-datadocks" }, 
+      { label: "Privacy Policy", href: "/privacy-policy-datadocks" },
     ]
   }
 };
@@ -168,7 +168,7 @@ const columns = {
       <div class="flex items-center gap-8">
         {/* Note: If you have the orange logo locally, convert it too! For now we focus on the reported ones */}
         <img
-          src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg"
+          src="/images/Orange-Logo.svg"
           alt="DataDocks Logo"
           width="56"
           height="56"
@@ -215,7 +215,7 @@ const columns = {
           </a>
         </div>
         <p class="text-sm text-gray-100">
-          © Northfire {new Date().getFullYear()}
+          © DataDocks {new Date().getFullYear()}
         </p>
       </div>
 
