@@ -145,7 +145,6 @@ async function rewriteWebflowHTML(response, pathname) {
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://fast.bentonow.com https://cdn.prod.website-files.com https://d3e54v103j8qbb.cloudfront.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.prod.website-files.com https://cdnjs.cloudflare.com; img-src 'self' data: https://cdn.prod.website-files.com https://img.youtube.com https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self' https://fonts.gstatic.com https://cdn.prod.website-files.com; connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://fast.bentonow.com https://region1.google-analytics.com; frame-src https://www.youtube.com https://calendly.com; media-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self' https://calendly.com");
 
   return new Response(html, {
     status: response.status,

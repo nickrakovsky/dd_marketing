@@ -203,6 +203,89 @@ const author = getAuthor(frontmatter.author);
 
     <Footer />
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
+
+    <script is:inline>
+      // Immediately apply theme preference to avoid FOUC
+      (function() {
+        try {
+          const dflt = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'dark' || (!savedTheme && dflt === 'dark')) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+
+      function setupBlogInteractions() {
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+          themeToggle.onclick = () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          };
+        }
+
+        // Text Size Toggle Logic
+        const textSizeToggle = document.getElementById('text-size-toggle');
+        const article = document.getElementById('content');
+
+        // Check initial text scale
+        try {
+          if (localStorage.getItem('text-scaled') === 'true') {
+            article?.classList.add('text-scaled');
+          } else {
+            article?.classList.remove('text-scaled');
+          }
+        } catch (e) {}
+
+        if (textSizeToggle) {
+          textSizeToggle.onclick = () => {
+            article?.classList.toggle('text-scaled');
+            const isScaled = article?.classList.contains('text-scaled');
+            localStorage.setItem('text-scaled', isScaled ? 'true' : 'false');
+          };
+        }
+      }
+
+      // Run immediately for first load or when script is re-evaluated by Astro
+      setupBlogInteractions();
+
+      // Ensure it runs after View Transitions swap
+      if (typeof window !== 'undefined' && !window.blogInteractionsSetup) {
+        document.addEventListener('astro:after-swap', setupBlogInteractions);
+        window.blogInteractionsSetup = true;
+      }
+
+      function setupScrollSpy() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const id = entry.target.getAttribute('id');
+              if (!id) return;
+
+              document.querySelectorAll('.toc-link').forEach(link => {
+                const isActive = link.getAttribute('href') === `#${id}`;
+                link.classList.toggle('active', isActive);
+              });
+            }
+          });
+        }, { rootMargin: '0px 0px -75% 0px' });
+
+        document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
+      }
+
+      if (typeof window !== 'undefined') {
+        setupScrollSpy();
+        document.addEventListener('astro:after-swap', setupScrollSpy);
+      }
+    </script>
+
   </div>
 </Layout>
 
@@ -308,85 +391,3 @@ const author = getAuthor(frontmatter.author);
     }
   }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
-
-<script is:inline>
-  // Immediately apply theme preference to avoid FOUC
-  (function() {
-    try {
-      const dflt = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark' || (!savedTheme && dflt === 'dark')) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } catch (e) {}
-  })();
-
-  function setupBlogInteractions() {
-    // Theme Toggle Logic
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-      themeToggle.onclick = () => {
-        document.documentElement.classList.toggle('dark');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      };
-    }
-
-    // Text Size Toggle Logic
-    const textSizeToggle = document.getElementById('text-size-toggle');
-    const article = document.getElementById('content');
-    
-    // Check initial text scale
-    try {
-      if (localStorage.getItem('text-scaled') === 'true') {
-        article?.classList.add('text-scaled');
-      } else {
-        article?.classList.remove('text-scaled');
-      }
-    } catch (e) {}
-
-    if (textSizeToggle) {
-      textSizeToggle.onclick = () => {
-        article?.classList.toggle('text-scaled');
-        const isScaled = article?.classList.contains('text-scaled');
-        localStorage.setItem('text-scaled', isScaled ? 'true' : 'false');
-      };
-    }
-  }
-
-  // Run immediately for first load or when script is re-evaluated by Astro
-  setupBlogInteractions();
-
-  // Ensure it runs after View Transitions swap
-  if (typeof window !== 'undefined' && !window.blogInteractionsSetup) {
-    document.addEventListener('astro:after-swap', setupBlogInteractions);
-    window.blogInteractionsSetup = true;
-  }
-
-  function setupScrollSpy() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          if (!id) return;
-          
-          document.querySelectorAll('.toc-link').forEach(link => {
-            const isActive = link.getAttribute('href') === `#${id}`;
-            link.classList.toggle('active', isActive);
-          });
-        }
-      });
-    }, { rootMargin: '0px 0px -75% 0px' });
-
-    document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
-  }
-  
-  if (typeof window !== 'undefined') {
-    setupScrollSpy();
-    document.addEventListener('astro:after-swap', setupScrollSpy);
-  }
-</script>
