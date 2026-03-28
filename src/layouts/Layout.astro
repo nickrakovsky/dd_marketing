@@ -3,7 +3,6 @@ import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
-import recoletaMed from '../assets/fonts/Recoleta-Medium.woff2';
 import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
 
 interface Props {
@@ -260,7 +259,6 @@ const jsonLd = {
         <style is:inline set:html={`
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaMed}') format('woff2'); font-weight: 500; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
         `}></style>
         {!disableTransitions && <ViewTransitions />}
