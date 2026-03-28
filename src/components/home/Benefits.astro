@@ -62,9 +62,10 @@ const features = [
           {/* Image Side */}
           <div class="w-full lg:w-7/12 flex-shrink-0">
             <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-[4/3]">
-              <Image 
-                src={feature.image} 
+              <Image
+                src={feature.image}
                 alt={feature.alt}
+                loading="lazy"
                 class="w-full h-full object-cover"
               />
             </div>

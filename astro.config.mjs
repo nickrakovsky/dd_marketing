@@ -1,10 +1,27 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
-
 import sitemap from '@astrojs/sitemap';
-
 import mdx from '@astrojs/mdx';
+import fs from 'node:fs';
+import path from 'node:path';
+import matter from 'gray-matter';
+
+// Build a map of post slugs to their most recent date (updatedDate or pubDate)
+const postsDir = path.resolve('./src/content/posts');
+const postDateMap = new Map();
+if (fs.existsSync(postsDir)) {
+  for (const file of fs.readdirSync(postsDir)) {
+    if (!file.endsWith('.mdx') && !file.endsWith('.md')) continue;
+    const content = fs.readFileSync(path.join(postsDir, file), 'utf-8');
+    const { data } = matter(content);
+    const slug = file.replace(/\.mdx?$/, '');
+    const date = data.updatedDate ? new Date(data.updatedDate) : data.pubDate ? new Date(data.pubDate) : null;
+    if (date && !isNaN(date.getTime())) {
+      postDateMap.set(`https://datadocks.com/posts/${slug}`, date);
+    }
+  }
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,8 +30,22 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'never',
 
+  vite: {
+    build: {
+      cssCodeSplit: false,
+    },
+  },
+
   integrations: [tailwind(), react(), sitemap({
     filter: (page) => !page.includes('/home-draft'),
+    serialize(item) {
+      // Add lastmod from post frontmatter if available
+      const postDate = postDateMap.get(item.url);
+      if (postDate) {
+        item.lastmod = postDate.toISOString();
+      }
+      return item;
+    },
     customPages: [
       // Webflow pages not yet migrated to Astro
       'https://datadocks.com/datadocks-vs-opendock',

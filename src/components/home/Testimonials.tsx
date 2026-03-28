@@ -122,6 +122,9 @@ export default function Testimonials() {
                       <img
                         src={item.image}
                         alt={item.author}
+                        width="64"
+                        height="64"
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -129,6 +132,8 @@ export default function Testimonials() {
                       <img
                         src={item.logo}
                         alt="Company Logo"
+                        height="32"
+                        loading="lazy"
                         className="h-full w-auto object-contain brightness-0 flex-shrink-0"
                       />
                     </div>
