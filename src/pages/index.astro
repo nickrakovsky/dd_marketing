@@ -10,7 +10,10 @@ import CTA from '../components/home/CTA.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<Layout title="Dock Scheduling Software for Warehouses | DataDocks">
+<Layout title="Dock Scheduling Software for Warehouses | DataDocks" disableTransitions>
+
+  <link slot="head" rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" media="(min-width: 860px)" fetchpriority="high" />
+  <link slot="head" rel="preload" as="image" href="/images/homepage-screenshot-mobile-750.webp" media="(max-width: 859px)" fetchpriority="high" />
 
   <Navigation client:load />
 
