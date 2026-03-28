@@ -70,6 +70,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@playform/inline": "^0.1.4",
     "@tailwindcss/typography": "^0.5.19",
     "gray-matter": "^4.0.3"
   }

@@ -101,9 +101,11 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
     {/* 5. Mobile/Tablet Hero Image — tappable/draggable pan */}
     <div class="block hero-desktop:hidden mt-8 w-full px-0 mb-4">
       <div id="hero-mobile-frame" class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-none">
-        <img 
+        <img
           id="hero-mobile-img"
           src={`${basePath}/images/homepage-screenshot-mobile.webp`}
+          srcset={`${basePath}/images/homepage-screenshot-mobile-500.webp 500w, ${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+          sizes="100vw"
           alt="DataDocks Calendar Interface Mobile"
           width="1724"
           height="655"
