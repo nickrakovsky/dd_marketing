@@ -1,32 +1,32 @@
 const integrations = [
   {
     name: "Microsoft Entra (SSO)",
-    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251f71d7dc3f818bc5989_Microsoft%20SSO%20(Entra).svg",
+    icon: "/images/integrations/microsoft-sso-entra.svg",
     href: "https://datadocks.com/integrations/microsoft-sso-entra",
   },
   {
     name: "SAP Business ByDesign®",
-    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251d78f4d48a0d249d5be_SAP%20Business%20ByDesign.svg",
+    icon: "/images/integrations/sap-business-bydesign.svg",
     href: "https://datadocks.com/integrations/sap-business-bydesign",
   },
   {
     name: "Oracle® Fusion Cloud",
-    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251ac3ee15660333a7f75_Oracle%20Fusion%20Cloud.svg",
+    icon: "/images/integrations/oracle-fusion-cloud.svg",
     href: "https://datadocks.com/integrations/oracle-fusion-cloud",
   },
   {
     name: "Netsuite ERP",
-    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669250dc386ea53b2340b3f9_Netsuite%20ERP.svg",
+    icon: "/images/integrations/netsuite-erp.svg",
     href: "https://datadocks.com/integrations/netsuite-erp",
   },
   {
     name: "SAP S/4HANA®",
-    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669250b8809f558b0ab88125_SAP%20S%3A4HANA.svg",
+    icon: "/images/integrations/sap-s4hana.svg",
     href: "https://datadocks.com/integrations/sap-s-4hana",
   },
   {
     name: "Microsoft Power BI",
-    icon: "https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6692506e5cf5dc1cce5caa25_Microsoft%20Power%20BI.svg",
+    icon: "/images/integrations/microsoft-power-bi.svg",
     href: "https://datadocks.com/integrations/microsoft-power-bi",
   },
 ];
@@ -49,6 +49,8 @@ const Integrations = ({ content }: IntegrationsProps) => {
         <img
           src={integration.icon}
           alt={`${integration.name} icon`}
+          width={24}
+          height={24}
           className="h-full w-full object-contain opacity-90 group-hover:opacity-100 transition-opacity"
         />
       </div>

@@ -5,6 +5,7 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
+import { getAuthor } from '../data/authors';
 
 interface Heading {
   depth: number;
@@ -34,6 +35,9 @@ const calculatedReadTime = minReadingTime === maxReadingTime
   : `${minReadingTime}-${maxReadingTime} min read`;
 
 const finalReadTime = frontmatter.readTime || calculatedReadTime;
+
+// 4. Author Data
+const author = getAuthor(frontmatter.author);
 ---
 
 <Layout 
@@ -72,7 +76,10 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
             </div>
             
             <div class="flex flex-wrap items-center gap-x-6 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
-              <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{frontmatter.author}</div>
+              <div class="flex flex-col">
+                <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{author.name}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{author.role}</div>
+              </div>
               
               <div class="flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
                 <span>First Published: {formattedDate}</span>

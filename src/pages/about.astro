@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.jsx';
+import Footer from '../components/Footer.astro';
+import { authors } from '../data/authors';
+
+const teamMembers = [
+  {
+    ...authors["Joe Fitzpatrick"],
+    bio: "Joe co-founded DataDocks in 2013 after witnessing firsthand how inefficient dock scheduling was costing warehouses time and money. With deep roots in logistics operations, he leads company strategy, customer relationships, and product vision — ensuring DataDocks solves real problems for real facilities.",
+  },
+  {
+    ...authors["Nick Rakovsky"],
+    bio: "Nick co-founded DataDocks alongside Joe, bringing a technical background in software engineering and cloud infrastructure. He leads the engineering team and architects the platform — from the carrier portal to the real-time dock dashboard — that powers scheduling for warehouses worldwide.",
+  },
+  {
+    ...authors["Noel Moffatt"],
+    bio: "Noel leads content at DataDocks, covering dock scheduling, yard management, and supply chain efficiency. He turns complex logistics challenges into clear, actionable insights that help warehouse operators make better decisions.",
+  },
+  {
+    ...authors["Tim Branch"],
+    bio: "Tim drives growth strategy and digital marketing at DataDocks. He focuses on connecting warehouses and distribution centers with the scheduling tools they need to reduce detention charges and operate more efficiently.",
+  },
+  {
+    ...authors["Jessica Edgson"],
+    bio: "Jessica creates educational content about logistics technology at DataDocks. She helps readers understand how modern dock scheduling software can transform day-to-day warehouse operations.",
+  },
+  {
+    ...authors["Hunter Branch"],
+    bio: "Hunter supports marketing and content creation at DataDocks, focusing on audience engagement and bringing logistics industry stories to a wider audience.",
+  },
+];
+---
+
+<Layout
+  title="About DataDocks | Dock Scheduling Software Since 2013"
+  description="Learn about DataDocks — the dock scheduling platform founded in 2013 to help warehouses reduce wait times, digitize operations, and delight carriers. Meet the team behind the software."
+>
+  <Navigation client:idle />
+
+  <main class="bg-[#FFF8E9] min-h-screen font-recoleta text-gray-800">
+
+    {/* Hero Section */}
+    <section class="pt-32 pb-16 px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 class="font-bruta text-5xl md:text-6xl lg:text-7xl uppercase text-[#fd4f00] leading-[1.05] mb-6">
+          About DataDocks
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+          We build dock scheduling software that helps warehouses and distribution centers reduce wait times, eliminate scheduling chaos, and run smoother operations.
+        </p>
+      </div>
+    </section>
+
+    {/* Mission & Story */}
+    <section class="py-16 px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+          <div>
+            <h2 class="font-bruta text-3xl uppercase text-black mb-4">Our Mission</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+              To give every warehouse and distribution center the tools to schedule dock appointments efficiently, reduce carrier wait times, and gain full visibility into their yard — without spreadsheets, phone tag, or guesswork.
+            </p>
+          </div>
+          <div>
+            <h2 class="font-bruta text-3xl uppercase text-black mb-4">Our Story</h2>
+            <p class="text-lg text-gray-700 leading-relaxed">
+              DataDocks was founded in 2013 when our co-founders saw how much time and money warehouses were losing to manual dock scheduling. What started as a simple appointment booking tool has grown into a full dock scheduling and yard management platform trusted by facilities across North America and beyond.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Key Stats */}
+    <section class="py-16 px-4 bg-black text-white">
+      <div class="max-w-5xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div>
+            <div class="font-bruta text-4xl md:text-5xl text-[#fd4f00] mb-2">2013</div>
+            <div class="text-gray-300 text-sm uppercase tracking-wider">Founded</div>
+          </div>
+          <div>
+            <div class="font-bruta text-4xl md:text-5xl text-[#fd4f00] mb-2">50+</div>
+            <div class="text-gray-300 text-sm uppercase tracking-wider">Customer Reviews</div>
+          </div>
+          <div>
+            <div class="font-bruta text-4xl md:text-5xl text-[#fd4f00] mb-2">4.9</div>
+            <div class="text-gray-300 text-sm uppercase tracking-wider">Average Rating</div>
+          </div>
+          <div>
+            <div class="font-bruta text-4xl md:text-5xl text-[#fd4f00] mb-2">SOC 2</div>
+            <div class="text-gray-300 text-sm uppercase tracking-wider">Certified</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Team Section */}
+    <section class="py-16 px-4">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="font-bruta text-4xl md:text-5xl uppercase text-black mb-4">
+            Meet the <span class="text-[#fd4f00]">Team</span>
+          </h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            The people behind the platform — building better dock scheduling every day.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {teamMembers.map((member) => (
+            <div id={member.slug} class="bg-white rounded-2xl p-6 border border-[#E5D3B3] scroll-mt-32">
+              <h3 class="font-bruta text-xl uppercase text-black mb-1">{member.name}</h3>
+              <div class="text-[#fd4f00] font-semibold text-sm mb-3">{member.role}</div>
+              <p class="text-gray-600 leading-relaxed">{member.bio}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* CTA */}
+    <section class="py-16 px-4 bg-[#fd4f00]">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-black mb-4">
+          Ready to see DataDocks in action?
+        </h2>
+        <p class="text-lg text-black/80 mb-8">
+          Book a free demo and see how our dock scheduling platform can work for your facility.
+        </p>
+        <a
+          href="https://calendly.com/nick-rakovsky/datadocks-demo"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block bg-black text-white font-bruta uppercase px-8 py-4 rounded-lg hover:bg-gray-900 transition-colors text-lg"
+        >
+          Book a Demo
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

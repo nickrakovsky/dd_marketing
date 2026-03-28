@@ -4,6 +4,7 @@ import '../styles/global.css';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
 import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
+import { getAuthor } from '../data/authors';
 
 interface Props {
     title: string;
@@ -41,8 +42,7 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-// Remove trailing slash from pathname to match sitemap format
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const pathname = Astro.url.pathname;
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
@@ -187,7 +187,7 @@ if (type === 'article' && articleData) {
     "author": {
       "@type": "Person",
       "name": articleData.author,
-      "url": "https://datadocks.com/about"
+      "url": `https://datadocks.com/about#${getAuthor(articleData.author).slug}`
     },
     "publisher": { "@id": "https://datadocks.com/#organization" },
     "articleSection": articleData.section

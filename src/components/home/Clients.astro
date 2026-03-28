@@ -22,15 +22,15 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
  * canvas ratios & ink analysis → see analyse-logos.mjs
  */
 const logos = [
-  { src: "Layer_1-2.svg",     alt: "LG Logo",         cls: "w-[118px] h-[52px] object-contain", pos: "41% 51%" },   
-  { src: "shipmonk_.svg",     alt: "ShipMonk Logo",   cls: "w-[164px] h-[41px] object-contain", pos: "48% 49%" },
-  { src: "Layer_2-2.svg",     alt: "GSK Logo",        cls: "w-[140px] h-[42px] object-contain", pos: "47% 51%" },  
-  { src: "Group-1.svg",       alt: "HelloFresh Logo", cls: "w-[129px] h-[42px] object-contain", pos: "44% 50%" },
-  { src: "Group.svg",         alt: "StitchFix Logo",  cls: "w-[220px] h-[27px] object-contain", pos: "49% 47%" },
-  { src: "Pepsi_2023.svg",    alt: "Pepsi Logo",      cls: "w-[65px] h-[65px] object-contain",  pos: "50% 50%" },
-  { src: "Samsung.svg",       alt: "Samsung Logo",    cls: "w-[187px] h-[29px] object-contain", pos: "50% 50%" },
-  { src: "Toyota_Logo.svg",   alt: "Toyota Logo",     cls: "w-[90px] h-[65px] object-contain",  pos: "50% 51%" },
-  { src: "columbia-wide.svg", alt: "Columbia Logo",   cls: "w-[260px] h-[39px] object-contain", pos: "46% 52%" },
+  { src: "Layer_1-2.svg",     alt: "LG Logo",         cls: "w-[118px] h-[52px] object-contain", pos: "41% 51%", w: 118, h: 52 },
+  { src: "shipmonk_.svg",     alt: "ShipMonk Logo",   cls: "w-[164px] h-[41px] object-contain", pos: "48% 49%", w: 164, h: 41 },
+  { src: "Layer_2-2.svg",     alt: "GSK Logo",        cls: "w-[140px] h-[42px] object-contain", pos: "47% 51%", w: 140, h: 42 },
+  { src: "Group-1.svg",       alt: "HelloFresh Logo", cls: "w-[129px] h-[42px] object-contain", pos: "44% 50%", w: 129, h: 42 },
+  { src: "Group.svg",         alt: "StitchFix Logo",  cls: "w-[220px] h-[27px] object-contain", pos: "49% 47%", w: 220, h: 27 },
+  { src: "Pepsi_2023.svg",    alt: "Pepsi Logo",      cls: "w-[65px] h-[65px] object-contain",  pos: "50% 50%", w: 65, h: 65 },
+  { src: "Samsung.svg",       alt: "Samsung Logo",    cls: "w-[187px] h-[29px] object-contain", pos: "50% 50%", w: 187, h: 29 },
+  { src: "Toyota_Logo.svg",   alt: "Toyota Logo",     cls: "w-[90px] h-[65px] object-contain",  pos: "50% 51%", w: 90, h: 65 },
+  { src: "columbia-wide.svg", alt: "Columbia Logo",   cls: "w-[260px] h-[39px] object-contain", pos: "46% 52%", w: 260, h: 39 },
 ];
 ---
 
@@ -54,6 +54,8 @@ const logos = [
             src={`${basePath}/images/${logo.src}`}
             alt={logo.alt}
             draggable="false"
+            width={logo.w}
+            height={logo.h}
             class={logo.cls}
             style={`object-position: ${logo.pos};`}
           />
