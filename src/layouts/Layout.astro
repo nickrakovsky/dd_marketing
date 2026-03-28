@@ -26,6 +26,7 @@ interface Props {
     videoData?: {
         youtubeId: string;
         uploadDate: Date;
+        duration?: string;
     };
 }
 
@@ -117,11 +118,14 @@ const graph: any[] = [
     "operatingSystem": "Web, Cloud-based",
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
-      "@type": "Offer",
+      "@type": "AggregateOffer",
       "priceCurrency": "USD",
-      "description": "Custom pricing. Free demo available.",
-      "availability": "https://schema.org/InStock",
-      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
+      "lowPrice": "0",
+      "highPrice": "0",
+      "offerCount": "1",
+      "availability": "https://schema.org/OnlineOnly",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
+      "description": "Custom pricing based on facility size. Free demo available."
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -156,8 +160,8 @@ if (breadcrumbItems.length > 0) {
       ...breadcrumbItems.map((path, index, arr) => ({
         "@type": "ListItem",
         "position": index + 2,
-        "name": path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-        "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
+        "name": index === arr.length - 1 ? title : path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
       }))
     ]
   });
@@ -204,6 +208,7 @@ if (videoData) {
       `https://img.youtube.com/vi/${videoData.youtubeId}/hqdefault.jpg`
     ],
     "uploadDate": videoData.uploadDate.toISOString(),
+    ...(videoData.duration ? { "duration": videoData.duration } : {}),
     "contentUrl": `https://www.youtube.com/watch?v=${videoData.youtubeId}`,
     "embedUrl": `https://www.youtube.com/embed/${videoData.youtubeId}`,
     "publisher": { "@id": "https://datadocks.com/#organization" }
