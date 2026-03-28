@@ -11,7 +11,8 @@ interface Props {
     description?: string;
     image?: string;
     type?: "website" | "article" | "video";
-    noindex?: boolean; 
+    noindex?: boolean;
+    disableTransitions?: boolean;
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
@@ -28,12 +29,13 @@ interface Props {
     };
 }
 
-const { 
-  title, 
+const {
+  title,
   description = "Optimize your dock scheduling and yard management with DataDocks. Reduce wait times, digitize operations, and delight your carriers.",
   image = "/og-default.jpg",
   type = "website",
   noindex = false,
+  disableTransitions = false,
   schemaData,
   articleData,
   videoData
@@ -245,8 +247,9 @@ const jsonLd = {
         <link rel="sitemap" href="/sitemap.xml" />
         <meta name="theme-color" content="#FFF8E9" />
 
-        <link rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" fetchpriority="high" />
         <link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
+
+        <slot name="head" />
 
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
@@ -259,7 +262,7 @@ const jsonLd = {
             @font-face { font-family: 'Recoleta'; src: url('${recoletaMed}') format('woff2'); font-weight: 500; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
         `}></style>
-        <ViewTransitions />
+        {!disableTransitions && <ViewTransitions />}
     </head>
     <body>
         <slot />
