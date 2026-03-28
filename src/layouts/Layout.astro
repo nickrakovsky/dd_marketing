@@ -72,7 +72,7 @@ const graph: any[] = [
     "primaryImageOfPage": { "@id": socialImageURL.toString() },
     "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
     "accessibilityFeature": ["alternativeText", "ARIA"],
-    "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` }
+    ...(Astro.url.pathname.split('/').filter(Boolean).length > 0 ? { "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` } } : {})
   },
   // 3. SoftwareApplication (Industry Specificity)
   {
@@ -93,18 +93,22 @@ const graph: any[] = [
       "https://www.wikidata.org/wiki/Q4781631"
     ]
   },
-  // 4. Breadcrumbs (Structure)
-  {
+];
+
+// 4. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
+const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
+if (breadcrumbItems.length > 0) {
+  graph.push({
     "@type": "BreadcrumbList",
     "@id": `${canonicalURL.toString()}#breadcrumb`,
-    "itemListElement": Astro.url.pathname.split('/').filter(Boolean).map((path, index, arr) => ({
+    "itemListElement": breadcrumbItems.map((path, index, arr) => ({
       "@type": "ListItem",
       "position": index + 1,
       "name": path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
       "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
     }))
-  }
-];
+  });
+}
 
 if (schemaData?.faq) {
   graph.push({
