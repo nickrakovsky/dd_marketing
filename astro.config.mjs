@@ -18,7 +18,7 @@ if (fs.existsSync(postsDir)) {
     const slug = file.replace(/\.mdx?$/, '');
     const date = data.updatedDate ? new Date(data.updatedDate) : data.pubDate ? new Date(data.pubDate) : null;
     if (date && !isNaN(date.getTime())) {
-      postDateMap.set(`https://datadocks.com/posts/${slug}`, date);
+      postDateMap.set(`https://datadocks.com/posts/${slug.toLowerCase()}`, date);
     }
   }
 }
@@ -46,7 +46,6 @@ export default defineConfig({
     customPages: [
       // Webflow pages not yet migrated to Astro
       'https://datadocks.com/datadocks-vs-opendock',
-      'https://datadocks.com/datadocks-vs/opendock',
       'https://datadocks.com/support',
       'https://datadocks.com/integrations',
       'https://datadocks.com/integrations/microsoft-power-bi',

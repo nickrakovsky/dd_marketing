@@ -64,7 +64,7 @@ const graph: any[] = [
     "foundingDate": "2013",
     "sameAs": [
       "https://www.linkedin.com/company/datadocks",
-      "https://twitter.com/datadocks",
+      "https://x.com/datadocks",
       "https://www.youtube.com/@DataDocks",
       "https://www.capterra.com/p/179266/DataDocks/"
     ],
@@ -118,10 +118,10 @@ const graph: any[] = [
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
       "@type": "Offer",
-      "price": "0",
       "priceCurrency": "USD",
-      "description": "Free demo available. Contact sales for custom pricing.",
-      "availability": "https://schema.org/InStock"
+      "description": "Custom pricing. Free demo available.",
+      "availability": "https://schema.org/InStock",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -289,8 +289,20 @@ const jsonLd = {
           <Fragment>
             <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
                 window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
+                (function() {
+                  function loadBento() {
+                    var s = document.createElement('script');
+                    s.src = 'https://fast.bentonow.com?site_uuid=' + PUBLIC_BENTO_UUID;
+                    s.async = true;
+                    document.head.appendChild(s);
+                  }
+                  if ('requestIdleCallback' in window) {
+                    requestIdleCallback(loadBento);
+                  } else {
+                    setTimeout(loadBento, 2000);
+                  }
+                })();
             </script>
-            <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
     </body>
