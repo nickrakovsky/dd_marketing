@@ -9,8 +9,8 @@ export const authors: Record<string, Author> = {
   "Joe Fitzpatrick": {
     name: "Joe Fitzpatrick",
     slug: "joe-fitzpatrick",
-    role: "Co-Founder & CEO",
-    shortBio: "Joe co-founded DataDocks in 2013 to solve the dock scheduling chaos he witnessed firsthand in logistics. He leads company strategy and product vision.",
+    role: "Marketing Lead",
+    shortBio: "Joe leads marketing at DataDocks, driving awareness and growth for the dock scheduling platform across the logistics industry.",
   },
   "Noel Moffatt": {
     name: "Noel Moffatt",
@@ -51,8 +51,8 @@ export const authors: Record<string, Author> = {
   "Tim Branch & Joe Fitzpatrick": {
     name: "Tim Branch & Joe Fitzpatrick",
     slug: "tim-branch",
-    role: "Marketing Lead & Co-Founder",
-    shortBio: "A collaborative piece from Tim Branch and Joe Fitzpatrick combining marketing insight with founder expertise.",
+    role: "Marketing",
+    shortBio: "A collaborative piece from Tim Branch and Joe Fitzpatrick on the DataDocks marketing team.",
   },
 };
 
