@@ -167,20 +167,22 @@ const columns = {
       {/* Left: Datadocks Logo Icon & SOC2 */}
       <div class="flex items-center gap-8">
         {/* Note: If you have the orange logo locally, convert it too! For now we focus on the reported ones */}
-        <img 
-          src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg" 
-          alt="DataDocks Logo" 
+        <img
+          src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg"
+          alt="DataDocks Logo"
           width="56"
           height="56"
+          loading="lazy"
           class="w-14 h-14"
         />
 
         {/* UPDATED: SOC2 Badge */}
-        <Image 
-          src={soc2Badge} 
-          alt="AICPA SOC2 Certified" 
-          width={80} 
-          class="h-20 w-auto object-contain" 
+        <Image
+          src={soc2Badge}
+          alt="AICPA SOC2 Certified"
+          width={80}
+          loading="lazy"
+          class="h-20 w-auto object-contain"
         />
       </div>
 
@@ -191,10 +193,11 @@ const columns = {
         </div>
         
         {/* UPDATED: Canada Badge */}
-        <Image 
-          src={canadaBadge} 
-          alt="Government of Canada" 
-          width={600} 
+        <Image
+          src={canadaBadge}
+          alt="Government of Canada"
+          width={600}
+          loading="lazy"
           class="h-8 w-auto object-contain"
         />
       </div>

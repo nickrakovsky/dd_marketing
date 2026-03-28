@@ -37,9 +37,12 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
           <div class="hidden md:block">
             <div class="flex flex-row items-center gap-3 mb-4">
               <div class="w-10 h-10 flex-shrink-0">
-                <img 
-                  src={feature.icon} 
-                  alt={feature.title} 
+                <img
+                  src={feature.icon}
+                  alt={feature.title}
+                  width="40"
+                  height="40"
+                  loading="lazy"
                   class="w-full h-full object-contain"
                 />
               </div>
@@ -59,9 +62,12 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
             </h3>
             <div>
               <div class="float-left mr-2 mb-1 w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
-                <img 
-                  src={feature.icon} 
-                  alt={feature.title} 
+                <img
+                  src={feature.icon}
+                  alt={feature.title}
+                  width="32"
+                  height="32"
+                  loading="lazy"
                   class="w-full h-full object-contain"
                 />
               </div>

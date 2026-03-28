@@ -246,7 +246,7 @@ const jsonLd = {
         <meta name="theme-color" content="#FFF8E9" />
 
         <link rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" fetchpriority="high" />
-
+        <link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
 
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
@@ -270,10 +270,14 @@ const jsonLd = {
             gtag('config', 'G-EZMTT6QYLJ');
         </script>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-EZMTT6QYLJ"></script>
-        <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
-            window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
-        </script>
-        <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
+        {PUBLIC_BENTO_UUID && (
+          <Fragment>
+            <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
+                window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
+            </script>
+            <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
+          </Fragment>
+        )}
     </body>
 </html>
 

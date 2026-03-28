@@ -16,9 +16,11 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
             <span class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full">
               <span class="block relative inline-block">YOUR
                 <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
-                  <img 
+                  <img
                     src={`${basePath}/images/hero-badge.webp`}
                     alt="Save Time Make It Visible"
+                    width="96"
+                    height="96"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
                 </div>
@@ -34,9 +36,11 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
               <span class="relative inline-block">
                 YOUR LOADING DOCK,
                 <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
-                  <img 
+                  <img
                     src={`${basePath}/images/hero-badge.webp`}
                     alt="Save Time Make It Visible"
+                    width="96"
+                    height="96"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
                 </div>
@@ -83,6 +87,8 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
     <div class="hidden hero-desktop:block relative w-screen ml-[calc(50%-50vw)] mt-16 shadow-[0_12px_15px_-10px_rgba(0,0,0,0.1)] overflow-hidden">
       <img
         src={`${basePath}/images/DataDocks-Calendar-Screenshot.webp`}
+        srcset={`${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, ${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, ${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, ${basePath}/images/DataDocks-Calendar-Screenshot.webp 2000w`}
+        sizes="100vw"
         alt="DataDocks Calendar Interface"
         width="2000"
         height="717"
