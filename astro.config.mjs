@@ -3,7 +3,6 @@ import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
-import playformInline from '@playform/inline';
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
@@ -66,6 +65,6 @@ export default defineConfig({
       'https://datadocks.com/datadocks-features/notifications',
       'https://datadocks.com/datadocks-features/yard-management',
     ],
-  }), mdx(), playformInline()],
+  }), mdx()],
 
 });
