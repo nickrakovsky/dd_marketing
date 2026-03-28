@@ -53,19 +53,23 @@ const Navigation = ({ isOrange = false }) => {
 
           <div className="flex items-center flex-shrink min-w-0">
             <a href={MAIN_SITE} className="flex-shrink min-w-0">
-              <img 
-                src={datadocksLogo.src} 
-                alt="DataDocks Logo" 
+              <img
+                src={datadocksLogo.src}
+                alt="DataDocks Logo"
+                width="201"
+                height="43"
                 className={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${
                   isOrange ? "hidden" : "block dark:hidden"
-                }`} 
+                }`}
               />
-              <img 
-                src={datadocksLogoWhite.src} 
-                alt="DataDocks Logo" 
+              <img
+                src={datadocksLogoWhite.src}
+                alt="DataDocks Logo"
+                width="201"
+                height="43"
                 className={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${
                   isOrange ? "block" : "hidden dark:block"
-                }`} 
+                }`}
               />
             </a>
           </div>
