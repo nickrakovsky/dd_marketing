@@ -17,7 +17,7 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
               <span class="block relative inline-block">YOUR
                 <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
                   <img 
-                    src={`${basePath}/images/hero-badge.png`}
+                    src={`${basePath}/images/hero-badge.webp`}
                     alt="Save Time Make It Visible"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
@@ -35,7 +35,7 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
                 YOUR LOADING DOCK,
                 <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
                   <img 
-                    src={`${basePath}/images/hero-badge.png`}
+                    src={`${basePath}/images/hero-badge.webp`}
                     alt="Save Time Make It Visible"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
@@ -81,9 +81,11 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
 
     {/* 4. Desktop Hero Image */}
     <div class="hidden hero-desktop:block relative w-screen ml-[calc(50%-50vw)] mt-16 shadow-[0_12px_15px_-10px_rgba(0,0,0,0.1)] overflow-hidden">
-      <img 
+      <img
         src={`${basePath}/images/DataDocks-Calendar-Screenshot.webp`}
-        alt="DataDocks Calendar Interface" 
+        alt="DataDocks Calendar Interface"
+        fetchpriority="high"
+        loading="eager"
         class="w-full h-auto object-cover"
       />
     </div>
@@ -93,8 +95,10 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
       <div id="hero-mobile-frame" class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-none">
         <img 
           id="hero-mobile-img"
-          src={`${basePath}/images/homepage-screenshot-mobile.png`}
-          alt="DataDocks Calendar Interface Mobile" 
+          src={`${basePath}/images/homepage-screenshot-mobile.webp`}
+          alt="DataDocks Calendar Interface Mobile"
+          fetchpriority="high"
+          loading="eager"
           class="w-full h-full object-cover hero-pan-active"
           style="object-position: 0% 50%;"
         />
