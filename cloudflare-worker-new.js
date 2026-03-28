@@ -39,6 +39,11 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock
+    if (url.pathname === "/datadocks-vs/opendock" || url.pathname === "/datadocks-vs/opendock/") {
+      return Response.redirect("https://datadocks.com/datadocks-vs-opendock", 301);
+    }
+
     // Proxy Webflow paths
     if (shouldProxyToWebflow(url.pathname)) {
       const webflowUrl = new URL(url.pathname + url.search, WEBFLOW_ORIGIN);

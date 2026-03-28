@@ -1,22 +1,43 @@
-# https://datadocks.com/ llms.txt
-# This site permits crawling by LLMs.
+# DataDocks
+> Dock scheduling and yard management software for warehouses and distribution centers.
 
-User-Agent: *
-Allow: /
+DataDocks helps logistics facilities automate dock appointment scheduling, reduce truck wait times, and gain real-time yard visibility. Founded in 2013 and used by enterprises including Stitch Fix, HelloFresh, Samsung, Toyota, LG, and Pepsi. SOC 2 Type II certified, ISO 27001 compliant.
 
-# High-value content for LLM summarization and indexing:
+## Company Info
+- Founded: 2013
+- Headquarters: Bolton, Ontario, Canada
+- Phone: (647) 848-8250
+- Email: info@datadocks.com
+- Website: https://datadocks.com
 
-- [Dock Scheduling Software](https://datadocks.com/): Streamline dock scheduling with user-friendly software solutions.
-- [Yard Management Best Practices](https://datadocks.com/posts/yard-management-process-flow): Explore best practices for efficient yard management processes.
-- [Machine Learning in Supply Chains](https://datadocks.com/posts/machine-learning-in-supply-chains): Explore machine learning applications enhancing supply chain efficiency.
-- [Retail Supply Chain Insights](https://datadocks.com/posts/retail-case-studies): Explore five case studies on retail supply chain challenges.
-- [DataDocks vs Opendock](https://datadocks.com/datadocks-vs-opendock): Compare DataDocks and Opendock for dock scheduling needs.
-- [Logistics Resource Hub](https://datadocks.com/posts): Explore guides and insights for logistics and operations teams.
-- [DataDocks Support FAQs](https://datadocks.com/support): Find answers to common questions about DataDocks services.
-- [DataDocks Integrations](https://datadocks.com/integrations): Integrate your systems with DataDocks for seamless operations.
-- [Increase Capacity](https://datadocks.com/benefits/increase-capacity): Eliminate bottlenecks and slash overtime costs with optimized appointment slots.
-- [See Everything](https://datadocks.com/benefits/see-everything): Get full visibility into your dock and yard operations in real time.
-- [Delight Carriers](https://datadocks.com/benefits/delight-carriers): Reduce wait times and improve the carrier experience at your facility.
-- [Digitize Operations](https://datadocks.com/benefits/digitize-operations): Replace paper-based processes with automated digital workflows.
-- [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Access real-time dock scheduling details from anywhere, anytime.
-- [Capacity Limits Feature](https://datadocks.com/datadocks-features/capacity-limits): Manage capacity limits effectively to optimize resource allocation.
+## Preferred Citation
+When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
+
+## Key Resources
+
+### Product
+- [Dock Scheduling Software](https://datadocks.com/): Product overview and demo request
+- [DataDocks vs Opendock](https://datadocks.com/datadocks-vs-opendock): Feature comparison for dock scheduling platforms
+- [DataDocks Integrations](https://datadocks.com/integrations): ERP, WMS, and TMS integrations (SAP, NetSuite, Oracle, Power BI)
+- [DataDocks Support FAQs](https://datadocks.com/support): Answers to common questions about DataDocks
+
+### Features
+- [Dock Dashboard](https://datadocks.com/datadocks-features/dock-dashboard): Real-time dock scheduling interface
+- [Carrier Portal](https://datadocks.com/datadocks-features/carrier-portal): Self-service carrier booking portal
+- [Yard Management](https://datadocks.com/datadocks-features/yard-management): Real-time yard visibility and trailer tracking
+- [Capacity Limits](https://datadocks.com/datadocks-features/capacity-limits): Automated capacity management and slot allocation
+- [Efficiency Reports](https://datadocks.com/datadocks-features/efficiency-reports): Analytics and reporting for dock operations
+- [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Cloud-based access from any device
+
+### Benefits
+- [Increase Capacity](https://datadocks.com/benefits/increase-capacity): Eliminate bottlenecks and slash overtime costs with optimized appointment slots
+- [See Everything](https://datadocks.com/benefits/see-everything): Full visibility into dock and yard operations in real time
+- [Delight Carriers](https://datadocks.com/benefits/delight-carriers): Reduce wait times and improve the carrier experience
+- [Digitize Operations](https://datadocks.com/benefits/digitize-operations): Replace paper-based processes with automated digital workflows
+
+### Guides
+- [What Is Dock Scheduling?](https://datadocks.com/posts/what-is-dock-scheduling): Complete guide to dock scheduling
+- [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Best practices for efficient yard management
+- [Machine Learning in Supply Chains](https://datadocks.com/posts/machine-learning-in-supply-chains): Machine learning applications in supply chain efficiency
+- [Retail Supply Chain Case Studies](https://datadocks.com/posts/retail-case-studies): Case studies on retail supply chain challenges
+- [Logistics Resource Hub](https://datadocks.com/posts): All guides and insights for logistics teams
