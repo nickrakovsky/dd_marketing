@@ -140,6 +140,14 @@ async function rewriteWebflowHTML(response, pathname) {
   }
 
   const headers = new Headers(response.headers);
+  // Strip leaked Webflow headers
+  headers.delete("content-security-policy");
+  headers.delete("set-cookie");
+  headers.delete("surrogate-key");
+  headers.delete("surrogate-control");
+  headers.delete("x-lambda-id");
+  headers.delete("x-wf-region");
+  // Set security headers
   headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
   headers.set("X-Frame-Options", "SAMEORIGIN");
   headers.set("X-Content-Type-Options", "nosniff");

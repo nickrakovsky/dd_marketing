@@ -60,10 +60,11 @@ const getReadTime = (body: string) => {
     type="video"
     videoData={{
       youtubeId: entry.data.youtubeId!,
-      uploadDate: entry.data.pubDate
+      uploadDate: entry.data.pubDate,
+      duration: entry.data.duration
     }}
   >
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
+    <link rel="stylesheet" href="/css/lite-yt-embed.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
     <a href="#video-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
     <Navigation client:idle />

@@ -20,6 +20,8 @@ const postsCollection = defineCollection({
         contentType: z.enum(['article', 'video', 'short']).default('article'),
         // The 11-character YouTube ID (e.g., "dQw4w9WgXcQ")
         youtubeId: z.string().optional(),
+        // ISO 8601 duration for VideoObject schema (e.g., "PT13M25S")
+        duration: z.string().optional(),
         // Priority for sorting or hiding, but not displayed to end user.
         priority: z.string().optional(),
     })
