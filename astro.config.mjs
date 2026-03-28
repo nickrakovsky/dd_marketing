@@ -30,12 +30,6 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'never',
 
-  vite: {
-    build: {
-      cssCodeSplit: false,
-    },
-  },
-
   integrations: [tailwind(), react(), sitemap({
     filter: (page) => !page.includes('/home-draft'),
     serialize(item) {
