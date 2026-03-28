@@ -118,11 +118,14 @@ const graph: any[] = [
     "operatingSystem": "Web, Cloud-based",
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
-      "@type": "Offer",
+      "@type": "AggregateOffer",
       "priceCurrency": "USD",
-      "description": "Custom pricing. Free demo available.",
-      "availability": "https://schema.org/InStock",
-      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
+      "lowPrice": "0",
+      "highPrice": "0",
+      "offerCount": "1",
+      "availability": "https://schema.org/OnlineOnly",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
+      "description": "Custom pricing based on facility size. Free demo available."
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -158,7 +161,7 @@ if (breadcrumbItems.length > 0) {
         "@type": "ListItem",
         "position": index + 2,
         "name": index === arr.length - 1 ? title : path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-        "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
+        "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
       }))
     ]
   });
