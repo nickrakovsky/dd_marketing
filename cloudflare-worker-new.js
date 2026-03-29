@@ -74,16 +74,44 @@ async function rewriteWebflowHTML(response, pathname) {
 
   // Fix or inject canonical tag to match Astro's trailingSlash: 'always'
   const canonicalUrl = `https://datadocks.com${pathname.endsWith('/') ? pathname : pathname + '/'}`;
-  if (html.includes('rel="canonical"')) {
-    // Replace existing Webflow canonical (may lack trailing slash or point to staging)
+  if (/<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/i.test(html)) {
     html = html.replace(
-      /<link[^>]*rel="canonical"[^>]*>/i,
+      /<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/i,
       `<link rel="canonical" href="${canonicalUrl}" />`
+    );
+  } else {
+    // Inject after <head> if no </title> found (some Webflow pages have unusual structure)
+    if (html.includes('</title>')) {
+      html = html.replace(
+        '</title>',
+        `</title>\n    <link rel="canonical" href="${canonicalUrl}" />`
+      );
+    } else {
+      html = html.replace(
+        /<head[^>]*>/i,
+        `$&\n    <link rel="canonical" href="${canonicalUrl}" />`
+      );
+    }
+  }
+
+  // Strip ALL Webflow JSON-LD schema (conflicting Organization, SoftwareApplication, etc.)
+  // and inject canonical schema that matches our Astro source of truth
+  html = html.replace(/<script\s+type\s*=\s*["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi, '');
+  html = html.replace(
+    '</head>',
+    `<script type="application/ld+json">${JSON.stringify(getCanonicalSchema(canonicalUrl, pathname))}</script>\n</head>`
+  );
+
+  // Fix or inject og:url to match canonical
+  if (/<meta[^>]*property\s*=\s*["']og:url["'][^>]*>/i.test(html)) {
+    html = html.replace(
+      /<meta[^>]*property\s*=\s*["']og:url["'][^>]*>/i,
+      `<meta property="og:url" content="${canonicalUrl}" />`
     );
   } else {
     html = html.replace(
       '</title>',
-      `</title>\n    <link rel="canonical" href="${canonicalUrl}" />`
+      `</title>\n    <meta property="og:url" content="${canonicalUrl}" />`
     );
   }
 
@@ -165,4 +193,99 @@ async function rewriteWebflowHTML(response, pathname) {
     statusText: response.statusText,
     headers,
   });
+}
+
+// Canonical schema injected into all Webflow-proxied pages.
+// Single source of truth matching Astro's Layout.astro Organization + WebSite.
+function getCanonicalSchema(canonicalUrl, pathname) {
+  const pageTitle = getPageTitle(pathname);
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://datadocks.com/#organization",
+        "name": "DataDocks",
+        "url": "https://datadocks.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://datadocks.com/images/Orange-Logo.svg",
+          "width": 201,
+          "height": 43
+        },
+        "description": "Dock scheduling software for warehouses and distribution centers. Reduce truck wait times with automated appointment scheduling.",
+        "foundingDate": "2013",
+        "sameAs": [
+          "https://www.linkedin.com/company/datadocks",
+          "https://x.com/datadocks",
+          "https://www.youtube.com/@DataDocks",
+          "https://www.capterra.com/p/179266/DataDocks/"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-647-848-8250",
+          "contactType": "Sales",
+          "email": "info@datadocks.com",
+          "areaServed": "Worldwide",
+          "availableLanguage": ["English"]
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://datadocks.com/#website",
+        "url": "https://datadocks.com",
+        "name": "DataDocks",
+        "description": "Dock Scheduling Software for Warehouses",
+        "publisher": { "@id": "https://datadocks.com/#organization" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": canonicalUrl,
+        "url": canonicalUrl,
+        "name": pageTitle,
+        "isPartOf": { "@id": "https://datadocks.com/#website" },
+        "breadcrumb": { "@id": `${canonicalUrl}#breadcrumb` }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${canonicalUrl}#breadcrumb`,
+        "itemListElement": buildBreadcrumbs(pathname)
+      }
+    ]
+  };
+}
+
+function getPageTitle(pathname) {
+  const titles = {
+    "/datadocks-vs-opendock": "DataDocks vs OpenDock | Dock Scheduling Comparison",
+    "/support": "Support | DataDocks",
+    "/privacy-policy-datadocks": "Privacy Policy | DataDocks",
+    "/integrations": "Integrations | DataDocks",
+    "/integrations/microsoft-power-bi": "Microsoft Power BI Integration | DataDocks",
+    "/integrations/microsoft-sso-entra": "Microsoft SSO (Entra) Integration | DataDocks",
+    "/integrations/netsuite-erp": "NetSuite ERP Integration | DataDocks",
+    "/integrations/oracle-fusion-cloud": "Oracle Fusion Cloud Integration | DataDocks",
+    "/integrations/sap-business-bydesign": "SAP Business ByDesign Integration | DataDocks",
+    "/integrations/sap-s-4hana": "SAP S/4HANA Integration | DataDocks",
+  };
+  // Strip trailing slash for lookup
+  const clean = pathname.replace(/\/$/, '') || '/';
+  // Check exact match first, then check feature pages pattern
+  if (titles[clean]) return titles[clean];
+  if (clean.startsWith('/datadocks-features/')) {
+    const feature = clean.split('/').pop().replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return `${feature} | DataDocks Features`;
+  }
+  return "DataDocks | Dock Scheduling Software";
+}
+
+function buildBreadcrumbs(pathname) {
+  const segments = pathname.split('/').filter(Boolean);
+  const items = [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://datadocks.com" }];
+  segments.forEach((seg, i) => {
+    const url = `https://datadocks.com/${segments.slice(0, i + 1).join('/')}/`;
+    const name = seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    items.push({ "@type": "ListItem", "position": i + 2, "name": name, "item": url });
+  });
+  return items;
 }

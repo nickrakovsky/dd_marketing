@@ -40,10 +40,8 @@ export default defineConfig({
       const postDate = postDateMap.get(item.url);
       if (postDate) {
         item.lastmod = postDate.toISOString();
-      } else if (!item.lastmod) {
-        // Fallback: use build date for pages without explicit lastmod
-        item.lastmod = new Date().toISOString();
       }
+      // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
       return item;
     },
     customPages: [
@@ -69,7 +67,6 @@ export default defineConfig({
       'https://datadocks.com/datadocks-features/live-editing/',
       'https://datadocks.com/datadocks-features/notifications/',
       'https://datadocks.com/datadocks-features/yard-management/',
-      'https://datadocks.com/privacy-policy-datadocks/',
     ],
   }), mdx()],
 

@@ -59,10 +59,12 @@ export default function DigitizeGallery({ headerImage, gridImages }: DigitizeGal
             className="w-full flex flex-col"
           >
             <div className="w-full relative">
-              <img 
-                src={headerImage.src} 
-                alt="Dashboard Header" 
-                className="w-full h-auto block" 
+              <img
+                src={headerImage.src}
+                alt="Dashboard Header"
+                width={headerImage.width}
+                height={headerImage.height}
+                className="w-full h-auto block"
                 loading="eager"
                 fetchPriority="high"
               />
@@ -75,9 +77,11 @@ export default function DigitizeGallery({ headerImage, gridImages }: DigitizeGal
                   className="relative group cursor-pointer overflow-hidden"
                   onClick={() => setFocusedIndex(i)} 
                 >
-                  <img 
-                    src={img.src} 
+                  <img
+                    src={img.src}
                     alt={`Slice ${i}`}
+                    width={img.width}
+                    height={img.height}
                     className="w-full h-auto block transition-transform duration-300 group-hover:brightness-110"
                     loading="eager"
                   />

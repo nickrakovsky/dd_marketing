@@ -69,6 +69,8 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
               <img
                 src={image.src}
                 alt="Capacity Schedule View"
+                width={image.width}
+                height={image.height}
                 className="w-full h-auto block"
                 loading="eager"
                 fetchPriority="high"
@@ -92,6 +94,8 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
                   <img
                     src={overlayImage.src}
                     alt="Capacity Planning Overlay"
+                    width={overlayImage.width}
+                    height={overlayImage.height}
                     className="w-full h-auto block"
                     loading="eager"
                   />
