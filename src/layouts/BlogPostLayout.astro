@@ -107,10 +107,11 @@ const author = getAuthor(frontmatter.author);
           {frontmatter.heroFigure && (
             <div class="w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
               <div class="w-full aspect-[4/5] flex items-center justify-center overflow-visible">
-                <Image 
-                  src={frontmatter.heroFigure} 
+                <Image
+                  src={frontmatter.heroFigure}
                   alt={`Illustration for ${frontmatter.title}`}
-                  class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300" 
+                  loading="eager"
+                  class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300"
                 />
               </div>
             </div>
@@ -186,10 +187,11 @@ const author = getAuthor(frontmatter.author);
           {/* If there's a mobile view, we could also render the heroFigure inline before the content, but leaving it clean for now */}
           {frontmatter.heroFigure && (
             <div class="w-full mb-8 lg:hidden">
-              <Image 
-                src={frontmatter.heroFigure} 
+              <Image
+                src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
-                class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300" 
+                loading="eager"
+                class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300"
               />
             </div>
           )}
@@ -203,7 +205,7 @@ const author = getAuthor(frontmatter.author);
 
     <Footer />
 
-    <link rel="stylesheet" href="/css/lite-yt-embed.css" />
+    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
     <script is:inline src="/css/lite-yt-embed.js" defer></script>
 
     <script is:inline>

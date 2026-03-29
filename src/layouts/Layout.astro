@@ -87,9 +87,11 @@ const graph: any[] = [
     "description": "Dock Scheduling Software for Warehouses",
     "publisher": { "@id": "https://datadocks.com/#organization" }
   },
-  // 3. WebPage (Accessibility & Context)
+  // 3. WebPage (Accessibility & Context) — use specific types for known pages
   {
-    "@type": "ItemPage",
+    "@type": pathname === '/about/' ? "AboutPage"
+           : pathname === '/posts/' ? "CollectionPage"
+           : "ItemPage",
     "@id": canonicalURL.toString(),
     "url": canonicalURL.toString(),
     "name": title,
