@@ -72,9 +72,15 @@ async function rewriteWebflowHTML(response, pathname) {
   html = html.replace(/https:\/\/datadocks-staging\.webflow\.io/g, "https://datadocks.com");
   html = html.replace(/datadocks-staging\.webflow\.io/g, "datadocks.com");
 
-  // Inject canonical tag if missing
-  if (!html.includes('rel="canonical"')) {
-    const canonicalUrl = `https://datadocks.com${pathname}`;
+  // Fix or inject canonical tag to match Astro's trailingSlash: 'always'
+  const canonicalUrl = `https://datadocks.com${pathname.endsWith('/') ? pathname : pathname + '/'}`;
+  if (html.includes('rel="canonical"')) {
+    // Replace existing Webflow canonical (may lack trailing slash or point to staging)
+    html = html.replace(
+      /<link[^>]*rel="canonical"[^>]*>/i,
+      `<link rel="canonical" href="${canonicalUrl}" />`
+    );
+  } else {
     html = html.replace(
       '</title>',
       `</title>\n    <link rel="canonical" href="${canonicalUrl}" />`

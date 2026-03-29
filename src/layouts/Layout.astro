@@ -33,7 +33,7 @@ interface Props {
 const {
   title,
   description = "Optimize your dock scheduling and yard management with DataDocks. Reduce wait times, digitize operations, and delight your carriers.",
-  image = "/og-default.jpg",
+  image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
   disableTransitions = false,
@@ -57,9 +57,9 @@ const graph: any[] = [
     "url": "https://datadocks.com",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://datadocks.com/logo.png",
-      "width": 512,
-      "height": 512
+      "url": "https://datadocks.com/images/Orange-Logo.svg",
+      "width": 201,
+      "height": 43
     },
     "description": "Dock scheduling software for warehouses and distribution centers. Reduce truck wait times with automated appointment scheduling.",
     "foundingDate": "2013",
@@ -85,15 +85,7 @@ const graph: any[] = [
     "url": "https://datadocks.com",
     "name": "DataDocks",
     "description": "Dock Scheduling Software for Warehouses",
-    "publisher": { "@id": "https://datadocks.com/#organization" },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://datadocks.com/posts?search={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "publisher": { "@id": "https://datadocks.com/#organization" }
   },
   // 3. WebPage (Accessibility & Context)
   {
@@ -108,8 +100,11 @@ const graph: any[] = [
     "accessibilityFeature": ["alternativeText", "ARIA"],
     ...(Astro.url.pathname.split('/').filter(Boolean).length > 0 ? { "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` } } : {})
   },
-  // 4. SoftwareApplication (Industry Specificity)
-  {
+];
+
+// 4. SoftwareApplication — homepage only (Google requires visible reviews on the page)
+if (pathname === '/') {
+  graph.push({
     "@type": "SoftwareApplication",
     "@id": "https://datadocks.com/#software",
     "name": "DataDocks",
@@ -118,14 +113,12 @@ const graph: any[] = [
     "operatingSystem": "Web, Cloud-based",
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
-      "@type": "AggregateOffer",
+      "@type": "Offer",
       "priceCurrency": "USD",
-      "lowPrice": "0",
-      "highPrice": "0",
-      "offerCount": "1",
+      "price": "0",
       "availability": "https://schema.org/OnlineOnly",
       "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
-      "description": "Custom pricing based on facility size. Free demo available."
+      "description": "Free demo available. Custom pricing based on facility size."
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -146,8 +139,8 @@ const graph: any[] = [
       "Dock scheduling"
     ],
     "screenshot": "https://datadocks.com/images/DataDocks-Calendar-Screenshot.webp"
-  },
-];
+  });
+}
 
 // 5. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
 const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);

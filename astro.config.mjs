@@ -40,6 +40,9 @@ export default defineConfig({
       const postDate = postDateMap.get(item.url);
       if (postDate) {
         item.lastmod = postDate.toISOString();
+      } else if (!item.lastmod) {
+        // Fallback: use build date for pages without explicit lastmod
+        item.lastmod = new Date().toISOString();
       }
       return item;
     },
