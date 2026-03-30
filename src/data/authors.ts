@@ -12,12 +12,11 @@ export const authors: Record<string, Author> = {
     slug: "joe-fitzpatrick",
     role: "Marketing Lead",
     shortBio: "Joe leads marketing at DataDocks, driving awareness and growth for the dock scheduling platform across the logistics industry.",
-    linkedIn: "https://www.linkedin.com/in/joefitzpatrick-datadocks",
   },
   "Noel Moffatt": {
     name: "Noel Moffatt",
     slug: "noel-moffatt",
-    role: "Content Marketing Manager",
+    role: "Content Marketing",
     shortBio: "Noel writes about dock scheduling, yard management, and supply chain efficiency, turning complex logistics topics into actionable insights.",
   },
   "Nick Rakovsky": {
@@ -30,7 +29,7 @@ export const authors: Record<string, Author> = {
   "Tim Branch": {
     name: "Tim Branch",
     slug: "tim-branch",
-    role: "Marketing Lead",
+    role: "Content Marketing",
     shortBio: "Tim focuses on growth strategy and digital marketing at DataDocks, helping warehouses discover smarter dock scheduling.",
   },
   "Jessica Edgson": {
