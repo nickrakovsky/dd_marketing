@@ -40,9 +40,14 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
-    // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock
+    // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock/
     if (url.pathname === "/datadocks-vs/opendock" || url.pathname === "/datadocks-vs/opendock/") {
-      return Response.redirect("https://datadocks.com/datadocks-vs-opendock", 301);
+      return Response.redirect("https://datadocks.com/datadocks-vs-opendock/", 301);
+    }
+
+    // Enforce trailing slashes on Webflow paths (match Astro trailingSlash: 'always')
+    if (shouldProxyToWebflow(url.pathname) && !url.pathname.endsWith("/")) {
+      return Response.redirect(`https://datadocks.com${url.pathname}/${url.search}`, 308);
     }
 
     // Proxy Webflow paths
@@ -115,6 +120,44 @@ async function rewriteWebflowHTML(response, pathname) {
     );
   }
 
+  // Inject missing OG tags (og:title, og:type, og:description, og:site_name)
+  if (!/<meta[^>]*property\s*=\s*["']og:title["']/i.test(html)) {
+    html = html.replace(
+      '</title>',
+      `</title>\n    <meta property="og:title" content="${pageTitle}" />`
+    );
+  }
+  if (!/<meta[^>]*property\s*=\s*["']og:type["']/i.test(html)) {
+    html = html.replace(
+      '</title>',
+      `</title>\n    <meta property="og:type" content="website" />`
+    );
+  }
+  if (pageDescription && !/<meta[^>]*property\s*=\s*["']og:description["']/i.test(html)) {
+    html = html.replace(
+      '</title>',
+      `</title>\n    <meta property="og:description" content="${pageDescription}" />`
+    );
+  }
+  if (!/<meta[^>]*property\s*=\s*["']og:site_name["']/i.test(html)) {
+    html = html.replace(
+      '</title>',
+      `</title>\n    <meta property="og:site_name" content="DataDocks" />`
+    );
+  }
+
+  // Inject Twitter card meta tags if missing
+  if (!/<meta[^>]*(?:name|property)\s*=\s*["']twitter:card["']/i.test(html)) {
+    const twitterTags = `
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="${canonicalUrl}" />
+    <meta property="twitter:title" content="${pageTitle}" />
+    ${pageDescription ? `<meta property="twitter:description" content="${pageDescription}" />` : ''}
+    <meta property="twitter:image" content="https://datadocks.com/images/OG-Cover.png" />
+    <meta name="twitter:creator" content="@datadocks" />`;
+    html = html.replace('</title>', `</title>${twitterTags}`);
+  }
+
   // Inline Webflow CSS to eliminate render blocking
   const cssMatch = html.match(/<link[^>]*href="(https:\/\/cdn\.prod\.website-files\.com\/[^"']+\.css)"[^>]*>/);
   if (cssMatch) {
@@ -165,11 +208,24 @@ async function rewriteWebflowHTML(response, pathname) {
   // Fix www.datadocks.com links to datadocks.com
   html = html.replace(/href="https:\/\/www\.datadocks\.com\/?"/g, 'href="https://datadocks.com/"');
 
-  // Inject og:image for pages missing it (feature pages, integration sub-pages)
-  if (!html.includes('og:image')) {
+  // Inject or fix og:image (replace Webflow CDN URLs with datadocks.com)
+  if (/<meta[^>]*property\s*=\s*["']og:image["'][^>]*>/i.test(html)) {
+    html = html.replace(
+      /<meta[^>]*property\s*=\s*["']og:image["'][^>]*>/i,
+      `<meta property="og:image" content="https://datadocks.com/images/OG-Cover.png" />`
+    );
+  } else {
     html = html.replace(
       '</title>',
       '</title>\n    <meta property="og:image" content="https://datadocks.com/images/OG-Cover.png" />'
+    );
+  }
+
+  // Inject robots meta tag for explicit indexing directive
+  if (!/<meta[^>]*name\s*=\s*["']robots["']/i.test(html)) {
+    html = html.replace(
+      '</title>',
+      '</title>\n    <meta name="robots" content="index, follow" />'
     );
   }
 
@@ -187,6 +243,8 @@ async function rewriteWebflowHTML(response, pathname) {
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  // Set cache headers for Webflow-proxied pages
+  headers.set("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400");
 
   return new Response(html, {
     status: response.status,
@@ -199,6 +257,7 @@ async function rewriteWebflowHTML(response, pathname) {
 // Single source of truth matching Astro's Layout.astro Organization + WebSite.
 function getCanonicalSchema(canonicalUrl, pathname) {
   const pageTitle = getPageTitle(pathname);
+  const pageDescription = getPageDescription(pathname);
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -236,14 +295,24 @@ function getCanonicalSchema(canonicalUrl, pathname) {
         "url": "https://datadocks.com",
         "name": "DataDocks",
         "description": "Dock Scheduling Software for Warehouses",
-        "publisher": { "@id": "https://datadocks.com/#organization" }
+        "publisher": { "@id": "https://datadocks.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://datadocks.com/posts/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
       },
       {
         "@type": "WebPage",
         "@id": canonicalUrl,
         "url": canonicalUrl,
         "name": pageTitle,
+        ...(pageDescription ? { "description": pageDescription } : {}),
         "isPartOf": { "@id": "https://datadocks.com/#website" },
+        "primaryImageOfPage": { "@type": "ImageObject", "url": "https://datadocks.com/images/OG-Cover.png" },
         "breadcrumb": { "@id": `${canonicalUrl}#breadcrumb` }
       },
       {
@@ -277,6 +346,28 @@ function getPageTitle(pathname) {
     return `${feature} | DataDocks Features`;
   }
   return "DataDocks | Dock Scheduling Software";
+}
+
+function getPageDescription(pathname) {
+  const descriptions = {
+    "/datadocks-vs-opendock": "Compare DataDocks and OpenDock dock scheduling software. See how features, support, and scalability stack up for warehouses and distribution centers.",
+    "/support": "Get help with DataDocks dock scheduling software. Contact our support team for assistance.",
+    "/privacy-policy-datadocks": "DataDocks privacy policy. Learn how we handle and protect your data.",
+    "/integrations": "Connect DataDocks with SAP, Oracle, NetSuite, Microsoft and more. Integrate your ERP, WMS or TMS with real-time dock scheduling data.",
+    "/integrations/microsoft-power-bi": "Connect DataDocks with Microsoft Power BI for real-time dock scheduling analytics and reporting dashboards.",
+    "/integrations/microsoft-sso-entra": "Enable single sign-on for DataDocks using Microsoft Entra ID (Azure AD). Streamline user access and security.",
+    "/integrations/netsuite-erp": "Integrate DataDocks with NetSuite ERP for seamless dock scheduling and warehouse management data flow.",
+    "/integrations/oracle-fusion-cloud": "Connect DataDocks with Oracle Fusion Cloud for automated dock appointment scheduling and logistics data sync.",
+    "/integrations/sap-business-bydesign": "Integrate DataDocks with SAP Business ByDesign for coordinated dock scheduling and ERP operations.",
+    "/integrations/sap-s-4hana": "Connect DataDocks with SAP S/4HANA for real-time dock scheduling integrated with your enterprise resource planning.",
+  };
+  const clean = pathname.replace(/\/$/, '') || '/';
+  if (descriptions[clean]) return descriptions[clean];
+  if (clean.startsWith('/datadocks-features/')) {
+    const feature = clean.split('/').pop().replace(/-/g, ' ');
+    return `Learn about DataDocks ${feature} feature for dock scheduling and yard management.`;
+  }
+  return null;
 }
 
 function buildBreadcrumbs(pathname) {

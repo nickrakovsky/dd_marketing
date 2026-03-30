@@ -34,7 +34,7 @@ export default defineConfig({
   },
 
   integrations: [tailwind(), react(), sitemap({
-    filter: (page) => !page.includes('/home-draft'),
+    filter: (page) => !page.includes('/home-draft') && !page.includes('/sales-one-pager'),
     serialize(item) {
       // Add lastmod from post frontmatter if available
       const postDate = postDateMap.get(item.url);
@@ -67,6 +67,7 @@ export default defineConfig({
       'https://datadocks.com/datadocks-features/live-editing/',
       'https://datadocks.com/datadocks-features/notifications/',
       'https://datadocks.com/datadocks-features/yard-management/',
+      'https://datadocks.com/privacy-policy-datadocks/',
     ],
   }), mdx()],
 

@@ -3,6 +3,7 @@ export interface Author {
   slug: string;
   role: string;
   shortBio: string;
+  linkedIn?: string;
 }
 
 export const authors: Record<string, Author> = {
@@ -11,6 +12,7 @@ export const authors: Record<string, Author> = {
     slug: "joe-fitzpatrick",
     role: "Marketing Lead",
     shortBio: "Joe leads marketing at DataDocks, driving awareness and growth for the dock scheduling platform across the logistics industry.",
+    linkedIn: "https://www.linkedin.com/in/joefitzpatrick-datadocks",
   },
   "Noel Moffatt": {
     name: "Noel Moffatt",
@@ -23,6 +25,7 @@ export const authors: Record<string, Author> = {
     slug: "nick-rakovsky",
     role: "Co-Founder & CTO",
     shortBio: "Nick co-founded DataDocks and leads the engineering team. He architects the platform that powers dock scheduling for warehouses worldwide.",
+    linkedIn: "https://www.linkedin.com/in/nickrakovsky",
   },
   "Tim Branch": {
     name: "Tim Branch",
@@ -47,6 +50,7 @@ export const authors: Record<string, Author> = {
     slug: "nick-rakovsky",
     role: "Co-Founder & CTO",
     shortBio: "Nick co-founded DataDocks and leads the engineering team. He architects the platform that powers dock scheduling for warehouses worldwide.",
+    linkedIn: "https://www.linkedin.com/in/nickrakovsky",
   },
   "Tim Branch & Joe Fitzpatrick": {
     name: "Tim Branch & Joe Fitzpatrick",

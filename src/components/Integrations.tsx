@@ -51,6 +51,7 @@ const Integrations = ({ content }: IntegrationsProps) => {
           alt={`${integration.name} icon`}
           width={24}
           height={24}
+          loading="lazy"
           className="h-full w-full object-contain opacity-90 group-hover:opacity-100 transition-opacity"
         />
       </div>

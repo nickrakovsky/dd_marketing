@@ -97,7 +97,7 @@ export default function CapacityGallery({ image, overlayImage, mobileImages }: C
                     width={overlayImage.width}
                     height={overlayImage.height}
                     className="w-full h-auto block"
-                    loading="eager"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center group">
                     <div className="bg-white/90 backdrop-blur rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">

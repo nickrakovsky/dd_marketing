@@ -85,11 +85,20 @@ const graph: any[] = [
     "url": "https://datadocks.com",
     "name": "DataDocks",
     "description": "Dock Scheduling Software for Warehouses",
-    "publisher": { "@id": "https://datadocks.com/#organization" }
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://datadocks.com/posts/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
   },
   // 3. WebPage (Accessibility & Context) — use specific types for known pages
   {
-    "@type": pathname === '/about/' ? "AboutPage"
+    "@type": pathname === '/' ? "WebPage"
+           : pathname === '/about/' ? "AboutPage"
            : pathname === '/posts/' ? "CollectionPage"
            : "ItemPage",
     "@id": canonicalURL.toString(),
@@ -97,7 +106,7 @@ const graph: any[] = [
     "name": title,
     "description": description,
     "isPartOf": { "@id": "https://datadocks.com/#website" },
-    "primaryImageOfPage": { "@id": socialImageURL.toString() },
+    "primaryImageOfPage": { "@type": "ImageObject", "url": socialImageURL.toString() },
     "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
     "accessibilityFeature": ["alternativeText", "ARIA"],
     ...(Astro.url.pathname.split('/').filter(Boolean).length > 0 ? { "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` } } : {})
@@ -116,11 +125,15 @@ if (pathname === '/') {
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
       "@type": "Offer",
-      "priceCurrency": "USD",
-      "price": "0",
       "availability": "https://schema.org/OnlineOnly",
       "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
-      "description": "Free demo available. Custom pricing based on facility size."
+      "description": "Free demo available. Custom pricing based on facility size.",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "priceCurrency": "USD",
+        "price": "0",
+        "description": "Free demo"
+      }
     },
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -152,12 +165,20 @@ if (breadcrumbItems.length > 0) {
     "@id": `${canonicalURL.toString()}#breadcrumb`,
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://datadocks.com" },
-      ...breadcrumbItems.map((path, index, arr) => ({
-        "@type": "ListItem",
-        "position": index + 2,
-        "name": index === arr.length - 1 ? title : path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-        "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
-      }))
+      ...breadcrumbItems.map((path, index, arr) => {
+        let name = path.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        if (index === arr.length - 1) {
+          // Use short labels for known collection/section pages, full title for leaf pages
+          const shortLabels: Record<string, string> = { 'posts': 'Blog', 'benefits': 'Benefits', 'integrations': 'Integrations', 'about': 'About' };
+          name = shortLabels[path] || title;
+        }
+        return {
+          "@type": "ListItem",
+          "position": index + 2,
+          "name": name,
+          "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
+        };
+      })
     ]
   });
 }
@@ -165,6 +186,7 @@ if (breadcrumbItems.length > 0) {
 if (schemaData?.faq) {
   graph.push({
     "@type": "FAQPage",
+    "@id": `${canonicalURL.toString()}#faq`,
     "mainEntity": schemaData.faq.map((item: any) => ({
       "@type": "Question",
       "name": item.question,
@@ -174,19 +196,24 @@ if (schemaData?.faq) {
 }
 
 if (type === 'article' && articleData) {
+  const authorData = getAuthor(articleData.author);
   graph.push({
     "@type": "BlogPosting",
     "@id": `${canonicalURL.toString()}#article`,
     "mainEntityOfPage": { "@id": canonicalURL.toString() },
-    "headline": title,
+    "headline": title.replace(/\s*\|.*$/, ''),
     "description": description,
     "image": socialImageURL.toString(),
     "datePublished": articleData.pubDate.toISOString(),
     "dateModified": (articleData.updatedDate || articleData.pubDate).toISOString(),
     "author": {
       "@type": "Person",
-      "name": articleData.author,
-      "url": `https://datadocks.com/about#${getAuthor(articleData.author).slug}`
+      "@id": `https://datadocks.com/about#${authorData.slug}`,
+      "name": authorData.name,
+      "url": `https://datadocks.com/about#${authorData.slug}`,
+      "jobTitle": authorData.role,
+      "worksFor": { "@id": "https://datadocks.com/#organization" },
+      ...(authorData.linkedIn ? { "sameAs": [authorData.linkedIn] } : {})
     },
     "publisher": { "@id": "https://datadocks.com/#organization" },
     "articleSection": articleData.section
