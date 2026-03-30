@@ -52,7 +52,7 @@ const Navigation = ({ isOrange = false }) => {
         <div className="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
 
           <div className="flex items-center flex-shrink min-w-0">
-            <a href={MAIN_SITE} className="flex-shrink min-w-0">
+            <a href="/" className="flex-shrink min-w-0">
               <img
                 src={datadocksLogo.src}
                 alt="DataDocks Logo"

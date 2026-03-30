@@ -73,6 +73,10 @@ async function rewriteWebflowHTML(response, pathname) {
 
   let html = await response.text();
 
+  // Compute page title and description for meta tag injection
+  const pageTitle = getPageTitle(pathname);
+  const pageDescription = getPageDescription(pathname);
+
   // Replace Webflow staging URL with production URL (with and without protocol)
   html = html.replace(/https:\/\/datadocks-staging\.webflow\.io/g, "https://datadocks.com");
   html = html.replace(/datadocks-staging\.webflow\.io/g, "datadocks.com");
