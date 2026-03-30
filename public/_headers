@@ -4,3 +4,4 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://fast.bentonow.com https://cdn.prod.website-files.com https://d3e54v103j8qbb.cloudfront.net; style-src 'self' 'unsafe-inline' https://cdn.prod.website-files.com; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://fast.bentonow.com https://region1.google-analytics.com; frame-src https://www.youtube.com https://calendly.com; media-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'

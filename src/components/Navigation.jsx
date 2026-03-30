@@ -129,7 +129,7 @@ const Navigation = ({ isOrange = false }) => {
             </a>
 
             <a
-              href={`${MAIN_SITE}/integrations`}
+              href={`${MAIN_SITE}/integrations/`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${
                 isOrange 
                   ? "text-white hover:text-white/80" 
@@ -242,7 +242,7 @@ const Navigation = ({ isOrange = false }) => {
               </a>
 
               <a
-                href={`${MAIN_SITE}/integrations`}
+                href={`${MAIN_SITE}/integrations/`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
                   isOrange 
                     ? "text-white border-white/20" 

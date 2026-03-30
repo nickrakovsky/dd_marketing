@@ -21,11 +21,12 @@ const Testimonial = ({ content }: TestimonialProps) => {
           </blockquote>
           
           <div className="flex items-center gap-3 sm:gap-4">
-            <img 
-              src={content.image.src} 
-              alt={`${content.name} profile picture`} 
-              width={content.image.width}   
+            <img
+              src={content.image.src}
+              alt={`${content.name} profile picture`}
+              width={content.image.width}
               height={content.image.height}
+              loading="lazy"
               className="h-12 w-12 sm:h-14 sm:w-14 rounded-full object-cover border-2 border-primary" 
             />
             <div>
