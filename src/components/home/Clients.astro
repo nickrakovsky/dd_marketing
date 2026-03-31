@@ -39,9 +39,9 @@ const logos = [
   
   {/* Heading stays in container */}
   <div class="container mx-auto text-center">
-    <h3 class="font-recoleta text-xl md:text-2xl text-[#8d785c] mb-12 max-w-3xl mx-auto px-4">
+    <h2 class="font-recoleta text-xl md:text-2xl text-[#736146] mb-12 max-w-3xl mx-auto px-4">
       Trusted by the world's most relentless supply chains
-    </h3>
+    </h2>
   </div>
 
   {/* Full-width marquee */}
@@ -64,9 +64,9 @@ const logos = [
 
   {/* Trust statement stays in container */}
   <div class="container mx-auto text-center">
-    <h3 class="font-recoleta text-xl md:text-2xl text-[#8d785c] max-w-3xl mx-auto px-4">
+    <h2 class="font-recoleta text-xl md:text-2xl text-[#736146] max-w-3xl mx-auto px-4">
       Backed by SOC 2 compliance, we deliver the <strong class="font-bold text-black">most secure</strong> dock scheduling platform in the industry
-    </h3>
+    </h2>
   </div>
     
 </section>
@@ -90,15 +90,20 @@ const logos = [
       return track!.scrollWidth / 5;
     }
 
+    let setW = getSetWidth();
+
     // Start from -2 sets so there's content to the left
-    position = -(getSetWidth() * 2);
+    position = -(setW * 2);
     track.style.transform = `translateX(${position}px)`;
+
+    window.addEventListener('resize', () => {
+      setW = getSetWidth();
+    });
 
     function animate() {
       if (!isDragging) {
         position -= speed;
         // Wrap around: when we've scrolled past 3 sets, jump back by 1 set
-        const setW = getSetWidth();
         if (position < -(setW * 4)) {
           position += setW;
         }

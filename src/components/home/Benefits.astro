@@ -9,6 +9,7 @@ import dockExteriorImg from '../../assets/images/Dock-Exterior.png';
 const features = [
   {
     title: "Spot Bottlenecks in your Docks and Yard",
+    srTitle: "spotting bottlenecks in your docks and yard",
     description: "See exactly what's in your loading dock and yard at a glance, and estimate the loading time for each truck.",
     link: "/benefits/see-everything",
     image: managersOfficeImg,
@@ -16,6 +17,7 @@ const features = [
   },
   {
     title: "Incentivize Carrier Punctuality",
+    srTitle: "incentivizing carrier punctuality",
     description: "Show them, with data, how sticking to your schedule gets their trucks in and out of your facility faster.",
     link: "/benefits/delight-carriers",
     image: dockInteriorImg,
@@ -23,6 +25,7 @@ const features = [
   },
   {
     title: "Spread Your Appointments Throughout the Day",
+    srTitle: "spreading your appointments throughout the day",
     description: "Predict how much manpower you'll need and optimize your operations over time.",
     link: "/benefits/increase-capacity",
     image: warehouseInteriorImg,
@@ -30,6 +33,7 @@ const features = [
   },
   {
     title: "Say Goodbye to Spreadsheets & Paper",
+    srTitle: "saying goodbye to spreadsheets and paper",
     description: "Carriers book and you stay in control. Replace calls and emails with an easy interface that sends automatic notifications.",
     link: "/benefits/digitize-operations",
     image: dockExteriorImg,
@@ -54,8 +58,8 @@ const features = [
             <p class="font-recoleta text-lg md:text-xl text-gray-700 leading-relaxed">
               {feature.description}
             </p>
-            <a href={feature.link} class="inline-block w-full lg:w-auto text-center px-8 py-3 bg-[#FF5507] text-white font-recoleta font-medium rounded-none hover:bg-black transition-colors duration-300 tracking-wide text-lg">
-              Learn More
+            <a href={feature.link} class="inline-block w-full lg:w-auto text-center px-8 py-3 bg-[#E04B06] text-white font-recoleta font-medium rounded-none hover:bg-black hover:text-white transition-colors duration-300 tracking-wide text-lg">
+              Learn More<span class="sr-only"> about {feature.srTitle}</span>
             </a>
           </div>
 
@@ -65,6 +69,8 @@ const features = [
               <Image 
                 src={feature.image} 
                 alt={feature.alt}
+                widths={[400, 800]}
+                sizes="(max-width: 1024px) 100vw, 800px"
                 class="w-full h-full object-cover"
               />
             </div>

@@ -162,6 +162,7 @@ const Navigation = ({ isOrange = false }) => {
           </div>
 
           <button
+            aria-label="Toggle Navigation Menu"
             className={`lg:hidden shrink-0 p-2 transition-colors duration-300 ${
               isOrange ? "text-white" : "text-foreground dark:text-gray-200"
             }`}

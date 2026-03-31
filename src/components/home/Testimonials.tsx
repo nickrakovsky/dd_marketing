@@ -95,12 +95,14 @@ export default function Testimonials() {
           {/* Desktop Navigation Buttons */}
           <div className="hidden md:flex gap-4">
             <button
+              aria-label="Previous Testimonial"
               onClick={scrollPrev}
               className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
+              aria-label="Next Testimonial"
               onClick={scrollNext}
               className="w-12 h-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors"
             >
@@ -151,6 +153,7 @@ export default function Testimonials() {
                   {/* Author / Mobile Controls */}
                   <div className="pt-6 border-t border-gray-100 flex items-center justify-between md:block relative">
                     <button
+                      aria-label="Previous Testimonial Mobile"
                       onClick={scrollPrev}
                       className="md:hidden pointer-events-auto w-10 h-10 rounded-full flex-shrink-0 bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-sm"
                     >
@@ -160,6 +163,7 @@ export default function Testimonials() {
                       {item.author}
                     </p>
                     <button
+                      aria-label="Next Testimonial Mobile"
                       onClick={scrollNext}
                       className="md:hidden pointer-events-auto w-10 h-10 rounded-full flex-shrink-0 bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-sm"
                     >

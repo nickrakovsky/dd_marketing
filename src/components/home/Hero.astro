@@ -1,7 +1,8 @@
 ---
+import { Image } from 'astro:assets';
+import homepageMobileImg from '../../assets/images/homepage-screenshot-mobile.png';
+
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-const bentoAction = "https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/Demo%20Subscriber?hardened=true";
-const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
 ---
 
 <section class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black">
@@ -70,7 +71,7 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
           />
           <button 
             type="submit"
-            class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#FF5507] hover:bg-black text-white font-medium transition-colors duration-500 whitespace-nowrap tracking-wide text-lg flex items-center justify-center font-recoleta"
+            class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#E04B06] hover:bg-black text-white font-medium transition-colors duration-500 whitespace-nowrap tracking-wide text-lg flex items-center justify-center font-recoleta"
           >
             Get Free Demo
           </button>
@@ -91,12 +92,16 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
     {/* 5. Mobile/Tablet Hero Image — tappable/draggable pan */}
     <div class="block hero-desktop:hidden mt-8 w-full px-0 mb-4">
       <div id="hero-mobile-frame" class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-none">
-        <img 
+        <Image 
           id="hero-mobile-img"
-          src={`${basePath}/images/homepage-screenshot-mobile.png`}
+          src={homepageMobileImg}
           alt="DataDocks Calendar Interface Mobile" 
+          widths={[400, 750, 1000]}
+          sizes="(max-width: 860px) 100vw, 750px"
           class="w-full h-full object-cover hero-pan-active"
           style="object-position: 0% 50%;"
+          fetchpriority="high"
+          decoding="async"
         />
       </div>
     </div>
@@ -125,71 +130,78 @@ const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_c
   }
 </style>
 
-<script is:inline>
+<script>
+  // 1. Form Handling
   (function() {
-    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    var form = document.getElementById('hero-bento-form');
+    const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+    const form = document.getElementById('hero-bento-form') as HTMLFormElement | null;
+    
     if (form) {
-      form.addEventListener('submit', function(e) {
+      form.addEventListener('submit', (e) => {
         e.preventDefault();
-        var email = (form.querySelector('input[name="email"]') || {}).value;
-        if (email && window.bento) {
-          window.bento.identify(email);
-          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+        const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement | null;
+        const email = emailInput?.value;
+        
+        const bento = (window as any).bento;
+        if (email && bento) {
+          bento.identify(email);
+          bento.track('Demo Subscriber', { source: window.location.pathname });
         }
         window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
       });
     }
   })();
-</script>
-<script>
-  const frame = document.getElementById('hero-mobile-frame');
-  const img = document.getElementById('hero-mobile-img');
 
-  if (frame && img) {
-    let animationStopped = false;
-    let isDragging = false;
-    let startX = 0;
-    let currentPct = 0;
+  // 2. Mobile Image Panning
+  (function() {
+    const frame = document.getElementById('hero-mobile-frame');
+    const img = document.getElementById('hero-mobile-img') as HTMLImageElement | null;
 
-    function stopAnimation() {
-      if (animationStopped) return;
-      const computed = getComputedStyle(img).objectPosition;
-      const match = computed.match(/([\d.]+)%/);
-      currentPct = match ? parseFloat(match[1]) : 0;
-      img.classList.remove('hero-pan-active');
-      img.style.objectPosition = `${currentPct}% 50%`;
-      animationStopped = true;
+    if (frame && img) {
+      let animationStopped = false;
+      let isDragging = false;
+      let startX = 0;
+      let currentPct = 0;
+
+      function stopAnimation() {
+        if (animationStopped) return;
+        const computed = getComputedStyle(img!).objectPosition;
+        const match = computed.match(/([\d.]+)%/);
+        currentPct = match ? parseFloat(match[1]) : 0;
+        img!.classList.remove('hero-pan-active');
+        img!.style.objectPosition = `${currentPct}% 50%`;
+        animationStopped = true;
+      }
+
+      frame.addEventListener('pointerdown', (e) => {
+        stopAnimation();
+        isDragging = true;
+        startX = e.clientX;
+        frame!.setPointerCapture(e.pointerId);
+      });
+
+      frame.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const frameWidth = frame!.offsetWidth;
+        const deltaPct = -(dx / frameWidth) * 100;
+        let newPct = currentPct + deltaPct;
+        newPct = Math.max(0, Math.min(100, newPct));
+        img!.style.objectPosition = `${newPct}% 50%`;
+      });
+
+      frame.addEventListener('pointerup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        const computed = getComputedStyle(img!).objectPosition;
+        const match = computed.match(/([\d.]+)%/);
+        currentPct = match ? parseFloat(match[1]) : currentPct;
+      });
+
+      frame.addEventListener('pointercancel', () => {
+        isDragging = false;
+      });
     }
-
-    frame.addEventListener('pointerdown', (e) => {
-      stopAnimation();
-      isDragging = true;
-      startX = e.clientX;
-      frame.setPointerCapture(e.pointerId);
-    });
-
-    frame.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const frameWidth = frame.offsetWidth;
-      const deltaPct = -(dx / frameWidth) * 100;
-      let newPct = currentPct + deltaPct;
-      newPct = Math.max(0, Math.min(100, newPct));
-      img.style.objectPosition = `${newPct}% 50%`;
-    });
-
-    frame.addEventListener('pointerup', (e) => {
-      if (!isDragging) return;
-      isDragging = false;
-      const computed = getComputedStyle(img).objectPosition;
-      const match = computed.match(/([\d.]+)%/);
-      currentPct = match ? parseFloat(match[1]) : currentPct;
-    });
-
-    frame.addEventListener('pointercancel', () => {
-      isDragging = false;
-    });
-  }
+  })();
 </script>
