@@ -1,17 +1,20 @@
 ---
-title: "7 Ways Custom Rules Speed Up Loading Dock Operations"
-category: "Systems Integration"
-priority: "Medium"
-slug: "custom-rules"
-description: "Learn how facilities use rules in their scheduling systems to prevent overbooking, cut paperwork, balance capacity, and keep docks running on time."
-author: "Joe Fitzpatrick"
-pubDate: "Aug 27, 2025 5:43 AM"
-updatedDate: "Jan 20, 2026 8:27 AM"
-cardImage: "../../assets/blog-images/custom-rules-cover.webp"
-cardAlt: ""
-isFeatured: false
+title: 7 Ways Custom Rules Speed Up Loading Dock Operations
+category: Systems Integration
+priority: Medium
+description: >-
+  Learn how facilities use rules in their scheduling systems to prevent
+  overbooking, cut paperwork, balance capacity, and keep docks running on time.
+author: Joe Fitzpatrick
+pubDate: 'Aug 27, 2025 5:43 AM'
+updatedDate: 'Jan 20, 2026 8:27 AM'
+cardImage: ../../assets/blog-images/custom-rules-cover.webp
+cardAlt: ''
 isHighlighted: false
 showToc: true
+postType:
+  discriminant: article
+  value: {}
 ---
 
 A lot of facilities are finding out that first-come-first-serve just doesn’t cut it anymore. Demand spikes unpredictably, competing for the same limited doors and workforce, not to mention the inconsistent or straight-up missing paperwork. Operations managers know something needs to change. But there’s a difficult conversation to have with carriers and customers:
@@ -29,9 +32,7 @@ Custom rules are the guardrails in your scheduling engine. They are the logic la
 Below are 7 practical ways facilities are using custom rules to reduce labor, prevent errors, and get more value out of [dock scheduling](https://datadocks.com/). Each example includes a real deployment, but the patterns apply across many different industries and workflows.
 
 ## 1\. Enforce contract limits at the point of booking
-
-**Goal:** Prevent overbooking or overdelivery against contracts.**‍**
-
+**Goal:** Prevent overbooking or overdelivery against contracts.****
 **How to do it:** Upload POs and let the system automatically compute max weight/units/appointments for any given time period, and only allow the carrier/customer to book appointments that keep within the limit.
 
 **KPIs:** % capacity compliance; manual touches cut; overage prevented.
@@ -77,15 +78,13 @@ The automation checks whether the BOL has been uploaded; if not, it sends a temp
 A 24-hour BOL reminder is just one way to apply this kind of rule. You could also optimize the system to target no-show risk. Facilities can set different windows based on transit times and customize the checklist or message by customer, lane, or commodity.
 
 ## 4\. Flag appointments booked after expected ship dates
-
-**Goal:** Improve inbound and/or outbound OTIF rates**‍**
-
+**Goal:** Improve inbound and/or outbound OTIF rates****
 **How to do it:** Ensure all POs include ship dates. Optionally allow loads to be booked after the relevant ship date, but trigger a notification.  
 **KPIs:** Order OTIF %; average number of days late.
 
 A truck might show up right on time for its appointment but still be carrying an order that’s way behind schedule. That doesn’t necessarily mean something went wrong, but inventory problems can arise when those delays are invisible. Without a rule to flag loads booked after their ship date, you have no early signal to prepare, escalate, or adjust priorities, and exceptions only surface once they cause downstream disruption.
 
-‍  
+  
 One plant manager has orders flow into DataDocks via API with expected ship dates attached. When someone books an appointment after the expected ship date, the system flags the load and notifies the location so they can prepare, reschedule, or escalate. 
 
 The check is transparent at booking and visible to downstream teams in the console. This allows for a clear comparison of booking time against the upstream ship milestone. The effect is earlier detection of stale orders and fewer surprises at putaway.
@@ -94,7 +93,6 @@ In this example, the trigger is the ship date, but the same approach can be tied
 
 The point is to make lateness visible as soon as it enters the schedule, not after it hits the dock. 
 
-‍
 
 ## 5\. Automatically set appointment durations by load attributes
 
@@ -112,7 +110,6 @@ The same framework can estimate time by more granular factors such as line count
 
 You can also set up special rules for temperature-control and loads that require special handling or equipment. By letting the system calculate slot length instead of relying on averages, you get schedules that reflect real effort and more on-time departures.
 
-‍
 
 ## 6\. Limit slot availability by customer or day-of-the-week
 
@@ -130,7 +127,6 @@ These constraints are enforced at search and booking through dynamic capacity mo
 
 The same principle applies to any situation where demand and resources fluctuate. Rules can hold back weekend capacity, reserve slots for priority flows, or smooth peaks across shifts. You can let the system enforce those allocations automatically, so coordinators aren’t stuck making judgment calls on every booking.
 
-‍
 
 ## 7\. Assign doors by best fit for each trailer
 
@@ -148,7 +144,6 @@ On the floor, teams see assignments that already respect the capability matrix, 
 
 The important part is that the rules live inside the scheduling system, so the right door is assigned automatically at booking. That way, trailers are in position the first time, coordinators aren’t stuck making calls on the fly, and the yard runs with fewer staging moves and smoother flow.
 
-‍
 
 ## Is it complicated to set up these kinds of rules?
 
@@ -160,4 +155,4 @@ Start with the biggest pain point, like contract caps or document checks, then e
 
 The longer you keep using dock scheduling, the more opportunities you’ll spot where automated workflows can make your operations run even better. And if you choose DataDocks, you get a team that’s always on hand to implement custom functionality for you.
 
-‍
+

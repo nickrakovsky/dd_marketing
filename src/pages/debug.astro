@@ -1,0 +1,5 @@
+---
+import { getCollection } from 'astro:content';
+const posts = await getCollection('posts');
+---
+<pre>{JSON.stringify(posts.map(p => ({ slug: p.slug, contentType: p.data.contentType })), null, 2)}</pre>

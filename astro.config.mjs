@@ -1,6 +1,8 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
+import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import fs from 'node:fs';
@@ -25,15 +27,19 @@ if (fs.existsSync(postsDir)) {
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
+  adapter: cloudflare({
+    imageService: 'compile',
+  }),
 
   site: 'https://datadocks.com',
   base: '/',
-  trailingSlash: 'always',
+  trailingSlash: 'ignore',
   build: {
     inlineStylesheets: 'always',
   },
 
-  integrations: [tailwind(), react(), sitemap({
+  integrations: [tailwind(), react(), keystatic(), sitemap({
     filter: (page) => !page.includes('/home-draft') && !page.includes('/sales-one-pager'),
     serialize(item) {
       // Add lastmod from post frontmatter if available

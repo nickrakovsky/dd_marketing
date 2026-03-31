@@ -32,8 +32,8 @@ Object.keys(postsByCategory).forEach(category => {
   let catPosts = postsByCategory[category];
   
   // Separate videos/shorts from articles
-  const videos = catPosts.filter(p => p.data.contentType === 'video' || p.data.contentType === 'short');
-  const articles = catPosts.filter(p => p.data.contentType !== 'video' && p.data.contentType !== 'short');
+  const videos = catPosts.filter(p => p.data.postType?.discriminant === 'video' || p.data.postType?.discriminant === 'short');
+  const articles = catPosts.filter(p => p.data.postType?.discriminant !== 'video' && p.data.postType?.discriminant !== 'short');
   
   // Sort articles by priority then date
   articles.sort((a, b) => {
@@ -207,7 +207,7 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                 <div class="grid grid-flow-col-dense grid-rows-2 auto-cols-[85vw] sm:auto-cols-[300px] lg:auto-cols-[calc((100%-4.5rem)/4)] gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide scroll-smooth" data-carousel style="-ms-overflow-style: none; scrollbar-width: none;">
                   
                   {posts.map((post, postIdx) => {
-                    const type = post.data.contentType || 'article';
+                    const type = post.data.postType?.discriminant || 'article';
                     // isFeatured must never be true for video or short
                     const isFeatured = postIdx === 0 && type === 'article';
                     
@@ -225,7 +225,8 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                     const finalReadTime = post.data.readTime || getReadTime(post.body || '');
 
                     // Pure Video Card Rendering
-                    if (!isFeatured && (type === 'video' || type === 'short') && post.data.youtubeId) {
+                    if (!isFeatured && (type === 'video' || type === 'short') && post.data.postType?.value && 'youtubeId' in post.data.postType.value && post.data.postType.value.youtubeId) {
+                      const videoId = post.data.postType.value.youtubeId;
                       const isShort = type === 'short';
                       return (
                         <a 
@@ -238,9 +239,9 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                               {/* Short: Fixed 9:16 aspect ratio for the frame to prevent zoom, banner gets the rest */}
                               <div class="relative w-full aspect-[9/16] overflow-hidden shrink-0">
                                 <lite-youtube 
-                                  videoid={post.data.youtubeId} 
+                                  videoid={videoId} 
                                   playlabel={post.data.title} 
-                                  style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                                  style={`background-image: url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
                                   class="w-full h-full pointer-events-none" 
                                 />
                                 {/* Overlay: visible by default, hides on hover */}
@@ -256,9 +257,9 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                             <>
                               {/* Longform: edge-to-edge video, no padding */}
                               <lite-youtube 
-                                videoid={post.data.youtubeId} 
+                                videoid={videoId} 
                                 playlabel={post.data.title} 
-                                style={`background-image: url('https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                                style={`background-image: url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
                                 class="w-full h-full aspect-video pointer-events-none" 
                               />
                               {/* Overlay: visible by default, hides on hover */}
@@ -282,8 +283,8 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                         {isFeatured ? (
                           <>
                             <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
-                              {post.data.youtubeId ? (
-                                 <img src={`https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
+                              {(post.data.postType?.value && 'youtubeId' in post.data.postType.value && post.data.postType.value.youtubeId) ? (
+                                 <img src={`https://img.youtube.com/vi/${post.data.postType.value.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
                               ) : post.data.cardImage ? (
                                 <Image src={post.data.cardImage} alt={post.data.title} class="w-full h-full object-cover" loading="eager" />
                               ) : fallbackImg ? (

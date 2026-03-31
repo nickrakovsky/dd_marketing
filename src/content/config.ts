@@ -15,13 +15,26 @@ const postsCollection = defineCollection({
         readTime: z.string().optional(),
         showToc: z.boolean().optional(),
 
-        // --- THE NEW BENTO FIELDS ---
-        // 'article' is default. 'video' is 16:9. 'short' is 9:16.
-        contentType: z.enum(['article', 'video', 'short']).default('article'),
-        // The 11-character YouTube ID (e.g., "dQw4w9WgXcQ")
-        youtubeId: z.string().optional(),
-        // ISO 8601 duration for VideoObject schema (e.g., "PT13M25S")
-        duration: z.string().optional(),
+        postType: z.discriminatedUnion('discriminant', [
+            z.object({
+                discriminant: z.literal('article'),
+                value: z.object({}).optional()
+            }),
+            z.object({
+                discriminant: z.literal('video'),
+                value: z.object({
+                    youtubeId: z.string().optional(),
+                    duration: z.string().optional()
+                })
+            }),
+            z.object({
+                discriminant: z.literal('short'),
+                value: z.object({
+                    youtubeId: z.string().optional(),
+                    duration: z.string().optional()
+                })
+            })
+        ]).default({ discriminant: 'article', value: {} }),
         // Priority for sorting or hiding, but not displayed to end user.
         priority: z.string().optional(),
     })
