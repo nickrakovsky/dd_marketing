@@ -5,6 +5,7 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
+import { getAuthor } from '../data/authors';
 
 interface Heading {
   depth: number;
@@ -34,12 +35,15 @@ const calculatedReadTime = minReadingTime === maxReadingTime
   : `${minReadingTime}-${maxReadingTime} min read`;
 
 const finalReadTime = frontmatter.readTime || calculatedReadTime;
+
+// 4. Author Data
+const author = getAuthor(frontmatter.author);
 ---
 
 <Layout 
   title={`${frontmatter.title} | DataDocks Blog`}
   description={frontmatter.description}
-  image={frontmatter.cardImage}
+  image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
   articleData={{
     author: frontmatter.author,
@@ -72,7 +76,11 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
             </div>
             
             <div class="flex flex-wrap items-center gap-x-6 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
-              <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{frontmatter.author}</div>
+              <div class="flex flex-col">
+                <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{author.name}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{author.role}</div>
+                <div class="text-xs text-gray-400 dark:text-gray-500 mt-1 max-w-md transition-colors duration-300">{author.shortBio}</div>
+              </div>
               
               <div class="flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
                 <span>First Published: {formattedDate}</span>
@@ -100,10 +108,11 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
           {frontmatter.heroFigure && (
             <div class="w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
               <div class="w-full aspect-[4/5] flex items-center justify-center overflow-visible">
-                <Image 
-                  src={frontmatter.heroFigure} 
+                <Image
+                  src={frontmatter.heroFigure}
                   alt={`Illustration for ${frontmatter.title}`}
-                  class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300" 
+                  loading="eager"
+                  class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300"
                 />
               </div>
             </div>
@@ -179,10 +188,11 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
           {/* If there's a mobile view, we could also render the heroFigure inline before the content, but leaving it clean for now */}
           {frontmatter.heroFigure && (
             <div class="w-full mb-8 lg:hidden">
-              <Image 
-                src={frontmatter.heroFigure} 
+              <Image
+                src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
-                class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300" 
+                loading="eager"
+                class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300"
               />
             </div>
           )}
@@ -195,6 +205,89 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
     </main>
 
     <Footer />
+
+    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+    <script is:inline src="/css/lite-yt-embed.js" defer></script>
+
+    <script is:inline>
+      // Immediately apply theme preference to avoid FOUC
+      (function() {
+        try {
+          const dflt = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'dark' || (!savedTheme && dflt === 'dark')) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+
+      function setupBlogInteractions() {
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+          themeToggle.onclick = () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          };
+        }
+
+        // Text Size Toggle Logic
+        const textSizeToggle = document.getElementById('text-size-toggle');
+        const article = document.getElementById('content');
+
+        // Check initial text scale
+        try {
+          if (localStorage.getItem('text-scaled') === 'true') {
+            article?.classList.add('text-scaled');
+          } else {
+            article?.classList.remove('text-scaled');
+          }
+        } catch (e) {}
+
+        if (textSizeToggle) {
+          textSizeToggle.onclick = () => {
+            article?.classList.toggle('text-scaled');
+            const isScaled = article?.classList.contains('text-scaled');
+            localStorage.setItem('text-scaled', isScaled ? 'true' : 'false');
+          };
+        }
+      }
+
+      // Run immediately for first load or when script is re-evaluated by Astro
+      setupBlogInteractions();
+
+      // Ensure it runs after View Transitions swap
+      if (typeof window !== 'undefined' && !window.blogInteractionsSetup) {
+        document.addEventListener('astro:after-swap', setupBlogInteractions);
+        window.blogInteractionsSetup = true;
+      }
+
+      function setupScrollSpy() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const id = entry.target.getAttribute('id');
+              if (!id) return;
+
+              document.querySelectorAll('.toc-link').forEach(link => {
+                const isActive = link.getAttribute('href') === `#${id}`;
+                link.classList.toggle('active', isActive);
+              });
+            }
+          });
+        }, { rootMargin: '0px 0px -75% 0px' });
+
+        document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
+      }
+
+      if (typeof window !== 'undefined') {
+        setupScrollSpy();
+        document.addEventListener('astro:after-swap', setupScrollSpy);
+      }
+    </script>
 
   </div>
 </Layout>
@@ -301,85 +394,3 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
     }
   }
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" defer></script>
-
-<script is:inline>
-  // Immediately apply theme preference to avoid FOUC
-  (function() {
-    try {
-      const dflt = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark' || (!savedTheme && dflt === 'dark')) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } catch (e) {}
-  })();
-
-  function setupBlogInteractions() {
-    // Theme Toggle Logic
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-      themeToggle.onclick = () => {
-        document.documentElement.classList.toggle('dark');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      };
-    }
-
-    // Text Size Toggle Logic
-    const textSizeToggle = document.getElementById('text-size-toggle');
-    const article = document.getElementById('content');
-    
-    // Check initial text scale
-    try {
-      if (localStorage.getItem('text-scaled') === 'true') {
-        article?.classList.add('text-scaled');
-      } else {
-        article?.classList.remove('text-scaled');
-      }
-    } catch (e) {}
-
-    if (textSizeToggle) {
-      textSizeToggle.onclick = () => {
-        article?.classList.toggle('text-scaled');
-        const isScaled = article?.classList.contains('text-scaled');
-        localStorage.setItem('text-scaled', isScaled ? 'true' : 'false');
-      };
-    }
-  }
-
-  // Run immediately for first load or when script is re-evaluated by Astro
-  setupBlogInteractions();
-
-  // Ensure it runs after View Transitions swap
-  if (typeof window !== 'undefined' && !window.blogInteractionsSetup) {
-    document.addEventListener('astro:after-swap', setupBlogInteractions);
-    window.blogInteractionsSetup = true;
-  }
-
-  function setupScrollSpy() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          if (!id) return;
-          
-          document.querySelectorAll('.toc-link').forEach(link => {
-            const isActive = link.getAttribute('href') === `#${id}`;
-            link.classList.toggle('active', isActive);
-          });
-        }
-      });
-    }, { rootMargin: '0px 0px -75% 0px' });
-
-    document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
-  }
-  
-  if (typeof window !== 'undefined') {
-    setupScrollSpy();
-    document.addEventListener('astro:after-swap', setupScrollSpy);
-  }
-</script>

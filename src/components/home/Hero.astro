@@ -1,75 +1,89 @@
 ---
-import { Image } from 'astro:assets';
-import homepageMobileImg from '../../assets/images/homepage-screenshot-mobile.png';
+import { Image } from "astro:assets";
+import homepageMobileImg from "../../assets/images/homepage-screenshot-mobile.png";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<section class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black">
+<section
+  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black"
+>
   <div class="container mx-auto px-4">
     <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
-      
       {/* 1. Main Heading */}
       <div class="relative mb-10 w-full max-w-4xl mx-auto">
-         <h1 class="font-bruta uppercase relative z-0 text-black">
-            
-            {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
-            <span class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full">
-              <span class="block relative inline-block">YOUR
-                <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
-                  <img 
-                    src={`${basePath}/images/hero-badge.png`}
+        <h1 class="font-bruta uppercase relative z-0 text-black">
+          {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
+          <span
+            class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
+          >
+            <span class="block relative inline-block">
+              <!--<div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
+                  <img
+                    src={`${basePath}/images/hero-badge.webp`}
                     alt="Save Time Make It Visible"
+                    width="96"
+                    height="96"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
-                </div>
-              </span>
-              <span class="block">LOADING</span>
-              <span class="block">DOCK,</span>
-              <span class="block">YOUR</span>
-              <span class="block">RULES</span>
+                </div>-->
             </span>
+            Dock Scheduling & Yard Management Software
+          </span>
 
-            {/* DESKTOP VIEW (860px+) — restored to original text-8xl that fits on 2 lines */}
-            <span class="hidden hero-desktop:block text-8xl leading-[0.85] text-black">
-              <span class="relative inline-block">
+          {
+            /* DESKTOP VIEW (860px+) — restored to original text-8xl that fits on 2 lines */
+          }
+          <span
+            class="hidden hero-desktop:block text-8xl leading-[0.85] text-black"
+          >
+            <!--<span class="relative inline-block">
                 YOUR LOADING DOCK,
                 <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
-                  <img 
-                    src={`${basePath}/images/hero-badge.png`}
+                  <img
+                    src={`${basePath}/images/hero-badge.webp`}
                     alt="Save Time Make It Visible"
+                    width="96"
+                    height="96"
                     class="w-full h-full animate-[spin_12s_linear_infinite]"
                   />
                 </div>
               </span>
-              <span class="block">YOUR RULES</span>
-            </span>
-
-         </h1>
+              <span class="block">YOUR RULES</span>-->
+            Dock Scheduling & Yard Management Software
+          </span>
+        </h1>
       </div>
 
-      {/* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */}
-      <p class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[640px] mx-auto leading-relaxed px-2">
-        Our dock scheduling software is known for having the easiest interface and the most helpful team in the industry.
+      {
+        /* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */
+      }
+      <p
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[640px] mx-auto leading-relaxed px-2"
+      >
+        Our dock scheduling software is known for having the easiest interface
+        and the most helpful team in the industry.
         <br class="hidden lg:block" />
-        <strong class="text-black block mt-3 md:mt-4">Start turning trucks around faster today.</strong>
+        <strong class="text-black block mt-3 md:mt-4"
+          >Start turning trucks around faster today.</strong
+        >
       </p>
 
       {/* 3. Form Area */}
       <div class="w-full max-w-[95%] md:max-w-2xl mx-auto mb-12 px-0">
-        <form 
+        <form
           id="hero-bento-form"
           class="flex flex-col sm:flex-row items-stretch justify-center gap-0 bg-[#EFE2D2] sm:bg-transparent"
         >
-          <input 
-            type="email" 
+          <input
+            type="email"
             name="email"
-            placeholder="Enter your email" 
+            placeholder="Enter your email"
             style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
             class="!h-12 sm:!h-14 w-full sm:w-[22rem] px-4 text-center sm:text-left sm:hover:pl-5 sm:focus:pl-5 transition-all duration-300 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none"
             required
           />
-          <button 
+          <button
             type="submit"
             class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#E04B06] hover:bg-black text-white font-medium transition-colors duration-500 whitespace-nowrap tracking-wide text-lg flex items-center justify-center font-recoleta"
           >
@@ -77,52 +91,79 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           </button>
         </form>
       </div>
-
     </div>
 
     {/* 4. Desktop Hero Image */}
-    <div class="hidden hero-desktop:block relative w-screen ml-[calc(50%-50vw)] mt-16 shadow-[0_12px_15px_-10px_rgba(0,0,0,0.1)] overflow-hidden">
-      <img 
+    <div
+      class="hidden hero-desktop:block relative w-screen ml-[calc(50%-50vw)] mt-16 shadow-[0_12px_15px_-10px_rgba(0,0,0,0.1)] overflow-hidden"
+    >
+      <img
         src={`${basePath}/images/DataDocks-Calendar-Screenshot.webp`}
-        alt="DataDocks Calendar Interface" 
+        srcset={`${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, ${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, ${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, ${basePath}/images/DataDocks-Calendar-Screenshot.webp 2000w`}
+        sizes="100vw"
+        alt="DataDocks Calendar Interface"
+        width="2000"
+        height="717"
+        fetchpriority="high"
+        loading="eager"
         class="w-full h-auto object-cover"
       />
     </div>
 
     {/* 5. Mobile/Tablet Hero Image — tappable/draggable pan */}
     <div class="block hero-desktop:hidden mt-8 w-full px-0 mb-4">
-      <div id="hero-mobile-frame" class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-none">
-        <Image 
+      <div
+        id="hero-mobile-frame"
+        class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-none"
+      >
+        <img
           id="hero-mobile-img"
-          src={homepageMobileImg}
-          alt="DataDocks Calendar Interface Mobile" 
-          widths={[400, 750, 1000]}
-          sizes="(max-width: 860px) 100vw, 750px"
+          src={`${basePath}/images/homepage-screenshot-mobile.webp`}
+          srcset={`${basePath}/images/homepage-screenshot-mobile-500.webp 500w, ${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+          sizes="100vw"
+          alt="DataDocks Calendar Interface Mobile"
+          width="1724"
+          height="655"
+          fetchpriority="high"
+          loading="eager"
+          decoding="async"
           class="w-full h-full object-cover hero-pan-active"
           style="object-position: 0% 50%;"
-          fetchpriority="high"
-          decoding="async"
         />
       </div>
     </div>
-
   </div>
 </section>
 
 <style>
   /* Custom breakpoint: 860px for the hero desktop/mobile switch */
   @media (min-width: 860px) {
-    .hero-desktop\:block { display: block !important; }
-    .hero-desktop\:hidden { display: none !important; }
+    .hero-desktop\:block {
+      display: block !important;
+    }
+    .hero-desktop\:hidden {
+      display: none !important;
+    }
   }
   @media (max-width: 859px) {
-    .hero-desktop\:block { display: none !important; }
+    .hero-desktop\:block {
+      display: none !important;
+    }
   }
 
   @keyframes pan-x {
-    0%, 10% { object-position: 0% 50%; }
-    45%, 55% { object-position: 100% 50%; }
-    90%, 100% { object-position: 0% 50%; }
+    0%,
+    10% {
+      object-position: 0% 50%;
+    }
+    45%,
+    55% {
+      object-position: 100% 50%;
+    }
+    90%,
+    100% {
+      object-position: 0% 50%;
+    }
   }
   .hero-pan-active {
     animation: pan-x 24s ease-in-out infinite;
@@ -132,31 +173,38 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 <script>
   // 1. Form Handling
-  (function() {
-    const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    const form = document.getElementById('hero-bento-form') as HTMLFormElement | null;
-    
+  (function () {
+    const calendlyUrl =
+      "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+    const form = document.getElementById(
+      "hero-bento-form",
+    ) as HTMLFormElement | null;
+
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement | null;
+        const emailInput = form.querySelector(
+          'input[name="email"]',
+        ) as HTMLInputElement | null;
         const email = emailInput?.value;
-        
+
         const bento = (window as any).bento;
         if (email && bento) {
           bento.identify(email);
-          bento.track('Demo Subscriber', { source: window.location.pathname });
+          bento.track("Demo Subscriber", { source: window.location.pathname });
         }
-        window.open(calendlyUrl, '_blank', 'noopener');
+        window.open(calendlyUrl, "_blank", "noopener");
         form.reset();
       });
     }
   })();
 
   // 2. Mobile Image Panning
-  (function() {
-    const frame = document.getElementById('hero-mobile-frame');
-    const img = document.getElementById('hero-mobile-img') as HTMLImageElement | null;
+  (function () {
+    const frame = document.getElementById("hero-mobile-frame");
+    const img = document.getElementById(
+      "hero-mobile-img",
+    ) as HTMLImageElement | null;
 
     if (frame && img) {
       let animationStopped = false;
@@ -169,19 +217,19 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         const computed = getComputedStyle(img!).objectPosition;
         const match = computed.match(/([\d.]+)%/);
         currentPct = match ? parseFloat(match[1]) : 0;
-        img!.classList.remove('hero-pan-active');
+        img!.classList.remove("hero-pan-active");
         img!.style.objectPosition = `${currentPct}% 50%`;
         animationStopped = true;
       }
 
-      frame.addEventListener('pointerdown', (e) => {
+      frame.addEventListener("pointerdown", (e) => {
         stopAnimation();
         isDragging = true;
         startX = e.clientX;
         frame!.setPointerCapture(e.pointerId);
       });
 
-      frame.addEventListener('pointermove', (e) => {
+      frame.addEventListener("pointermove", (e) => {
         if (!isDragging) return;
         const dx = e.clientX - startX;
         const frameWidth = frame!.offsetWidth;
@@ -191,7 +239,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         img!.style.objectPosition = `${newPct}% 50%`;
       });
 
-      frame.addEventListener('pointerup', () => {
+      frame.addEventListener("pointerup", () => {
         if (!isDragging) return;
         isDragging = false;
         const computed = getComputedStyle(img!).objectPosition;
@@ -199,7 +247,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         currentPct = match ? parseFloat(match[1]) : currentPct;
       });
 
-      frame.addEventListener('pointercancel', () => {
+      frame.addEventListener("pointercancel", () => {
         isDragging = false;
       });
     }

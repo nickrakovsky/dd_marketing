@@ -141,7 +141,8 @@ const description = "DataDocks is a dock appointment scheduling software, that h
 ---
 
 <Layout title={title} description={description}>
-
+  <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+  <script is:inline src="/css/lite-yt-embed.js" defer></script>
   <div class="min-h-screen flex flex-col">
     
     <Navigation client:idle />
@@ -228,7 +229,7 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                       const isShort = type === 'short';
                       return (
                         <a 
-                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace('//posts', '/posts')} 
+                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}/?autoplay=1`.replace('//posts', '/posts')}
                           class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 ${theme.border} ${theme.hoverBorder} ${spanClass}`}
                           data-priority={post.data.priority}
                         >
@@ -274,7 +275,7 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                     // Non-Video and Featured Card Rendering
                     return (
                       <a 
-                        href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
+                        href={`${import.meta.env.BASE_URL}/posts/${post.slug}/`.replace('//posts', '/posts')}
                         class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl ${spanClass} ${isFeatured ? 'bg-white border-0' : `bg-transparent border-2 ${theme.border} ${theme.hoverBorder}`}`}
                         data-priority={post.data.priority}
                       >
@@ -282,11 +283,11 @@ const description = "DataDocks is a dock appointment scheduling software, that h
                           <>
                             <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
                               {post.data.youtubeId ? (
-                                 <img src={`https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" />
+                                 <img src={`https://img.youtube.com/vi/${post.data.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
                               ) : post.data.cardImage ? (
-                                <Image src={post.data.cardImage} alt={post.data.title} class="w-full h-full object-cover" />
+                                <Image src={post.data.cardImage} alt={post.data.title} class="w-full h-full object-cover" loading="eager" />
                               ) : fallbackImg ? (
-                                <Image src={fallbackImg} alt={post.data.title} class="w-full h-full object-cover" />
+                                <Image src={fallbackImg} alt={post.data.title} class="w-full h-full object-cover" loading="eager" />
                               ) : (
                                 <div class={`w-full h-full opacity-80 ${fallbackGradients[post.slug.length % fallbackGradients.length]}`}></div>
                               )}

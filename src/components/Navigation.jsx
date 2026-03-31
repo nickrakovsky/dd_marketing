@@ -15,13 +15,13 @@ const Navigation = ({ isOrange = false }) => {
     : "";
 
   const dropdownItems = [
-    { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity` },
-    { label: "See Everything", href: `${cleanBase}/benefits/see-everything` },
-    { label: "Delight Carriers", href: `${cleanBase}/benefits/delight-carriers` },
-    { label: "Digitize Operations", href: `${cleanBase}/benefits/digitize-operations` },
+    { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity/` },
+    { label: "See Everything", href: `${cleanBase}/benefits/see-everything/` },
+    { label: "Delight Carriers", href: `${cleanBase}/benefits/delight-carriers/` },
+    { label: "Digitize Operations", href: `${cleanBase}/benefits/digitize-operations/` },
   ];
 
-  const MAIN_SITE = "https://www.datadocks.com";
+  const MAIN_SITE = "";
 
   const handleMouseEnter = () => {
     if (dropdownTimeoutRef.current) {
@@ -52,20 +52,24 @@ const Navigation = ({ isOrange = false }) => {
         <div className="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
 
           <div className="flex items-center flex-shrink min-w-0">
-            <a href={MAIN_SITE} className="flex-shrink min-w-0">
-              <img 
-                src={datadocksLogo.src} 
-                alt="DataDocks Logo" 
+            <a href="/" className="flex-shrink min-w-0">
+              <img
+                src={datadocksLogo.src}
+                alt="DataDocks Logo"
+                width="201"
+                height="43"
                 className={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${
                   isOrange ? "hidden" : "block dark:hidden"
-                }`} 
+                }`}
               />
-              <img 
-                src={datadocksLogoWhite.src} 
-                alt="DataDocks Logo" 
+              <img
+                src={datadocksLogoWhite.src}
+                alt="DataDocks Logo"
+                width="201"
+                height="43"
                 className={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${
                   isOrange ? "block" : "hidden dark:block"
-                }`} 
+                }`}
               />
             </a>
           </div>
@@ -103,7 +107,7 @@ const Navigation = ({ isOrange = false }) => {
             </div>
 
             <a
-              href={`${cleanBase}/home-draft#features`}
+              href={`/#features`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${
                 isOrange 
                   ? "text-white hover:text-white/80" 
@@ -114,7 +118,7 @@ const Navigation = ({ isOrange = false }) => {
             </a>
 
             <a
-              href={`${cleanBase}/posts`}
+              href={`${cleanBase}/posts/`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${
                 isOrange 
                   ? "text-white hover:text-white/80" 
@@ -125,7 +129,7 @@ const Navigation = ({ isOrange = false }) => {
             </a>
 
             <a
-              href={`${MAIN_SITE}/integrations`}
+              href={`${MAIN_SITE}/integrations/`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${
                 isOrange 
                   ? "text-white hover:text-white/80" 
@@ -215,7 +219,7 @@ const Navigation = ({ isOrange = false }) => {
               </div>
 
               <a
-                href={`${cleanBase}/home-draft#features`}
+                href={`/#features`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
                   isOrange 
                     ? "text-white border-white/20" 
@@ -227,7 +231,7 @@ const Navigation = ({ isOrange = false }) => {
               </a>
 
               <a
-                href={`${cleanBase}/posts`}
+                href={`${cleanBase}/posts/`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
                   isOrange 
                     ? "text-white border-white/20" 
@@ -239,7 +243,7 @@ const Navigation = ({ isOrange = false }) => {
               </a>
 
               <a
-                href={`${MAIN_SITE}/integrations`}
+                href={`${MAIN_SITE}/integrations/`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${
                   isOrange 
                     ? "text-white border-white/20" 

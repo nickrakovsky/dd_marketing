@@ -61,9 +61,11 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
         <div className="relative w-full max-w-2xl mx-auto">
           
           {/* Main images load immediately (Eager) */}
-          <motion.img 
-            src={baseImage.src} 
-            alt="Property Overview" 
+          <motion.img
+            src={baseImage.src}
+            alt="Property Overview"
+            width={baseImage.width}
+            height={baseImage.height}
             className="w-full h-auto block rounded-lg shadow-xl"
             animate={{ opacity: focusedIndex !== null ? 0 : 1 }}
             transition={{ duration: 0.3 }}
@@ -83,7 +85,7 @@ export default function VisibilityGallery({ baseImage, overlayImage, galleryImag
                 onClick={() => setFocusedIndex(0)} 
               >
                 <div className="relative rounded-t-xl overflow-hidden shadow-2xl transition-transform duration-200 group hover:scale-[1.02] origin-bottom">
-                  <img src={overlayImage.src} alt="Mobile App View" className="w-full h-auto block" />
+                  <img src={overlayImage.src} alt="Mobile App View" width={overlayImage.width} height={overlayImage.height} className="w-full h-auto block" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
                     <div className="bg-white/90 backdrop-blur rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                       <ZoomIn className="text-primary w-5 h-5" />

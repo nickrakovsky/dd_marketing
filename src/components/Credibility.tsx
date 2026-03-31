@@ -69,7 +69,7 @@ const BadgeList = ({ mode, content, images }: { mode: "carousel" | "desktop"; co
         className={`${cardContainerClass} bg-[#FF492C] gap-3`}
       >
         <div className={`flex items-center justify-center flex-shrink-0 ${isDesktop ? "h-10 w-10" : "h-8 w-8"}`}>
-          <img src={images.g2} alt="G2" className="w-full h-full object-contain" />
+          <img src={images.g2} alt="G2" width={isDesktop ? 40 : 32} height={isDesktop ? 40 : 32} loading="lazy" className="w-full h-full object-contain" />
         </div>
 
         <div className="flex-1 min-w-0 flex flex-col justify-center items-start">
@@ -114,7 +114,7 @@ const BadgeList = ({ mode, content, images }: { mode: "carousel" | "desktop"; co
         rel="noopener noreferrer"
         className={`${cardContainerClass} bg-[#134B70] gap-2 xl:gap-3 pr-4`}
       >
-        <img src={images.capterra} alt="Capterra" className={`${isDesktop ? "h-6 w-6" : "h-6 w-6"} flex-shrink-0`} />
+        <img src={images.capterra} alt="Capterra" width={24} height={24} loading="lazy" className={`${isDesktop ? "h-6 w-6" : "h-6 w-6"} flex-shrink-0`} />
 
         <div className="flex-1 min-w-0 flex flex-col justify-center">
           <div className={`text-white font-bold whitespace-nowrap leading-tight ${isDesktop ? "text-sm" : "text-sm"}`}>

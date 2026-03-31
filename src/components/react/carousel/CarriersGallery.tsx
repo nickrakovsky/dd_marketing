@@ -70,10 +70,12 @@ export default function CarriersGallery({ masterImage, mobileImages, galleryImag
             transition={{ duration: 0.3 }}
             className="relative w-full"
           >
-            <img 
-              src={masterImage.src} 
-              alt="Carrier Portal Dashboard" 
-              className="w-full h-auto block" 
+            <img
+              src={masterImage.src}
+              alt="Carrier Portal Dashboard"
+              width={masterImage.width}
+              height={masterImage.height}
+              className="w-full h-auto block"
               loading="eager"
               fetchPriority="high"
             />

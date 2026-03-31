@@ -3,15 +3,16 @@ import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
-import recoletaMed from '../assets/fonts/Recoleta-Medium.woff2';
 import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
+import { getAuthor } from '../data/authors';
 
 interface Props {
     title: string;
     description?: string;
     image?: string;
     type?: "website" | "article" | "video";
-    noindex?: boolean; 
+    noindex?: boolean;
+    disableTransitions?: boolean;
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
@@ -25,23 +26,26 @@ interface Props {
     videoData?: {
         youtubeId: string;
         uploadDate: Date;
+        duration?: string;
     };
 }
 
-const { 
-  title, 
+const {
+  title,
   description = "Optimize your dock scheduling and yard management with DataDocks. Reduce wait times, digitize operations, and delight your carriers.",
-  image = "/og-default.jpg",
+  image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
+  disableTransitions = false,
   schemaData,
   articleData,
   videoData
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const socialImageURL = new URL(image, Astro.url);
+const pathname = Astro.url.pathname;
+const canonicalURL = new URL(pathname, Astro.site);
+const socialImageURL = new URL(image, Astro.site);
 
 // 5. Schema Assembly
 const graph: any[] = [
@@ -51,62 +55,138 @@ const graph: any[] = [
     "@id": "https://datadocks.com/#organization",
     "name": "DataDocks",
     "url": "https://datadocks.com",
-    "logo": "https://datadocks.com/logo.png",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://datadocks.com/images/Orange-Logo.svg",
+      "width": 201,
+      "height": 43
+    },
+    "description": "Dock scheduling software for warehouses and distribution centers. Reduce truck wait times with automated appointment scheduling.",
+    "foundingDate": "2013",
     "sameAs": [
-      "https://linkedin.com/company/datadocks",
-      "https://twitter.com/datadocks",
+      "https://www.linkedin.com/company/datadocks",
+      "https://x.com/datadocks",
       "https://www.youtube.com/@DataDocks",
       "https://www.capterra.com/p/179266/DataDocks/"
-    ]
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+1-647-848-8250",
+      "contactType": "Sales",
+      "email": "info@datadocks.com",
+      "areaServed": "Worldwide",
+      "availableLanguage": ["English"]
+    }
   },
-  // 2. WebPage (Accessibility & Context)
+  // 2. WebSite (Search & Discovery)
   {
-    "@type": "ItemPage",
+    "@type": "WebSite",
+    "@id": "https://datadocks.com/#website",
+    "url": "https://datadocks.com",
+    "name": "DataDocks",
+    "description": "Dock Scheduling Software for Warehouses",
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://datadocks.com/posts/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  },
+  // 3. WebPage (Accessibility & Context) — use specific types for known pages
+  {
+    "@type": pathname === '/' ? "WebPage"
+           : pathname === '/about/' ? "AboutPage"
+           : pathname === '/posts/' ? "CollectionPage"
+           : "ItemPage",
     "@id": canonicalURL.toString(),
     "url": canonicalURL.toString(),
     "name": title,
     "description": description,
     "isPartOf": { "@id": "https://datadocks.com/#website" },
-    "primaryImageOfPage": { "@id": socialImageURL.toString() },
+    "primaryImageOfPage": { "@type": "ImageObject", "url": socialImageURL.toString() },
     "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
     "accessibilityFeature": ["alternativeText", "ARIA"],
-    "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` }
+    ...(Astro.url.pathname.split('/').filter(Boolean).length > 0 ? { "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` } } : {})
   },
-  // 3. SoftwareApplication (Industry Specificity)
-  {
+];
+
+// 4. SoftwareApplication — homepage only (Google requires visible reviews on the page)
+if (pathname === '/') {
+  graph.push({
     "@type": "SoftwareApplication",
+    "@id": "https://datadocks.com/#software",
     "name": "DataDocks",
     "applicationCategory": "BusinessApplication",
-    "applicationSubCategory": "Dock Scheduling",
-    "operatingSystem": "Cloud-based",
-    "description": "Dock scheduling and yard management software for logistics facilities.",
+    "applicationSubCategory": "Dock Scheduling and Yard Management Software",
+    "operatingSystem": "Web, Cloud-based",
+    "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
       "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD",
-      "availability": "https://schema.org/InStock"
+      "availability": "https://schema.org/OnlineOnly",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
+      "description": "Free demo available. Custom pricing based on facility size.",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "priceCurrency": "USD",
+        "price": "0",
+        "description": "Free demo"
+      }
     },
-    "sameAs": [
-      "https://www.wikidata.org/wiki/Q6667674",
-      "https://www.wikidata.org/wiki/Q4781631"
-    ]
-  },
-  // 4. Breadcrumbs (Structure)
-  {
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "50",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "featureList": [
+      "Self-service carrier portal",
+      "Real-time yard visibility",
+      "Automated capacity management",
+      "Smart notifications",
+      "ERP and WMS integration",
+      "Custom business rules engine",
+      "Efficiency reporting and analytics",
+      "Yard management",
+      "Dock scheduling"
+    ],
+    "screenshot": "https://datadocks.com/images/DataDocks-Calendar-Screenshot.webp"
+  });
+}
+
+// 5. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
+const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
+if (breadcrumbItems.length > 0) {
+  graph.push({
     "@type": "BreadcrumbList",
     "@id": `${canonicalURL.toString()}#breadcrumb`,
-    "itemListElement": Astro.url.pathname.split('/').filter(Boolean).map((path, index, arr) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": path.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-      "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
-    }))
-  }
-];
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://datadocks.com" },
+      ...breadcrumbItems.map((path, index, arr) => {
+        let name = path.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+        if (index === arr.length - 1) {
+          // Use short labels for known collection/section pages, full title for leaf pages
+          const shortLabels: Record<string, string> = { 'posts': 'Blog', 'benefits': 'Benefits', 'integrations': 'Integrations', 'about': 'About' };
+          name = shortLabels[path] || title;
+        }
+        return {
+          "@type": "ListItem",
+          "position": index + 2,
+          "name": name,
+          "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
+        };
+      })
+    ]
+  });
+}
 
 if (schemaData?.faq) {
   graph.push({
     "@type": "FAQPage",
+    "@id": `${canonicalURL.toString()}#faq`,
     "mainEntity": schemaData.faq.map((item: any) => ({
       "@type": "Question",
       "name": item.question,
@@ -116,19 +196,24 @@ if (schemaData?.faq) {
 }
 
 if (type === 'article' && articleData) {
+  const authorData = getAuthor(articleData.author);
   graph.push({
     "@type": "BlogPosting",
     "@id": `${canonicalURL.toString()}#article`,
     "mainEntityOfPage": { "@id": canonicalURL.toString() },
-    "headline": title,
+    "headline": title.replace(/\s*\|.*$/, ''),
     "description": description,
     "image": socialImageURL.toString(),
     "datePublished": articleData.pubDate.toISOString(),
     "dateModified": (articleData.updatedDate || articleData.pubDate).toISOString(),
     "author": {
       "@type": "Person",
-      "name": articleData.author,
-      "url": "https://datadocks.com/about"
+      "@id": `https://datadocks.com/about#${authorData.slug}`,
+      "name": authorData.name,
+      "url": `https://datadocks.com/about#${authorData.slug}`,
+      "jobTitle": authorData.role,
+      "worksFor": { "@id": "https://datadocks.com/#organization" },
+      ...(authorData.linkedIn ? { "sameAs": [authorData.linkedIn] } : {})
     },
     "publisher": { "@id": "https://datadocks.com/#organization" },
     "articleSection": articleData.section
@@ -145,6 +230,7 @@ if (videoData) {
       `https://img.youtube.com/vi/${videoData.youtubeId}/hqdefault.jpg`
     ],
     "uploadDate": videoData.uploadDate.toISOString(),
+    ...(videoData.duration ? { "duration": videoData.duration } : {}),
     "contentUrl": `https://www.youtube.com/watch?v=${videoData.youtubeId}`,
     "embedUrl": `https://www.youtube.com/embed/${videoData.youtubeId}`,
     "publisher": { "@id": "https://datadocks.com/#organization" }
@@ -183,58 +269,73 @@ const jsonLd = {
         <meta property="twitter:image" content={socialImageURL} />
         <meta name="twitter:creator" content="@datadocks" />
 
-        <link rel="icon" href="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d25ab9ed0aca15eca65b16_Favicon.png" />
-        <link rel="sitemap" href="https://datadocks.com/benefits/sitemap-index.xml" />
+        <link rel="icon" href="/favicon.png" />
+        <link rel="sitemap" href="/sitemap.xml" />
         <meta name="theme-color" content="#FFF8E9" />
 
-        <link rel="preload" href={recoletaMed} as="font" type="font/woff2" crossorigin="anonymous" />
-        <link rel="preload" href={recoletaSemi} as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
+        <link rel="preload" as="font" type="font/woff2" href={recoletaReg} crossorigin />
+        <link rel="preload" as="font" type="font/woff2" href={recoletaSemi} crossorigin />
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" is:inline defer></script>
 
+        <slot name="head" />
+
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-        <link rel="preconnect" href="https://app.bentonow.com" />
-        <link rel="preconnect" href="https://fast.bentonow.com" />
-        
+        <!-- GTM deferred to requestIdleCallback, no preconnect needed -->
+        <link rel="dns-prefetch" href="https://fast.bentonow.com" />
+
         <style is:inline set:html={`
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaMed}') format('woff2'); font-weight: 500; font-display: swap; }
             @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
         `}></style>
-
+        {!disableTransitions && <ViewTransitions />}
+    </head>
+    <body>
+        <slot />
         <script is:inline>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-EZMTT6QYLJ');
-
-            let gtmLoaded = false;
-            function loadGTM() {
-              if (gtmLoaded) return;
-              gtmLoaded = true;
-              const script = document.createElement('script');
-              script.src = 'https://www.googletagmanager.com/gtag/js?id=G-EZMTT6QYLJ';
-              script.async = true;
-              document.head.appendChild(script);
-            }
-
-            ['scroll', 'mousemove', 'touchstart', 'click', 'keydown'].forEach(e => 
-              window.addEventListener(e, loadGTM, { once: true, passive: true })
-            );
-            setTimeout(loadGTM, 3500);
+            // Defer GTM load to after page is interactive
+            (function() {
+              function loadGTM() {
+                var s = document.createElement('script');
+                s.src = 'https://www.googletagmanager.com/gtag/js?id=G-EZMTT6QYLJ';
+                s.async = true;
+                document.head.appendChild(s);
+              }
+              if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadGTM);
+              } else {
+                setTimeout(loadGTM, 2000);
+              }
+            })();
         </script>
-
-        <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
-            window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
-        </script>
-        <script async src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
-        <ViewTransitions />
-    </head>
-    <body>
-        <slot />
+        {PUBLIC_BENTO_UUID && (
+          <Fragment>
+            <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
+                window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
+                (function() {
+                  function loadBento() {
+                    var s = document.createElement('script');
+                    s.src = 'https://fast.bentonow.com?site_uuid=' + PUBLIC_BENTO_UUID;
+                    s.async = true;
+                    document.head.appendChild(s);
+                  }
+                  if ('requestIdleCallback' in window) {
+                    requestIdleCallback(loadBento);
+                  } else {
+                    setTimeout(loadBento, 2000);
+                  }
+                })();
+            </script>
+          </Fragment>
+        )}
     </body>
 </html>
 
