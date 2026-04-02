@@ -1,5 +1,5 @@
 ---
-import { Mail, Phone, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, Linkedin, Youtube, X } from "lucide-react";
 import { Image } from "astro:assets";
 import capterraBadge from "@/assets/capterra-logo.png";
 import soc2Badge from "@/assets/soc2-badge.png";
@@ -8,7 +8,7 @@ import canadaBadge from "@/assets/canada-badge.png";
 const MAIN_SITE = "";
 
 const hoverLinkClass = `
-  relative inline-block text-base text-gray-100 transition-colors duration-300
+  relative inline-block text-base text-[#FFF8E9] transition-colors duration-300
   hover:text-[#FF5722]
   after:content-[''] 
   after:absolute 
@@ -81,16 +81,16 @@ const columns = {
 };
 ---
 
-<footer class="bg-black text-white py-12 border-t border-white/10 font-sans">
-  <div class="container mx-auto px-6 max-w-6xl">
+<footer class="bg-black text-[#FFF8E9] py-12 border-t border-white/10 font-sans">
+  <div class="container mx-auto px-6 max-w-7xl">
     
     {/* TOP SECTION: LINKS */}
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-y-16 gap-x-8 lg:gap-4 mb-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-y-12 gap-x-12 lg:gap-20 mb-12">
       
       {/* 1. CONTACT */}
       <div class="col-span-1">
-        <h3 class="font-recoleta font-bold text-xl mb-4 text-white">Contact Us</h3>
-        <div class="text-base text-gray-100 space-y-0 leading-snug mb-4">
+        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">Contact Us</h3>
+        <div class="text-base text-[#FFF8E9]/90 space-y-0 leading-snug mb-4">
           {columns.contact.address.map(line => <p>{line}</p>)}
         </div>
         <div class="space-y-1">
@@ -106,8 +106,8 @@ const columns = {
 
       {/* 2. HOW IT HELPS */}
       <div class="col-span-1">
-        <h3 class="font-recoleta font-bold text-xl mb-4 text-white">{columns.howItHelps.title}</h3>
-        <ul class="space-y-2">
+        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.howItHelps.title}</h3>
+        <ul class="space-y-1.5">
           {columns.howItHelps.links.map(link => (
             <li>
               <a href={link.href} class={hoverLinkClass}>
@@ -118,37 +118,37 @@ const columns = {
         </ul>
       </div>
 
-      {/* 3. FEATURES (Left) */}
-      <div class="col-span-1">
-        <h3 class="font-recoleta font-bold text-xl mb-4 text-white">{columns.features1.title}</h3>
-        <ul class="space-y-2">
-          {columns.features1.links.map(link => (
-            <li>
-              <a href={link.href} class={hoverLinkClass}>
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* 4. FEATURES (Right) */}
-      <div class="col-span-1 pt-0 lg:pt-[2.75rem]">
-        <ul class="space-y-2">
-          {columns.features2.links.map(link => (
-            <li>
-              <a href={link.href} class={hoverLinkClass}>
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+      {/* 3 & 4. FEATURES (Grouped) */}
+      <div class="col-span-1 lg:col-span-1 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
+        <div>
+          <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.features1.title}</h3>
+          <ul class="space-y-1.5">
+            {columns.features1.links.map(link => (
+              <li>
+                <a href={link.href} class={hoverLinkClass}>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="pt-0 lg:pt-[2.75rem]">
+          <ul class="space-y-1.5">
+            {columns.features2.links.map(link => (
+              <li>
+                <a href={link.href} class={hoverLinkClass}>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {/* 5. QUICK LINKS */}
       <div class="col-span-1">
-        <h3 class="font-recoleta font-bold text-xl mb-4 text-white">{columns.quickLinks.title}</h3>
-        <ul class="space-y-2">
+        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.quickLinks.title}</h3>
+        <ul class="space-y-1.5">
           {columns.quickLinks.links.map(link => (
             <li>
               <a href={link.href} class={hoverLinkClass}>
@@ -162,60 +162,78 @@ const columns = {
     </div>
 
     {/* BOTTOM SECTION: LOGOS & COPYRIGHT */}
-    <div class="flex flex-col lg:flex-row justify-between items-end lg:items-center gap-8 border-t border-white/10 pt-10">
+    <div class="flex flex-col lg:flex-row justify-between items-center gap-12 pt-4">
       
-      {/* Left: Datadocks Logo Icon & SOC2 */}
-      <div class="flex items-center gap-8">
-        {/* Note: If you have the orange logo locally, convert it too! For now we focus on the reported ones */}
-        <img
-          src="/images/Orange-Logo.svg"
-          alt="DataDocks Logo"
-          width="56"
-          height="56"
-          loading="lazy"
-          class="w-14 h-14"
-        />
+      {/* Group the 3 primary logos for even spacing */}
+      <div class="flex flex-col md:flex-row items-center justify-between w-full lg:w-3/4 gap-12 lg:gap-8">
+        {/* 1. Datadocks Logo Icon */}
+        <a href="/" class="hover:scale-105 transition-transform duration-300">
+          <img
+            src="/images/Orange-Logo.svg"
+            alt="DataDocks Logo"
+            width="56"
+            height="56"
+            loading="lazy"
+            class="w-14 h-14"
+          />
+        </a>
 
-        {/* UPDATED: SOC2 Badge */}
-        <Image
-          src={soc2Badge}
-          alt="AICPA SOC2 Certified"
-          width={80}
-          loading="lazy"
-          class="h-20 w-auto object-contain"
-        />
+        {/* 2. AICPA/SOC2 Badge */}
+        <a 
+          href="https://www.aicpa.org/soc4so" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="hover:scale-105 transition-transform duration-300"
+        >
+          <Image
+            src={soc2Badge}
+            alt="AICPA SOC2 Certified"
+            width={120}
+            loading="lazy"
+            class="h-24 w-auto object-contain"
+          />
+        </a>
+
+        {/* 3. Canada Badge */}
+        <a 
+          href="https://feddev-ontario.canada.ca/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="hover:scale-105 transition-transform duration-300"
+        >
+          <div class="sr-only">
+            Funded by the Federal Economic Development Agency for Southern Ontario
+          </div>
+          <Image
+            src={canadaBadge}
+            alt="Government of Canada"
+            width={600}
+            loading="lazy"
+            class="h-10 w-auto object-contain"
+          />
+        </a>
       </div>
 
-      {/* Center: Government Funding */}
-      <div class="flex items-center gap-4 opacity-90 hover:opacity-100 transition-opacity">
-        <div class="sr-only">
-          Funded by the Federal Economic Development Agency for Southern Ontario
-        </div>
-        
-        {/* UPDATED: Canada Badge */}
-        <Image
-          src={canadaBadge}
-          alt="Government of Canada"
-          width={600}
-          loading="lazy"
-          class="h-8 w-auto object-contain"
-        />
-      </div>
-
-      {/* Right: Copyright */}
-      <div class="flex flex-col items-end gap-2">
-        <div class="flex items-center gap-4">
-          <a href="https://linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#0077b5] transition-colors">
+      {/* Right: Socials & Copyright */}
+      <div class="flex flex-col items-center lg:items-end gap-3 shrink-0">
+        <div class="flex items-center gap-5">
+          <a href="https://linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors">
              <Linkedin className="w-5 h-5" />
             <span class="sr-only">LinkedIn</span>
           </a>
-          <a href="https://twitter.com/datadocks" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-[#1DA1F2] transition-colors">
-            <Twitter className="w-5 h-5" />
-            <span class="sr-only">Twitter</span>
+          <a href="https://x.com/datadocks" target="_blank" rel="noopener noreferrer" class="text-[#FFF8E9]/60 hover:text-[#FFF8E9] transition-colors">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="w-5 h-5 fill-current">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+            </svg>
+            <span class="sr-only">X (formerly Twitter)</span>
+          </a>
+          <a href="https://www.youtube.com/@datadocks" target="_blank" rel="noopener noreferrer" class="text-[#FFF8E9]/60 hover:text-[#FF0000] transition-colors">
+            <Youtube className="w-5 h-5" />
+            <span class="sr-only">YouTube</span>
           </a>
         </div>
-        <p class="text-sm text-gray-100">
-          © DataDocks {new Date().getFullYear()}
+        <p class="text-sm text-[#FFF8E9]/80">
+          © Northfire {new Date().getFullYear()}
         </p>
       </div>
 
