@@ -38,6 +38,10 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'always',
   },
+  redirects: {
+    '/datadocks-vs/opendock/': '/datadocks-vs-opendock/',
+    '/privacy-policy-datadocks/': '/privacy-policy/',
+  },
 
   integrations: [tailwind(), react(), keystatic(), sitemap({
     filter: (page) => !page.includes('/home-draft') && !page.includes('/sales-one-pager'),
@@ -50,31 +54,7 @@ export default defineConfig({
       // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
       return item;
     },
-    customPages: [
-      // Webflow pages not yet migrated to Astro (trailing slashes match trailingSlash: 'always')
-      'https://datadocks.com/datadocks-vs-opendock/',
-      'https://datadocks.com/support/',
-      'https://datadocks.com/integrations/',
-      'https://datadocks.com/integrations/microsoft-power-bi/',
-      'https://datadocks.com/integrations/microsoft-sso-entra/',
-      'https://datadocks.com/integrations/netsuite-erp/',
-      'https://datadocks.com/integrations/oracle-fusion-cloud/',
-      'https://datadocks.com/integrations/sap-business-bydesign/',
-      'https://datadocks.com/integrations/sap-s-4hana/',
-      'https://datadocks.com/datadocks-features/access-anywhere/',
-      'https://datadocks.com/datadocks-features/capacity-limits/',
-      'https://datadocks.com/datadocks-features/carrier-portal/',
-      'https://datadocks.com/datadocks-features/custom-rules/',
-      'https://datadocks.com/datadocks-features/data-validation/',
-      'https://datadocks.com/datadocks-features/dock-dashboard/',
-      'https://datadocks.com/datadocks-features/documentation/',
-      'https://datadocks.com/datadocks-features/efficiency-reports/',
-      'https://datadocks.com/datadocks-features/integration/',
-      'https://datadocks.com/datadocks-features/live-editing/',
-      'https://datadocks.com/datadocks-features/notifications/',
-      'https://datadocks.com/datadocks-features/yard-management/',
-      'https://datadocks.com/privacy-policy-datadocks/',
-    ],
+    customPages: [],
   }), mdx()],
 
 });

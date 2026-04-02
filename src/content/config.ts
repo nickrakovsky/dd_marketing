@@ -40,6 +40,38 @@ const postsCollection = defineCollection({
     })
 });
 
+const featuresCollection = defineCollection({
+    type: 'content',
+    schema: () => z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        pubDate: z.coerce.date().optional(),
+        icon: z.string().optional(),
+        videoUrl: z.string().optional()
+    })
+});
+
+const integrationsCollection = defineCollection({
+    type: 'content',
+    schema: () => z.object({
+        title: z.string(),
+        pageTitle: z.string().optional(),
+        description: z.string().optional(),
+        pubDate: z.coerce.date().optional(),
+        icon: z.string().optional(),
+        overview: z.string().optional(),
+        subheader: z.string().optional(),
+        disclaimer: z.string().optional(),
+        benefits: z.array(z.object({
+            title: z.string().optional(),
+            text: z.string().optional(),
+            icon: z.string().optional(),
+        })).optional()
+    })
+});
+
 export const collections = {
     'posts': postsCollection,
+    'features': featuresCollection,
+    'integrations': integrationsCollection,
 };

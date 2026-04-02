@@ -1,6 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { useIsMobile } from '../../hooks/use-mobile';
+import { cn } from '../../lib/utils';
 
 const testimonials = [
   {
@@ -30,10 +32,12 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const isMobile = useIsMobile();
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true, 
       align: 'start',
+      active: !isMobile,
       watchDrag: (api, event) => {
         if (event.target && 'closest' in event.target) {
           // Type casting for safety, though DOM elements will have .closest
@@ -44,16 +48,29 @@ export default function Testimonials() {
     }
   );
 
+  const teaseTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const stopTease = useCallback(() => {
+    if (teaseTimerRef.current) {
+      clearTimeout(teaseTimerRef.current);
+      teaseTimerRef.current = null;
+    }
+  }, []);
+
   const scrollPrev = useCallback(() => {
+    stopTease();
     if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
+  }, [emblaApi, stopTease]);
 
   const scrollNext = useCallback(() => {
+    stopTease();
     if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
+  }, [emblaApi, stopTease]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || isMobile) return;
+    
+    emblaApi.on('pointerDown', stopTease);
     
     let hasTriggered = false;
     
@@ -63,8 +80,8 @@ export default function Testimonials() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             if (!hasTriggered) {
-              setTimeout(() => {
-                if (emblaApi) emblaApi.scrollPrev();
+              teaseTimerRef.current = setTimeout(() => {
+                if (emblaApi) emblaApi.scrollNext();
               }, 1200);
               hasTriggered = true;
             }
@@ -80,7 +97,11 @@ export default function Testimonials() {
     const node = emblaApi.rootNode();
     if (node) observer.observe(node);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      stopTease();
+      emblaApi.off('pointerDown', stopTease);
+    };
   }, [emblaApi]);
 
   return (
@@ -111,11 +132,13 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Carousel Viewport */}
-        <div className="relative overflow-hidden" ref={emblaRef}>
+        <div 
+          className="relative overflow-x-auto md:overflow-hidden snap-x snap-mandatory scrollbar-hide" 
+          ref={emblaRef}
+        >
           <div className="flex -ml-4 md:-ml-6">
             {testimonials.map((item, index) => (
-              <div key={index} className="flex-[0_0_100%] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pl-4 md:pl-6">
+              <div key={index} className="flex-[0_0_85vw] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pl-4 md:pl-6 snap-center">
                 <div className="relative bg-[#EFE2D2] p-6 md:p-8 rounded-2xl h-full flex flex-col shadow-sm">
 
                   {/* Header: Image + Logo */}
@@ -151,30 +174,21 @@ export default function Testimonials() {
 
                   {/* Quote */}
                   <blockquote className="flex-grow mb-6 relative z-10">
-                    <p className="font-recoleta text-lg text-black leading-relaxed select-text cursor-text embla__no-drag inline">
+                    <p className={cn(
+                      "font-recoleta text-black leading-relaxed select-text cursor-text embla__no-drag inline",
+                      item.quote.length > 200 
+                        ? "text-base md:text-lg" 
+                        : "text-lg md:text-xl"
+                    )}>
                       "{item.quote}"
                     </p>
                   </blockquote>
 
-                  {/* Author / Mobile Controls */}
+                  {/* Author / Desktop Controls (hidden on mobile native scroll) */}
                   <div className="pt-6 border-t border-gray-100 flex items-center justify-between md:block relative">
-                    <button
-                      aria-label="Previous Testimonial Mobile"
-                      onClick={scrollPrev}
-                      className="md:hidden pointer-events-auto w-10 h-10 rounded-full flex-shrink-0 bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-sm"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <p className="font-bold text-sm uppercase tracking-wider text-black text-center md:text-left w-full md:w-auto px-2">
+                    <p className="font-bold text-sm uppercase tracking-wider text-black text-center md:text-left w-full">
                       {item.author}
                     </p>
-                    <button
-                      aria-label="Next Testimonial Mobile"
-                      onClick={scrollNext}
-                      className="md:hidden pointer-events-auto w-10 h-10 rounded-full flex-shrink-0 bg-white/80 border border-white/50 flex items-center justify-center text-black hover:bg-white transition-colors shadow-sm"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
                   </div>
 
                 </div>
