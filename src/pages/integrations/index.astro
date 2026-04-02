@@ -1,0 +1,131 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.jsx';
+import Footer from '../../components/Footer.astro';
+import CTA from '../../components/home/CTA.astro';
+import FAQ from '../../components/FAQ.tsx';
+
+// We fetch and sort integrations so they appear in a consistent order
+const integrations = await getCollection('integrations');
+
+const faqContent = {
+  faqs: [
+    {
+      question: "Will DataDocks help me implement my integration?",
+      answer: "Absolutely. Customer success is at the core of our business model. Our team will work closely with you to develop a tailored integration solution that meets your specific needs, even if it requires custom code. We're committed to ensuring a smooth transition and maximizing the value of DataDocks for your operations."
+    },
+    {
+      question: "Is DataDocks Compatible with EDI?",
+      answer: "Yes, DataDocks fully supports EDI integration. We'll assist you in implementing EDI-via-API, allowing you to maintain your current EDI workflows while simultaneously preparing your tech stack for the API-driven future. This approach ensures a seamless transition and positions your business for long-term scalability."
+    },
+    {
+      question: "I don’t see my system listed here. Does that mean it’s not compatible?",
+      answer: "In our experience, we've yet to encounter a system we couldn't integrate with. The software solutions listed on our integrations page represent our most frequent integrations, but they're far from exhaustive. We're always excited to tackle new integration challenges and expand our compatibility. Let's discuss your specific system and explore how we can make it work seamlessly with DataDocks."
+    },
+    {
+      question: "Can we set up a custom trigger to create loading dock appointments from another system?",
+      answer: "Certainly. DataDocks features a robust RESTful API that enables sophisticated integrations and automation. You can set up custom triggers to create loading dock appointments based on events in your existing systems. Our webhooks allow real-time data exchange, ensuring that your appointment scheduling remains synchronized across all your operations."
+    },
+    {
+      question: "We have sensitive data in the system we want to connect. Is DataDocks secure?",
+      answer: "Data security is paramount at DataDocks, especially when handling integrations. All our API endpoints are fortified against common vulnerabilities and attacks. We engage independent security firms to conduct comprehensive audits. All data in transit and at rest is encrypted using industry-standard protocols, and we implement strict access controls and authentication measures."
+    },
+    {
+      question: "How long does a typical integration take?",
+      answer: "Integration timelines can vary depending on the complexity of your existing systems and specific requirements. However, most standard integrations are completed within 2-4 weeks. For more complex scenarios, our team will provide a detailed project plan with estimated timelines. We pride ourselves on efficient implementation while ensuring thorough testing and validation."
+    },
+    {
+      question: "Do you offer support during and after the integration process?",
+      answer: "Yes, we provide comprehensive support throughout the entire integration lifecycle. During implementation, you'll have a dedicated integration specialist to guide you through the process. Post-integration, our customer success team offers ongoing support, including 24/7 technical assistance, ongoing optimization, training, and more to ensure your continued success."
+    }
+  ]
+};
+---
+
+<Layout title="Integrations | DataDocks - Extend Your Software" description="Connect DataDocks with your existing ERP, WMS, or TMS to streamline your logistics operations.">
+  <Navigation client:idle />
+
+  <main class="min-h-screen bg-background">
+    
+    {/* Section 1: Hero */}
+    <div class="pt-12 pb-12 relative isolate overflow-hidden">
+      {/* Decorative Vectors */}
+      <img src="/images/hero-img-1.svg" class="absolute hidden lg:block top-10 left-[8%] w-32 opacity-90 rotate-[-12deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-2.svg" class="absolute hidden lg:block top-14 right-[12%] w-28 opacity-90 rotate-[15deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-3.svg" class="absolute hidden lg:block bottom-10 right-[8%] w-32 opacity-90 rotate-[-8deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-4.svg" class="absolute hidden lg:block bottom-8 left-[12%] w-28 opacity-90 rotate-[10deg]" alt="" aria-hidden="true" />
+
+      <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+        <div class="mx-auto max-w-5xl text-center">
+          <h2 class="font-recoleta font-semibold text-2xl leading-7 tracking-wide text-black mb-10">Apps &amp; Integrations</h2>
+          <h1 class="text-7xl md:text-[6.5rem] font-black tracking-tight font-bruta uppercase text-black leading-[0.9] max-w-4xl mx-auto">
+            Extend your <span class="text-primary">ERP, WMS OR TMS</span> with DataDocks
+          </h1>
+          <p class="mt-6 text-2xl leading-relaxed text-black max-w-xl mx-auto font-recoleta font-semibold">
+            Capture data about goods the moment they enter or leave your facilities.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Section 2: Integrations Grid */}
+    <div class="pb-24 z-10 relative">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {integrations.map((app) => {
+            // Helper to clean icon path: strips Webflow prefix and handles parentheses/naming issues
+            let cleanIcon = app.data.icon?.split('_').pop() || '';
+            if (cleanIcon.includes('microsoft-sso-(entra)')) {
+              cleanIcon = 'microsoft-sso-entra.svg';
+            }
+            const iconPath = `/images/integrations/${cleanIcon}`;
+              
+            return (
+              <a href={`/integrations/${app.slug}`} class="flex flex-col text-left rounded-xl bg-secondary p-6 shadow-sm transition-all duration-300 hover:shadow-md group">
+                <div class="h-12 w-12 bg-white rounded-md flex items-center justify-center mb-6 overflow-hidden p-1.5 shadow-sm">
+                  {cleanIcon ? (
+                    <img class="h-full w-full object-contain" src={iconPath} alt={app.data.title} loading="lazy" />
+                  ) : (
+                    <div class="h-full w-full bg-gray-50" />
+                  )}
+                </div>
+                <div class="flex flex-1 flex-col items-start">
+                  <h3 class="text-3xl font-bold text-black font-recoleta mb-4 leading-tight">
+                     {app.data.title}
+                  </h3>
+                  <p class="text-xl leading-relaxed text-gray-800 font-recoleta font-medium flex-1">
+                    {app.data.description}
+                  </p>
+                  
+                  <div class="mt-10 flex items-center text-lg font-bold text-primary group-hover:text-black tracking-wider transition-colors font-recoleta">
+                    Learn More
+                    <span class="ml-2 font-light text-2xl leading-none">&#8250;</span>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
+        <div class="mt-20 text-center">
+          <p class="text-lg font-recoleta font-medium leading-relaxed text-black/80 max-w-4xl mx-auto">
+            Oracle and NetSuite are registered trademarks of Oracle and/or its affiliates. <br class="hidden sm:block" />
+            SAP S/4HANA and SAP Business ByDesign are the trademarks or registered trademarks of SAP SE or its affiliates in Germany and in other countries.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Section 3: FAQ */}
+    <div class="bg-secondary py-24 border-t border-orange-100/50">
+      <div class="mx-auto max-w-6xl px-6 lg:px-8">
+        <FAQ content={faqContent} client:load headerAlign="left" noBackground={true} />
+      </div>
+    </div>
+
+  </main>
+  
+  <CTA />
+  <Footer />
+</Layout>
