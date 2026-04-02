@@ -29,12 +29,12 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
     {/* 2 cols on small screens, 3 cols on md+ (768px) */}
     <div class="grid grid-cols-2 md:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-4 md:gap-y-5">
       {features.map((feature) => (
-        <a 
-          href={`/datadocks-features/${slugify(feature.title)}/`}
-          class="group block p-3 md:p-8 rounded-2xl border border-transparent hover:border-[#EFE2D2] hover:shadow-lg transition-all duration-300 bg-[#FFF8E9]"
-        >
-          {/* DESKTOP (md+): icon beside title, then body text below — ORIGINAL LAYOUT */}
-          <div class="hidden md:block">
+        <>
+          {/* DESKTOP (md+): Whole card is a link */}
+          <a 
+            href={`/datadocks-features/${slugify(feature.title)}/`}
+            class="feature-card hidden md:block p-8 rounded-2xl border border-transparent bg-[#FFF8E9] transition-all duration-300"
+          >
             <div class="flex flex-row items-center gap-3 mb-4">
               <div class="w-10 h-10 flex-shrink-0">
                 <img
@@ -46,21 +46,24 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
                   class="w-full h-full object-contain"
                 />
               </div>
-              <h3 class="font-bruta text-2xl uppercase text-black group-hover:text-[#FF5507] transition-colors leading-tight">
+              <h3 class="feature-title font-bruta text-2xl uppercase text-black transition-colors leading-tight">
                 {feature.title}
               </h3>
             </div>
             <p class="font-recoleta text-[15px] text-gray-700 leading-relaxed">
               {feature.text}
             </p>
-          </div>
+          </a>
 
-          {/* MOBILE (<md): title on top, icon floats left of body text */}
-          <div class="md:hidden">
-            <h3 class="font-bruta text-base sm:text-lg uppercase text-black group-hover:text-[#FF5507] transition-colors leading-tight mb-2">
+          {/* MOBILE (<md): Card is static, only "Learn More" is a link */}
+          <div 
+            class="feature-card md:hidden p-3 rounded-2xl border border-transparent bg-[#FFF8E9] transition-all duration-300 flex flex-col focus:outline-none"
+            tabindex="0"
+          >
+            <h3 class="feature-title font-bruta text-base sm:text-lg uppercase text-black transition-colors leading-tight mb-2">
               {feature.title}
             </h3>
-            <div>
+            <div class="clearfix flex-grow">
               <div class="float-left mr-2 mb-1 w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
                 <img
                   src={feature.icon}
@@ -75,10 +78,61 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
                 {feature.text}
               </p>
             </div>
+            
+            {/* Mobile Affordance: Only this part is a link */}
+            <a href={`/datadocks-features/${slugify(feature.title)}/`} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
+              <span class="link-text font-recoleta text-[10px] sm:text-xs text-[#FF5507] font-bold transition-colors">Learn More</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FF5507" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="sm:w-3 sm:h-3">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </a>
           </div>
-        </a>
+        </>
       ))}
     </div>
 
   </div>
 </section>
+
+<style>
+  /* Common highlight styles for desktop hover and mobile focus/active */
+  .feature-card:hover,
+  .feature-card:focus {
+    border-color: #EFE2D2;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  /* Desktop-only hover effects */
+  @media (hover: hover) and (pointer: fine) {
+    .feature-card:hover .feature-title {
+      color: #FF5507;
+    }
+  }
+
+  /* Mobile active/tactile feedback and persistence */
+  @media (hover: none), (pointer: coarse) {
+    /* Title remains orange when focused or hovered (which sticks on mobile) */
+    .feature-card:focus .feature-title,
+    .feature-card:hover .feature-title,
+    .feature-card:active .feature-title {
+      color: #FF5507;
+    }
+
+    /* "Learn More" text flashes black when selected */
+    .mobile-link:active .link-text {
+      color: #000000 !important;
+    }
+    
+    .mobile-link:active svg {
+      stroke: #000000 !important;
+    }
+  }
+
+  /* Clearfix for the floated icon on mobile */
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+</style>
+e>

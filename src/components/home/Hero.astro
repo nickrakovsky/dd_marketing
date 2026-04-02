@@ -114,13 +114,13 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     <div class="block hero-desktop:hidden mt-8 w-full px-0 mb-4">
       <div
         id="hero-mobile-frame"
-        class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-none"
+        class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y"
       >
         <img
           id="hero-mobile-img"
           src={`${basePath}/images/homepage-screenshot-mobile.webp`}
           srcset={`${basePath}/images/homepage-screenshot-mobile-500.webp 500w, ${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-          sizes="100vw"
+          sizes="(max-width: 859px) 250vw, 100vw"
           alt="DataDocks Calendar Interface Mobile"
           width="1724"
           height="655"
@@ -166,7 +166,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     }
   }
   .hero-pan-active {
-    animation: pan-x 24s ease-in-out infinite;
+    /* No longer using CSS animation, handled by JS for smooth pausing/resuming */
     will-change: object-position;
   }
 </style>
@@ -207,41 +207,85 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     ) as HTMLImageElement | null;
 
     if (frame && img) {
-      let animationStopped = false;
       let isDragging = false;
       let startX = 0;
+      let startY = 0;
       let currentPct = 0;
+      const threshold = 7;
+      
+      // Animation state
+      const targetSpeed = 0.05; // target speed per frame
+      let currentSpeed = 0; // starts at zero, builds up momentum
+      let direction = 1; // 1 for forward, -1 for backward
+      let lastInteractionTime = 0;
+      const RESUME_DELAY = 500; // 0.5s short pause before regaining momentum
+      const ACCEL_DURATION = 1500; // 1.5s to reach full speed
+      let rafId: number;
 
-      function stopAnimation() {
-        if (animationStopped) return;
-        const computed = getComputedStyle(img!).objectPosition;
-        const match = computed.match(/([\d.]+)%/);
-        currentPct = match ? parseFloat(match[1]) : 0;
-        img!.classList.remove("hero-pan-active");
-        img!.style.objectPosition = `${currentPct}% 50%`;
-        animationStopped = true;
+      function animate() {
+        const now = Date.now();
+        if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
+          // Calculate momentum (0 to 1) based on time since resume delay passed
+          const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
+          const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
+          
+          currentSpeed = targetSpeed * momentum;
+          currentPct += currentSpeed * direction;
+          
+          if (currentPct >= 100) {
+            currentPct = 100;
+            direction = -1;
+          } else if (currentPct <= 0) {
+            currentPct = 0;
+            direction = 1;
+          }
+          img!.style.objectPosition = `${currentPct}% 50%`;
+        } else {
+          // Reset speed when interacting
+          currentSpeed = 0;
+        }
+        rafId = requestAnimationFrame(animate);
       }
 
+      rafId = requestAnimationFrame(animate);
+
       frame.addEventListener("pointerdown", (e) => {
-        stopAnimation();
-        isDragging = true;
         startX = e.clientX;
+        startY = e.clientY;
         frame!.setPointerCapture(e.pointerId);
+
+        if (e.pointerType === 'mouse') {
+          isDragging = true;
+          lastInteractionTime = Date.now();
+        }
       });
 
       frame.addEventListener("pointermove", (e) => {
-        if (!isDragging) return;
+        if (!isDragging) {
+          if (e.pointerType === 'mouse') return;
+          const dx = Math.abs(e.clientX - startX);
+          const dy = Math.abs(e.clientY - startY);
+          if (dx > threshold && dx > dy) {
+            isDragging = true;
+            startX = e.clientX; 
+          }
+          return;
+        }
+
+        lastInteractionTime = Date.now();
         const dx = e.clientX - startX;
         const frameWidth = frame!.offsetWidth;
         const deltaPct = -(dx / frameWidth) * 100;
-        let newPct = currentPct + deltaPct;
-        newPct = Math.max(0, Math.min(100, newPct));
-        img!.style.objectPosition = `${newPct}% 50%`;
+        let movePct = currentPct + deltaPct;
+        movePct = Math.max(0, Math.min(100, movePct));
+        img!.style.objectPosition = `${movePct}% 50%`;
       });
 
-      frame.addEventListener("pointerup", () => {
+      frame.addEventListener("pointerup", (e) => {
         if (!isDragging) return;
         isDragging = false;
+        lastInteractionTime = Date.now();
+        
         const computed = getComputedStyle(img!).objectPosition;
         const match = computed.match(/([\d.]+)%/);
         currentPct = match ? parseFloat(match[1]) : currentPct;
@@ -249,6 +293,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
       frame.addEventListener("pointercancel", () => {
         isDragging = false;
+        lastInteractionTime = Date.now();
       });
     }
   })();
