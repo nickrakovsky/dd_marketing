@@ -9,7 +9,7 @@ import digi3 from "@/assets/solutionsscreenshots/digitization/combinedontime.web
 import digi4 from "@/assets/solutionsscreenshots/digitization/completedontime.webp";
 import digi5 from "@/assets/solutionsscreenshots/digitization/earlyappointments.webp";
 import digi6 from "@/assets/solutionsscreenshots/digitization/lateappointments.webp";
-import nickSteinman from "@/assets/nick-steinman.jpg";
+import nickSteinman from "@/assets/testimonials/nick-steinman.jpg";
 
 export const defaultContent: PageContent = {
   hero: {

@@ -15,7 +15,7 @@ import gal5 from "@/assets/solutionsscreenshots/carriers/carriergallery5.webp";
 
 // Placeholder for Dashboard
 import dashboardPreview from "@/assets/dashboard-preview.webp";
-import landonMoreno from "@/assets/landonmoreno.webp";
+import landonMoreno from "@/assets/testimonials/landonmoreno.webp";
 
 export const carriersContent: PageContent = {
   ...defaultContent,

@@ -8,7 +8,7 @@ import visGallery2 from "@/assets/solutionsscreenshots/visibility/appscreenshot2
 import visGallery3 from "@/assets/solutionsscreenshots/visibility/appscreenshot3.webp"; 
 import visGallery4 from "@/assets/solutionsscreenshots/visibility/appscreenshot4.webp";
 import visGallery5 from "@/assets/solutionsscreenshots/visibility/appscreenshot5.webp";
-import honeyvilleLogo from "@/assets/honeyvillelogo.webp";
+import honeyvilleLogo from "@/assets/testimonials/honeyvillelogo.webp";
 
 export const yardappContent: PageContent = {
   ...defaultContent,

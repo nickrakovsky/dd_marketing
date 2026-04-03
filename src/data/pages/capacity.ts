@@ -8,7 +8,7 @@ import capMobile from "@/assets/solutionsscreenshots/capacity/mobileschedule.web
 import capOverlay from "@/assets/solutionsscreenshots/capacity/capacity1.webp";
 // NEW IMPORT
 import capMobile2 from "@/assets/solutionsscreenshots/capacity/mobileschedule2.webp";
-import isaacMorley from "@/assets/isaacmorley.webp";
+import isaacMorley from "@/assets/testimonials/isaacmorley.webp";
 
 export const capacityContent: PageContent = {
   ...defaultContent,
