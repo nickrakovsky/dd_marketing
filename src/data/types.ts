@@ -134,3 +134,10 @@ export interface PageContent {
   caseStudies: CaseStudiesContent;
   faq: FAQContent;
 }
+
+export interface TestimonialItem {
+  quote: string;
+  author: string;
+  image: string | null;
+  logo?: string | null;
+}

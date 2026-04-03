@@ -1,40 +1,53 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation';
-import Footer from '../../components/Footer.astro';
-import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
-import { getFriendlyDate } from '../../utils/dateFormatter';
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { getFriendlyDate } from "../../utils/dateFormatter";
 
 // Fetch and sort posts chronologically
-const allPosts = await getCollection('posts');
-const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allPosts = await getCollection("posts");
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 
 // Split posts: The newest post is the Hero, the rest go into the Bento Grid
 const highlightedPost = sortedPosts[0];
 const restPosts = sortedPosts.slice(1);
 
 // Group the rest of the posts by category
-const postsByCategory = restPosts.reduce((acc, post) => {
-  const category = post.data.category || 'Logistics';
-  if (!acc[category]) {
-    acc[category] = [];
-  }
-  acc[category].push(post);
-  return acc;
-}, {} as Record<string, typeof restPosts>);
+const postsByCategory = restPosts.reduce(
+  (acc, post) => {
+    const category = post.data.category || "Logistics";
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(post);
+    return acc;
+  },
+  {} as Record<string, typeof restPosts>,
+);
 
 // Category sorting and pinning logic
 const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
-const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ''] || 0;
+const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
 
-Object.keys(postsByCategory).forEach(category => {
+Object.keys(postsByCategory).forEach((category) => {
   let catPosts = postsByCategory[category];
-  
+
   // Separate videos/shorts from articles
-  const videos = catPosts.filter(p => p.data.postType?.discriminant === 'video' || p.data.postType?.discriminant === 'short');
-  const articles = catPosts.filter(p => p.data.postType?.discriminant !== 'video' && p.data.postType?.discriminant !== 'short');
-  
+  const videos = catPosts.filter(
+    (p) =>
+      p.data.postType?.discriminant === "video" ||
+      p.data.postType?.discriminant === "short",
+  );
+  const articles = catPosts.filter(
+    (p) =>
+      p.data.postType?.discriminant !== "video" &&
+      p.data.postType?.discriminant !== "short",
+  );
+
   // Sort articles by priority then date
   articles.sort((a, b) => {
     const pA = getPriority(a.data.priority);
@@ -44,32 +57,32 @@ Object.keys(postsByCategory).forEach(category => {
     const dateB = (b.data.updatedDate || b.data.pubDate).valueOf();
     return dateB - dateA;
   });
-  
+
   // Sort videos: newest first
   videos.sort((a, b) => {
     const dateA = (a.data.updatedDate || a.data.pubDate).valueOf();
     const dateB = (b.data.updatedDate || b.data.pubDate).valueOf();
     return dateB - dateA;
   });
-  
+
   if (videos.length > 0) {
     const result: typeof catPosts = [...articles];
-    
+
     // 1. Newest video pinned to first page (at index 2 - bottom of col 3)
     const newestVideo = videos[0];
     result.splice(2, 0, newestVideo);
-    
+
     // 2. Oldest video safely padded by 2 articles to prevent grid gaps
     if (videos.length > 1) {
       const oldestVideo = videos[videos.length - 1];
       const pad = Math.max(0, result.length >= 2 ? 2 : 0);
       result.splice(result.length - pad, 0, oldestVideo);
-      
+
       // 3. Intermediate videos spaced by ≥2 articles from each other and from the newest/oldest
       const intermediateVideos = videos.slice(1, -1);
       if (intermediateVideos.length > 0) {
         let insertionPointer = 6;
-        intermediateVideos.forEach(v => {
+        intermediateVideos.forEach((v) => {
           if (insertionPointer < result.length - 2) {
             result.splice(insertionPointer, 0, v);
             insertionPointer += 4; // Skip a few articles
@@ -80,7 +93,7 @@ Object.keys(postsByCategory).forEach(category => {
         });
       }
     }
-    
+
     postsByCategory[category] = result;
   } else {
     postsByCategory[category] = articles;
@@ -93,17 +106,20 @@ const fallbackGradients = [
   "bg-gradient-to-tl from-black via-[#fd4f00] to-black",
   "bg-gradient-to-tr from-[#E5D3B3] to-[#F8EDD9]",
   "bg-gradient-to-bl from-[#fd4f00] to-black",
-  "bg-gradient-to-br from-gray-900 to-[#fd4f00]"
+  "bg-gradient-to-br from-gray-900 to-[#fd4f00]",
 ];
 
 // Image Globbing for fallback Extraction
-const allBlogImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/blog-images/*.{jpeg,jpg,png,gif,webp}', { eager: true });
+const allBlogImages = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/blog-images/*.{jpeg,jpg,png,gif,webp}",
+  { eager: true },
+);
 
 const getFirstImage = (body: string) => {
   if (!body) return null;
   const match = body.match(/!\[.*?\]\((.*?)\)/);
   if (match) {
-    const filename = match[1].split('/').pop();
+    const filename = match[1].split("/").pop();
     if (filename && allBlogImages[`/src/assets/blog-images/${filename}`]) {
       return allBlogImages[`/src/assets/blog-images/${filename}`].default;
     }
@@ -113,286 +129,506 @@ const getFirstImage = (body: string) => {
 
 // Math-based Reading Time Map
 const getReadTime = (body: string) => {
-  if (!body) return '1 min read';
-  const plainText = body.replace(/[^\w\s]/g, '').trim();
+  if (!body) return "1 min read";
+  const plainText = body.replace(/[^\w\s]/g, "").trim();
   const wordCount = plainText ? plainText.split(/\s+/).length : 0;
   const minReadingTime = Math.max(1, Math.floor(wordCount / 250));
   const maxReadingTime = Math.max(1, Math.ceil(wordCount / 180));
-  return minReadingTime === maxReadingTime 
-    ? `${minReadingTime} min read` 
+  return minReadingTime === maxReadingTime
+    ? `${minReadingTime} min read`
     : `${minReadingTime}-${maxReadingTime} min read`;
 };
 
 // Category Object Themes
-const categoryThemes: Record<string, { bg: string, accent: string, neutral: string, border: string, hoverBorder: string }> = {
-  "Facility Operations": { bg: "bg-[#F8EDD9]", accent: "bg-[#fd4f00] text-white", neutral: "text-black", border: "border-black/10", hoverBorder: "hover:border-[#fd4f00]" },
-  "Carrier Management": { bg: "bg-[#FFF8E9]", accent: "bg-[#E5D3B3] text-black", neutral: "text-black", border: "border-black/10", hoverBorder: "hover:border-[#E5D3B3]" },
-  "Supply Chain Strategy": { bg: "bg-[#fd4f00]", accent: "bg-[#FFF8E9] text-black", neutral: "text-white", border: "border-white/20", hoverBorder: "hover:border-white" },
-  "Systems Integration": { bg: "bg-black", accent: "bg-[#F8EDD9] text-black", neutral: "text-white", border: "border-white/20", hoverBorder: "hover:border-white" },
+const categoryThemes: Record<
+  string,
+  {
+    bg: string;
+    accent: string;
+    neutral: string;
+    border: string;
+    hoverBorder: string;
+  }
+> = {
+  "Facility Operations": {
+    bg: "bg-[#F8EDD9]",
+    accent: "bg-[#fd4f00] text-white",
+    neutral: "text-black",
+    border: "border-black/10",
+    hoverBorder: "hover:border-[#fd4f00]",
+  },
+  "Carrier Management": {
+    bg: "bg-[#FFF8E9]",
+    accent: "bg-[#E5D3B3] text-black",
+    neutral: "text-black",
+    border: "border-black/10",
+    hoverBorder: "hover:border-[#E5D3B3]",
+  },
+  "Supply Chain Strategy": {
+    bg: "bg-[#fd4f00]",
+    accent: "bg-[#FFF8E9] text-black",
+    neutral: "text-white",
+    border: "border-white/20",
+    hoverBorder: "hover:border-white",
+  },
+  "Systems Integration": {
+    bg: "bg-black",
+    accent: "bg-[#F8EDD9] text-black",
+    neutral: "text-white",
+    border: "border-white/20",
+    hoverBorder: "hover:border-white",
+  },
 };
-const getCategoryTheme = (cat: string) => categoryThemes[cat] || { bg: "bg-gray-100", accent: "bg-[#fd4f00] text-white", neutral: "text-black", border: "border-black/20", hoverBorder: "hover:border-black/50" };
+const getCategoryTheme = (cat: string) =>
+  categoryThemes[cat] || {
+    bg: "bg-gray-100",
+    accent: "bg-[#fd4f00] text-white",
+    neutral: "text-black",
+    border: "border-black/20",
+    hoverBorder: "hover:border-black/50",
+  };
 
 // Category Order
-const categoryOrder = ["Facility Operations", "Carrier Management", "Supply Chain Strategy", "Systems Integration"];
+const categoryOrder = [
+  "Facility Operations",
+  "Carrier Management",
+  "Supply Chain Strategy",
+  "Systems Integration",
+];
 
 // Page metadata
-const title = "Shipping & Receiving Best Practice Research | DataDocks";
-const description = "DataDocks is a dock appointment scheduling software, that helps increase your facility's performance.";
+const title = "Guides, Checklists & Insights for Operations Teams | DataDocks";
+const description =
+  "DataDocks is a dock appointment scheduling software, that helps increase your facility's performance.";
 ---
 
 <Layout title={title} description={description}>
-  <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+  <link
+    rel="stylesheet"
+    href="/css/lite-yt-embed.css"
+    media="print"
+    onload="this.media='all'"
+  />
   <script is:inline src="/css/lite-yt-embed.js" defer></script>
   <div class="min-h-screen flex flex-col">
-    
     <Navigation client:idle />
 
-    <main class="flex-grow w-full bg-[#FFF8E9] font-recoleta text-gray-800 pt-24">
+    <main
+      class="flex-grow w-full bg-[#FFF8E9] font-recoleta text-gray-800 pt-24"
+    >
       <div class="max-w-7xl mx-auto px-4 md:px-12">
-        
         <div class="text-center mb-16 md:mb-24">
-          <h1 class="text-4xl md:text-6xl lg:text-[76px] font-bruta uppercase leading-[0.85] tracking-tight w-full">
-            <span class="text-[#fd4f00]">RESOURCE HUB:</span><br/>
-            <span class="text-black">Guides, Checklists & Insights<br class="hidden sm:block" /> for Operations Teams</span>
+          <h1
+            class="text-4xl md:text-6xl lg:text-[76px] font-bruta uppercase leading-[0.85] tracking-tight w-full"
+          >
+            <span class="text-[#fd4f00]">RESOURCE HUB:</span><br />
+            <span class="text-black"
+              >Guides, Checklists & Insights<br class="hidden sm:block" /> for Operations
+              Teams</span
+            >
           </h1>
         </div>
 
         {/* Category Icon Hotlinks */}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-20 max-w-4xl mx-auto px-4">
-          {categoryOrder.map((category, idx) => (
-            <a href={`#category-${idx}`} class="flex flex-col items-center group">
-              <div class="w-16 h-16 md:w-24 md:h-24 bg-white rounded-2xl shadow-md border-2 border-[#E5D3B3] flex items-center justify-center mb-4 group-hover:-translate-y-2 group-hover:border-[#fd4f00] group-hover:shadow-lg transition-all duration-300">
-                <svg class="w-8 h-8 md:w-10 md:h-10 text-black group-hover:text-[#fd4f00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-              <span class="font-bruta uppercase text-base md:text-lg text-center text-gray-800 group-hover:text-[#fd4f00] transition-colors leading-tight">{category}</span>
-            </a>
-          ))}
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-20 max-w-4xl mx-auto px-4"
+        >
+          {
+            categoryOrder.map((category, idx) => (
+              <a
+                href={`#category-${idx}`}
+                class="flex flex-col items-center group"
+              >
+                <div class="w-16 h-16 md:w-24 md:h-24 bg-white rounded-2xl shadow-md border-2 border-[#E5D3B3] flex items-center justify-center mb-4 group-hover:-translate-y-2 group-hover:border-[#fd4f00] group-hover:shadow-lg transition-all duration-300">
+                  <svg
+                    class="w-8 h-8 md:w-10 md:h-10 text-black group-hover:text-[#fd4f00] transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                </div>
+                <span class="font-bruta uppercase text-base md:text-lg text-center text-gray-800 group-hover:text-[#fd4f00] transition-colors leading-tight">
+                  {category}
+                </span>
+              </a>
+            ))
+          }
         </div>
       </div>
 
       {/* Category Sections (Scrollable Carousels) */}
 
-      {categoryOrder.map((category, idx) => {
-        const posts = postsByCategory[category] || [];
-        if (posts.length === 0) return null;
-        const theme = getCategoryTheme(category);
-        return (
-          <section id={`category-${idx}`} class={`w-full ${theme.bg} py-16 md:py-24 border-t-2 border-black/5`}>
-            <div class="max-w-7xl mx-auto px-4 md:px-12">
-              <div class="flex items-center justify-between mb-12">
-                <h3 class={`font-bruta text-3xl md:text-5xl uppercase tracking-tiight ${theme.neutral}`}>{category}</h3>
-              </div>
-                           {/* Scrollable Carousel Wrapper */}
-              <div class="relative carousel-container group/carousel">
-                {/* Navigation Arrows */}
-                <button 
-                  class="absolute -left-4 md:-left-12 top-[calc(50%-2rem)] -translate-y-1/2 z-20 bg-white/90 dark:bg-black/90 hover:bg-[#fd4f00] hover:text-white text-black dark:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/10 dark:border-white/20 shadow-lg hidden md:flex items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:!opacity-0 focus:outline-none focus:ring-2 focus:ring-[#fd4f00]"
-                  aria-label="Scroll Left"
-                  data-carousel-prev
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                </button>
-                
-                <button 
-                  class="absolute -right-4 md:-right-12 top-[calc(50%-2rem)] -translate-y-1/2 z-20 bg-white/90 dark:bg-black/90 hover:bg-[#fd4f00] hover:text-white text-black dark:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/10 dark:border-white/20 shadow-lg hidden md:flex items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:!opacity-0 focus:outline-none focus:ring-2 focus:ring-[#fd4f00]"
-                  aria-label="Scroll Right"
-                  data-carousel-next
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                </button>
+      {
+        categoryOrder.map((category, idx) => {
+          const posts = postsByCategory[category] || [];
+          if (posts.length === 0) return null;
+          const theme = getCategoryTheme(category);
+          return (
+            <section
+              id={`category-${idx}`}
+              class={`w-full ${theme.bg} py-16 md:py-24 border-t-2 border-black/5`}
+            >
+              <div class="max-w-7xl mx-auto px-4 md:px-12">
+                <div class="flex items-center justify-between mb-12">
+                  <h3
+                    class={`font-bruta text-3xl md:text-5xl uppercase tracking-tiight ${theme.neutral}`}
+                  >
+                    {category}
+                  </h3>
+                </div>
+                {/* Scrollable Carousel Wrapper */}
+                <div class="relative carousel-container group/carousel">
+                  {/* Navigation Arrows */}
+                  <button
+                    class="absolute -left-4 md:-left-12 top-[calc(50%-2rem)] -translate-y-1/2 z-20 bg-white/90 dark:bg-black/90 hover:bg-[#fd4f00] hover:text-white text-black dark:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/10 dark:border-white/20 shadow-lg hidden md:flex items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:!opacity-0 focus:outline-none focus:ring-2 focus:ring-[#fd4f00]"
+                    aria-label="Scroll Left"
+                    data-carousel-prev
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
 
-                {/* Scrollable Carousel Grid */}
-                <div class="grid grid-flow-col-dense grid-rows-2 auto-cols-[85vw] sm:auto-cols-[300px] lg:auto-cols-[calc((100%-4.5rem)/4)] gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide scroll-smooth" data-carousel style="-ms-overflow-style: none; scrollbar-width: none;">
-                  
-                  {posts.map((post, postIdx) => {
-                    const type = post.data.postType?.discriminant || 'article';
-                    // isFeatured must never be true for video or short
-                    const isFeatured = postIdx === 0 && type === 'article';
-                    
-                    // Aspect Ratios & Grid Spans
-                    let spanClass = "row-span-1 col-span-1 aspect-[4/5]";
-                    if (isFeatured) {
-                      spanClass = "row-span-2 col-span-2 aspect-[4/5] hidden sm:flex"; 
-                    } else if (type === 'video') {
-                      spanClass = "row-span-1 col-span-2 h-full";
-                    } else if (type === 'short') {
-                      spanClass = "row-span-2 col-span-1 h-full";
-                    }
+                  <button
+                    class="absolute -right-4 md:-right-12 top-[calc(50%-2rem)] -translate-y-1/2 z-20 bg-white/90 dark:bg-black/90 hover:bg-[#fd4f00] hover:text-white text-black dark:text-white w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/10 dark:border-white/20 shadow-lg hidden md:flex items-center justify-center transition-all opacity-0 group-hover/carousel:opacity-100 disabled:!opacity-0 focus:outline-none focus:ring-2 focus:ring-[#fd4f00]"
+                    aria-label="Scroll Right"
+                    data-carousel-next
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
 
-                    const fallbackImg = getFirstImage(post.body || '');
-                    const finalReadTime = post.data.readTime || getReadTime(post.body || '');
+                  {/* Scrollable Carousel Grid */}
+                  <div
+                    class="grid grid-flow-col-dense grid-rows-2 auto-cols-[85vw] sm:auto-cols-[300px] lg:auto-cols-[calc((100%-4.5rem)/4)] gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide scroll-smooth"
+                    data-carousel
+                    style="-ms-overflow-style: none; scrollbar-width: none;"
+                  >
+                    {posts.map((post, postIdx) => {
+                      const type =
+                        post.data.postType?.discriminant || "article";
+                      // isFeatured must never be true for video or short
+                      const isFeatured = postIdx === 0 && type === "article";
 
-                    // Pure Video Card Rendering
-                    if (!isFeatured && (type === 'video' || type === 'short') && post.data.postType?.value && 'youtubeId' in post.data.postType.value && post.data.postType.value.youtubeId) {
-                      const videoId = post.data.postType.value.youtubeId;
-                      const isShort = type === 'short';
-                      return (
-                        <a 
-                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}/?autoplay=1`.replace('//posts', '/posts')}
-                          class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 ${theme.border} ${theme.hoverBorder} ${spanClass}`}
-                          data-priority={post.data.priority}
-                        >
-                          {isShort ? (
-                            <>
-                              {/* Short: Fixed 9:16 aspect ratio for the frame to prevent zoom, banner gets the rest */}
-                              <div class="relative w-full aspect-[9/16] overflow-hidden shrink-0">
-                                <lite-youtube 
-                                  videoid={videoId} 
-                                  playlabel={post.data.title} 
+                      // Aspect Ratios & Grid Spans
+                      let spanClass = "row-span-1 col-span-1 aspect-[4/5]";
+                      if (isFeatured) {
+                        spanClass =
+                          "row-span-2 col-span-2 aspect-[4/5] hidden sm:flex";
+                      } else if (type === "video") {
+                        spanClass = "row-span-1 col-span-2 h-full";
+                      } else if (type === "short") {
+                        spanClass = "row-span-2 col-span-1 h-full";
+                      }
+
+                      const fallbackImg = getFirstImage(post.body || "");
+                      const finalReadTime =
+                        post.data.readTime || getReadTime(post.body || "");
+
+                      // Pure Video Card Rendering
+                      if (
+                        !isFeatured &&
+                        (type === "video" || type === "short") &&
+                        post.data.postType?.value &&
+                        "youtubeId" in post.data.postType.value &&
+                        post.data.postType.value.youtubeId
+                      ) {
+                        const videoId = post.data.postType.value.youtubeId;
+                        const isShort = type === "short";
+                        return (
+                          <a
+                            href={`${import.meta.env.BASE_URL}/posts/${post.slug}/?autoplay=1`.replace(
+                              "//posts",
+                              "/posts",
+                            )}
+                            class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 ${theme.border} ${theme.hoverBorder} ${spanClass}`}
+                            data-priority={post.data.priority}
+                          >
+                            {isShort ? (
+                              <>
+                                {/* Short: Fixed 9:16 aspect ratio for the frame to prevent zoom, banner gets the rest */}
+                                <div class="relative w-full aspect-[9/16] overflow-hidden shrink-0">
+                                  <lite-youtube
+                                    videoid={videoId}
+                                    playlabel={post.data.title}
+                                    style={`background-image: url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                                    class="w-full h-full pointer-events-none"
+                                  />
+                                  {/* Overlay: visible by default, hides on hover */}
+                                  <div class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
+                                    <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">
+                                      Watch Short
+                                    </span>
+                                  </div>
+                                </div>
+                                <div
+                                  class={`flex-grow flex flex-col justify-center px-4 py-3 ${theme.neutral} border-t ${theme.border} bg-black/5`}
+                                >
+                                  <h4
+                                    class={`text-xl md:text-[22px] font-bold font-bruta uppercase leading-tight line-clamp-3 ${theme.neutral}`}
+                                  >
+                                    {post.data.title}
+                                  </h4>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                {/* Longform: edge-to-edge video, no padding */}
+                                <lite-youtube
+                                  videoid={videoId}
+                                  playlabel={post.data.title}
                                   style={`background-image: url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
-                                  class="w-full h-full pointer-events-none" 
+                                  class="w-full h-full aspect-video pointer-events-none"
                                 />
                                 {/* Overlay: visible by default, hides on hover */}
-                                <div class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
-                                  <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Short</span>
+                                <div class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
+                                  <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">
+                                    Watch Video
+                                  </span>
+                                  <h4 class="text-white text-center text-lg md:text-xl font-bruta uppercase leading-[1.15] line-clamp-4">
+                                    {post.data.title}
+                                  </h4>
                                 </div>
+                              </>
+                            )}
+                          </a>
+                        );
+                      }
+
+                      // Non-Video and Featured Card Rendering
+                      return (
+                        <a
+                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}/`.replace(
+                            "//posts",
+                            "/posts",
+                          )}
+                          class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl ${spanClass} ${isFeatured ? "bg-white border-0" : `bg-transparent border-2 ${theme.border} ${theme.hoverBorder}`}`}
+                          data-priority={post.data.priority}
+                        >
+                          {isFeatured ? (
+                            <>
+                              <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
+                                {post.data.postType?.value &&
+                                "youtubeId" in post.data.postType.value &&
+                                post.data.postType.value.youtubeId ? (
+                                  <img
+                                    src={`https://img.youtube.com/vi/${post.data.postType.value.youtubeId}/maxresdefault.jpg`}
+                                    alt={post.data.title}
+                                    class="w-full h-full object-cover"
+                                    loading="eager"
+                                    fetchpriority="high"
+                                  />
+                                ) : post.data.cardImage ? (
+                                  <Image
+                                    src={post.data.cardImage}
+                                    alt={post.data.title}
+                                    class="w-full h-full object-cover"
+                                    loading="eager"
+                                  />
+                                ) : fallbackImg ? (
+                                  <Image
+                                    src={fallbackImg}
+                                    alt={post.data.title}
+                                    class="w-full h-full object-cover"
+                                    loading="eager"
+                                  />
+                                ) : (
+                                  <div
+                                    class={`w-full h-full opacity-80 ${fallbackGradients[post.slug.length % fallbackGradients.length]}`}
+                                  />
+                                )}
+                                {/* Badges (Video/Short cannot be featured, so no badges needed here) */}
                               </div>
-                              <div class={`flex-grow flex flex-col justify-center px-4 py-3 ${theme.neutral} border-t ${theme.border} bg-black/5`}>
-                                <h4 class={`text-xl md:text-[22px] font-bold font-bruta uppercase leading-tight line-clamp-3 ${theme.neutral}`}>{post.data.title}</h4>
+                              <div
+                                class={`w-full flex-grow p-6 md:p-8 flex flex-col justify-between min-h-[33.33%] ${theme.accent}`}
+                              >
+                                <div>
+                                  <h4
+                                    class={`text-2xl md:text-4xl font-bold font-bruta uppercase mb-4 leading-[1.1] opacity-90 transition-opacity group-hover:opacity-100 line-clamp-3`}
+                                  >
+                                    {post.data.title}
+                                  </h4>
+                                  <div class="w-12 h-[3px] bg-current opacity-30 mb-4" />
+                                  <p class="text-base md:text-lg opacity-80 line-clamp-2 md:line-clamp-3 mb-4">
+                                    {post.data.description ||
+                                      "Click here to read the full article."}
+                                  </p>
+                                </div>
+                                <div class="flex flex-col gap-3 md:gap-4 mt-auto">
+                                  <span
+                                    class={`font-bold flex items-center gap-2 opacity-90 text-lg md:text-xl`}
+                                  >
+                                    Read More{" "}
+                                    <span class="text-2xl leading-none transition-transform group-hover:translate-x-1">
+                                      &#8594;
+                                    </span>
+                                  </span>
+                                  <div class="w-full h-px bg-current opacity-20" />
+                                  <div class="flex items-center justify-between">
+                                    <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">
+                                      {finalReadTime}
+                                    </span>
+                                    <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">
+                                      {getFriendlyDate(
+                                        post.data.updatedDate ||
+                                          post.data.pubDate,
+                                      )}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                             </>
                           ) : (
-                            <>
-                              {/* Longform: edge-to-edge video, no padding */}
-                              <lite-youtube 
-                                videoid={videoId} 
-                                playlabel={post.data.title} 
-                                style={`background-image: url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
-                                class="w-full h-full aspect-video pointer-events-none" 
-                              />
-                              {/* Overlay: visible by default, hides on hover */}
-                              <div class="absolute inset-0 bg-black/85 flex flex-col items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity z-10 p-4">
-                                <span class="bg-[#fd4f00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-3">Watch Video</span>
-                                 <h4 class="text-white text-center text-lg md:text-xl font-bruta uppercase leading-[1.15] line-clamp-4">{post.data.title}</h4>
+                            <div
+                              class={`w-full h-full p-4 md:p-5 flex flex-col justify-between transition-colors ${theme.neutral}`}
+                            >
+                              <div class="mb-3">
+                                <h4
+                                  class={`text-xl md:text-[22px] font-bold font-bruta uppercase leading-[1.15] mb-3 line-clamp-3 ${theme.neutral}`}
+                                >
+                                  {post.data.title}
+                                </h4>
                               </div>
-                            </>
+                              <div class="mb-3 flex-grow flex flex-col justify-center">
+                                <p
+                                  class={`text-xs md:text-sm opacity-80 line-clamp-4 mb-3 ${theme.neutral}`}
+                                >
+                                  {post.data.description ||
+                                    "Click here to read the full article."}
+                                </p>
+                                <span
+                                  class={`font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 mt-auto text-sm ${theme.neutral}`}
+                                >
+                                  Read{" "}
+                                  <span class="text-base leading-none transition-transform group-hover:translate-x-1">
+                                    &#8594;
+                                  </span>
+                                </span>
+                              </div>
+                              <div
+                                class={`pt-3 border-t flex items-center justify-between text-[10px] font-bold uppercase tracking-wider ${theme.border.replace("border-", "border-")} border-opacity-30 ${theme.neutral}`}
+                              >
+                                <span class="opacity-70">
+                                  {finalReadTime.replace(/ read$/i, "")}
+                                </span>
+                                <span class="opacity-70">
+                                  {getFriendlyDate(
+                                    post.data.updatedDate || post.data.pubDate,
+                                  )}
+                                </span>
+                              </div>
+                            </div>
                           )}
                         </a>
                       );
-                    }
-
-                    // Non-Video and Featured Card Rendering
-                    return (
-                      <a 
-                        href={`${import.meta.env.BASE_URL}/posts/${post.slug}/`.replace('//posts', '/posts')}
-                        class={`group snap-start relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl ${spanClass} ${isFeatured ? 'bg-white border-0' : `bg-transparent border-2 ${theme.border} ${theme.hoverBorder}`}`}
-                        data-priority={post.data.priority}
-                      >
-                        {isFeatured ? (
-                          <>
-                            <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
-                              {(post.data.postType?.value && 'youtubeId' in post.data.postType.value && post.data.postType.value.youtubeId) ? (
-                                 <img src={`https://img.youtube.com/vi/${post.data.postType.value.youtubeId}/maxresdefault.jpg`} alt={post.data.title} class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
-                              ) : post.data.cardImage ? (
-                                <Image src={post.data.cardImage} alt={post.data.title} class="w-full h-full object-cover" loading="eager" />
-                              ) : fallbackImg ? (
-                                <Image src={fallbackImg} alt={post.data.title} class="w-full h-full object-cover" loading="eager" />
-                              ) : (
-                                <div class={`w-full h-full opacity-80 ${fallbackGradients[post.slug.length % fallbackGradients.length]}`}></div>
-                              )}
-                              {/* Badges (Video/Short cannot be featured, so no badges needed here) */}
-                            </div>
-                            <div class={`w-full flex-grow p-6 md:p-8 flex flex-col justify-between min-h-[33.33%] ${theme.accent}`}>
-                              <div>
-                                 <h4 class={`text-2xl md:text-4xl font-bold font-bruta uppercase mb-4 leading-[1.1] opacity-90 transition-opacity group-hover:opacity-100 line-clamp-3`}>{post.data.title}</h4>
-                                 <div class="w-12 h-[3px] bg-current opacity-30 mb-4"></div>
-                                 <p class="text-base md:text-lg opacity-80 line-clamp-2 md:line-clamp-3 mb-4">{post.data.description || 'Click here to read the full article.'}</p>
-                              </div>
-                              <div class="flex flex-col gap-3 md:gap-4 mt-auto">
-                                 <span class={`font-bold flex items-center gap-2 opacity-90 text-lg md:text-xl`}>Read More <span class="text-2xl leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
-                                 <div class="w-full h-px bg-current opacity-20"></div>
-                                 <div class="flex items-center justify-between">
-                                   <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">{finalReadTime}</span>
-                                   <span class="text-[10px] md:text-xs opacity-70 font-bold uppercase tracking-wider">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
-                                 </div>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <div class={`w-full h-full p-4 md:p-5 flex flex-col justify-between transition-colors ${theme.neutral}`}>
-                             <div class="mb-3">
-                               <h4 class={`text-xl md:text-[22px] font-bold font-bruta uppercase leading-[1.15] mb-3 line-clamp-3 ${theme.neutral}`}>{post.data.title}</h4>
-                             </div>
-                             <div class="mb-3 flex-grow flex flex-col justify-center">
-                               <p class={`text-xs md:text-sm opacity-80 line-clamp-4 mb-3 ${theme.neutral}`}>{post.data.description || 'Click here to read the full article.'}</p>
-                               <span class={`font-bold flex items-center gap-1 opacity-90 group-hover:opacity-100 mt-auto text-sm ${theme.neutral}`}>Read <span class="text-base leading-none transition-transform group-hover:translate-x-1">&#8594;</span></span>
-                             </div>
-                             <div class={`pt-3 border-t flex items-center justify-between text-[10px] font-bold uppercase tracking-wider ${theme.border.replace('border-', 'border-')} border-opacity-30 ${theme.neutral}`}>
-                                <span class="opacity-70">{finalReadTime.replace(/ read$/i, '')}</span>
-                                <span class="opacity-70">{getFriendlyDate(post.data.updatedDate || post.data.pubDate)}</span>
-                             </div>
-                          </div>
-                        )}
-                      </a>
-                    );
-                  })}
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
-        );
-      })}
-
+            </section>
+          );
+        })
+      }
     </main>
-    
+
     <script is:inline>
-      (function() {
+      (function () {
         let hasAutoswiped = false;
         let swipeObserver = null;
 
         function initCarousels() {
-          const carousels = document.querySelectorAll('[data-carousel]');
-          
+          const carousels = document.querySelectorAll("[data-carousel]");
+
           // 1. Initial State: All on "Page 2"
           if (!hasAutoswiped) {
-            carousels.forEach(carousel => {
+            carousels.forEach((carousel) => {
               // Make sure to measure after layout
               const scrollPos = carousel.offsetWidth * 0.6; // ~60% scroll for "Page 2" preview
-              carousel.scrollTo({ left: scrollPos, behavior: 'auto' });
+              carousel.scrollTo({ left: scrollPos, behavior: "auto" });
             });
 
             // 2. Observer for ANY carousel entering viewport
             if (swipeObserver) swipeObserver.disconnect();
-            swipeObserver = new IntersectionObserver((entries) => {
-              if (hasAutoswiped) return;
-              
-              if (entries.some(e => e.isIntersecting)) {
-                hasAutoswiped = true;
-                carousels.forEach(c => {
-                  c.scrollTo({ left: 0, behavior: 'smooth' });
-                });
-                swipeObserver.disconnect();
-              }
-            }, { threshold: 0.9 });
+            swipeObserver = new IntersectionObserver(
+              (entries) => {
+                if (hasAutoswiped) return;
 
-            carousels.forEach(c => swipeObserver.observe(c));
+                if (entries.some((e) => e.isIntersecting)) {
+                  hasAutoswiped = true;
+                  carousels.forEach((c) => {
+                    c.scrollTo({ left: 0, behavior: "smooth" });
+                  });
+                  swipeObserver.disconnect();
+                }
+              },
+              { threshold: 0.9 },
+            );
+
+            carousels.forEach((c) => swipeObserver.observe(c));
           }
-          
-          carousels.forEach(carousel => {
-            const container = carousel.closest('.carousel-container');
+
+          carousels.forEach((carousel) => {
+            const container = carousel.closest(".carousel-container");
             if (!container) return;
-            
-            const prevBtn = container.querySelector('[data-carousel-prev]');
-            const nextBtn = container.querySelector('[data-carousel-next]');
+
+            const prevBtn = container.querySelector("[data-carousel-prev]");
+            const nextBtn = container.querySelector("[data-carousel-next]");
 
             const getScrollAmount = () => carousel.offsetWidth * 0.8;
 
-            prevBtn?.addEventListener('click', () => {
-              carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+            prevBtn?.addEventListener("click", () => {
+              carousel.scrollBy({
+                left: -getScrollAmount(),
+                behavior: "smooth",
+              });
             });
 
-            nextBtn?.addEventListener('click', () => {
-              carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+            nextBtn?.addEventListener("click", () => {
+              carousel.scrollBy({
+                left: getScrollAmount(),
+                behavior: "smooth",
+              });
             });
 
             const updateButtons = () => {
               if (prevBtn) prevBtn.disabled = carousel.scrollLeft <= 5;
-              if (nextBtn) nextBtn.disabled = carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth - 5);
+              if (nextBtn)
+                nextBtn.disabled =
+                  carousel.scrollLeft >=
+                  carousel.scrollWidth - carousel.clientWidth - 5;
             };
 
-            carousel.addEventListener('scroll', updateButtons, { passive: true });
+            carousel.addEventListener("scroll", updateButtons, {
+              passive: true,
+            });
             setTimeout(updateButtons, 100);
           });
         }
@@ -401,11 +637,10 @@ const description = "DataDocks is a dock appointment scheduling software, that h
         initCarousels();
 
         // Support Astro View Transitions
-        document.addEventListener('astro:after-swap', initCarousels);
+        document.addEventListener("astro:after-swap", initCarousels);
       })();
     </script>
 
     <Footer />
-    
   </div>
 </Layout>
