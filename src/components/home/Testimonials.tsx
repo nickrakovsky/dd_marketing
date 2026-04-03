@@ -3,41 +3,37 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { cn } from '../../lib/utils';
+import type { TestimonialItem } from '../../data/types';
 
-const testimonials = [
-  {
-    quote: "We've had great results and the DataDocks team has been accommodating in making the software fit with what we need. It has helped streamline things on our end so much.",
-    author: "Carla Thorel, ClearTech",
-    image: "/images/testimonials/carla-thorel.webp",
-    logo: "/images/testimonials/cleartech.svg"
-  },
-  {
-    quote: "DataDocks blew the competition out of the water. They are quick and timely in their responses, and very easy to work with. I recommend them for anyone who needs more than an off the shelf appointment scheduling solution.",
-    author: "Salah El-Jamil, AJC Logistics",
-    image: "/images/testimonials/salah-el-jamil.jpg",
-    logo: "/images/testimonials/ajc.svg"
-  },
-  {
-    quote: "The integration process has been seamless, and the tool is easy for our vendors to use. Whenever we need them, the team is quick to help us resolve any issues.",
-    author: "Lina Wong, Stitch Fix",
-    image: "/images/testimonials/lina-wong.jpg",
-    logo: "/images/testimonials/stitch-fix.svg"
-  },
-  {
-    quote: "It's not an expense but an investment. My team loves DataDocks. I don't know how we lived without it.",
-    author: "Andres Enderica, Atlantic Autocold",
-    image: "/images/testimonials/andres-enderica.jpg",
-    logo: "/images/testimonials/atlantic-autocold.svg"
-  }
-];
+interface TestimonialsProps {
+  items: TestimonialItem[];
+}
 
-export default function Testimonials() {
+const getInitials = (name: string) => {
+  return name
+    .split(',')[0]
+    .trim()
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+export default function Testimonials({ items }: TestimonialsProps) {
   const isMobile = useIsMobile();
+  
+  // For desktop loop, we double the tests to avoid jumpiness on small slide counts
+  // But on mobile, we keep it exactly as-is for native scroll behavior
+  const displayTestimonials = !isMobile ? [...items, ...items] : items;
+
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
       loop: true, 
       align: 'start',
       active: !isMobile,
+      duration: 35, // Slightly slower for a more premium feel
+      skipSnaps: false, // Ensure we hit every snap point cleanly
       watchDrag: (api, event) => {
         if (event.target && 'closest' in event.target) {
           // Type casting for safety, though DOM elements will have .closest
@@ -133,35 +129,49 @@ export default function Testimonials() {
         </div>
 
         <div 
-          className="relative overflow-x-auto md:overflow-hidden snap-x snap-mandatory scrollbar-hide" 
+          className={cn(
+            "relative overflow-x-auto md:overflow-hidden scrollbar-hide",
+            isMobile && "snap-x snap-mandatory"
+          )}
           ref={emblaRef}
         >
           <div className="flex -ml-4 md:-ml-6">
-            {testimonials.map((item, index) => (
-              <div key={index} className="flex-[0_0_85vw] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pl-4 md:pl-6 snap-center">
+            {displayTestimonials.map((item, index) => (
+              <div key={`${index}-${(item as any).author}`} className={cn(
+                "flex-[0_0_85vw] md:flex-[0_0_45%] lg:flex-[0_0_35%] min-w-0 pl-4 md:pl-6",
+                isMobile && "snap-center"
+              )}>
                 <div className="relative bg-[#EFE2D2] p-6 md:p-8 rounded-2xl h-full flex flex-col shadow-sm">
 
                   {/* Header: Image + Logo */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-100">
-                      <img
-                        src={item.image}
-                        alt={item.author}
-                        width="64"
-                        height="64"
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-16 h-16 rounded-full overflow-hidden border border-black/5 flex items-center justify-center bg-white/50">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.author}
+                          width="64"
+                          height="64"
+                          loading="lazy"
+                          className="w-full h-full object-cover grayscale opacity-90 contrast-125"
+                        />
+                      ) : (
+                        <span className="text-[#FF5507] font-bold text-xl uppercase tracking-tighter">
+                          {getInitials(item.author)}
+                        </span>
+                      )}
                     </div>
                     <div className="h-8">
-                      <img
-                        src={item.logo}
-                        alt="Company Logo"
-                        width="auto"
-                        height="32"
-                        loading="lazy"
-                        className="h-full w-auto object-contain brightness-0 flex-shrink-0"
-                      />
+                      {item.logo && (
+                        <img
+                          src={item.logo}
+                          alt="Company Logo"
+                          width="auto"
+                          height="32"
+                          loading="lazy"
+                          className="h-full w-auto object-contain brightness-0 flex-shrink-0"
+                        />
+                      )}
                     </div>
                   </div>
 
