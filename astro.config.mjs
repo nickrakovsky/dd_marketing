@@ -43,8 +43,22 @@ export default defineConfig({
     '/privacy-policy-datadocks/': '/privacy-policy/',
   },
 
-  integrations: [tailwind(), react(), keystatic(), sitemap({
-    filter: (page) => !page.includes('/home-draft') && !page.includes('/sales-one-pager'),
+  integrations: [
+    {
+      name: 'dev-only-pages',
+      hooks: {
+        'astro:config:setup': ({ addRoute, command }) => {
+          if (command === 'dev') {
+            addRoute({
+              pattern: '/sales-one-pager',
+              entrypoint: './src/offline-pages/sales-one-pager.astro'
+            });
+          }
+        }
+      }
+    },
+    tailwind(), react(), keystatic(), sitemap({
+    filter: (page) => !page.includes('/home-draft'),
     serialize(item) {
       // Add lastmod from post frontmatter if available
       const postDate = postDateMap.get(item.url);
