@@ -26,19 +26,19 @@ export const carriersContent: PageContent = {
     galleryImages: [gal1, gal2, gal3, gal4, gal5],
     hotspots: [
       { // HOTSPOT 1 (Top Left Main)
-        left: "0.68%", top: "7.05%", width: "57.28%", height: "35.35%", targetIndex: 0 
+        left: "0.68%", top: "7.05%", width: "57.28%", height: "35.35%", targetIndex: 0
       },
       { // HOTSPOT 2 (Bottom Left Main)
-        left: "0.68%", top: "43.40%", width: "57.28%", height: "22.37%", targetIndex: 1 
+        left: "0.68%", top: "43.40%", width: "57.28%", height: "22.37%", targetIndex: 1
       },
       { // HOTSPOT 3 (Top Right Strip)
-        left: "58.43%", top: "7.05%", width: "40.78%", height: "18.79%", targetIndex: 2 
+        left: "58.43%", top: "7.05%", width: "40.78%", height: "18.79%", targetIndex: 2
       },
       { // HOTSPOT 4 (Middle Right Strip)
-        left: "58.43%", top: "26.85%", width: "40.78%", height: "24.27%", targetIndex: 3 
+        left: "58.43%", top: "26.85%", width: "40.78%", height: "24.27%", targetIndex: 3
       },
       { // HOTSPOT 5 (Bottom Right Strip)
-        left: "58.43%", top: "70.02%", width: "40.78%", height: "29.98%", targetIndex: 4 
+        left: "58.43%", top: "70.02%", width: "40.78%", height: "29.98%", targetIndex: 4
       },
     ]
   },
@@ -99,21 +99,21 @@ export const carriersContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { 
-        company: "Vee Express", 
-        industry: "3PL & Packaging", 
-        metricValue: "0", 
-        metricLabel: "Late Disputes", 
-        challenge: "Vee Express struggled with a lack of accountability when carriers arrived late. Without an objective system to track appointment times versus actual arrival times, the warehouse often faced disputes and liability for delays.", 
-        result: "DataDocks provided an indisputable audit trail. By automatically emailing trucking companies the moment a driver is late, the system creates objective proof of performance, shifting responsibility back to the carriers and eliminating arguments.", 
+      {
+        company: "Vee Express",
+        industry: "3PL & Packaging",
+        metricValue: "0",
+        metricLabel: "Late Disputes",
+        challenge: "Vee Express struggled with a lack of accountability when carriers arrived late. Without an objective system to track appointment times versus actual arrival times, the warehouse often faced disputes and liability for delays.",
+        result: "DataDocks provided an indisputable audit trail. By automatically emailing trucking companies the moment a driver is late, the system creates objective proof of performance, shifting responsibility back to the carriers and eliminating arguments.",
       },
-      { 
-        company: "Nick Steinman", 
-        industry: "Food Wholesale", 
-        metricValue: "75%", 
-        metricLabel: "Self-Service Bookings", 
-        challenge: "Booking a single appointment was an administrative nightmare, requiring an average of five emails—and sometimes as many as 17—to finalize. This inefficient back-and-forth drained over 40 hours of admin time every week.", 
-        result: "By shifting 75% of bookings to the self-service portal, the team virtually eliminated the email burden. This transition, combined with direct driver messaging, recovered a full work week’s worth of labor for the staff.", 
+      {
+        company: "Nick Steinman",
+        industry: "Food Wholesale",
+        metricValue: "75%",
+        metricLabel: "Self-Service Bookings",
+        challenge: "Booking a single appointment was an administrative nightmare, requiring an average of five emails—and sometimes as many as 17—to finalize. This inefficient back-and-forth drained over 40 hours of admin time every week.",
+        result: "By shifting 75% of bookings to the self-service portal, the team virtually eliminated the email burden. This transition, combined with direct driver messaging, recovered a full work week’s worth of labor for the staff.",
       },
     ],
   },

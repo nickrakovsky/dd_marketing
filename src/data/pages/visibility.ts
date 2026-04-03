@@ -5,7 +5,7 @@ import type { PageContent } from "@/data/types";
 import visBase from "@/assets/solutionsscreenshots/visibility/propertyview.webp";
 import visOverlay from "@/assets/solutionsscreenshots/visibility/appscreenshot1.webp";
 import visGallery2 from "@/assets/solutionsscreenshots/visibility/appscreenshot2.webp";
-import visGallery3 from "@/assets/solutionsscreenshots/visibility/appscreenshot3.webp"; 
+import visGallery3 from "@/assets/solutionsscreenshots/visibility/appscreenshot3.webp";
 import visGallery4 from "@/assets/solutionsscreenshots/visibility/appscreenshot4.webp";
 import visGallery5 from "@/assets/solutionsscreenshots/visibility/appscreenshot5.webp";
 import honeyvilleLogo from "@/assets/testimonials/honeyvillelogo.webp";
@@ -60,7 +60,7 @@ export const yardappContent: PageContent = {
     name: "Marcasa Ahlstrom",
     role: "Transportation Manager, Honeyville Inc.",
     image: honeyvilleLogo,
-  }, 
+  },
   benefits: {
     benefits: [
       { icon: "barChart", title: "Live ETAs & Smart Alerts", description: "Auto-ETA refresh, notifications, and real-time board visibility.", },
@@ -73,21 +73,21 @@ export const yardappContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { 
-        company: "Verst Group", 
-        industry: "Contract Logistics", 
-        metricValue: "Zero", 
-        metricLabel: "Radio Chatter", 
-        challenge: "The warehouse relied on physical whiteboards and constant radio communication to manage dock activity. This analog approach created information lags, resulting in confusion on the floor and endless noise just to confirm bay status.", 
-        result: "By replacing the whiteboard with a large TV display powered by DataDocks, the team gained instant, live updates. This digital shift silenced the radios and ensured the floor team acts on live data, a change the Operations Manager describes as 'transformative' for daily operations.", 
+      {
+        company: "Verst Group",
+        industry: "Contract Logistics",
+        metricValue: "Zero",
+        metricLabel: "Radio Chatter",
+        challenge: "The warehouse relied on physical whiteboards and constant radio communication to manage dock activity. This analog approach created information lags, resulting in confusion on the floor and endless noise just to confirm bay status.",
+        result: "By replacing the whiteboard with a large TV display powered by DataDocks, the team gained instant, live updates. This digital shift silenced the radios and ensured the floor team acts on live data, a change the Operations Manager describes as 'transformative' for daily operations.",
       },
-      { 
-        company: "ShipMonk", 
-        industry: "E-commerce 3PL", 
-        metricValue: "12", 
-        metricLabel: "Locations Managed", 
-        challenge: "Managing inbound freight across 12 facilities was chaotic without data validation. Carriers frequently booked slots against incorrect or non-existent POs, leading to receiving errors and a flood of emails to verify deliveries.", 
-        result: "DataDocks implemented an API bulk upload that restricts carriers to booking only against valid, real-time POs. This 'gatekeeper' function eliminated invalid bookings, drastically reduced email traffic, and provided leadership with high-level quality assurance.", 
+      {
+        company: "ShipMonk",
+        industry: "E-commerce 3PL",
+        metricValue: "12",
+        metricLabel: "Locations Managed",
+        challenge: "Managing inbound freight across 12 facilities was chaotic without data validation. Carriers frequently booked slots against incorrect or non-existent POs, leading to receiving errors and a flood of emails to verify deliveries.",
+        result: "DataDocks implemented an API bulk upload that restricts carriers to booking only against valid, real-time POs. This 'gatekeeper' function eliminated invalid bookings, drastically reduced email traffic, and provided leadership with high-level quality assurance.",
       },
     ],
   },

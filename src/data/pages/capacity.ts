@@ -26,7 +26,7 @@ export const capacityContent: PageContent = {
   },
   capacityGallery: {
     staticImage: capSchedule,
-    overlayImage: capOverlay 
+    overlayImage: capOverlay
   },
   howItWorks: {
     title: "HOW IT WORKS",
@@ -36,14 +36,14 @@ export const capacityContent: PageContent = {
         stepNumber: 1,
         title: "Track Durations",
         description: "Automatically log the average loading and unloading duration for every different load type.",
-        icon: "upload", 
+        icon: "upload",
         mobileAnnotation: "Operations Control: Don't let Sales dictate your inventory flow.",
       },
       {
         stepNumber: 2,
         title: "Refine Labor",
         description: "The system learns exactly how much time and labor you need for specific loads, replacing guesswork with data.",
-        icon: "toggle", 
+        icon: "toggle",
         desktopAnnotation: "Operations Control: Don't let Sales dictate your inventory flow.",
         mobileAnnotation: "Strategy: Use 'Actual Duration' data to justify headcount or equipment budgets.",
         highlight: true,
@@ -52,7 +52,7 @@ export const capacityContent: PageContent = {
         stepNumber: 3,
         title: "Allocate Capacity",
         description: "Set the right appointment lengths based on actual need, and watch your dock utilization climb.",
-        icon: "refresh", 
+        icon: "refresh",
       },
     ],
     footerAnnotation: "💡 Strategy: Use 'Actual Duration' data to justify headcount or equipment budgets.",
@@ -75,21 +75,21 @@ export const capacityContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { 
-        company: "Quality Distribution, LLC", 
-        industry: "3PL & Warehousing", 
-        metricValue: "5", 
-        metricLabel: "Unified Locations", 
-        challenge: "Managing multiple warehouses, each with its own disconnected spreadsheet, meant data silos and operational inconsistency. The team struggled to forecast labor needs accurately or track performance issues, such as carrier no-shows, across the network.", 
-        result: "DataDocks centralized scheduling, replacing fragmented processes with a standardized digital workflow. This clarity enabled precise labor planning, real-time visibility into every facility, and the ability to capture and act on critical data like carrier attendance.", 
+      {
+        company: "Quality Distribution, LLC",
+        industry: "3PL & Warehousing",
+        metricValue: "5",
+        metricLabel: "Unified Locations",
+        challenge: "Managing multiple warehouses, each with its own disconnected spreadsheet, meant data silos and operational inconsistency. The team struggled to forecast labor needs accurately or track performance issues, such as carrier no-shows, across the network.",
+        result: "DataDocks centralized scheduling, replacing fragmented processes with a standardized digital workflow. This clarity enabled precise labor planning, real-time visibility into every facility, and the ability to capture and act on critical data like carrier attendance.",
       },
-      { 
-        company: "TNT Express", 
-        industry: "Delivery Services", 
-        metricValue: "100%", 
-        metricLabel: "Self-Booking", 
-        challenge: "Manual scheduling was prone to error, particularly when heavy or oversize pallets required more time than standard slots allowed. Without clear visibility into why slots were blocked, these variable loads caused bottlenecks, and the team struggled to align capacity with strict KPIs.", 
-        result: "Carriers now request their own slots, while TNT retains final approval. When scheduling conflicts or capacity limits arise, \"Kyle\" (the AI assistant) instantly diagnoses the bottleneck and suggests available alternatives, allowing the team to resolve capacity issues in seconds rather than hours.", 
+      {
+        company: "TNT Express",
+        industry: "Delivery Services",
+        metricValue: "100%",
+        metricLabel: "Self-Booking",
+        challenge: "Manual scheduling was prone to error, particularly when heavy or oversize pallets required more time than standard slots allowed. Without clear visibility into why slots were blocked, these variable loads caused bottlenecks, and the team struggled to align capacity with strict KPIs.",
+        result: "Carriers now request their own slots, while TNT retains final approval. When scheduling conflicts or capacity limits arise, \"Kyle\" (the AI assistant) instantly diagnoses the bottleneck and suggests available alternatives, allowing the team to resolve capacity issues in seconds rather than hours.",
       },
     ],
   },

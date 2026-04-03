@@ -47,9 +47,9 @@ export default defineConfig({
     {
       name: 'dev-only-pages',
       hooks: {
-        'astro:config:setup': ({ addRoute, command }) => {
+        'astro:config:setup': ({ injectRoute, command }) => {
           if (command === 'dev') {
-            addRoute({
+            injectRoute({
               pattern: '/sales-one-pager',
               entrypoint: './src/offline-pages/sales-one-pager.astro'
             });
@@ -58,17 +58,17 @@ export default defineConfig({
       }
     },
     tailwind(), react(), keystatic(), sitemap({
-    filter: (page) => !page.includes('/home-draft'),
-    serialize(item) {
-      // Add lastmod from post frontmatter if available
-      const postDate = postDateMap.get(item.url);
-      if (postDate) {
-        item.lastmod = postDate.toISOString();
-      }
-      // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
-      return item;
-    },
-    customPages: [],
-  }), mdx()],
+      filter: (page) => !page.includes('/home-draft'),
+      serialize(item) {
+        // Add lastmod from post frontmatter if available
+        const postDate = postDateMap.get(item.url);
+        if (postDate) {
+          item.lastmod = postDate.toISOString();
+        }
+        // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
+        return item;
+      },
+      customPages: [],
+    }), mdx()],
 
 });

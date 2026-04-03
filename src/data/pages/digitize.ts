@@ -18,11 +18,11 @@ export const defaultContent: PageContent = {
     emailPlaceholder: "Enter your work email",
     buttonText: "Get Free Demo",
     dashboardAlt: "Dashboard showing appointment analytics, dock statistics, and peak booking times",
-    desktopImage: dashboardPreview, 
+    desktopImage: dashboardPreview,
   },
   digitizeGallery: {
     header: digiHeader,
-    gridImages: [digi1, digi2, digi3, digi4, digi5, digi6] 
+    gridImages: [digi1, digi2, digi3, digi4, digi5, digi6]
   },
   credibility: {
     g2Rating: "4.9/5 on G2",
@@ -83,21 +83,21 @@ export const defaultContent: PageContent = {
   },
   caseStudies: {
     caseStudies: [
-      { 
-        company: "Honeyville, Inc.", 
-        industry: "Food Wholesale", 
-        metricValue: "83%", 
-        metricLabel: "Fewer Emails", 
-        challenge: "The logistics coordinator was swamped with calls and upwards of 120 emails a day, managing the schedule from an Outlook calendar. This reactive process left no time to optimize schedules or prepare the receiving team for incoming shipments.", 
-        result: "DataDocks centralized the schedule, cutting daily email volume to less than 20. This clarity allows the team to staff appropriately and prepare documentation in advance, transitioning the department from reactive fire-fighting to proactive logistics planning.", 
+      {
+        company: "Honeyville, Inc.",
+        industry: "Food Wholesale",
+        metricValue: "83%",
+        metricLabel: "Fewer Emails",
+        challenge: "The logistics coordinator was swamped with calls and upwards of 120 emails a day, managing the schedule from an Outlook calendar. This reactive process left no time to optimize schedules or prepare the receiving team for incoming shipments.",
+        result: "DataDocks centralized the schedule, cutting daily email volume to less than 20. This clarity allows the team to staff appropriately and prepare documentation in advance, transitioning the department from reactive fire-fighting to proactive logistics planning.",
       },
-      { 
-        company: "ShipMonk", 
-        industry: "E-commerce 3PL", 
-        metricValue: "90%", 
-        metricLabel: "Calcs Eliminated", 
-        challenge: "To maximize dock utilization, coordinators were forced to manually calculate capacity limits and appointment durations for every single booking. This manual math was slow, prone to error, and led to appointment rejections during crunch times.", 
-        result: "DataDocks automated the logic. The system now instantly calculates the perfect slot length for every load type based on ShipMonk's specific rules. This eliminated 90% of manual computations, freeing the team to focus on merchant experience instead of spreadsheet math.", 
+      {
+        company: "ShipMonk",
+        industry: "E-commerce 3PL",
+        metricValue: "90%",
+        metricLabel: "Calcs Eliminated",
+        challenge: "To maximize dock utilization, coordinators were forced to manually calculate capacity limits and appointment durations for every single booking. This manual math was slow, prone to error, and led to appointment rejections during crunch times.",
+        result: "DataDocks automated the logic. The system now instantly calculates the perfect slot length for every load type based on ShipMonk's specific rules. This eliminated 90% of manual computations, freeing the team to focus on merchant experience instead of spreadsheet math.",
       },
     ],
   },
