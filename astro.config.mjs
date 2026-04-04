@@ -60,8 +60,12 @@ export default defineConfig({
     tailwind(), react(), keystatic(), sitemap({
       filter: (page) => !page.includes('/home-draft'),
       serialize(item) {
+        // Strip trailing slash from sitemap URLs (except homepage)
+        if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
+          item.url = item.url.replace(/\/$/, '');
+        }
         // Add lastmod from post frontmatter if available
-        const postDate = postDateMap.get(item.url);
+        const postDate = postDateMap.get(item.url) || postDateMap.get(item.url + '/');
         if (postDate) {
           item.lastmod = postDate.toISOString();
         }

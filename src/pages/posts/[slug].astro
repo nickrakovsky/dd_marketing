@@ -127,7 +127,7 @@ const getReadTime = (body: string) => {
               const isShort = relPostType === 'short';
               return (
                 <a 
-                  href={`${import.meta.env.BASE_URL}/posts/${post.slug}/?autoplay=1`.replace('//posts', '/posts')}
+                  href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace('//posts', '/posts')}
                   class="group relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 border-white/20 hover:border-white w-full"
                 >
                 <div class="flex items-start gap-4 p-2 transition-colors">

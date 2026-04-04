@@ -365,7 +365,7 @@ const description =
                         const isShort = type === "short";
                         return (
                           <a
-                            href={`${import.meta.env.BASE_URL}/posts/${post.slug}/?autoplay=1`.replace(
+                            href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace(
                               "//posts",
                               "/posts",
                             )}
@@ -426,7 +426,7 @@ const description =
                       // Non-Video and Featured Card Rendering
                       return (
                         <a
-                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}/`.replace(
+                          href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace(
                             "//posts",
                             "/posts",
                           )}
