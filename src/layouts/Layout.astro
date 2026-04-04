@@ -94,7 +94,7 @@ const graph: any[] = [
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://datadocks.com/posts/?q={search_term_string}"
+        "urlTemplate": "https://datadocks.com/posts?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }
@@ -102,8 +102,8 @@ const graph: any[] = [
   // 3. WebPage (Accessibility & Context) — use specific types for known pages
   {
     "@type": pathname === '/' ? "WebPage"
-           : pathname === '/about/' ? "AboutPage"
-           : pathname === '/posts/' ? "CollectionPage"
+           : pathname === '/about' ? "AboutPage"
+           : pathname === '/posts' ? "CollectionPage"
            : "ItemPage",
     "@id": canonicalURL.toString(),
     "url": canonicalURL.toString(),
@@ -180,7 +180,7 @@ if (breadcrumbItems.length > 0) {
           "@type": "ListItem",
           "position": index + 2,
           "name": name,
-          "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
+          "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
         };
       })
     ]
