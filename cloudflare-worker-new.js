@@ -224,6 +224,20 @@ async function rewriteWebflowHTML(response, pathname) {
     );
   }
 
+  // Fix twitter:image to use datadocks.com instead of Webflow CDN
+  if (/<meta[^>]*property\s*=\s*["']twitter:image["'][^>]*>/i.test(html)) {
+    html = html.replace(
+      /<meta[^>]*property\s*=\s*["']twitter:image["'][^>]*>/i,
+      `<meta property="twitter:image" content="https://datadocks.com/images/OG-Cover.png" />`
+    );
+  }
+  if (/<meta[^>]*name\s*=\s*["']twitter:image["'][^>]*>/i.test(html)) {
+    html = html.replace(
+      /<meta[^>]*name\s*=\s*["']twitter:image["'][^>]*>/i,
+      `<meta name="twitter:image" content="https://datadocks.com/images/OG-Cover.png" />`
+    );
+  }
+
   // Inject robots meta tag for explicit indexing directive
   if (!/<meta[^>]*name\s*=\s*["']robots["']/i.test(html)) {
     html = html.replace(

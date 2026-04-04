@@ -9,15 +9,25 @@ DataDocks helps logistics facilities automate dock appointment scheduling, reduc
 - Phone: (647) 848-8250
 - Email: info@datadocks.com
 - Website: https://datadocks.com
+- Last Updated: 2026-04-04
 
 ## Preferred Citation
 When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 
+## Key Definitions
+
+- **Dock scheduling**: The process of assigning specific time slots and dock doors to inbound and outbound trucks at a warehouse or distribution center, reducing wait times and congestion.
+- **Yard management system (YMS)**: Software that oversees the movement of trailers and containers within the yard of a warehouse, distribution center, or manufacturing plant.
+- **Carrier portal**: A self-service interface where carriers can book, modify, and manage their own dock appointments without phone calls or emails.
+- **Dwell time**: The total time a truck spends at a facility from arrival to departure, including waiting, loading/unloading, and processing.
+- **Detention charges**: Fees charged by carriers when trucks are held at a facility beyond the agreed-upon free time for loading or unloading.
+- **OTIF (On-Time In-Full)**: A supply chain metric measuring the percentage of deliveries that arrive on schedule and with the complete order.
+
 ## Key Resources
 
 ### Product
-- [Dock Scheduling Software](https://datadocks.com/): Product overview and demo request
-- [DataDocks vs Opendock](https://datadocks.com/datadocks-vs-opendock): Feature comparison for dock scheduling platforms
+- [Dock Scheduling Software](https://datadocks.com): Product overview and demo request
+- [DataDocks vs OpenDock](https://datadocks.com/datadocks-vs-opendock): Feature comparison for dock scheduling platforms
 - [DataDocks Integrations](https://datadocks.com/integrations): ERP, WMS, and TMS integrations (SAP, NetSuite, Oracle, Power BI)
 - [DataDocks Support FAQs](https://datadocks.com/support): Answers to common questions about DataDocks
 
@@ -27,7 +37,13 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Yard Management](https://datadocks.com/datadocks-features/yard-management): Real-time yard visibility and trailer tracking
 - [Capacity Limits](https://datadocks.com/datadocks-features/capacity-limits): Automated capacity management and slot allocation
 - [Efficiency Reports](https://datadocks.com/datadocks-features/efficiency-reports): Analytics and reporting for dock operations
+- [Custom Rules](https://datadocks.com/datadocks-features/custom-rules): Flexible business rules for scheduling and approvals
+- [Data Validation](https://datadocks.com/datadocks-features/data-validation): Built-in validation for appointments and inputs
+- [Notifications](https://datadocks.com/datadocks-features/notifications): Automatic alerts and real-time notifications
+- [Live Editing](https://datadocks.com/datadocks-features/live-editing): Real-time collaborative schedule editing
 - [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Cloud-based access from any device
+- [Integration](https://datadocks.com/datadocks-features/integration): WMS/TMS/ERP integration capabilities
+- [Documentation](https://datadocks.com/datadocks-features/documentation): Product documentation and developer guides
 
 ### Benefits
 - [Increase Capacity](https://datadocks.com/benefits/increase-capacity): Eliminate bottlenecks and slash overtime costs with optimized appointment slots
@@ -35,9 +51,83 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Delight Carriers](https://datadocks.com/benefits/delight-carriers): Reduce wait times and improve the carrier experience
 - [Digitize Operations](https://datadocks.com/benefits/digitize-operations): Replace paper-based processes with automated digital workflows
 
-### Guides
-- [What Is Dock Scheduling?](https://datadocks.com/posts/what-is-dock-scheduling): Complete guide to dock scheduling
-- [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Best practices for efficient yard management
-- [Machine Learning in Supply Chains](https://datadocks.com/posts/machine-learning-in-supply-chains): Machine learning applications in supply chain efficiency
-- [Retail Supply Chain Case Studies](https://datadocks.com/posts/retail-case-studies): Case studies on retail supply chain challenges
-- [Logistics Resource Hub](https://datadocks.com/posts): All guides and insights for logistics teams
+### Guides -- Dock Scheduling & Operations
+- [What Is Dock Scheduling?](https://datadocks.com/posts/what-is-dock-scheduling): Complete 2026 guide to dock scheduling for warehouses
+- [7 Disadvantages of Operating Without Dock Scheduling Software](https://datadocks.com/posts/disadvantages-of-operating-without-dock-scheduling-software): Why manual scheduling fails at scale
+- [Why "Simple" Dock Scheduling Tools Fail in Large Enterprises](https://datadocks.com/posts/enterprise-dock-scheduling): Enterprise dock scheduling requirements
+- [Time Slot Management](https://datadocks.com/posts/time-slot-management): Complete guide to time slot management for facilities
+- [Loading Dock Congestion](https://datadocks.com/posts/loading-dock-congestion): Real costs and how scheduling fixes it
+- [Is Your Loading Dock Stuck in the Past?](https://datadocks.com/posts/loading-dock-maturity-stages): Loading dock maturity stages assessment
+- [7 Ways Custom Rules Speed Up Loading Dock Operations](https://datadocks.com/posts/custom-rules): Custom scheduling rules for efficiency
+- [How to Run Peak Season Without Dock Chaos](https://datadocks.com/posts/peak-season-without-dock-chaos-a-complete-playbook): Complete peak season playbook
+
+### Guides -- Yard Management
+- [What is a Yard Management System (YMS)?](https://datadocks.com/posts/what-is-a-yard-management-system-yms): Complete guide to yard management systems
+- [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Steps, roles, and best practices
+- [Yard Management vs Dock Scheduling vs YMS](https://datadocks.com/posts/yard-management-vs-dock-scheduling-vs-yms): Key differences explained
+- [8 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options): Software comparison guide
+- [Crucial Components to Successful Yard Management](https://datadocks.com/posts/crucial-components-to-successful-yard-management): Essential yard management elements
+- [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations): Automation roadmap for yard management
+- [Yard Visibility](https://datadocks.com/posts/yard-visibility): 3 easy ways to improve yard visibility fast
+
+### Guides -- Supply Chain & Logistics
+- [Supply Chain KPIs You Need to Track](https://datadocks.com/posts/supply-chain-kpis-you-need-to-track): Essential supply chain metrics
+- [What Is OTIF?](https://datadocks.com/posts/what-is-otif-and-why-is-it-valued-as-an-essential-supply-chain-metric): Why OTIF is an essential supply chain metric
+- [How to Build Supply Chain Visibility](https://datadocks.com/posts/ultimate-guide-to-supply-chain-visibility-for-industry-professionals): Complete visibility guide
+- [How to Build a Supply Chain Center of Excellence](https://datadocks.com/posts/what-is-a-supply-chain-center-of-excellence): Building a CoE
+- [Inbound vs Outbound Logistics](https://datadocks.com/posts/inbound-vs-outbound-logistics): Fixing bottlenecks at the dock first
+- [How to Build Your Supply Chain Technology Stack](https://datadocks.com/posts/how-to-build-your-logistics-tech-stack): Tech stack planning guide
+- [Top Supply Chain Software Companies 2025](https://datadocks.com/posts/top-supply-chain-software-companies-2025): Software vendor comparison
+- [EDI vs APIs in Logistics](https://datadocks.com/posts/edi-vs-api): Real-time alternatives and hybrid strategies
+- [Digital Twin in Logistics](https://datadocks.com/posts/logistics-digital-twin): Practical use cases and benefits
+- [Machine Learning in Supply Chains](https://datadocks.com/posts/machine-learning-in-supply-chains): ML applications in supply chain efficiency
+- [What is Freight Transport?](https://datadocks.com/posts/what-is-freight-transport-types-pricing-and-management-solutions): Types, pricing, and management solutions
+- [What is a Freight Management System?](https://datadocks.com/posts/what-is-a-freight-management-system): Complete FMS overview
+- [What is Real-Time Inventory Tracking?](https://datadocks.com/posts/what-is-real-time-inventory-tracking): Real-time inventory tracking explained
+- [Comprehensive Guide to Manufacturing Logistics](https://datadocks.com/posts/comprehensive-guide-to-manufacturing-logistics): End-to-end manufacturing logistics
+- [Paperless Supply Chain](https://datadocks.com/posts/paperless-supply-chain): Why and how to switch
+- [Can Robotics Improve Labor Efficiency?](https://datadocks.com/posts/robots-in-logistics): Robotics applications in logistics
+- [What Every Logistics Leader Should Know about Nearshoring](https://datadocks.com/posts/nearshoring-logistics): Nearshoring logistics guide
+
+### Guides -- Warehouse Management
+- [What is a Warehouse Management System (WMS)?](https://datadocks.com/posts/what-is-a-warehouse-management-system-wms): Complete WMS guide
+- [How to Choose a Warehouse Management System](https://datadocks.com/posts/how-to-choose-a-warehouse-management-system): WMS selection criteria
+- [How to Get Around WMS Limitations](https://datadocks.com/posts/how-to-get-around-limitations-warehouse-management-system): Overcoming WMS gaps
+- [Running a Successful Warehouse in 2026](https://datadocks.com/posts/how-to-overcome-the-top-8-warehouse-management-challenges): Top 9 challenges and solutions
+- [Warehouse Optimization Strategies](https://datadocks.com/posts/warehouse-optimization-strategies): Optimization techniques
+- [Warehouse Receiving Best Practices](https://datadocks.com/posts/warehouse-receiving-process): 2026 how-to guide
+- [7 Warehouse KPIs to Track in 2026](https://datadocks.com/posts/warehouse-kpis): Metrics that drive performance
+- [2026 Warehouse Audit Checklist](https://datadocks.com/posts/warehouse-audit-checklist): Operational integrity checklist
+- [Warehouse Safety Checklist](https://datadocks.com/posts/warehouse-safety-checklist): Safety compliance guide
+- [Practical Ways to Reduce Turnaround Time](https://datadocks.com/posts/practical-ways-to-reduce-turnaround-time): Turnaround time reduction tactics
+
+### Guides -- Carrier & Cost Management
+- [How to Use Carrier Scorecards](https://datadocks.com/posts/carrier-scorecards): Driving carrier accountability with data
+- [How to Negotiate Better Contracts with OTR Carriers](https://datadocks.com/posts/negotiate-with-carriers): Carrier negotiation strategies
+- [Dwell Time in Logistics](https://datadocks.com/posts/dwell-time-in-trucking): What it is and how to reduce it
+- [Settling Driver Detention Disputes](https://datadocks.com/posts/truck-detention-accessorial-fees): Detention fee resolution guide
+- [How to Prevent Demurrage & Detention Charges](https://datadocks.com/posts/how-to-avoid-demurrage-and-detention-charges-throughout-the-supply-chain): Prevention strategies
+- [Drop Trailer vs Live Unload](https://datadocks.com/posts/drop-trailer-vs-live-unload): Which approach is right for you
+- [Lumper Service or In-House?](https://datadocks.com/posts/lumper-services): How to handle freight unloading
+- [Is a 99% OTIF Supply Chain Possible?](https://datadocks.com/posts/otif-supply-chain): OTIF optimization strategies
+- [Cold Chain Compliance](https://datadocks.com/posts/cold-chain-compliance): 2026 guide to avoiding fines
+- [Best Appointment Practices for Busy DCs](https://datadocks.com/posts/appointment-management-for-distribution-centers): Distribution center scheduling
+
+### Guides -- Workforce & Operations
+- [The Overtime Trap](https://datadocks.com/posts/the-overtime-trap): Why "more bodies" isn't the answer
+- [How to Manage Warehouse Employees Effectively](https://datadocks.com/posts/reduced-headcount): Workforce management strategies
+- [6 Ways to Retain Your Best Warehouse Employees](https://datadocks.com/posts/how-to-reduce-warehouse-turnover): Employee retention tactics
+- [How to Recruit Warehouse Employees](https://datadocks.com/posts/warehouse-recruiting): Recruitment strategies
+- [5 Ideas to Boost Warehouse Employee Engagement](https://datadocks.com/posts/warehouse-motivation): Morale and engagement ideas
+- [Warehouse Manager Career Guide](https://datadocks.com/posts/warehouse-management-career): Career advice for warehouse managers
+- [How Does a Warehouse Manager Become a Director?](https://datadocks.com/posts/become-a-warehouse-director): Career advancement path
+- [Logistics Coordinator Career Path](https://datadocks.com/posts/logistics-coordinator-career-path): 2026 career guide
+- [10 Ways Logistics Coordinators Add Value](https://datadocks.com/posts/10-ways-logistics-coordinators-add-value): Reducing distractions and adding value
+
+### Guides -- Other
+- [5 Retail Case Studies](https://datadocks.com/posts/retail-case-studies): How brands lose control of distribution
+- [Optimize Your Shipping Department](https://datadocks.com/posts/optimize-your-shipping-department): Shipping optimization tips
+- [Bring Tech Into Your Shipping and Receiving](https://datadocks.com/posts/bring-tech-into-your-logistics-department): Technology adoption guide
+
+### All Resources
+- [Logistics Resource Hub](https://datadocks.com/posts): All guides, videos, and insights for logistics teams
