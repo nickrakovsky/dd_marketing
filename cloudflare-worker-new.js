@@ -6,22 +6,18 @@ const WEBFLOW_ORIGIN = "https://datadocks-staging.webflow.io";
 
 // Paths that should be proxied to Webflow
 const WEBFLOW_PATHS = [
-  "/datadocks-features/",
-  "/integrations/",
+  "/datadocks-features",
   "/integrations",
   "/datadocks-vs-opendock",
-  "/datadocks-vs/",
+  "/datadocks-vs",
   "/support",
   "/privacy-policy-datadocks",
 ];
 
 function shouldProxyToWebflow(pathname) {
-  return WEBFLOW_PATHS.some(path => {
-    if (path.endsWith("/")) {
-      return pathname.startsWith(path) || pathname === path.slice(0, -1);
-    }
-    return pathname === path || pathname === path + "/";
-  });
+  // Strip trailing slash for comparison, accept both forms
+  const clean = pathname.replace(/\/$/, '') || '/';
+  return WEBFLOW_PATHS.some(path => clean === path || clean.startsWith(path + "/"));
 }
 
 export default {
@@ -40,14 +36,9 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
-    // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock/
+    // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock
     if (url.pathname === "/datadocks-vs/opendock" || url.pathname === "/datadocks-vs/opendock/") {
-      return Response.redirect("https://datadocks.com/datadocks-vs-opendock/", 301);
-    }
-
-    // Enforce trailing slashes on Webflow paths (match Astro trailingSlash: 'always')
-    if (shouldProxyToWebflow(url.pathname) && !url.pathname.endsWith("/")) {
-      return Response.redirect(`https://datadocks.com${url.pathname}/${url.search}`, 308);
+      return Response.redirect("https://datadocks.com/datadocks-vs-opendock", 301);
     }
 
     // Proxy Webflow paths
@@ -81,8 +72,8 @@ async function rewriteWebflowHTML(response, pathname) {
   html = html.replace(/https:\/\/datadocks-staging\.webflow\.io/g, "https://datadocks.com");
   html = html.replace(/datadocks-staging\.webflow\.io/g, "datadocks.com");
 
-  // Fix or inject canonical tag to match Astro's trailingSlash: 'always'
-  const canonicalUrl = `https://datadocks.com${pathname.endsWith('/') ? pathname : pathname + '/'}`;
+  // Fix or inject canonical tag (no trailing slash)
+  const canonicalUrl = `https://datadocks.com${pathname.replace(/\/$/, '') || '/'}`;
   if (/<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/i.test(html)) {
     html = html.replace(
       /<link[^>]*rel\s*=\s*["']canonical["'][^>]*>/i,
@@ -204,13 +195,8 @@ async function rewriteWebflowHTML(response, pathname) {
   // Strip broken obfuscated Webflow tracking script (returns 404)
   html = html.replace(/<script[^>]*src="\/g0lnomhfn3mg[^"]*"[^>]*><\/script>/g, '');
 
-  // Fix navigation links: add trailing slashes for Astro-served pages
-  // Benefits pages, /posts, and blog post links need trailing slashes
-  html = html.replace(/href="(\/benefits\/[^"/]+)"/g, 'href="$1/"');
-  html = html.replace(/href="(\/posts)"/g, 'href="$1/"');
-  html = html.replace(/href="(\/posts\/[^"/]+)"/g, 'href="$1/"');
   // Fix www.datadocks.com links to datadocks.com
-  html = html.replace(/href="https:\/\/www\.datadocks\.com\/?"/g, 'href="https://datadocks.com/"');
+  html = html.replace(/href="https:\/\/www\.datadocks\.com\/?"/g, 'href="https://datadocks.com"');
 
   // Inject or fix og:image (replace Webflow CDN URLs with datadocks.com)
   if (/<meta[^>]*property\s*=\s*["']og:image["'][^>]*>/i.test(html)) {
@@ -304,7 +290,7 @@ function getCanonicalSchema(canonicalUrl, pathname) {
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://datadocks.com/posts/?q={search_term_string}"
+            "urlTemplate": "https://datadocks.com/posts?q={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         }
@@ -378,7 +364,7 @@ function buildBreadcrumbs(pathname) {
   const segments = pathname.split('/').filter(Boolean);
   const items = [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://datadocks.com" }];
   segments.forEach((seg, i) => {
-    const url = `https://datadocks.com/${segments.slice(0, i + 1).join('/')}/`;
+    const url = `https://datadocks.com/${segments.slice(0, i + 1).join('/')}`;
     const name = seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     items.push({ "@type": "ListItem", "position": i + 2, "name": name, "item": url });
   });

@@ -32,7 +32,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
         <>
           {/* DESKTOP (md+): Whole card is a link */}
           <a 
-            href={`/datadocks-features/${slugify(feature.title)}/`}
+            href={`/datadocks-features/${slugify(feature.title)}`}
             class="feature-card hidden md:block p-8 rounded-2xl border border-transparent bg-[#FFF8E9] transition-all duration-300"
           >
             <div class="flex flex-row items-center gap-3 mb-4">
@@ -80,7 +80,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
             </div>
             
             {/* Mobile Affordance: Only this part is a link */}
-            <a href={`/datadocks-features/${slugify(feature.title)}/`} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
+            <a href={`/datadocks-features/${slugify(feature.title)}`} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
               <span class="link-text font-recoleta text-[10px] sm:text-xs text-[#FF5507] font-bold transition-colors">Learn More</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FF5507" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="sm:w-3 sm:h-3">
                 <path d="m9 18 6-6-6-6"/>

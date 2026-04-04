@@ -15,10 +15,10 @@ const Navigation = ({ isOrange = false }) => {
     : "";
 
   const dropdownItems = [
-    { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity/` },
-    { label: "See Everything", href: `${cleanBase}/benefits/see-everything/` },
-    { label: "Delight Carriers", href: `${cleanBase}/benefits/delight-carriers/` },
-    { label: "Digitize Operations", href: `${cleanBase}/benefits/digitize-operations/` },
+    { label: "Increase Capacity", href: `${cleanBase}/benefits/increase-capacity` },
+    { label: "See Everything", href: `${cleanBase}/benefits/see-everything` },
+    { label: "Delight Carriers", href: `${cleanBase}/benefits/delight-carriers` },
+    { label: "Digitize Operations", href: `${cleanBase}/benefits/digitize-operations` },
   ];
 
   const MAIN_SITE = "";
@@ -113,7 +113,7 @@ const Navigation = ({ isOrange = false }) => {
             </a>
 
             <a
-              href={`${cleanBase}/posts/`}
+              href={`${cleanBase}/posts`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${isOrange
                   ? "text-white hover:text-white/80"
                   : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
@@ -123,7 +123,7 @@ const Navigation = ({ isOrange = false }) => {
             </a>
 
             <a
-              href={`${MAIN_SITE}/integrations/`}
+              href={`${MAIN_SITE}/integrations`}
               className={`transition-colors font-recoleta text-base xl:text-lg ${isOrange
                   ? "text-white hover:text-white/80"
                   : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400"
@@ -217,7 +217,7 @@ const Navigation = ({ isOrange = false }) => {
               </a>
 
               <a
-                href={`${cleanBase}/posts/`}
+                href={`${cleanBase}/posts`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${isOrange
                     ? "text-white border-white/20"
                     : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
@@ -228,7 +228,7 @@ const Navigation = ({ isOrange = false }) => {
               </a>
 
               <a
-                href={`${MAIN_SITE}/integrations/`}
+                href={`${MAIN_SITE}/integrations`}
                 className={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${isOrange
                     ? "text-white border-white/20"
                     : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700"
