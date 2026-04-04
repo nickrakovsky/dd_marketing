@@ -54,7 +54,20 @@ export default {
     }
 
     // Everything else falls through to Cloudflare Pages (Astro)
-    return fetch(request);
+    // Follow any trailing-slash 308 redirect internally to avoid exposing it to crawlers
+    const astroResponse = await fetch(request);
+    if (astroResponse.status === 308) {
+      const redirectTarget = astroResponse.headers.get('location');
+      if (redirectTarget) {
+        const redirectUrl = new URL(redirectTarget, url.origin);
+        const cleanPathname = redirectUrl.pathname.replace(/\/$/, '') || '/';
+        // Only follow if the redirect just adds/removes a trailing slash
+        if (cleanPathname === url.pathname.replace(/\/$/, '')) {
+          return fetch(new Request(redirectUrl, request));
+        }
+      }
+    }
+    return astroResponse;
   },
 };
 

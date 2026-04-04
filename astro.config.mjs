@@ -39,8 +39,10 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   redirects: {
-    '/datadocks-vs/opendock/': '/datadocks-vs-opendock/',
-    '/privacy-policy-datadocks/': '/privacy-policy/',
+    '/datadocks-vs/opendock': '/datadocks-vs-opendock',
+    '/datadocks-vs/opendock/': '/datadocks-vs-opendock',
+    '/privacy-policy-datadocks': '/privacy-policy',
+    '/privacy-policy-datadocks/': '/privacy-policy',
   },
 
   integrations: [
@@ -58,7 +60,7 @@ export default defineConfig({
       }
     },
     tailwind(), react(), keystatic(), sitemap({
-      filter: (page) => !page.includes('/home-draft'),
+      filter: (page) => !page.includes('/home-draft') && !page.includes('/debug'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
