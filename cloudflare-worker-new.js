@@ -55,7 +55,7 @@ export default {
 
     // Everything else falls through to Cloudflare Pages (Astro)
     // Follow any trailing-slash 308 redirect internally to avoid exposing it to crawlers
-    const astroResponse = await fetch(request);
+    let astroResponse = await fetch(request);
     if (astroResponse.status === 308) {
       const redirectTarget = astroResponse.headers.get('location');
       if (redirectTarget) {
@@ -63,7 +63,7 @@ export default {
         const cleanPathname = redirectUrl.pathname.replace(/\/$/, '') || '/';
         // Only follow if the redirect just adds/removes a trailing slash
         if (cleanPathname === url.pathname.replace(/\/$/, '')) {
-          return fetch(new Request(redirectUrl, request));
+          astroResponse = await fetch(new Request(redirectUrl, request));
         }
       }
     }
@@ -336,7 +336,49 @@ function getCanonicalSchema(canonicalUrl, pathname) {
         "@type": "BreadcrumbList",
         "@id": `${canonicalUrl}#breadcrumb`,
         "itemListElement": buildBreadcrumbs(pathname)
-      }
+      },
+      // Add FAQPage schema for /integrations
+      ...(pathname.replace(/\/$/, '') === '/integrations' ? [{
+        "@type": "FAQPage",
+        "@id": `${canonicalUrl}#faq`,
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Will DataDocks help me implement my integration?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. Customer success is at the core of our business model. Our team will work closely with you to develop a tailored integration solution that meets your specific needs, even if it requires custom code. We're committed to ensuring a smooth transition and maximizing the value of DataDocks for your operations." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is DataDocks Compatible with EDI?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes, DataDocks fully supports EDI integration. We'll assist you in implementing EDI-via-API, allowing you to maintain your current EDI workflows while simultaneously preparing your tech stack for the API-driven future. This approach ensures a seamless transition and positions your business for long-term scalability." }
+          },
+          {
+            "@type": "Question",
+            "name": "I don't see my system listed here. Does that mean it's not compatible?",
+            "acceptedAnswer": { "@type": "Answer", "text": "In our experience, we've yet to encounter a system we couldn't integrate with. The software solutions listed on our integrations page represent our most frequent integrations, but they're far from exhaustive. We're always excited to tackle new integration challenges and expand our compatibility. Let's discuss your specific system and explore how we can make it work seamlessly with DataDocks." }
+          },
+          {
+            "@type": "Question",
+            "name": "Can we set up a custom trigger to create loading dock appointments from another system?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Certainly. DataDocks features a robust RESTful API that enables sophisticated integrations and automation. You can set up custom triggers to create loading dock appointments based on events in your existing systems. Our webhooks allow real-time data exchange, ensuring that your appointment scheduling remains synchronized across all your operations." }
+          },
+          {
+            "@type": "Question",
+            "name": "We have sensitive data in the system we want to connect. Is DataDocks secure?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Data security is paramount at DataDocks, especially when handling integrations. All our API endpoints are fortified against common vulnerabilities and attacks. We engage independent security firms to conduct comprehensive audits. All data in transit and at rest is encrypted using industry-standard protocols, and we implement strict access controls and authentication measures." }
+          },
+          {
+            "@type": "Question",
+            "name": "How long does a typical integration take?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Integration timelines can vary depending on the complexity of your existing systems and specific requirements. However, most standard integrations are completed within 2-4 weeks. For more complex scenarios, our team will provide a detailed project plan with estimated timelines. We pride ourselves on efficient implementation while ensuring thorough testing and validation." }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you offer support during and after the integration process?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes, we provide comprehensive support throughout the entire integration lifecycle. During implementation, you'll have a dedicated integration specialist to guide you through the process. Post-integration, our customer success team offers ongoing support, including 24/7 technical assistance, ongoing optimization, training, and more to ensure your continued success." }
+          }
+        ]
+      }] : [])
     ]
   };
 }

@@ -74,7 +74,21 @@ export default defineConfig({
         // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
         return item;
       },
-      customPages: [],
+      customPages: [
+        'https://datadocks.com/datadocks-vs-opendock',
+        'https://datadocks.com/datadocks-features/dock-dashboard',
+        'https://datadocks.com/datadocks-features/carrier-portal',
+        'https://datadocks.com/datadocks-features/yard-management',
+        'https://datadocks.com/datadocks-features/capacity-limits',
+        'https://datadocks.com/datadocks-features/efficiency-reports',
+        'https://datadocks.com/datadocks-features/custom-rules',
+        'https://datadocks.com/datadocks-features/data-validation',
+        'https://datadocks.com/datadocks-features/notifications',
+        'https://datadocks.com/datadocks-features/live-editing',
+        'https://datadocks.com/datadocks-features/access-anywhere',
+        'https://datadocks.com/datadocks-features/integration',
+        'https://datadocks.com/datadocks-features/documentation',
+      ],
     }), mdx()],
 
 });
