@@ -60,7 +60,16 @@ export default {
     }
 
     // Everything else falls through to Cloudflare Pages (Astro)
-    return fetch(request);
+    // Astro may 308 redirect to add a trailing slash — follow it internally
+    // so the client never sees it (our 301 above already enforces no trailing slash)
+    const astroResponse = await fetch(request);
+    if (astroResponse.status === 308) {
+      const redirectTarget = astroResponse.headers.get('location');
+      if (redirectTarget) {
+        return fetch(new Request(new URL(redirectTarget, url.origin), request));
+      }
+    }
+    return astroResponse;
   },
 };
 
