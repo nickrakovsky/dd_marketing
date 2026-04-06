@@ -213,6 +213,9 @@ async function rewriteWebflowHTML(response, pathname) {
   // Fix www.datadocks.com links to datadocks.com
   html = html.replace(/href="https:\/\/www\.datadocks\.com\/?"/g, 'href="https://datadocks.com"');
 
+  // Strip trailing slashes from internal links (prevents Google "duplicate canonical" warnings)
+  html = html.replace(/href="(https:\/\/datadocks\.com\/[^"]+?)\/"/g, 'href="$1"');
+
   // Inject or fix og:image (replace Webflow CDN URLs with datadocks.com)
   if (/<meta[^>]*property\s*=\s*["']og:image["'][^>]*>/i.test(html)) {
     html = html.replace(
