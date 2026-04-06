@@ -36,8 +36,14 @@ export default {
       return Response.redirect(url.toString(), 301);
     }
 
+    // Strip trailing slashes (except root) with 301 redirect
+    if (url.pathname !== '/' && url.pathname.endsWith('/')) {
+      const cleanUrl = `https://datadocks.com${url.pathname.replace(/\/+$/, '')}${url.search}`;
+      return Response.redirect(cleanUrl, 301);
+    }
+
     // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock
-    if (url.pathname === "/datadocks-vs/opendock" || url.pathname === "/datadocks-vs/opendock/") {
+    if (url.pathname === "/datadocks-vs/opendock") {
       return Response.redirect("https://datadocks.com/datadocks-vs-opendock", 301);
     }
 
@@ -54,20 +60,7 @@ export default {
     }
 
     // Everything else falls through to Cloudflare Pages (Astro)
-    // Follow any trailing-slash 308 redirect internally to avoid exposing it to crawlers
-    let astroResponse = await fetch(request);
-    if (astroResponse.status === 308) {
-      const redirectTarget = astroResponse.headers.get('location');
-      if (redirectTarget) {
-        const redirectUrl = new URL(redirectTarget, url.origin);
-        const cleanPathname = redirectUrl.pathname.replace(/\/$/, '') || '/';
-        // Only follow if the redirect just adds/removes a trailing slash
-        if (cleanPathname === url.pathname.replace(/\/$/, '')) {
-          astroResponse = await fetch(new Request(redirectUrl, request));
-        }
-      }
-    }
-    return astroResponse;
+    return fetch(request);
   },
 };
 

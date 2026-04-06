@@ -29,7 +29,7 @@ if (fs.existsSync(postsDir)) {
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
-    imageService: 'compile',
+    imageService: 'passthrough',
   }),
 
   site: 'https://datadocks.com',
@@ -75,7 +75,6 @@ export default defineConfig({
         return item;
       },
       customPages: [
-        'https://datadocks.com/datadocks-vs-opendock',
         'https://datadocks.com/datadocks-features/dock-dashboard',
         'https://datadocks.com/datadocks-features/carrier-portal',
         'https://datadocks.com/datadocks-features/yard-management',
