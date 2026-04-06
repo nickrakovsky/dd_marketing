@@ -319,10 +319,12 @@ const jsonLd = {
                 setTimeout(loadGTM, 2000);
               }
             })();
-            // Re-fire GA pageview on Astro View Transitions (client-side navigations)
+            // Re-fire GA pageview on Astro View Transitions (client-side navigations only, not initial load)
+            var _gaInitialLoad = true;
             document.addEventListener('astro:page-load', function() {
+              if (_gaInitialLoad) { _gaInitialLoad = false; return; }
               if (typeof gtag === 'function') {
-                gtag('config', 'G-EZMTT6QYLJ', { page_path: window.location.pathname });
+                gtag('event', 'page_view', { page_path: window.location.pathname, page_location: window.location.href });
               }
             });
         </script>
