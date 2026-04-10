@@ -11,7 +11,6 @@ const WEBFLOW_PATHS = [
   "/datadocks-vs-opendock",
   "/datadocks-vs",
   "/support",
-  "/privacy-policy-datadocks",
 ];
 
 function shouldProxyToWebflow(pathname) {
@@ -45,6 +44,11 @@ export default {
     // Redirect /datadocks-vs/opendock to /datadocks-vs-opendock
     if (url.pathname === "/datadocks-vs/opendock") {
       return Response.redirect("https://datadocks.com/datadocks-vs-opendock", 301);
+    }
+
+    // Redirect /privacy-policy-datadocks to /privacy-policy
+    if (url.pathname === "/privacy-policy-datadocks") {
+      return Response.redirect("https://datadocks.com/privacy-policy", 301);
     }
 
     // Proxy Webflow paths
@@ -397,7 +401,6 @@ function getPageTitle(pathname) {
   const titles = {
     "/datadocks-vs-opendock": "DataDocks vs OpenDock | Dock Scheduling Comparison",
     "/support": "Support | DataDocks",
-    "/privacy-policy-datadocks": "Privacy Policy | DataDocks",
     "/integrations": "Integrations | DataDocks",
     "/integrations/microsoft-power-bi": "Microsoft Power BI Integration | DataDocks",
     "/integrations/microsoft-sso-entra": "Microsoft SSO (Entra) Integration | DataDocks",
@@ -421,7 +424,6 @@ function getPageDescription(pathname) {
   const descriptions = {
     "/datadocks-vs-opendock": "Compare DataDocks and OpenDock dock scheduling software. See how features, support, and scalability stack up for warehouses and distribution centers.",
     "/support": "Get help with DataDocks dock scheduling software. Contact our support team for assistance.",
-    "/privacy-policy-datadocks": "DataDocks privacy policy. Learn how we handle and protect your data.",
     "/integrations": "Connect DataDocks with SAP, Oracle, NetSuite, Microsoft and more. Integrate your ERP, WMS or TMS with real-time dock scheduling data.",
     "/integrations/microsoft-power-bi": "Connect DataDocks with Microsoft Power BI for real-time dock scheduling analytics and reporting dashboards.",
     "/integrations/microsoft-sso-entra": "Enable single sign-on for DataDocks using Microsoft Entra ID (Azure AD). Streamline user access and security.",
