@@ -43,10 +43,10 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-// Ensure the pathname ALWAYS has a trailing slash for SEO
-const pathname = Astro.url.pathname.endsWith('/') 
-  ? Astro.url.pathname 
-  : `${Astro.url.pathname}/`;
+// Ensure the pathname NEVER has a trailing slash for SEO (except root)
+const pathname = (Astro.url.pathname !== '/' && Astro.url.pathname.endsWith('/')) 
+  ? Astro.url.pathname.slice(0, -1) 
+  : Astro.url.pathname;
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
@@ -180,7 +180,7 @@ if (breadcrumbItems.length > 0) {
           "@type": "ListItem",
           "position": index + 2,
           "name": name,
-          "item": new URL(arr.slice(0, index + 1).join('/') + '/', Astro.site).toString()
+          "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
         };
       })
     ]
