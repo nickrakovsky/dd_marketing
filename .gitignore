@@ -25,3 +25,7 @@ pnpm-debug.log*
 
 # Ignore Webflow export to keep Agent context clean
 webflow-migration/
+
+# Offline print assets - excluded from production build
+public/_offline_print/*
+!public/_offline_print/.gitkeep

@@ -1,10 +1,11 @@
 ---
 // src/components/home/Benefits.astro
-import { Image } from "astro:assets";
-import managersOfficeImg from "../../assets/images/Managers-Office.png";
-import dockInteriorImg from "../../assets/images/Dock-Interior.png";
-import warehouseInteriorImg from "../../assets/images/Warehouse-Interior.png";
-import dockExteriorImg from "../../assets/images/Dock-Exterior.png";
+// NOTE: We intentionally use plain <img> tags here (not Astro's <Image> component).
+// The site uses output: 'server' + imageService: 'compile', which generates hashed
+// /_astro/*.webp URLs that only exist in the static build tree. On the live SSR site,
+// those URLs hit the catch-all server route and return the homepage HTML instead of
+// the actual image — causing the "benefits images don't load" bug. Static files in
+// /public/images/ are served directly by Cloudflare Pages with stable, predictable URLs.
 
 const features = [
   {
@@ -13,7 +14,8 @@ const features = [
     description:
       "See exactly what's in your loading dock and yard at a glance, and estimate the loading time for each truck.",
     link: "/benefits/see-everything",
-    image: managersOfficeImg,
+    src: "/images/Managers-Office.webp",
+    srcset: "/images/de6c1a54b92ec0cc6a5fe48c9ab2a390_Managers-Office-p-500.webp 500w, /images/Managers-Office.webp 800w",
     alt: "Manager overlooking loading dock operations",
   },
   {
@@ -22,7 +24,8 @@ const features = [
     description:
       "Show them, with data, how sticking to your schedule gets their trucks in and out of your facility faster.",
     link: "/benefits/delight-carriers",
-    image: dockInteriorImg,
+    src: "/images/Dock-Interior.webp",
+    srcset: "/images/7b6dcc2c228a4f21953e11ac0efd4c2d_Dock-Interior-p-500.webp 500w, /images/Dock-Interior.webp 800w",
     alt: "Inside view of a busy loading dock",
   },
   {
@@ -31,7 +34,8 @@ const features = [
     description:
       "Predict how much manpower you'll need and optimize your operations over time.",
     link: "/benefits/increase-capacity",
-    image: warehouseInteriorImg,
+    src: "/images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-2000.webp",
+    srcset: "/images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-500.webp 500w, /images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-800.webp 800w, /images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-1080.webp 1080w, /images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-1600.webp 1600w, /images/ed60b008d9aeacd6d851628506ef7e44_Warehouse-Interior-p-2000.webp 2000w",
     alt: "Warehouse interior with organized cargo",
   },
   {
@@ -40,7 +44,8 @@ const features = [
     description:
       "Carriers book and you stay in control. Replace calls and emails with an easy interface that sends automatic notifications.",
     link: "/benefits/digitize-operations",
-    image: dockExteriorImg,
+    src: "/images/Dock-Exterior.webp",
+    srcset: "/images/77558bf99568593951c2f7f59bda11ae_Dock-Exterior-p-500.webp 500w, /images/Dock-Exterior.webp 800w",
     alt: "Exterior view of loading docks",
   },
 ];
@@ -74,14 +79,13 @@ const features = [
             {/* Image Side */}
             <div class="w-full lg:w-7/12 flex-shrink-0">
               <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-[4/3]">
-                <Image
-                  src={feature.image}
-                  alt={feature.alt}
-                  widths={[400, 800, 1200]}
+                <img
+                  src={feature.src}
+                  srcset={feature.srcset}
                   sizes="(max-width: 1024px) 100vw, 58vw"
-                  quality={75}
-                  format="webp"
+                  alt={feature.alt}
                   loading="lazy"
+                  decoding="async"
                   class="w-full h-full object-cover"
                 />
               </div>

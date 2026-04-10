@@ -210,7 +210,12 @@ async function rewriteWebflowHTML(response, pathname) {
   // Strip broken obfuscated Webflow tracking script (returns 404)
   html = html.replace(/<script[^>]*src="\/g0lnomhfn3mg[^"]*"[^>]*><\/script>/g, '');
 
-  // Fix www.datadocks.com links to datadocks.com
+  // Fix navigation links: remove trailing slashes for Astro-served pages
+  // Benefits pages, /posts, and blog post links need to match canonical
+  html = html.replace(/href="(\/benefits\/[^"/]+)\/"/g, 'href="$1"');
+  html = html.replace(/href="(\/posts)\/"/g, 'href="$1"');
+  html = html.replace(/href="(\/posts\/[^"/]+)\/"/g, 'href="$1"');
+  // Fix datadocks.com links to datadocks.com/
   html = html.replace(/href="https:\/\/www\.datadocks\.com\/?"/g, 'href="https://datadocks.com"');
 
   // Strip trailing slashes from internal links (prevents Google "duplicate canonical" warnings)
