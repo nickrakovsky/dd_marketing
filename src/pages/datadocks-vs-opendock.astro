@@ -1,560 +1,1041 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.jsx';
-import Footer from '../components/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.jsx";
+import Footer from "../components/Footer.astro";
 ---
 
-<Layout title="DataDocks vs OpenDock" description="A comprehensive comparison between DataDocks and OpenDock">
+<Layout
+  title="DataDocks vs OpenDock"
+  description="A comprehensive comparison between DataDocks and OpenDock"
+>
   <Navigation client:idle />
-  
-  <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24 prose prose-lg prose-orange max-w-7xl mx-auto px-6 lg:px-8">
-    
-      <div class="datadocks_vs-hero">
-        <div class="full-bleed_container compare-page">
-          <div class="comparison-hero">
-            <div class="comparison-flex">
-              <div class="datadocks-vs_text">
-                <h1 class="h2 align-center _0-margin orange">datadocks</h1>
-              </div>
-              <div class="vs-comp">
-                <div class="vs-text">vs.</div><img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="">
-                <h2 class="h2 align-center _0-margin">OpenDock</h2>
-              </div>
+
+  <main
+    class="bg-[#FFF8E9] min-h-screen pt-32 pb-24 prose prose-lg prose-orange max-w-7xl mx-auto px-6 lg:px-8"
+  >
+    <div class="datadocks_vs-hero">
+      <div class="full-bleed_container compare-page">
+        <div class="comparison-hero">
+          <div class="comparison-flex">
+            <div class="datadocks-vs_text">
+              <h1 class="h2 align-center _0-margin orange">datadocks</h1>
             </div>
-            <div class="max-width-small comparison-page">
-              <div class="flex-text_wrapper large-gap">
-                <div class="large-text text-align-center">How to Choose the Right Dock Scheduling Software?<br><br>If your facility gets about 20 loads per week, Opendock has you covered.<br><br>Any more than that, and we think you’ll appreciate what <span class="text-color-orange">DataDocks</span> can do.</div>
-                <div class="demo-form _100 w-form">
-                  <form id="wf-form-CTA-Form" name="wf-form-CTA-Form" data-name="CTA Form" method="get" class="form-container" data-wf-page-id="651ec97b48428a3c2cafadce" data-wf-element-id="88c974c5-5772-a07b-6e6c-deda565f82f8">
-                    <div class="form-block-wrapper"><input class="footer-form-input w-input" maxlength="256" name="Demo-Form-2" data-name="Demo Form 2" aria-label="Enter your email" placeholder="Enter your email" type="email" id="submit-field" required="">
-                      <div class="button-wrapper"><input type="submit" data-wait="Please wait..." id="submit-button" class="form-button-2 w-button" value="Schedule a Demo"></div>
-                    </div>
-                  </form>
-                  <div class="success-form_message w-form-done">
-                    <div>Thank you! Your submission has been received!</div>
-                  </div>
-                  <div class="error-form_message w-form-fail">
-                    <div>Oops! Something went wrong while submitting the form.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div><img src="images/6.svg" loading="lazy" width="139.5" alt="" class="datadocks-cover_image"><img loading="lazy" alt="" src="images/15.svg" class="datadocks-competitor">
-        </div>
-      </div>
-      <div class="comparison-chart_section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="full-width-img-wrapper"><img class="full-width-img position-relative" src="images/6697eaf1ef0175dfdcf7e88c_DD-Comic.webp" alt="Fast delivery logistics with truck tracking, on-time shipment icons, digital dock scheduling, and happy customer service representatives shaking hands with partners" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" sizes="(max-width: 1000px) 100vw, 1000px" data-w-id="10c75040-70f1-aa79-cf38-b5a75439c3f8" loading="lazy" srcset="images/6697eaf1ef0175dfdcf7e88c_DD-Comic-p-500.webp 500w, images/6697eaf1ef0175dfdcf7e88c_DD-Comic-p-800.webp 800w, images/6697eaf1ef0175dfdcf7e88c_DD-Comic.webp 1000w"></div>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="text-align-center">
-            <h2 data-w-id="0a2bdca2-9211-92db-cf56-bb16ff3f5789" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="h3">Training and Support</h2>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="comparison_component">
-            <div class="comparison_item-wrapper">
-              <div class="comparison_card-title">Ease of Setup</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="a35434c9-9328-c82b-e43b-66a0ed64025c" class="comparison_guage-inner-wrapper"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="f9e9de1b-b862-b1c9-0e13-c58b1429ceb0" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-a4ac5d3e-79e9-d56b-0448-5bdb90157f3c-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Carrier Onboarding</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="a4ac5d3e-79e9-d56b-0448-5bdb90157f47" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="a4ac5d3e-79e9-d56b-0448-5bdb90157f4d" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_9ea98b5e-04a1-9925-f2fe-02e35e31b815-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Ongoing Support</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9ea98b5e-04a1-9925-f2fe-02e35e31b820" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9ea98b5e-04a1-9925-f2fe-02e35e31b826" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_7844d35a-f0be-4808-a85a-456a61b1f246-2cafadce" data-w-id="7844d35a-f0be-4808-a85a-456a61b1f246" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="comparison_summary-component">
-              <div class="comparison_summary-inner-wrapper">
-                <div class="comparison_summary-card-wrapper"><img src="images/logo-3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">With DataDocks, you get comprehensive onboarding.</div>
-                    <p>And we stick around to make sure you and your carriers are successful.</p>
-                  </div>
-                </div>
-                <div id="w-node-c1b0714e-c0af-88fe-f37d-56659cc900a7-2cafadce" class="comparison_summary-card-wrapper"><img src="images/3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">Opendock will set you up in less than an hour.</div>
-                    <p>But users say: “The service I&#x27;m receiving now isn&#x27;t what I initially signed up for.” <sup>1</sup></p>
-                  </div>
-                </div>
-              </div>
+            <div class="vs-comp">
+              <div class="vs-text">vs.</div><img
+                src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg"
+                loading="lazy"
+                alt=""
+              />
+              <h2 class="h2 align-center _0-margin">OpenDock</h2>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="comparison-chart_section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="full-width-img-wrapper"><img class="full-width-img" src="images/661d172d591e8a0d7adb03e3_2.webp" alt="" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" sizes="(max-width: 1000px) 100vw, 1000px" data-w-id="9aac750f-9844-49fa-994d-959ece62740a" loading="lazy" srcset="images/661d172d591e8a0d7adb03e3_2-p-500.webp 500w, images/661d172d591e8a0d7adb03e3_2-p-800.webp 800w, images/661d172d591e8a0d7adb03e3_2.webp 1000w"></div>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="text-align-center">
-            <h2 data-w-id="9aac750f-9844-49fa-994d-959ece62740d" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="h3">User Interface</h2>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="comparison_component">
-            <div class="comparison_item-wrapper">
-              <div class="comparison_card-title">Manage Multiple Facilities</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9aac750f-9844-49fa-994d-959ece62741c" class="comparison_guage-inner-wrapper"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9aac750f-9844-49fa-994d-959ece627422" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
+          <div class="max-width-small comparison-page">
+            <div class="flex-text_wrapper large-gap">
+              <div class="large-text text-align-center">
+                How to Choose the Right Dock Scheduling Software?<br /><br />If
+                your facility gets about 20 loads per week, Opendock has you
+                covered.<br /><br />Any more than that, and we think you’ll
+                appreciate what <span class="text-color-orange">DataDocks</span> can
+                do.
               </div>
-            </div>
-            <div id="w-node-_9aac750f-9844-49fa-994d-959ece627423-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">User Permissions</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9aac750f-9844-49fa-994d-959ece62742e" class="comparison_guage-inner-wrapper _30"></div>
+              <div class="demo-form _100 w-form">
+                <form
+                  id="wf-form-CTA-Form"
+                  name="wf-form-CTA-Form"
+                  data-name="CTA Form"
+                  method="get"
+                  class="form-container"
+                  data-wf-page-id="651ec97b48428a3c2cafadce"
+                  data-wf-element-id="88c974c5-5772-a07b-6e6c-deda565f82f8"
+                >
+                  <div class="form-block-wrapper">
+                    <input
+                      class="footer-form-input w-input"
+                      maxlength="256"
+                      name="Demo-Form-2"
+                      data-name="Demo Form 2"
+                      aria-label="Enter your email"
+                      placeholder="Enter your email"
+                      type="email"
+                      id="submit-field"
+                      required=""
+                    />
+                    <div class="button-wrapper">
+                      <input
+                        type="submit"
+                        data-wait="Please wait..."
+                        id="submit-button"
+                        class="form-button-2 w-button"
+                        value="Schedule a Demo"
+                      />
                     </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9aac750f-9844-49fa-994d-959ece627434" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_9aac750f-9844-49fa-994d-959ece627435-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Scalability</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9aac750f-9844-49fa-994d-959ece627440" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="9aac750f-9844-49fa-994d-959ece627446" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_9aac750f-9844-49fa-994d-959ece627447-2cafadce" data-w-id="9aac750f-9844-49fa-994d-959ece627447" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="comparison_summary-component">
-              <div class="comparison_summary-inner-wrapper">
-                <div class="comparison_summary-card-wrapper"><img src="images/logo-3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">DataDocks provides a custom dashboard for each user.</div>
-                    <p>With filters and settings for each facility, the interface stays clean as you scale.</p>
-                  </div>
-                </div>
-                <div id="w-node-_9aac750f-9844-49fa-994d-959ece627450-2cafadce" class="comparison_summary-card-wrapper"><img src="images/3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">Opendock puts all your facilities and their appointments in one place.</div>
-                    <p>It offers visibility but we think it gets congested over time.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="comparison-chart_section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="full-width-img-wrapper"><img class="full-width-img" src="images/661d181970c22886b1a17fa8_3.webp" alt="Freight management and warehouse operations depicted with digital bidding platforms, route optimization maps, forklifts, and cargo loading" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" sizes="(max-width: 1000px) 100vw, 1000px" data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc48f0" loading="lazy" srcset="images/661d181970c22886b1a17fa8_3-p-500.webp 500w, images/661d181970c22886b1a17fa8_3-p-800.webp 800w, images/661d181970c22886b1a17fa8_3.webp 1000w"></div>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="text-align-center">
-            <h2 data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc48f3" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="h3">Who is it for?</h2>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="comparison_component">
-            <div class="comparison_item-wrapper">
-              <div class="comparison_card-title">National carriers</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4902" class="comparison_guage-inner-wrapper"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4908" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc4909-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Local Carriers</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4914" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc491a" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc491b-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Integration with Other Systems</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4926" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc492c" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc492d-2cafadce" data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc492d" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="comparison_summary-component">
-              <div class="comparison_summary-inner-wrapper">
-                <div class="comparison_summary-card-wrapper"><img src="images/logo-3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">DataDocks focusses on dock scheduling.</div>
-                    <p>We thrive on those nuances and tailor the system to match your setup.</p>
-                  </div>
-                </div>
-                <div id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc4936-2cafadce" class="comparison_summary-card-wrapper"><img src="images/3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">Loadsmart excels at Freight Brokerage, and Opendock is part of that vision.</div>
-                    <p>But we don’t think they get the nuances of warehouses and carrier relationships</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="comparison-chart_section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="full-width-img-wrapper"><img class="full-width-img" src="images/661d1b8e591e8a0d7adf484a_4-p-2000.webp" alt="Warehouse logistics operations showing workers managing inventory, trucks loading and unloading, a clock indicating shift time, and supervisors monitoring schedules and checklists" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" sizes="100vw" data-w-id="8e7deb00-ca63-8418-796b-623638697791" loading="lazy" srcset="images/661d1b8e591e8a0d7adf484a_4-p-2000-p-500.webp 500w, images/661d1b8e591e8a0d7adf484a_4-p-2000-p-800.webp 800w, images/661d1b8e591e8a0d7adf484a_4-p-2000.webp 1000w"></div>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="text-align-center">
-            <h2 data-w-id="8e7deb00-ca63-8418-796b-623638697794" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="h3">Dealing with the Unexpected</h2>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="comparison_component">
-            <div class="comparison_item-wrapper">
-              <div class="comparison_card-title">Reliability</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="8e7deb00-ca63-8418-796b-6236386977a3" class="comparison_guage-inner-wrapper"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="8e7deb00-ca63-8418-796b-6236386977a9" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_8e7deb00-ca63-8418-796b-6236386977aa-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Edge Cases</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="8e7deb00-ca63-8418-796b-6236386977b5" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="8e7deb00-ca63-8418-796b-6236386977bb" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_8e7deb00-ca63-8418-796b-6236386977bc-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Rescheduling</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="8e7deb00-ca63-8418-796b-6236386977c7" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="8e7deb00-ca63-8418-796b-6236386977cd" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_8e7deb00-ca63-8418-796b-6236386977ce-2cafadce" data-w-id="8e7deb00-ca63-8418-796b-6236386977ce" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="comparison_summary-component">
-              <div class="comparison_summary-inner-wrapper">
-                <div class="comparison_summary-card-wrapper"><img src="images/logo-3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">DataDocks is made for dealing with real-life challenges.</div>
-                    <p>Whether it’s rescheduling canceled appointments or taking care of spot trailers.</p>
-                  </div>
-                </div>
-                <div id="w-node-_8e7deb00-ca63-8418-796b-6236386977d7-2cafadce" class="comparison_summary-card-wrapper"><img src="images/3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">Opendock is designed for operations with a fixed schedule.</div>
-                    <p>It “can be limited” <sup>2</sup> and service outages can be frustrating</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="comparison-chart_section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="full-width-img-wrapper"><img class="full-width-img" src="images/661d1c92fdc2884d165589b2_5-p-2000.webp" alt="Warehouse management software displayed on desktop screens with logistics dashboards, inventory tracking, and forklifts in a busy supply chain environment" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" sizes="100vw" data-w-id="6798ffa8-1703-2b97-f50d-b939e0653846" loading="lazy" srcset="images/661d1c92fdc2884d165589b2_5-p-2000-p-500.webp 500w, images/661d1c92fdc2884d165589b2_5-p-2000-p-800.webp 800w, images/661d1c92fdc2884d165589b2_5-p-2000.webp 1000w"></div>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="text-align-center">
-            <h2 data-w-id="6798ffa8-1703-2b97-f50d-b939e0653849" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="h3">Data and Accountability</h2>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="comparison_component">
-            <div class="comparison_item-wrapper">
-              <div class="comparison_card-title">Easy-to-use</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="6798ffa8-1703-2b97-f50d-b939e0653858" class="comparison_guage-inner-wrapper"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="6798ffa8-1703-2b97-f50d-b939e065385e" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_6798ffa8-1703-2b97-f50d-b939e065385f-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Reporting</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="6798ffa8-1703-2b97-f50d-b939e065386a" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="6798ffa8-1703-2b97-f50d-b939e0653870" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_6798ffa8-1703-2b97-f50d-b939e0653871-2cafadce" class="comparison_item-wrapper">
-              <div class="comparison_card-title">Customizability</div>
-              <div class="spacer-small"></div>
-              <div>
-                <div class="comparison_guages-wrapper">
-                  <div class="comparison_guage-item-wrapper">
-                    <div>Opendock</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="6798ffa8-1703-2b97-f50d-b939e065387c" class="comparison_guage-inner-wrapper _30"></div>
-                    </div>
-                  </div>
-                  <div class="comparison_guage-item-wrapper">
-                    <div>DataDocks</div>
-                    <div class="spacer-xsmall"></div>
-                    <div class="comparison_guage-outer-wrapper">
-                      <div data-w-id="6798ffa8-1703-2b97-f50d-b939e0653882" class="comparison_guage-inner-wrapper background-color-orange"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="w-node-_6798ffa8-1703-2b97-f50d-b939e0653883-2cafadce" data-w-id="6798ffa8-1703-2b97-f50d-b939e0653883" style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="comparison_summary-component">
-              <div class="comparison_summary-inner-wrapper">
-                <div class="comparison_summary-card-wrapper"><img src="images/logo-3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">If you’re preparing for a data-driven future, DataDocks is for you.</div>
-                    <p>Whether it’s logging unscheduled trucks or editing past appointments, we make it easy.</p>
-                  </div>
-                </div>
-                <div id="w-node-_6798ffa8-1703-2b97-f50d-b939e065388c-2cafadce" class="comparison_summary-card-wrapper"><img src="images/3.svg" loading="lazy" alt="" class="comparison_summary-card-icon">
-                  <div class="comparison_summary-card-inner-wrapper">
-                    <div class="subtitle">If you want a logistics-friendly alternative to Google Calendar, Opendock nails it.</div>
-                    <p>But for continuous improvement, you need more accurate data.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="spacer-medium"></div>
-          <div class="footnoters-component">
-            <a href="https://www.g2.com/products/opendock/reviews/opendock-review-7755123" target="_blank" class="footnote-link"><sup>1</sup> Review posted to g2.com, February 2023 </a>
-            <a href="https://www.g2.com/products/opendock/reviews/opendock-review-8691077" target="_blank" class="footnote-link"><sup>2</sup> Review posted to g2.com, October 2023</a>
-          </div>
-        </div>
-      </div>
-      <div class="cta-section">
-        <div class="padding-global">
-          <div class="cta-wrapper">
-            <div class="line-wrapper">
-              <h3 class="h3 light center-mobile">let us help you decide if datadocks is a good</h3>
-            </div>
-            <div class="cta-flex_wrapper">
-              <div class="line-wrapper top-margin">
-                <h3 class="h3 light center-mobile">fit for your needs</h3>
-              </div>
-              <div class="demo-form top-padding cta-form w-form">
-                <form id="wf-form-CTA-Form" name="wf-form-CTA-Form" data-name="CTA Form" method="get" class="form-container" data-wf-page-id="651ec97b48428a3c2cafadce" data-wf-element-id="dc03708e-3838-493d-ee26-97ccd9f379f3">
-                  <div class="form-block-wrapper"><input class="footer-form-input w-input" maxlength="256" name="Demo-Form-2" data-name="Demo Form 2" aria-label="Enter your email" placeholder="Enter your email" type="email" id="submit-field_footer" required="">
-                    <div class="button-wrapper"><input type="submit" data-wait="Please wait..." id="submit-button_footer" class="button demo black w-button" value="Schedule a Demo"></div>
                   </div>
                 </form>
                 <div class="success-form_message w-form-done">
                   <div>Thank you! Your submission has been received!</div>
                 </div>
                 <div class="error-form_message w-form-fail">
-                  <div>Oops! Something went wrong while submitting the form.</div>
+                  <div>
+                    Oops! Something went wrong while submitting the form.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><img
+          src="images/6.svg"
+          loading="lazy"
+          width="139.5"
+          alt=""
+          class="datadocks-cover_image"
+        /><img
+          loading="lazy"
+          alt=""
+          src="images/15.svg"
+          class="datadocks-competitor"
+        />
+      </div>
+    </div>
+    <div class="comparison-chart_section">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="full-width-img-wrapper">
+            <img
+              class="full-width-img position-relative"
+              src="images/6697eaf1ef0175dfdcf7e88c_DD-Comic.webp"
+              alt="Fast delivery logistics with truck tracking, on-time shipment icons, digital dock scheduling, and happy customer service representatives shaking hands with partners"
+              style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+              sizes="(max-width: 1000px) 100vw, 1000px"
+              data-w-id="10c75040-70f1-aa79-cf38-b5a75439c3f8"
+              loading="lazy"
+              srcset="images/6697eaf1ef0175dfdcf7e88c_DD-Comic-p-500.webp 500w, images/6697eaf1ef0175dfdcf7e88c_DD-Comic-p-800.webp 800w, images/6697eaf1ef0175dfdcf7e88c_DD-Comic.webp 1000w"
+            />
+          </div>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="text-align-center">
+          <h2
+            data-w-id="0a2bdca2-9211-92db-cf56-bb16ff3f5789"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="h3"
+          >
+            Training and Support
+          </h2>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="comparison_component">
+          <div class="comparison_item-wrapper">
+            <div class="comparison_card-title">Ease of Setup</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="a35434c9-9328-c82b-e43b-66a0ed64025c"
+                      class="comparison_guage-inner-wrapper"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="f9e9de1b-b862-b1c9-0e13-c58b1429ceb0"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-a4ac5d3e-79e9-d56b-0448-5bdb90157f3c-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Carrier Onboarding</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="a4ac5d3e-79e9-d56b-0448-5bdb90157f47"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="a4ac5d3e-79e9-d56b-0448-5bdb90157f4d"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_9ea98b5e-04a1-9925-f2fe-02e35e31b815-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Ongoing Support</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9ea98b5e-04a1-9925-f2fe-02e35e31b820"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9ea98b5e-04a1-9925-f2fe-02e35e31b826"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_7844d35a-f0be-4808-a85a-456a61b1f246-2cafadce"
+            data-w-id="7844d35a-f0be-4808-a85a-456a61b1f246"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="comparison_summary-component"
+          >
+            <div class="comparison_summary-inner-wrapper">
+              <div class="comparison_summary-card-wrapper">
+                <img
+                  src="images/logo-3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    With DataDocks, you get comprehensive onboarding.
+                  </div>
+                  <p>
+                    And we stick around to make sure you and your carriers are
+                    successful.
+                  </p>
+                </div>
+              </div>
+              <div
+                id="w-node-c1b0714e-c0af-88fe-f37d-56659cc900a7-2cafadce"
+                class="comparison_summary-card-wrapper"
+              >
+                <img
+                  src="images/3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    Opendock will set you up in less than an hour.
+                  </div>
+                  <p>
+                    But users say: “The service I&#x27;m receiving now
+                    isn&#x27;t what I initially signed up for.” <sup>1</sup>
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+    </div>
+    <div class="comparison-chart_section">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="full-width-img-wrapper">
+            <img
+              class="full-width-img"
+              src="images/661d172d591e8a0d7adb03e3_2.webp"
+              alt=""
+              style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+              sizes="(max-width: 1000px) 100vw, 1000px"
+              data-w-id="9aac750f-9844-49fa-994d-959ece62740a"
+              loading="lazy"
+              srcset="images/661d172d591e8a0d7adb03e3_2-p-500.webp 500w, images/661d172d591e8a0d7adb03e3_2-p-800.webp 800w, images/661d172d591e8a0d7adb03e3_2.webp 1000w"
+            />
+          </div>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="text-align-center">
+          <h2
+            data-w-id="9aac750f-9844-49fa-994d-959ece62740d"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="h3"
+          >
+            User Interface
+          </h2>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="comparison_component">
+          <div class="comparison_item-wrapper">
+            <div class="comparison_card-title">Manage Multiple Facilities</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9aac750f-9844-49fa-994d-959ece62741c"
+                      class="comparison_guage-inner-wrapper"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9aac750f-9844-49fa-994d-959ece627422"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_9aac750f-9844-49fa-994d-959ece627423-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">User Permissions</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9aac750f-9844-49fa-994d-959ece62742e"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9aac750f-9844-49fa-994d-959ece627434"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_9aac750f-9844-49fa-994d-959ece627435-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Scalability</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9aac750f-9844-49fa-994d-959ece627440"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="9aac750f-9844-49fa-994d-959ece627446"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_9aac750f-9844-49fa-994d-959ece627447-2cafadce"
+            data-w-id="9aac750f-9844-49fa-994d-959ece627447"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="comparison_summary-component"
+          >
+            <div class="comparison_summary-inner-wrapper">
+              <div class="comparison_summary-card-wrapper">
+                <img
+                  src="images/logo-3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    DataDocks provides a custom dashboard for each user.
+                  </div>
+                  <p>
+                    With filters and settings for each facility, the interface
+                    stays clean as you scale.
+                  </p>
+                </div>
+              </div>
+              <div
+                id="w-node-_9aac750f-9844-49fa-994d-959ece627450-2cafadce"
+                class="comparison_summary-card-wrapper"
+              >
+                <img
+                  src="images/3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    Opendock puts all your facilities and their appointments in
+                    one place.
+                  </div>
+                  <p>
+                    It offers visibility but we think it gets congested over
+                    time.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="comparison-chart_section">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="full-width-img-wrapper">
+            <img
+              class="full-width-img"
+              src="images/661d181970c22886b1a17fa8_3.webp"
+              alt="Freight management and warehouse operations depicted with digital bidding platforms, route optimization maps, forklifts, and cargo loading"
+              style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+              sizes="(max-width: 1000px) 100vw, 1000px"
+              data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc48f0"
+              loading="lazy"
+              srcset="images/661d181970c22886b1a17fa8_3-p-500.webp 500w, images/661d181970c22886b1a17fa8_3-p-800.webp 800w, images/661d181970c22886b1a17fa8_3.webp 1000w"
+            />
+          </div>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="text-align-center">
+          <h2
+            data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc48f3"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="h3"
+          >
+            Who is it for?
+          </h2>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="comparison_component">
+          <div class="comparison_item-wrapper">
+            <div class="comparison_card-title">National carriers</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4902"
+                      class="comparison_guage-inner-wrapper"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4908"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc4909-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Local Carriers</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4914"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc491a"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc491b-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">
+              Integration with Other Systems
+            </div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc4926"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc492c"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc492d-2cafadce"
+            data-w-id="0683b220-f58e-b81d-f19a-4cf9c9fc492d"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="comparison_summary-component"
+          >
+            <div class="comparison_summary-inner-wrapper">
+              <div class="comparison_summary-card-wrapper">
+                <img
+                  src="images/logo-3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    DataDocks focusses on dock scheduling.
+                  </div>
+                  <p>
+                    We thrive on those nuances and tailor the system to match
+                    your setup.
+                  </p>
+                </div>
+              </div>
+              <div
+                id="w-node-_0683b220-f58e-b81d-f19a-4cf9c9fc4936-2cafadce"
+                class="comparison_summary-card-wrapper"
+              >
+                <img
+                  src="images/3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    Loadsmart excels at Freight Brokerage, and Opendock is part
+                    of that vision.
+                  </div>
+                  <p>
+                    But we don’t think they get the nuances of warehouses and
+                    carrier relationships
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="comparison-chart_section">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="full-width-img-wrapper">
+            <img
+              class="full-width-img"
+              src="images/661d1b8e591e8a0d7adf484a_4-p-2000.webp"
+              alt="Warehouse logistics operations showing workers managing inventory, trucks loading and unloading, a clock indicating shift time, and supervisors monitoring schedules and checklists"
+              style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+              sizes="100vw"
+              data-w-id="8e7deb00-ca63-8418-796b-623638697791"
+              loading="lazy"
+              srcset="images/661d1b8e591e8a0d7adf484a_4-p-2000-p-500.webp 500w, images/661d1b8e591e8a0d7adf484a_4-p-2000-p-800.webp 800w, images/661d1b8e591e8a0d7adf484a_4-p-2000.webp 1000w"
+            />
+          </div>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="text-align-center">
+          <h2
+            data-w-id="8e7deb00-ca63-8418-796b-623638697794"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="h3"
+          >
+            Dealing with the Unexpected
+          </h2>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="comparison_component">
+          <div class="comparison_item-wrapper">
+            <div class="comparison_card-title">Reliability</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="8e7deb00-ca63-8418-796b-6236386977a3"
+                      class="comparison_guage-inner-wrapper"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="8e7deb00-ca63-8418-796b-6236386977a9"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_8e7deb00-ca63-8418-796b-6236386977aa-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Edge Cases</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="8e7deb00-ca63-8418-796b-6236386977b5"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="8e7deb00-ca63-8418-796b-6236386977bb"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_8e7deb00-ca63-8418-796b-6236386977bc-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Rescheduling</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="8e7deb00-ca63-8418-796b-6236386977c7"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="8e7deb00-ca63-8418-796b-6236386977cd"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_8e7deb00-ca63-8418-796b-6236386977ce-2cafadce"
+            data-w-id="8e7deb00-ca63-8418-796b-6236386977ce"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="comparison_summary-component"
+          >
+            <div class="comparison_summary-inner-wrapper">
+              <div class="comparison_summary-card-wrapper">
+                <img
+                  src="images/logo-3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    DataDocks is made for dealing with real-life challenges.
+                  </div>
+                  <p>
+                    Whether it’s rescheduling canceled appointments or taking
+                    care of spot trailers.
+                  </p>
+                </div>
+              </div>
+              <div
+                id="w-node-_8e7deb00-ca63-8418-796b-6236386977d7-2cafadce"
+                class="comparison_summary-card-wrapper"
+              >
+                <img
+                  src="images/3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    Opendock is designed for operations with a fixed schedule.
+                  </div>
+                  <p>
+                    It “can be limited” <sup>2</sup> and service outages can be frustrating
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="comparison-chart_section">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="full-width-img-wrapper">
+            <img
+              class="full-width-img"
+              src="images/661d1c92fdc2884d165589b2_5-p-2000.webp"
+              alt="Warehouse management software displayed on desktop screens with logistics dashboards, inventory tracking, and forklifts in a busy supply chain environment"
+              style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+              sizes="100vw"
+              data-w-id="6798ffa8-1703-2b97-f50d-b939e0653846"
+              loading="lazy"
+              srcset="images/661d1c92fdc2884d165589b2_5-p-2000-p-500.webp 500w, images/661d1c92fdc2884d165589b2_5-p-2000-p-800.webp 800w, images/661d1c92fdc2884d165589b2_5-p-2000.webp 1000w"
+            />
+          </div>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="text-align-center">
+          <h2
+            data-w-id="6798ffa8-1703-2b97-f50d-b939e0653849"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="h3"
+          >
+            Data and Accountability
+          </h2>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="comparison_component">
+          <div class="comparison_item-wrapper">
+            <div class="comparison_card-title">Easy-to-use</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="6798ffa8-1703-2b97-f50d-b939e0653858"
+                      class="comparison_guage-inner-wrapper"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="6798ffa8-1703-2b97-f50d-b939e065385e"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_6798ffa8-1703-2b97-f50d-b939e065385f-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Reporting</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="6798ffa8-1703-2b97-f50d-b939e065386a"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="6798ffa8-1703-2b97-f50d-b939e0653870"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_6798ffa8-1703-2b97-f50d-b939e0653871-2cafadce"
+            class="comparison_item-wrapper"
+          >
+            <div class="comparison_card-title">Customizability</div>
+            <div class="spacer-small"></div>
+            <div>
+              <div class="comparison_guages-wrapper">
+                <div class="comparison_guage-item-wrapper">
+                  <div>Opendock</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="6798ffa8-1703-2b97-f50d-b939e065387c"
+                      class="comparison_guage-inner-wrapper _30"
+                    >
+                    </div>
+                  </div>
+                </div>
+                <div class="comparison_guage-item-wrapper">
+                  <div>DataDocks</div>
+                  <div class="spacer-xsmall"></div>
+                  <div class="comparison_guage-outer-wrapper">
+                    <div
+                      data-w-id="6798ffa8-1703-2b97-f50d-b939e0653882"
+                      class="comparison_guage-inner-wrapper background-color-orange"
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            id="w-node-_6798ffa8-1703-2b97-f50d-b939e0653883-2cafadce"
+            data-w-id="6798ffa8-1703-2b97-f50d-b939e0653883"
+            style="-webkit-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 20px, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0"
+            class="comparison_summary-component"
+          >
+            <div class="comparison_summary-inner-wrapper">
+              <div class="comparison_summary-card-wrapper">
+                <img
+                  src="images/logo-3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    If you’re preparing for a data-driven future, DataDocks is
+                    for you.
+                  </div>
+                  <p>
+                    Whether it’s logging unscheduled trucks or editing past
+                    appointments, we make it easy.
+                  </p>
+                </div>
+              </div>
+              <div
+                id="w-node-_6798ffa8-1703-2b97-f50d-b939e065388c-2cafadce"
+                class="comparison_summary-card-wrapper"
+              >
+                <img
+                  src="images/3.svg"
+                  loading="lazy"
+                  alt=""
+                  class="comparison_summary-card-icon"
+                />
+                <div class="comparison_summary-card-inner-wrapper">
+                  <div class="subtitle">
+                    If you want a logistics-friendly alternative to Google
+                    Calendar, Opendock nails it.
+                  </div>
+                  <p>
+                    But for continuous improvement, you need more accurate data.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spacer-medium"></div>
+        <div class="footnoters-component">
+          <a
+            href="https://www.g2.com/products/opendock/reviews/opendock-review-7755123"
+            target="_blank"
+            class="footnote-link"
+            ><sup>1</sup> Review posted to g2.com, February 2023
+          </a>
+          <a
+            href="https://www.g2.com/products/opendock/reviews/opendock-review-8691077"
+            target="_blank"
+            class="footnote-link"
+            ><sup>2</sup> Review posted to g2.com, October 2023</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="cta-section">
+      <div class="padding-global">
+        <div class="cta-wrapper">
+          <div class="line-wrapper">
+            <h3 class="h3 light center-mobile">
+              let us help you decide if datadocks is a good
+            </h3>
+          </div>
+          <div class="cta-flex_wrapper">
+            <div class="line-wrapper top-margin">
+              <h3 class="h3 light center-mobile">fit for your needs</h3>
+            </div>
+            <div class="demo-form top-padding cta-form w-form">
+              <form
+                id="wf-form-CTA-Form"
+                name="wf-form-CTA-Form"
+                data-name="CTA Form"
+                method="get"
+                class="form-container"
+                data-wf-page-id="651ec97b48428a3c2cafadce"
+                data-wf-element-id="dc03708e-3838-493d-ee26-97ccd9f379f3"
+              >
+                <div class="form-block-wrapper">
+                  <input
+                    class="footer-form-input w-input"
+                    maxlength="256"
+                    name="Demo-Form-2"
+                    data-name="Demo Form 2"
+                    aria-label="Enter your email"
+                    placeholder="Enter your email"
+                    type="email"
+                    id="submit-field_footer"
+                    required=""
+                  />
+                  <div class="button-wrapper">
+                    <input
+                      type="submit"
+                      data-wait="Please wait..."
+                      id="submit-button_footer"
+                      class="button demo black w-button"
+                      value="Schedule a Demo"
+                    />
+                  </div>
+                </div>
+              </form>
+              <div class="success-form_message w-form-done">
+                <div>Thank you! Your submission has been received!</div>
+              </div>
+              <div class="error-form_message w-form-fail">
+                <div>Oops! Something went wrong while submitting the form.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <Footer />
