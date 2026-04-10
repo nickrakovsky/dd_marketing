@@ -41,7 +41,9 @@ export default defineConfig({
   },
   redirects: {
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
+    '/datadocks-vs/opendock/': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
+    '/privacy-policy-datadocks/': '/privacy-policy',
   },
 
   integrations: [
@@ -69,17 +71,34 @@ export default defineConfig({
       }
     },
     tailwind(), react(), keystatic(), sitemap({
-      filter: (page) => !page.includes('/home-draft'),
+      filter: (page) => !page.includes('/home-draft') && !page.includes('/debug'),
       serialize(item) {
+        // Strip trailing slash from sitemap URLs (except homepage)
+        if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
+          item.url = item.url.replace(/\/$/, '');
+        }
         // Add lastmod from post frontmatter if available
-        const postDate = postDateMap.get(item.url);
+        const postDate = postDateMap.get(item.url) || postDateMap.get(item.url + '/');
         if (postDate) {
           item.lastmod = postDate.toISOString();
         }
         // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
         return item;
       },
-      customPages: [],
+      customPages: [
+        'https://datadocks.com/datadocks-features/dock-dashboard',
+        'https://datadocks.com/datadocks-features/carrier-portal',
+        'https://datadocks.com/datadocks-features/yard-management',
+        'https://datadocks.com/datadocks-features/capacity-limits',
+        'https://datadocks.com/datadocks-features/efficiency-reports',
+        'https://datadocks.com/datadocks-features/custom-rules',
+        'https://datadocks.com/datadocks-features/data-validation',
+        'https://datadocks.com/datadocks-features/notifications',
+        'https://datadocks.com/datadocks-features/live-editing',
+        'https://datadocks.com/datadocks-features/access-anywhere',
+        'https://datadocks.com/datadocks-features/integration',
+        'https://datadocks.com/datadocks-features/documentation',
+      ],
     }), mdx()],
 
 });
