@@ -1,10 +1,17 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 import { block } from '@keystatic/core/content-components';
 
+const isProd = import.meta.env.PROD;
+
 export default config({
-    storage: {
-        kind: 'local', // Tells Keystatic to save files directly to your local codebase
-    },
+    storage: isProd
+        ? {
+            kind: 'github',
+            repo: 'nickrakovsky/dd_marketing',
+        }
+        : {
+            kind: 'local',
+        },
 
     // 1. SINGLETONS (One-off pages like Settings or Hubs)
     singletons: {
