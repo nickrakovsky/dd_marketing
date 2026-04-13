@@ -1,7 +1,8 @@
 import { makeHandler } from '@keystatic/astro/api';
 import type { APIContext } from 'astro';
+import keystaticConfig from '../../../../keystatic.config';
 
-const handler = makeHandler({});
+const handler = makeHandler({ config: keystaticConfig });
 
 export const ALL = async (ctx: APIContext) => {
   try {
