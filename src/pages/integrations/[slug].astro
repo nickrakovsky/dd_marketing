@@ -25,7 +25,8 @@ if (!integration) {
 }
 
 if (!integration) {
-  return Astro.redirect('/404');
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
 }
 
 const { Content } = await (integration as any).render();

@@ -10,9 +10,12 @@ import { getFriendlyDate } from "../../utils/dateFormatter";
 
 // Fetch and sort posts chronologically
 const allPosts = await getCollection("posts");
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const sortedPosts = allPosts.sort((a, b) => {
+  const pA = getPriority(a.data.priority);
+  const pB = getPriority(b.data.priority);
+  if (pA !== pB) return pB - pA;
+  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+});
 
 // Split posts: The newest post is the Hero, the rest go into the Bento Grid
 const highlightedPost = sortedPosts[0];
