@@ -8,11 +8,18 @@ import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import { getFriendlyDate } from "../../utils/dateFormatter";
 
+// Priority helper
+const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
+const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
+
 // Fetch and sort posts chronologically
 const allPosts = await getCollection("posts");
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const sortedPosts = allPosts.sort((a, b) => {
+  const pA = getPriority(a.data.priority);
+  const pB = getPriority(b.data.priority);
+  if (pA !== pB) return pB - pA;
+  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+});
 
 // Split posts: The newest post is the Hero, the rest go into the Bento Grid
 const highlightedPost = sortedPosts[0];
@@ -30,10 +37,6 @@ const postsByCategory = restPosts.reduce(
   },
   {} as Record<string, typeof restPosts>,
 );
-
-// Category sorting and pinning logic
-const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
-const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
 
 Object.keys(postsByCategory).forEach((category) => {
   let catPosts = postsByCategory[category];

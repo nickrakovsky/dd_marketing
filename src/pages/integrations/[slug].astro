@@ -25,75 +25,126 @@ if (!integration) {
 }
 
 if (!integration) {
-  return Astro.redirect('/404');
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
 }
 
 const { Content } = await (integration as any).render();
 ---
 
 <Layout title={`${integration.data.pageTitle || integration.data.title} | DataDocks Integration`} description={integration.data.description}>
+  <style>
+    .text-brand-orange {
+      color: #fd4f00;
+    }
+  </style>
+
   <Navigation client:idle />
   
-  <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">
-    
-    {/* Header / Overview */}
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-20">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div>
-          <h3 class="text-brand-orange text-lg font-bold tracking-tight uppercase mb-4">{integration.data.subheader}</h3>
-          <h1 class="text-5xl md:text-6xl font-black text-gray-900 tracking-tight font-recoleta mb-6 leading-tight">
-            {integration.data.title}
-          </h1>
-          <p class="text-xl text-gray-700 leading-relaxed mb-8">
-            {integration.data.overview}
-          </p>
-          <a href="https://calendly.com/nick-rakovsky/datadocks-demo?month=2023-05" class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-6 bg-gray-900 text-white hover:bg-gray-700">
-             Schedule a Demo
-          </a>
-        </div>
-        <div class="flex justify-center flex-col items-center bg-white p-16 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
-           {integration.data.icon ? (
-             <img src={integration.data.icon} alt={integration.data.title} class="w-48 h-48 object-contain mb-8" />
-           ) : (
-             <div class="w-48 h-48 bg-gray-100 rounded-full mb-8"></div>
-           )}
-           {integration.data.disclaimer && (
-             <p class="text-xs text-gray-400 text-center uppercase tracking-wider">{integration.data.disclaimer}</p>
-           )}
-        </div>
-      </div>
-    </div>
-
-    {/* Benefits section (if present) */}
-    {integration.data.benefits && integration.data.benefits.length > 0 && (
-      <div class="max-w-7xl mx-auto px-6 lg:px-8 py-20 bg-white rounded-3xl mb-20 shadow-sm border border-orange-50">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold font-recoleta sm:text-4xl text-gray-900">Why Integrate {integration.data.title}?</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          {integration.data.benefits.map((benefit) => (
-            <div class="flex flex-col items-center">
-              {benefit.icon && (
-                <div class="mb-6 p-4 bg-orange-50 rounded-full">
-                  <img src={benefit.icon} alt="" class="w-12 h-12 object-contain" />
+  <main class="bg-[#FFF8E9] text-[#000000] relative">
+      
+      {/* Refined Hero Section */}
+      <section class="relative min-h-[75vh] flex flex-col items-center justify-center pt-24 pb-20 px-6 overflow-hidden">
+        
+        {/* Flanking Graphics - Centered and edge-aligned WITHOUT obstructing Navigation */}
+        <div class="absolute inset-0 pointer-events-none select-none z-10 hidden md:block overflow-hidden">
+            {/* Left Visual Group */}
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[35%] max-w-[350px] -translate-x-[40%]">
+                <div class="relative w-full h-full">
+                    <img src="/images/integrations/hero-shape-1.svg" alt="" class="w-full h-auto opacity-70" />
+                    <img src="/images/integrations/datadocks-icon.svg" alt="DataDocks" class="absolute top-1/2 right-[5%] -translate-y-1/2 w-28 h-28 lg:w-36 lg:h-36 object-contain filter drop-shadow-2xl" />
                 </div>
-              )}
-              <h3 class="text-xl font-bold font-recoleta text-gray-900 mb-3">{benefit.title}</h3>
-              <p class="text-gray-600 leading-relaxed">{benefit.text}</p>
             </div>
-          ))}
+
+            {/* Right Visual Group */}
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[35%] max-w-[350px] translate-x-[40%]">
+                <div class="relative w-full h-full">
+                    <img src="/images/integrations/hero-shape-2.svg" alt="" class="w-full h-auto opacity-70" />
+                    <img src={integration.data.icon} alt={integration.data.title} class="absolute top-1/2 left-[5%] -translate-y-1/2 w-28 h-28 lg:w-36 lg:h-36 object-contain filter drop-shadow-2xl transform rotate-[15deg]" />
+                </div>
+            </div>
         </div>
-      </div>
-    )}
 
-    {/* Content Section */}
-    <div class="max-w-3xl mx-auto px-6 lg:px-8">
-      <div class="prose prose-lg prose-orange mx-auto">
-        <Content />
-      </div>
-    </div>
+        <div class="w-full max-w-7xl mx-auto relative z-20">
+          <div class="text-center mb-10">
+              {/* Balanced Two-Line H1 Branding - Allowing wrap for long integration names */}
+              <h1 class="font-bruta leading-none tracking-tighter mb-10">
+                  <span class="text-brand-orange text-4xl md:text-6xl lg:text-7xl block uppercase mb-2">
+                      DataDocks+
+                  </span>
+                  <span class="text-black text-5xl md:text-7xl lg:text-8xl block uppercase leading-[0.95]">
+                      {integration.data.title}
+                  </span>
+              </h1>
 
-  </main>
+              {/* Unified Recoleta Body Copy using Overview as the longer-form copy */}
+              <p class="font-recoleta text-2xl md:text-4xl font-semibold text-gray-800 max-w-4xl mx-auto leading-[1.15] tracking-tight">
+                  {integration.data.overview}
+              </p>
+          </div>
+
+          {/* Centered CTA Section */}
+          <div class="w-full flex justify-center mt-12 bg-[#FFF8E9]/60 backdrop-blur-sm rounded-xl py-4">
+              <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                  <a href="https://calendly.com/nick-rakovsky/datadocks-demo" class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-black text-white hover:bg-brand-orange transition-all hover:-translate-y-1 uppercase tracking-widest shadow-2xl">
+                      Schedule a Demo
+                  </a>
+                  <a href="#advantages" class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-white text-gray-900 border-2 border-gray-900 hover:bg-gray-50 transition-all hover:-translate-y-1 uppercase tracking-widest">
+                      Learn More
+                  </a>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Integration Advantages Section */}
+      {integration.data.benefits && integration.data.benefits.length > 0 && (
+        <section id="advantages" class="py-24 bg-white border-y border-[#efe2d2] relative z-20">
+          <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-20">
+              <h2 class="font-bruta text-6xl md:text-7xl uppercase tracking-tight">
+                  Integration <span class="text-brand-orange">Advantages</span>
+              </h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {integration.data.benefits.map((benefit) => (
+                <div class="flex flex-col items-start bg-[#f1e3d2] p-10 rounded-[1.25rem] shadow-sm hover:shadow-2xl transition-all border border-[#e3d5c4]/30 group">
+                  {benefit.icon && (
+                    <div class="mb-10 w-20 h-20 flex items-center justify-center p-4 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">
+                      <img src={benefit.icon} alt="" class="w-full h-full object-contain" />
+                    </div>
+                  )}
+                  <h3 class="text-3xl font-bold font-recoleta text-gray-900 mb-5 leading-tight tracking-tight">{benefit.title}</h3>
+                  <p class="text-gray-700 leading-relaxed font-medium text-lg lg:text-xl opacity-90">{benefit.text}</p>
+                </div>
+              ))}
+            </div>
+
+            {integration.data.disclaimer && (
+              <div class="mt-24 pt-12 border-t border-[#efe2d2] text-center">
+                  <p class="text-[10px] md:text-xs text-[#8d785c] uppercase tracking-[0.25em] font-bold opacity-60 max-w-3xl mx-auto leading-loose">
+                      {integration.data.disclaimer}
+                  </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Content Section */}
+      <section class="py-24 bg-[#FFF8E9] relative z-20">
+          <div class="max-w-4xl mx-auto px-6 lg:px-8">
+              <div class="prose prose-xl prose-orange mx-auto 
+                  prose-headings:font-bruta prose-headings:uppercase prose-headings:tracking-tight 
+                  prose-p:text-gray-800 prose-p:leading-relaxed prose-p:font-medium
+                  prose-li:text-gray-800 prose-li:font-medium">
+                  <Content />
+              </div>
+          </div>
+      </section>
+
+    </main>
 
   <CTA />
   <Footer />

@@ -25,7 +25,8 @@ if (!feature) {
 }
 
 if (!feature) {
-  return Astro.redirect('/404');
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
 }
 
 const { Content } = await (feature as any).render();

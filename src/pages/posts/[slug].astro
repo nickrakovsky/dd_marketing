@@ -21,7 +21,8 @@ const entry = Astro.props.entry || await getEntry('posts', slug as string);
 
 if (!entry) {
   // Fallback for types or edge cases
-  return Astro.redirect('/404');
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
 }
 const { Content, headings } = await entry.render();
 

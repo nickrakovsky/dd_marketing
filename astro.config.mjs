@@ -41,9 +41,7 @@ export default defineConfig({
   },
   redirects: {
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
-    '/datadocks-vs/opendock/': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
-    '/privacy-policy-datadocks/': '/privacy-policy',
   },
 
   integrations: [

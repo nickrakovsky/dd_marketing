@@ -1,17 +1,17 @@
 ---
 const features = [
-  { title: "Carrier Portal", text: "Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling.", icon: "/images/features/checked-laptop.svg" },
-  { title: "Yard Management", text: "Get real-time yard visibility. Track trailers, reduce congestion, and streamline dock operations for peak efficiency.", icon: "/images/features/vision.svg" },
-  { title: "Documentation", text: "Access comprehensive product documentation and developer guides to help you integrate and configure DataDocks.", icon: "/images/features/submit-document.svg" },
-  { title: "Capacity Limits", text: "Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safety.", icon: "/images/features/partially-shipped.svg" },
-  { title: "Custom Rules", text: "Create flexible business rules for scheduling, approvals, and compliance to match your site's unique workflow.", icon: "/images/features/delivery.svg" },
-  { title: "Data Validation", text: "Ensure cleaner data with built-in validation for appointments and inputs - reducing errors and rework.", icon: "/images/features/data-quality.svg" },
-  { title: "Efficiency Reports", text: "Track performance metrics like dwell time and appointment adherence to identify bottlenecks.", icon: "/images/features/linechart-file.svg" },
-  { title: "Notifications", text: "Stay ahead of delays and changes with automatic alerts and real-time notifications for teams and drivers.", icon: "/images/features/push-notifications.svg" },
-  { title: "Access Anywhere", text: "Use DataDocks from any device, anywhere. No downloads required - just simple, secure, browser-based access.", icon: "/images/features/multiple-devices.svg" },
-  { title: "Live Editing", text: "Make real-time edits to schedules, trailers, and contact info with collaborative tools that keep everyone updated.", icon: "/images/features/people.svg" },
-  { title: "Integration", text: "Integrate seamlessly with your WMS/TMS to eliminate double entry and streamline operations.", icon: "/images/features/automation.svg" },
-  { title: "Dock Dashboard", text: "Manage appointments in real-time with an intuitive dashboard designed to reduce congestion and delays.", icon: "/images/features/dashboard-layout.svg" }
+  { title: "Carrier Portal", srTitle: "how DataDocks' carrier portal works", text: "Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling.", icon: "/images/features/checked-laptop.svg" },
+  { title: "Yard Management", srTitle: "how to get real-time yard visibility", text: "Get real-time yard visibility. Track trailers, reduce congestion, and streamline dock operations for peak efficiency.", icon: "/images/features/vision.svg" },
+  { title: "Documentation", srTitle: "accessing our product documentation", text: "Access comprehensive product documentation and developer guides to help you integrate and configure DataDocks.", icon: "/images/features/submit-document.svg" },
+  { title: "Capacity Limits", srTitle: "setting constraints on docks and yard areas", text: "Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safety.", icon: "/images/features/partially-shipped.svg" },
+  { title: "Custom Rules", srTitle: "creating flexible business rules", text: "Create flexible business rules for scheduling, approvals, and compliance to match your site's unique workflow.", icon: "/images/features/delivery.svg" },
+  { title: "Data Validation", srTitle: "how built-in data validation works", text: "Ensure cleaner data with built-in validation for appointments and inputs - reducing errors and rework.", icon: "/images/features/data-quality.svg" },
+  { title: "Efficiency Reports", srTitle: "tracking operational performance metrics", text: "Track performance metrics like dwell time and appointment adherence to identify bottlenecks.", icon: "/images/features/linechart-file.svg" },
+  { title: "Notifications", srTitle: "staying ahead with automatic alerts", text: "Stay ahead of delays and changes with automatic alerts and real-time notifications for teams and drivers.", icon: "/images/features/push-notifications.svg" },
+  { title: "Access Anywhere", srTitle: "using DataDocks across any device", text: "Use DataDocks from any device, anywhere. No downloads required - just simple, secure, browser-based access.", icon: "/images/features/multiple-devices.svg" },
+  { title: "Live Editing", srTitle: "making real-time collaborative edits", text: "Make real-time edits to schedules, trailers, and contact info with collaborative tools that keep everyone updated.", icon: "/images/features/people.svg" },
+  { title: "Integration", srTitle: "integrating seamlessly with your WMS or TMS", text: "Integrate seamlessly with your WMS/TMS to eliminate double entry and streamline operations.", icon: "/images/features/automation.svg" },
+  { title: "Dock Dashboard", srTitle: "managing appointments with the intuitive dashboard", text: "Manage appointments in real-time with an intuitive dashboard designed to reduce congestion and delays.", icon: "/images/features/dashboard-layout.svg" }
 ];
 
 const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
@@ -22,7 +22,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
     
     <div class="text-center mb-16 max-w-4xl mx-auto">
       <h2 class="font-bruta text-4xl md:text-5xl uppercase leading-none mb-4 text-black">
-        Everything You Need to <span class="text-[#FF5507]">Master Your Docks and Yard</span>
+        Everything You Need to <span class="text-[#FE5000]">Master Your Docks and Yard</span>
       </h2>
     </div>
 
@@ -81,8 +81,9 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
             
             {/* Mobile Affordance: Only this part is a link */}
             <a href={`/datadocks-features/${slugify(feature.title)}`} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
-              <span class="link-text font-recoleta text-[10px] sm:text-xs text-[#FF5507] font-bold transition-colors">Learn More</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FF5507" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="sm:w-3 sm:h-3">
+              <span class="link-text font-recoleta text-[10px] sm:text-xs text-[#FE5000] font-bold transition-colors [text-shadow:0px_1px_2px_rgba(0,0,0,0.15)]">Learn More</span>
+              <span class="sr-only"> about {feature.srTitle}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FE5000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="sm:w-3 sm:h-3 drop-shadow-sm">
                 <path d="m9 18 6-6-6-6"/>
               </svg>
             </a>
@@ -105,7 +106,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
   /* Desktop-only hover effects */
   @media (hover: hover) and (pointer: fine) {
     .feature-card:hover .feature-title {
-      color: #FF5507;
+      color: #FE5000;
     }
   }
 
@@ -115,7 +116,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
     .feature-card:focus .feature-title,
     .feature-card:hover .feature-title,
     .feature-card:active .feature-title {
-      color: #FF5507;
+      color: #FE5000;
     }
 
     /* "Learn More" text flashes black when selected */

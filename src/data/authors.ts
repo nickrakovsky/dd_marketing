@@ -44,6 +44,12 @@ export const authors: Record<string, Author> = {
     role: "Marketing Specialist",
     shortBio: "Hunter supports DataDocks marketing efforts with a focus on content creation and audience engagement in the logistics space.",
   },
+  "Chris La Porte": {
+    name: "Chris La Porte",
+    slug: "chris-la-porte",
+    role: "Content Writer",
+    shortBio: "Chris is a content writer at DataDocks, specializing in translating complex supply chain challenges into practical strategies for warehouse managers and logistics leaders.",
+  },
   "DataDocks": {
     name: "Nick Rakovsky",
     slug: "nick-rakovsky",

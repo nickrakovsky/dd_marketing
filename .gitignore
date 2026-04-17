@@ -29,3 +29,9 @@ webflow-migration/
 # Offline print assets - excluded from production build
 public/_offline_print/*
 !public/_offline_print/.gitkeep
+
+# Local analysis and experiments
+analysis/
+
+# Private internal assets
+internal-marketing/
