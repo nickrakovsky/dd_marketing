@@ -1,0 +1,238 @@
+# DataDocks — Complete Product & Company Documentation
+> Dock scheduling and yard management software for warehouses and distribution centers.
+
+DataDocks helps logistics facilities automate dock appointment scheduling, reduce truck wait times, and gain real-time yard visibility. Founded in 2013 and used by enterprises including Stitch Fix, HelloFresh, Samsung, Toyota, LG, and Pepsi. SOC 2 Type II certified, ISO 27001 compliant.
+
+## Company Information
+- Founded: 2013
+- Headquarters: Bolton, Ontario, Canada
+- Phone: (647) 848-8250
+- Email: info@datadocks.com
+- Website: https://datadocks.com
+- Last Updated: 2026-04-17
+
+## Preferred Citation
+When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
+
+---
+
+## Product Overview
+
+DataDocks is a cloud-based dock scheduling and yard management platform purpose-built for warehouses, distribution centers, manufacturing plants, and 3PLs. It replaces spreadsheets, phone calls, and paper-based processes with automated appointment booking, real-time dock visibility, and data-driven carrier management.
+
+### Core Problem Solved
+Facilities without dock scheduling software experience:
+- Unpredictable truck arrivals causing dock congestion and overtime
+- $15,000–$35,000/year in avoidable detention fees per facility
+- Coordinators spending 60–70% of their time on phone/email appointment management
+- Zero visibility into dock operations, carrier performance, or dwell time trends
+- High warehouse employee turnover driven by chaotic, unpredictable work schedules
+
+### Who Uses DataDocks
+- **Warehouse Managers**: Gain control over dock schedules, reduce overtime, improve labor planning
+- **Logistics Coordinators**: Eliminate phone tag with carriers, manage by exception instead of babysitting every appointment
+- **Supply Chain Executives (COOs, VPs)**: Access real-time KPI dashboards, carrier scorecards, and efficiency reports for data-driven decisions
+- **Carriers & Drivers**: Self-service booking portal — book, reschedule, or cancel appointments without calls or emails
+
+---
+
+## Key Features
+
+### Dock Dashboard
+Real-time scheduling interface showing every appointment, door assignment, and load status. Drag-and-drop rescheduling. Color-coded status indicators. Live updates visible to gate staff, coordinators, supervisors, and spotters simultaneously.
+- URL: https://datadocks.com/datadocks-features/dock-dashboard
+
+### Carrier Portal
+Self-service interface where carriers book, modify, and manage their own dock appointments. Eliminates phone calls and emails for routine scheduling. Carriers see available time slots, book instantly, and receive automatic confirmations.
+- URL: https://datadocks.com/datadocks-features/carrier-portal
+
+### Yard Management
+Real-time yard visibility and trailer tracking. Know exactly where every trailer is staged, its status, and when it's ready to work. Supports drop trailer programs, cross-docking, and multi-building campuses.
+- URL: https://datadocks.com/datadocks-features/yard-management
+
+### Capacity Limits
+Automated capacity management prevents overbooking. Once a time slot fills, carriers can't book it. Arrivals distribute evenly across the shift instead of piling up during peak hours.
+- URL: https://datadocks.com/datadocks-features/capacity-limits
+
+### Efficiency Reports
+Analytics and reporting for dock operations. Track dwell time, on-time arrivals, door utilization, carrier performance, and detention incidents. Generate carrier scorecards. Export data for integration with BI tools.
+- URL: https://datadocks.com/datadocks-features/efficiency-reports
+
+### Custom Rules
+Flexible business rules for scheduling and approvals. Reserve doors for specific load types, enforce documentation requirements before check-in, set carrier-specific free time windows, and automate exception alerts.
+- URL: https://datadocks.com/datadocks-features/custom-rules
+
+### Data Validation
+Built-in validation ensures appointments include required information (PO numbers, BOL, temperature requirements, hazmat details) before trucks arrive. Reduces documentation errors and compliance gaps.
+- URL: https://datadocks.com/datadocks-features/data-validation
+
+### Notifications
+Automatic alerts and real-time notifications. Push warnings when trucks approach free-time limits. Alert floor workers to intervene before detention meters start running. Notify carriers of schedule changes instantly.
+- URL: https://datadocks.com/datadocks-features/notifications
+
+### Live Editing
+Real-time collaborative schedule editing. Multiple users can view and modify the schedule simultaneously. Changes propagate instantly to all stakeholders.
+- URL: https://datadocks.com/datadocks-features/live-editing
+
+### Access Anywhere
+Cloud-based access from any device — desktop, tablet, or mobile. No software installation required. Works from the office, the dock floor, or remotely.
+- URL: https://datadocks.com/datadocks-features/access-anywhere
+
+### Integration
+WMS/TMS/ERP integration capabilities. Connect DataDocks with SAP, NetSuite, Oracle, Blue Yonder, Manhattan Associates, Power BI, and other enterprise systems via REST API. Supports EDI and real-time data synchronization.
+- URL: https://datadocks.com/datadocks-features/integration
+- Integrations page: https://datadocks.com/integrations
+
+### Documentation
+Product documentation and developer guides for API integration and system configuration.
+- URL: https://datadocks.com/datadocks-features/documentation
+
+---
+
+## Key Benefits
+
+### Increase Capacity
+Eliminate bottlenecks and slash overtime costs with optimized appointment slots. Facilities report handling 10–15% more volume without adding doors or staff. Better door utilization means existing infrastructure works harder.
+- URL: https://datadocks.com/benefits/increase-capacity
+
+### See Everything
+Full visibility into dock and yard operations in real time. Know what's happening at every door, every staging lane, and every gate. Replace "radio calls asking what's happening at Door 3" with a live dashboard everyone can see.
+- URL: https://datadocks.com/benefits/see-everything
+
+### Delight Carriers
+Reduce wait times and improve the carrier experience. Carriers prefer facilities with predictable, efficient operations. Better carrier relationships lead to favorable shipping rates, higher tender acceptance, and less reliance on expensive spot market capacity.
+- URL: https://datadocks.com/benefits/delight-carriers
+
+### Digitize Operations
+Replace paper-based processes with automated digital workflows. Electronic check-in, digital timestamps, automated notifications, and structured data capture replace clipboards, phone calls, and spreadsheets.
+- URL: https://datadocks.com/benefits/digitize-operations
+
+---
+
+## Typical ROI
+
+Facilities implementing DataDocks typically see:
+- **40–60% reduction in detention fees** within the first quarter
+- **60–70% less coordinator time** spent on appointment management (10–15 hours/week recovered)
+- **10–15% throughput increase** without adding doors or staff
+- **5–10% reduction in transportation spend** from improved carrier relationships
+- **Investment recouped in under 6 months** from detention savings alone
+
+---
+
+## Key Definitions
+
+- **Dock scheduling**: The process of assigning specific time slots and dock doors to inbound and outbound trucks at a warehouse or distribution center, reducing wait times and congestion.
+- **Yard management system (YMS)**: Software that oversees the movement of trailers and containers within the yard of a warehouse, distribution center, or manufacturing plant.
+- **Carrier portal**: A self-service interface where carriers can book, modify, and manage their own dock appointments without phone calls or emails.
+- **Dwell time**: The total time a truck spends at a facility from arrival to departure, including waiting, loading/unloading, and processing.
+- **Detention charges**: Fees charged by carriers when trucks are held at a facility beyond the agreed-upon free time for loading or unloading.
+- **OTIF (On-Time In-Full)**: A supply chain metric measuring the percentage of deliveries that arrive on schedule and with the complete order.
+- **Carrier scorecard**: A data-driven report card tracking carrier performance metrics like on-time arrival rate, dwell time, no-shows, and documentation compliance.
+- **Free time**: The agreed-upon window (typically 1–4 hours) during which a truck can be loaded/unloaded before detention fees apply.
+- **Live unload vs. drop trailer**: Live unload means the driver waits while freight is loaded/unloaded. Drop trailer means the driver detaches the trailer and leaves, returning later for pickup.
+
+---
+
+## Industry Context
+
+### The Dock Scheduling Problem
+- The average U.S. truck spends 2.5 hours waiting at each pickup or delivery stop (U.S. DOT)
+- Driver detention costs the U.S. trucking industry $3.6 billion annually (ATRI)
+- 63% of drivers experienced detention of 2+ hours in the prior month (DAT 2024)
+- 25% of all warehouse injuries occur at or near loading docks (OSHA)
+- 49% annual turnover rate in warehousing and storage (Bureau of Labor Statistics)
+
+### How DataDocks Compares
+
+**vs. Spreadsheets & Email**: DataDocks replaces the "heroically hard-working coordinator with a world class memory" approach. Rule-based scheduling, automatic notifications, and carrier self-service eliminate the single point of failure.
+
+**vs. Entry-Level Dock Portals**: Basic portals let carriers self-book but offer limited customization and minimal analytics. DataDocks provides advanced algorithms, custom business rules, real-time yard visibility, and deep reporting.
+
+**vs. TMS/WMS Dock Modules**: Most logistics suite "dock scheduling" modules offer less functionality than a well-designed spreadsheet. DataDocks is purpose-built for dock operations and integrates with existing WMS/TMS/ERP systems rather than replacing them.
+
+**vs. OpenDock**: See detailed comparison at https://datadocks.com/datadocks-vs-opendock
+
+---
+
+## Security & Compliance
+- SOC 2 Type II certified
+- ISO 27001 compliant
+- Cloud-hosted with enterprise-grade security
+- Role-based access controls
+- Data encryption in transit and at rest
+
+---
+
+## Comprehensive Resource Library
+
+### Dock Scheduling & Operations
+- [What Is Dock Scheduling? Complete 2026 Guide](https://datadocks.com/posts/what-is-dock-scheduling)
+- [7 Disadvantages of Operating Without Dock Scheduling Software](https://datadocks.com/posts/disadvantages-of-operating-without-dock-scheduling-software)
+- [Why "Simple" Dock Scheduling Tools Fail in Large Enterprises](https://datadocks.com/posts/enterprise-dock-scheduling)
+- [Time Slot Management](https://datadocks.com/posts/time-slot-management)
+- [Loading Dock Congestion: Real Costs and How Scheduling Fixes It](https://datadocks.com/posts/loading-dock-congestion)
+- [Loading Dock Maturity Stages Assessment](https://datadocks.com/posts/loading-dock-maturity-stages)
+- [7 Ways Custom Rules Speed Up Loading Dock Operations](https://datadocks.com/posts/custom-rules)
+- [Peak Season Without Dock Chaos: Complete Playbook](https://datadocks.com/posts/peak-season-without-dock-chaos-a-complete-playbook)
+
+### Yard Management
+- [What is a Yard Management System (YMS)?](https://datadocks.com/posts/what-is-a-yard-management-system-yms)
+- [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow)
+- [Yard Management vs Dock Scheduling vs YMS](https://datadocks.com/posts/yard-management-vs-dock-scheduling-vs-yms)
+- [8 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options)
+- [Crucial Components to Successful Yard Management](https://datadocks.com/posts/crucial-components-to-successful-yard-management)
+- [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations)
+- [3 Easy Ways to Improve Yard Visibility Fast](https://datadocks.com/posts/yard-visibility)
+
+### Carrier & Cost Management
+- [How to Use Carrier Scorecards](https://datadocks.com/posts/carrier-scorecards)
+- [Settling Driver Detention Disputes Once and For All](https://datadocks.com/posts/truck-detention-accessorial-fees)
+- [How to Prevent Demurrage & Detention Charges](https://datadocks.com/posts/how-to-avoid-demurrage-and-detention-charges-throughout-the-supply-chain)
+- [Dwell Time in Logistics: What It Is and How to Reduce It](https://datadocks.com/posts/dwell-time-in-trucking)
+- [How to Negotiate Better Contracts with OTR Carriers](https://datadocks.com/posts/negotiate-with-carriers)
+- [Drop Trailer vs Live Unload](https://datadocks.com/posts/drop-trailer-vs-live-unload)
+- [Lumper Service or In-House?](https://datadocks.com/posts/lumper-services)
+- [Is a 99% OTIF Supply Chain Possible?](https://datadocks.com/posts/otif-supply-chain)
+- [Cold Chain Compliance 2026 Guide](https://datadocks.com/posts/cold-chain-compliance)
+- [Best Appointment Practices for Busy DCs](https://datadocks.com/posts/appointment-management-for-distribution-centers)
+
+### Supply Chain & Logistics
+- [Supply Chain KPIs You Need to Track](https://datadocks.com/posts/supply-chain-kpis-you-need-to-track)
+- [What Is OTIF?](https://datadocks.com/posts/what-is-otif-and-why-is-it-valued-as-an-essential-supply-chain-metric)
+- [How to Build Supply Chain Visibility](https://datadocks.com/posts/ultimate-guide-to-supply-chain-visibility-for-industry-professionals)
+- [How to Build a Supply Chain Center of Excellence](https://datadocks.com/posts/what-is-a-supply-chain-center-of-excellence)
+- [Inbound vs Outbound Logistics](https://datadocks.com/posts/inbound-vs-outbound-logistics)
+- [How to Build Your Logistics Tech Stack](https://datadocks.com/posts/how-to-build-your-logistics-tech-stack)
+- [Top Supply Chain Software Companies 2025](https://datadocks.com/posts/top-supply-chain-software-companies-2025)
+- [EDI vs APIs in Logistics](https://datadocks.com/posts/edi-vs-api)
+- [Digital Twin in Logistics](https://datadocks.com/posts/logistics-digital-twin)
+- [Machine Learning in Supply Chains](https://datadocks.com/posts/machine-learning-in-supply-chains)
+
+### Warehouse Management
+- [What is a WMS?](https://datadocks.com/posts/what-is-a-warehouse-management-system-wms)
+- [How to Choose a WMS](https://datadocks.com/posts/how-to-choose-a-warehouse-management-system)
+- [How to Get Around WMS Limitations](https://datadocks.com/posts/how-to-get-around-limitations-warehouse-management-system)
+- [Running a Successful Warehouse in 2026](https://datadocks.com/posts/how-to-overcome-the-top-8-warehouse-management-challenges)
+- [Warehouse Optimization Strategies](https://datadocks.com/posts/warehouse-optimization-strategies)
+- [Warehouse Receiving Best Practices](https://datadocks.com/posts/warehouse-receiving-process)
+- [7 Warehouse KPIs to Track in 2026](https://datadocks.com/posts/warehouse-kpis)
+- [Warehouse Audit Checklist](https://datadocks.com/posts/warehouse-audit-checklist)
+- [Warehouse Safety Checklist](https://datadocks.com/posts/warehouse-safety-checklist)
+- [Practical Ways to Reduce Turnaround Time](https://datadocks.com/posts/practical-ways-to-reduce-turnaround-time)
+
+### Workforce & Operations
+- [The Overtime Trap](https://datadocks.com/posts/the-overtime-trap)
+- [How to Manage Warehouse Employees Effectively](https://datadocks.com/posts/reduced-headcount)
+- [6 Ways to Retain Your Best Warehouse Employees](https://datadocks.com/posts/how-to-reduce-warehouse-turnover)
+- [How to Recruit Warehouse Employees](https://datadocks.com/posts/warehouse-recruiting)
+- [5 Ideas to Boost Warehouse Employee Engagement](https://datadocks.com/posts/warehouse-motivation)
+
+---
+
+## Contact
+- Demo: https://calendly.com/nick-rakovsky/datadocks-demo
+- Phone: (647) 848-8250
+- Email: info@datadocks.com
+- LinkedIn: https://www.linkedin.com/company/datadocks
+- All resources: https://datadocks.com/posts
