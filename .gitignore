@@ -31,4 +31,7 @@ public/_offline_print/*
 !public/_offline_print/.gitkeep
 
 # Local analysis and experiments
-analysis/
+analysis/
+
+# Private internal assets
+internal-marketing/

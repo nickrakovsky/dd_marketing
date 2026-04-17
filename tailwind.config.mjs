@@ -59,6 +59,7 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
 
+        'brand-orange': '#fd4f00',
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
