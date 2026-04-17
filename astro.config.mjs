@@ -31,6 +31,16 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare({
     imageService: 'compile',
+    routes: {
+      extend: {
+        exclude: [
+          { pattern: '/posts/*' },
+          { pattern: '/integrations/*' },
+          { pattern: '/datadocks-features/*' },
+          { pattern: '/benefits/*' },
+        ],
+      },
+    },
   }),
 
   site: 'https://datadocks.com',
