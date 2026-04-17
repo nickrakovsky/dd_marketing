@@ -31,16 +31,6 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare({
     imageService: 'compile',
-    routes: {
-      extend: {
-        exclude: [
-          { pattern: '/posts/*' },
-          { pattern: '/integrations/*' },
-          { pattern: '/datadocks-features/*' },
-          { pattern: '/benefits/*' },
-        ],
-      },
-    },
   }),
 
   site: 'https://datadocks.com',
@@ -74,6 +64,24 @@ export default defineConfig({
           const offlinePath = fileURLToPath(new URL('_offline_print', dir));
           if (fs.existsSync(offlinePath)) {
             fs.rmSync(offlinePath, { recursive: true, force: true });
+          }
+
+          // Cloudflare _routes.json has a 100-entry limit.
+          // Collapse individual /posts/*, /integrations/*, /datadocks-features/* into wildcards.
+          const routesPath = fileURLToPath(new URL('_routes.json', dir));
+          if (fs.existsSync(routesPath)) {
+            const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
+            const wildcardPrefixes = ['/posts/', '/integrations/', '/datadocks-features/', '/benefits/'];
+            routes.exclude = routes.exclude.filter(rule => {
+              return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
+            });
+            wildcardPrefixes.forEach(prefix => {
+              const wildcard = prefix + '*';
+              if (!routes.exclude.includes(wildcard)) {
+                routes.exclude.push(wildcard);
+              }
+            });
+            fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
         }
       }
