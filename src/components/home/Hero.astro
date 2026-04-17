@@ -120,7 +120,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           id="hero-mobile-img"
           src={`${basePath}/images/homepage-screenshot-mobile.webp`}
           srcset={`${basePath}/images/homepage-screenshot-mobile-500.webp 500w, ${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-          sizes="(max-width: 859px) 250vw, 100vw"
+          sizes="(max-width: 500px) 200vw, (max-width: 859px) 250vw, 100vw"
           alt="DataDocks Calendar Interface Mobile"
           width="1724"
           height="655"
@@ -212,6 +212,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       let startY = 0;
       let currentPct = 0;
       const threshold = 7;
+      let cachedFrameWidth = frame.offsetWidth;
       
       // Animation state
       const targetSpeed = 0.05; // target speed per frame
@@ -221,6 +222,8 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       const RESUME_DELAY = 500; // 0.5s short pause before regaining momentum
       const ACCEL_DURATION = 1500; // 1.5s to reach full speed
       let rafId: number;
+
+      window.addEventListener('resize', () => { cachedFrameWidth = frame!.offsetWidth; }, { passive: true });
 
       function animate() {
         const now = Date.now();
@@ -274,8 +277,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
         lastInteractionTime = Date.now();
         const dx = e.clientX - startX;
-        const frameWidth = frame!.offsetWidth;
-        const deltaPct = -(dx / frameWidth) * 100;
+        const deltaPct = -(dx / cachedFrameWidth) * 100;
         let movePct = currentPct + deltaPct;
         movePct = Math.max(0, Math.min(100, movePct));
         img!.style.objectPosition = `${movePct}% 50%`;

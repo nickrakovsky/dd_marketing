@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.jsx';
+import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { authors } from '../data/authors';
 
@@ -38,7 +38,7 @@ const teamMembers = [
   title="About DataDocks | Dock Scheduling Software Since 2013"
   description="Learn about DataDocks — the dock scheduling platform founded in 2013 to help warehouses reduce wait times, digitize operations, and delight carriers. Meet the team behind the software."
 >
-  <Navigation client:idle />
+  <Navigation />
 
   <main class="bg-[#FFF8E9] min-h-screen font-recoleta text-gray-800">
 

@@ -1,0 +1,219 @@
+---
+import datadocksLogo from "../assets/datadocks-logo.svg";
+import datadocksLogoWhite from "../assets/datadocks-logo-white.svg";
+
+interface Props {
+  isOrange?: boolean;
+}
+
+const { isOrange = false } = Astro.props;
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const dropdownItems = [
+  { label: "Increase Capacity", href: `${basePath}/benefits/increase-capacity` },
+  { label: "See Everything", href: `${basePath}/benefits/see-everything` },
+  { label: "Delight Carriers", href: `${basePath}/benefits/delight-carriers` },
+  { label: "Digitize Operations", href: `${basePath}/benefits/digitize-operations` },
+];
+
+const textClass = isOrange
+  ? "text-white hover:text-white/80"
+  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400";
+
+const mobileTextClass = isOrange
+  ? "text-white border-white/20"
+  : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700";
+
+const mobileBg = isOrange
+  ? "bg-[#fd4f00] border-white/20"
+  : "bg-[#FFF8E9] dark:bg-gray-900 border-border dark:border-gray-700";
+
+const desktopBtnClass = isOrange
+  ? "bg-white text-[#fd4f00] hover:bg-black hover:text-white border-transparent hover:border-b-white"
+  : "bg-[#FF5722] hover:bg-black text-white border-transparent hover:border-b-[#FF5722]";
+
+const mobileBtnClass = isOrange
+  ? "bg-white text-[#fd4f00] hover:bg-black hover:text-white border-transparent hover:border-b-white"
+  : "bg-[#FF5722] hover:bg-black text-white border-transparent hover:border-b-[#FF5722]";
+
+const mobileDropdownBg = isOrange
+  ? ""
+  : "bg-[#EFE2D2] dark:bg-gray-800";
+
+const mobileDropdownLinkClass = isOrange
+  ? "text-white/90 border-white/10 hover:text-white"
+  : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700 hover:text-[#665238] dark:hover:text-[#ff7635]";
+---
+
+<nav class={`z-50 transition-colors duration-300 ${isOrange ? "relative bg-transparent" : "relative bg-[#FFF8E9] dark:bg-gray-900"}`} data-nav>
+  <div class="container mx-auto px-0 md:px-8 pt-4 md:pt-12 pb-4 md:pb-6">
+    <div class="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
+
+      <div class="flex items-center flex-shrink min-w-0">
+        <a href="/" class="flex-shrink min-w-0">
+          <img
+            src={datadocksLogo.src}
+            alt="DataDocks Logo"
+            width="201"
+            height="43"
+            class={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${isOrange ? "hidden" : "block dark:hidden"}`}
+          />
+          <img
+            src={datadocksLogoWhite.src}
+            alt="DataDocks Logo"
+            width="201"
+            height="43"
+            class={`h-[clamp(1.5rem,10vw,2.5rem)] sm:h-12 w-auto max-w-[65vw] object-contain ${isOrange ? "block" : "hidden dark:block"}`}
+          />
+        </a>
+      </div>
+
+      <!-- Desktop Nav -->
+      <div class="hidden lg:flex items-center lg:space-x-6 xl:space-x-8 flex-1 justify-end">
+
+        <div class="relative" data-dropdown>
+          <button class={`flex items-center gap-1 transition-colors font-recoleta text-base xl:text-lg ${textClass}`} data-dropdown-trigger>
+            How DataDocks Helps
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="absolute top-full left-0 mt-0 pt-2 w-56 z-50 hidden" data-dropdown-menu>
+            <div class="bg-[#EFE2D2] dark:bg-gray-800 border border-border dark:border-gray-700 rounded-lg overflow-hidden py-2 transition-colors duration-300">
+              {dropdownItems.map((item) => (
+                <a
+                  href={item.href}
+                  class="block px-4 py-1.5 text-foreground dark:text-gray-200 hover:pl-6 hover:translate-x-1 hover:text-[#665238] dark:hover:text-[#ff7635] transition-all duration-300 font-recoleta text-base"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <a href="/#features" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Features</a>
+        <a href={`${basePath}/posts`} class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Resources</a>
+        <a href="/integrations" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Integrations</a>
+        <a href="https://booking.datadocks.com/sessions/new" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Login</a>
+
+        <a
+          href="https://calendly.com/nick-rakovsky/datadocks-demo"
+          target="_blank"
+          rel="noopener noreferrer"
+          class={`inline-flex items-center justify-center whitespace-nowrap h-10 px-6 font-recoleta rounded-none text-base xl:text-lg border-b-4 transition-all shadow-none ${desktopBtnClass}`}
+        >
+          Schedule a Demo
+        </a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button
+        aria-label="Toggle Navigation Menu"
+        class={`lg:hidden shrink-0 p-2 transition-colors duration-300 ${isOrange ? "text-white" : "text-foreground dark:text-gray-200"}`}
+        data-mobile-toggle
+      >
+        <svg class="w-6 h-6" data-icon-menu xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <svg class="w-6 h-6 hidden" data-icon-close xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class={`lg:hidden absolute top-full left-0 right-0 border-t z-50 shadow-xl transition-colors duration-300 hidden ${mobileBg}`} data-mobile-menu>
+      <div class="flex flex-col space-y-0">
+        <div class="flex flex-col">
+          <button
+            class={`flex items-center justify-between px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`}
+            data-mobile-dropdown-trigger
+          >
+            How DataDocks Helps
+            <svg class="w-4 h-4 transition-transform" data-mobile-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class={`${mobileDropdownBg} flex flex-col transition-colors duration-300 hidden`} data-mobile-dropdown>
+            {dropdownItems.map((item) => (
+              <a
+                href={item.href}
+                class={`px-8 py-3 font-recoleta border-b last:border-0 transition-colors duration-300 ${mobileDropdownLinkClass}`}
+                data-mobile-link
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <a href="/#features" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Features</a>
+        <a href={`${basePath}/posts`} class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Resources</a>
+        <a href="/integrations" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Integrations</a>
+        <a href="https://booking.datadocks.com/sessions/new" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Login</a>
+
+        <div class="p-0">
+          <a
+            href="https://calendly.com/nick-rakovsky/datadocks-demo"
+            target="_blank"
+            rel="noopener noreferrer"
+            class={`w-full inline-flex items-center justify-center rounded-none border-b-4 transition-all shadow-none font-recoleta py-8 ${mobileBtnClass}`}
+          >
+            Schedule a Demo
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+  function initNav() {
+    const nav = document.querySelector('[data-nav]');
+    if (!nav) return;
+
+    // Desktop dropdown
+    const dropdown = nav.querySelector('[data-dropdown]');
+    const dropdownMenu = nav.querySelector('[data-dropdown-menu]');
+    let dropdownTimeout: ReturnType<typeof setTimeout>;
+
+    dropdown?.addEventListener('mouseenter', () => {
+      clearTimeout(dropdownTimeout);
+      dropdownMenu?.classList.remove('hidden');
+    });
+    dropdown?.addEventListener('mouseleave', () => {
+      dropdownTimeout = setTimeout(() => {
+        dropdownMenu?.classList.add('hidden');
+      }, 300);
+    });
+
+    // Mobile toggle
+    const mobileToggle = nav.querySelector('[data-mobile-toggle]');
+    const mobileMenu = nav.querySelector('[data-mobile-menu]');
+    const iconMenu = nav.querySelector('[data-icon-menu]');
+    const iconClose = nav.querySelector('[data-icon-close]');
+
+    mobileToggle?.addEventListener('click', () => {
+      const isOpen = !mobileMenu?.classList.contains('hidden');
+      mobileMenu?.classList.toggle('hidden');
+      iconMenu?.classList.toggle('hidden', !isOpen);
+      iconClose?.classList.toggle('hidden', isOpen);
+    });
+
+    // Mobile dropdown
+    const mobileDropdownTrigger = nav.querySelector('[data-mobile-dropdown-trigger]');
+    const mobileDropdown = nav.querySelector('[data-mobile-dropdown]');
+    const mobileChevron = nav.querySelector('[data-mobile-chevron]');
+
+    mobileDropdownTrigger?.addEventListener('click', () => {
+      mobileDropdown?.classList.toggle('hidden');
+      mobileChevron?.classList.toggle('rotate-180');
+    });
+
+    // Close mobile menu on link click
+    nav.querySelectorAll('[data-mobile-link]').forEach((link) => {
+      link.addEventListener('click', () => {
+        mobileMenu?.classList.add('hidden');
+        iconMenu?.classList.remove('hidden');
+        iconClose?.classList.add('hidden');
+      });
+    });
+  }
+
+  initNav();
+  document.addEventListener('astro:after-swap', initNav);
+</script>

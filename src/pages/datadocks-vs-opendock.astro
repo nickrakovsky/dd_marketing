@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from "../layouts/Layout.astro";
-import Navigation from "../components/Navigation.jsx";
+import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 ---
 
@@ -10,7 +10,7 @@ import Footer from "../components/Footer.astro";
   title="DataDocks vs OpenDock"
   description="A comprehensive comparison between DataDocks and OpenDock"
 >
-  <Navigation client:idle />
+  <Navigation />
 
   <main
     class="bg-[#FFF8E9] min-h-screen pt-32 pb-24 prose prose-lg prose-orange max-w-7xl mx-auto px-6 lg:px-8"

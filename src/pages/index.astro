@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.jsx';
+import Navigation from '../components/Navigation.astro';
 import Hero from '../components/home/Hero.astro';
 import Clients from '../components/home/Clients.astro';
 import Benefits from '../components/home/Benefits.astro';
@@ -91,9 +91,9 @@ const optimizedTestimonials = await Promise.all(
 <Layout title="Dock Scheduling Software for Warehouses | DataDocks" disableTransitions>
 
   <link slot="head" rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" imagesrcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" imagesizes="100vw" media="(min-width: 860px)" fetchpriority="high" />
-  <link slot="head" rel="preload" as="image" href="/images/homepage-screenshot-mobile-750.webp" imagesrcset="/images/homepage-screenshot-mobile-500.webp 500w, /images/homepage-screenshot-mobile-750.webp 750w, /images/homepage-screenshot-mobile.webp 1724w" imagesizes="100vw" media="(max-width: 859px)" fetchpriority="high" />
+  <link slot="head" rel="preload" as="image" href="/images/homepage-screenshot-mobile-750.webp" imagesrcset="/images/homepage-screenshot-mobile-500.webp 500w, /images/homepage-screenshot-mobile-750.webp 750w, /images/homepage-screenshot-mobile.webp 1724w" imagesizes="(max-width: 500px) 200vw, (max-width: 859px) 250vw, 100vw" media="(max-width: 859px)" fetchpriority="high" />
 
-  <Navigation client:idle />
+  <Navigation />
 
   <main class="bg-[#FFF8E9] min-h-screen">
 

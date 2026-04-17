@@ -1,6 +1,6 @@
 ---
 // 1. Interactive Components
-import Navigation from "./Navigation"; 
+import Navigation from "./Navigation.astro";
 import FAQ from "./FAQ";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -57,7 +57,7 @@ const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
         </svg>
       </div>
       
-      <Navigation client:idle isOrange={isOrangeNav} />
+      <Navigation isOrange={isOrangeNav} />
       
       <Hero 
         content={content.hero} 
@@ -71,7 +71,7 @@ const optimizedG2 = await getImage({ src: g2Src, format: 'webp', width: 100 });
 
   {!isOrangeNav && (
     <Fragment>
-      <Navigation client:idle isOrange={isOrangeNav} />
+      <Navigation isOrange={isOrangeNav} />
       
       <Hero 
         content={content.hero} 
