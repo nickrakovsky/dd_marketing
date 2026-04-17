@@ -1,7 +1,7 @@
 ---
 // 1. Imports
 import Layout from './Layout.astro';
-import Navigation from '../components/Navigation';
+import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
@@ -54,7 +54,7 @@ const author = getAuthor(frontmatter.author);
 >
   <div class="min-h-screen flex flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
-    <Navigation client:idle />
+    <Navigation />
 
     <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-gray-900 font-recoleta text-gray-800 dark:text-gray-200 transition-colors duration-300">
       

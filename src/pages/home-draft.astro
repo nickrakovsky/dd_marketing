@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.jsx';
+import Navigation from '../components/Navigation.astro';
 import Hero from '../components/home/Hero.astro'; 
 import Clients from '../components/home/Clients.astro';
 import Benefits from '../components/home/Benefits.astro';
@@ -19,7 +19,7 @@ import Footer from '../components/Footer.astro';
   {/* client:idle tells Astro to "turn on" the React code 
       once the initial page load finishes so the dropdown menus work without blocking rendering.
   */}
-  <Navigation client:idle />
+  <Navigation />
 
   <main class="bg-[#FFF8E9] min-h-screen">
     

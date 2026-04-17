@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from "../../layouts/Layout.astro";
-import Navigation from "../../components/Navigation";
+import Navigation from "../../components/Navigation.astro";
 import Footer from "../../components/Footer.astro";
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
@@ -216,7 +216,7 @@ const description =
   />
   <script is:inline src="/css/lite-yt-embed.js" defer></script>
   <div class="min-h-screen flex flex-col">
-    <Navigation client:idle />
+    <Navigation />
 
     <main
       class="flex-grow w-full bg-[#FFF8E9] font-recoleta text-gray-800 pt-24"

@@ -2,7 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation';
+import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import { getFriendlyDate } from '../../utils/dateFormatter';
 
@@ -76,7 +76,7 @@ const getReadTime = (body: string) => {
     <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
     <script is:inline src="/css/lite-yt-embed.js" defer></script>
     <a href="#video-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
-    <Navigation client:idle />
+    <Navigation />
     
     <main class="bg-[#0f0f0f] min-h-screen text-white pt-28 pb-20 font-recoleta">
       <div class="max-w-7xl mx-auto px-4 md:px-8 flex flex-col lg:flex-row gap-8">

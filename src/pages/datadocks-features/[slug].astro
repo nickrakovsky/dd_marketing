@@ -3,7 +3,7 @@ export const prerender = true;
 
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation.jsx';
+import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
 
@@ -33,7 +33,7 @@ const { Content } = await (feature as any).render();
 ---
 
 <Layout title={`${feature.data.title} | DataDocks - Dock Scheduling Features`} description={feature.data.description}>
-  <Navigation client:idle />
+  <Navigation />
   
   <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">

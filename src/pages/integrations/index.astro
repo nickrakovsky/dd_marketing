@@ -3,7 +3,7 @@ export const prerender = true;
 
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation.jsx';
+import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
 import FAQ from '../../components/FAQ.tsx';
@@ -49,7 +49,7 @@ const faqContent = {
   title="Integrations | DataDocks - Extend Your Software"
   description="Connect DataDocks with your existing ERP, WMS, or TMS to streamline your logistics operations."
 >
-  <Navigation client:idle />
+  <Navigation />
 
   <main class="min-h-screen bg-[#FFF8E9]">
     
@@ -80,16 +80,21 @@ const faqContent = {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {integrations.map((app) => {
             // Helper to clean icon path: strips Webflow prefix and handles parentheses/naming issues
-            let cleanIcon = app.data.icon?.split('_').pop() || '';
-            if (cleanIcon.includes('microsoft-sso-(entra)')) {
-              cleanIcon = 'microsoft-sso-entra.svg';
+            let iconPath = '';
+            if (app.data.icon?.startsWith('/')) {
+              iconPath = app.data.icon;
+            } else {
+              let cleanIcon = app.data.icon?.split('_').pop() || '';
+              if (cleanIcon.includes('microsoft-sso-(entra)')) {
+                cleanIcon = 'microsoft-sso-entra.svg';
+              }
+              iconPath = `/images/integrations/${cleanIcon}`;
             }
-            const iconPath = `/images/integrations/${cleanIcon}`;
               
             return (
               <a href={`/integrations/${app.slug}`} class="flex flex-col text-left rounded-xl bg-secondary p-6 shadow-sm transition-all duration-300 hover:shadow-md group">
                 <div class="h-12 w-12 bg-white rounded-md flex items-center justify-center mb-6 overflow-hidden p-1.5 shadow-sm">
-                  {cleanIcon ? (
+                  {iconPath ? (
                     <img class="h-full w-full object-contain" src={iconPath} alt={app.data.title} loading="lazy" />
                   ) : (
                     <div class="h-full w-full bg-gray-50" />

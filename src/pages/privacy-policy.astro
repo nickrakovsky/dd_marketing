@@ -2,13 +2,13 @@
 export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.jsx';
+import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import CTA from '../components/home/CTA.astro';
 ---
 
 <Layout title="Privacy Policy | DataDocks" description="DataDocks Privacy Policy">
-  <Navigation client:idle />
+  <Navigation />
   
   <main class="bg-[#FFF8E9] min-h-screen pt-32 font-sans text-black">
     

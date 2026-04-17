@@ -3,7 +3,7 @@ export const prerender = true;
 
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation.jsx';
+import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
 
@@ -39,7 +39,7 @@ const { Content } = await (integration as any).render();
     }
   </style>
 
-  <Navigation client:idle />
+  <Navigation />
   
   <main class="bg-[#FFF8E9] text-[#000000] relative">
       
