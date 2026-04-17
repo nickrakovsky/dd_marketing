@@ -8,6 +8,10 @@ import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import { getFriendlyDate } from "../../utils/dateFormatter";
 
+// Priority helper
+const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
+const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
+
 // Fetch and sort posts chronologically
 const allPosts = await getCollection("posts");
 const sortedPosts = allPosts.sort((a, b) => {
@@ -33,10 +37,6 @@ const postsByCategory = restPosts.reduce(
   },
   {} as Record<string, typeof restPosts>,
 );
-
-// Category sorting and pinning logic
-const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
-const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
 
 Object.keys(postsByCategory).forEach((category) => {
   let catPosts = postsByCategory[category];
