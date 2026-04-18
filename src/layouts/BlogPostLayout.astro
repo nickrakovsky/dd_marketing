@@ -13,7 +13,7 @@ interface Heading {
   text: string;
 }
 
-const { frontmatter, headings = [] as Heading[] } = Astro.props;
+const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
 const h2Headings = headings.filter((h: Heading) => h.depth === 2);
 
 // 2. Date Formatting
@@ -201,6 +201,23 @@ const author = getAuthor(frontmatter.author);
         </article>
       </div>
     </div>
+
+    {relatedPosts.length > 0 && (
+      <section class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-16">
+        <h2 class="font-bruta uppercase text-[#fd4f00] text-2xl font-bold tracking-wide mb-8">Related Articles</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {relatedPosts.map((post: any) => (
+            <a href={`/posts/${post.slug}`} class="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-[#E5D3B3]">
+              <div class="p-6">
+                <div class="text-xs font-bold uppercase tracking-widest text-[#fd4f00] mb-2">{post.data.category}</div>
+                <h3 class="font-recoleta text-lg font-bold text-gray-900 group-hover:text-[#fd4f00] transition-colors line-clamp-3 mb-3">{post.data.title}</h3>
+                <p class="text-sm text-gray-600 line-clamp-2">{post.data.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     </main>
 

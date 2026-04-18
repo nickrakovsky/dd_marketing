@@ -89,15 +89,7 @@ const graph: any[] = [
     "url": "https://datadocks.com",
     "name": "DataDocks",
     "description": "Dock Scheduling Software for Warehouses",
-    "publisher": { "@id": "https://datadocks.com/#organization" },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://datadocks.com/posts?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "publisher": { "@id": "https://datadocks.com/#organization" }
   },
   // 3. WebPage (Accessibility & Context) — use specific types for known pages
   {
@@ -220,7 +212,28 @@ if (type === 'article' && articleData) {
       ...(authorData.linkedIn ? { "sameAs": [authorData.linkedIn] } : {})
     },
     "publisher": { "@id": "https://datadocks.com/#organization" },
-    "articleSection": articleData.section
+    "articleSection": articleData.section,
+    "inLanguage": "en",
+    "isAccessibleForFree": true
+  });
+}
+
+if (schemaData?.reviews && schemaData.reviews.length > 0) {
+  schemaData.reviews.forEach((review) => {
+    graph.push({
+      "@type": "Review",
+      "reviewBody": review.quote,
+      "author": {
+        "@type": "Person",
+        "name": review.author
+      },
+      "itemReviewed": { "@id": "https://datadocks.com/#software" },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      }
+    });
   });
 }
 
