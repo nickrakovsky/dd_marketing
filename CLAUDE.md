@@ -37,6 +37,7 @@
 - AI citation-optimized opening paragraphs: lead with "X is Y" definition, target 134-167 words
 - `cardAlt` frontmatter field provides alt text for blog card/cover images — never leave empty
 - FAQ schema benefits AI/LLM citation but no longer triggers Google rich results on commercial sites (Aug 2023)
+- YouTube video posts (`/posts/yt-*`) must have a written summary/description in the MDX body — never leave them as embed-only
 
 ### Structured Data
 - JSON-LD uses `@graph` array pattern in Layout.astro
