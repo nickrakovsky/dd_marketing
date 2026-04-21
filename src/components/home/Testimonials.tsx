@@ -20,12 +20,12 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export default function Testimonials({ items }: TestimonialsProps) {
+export default function Testimonials({ items = [] }: TestimonialsProps) {
   const isMobile = useIsMobile();
   
   // For desktop loop, we double the tests to avoid jumpiness on small slide counts
   // But on mobile, we keep it exactly as-is for native scroll behavior
-  const displayTestimonials = !isMobile ? [...items, ...items] : items;
+  const displayTestimonials = !isMobile && items.length > 0 ? [...items, ...items] : items;
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 

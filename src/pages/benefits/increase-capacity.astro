@@ -11,7 +11,9 @@ const schemaData = {
   reviews: capacityContent.testimonial ? [{
     author: capacityContent.testimonial.name,
     quote: capacityContent.testimonial.quote,
-    role: capacityContent.testimonial.role
+    role: capacityContent.testimonial.role,
+    source: capacityContent.testimonial.source,
+    url: capacityContent.testimonial.sourceUrl
   }] : []
 };
 ---

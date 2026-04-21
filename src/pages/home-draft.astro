@@ -12,6 +12,10 @@ import Footer from '../components/Footer.astro';
 // We are keeping this commented out to prevent the "CSS Civil War."
 // If the page looks totally broken later, we can try uncommenting it.
 // import '../styles/webflow-legacy.css';
+
+import { getOptimizedTestimonials } from '../data/testimonials';
+
+const optimizedTestimonials = await getOptimizedTestimonials();
 ---
 
 <Layout title="Dock Scheduling Software for Warehouses | DataDocks" noindex={true}>
@@ -31,7 +35,7 @@ import Footer from '../components/Footer.astro';
 
     <FeatureGrid />
 
-    <Testimonials client:visible />
+    <Testimonials items={optimizedTestimonials} client:visible />
 
     <CTA />
     
