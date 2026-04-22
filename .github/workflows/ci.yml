@@ -33,6 +33,8 @@ jobs:
       #   - Prop type mismatches on components
       - name: Type-check (astro check)
         run: npm run check
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
       # Full production build — same command Cloudflare runs.
       # If this passes locally/in CI, Cloudflare will pass too.
