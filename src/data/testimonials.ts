@@ -14,7 +14,7 @@ import honeyvilleLogo from "@/assets/testimonials/honeyville.webp";
 import isaacPortrait from "@/assets/testimonials/isaacmorley.webp";
 import qualityLogo from "@/assets/testimonials/quality-distribution.webp";
 
-const rawTestimonials = [
+export const rawTestimonials = [
   {
     quote: "We've had great results and the DataDocks team has been accommodating in making the software fit with what we need. It has helped streamline things on our end so much.",
     author: "Carla Thorel, ClearTech",
