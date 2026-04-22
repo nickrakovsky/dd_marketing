@@ -1,7 +1,0 @@
----
-import { getCollection } from 'astro:content';
-const posts = await getCollection('posts');
----
-<html><head><meta name="robots" content="noindex, nofollow" /><title>Debug</title></head><body>
-<pre>{JSON.stringify(posts.map(p => ({ slug: p.slug, contentType: p.data.contentType })), null, 2)}</pre>
-</body></html>

@@ -23,7 +23,7 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# Ignore Webflow export to keep Agent context clean
+# Webflow export (large, not needed in CI)
 webflow-migration/
 
 # Offline print assets - excluded from production build
@@ -35,3 +35,21 @@ analysis/
 
 # Private internal assets
 internal-marketing/
+
+# Scratch / one-off scripts
+scratch/
+
+# Test/prototype HTML files at repo root
+/test*.html
+/index.html
+
+# Loose reference / artefact JSON files at repo root (keep tracked project files)
+/*.json
+!/package.json
+!/tsconfig.json
+
+# Backup files left by editors / agents
+*.bak
+
+# Assets staging folder (used for one-off imports only)
+assets-for-import/
