@@ -87,7 +87,6 @@ export default defineConfig({
       }
     },
     tailwind(), react(), keystatic(), sitemap({
-      filter: (page) => !page.includes('/home-draft') && !page.includes('/debug'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {

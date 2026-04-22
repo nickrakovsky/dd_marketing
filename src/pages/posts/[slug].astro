@@ -1,23 +1,29 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import { getFriendlyDate } from '../../utils/dateFormatter';
+// getFriendlyDate is unused
+// import { getFriendlyDate } from '../../utils/dateFormatter';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts');
-  return postEntries.map(entry => ({
+  return postEntries.map((entry: CollectionEntry<'posts'>) => ({
     params: { slug: entry.slug }, 
     props: { entry },
   }));
 }
 
+interface Props {
+  entry: CollectionEntry<'posts'>;
+}
+
 const { slug } = Astro.params;
-const entry = Astro.props.entry || await getEntry('posts', slug as string);
+const entry: CollectionEntry<'posts'> = (Astro.props as Props).entry || await getEntry('posts', slug as string);
 
 if (!entry) {
   // Fallback for types or edge cases
@@ -37,14 +43,14 @@ const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('en-US', {
 
 const allPosts = await getCollection('posts');
 const categoryPosts = allPosts
-  .filter(p => p.slug !== entry.slug && p.data.category === entry.data.category)
-  .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+  .filter((p: CollectionEntry<'posts'>) => p.slug !== entry.slug && p.data.category === entry.data.category)
+  .sort((a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
 let relatedPosts = categoryPosts.slice(0, 3);
 if (relatedPosts.length < 3) {
   const otherPosts = allPosts
-    .filter(p => p.slug !== entry.slug && !relatedPosts.some(rp => rp.slug === p.slug))
-    .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
+    .filter((p: CollectionEntry<'posts'>) => p.slug !== entry.slug && !relatedPosts.some((rp: any) => rp.slug === p.slug))
+    .sort((a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
     .slice(0, 3 - relatedPosts.length);
   relatedPosts = [...relatedPosts, ...otherPosts];
 }
@@ -119,7 +125,7 @@ const getReadTime = (body: string) => {
         <div class="w-full lg:w-96 flex-shrink-0 flex flex-col gap-6" style="margin-top: 0;">
           <h3 class="text-xl font-bruta uppercase mb-2 text-white">More Resources</h3>
           
-          {relatedPosts.map(post => {
+          {relatedPosts.map((post: any) => {
             const relPostType = post.data.postType?.discriminant || 'article';
             const finalReadTime = post.data.readTime || getReadTime(post.body || '');
             

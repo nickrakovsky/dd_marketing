@@ -1,4 +1,4 @@
-# DataDocks Marketing Site
+# DataDocks Marketing Site (Gemini Instructions)
 
 ## Tech Stack
 - **Framework:** Astro with MDX

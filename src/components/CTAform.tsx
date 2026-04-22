@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
+// Loader2 is unused
+import { /* Loader2, */ ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface CTAFormProps {
   buttonText?: string;

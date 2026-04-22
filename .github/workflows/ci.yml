@@ -1,0 +1,45 @@
+name: CI – Build Check
+
+# Run on every PR and on direct pushes to the two deployment branches.
+# This catches build errors before Cloudflare sees them.
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - staging-v2
+
+jobs:
+  build:
+    name: Type-check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # astro check catches:
+      #   - TypeScript errors in .astro, .tsx, .ts files
+      #   - Missing imports / undefined variables in frontmatter
+      #   - Prop type mismatches on components
+      - name: Type-check (astro check)
+        run: npm run check
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+
+      # Full production build — same command Cloudflare runs.
+      # If this passes locally/in CI, Cloudflare will pass too.
+      - name: Build
+        run: npm run build
+        env:
+          # Provide any public env vars needed at build time
+          PUBLIC_BENTO_SITE_UUID: ${{ secrets.PUBLIC_BENTO_SITE_UUID }}

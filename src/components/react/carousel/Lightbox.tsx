@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// AnimatePresence is unused
+import { motion /*, AnimatePresence */ } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowLeft, Loader2 } from "lucide-react";
 
 interface LightboxProps {

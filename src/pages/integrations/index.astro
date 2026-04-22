@@ -78,8 +78,8 @@ const faqContent = {
     {/* Section 2: Integrations Grid */}
     <div class="pb-24 z-10 relative">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {integrations.map((app) => {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-20">
+          {integrations.map((app: any) => {
             // Helper to clean icon path: strips Webflow prefix and handles parentheses/naming issues
             let iconPath = '';
             if (app.data.icon?.startsWith('/')) {

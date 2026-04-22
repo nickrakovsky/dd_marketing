@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
@@ -9,19 +10,23 @@ import CTA from '../../components/home/CTA.astro';
 
 export async function getStaticPaths() {
   const integrations = await getCollection('integrations');
-  return integrations.map(int => ({
+  return integrations.map((int: CollectionEntry<'integrations'>) => ({
     params: { slug: int.slug },
     props: { integration: int },
   }));
 }
 
-const { integration: propIntegration } = Astro.props;
+interface Props {
+  integration: CollectionEntry<'integrations'>;
+}
+
+const { integration: propIntegration } = Astro.props as Props;
 const { slug } = Astro.params;
 
-let integration = propIntegration;
+let integration: CollectionEntry<'integrations'> | undefined = propIntegration;
 if (!integration) {
   const integrations = await getCollection('integrations');
-  integration = (integrations as any[]).find(i => i.slug === slug);
+  integration = integrations.find((i: CollectionEntry<'integrations'>) => i.slug === slug);
 }
 
 if (!integration) {
@@ -29,7 +34,7 @@ if (!integration) {
   return Astro.rewrite('/404');
 }
 
-const { Content } = await (integration as any).render();
+const { Content } = await integration.render();
 ---
 
 <Layout title={`${integration.data.pageTitle || integration.data.title} | DataDocks Integration`} description={integration.data.description}>
@@ -108,7 +113,7 @@ const { Content } = await (integration as any).render();
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {integration.data.benefits.map((benefit) => (
+              {integration.data.benefits.map((benefit: any) => (
                 <div class="flex flex-col items-start bg-[#f1e3d2] p-10 rounded-[1.25rem] shadow-sm hover:shadow-2xl transition-all border border-[#e3d5c4]/30 group">
                   {benefit.icon && (
                     <div class="mb-10 w-20 h-20 flex items-center justify-center p-4 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">

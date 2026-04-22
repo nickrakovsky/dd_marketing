@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navigation from "../../components/Navigation.astro";
 import Footer from "../../components/Footer.astro";
 import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 import { getFriendlyDate } from "../../utils/dateFormatter";
 
@@ -14,7 +15,7 @@ const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
 
 // Fetch and sort posts chronologically
 const allPosts = await getCollection("posts");
-const sortedPosts = allPosts.sort((a, b) => {
+const sortedPosts = allPosts.sort((a: CollectionEntry<"posts">, b: CollectionEntry<"posts">) => {
   const pA = getPriority(a.data.priority);
   const pB = getPriority(b.data.priority);
   if (pA !== pB) return pB - pA;
@@ -27,7 +28,7 @@ const restPosts = sortedPosts.slice(1);
 
 // Group the rest of the posts by category
 const postsByCategory = restPosts.reduce(
-  (acc, post) => {
+  (acc: Record<string, typeof restPosts>, post: CollectionEntry<"posts">) => {
     const category = post.data.category || "Logistics";
     if (!acc[category]) {
       acc[category] = [];
@@ -43,18 +44,18 @@ Object.keys(postsByCategory).forEach((category) => {
 
   // Separate videos/shorts from articles
   const videos = catPosts.filter(
-    (p) =>
+    (p: CollectionEntry<"posts">) =>
       p.data.postType?.discriminant === "video" ||
       p.data.postType?.discriminant === "short",
   );
   const articles = catPosts.filter(
-    (p) =>
+    (p: CollectionEntry<"posts">) =>
       p.data.postType?.discriminant !== "video" &&
       p.data.postType?.discriminant !== "short",
   );
 
   // Sort articles by priority then date
-  articles.sort((a, b) => {
+  articles.sort((a: CollectionEntry<"posts">, b: CollectionEntry<"posts">) => {
     const pA = getPriority(a.data.priority);
     const pB = getPriority(b.data.priority);
     if (pA !== pB) return pB - pA;
@@ -64,7 +65,7 @@ Object.keys(postsByCategory).forEach((category) => {
   });
 
   // Sort videos: newest first
-  videos.sort((a, b) => {
+  videos.sort((a: CollectionEntry<"posts">, b: CollectionEntry<"posts">) => {
     const dateA = (a.data.updatedDate || a.data.pubDate).valueOf();
     const dateB = (b.data.updatedDate || b.data.pubDate).valueOf();
     return dateB - dateA;
@@ -87,7 +88,7 @@ Object.keys(postsByCategory).forEach((category) => {
       const intermediateVideos = videos.slice(1, -1);
       if (intermediateVideos.length > 0) {
         let insertionPointer = 6;
-        intermediateVideos.forEach((v) => {
+        intermediateVideos.forEach((v: CollectionEntry<"posts">) => {
           if (insertionPointer < result.length - 2) {
             result.splice(insertionPointer, 0, v);
             insertionPointer += 4; // Skip a few articles
@@ -337,7 +338,7 @@ const description =
                     data-carousel
                     style="-ms-overflow-style: none; scrollbar-width: none;"
                   >
-                    {posts.map((post, postIdx) => {
+                    {posts.map((post: any, postIdx: number) => {
                       const type =
                         post.data.postType?.discriminant || "article";
                       // isFeatured must never be true for video or short

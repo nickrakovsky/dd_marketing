@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+// React and useState are unused
+import { useCallback, useEffect, useRef /*, useState */ } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useIsMobile } from '../../hooks/use-mobile';
