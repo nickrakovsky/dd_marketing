@@ -11,7 +11,13 @@
 ## Commands
 - `npm run dev` — local dev server
 - `npm run build` — production build (also copies sitemap-index.xml to sitemap.xml)
+- `npm run check` — **run this before every commit** — astro type-check (catches undefined variables, bad imports, prop mismatches)
 - `npm run preview` — preview production build
+
+> **RULE FOR AI AGENTS:** Always run `npm run check` after making code changes and before committing.
+> If it reports errors, fix them first. A passing `check` means the Cloudflare build will not fail
+> due to TypeScript or import errors.
+
 
 ## Project Structure
 - `src/content/posts/` — Blog posts (MDX files)
