@@ -201,12 +201,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     "yandex.com"
   ]);
 
-  function getDomain(email) {
+  function getDomain(email: string) {
     const parts = String(email || "").trim().toLowerCase().split("@");
     return parts.length === 2 ? parts[1] : "";
   }
 
-  function isBusinessEmail(email) {
+  function isBusinessEmail(email: string) {
     const domain = getDomain(email);
     return !!domain && !blockedDomains.has(domain);
   }
@@ -219,7 +219,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const email = String(emailInput.value || "").trim();
+      const email = String((emailInput as HTMLInputElement).value || "").trim();
       if (errorEl) errorEl.textContent = "";
 
       // 🚫 Block personal emails
@@ -227,12 +227,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         if (errorEl) {
           errorEl.textContent = "Please enter your business email address.";
         }
-        emailInput.focus();
+        (emailInput as HTMLInputElement).focus();
         return;
       }
 
       // ✅ Track
-      const bento = window.bento;
+      const bento = (window as any).bento;
       if (email && bento) {
         bento.identify(email);
         bento.track("Demo Subscriber", { source: window.location.pathname });
@@ -245,7 +245,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       // Redirect (same tab feels cleaner)
       window.location.href = url.toString();
 
-      form.reset();
+      (form as HTMLFormElement).reset();
     });
   }
 })();
@@ -272,7 +272,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       let lastInteractionTime = 0;
       const RESUME_DELAY = 500; // 0.5s short pause before regaining momentum
       const ACCEL_DURATION = 1500; // 1.5s to reach full speed
-      let rafId: number;
+      let _rafId: number;
 
       window.addEventListener('resize', () => { cachedFrameWidth = frame!.offsetWidth; }, { passive: true });
 
@@ -298,10 +298,10 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           // Reset speed when interacting
           currentSpeed = 0;
         }
-        rafId = requestAnimationFrame(animate);
+        _rafId = requestAnimationFrame(animate);
       }
 
-      rafId = requestAnimationFrame(animate);
+      _rafId = requestAnimationFrame(animate);
 
       frame.addEventListener("pointerdown", (e) => {
         startX = e.clientX;
@@ -334,7 +334,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         img!.style.objectPosition = `${movePct}% 50%`;
       });
 
-      frame.addEventListener("pointerup", (e) => {
+      frame.addEventListener("pointerup", (_e) => {
         if (!isDragging) return;
         isDragging = false;
         lastInteractionTime = Date.now();
