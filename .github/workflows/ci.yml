@@ -39,7 +39,7 @@ jobs:
       # Full production build — same command Cloudflare runs.
       # If this passes locally/in CI, Cloudflare will pass too.
       - name: Build
-        run: astro build
+        run: npm run build
         env:
           # Provide any public env vars needed at build time
           PUBLIC_BENTO_SITE_UUID: ${{ secrets.PUBLIC_BENTO_SITE_UUID }}
