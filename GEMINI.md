@@ -31,6 +31,12 @@
 
 ## Conventions
 
+### TypeScript Strict Mode Rules
+- The project runs TypeScript in strict mode (`verbatimModuleSyntax` enabled).
+- **React Components:** You MUST separate type imports from code imports. Use `import type { ... } from '...';` for types.
+- **Astro Components:** Avoid using inline generic types (e.g. `<... >`) inside `.map()` functions within the Astro template (HTML) section, as it breaks Astro's JSX-like parser. Either cast the array properly beforehand or type the parameters as `any`.
+- **CMS Collections:** Always use `CollectionEntry<'collectionName'>` from `astro:content` to strongly type CMS data. If a page type or field falls outside the built-in options, you MUST update `src/content/config.ts` to reflect the new schema instead of falling back to `any`.
+
 ### URLs and Links
 - **No trailing slashes.** Internal links must be `/posts/slug` not `/posts/slug/`
 - Internal blog links use relative format: `/posts/slug` not `https://datadocks.com/posts/slug`
