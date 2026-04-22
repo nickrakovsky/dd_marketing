@@ -1,0 +1,126 @@
+---
+export interface Props {
+  headline: string;
+  buttonText?: string;
+  eventName: string;
+  redirectUrl: string;
+}
+
+const {
+  headline,
+  buttonText = "Download",
+  eventName,
+  redirectUrl,
+} = Astro.props;
+
+const BENTO_UUID = "b4cb9a34a989bcc643714151df7b7154";
+const uid = Math.random().toString(36).slice(2, 9);
+---
+
+<div class="my-8 not-prose lead-magnet-container" id={`lmf-${uid}`}>
+  <div class="success-message hidden w-full bg-[#FFF8EE] border-2 border-black/15 p-6 text-center">
+    <div class="flex items-center justify-center gap-2 text-green-700 font-bold font-recoleta text-lg">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      Check your email for the download!
+    </div>
+    <p class="text-sm text-gray-500 mt-2 font-recoleta">
+      Didn't get it? Check your spam folder or{" "}
+      <a href={redirectUrl} target="_blank" rel="noreferrer" class="underline text-[#fd4f00]">
+        download directly
+      </a>.
+    </p>
+  </div>
+
+  <form
+    class="lead-magnet-form block w-full bg-[#FFF8EE] border-2 border-black/15 shadow-sm p-5 sm:p-6"
+    data-event={eventName}
+    data-redirect={redirectUrl}
+    data-uuid={BENTO_UUID}
+  >
+    <div class="font-recoleta font-bold text-gray-800 text-lg sm:text-xl mb-4">
+      {headline}
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+        class="w-full sm:flex-1 h-12 px-4 bg-white border-2 border-gray-300 text-gray-800 text-base font-recoleta placeholder:text-gray-400 focus:border-[#fd4f00] focus:outline-none transition-colors"
+      />
+      <button
+        type="submit"
+        class="w-full sm:w-auto h-12 px-8 bg-[#FE5000] hover:bg-[#e54700] text-white font-recoleta font-bold text-base shadow-sm transition-colors cursor-pointer whitespace-nowrap"
+      >
+        {buttonText}
+      </button>
+    </div>
+  </form>
+
+  <p class="disclaimer-message block text-center text-sm text-gray-400 mt-3 font-recoleta">
+    You'll also receive occasional updates from us. You can unsubscribe at any time.
+  </p>
+</div>
+
+<script is:inline>
+  (function() {
+    function attachLeadMagnetForms() {
+      document.querySelectorAll('.lead-magnet-form:not([data-bound])').forEach(function(form) {
+        form.setAttribute('data-bound', 'true');
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          var emailInput = form.querySelector('input[name="email"]');
+          var email = emailInput ? emailInput.value : '';
+          var eventName = form.getAttribute('data-event');
+          var redirectUrl = form.getAttribute('data-redirect');
+          var uuid = form.getAttribute('data-uuid');
+
+          var formData = new FormData();
+          formData.append('email', email);
+          if (redirectUrl) formData.append('redirect', redirectUrl);
+          formData.append('fields[source]', window.location.pathname);
+
+          if (uuid && eventName) {
+            fetch('https://track.bentonow.com/forms/' + uuid + '/' + eventName, {
+              method: 'POST',
+              body: formData,
+              mode: 'no-cors',
+            }).catch(function() {});
+          }
+
+          var container = form.closest('.lead-magnet-container');
+          if (container) {
+            form.classList.remove('block');
+            form.classList.add('hidden');
+
+            var disclaimer = container.querySelector('.disclaimer-message');
+            if (disclaimer) {
+              disclaimer.classList.remove('block');
+              disclaimer.classList.add('hidden');
+            }
+
+            var success = container.querySelector('.success-message');
+            if (success) {
+              success.classList.remove('hidden');
+              success.classList.add('block');
+            }
+          }
+
+          if (redirectUrl) {
+            window.open(redirectUrl, '_blank', 'noopener');
+          }
+        });
+      });
+    }
+
+    // Run immediately (handles direct page loads)
+    attachLeadMagnetForms();
+
+    // Re-run after Astro View Transition swaps
+    document.addEventListener('astro:page-load', attachLeadMagnetForms);
+  })();
+</script>

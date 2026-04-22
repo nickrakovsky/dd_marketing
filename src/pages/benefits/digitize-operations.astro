@@ -11,7 +11,9 @@ const schemaData = {
   reviews: defaultContent.testimonial ? [{
     author: defaultContent.testimonial.name,
     quote: defaultContent.testimonial.quote,
-    role: defaultContent.testimonial.role
+    role: defaultContent.testimonial.role,
+    source: defaultContent.testimonial.source,
+    url: defaultContent.testimonial.sourceUrl
   }] : []
 };
 ---

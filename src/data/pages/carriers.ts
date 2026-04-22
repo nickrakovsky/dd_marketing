@@ -86,6 +86,8 @@ export const carriersContent: PageContent = {
     name: "Landon Moreno",
     role: "Logistics Operations Manager, Vee Express, LLC",
     image: landonMoreno,
+    source: "Capterra",
+    sourceUrl: "https://www.capterra.com/p/179266/DataDocks/#Capterra___6885812/",
   },
   benefits: {
     benefits: [

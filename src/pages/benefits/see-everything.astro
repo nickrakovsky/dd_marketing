@@ -11,7 +11,9 @@ const schemaData = {
   reviews: yardappContent.testimonial ? [{
     author: yardappContent.testimonial.name,
     quote: yardappContent.testimonial.quote,
-    role: yardappContent.testimonial.role
+    role: yardappContent.testimonial.role,
+    source: yardappContent.testimonial.source,
+    url: yardappContent.testimonial.sourceUrl
   }] : []
 };
 ---

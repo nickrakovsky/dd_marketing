@@ -134,7 +134,7 @@ if (pathname === '/') {
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.9",
-      "reviewCount": 50,
+      "reviewCount": "50",
       "bestRating": "5",
       "worstRating": "1"
     },
@@ -153,7 +153,38 @@ if (pathname === '/') {
   });
 }
 
-// 5. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
+// 5. Reviews (Social Proof)
+if (schemaData?.reviews) {
+  schemaData.reviews.forEach((review: any) => {
+    graph.push({
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": review.author
+      },
+      "reviewBody": review.quote,
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      ...(review.source ? { 
+        "publisher": { 
+          "@type": "Organization", 
+          "name": review.source 
+        } 
+      } : {}),
+      ...(review.url ? { "url": review.url } : {}),
+      "itemReviewed": { 
+        "@type": "SoftwareApplication",
+        "@id": "https://datadocks.com/#software",
+        "name": "DataDocks"
+      }
+    });
+  });
+}
+
+// 6. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
 const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
 if (breadcrumbItems.length > 0) {
   graph.push({
