@@ -89,15 +89,7 @@ const graph: any[] = [
     "url": "https://datadocks.com",
     "name": "DataDocks",
     "description": "Dock Scheduling Software for Warehouses",
-    "publisher": { "@id": "https://datadocks.com/#organization" },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://datadocks.com/posts?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "publisher": { "@id": "https://datadocks.com/#organization" }
   },
   // 3. WebPage (Accessibility & Context) — use specific types for known pages
   {
@@ -117,55 +109,47 @@ const graph: any[] = [
   },
 ];
 
-// 4. SoftwareApplication — (Google requires visible reviews on the page to show stars)
-const softwareApplication = {
-  "@type": "SoftwareApplication",
-  "@id": "https://datadocks.com/#software",
-  "name": "DataDocks",
-  "applicationCategory": "BusinessApplication",
-  "applicationSubCategory": "Dock Scheduling and Yard Management Software",
-  "operatingSystem": "Web, Cloud-based",
-  "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
-  "publisher": { "@id": "https://datadocks.com/#organization" },
-  "offers": {
-    "@type": "Offer",
-    "availability": "https://schema.org/OnlineOnly",
-    "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
-    "description": "Free demo available. Custom pricing based on facility size.",
-    "priceSpecification": {
-      "@type": "UnitPriceSpecification",
-      "priceCurrency": "USD",
-      "price": "0",
-      "description": "Free demo"
-    }
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "50",
-    "bestRating": "5",
-    "worstRating": "1"
-  }
-};
-
-// Only add full SoftwareApplication to homepage or pages that explicitly need it
-if (pathname === '/' || schemaData?.reviews?.length) {
+// 4. SoftwareApplication — homepage only (Google requires visible reviews on the page)
+if (pathname === '/') {
   graph.push({
-    ...softwareApplication,
-    ...(pathname === '/' ? {
-      "featureList": [
-        "Self-service carrier portal",
-        "Real-time yard visibility",
-        "Automated capacity management",
-        "Smart notifications",
-        "ERP and WMS integration",
-        "Custom business rules engine",
-        "Efficiency reporting and analytics",
-        "Yard management",
-        "Dock scheduling"
-      ],
-      "screenshot": "https://datadocks.com/images/DataDocks-Calendar-Screenshot.webp"
-    } : {})
+    "@type": "SoftwareApplication",
+    "@id": "https://datadocks.com/#software",
+    "name": "DataDocks",
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": "Dock Scheduling and Yard Management Software",
+    "operatingSystem": "Web, Cloud-based",
+    "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/OnlineOnly",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
+      "description": "Free demo available. Custom pricing based on facility size.",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "priceCurrency": "USD",
+        "price": "0",
+        "description": "Free demo"
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "50",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "featureList": [
+      "Self-service carrier portal",
+      "Real-time yard visibility",
+      "Automated capacity management",
+      "Smart notifications",
+      "ERP and WMS integration",
+      "Custom business rules engine",
+      "Efficiency reporting and analytics",
+      "Yard management",
+      "Dock scheduling"
+    ],
+    "screenshot": "https://datadocks.com/images/DataDocks-Calendar-Screenshot.webp"
   });
 }
 
@@ -259,7 +243,28 @@ if (type === 'article' && articleData) {
       ...(authorData.linkedIn ? { "sameAs": [authorData.linkedIn] } : {})
     },
     "publisher": { "@id": "https://datadocks.com/#organization" },
-    "articleSection": articleData.section
+    "articleSection": articleData.section,
+    "inLanguage": "en",
+    "isAccessibleForFree": true
+  });
+}
+
+if (schemaData?.reviews && schemaData.reviews.length > 0) {
+  schemaData.reviews.forEach((review) => {
+    graph.push({
+      "@type": "Review",
+      "reviewBody": review.quote,
+      "author": {
+        "@type": "Person",
+        "name": review.author
+      },
+      "itemReviewed": { "@id": "https://datadocks.com/#software" },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      }
+    });
   });
 }
 

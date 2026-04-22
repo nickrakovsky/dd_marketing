@@ -12,19 +12,19 @@ const supportFaqs = {
   faqs: [
     {
       question: "Do customers/carrier accounts count towards User Accounts?",
-      answer: "No. You get unlimited customer/carrier/vendor accounts."
+      answer: "No. You get unlimited customer/carrier/vendor accounts. Only internal team members who manage schedules and settings count as user accounts."
     },
     {
       question: "Can my customers/carriers see all my appointments?",
-      answer: "No. The only appointments they can see are the appointments tied to their account."
+      answer: "No. Each carrier or customer can only see appointments tied to their own account. Your internal schedule, other carriers' bookings, and facility-wide data remain private."
     },
     {
       question: "I have many different locations. Can DataDocks handle that?",
-      answer: "Yes. DataDocks was designed to scale horizontally across multiple locations."
+      answer: "Yes. DataDocks was designed to scale horizontally across multiple locations. Each facility gets its own dashboard, capacity rules, and reporting while you maintain a unified view across all sites."
     },
     {
       question: "Can I run DataDocks as a standalone product?",
-      answer: "Perfect! DataDocks works great this way."
+      answer: "Absolutely. DataDocks works great as a standalone product with no other systems required. Many facilities start with DataDocks on its own and add integrations later as their needs grow."
     },
     {
       question: "Can I integrate DataDocks with our current systems?",
@@ -32,22 +32,20 @@ const supportFaqs = {
     },
     {
       question: "Can we cancel at any time?",
-      answer: "Yes. There's no minimum contract for DataDocks."
+      answer: "Yes. There's no minimum contract for DataDocks. You can cancel at any time without penalties or long-term commitments."
     }
   ]
 };
 ---
 
-<Layout title="Frequently Asked Questions & Support | DataDocks" description="Find quick answers and get expert help tailored to help you get the most out of DataDocks.">
+<Layout title="Frequently Asked Questions & Support | DataDocks" description="Get answers to common questions about DataDocks dock scheduling software — pricing, integrations, multi-location support, carrier accounts, and cancellation policy." schemaData={{ faq: supportFaqs.faqs }}>
   <Navigation />
 
   <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">
     <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-16">
       <div class="text-center">
         <h1 class="text-5xl font-black text-gray-900 tracking-tight font-recoleta mb-6">
-          <span class="text-[#FF6A13]">Got a question you need answered?</span>
-          <br />
-          Check below for the answers to our most common questions.
+          <span class="text-[#FF6A13]">FAQ</span> & Support
         </h1>
       </div>
     </div>
