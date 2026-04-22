@@ -21,7 +21,7 @@ const integrations = [
   },
   {
     name: "SAP S/4HANA®",
-    icon: "/images/integrations/sap-s4hana.svg",
+    icon: "/images/integrations/sap-s-4hana.svg",
     href: "https://datadocks.com/integrations/sap-s-4hana",
   },
   {
