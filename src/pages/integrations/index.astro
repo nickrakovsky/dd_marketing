@@ -57,10 +57,10 @@ const faqContent = {
     {/* Section 1: Hero */}
     <div class="pt-12 pb-12 relative isolate overflow-hidden">
       {/* Decorative Vectors */}
-      <img src="/images/hero-img-1.svg" class="absolute hidden lg:block top-10 left-[8%] w-32 opacity-90 rotate-[-12deg]" alt="" aria-hidden="true" />
-      <img src="/images/hero-img-2.svg" class="absolute hidden lg:block top-14 right-[12%] w-28 opacity-90 rotate-[15deg]" alt="" aria-hidden="true" />
-      <img src="/images/hero-img-3.svg" class="absolute hidden lg:block bottom-10 right-[8%] w-32 opacity-90 rotate-[-8deg]" alt="" aria-hidden="true" />
-      <img src="/images/hero-img-4.svg" class="absolute hidden lg:block bottom-8 left-[12%] w-28 opacity-90 rotate-[10deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-1.svg" class="absolute hidden min-[650px]:block top-10 left-[4%] md:left-[8%] w-16 md:w-32 opacity-90 rotate-[-12deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-2.svg" class="absolute hidden min-[650px]:block top-14 right-[6%] md:right-[12%] w-14 md:w-28 opacity-90 rotate-[15deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-3.svg" class="absolute hidden min-[650px]:block bottom-10 right-[4%] md:right-[8%] w-16 md:w-32 opacity-90 rotate-[-8deg]" alt="" aria-hidden="true" />
+      <img src="/images/hero-img-4.svg" class="absolute hidden min-[650px]:block bottom-8 left-[6%] md:left-[12%] w-14 md:w-28 opacity-90 rotate-[10deg]" alt="" aria-hidden="true" />
 
       <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         <div class="mx-auto max-w-5xl text-center">
@@ -68,7 +68,7 @@ const faqContent = {
           <h1 class="text-7xl md:text-[6.5rem] font-black tracking-tight font-bruta uppercase text-black leading-[0.9] max-w-4xl mx-auto">
             Extend your <span class="text-primary">ERP, WMS OR TMS</span> with DataDocks
           </h1>
-          <p class="mt-6 text-2xl leading-relaxed text-black max-w-xl mx-auto font-recoleta font-semibold">
+          <p class="mt-6 text-3xl leading-snug text-black max-w-xl mx-auto font-recoleta font-semibold">
             Capture data about goods the moment they enter or leave your facilities.
           </p>
         </div>
@@ -78,7 +78,7 @@ const faqContent = {
     {/* Section 2: Integrations Grid */}
     <div class="pb-24 z-10 relative">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-20">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-20">
           {integrations.map((app: any) => {
             // Helper to clean icon path: strips Webflow prefix and handles parentheses/naming issues
             let iconPath = '';
@@ -93,7 +93,7 @@ const faqContent = {
             }
               
             return (
-              <a href={`/integrations/${app.slug}`} class="flex flex-col text-left rounded-xl bg-secondary p-6 shadow-sm transition-all duration-300 hover:shadow-md group">
+              <div class="flex flex-col text-left rounded-xl bg-secondary p-6 shadow-sm transition-all duration-300 hover:shadow-md">
                 <div class="h-12 w-12 bg-white rounded-md flex items-center justify-center mb-6 overflow-hidden p-1.5 shadow-sm">
                   {iconPath ? (
                     <img class="h-full w-full object-contain" src={iconPath} alt={app.data.title} loading="lazy" />
@@ -109,18 +109,18 @@ const faqContent = {
                     {app.data.description}
                   </p>
                   
-                  <div class="mt-10 flex items-center text-lg font-bold text-primary group-hover:text-black tracking-wider transition-colors font-recoleta">
+                  <a href={`/integrations/${app.slug}`} class="mt-10 flex items-center text-lg font-bold text-primary hover:text-black tracking-wider transition-colors font-recoleta">
                     Learn More
                     <span class="ml-2 font-light text-2xl leading-none">&#8250;</span>
-                  </div>
+                  </a>
                 </div>
-              </a>
+              </div>
             );
           })}
         </div>
 
         <div class="mt-20 text-center">
-          <p class="text-lg font-recoleta font-medium leading-relaxed text-black/80 max-w-4xl mx-auto">
+          <p class="text-sm font-recoleta font-normal leading-relaxed text-[#6F6452] max-w-6xl mx-auto">
             Oracle and NetSuite are registered trademarks of Oracle and/or its affiliates. <br class="hidden sm:block" />
             SAP S/4HANA and SAP Business ByDesign are the trademarks or registered trademarks of SAP SE or its affiliates in Germany and in other countries.
           </p>

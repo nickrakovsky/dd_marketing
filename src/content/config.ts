@@ -59,8 +59,8 @@ const integrationsCollection = defineCollection({
         description: z.string().optional(),
         pubDate: z.coerce.date().optional(),
         icon: z.string().optional(),
-        overview: z.string().optional(),
-        subheader: z.string().optional(),
+        heroBody: z.string().optional(),
+        advantagesTitle: z.string().optional(),
         disclaimer: z.string().optional(),
         benefits: z.array(z.object({
             title: z.string().optional(),

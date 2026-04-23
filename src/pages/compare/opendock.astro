@@ -2,14 +2,14 @@
 import Layout from "../../layouts/Layout.astro";
 import Navigation from "../../components/Navigation.astro";
 import Footer from "../../components/Footer.astro";
+import CTA from "../../components/home/CTA.astro";
 
 const sections = [
   {
     id: "training",
     heading: "Training and Support",
-    image: { src: "/images/6697eaf1ef0175dfdcf7e88c_DD-Comic.webp", alt: "Training and support illustration" },
     items: [
-      { title: "Ease of Setup", odScore: 15, ddScore: 100 },
+      { title: "Ease of Setup", odScore: 100, ddScore: 100 },
       { title: "Carrier Onboarding", odScore: 30, ddScore: 100 },
       { title: "Ongoing Support", odScore: 30, ddScore: 100 },
     ],
@@ -21,10 +21,9 @@ const sections = [
   {
     id: "ui",
     heading: "User Interface",
-    image: { src: "/images/661d172d591e8a0d7adb03e3_2.webp", alt: "User interface illustration" },
     items: [
-      { title: "Manage Multiple Facilities", odScore: 15, ddScore: 100 },
-      { title: "User Permissions", odScore: 30, ddScore: 100 },
+      { title: "Manage Multiple Facilities", odScore: 100, ddScore: 100 },
+      { title: "User Permissions", odScore: 60, ddScore: 100 },
       { title: "Scalability", odScore: 30, ddScore: 100 },
     ],
     summary: {
@@ -35,11 +34,10 @@ const sections = [
   {
     id: "who",
     heading: "Who is it for?",
-    image: { src: "/images/661d181970c22886b1a17fa8_3.webp", alt: "Who is it for illustration" },
     items: [
-      { title: "National Carriers", odScore: 15, ddScore: 100 },
+      { title: "National Carriers", odScore: 100, ddScore: 100 },
       { title: "Local Carriers", odScore: 30, ddScore: 100 },
-      { title: "Integration with Other Systems", odScore: 30, ddScore: 100 },
+      { title: "Integration with Other Systems", odScore: 50, ddScore: 100 },
     ],
     summary: {
       dd: { title: "DataDocks focusses on dock scheduling.", body: "We thrive on those nuances and tailor the system to match your setup." },
@@ -49,11 +47,10 @@ const sections = [
   {
     id: "unexpected",
     heading: "Dealing with the Unexpected",
-    image: { src: "/images/661d1b8e591e8a0d7adf484a_4-p-2000.webp", alt: "Dealing with the unexpected illustration" },
     items: [
-      { title: "Reliability", odScore: 15, ddScore: 100 },
-      { title: "Edge Cases", odScore: 30, ddScore: 100 },
-      { title: "Rescheduling", odScore: 30, ddScore: 100 },
+      { title: "Reliability", odScore: 100, ddScore: 100 },
+      { title: "Edge Cases", odScore: 10, ddScore: 100 },
+      { title: "Rescheduling", odScore: 50, ddScore: 100 },
     ],
     summary: {
       dd: { title: "DataDocks is made for dealing with real-life challenges.", body: "Whether it's rescheduling canceled appointments or taking care of spot trailers." },
@@ -63,11 +60,10 @@ const sections = [
   {
     id: "data",
     heading: "Data and Accountability",
-    image: { src: "/images/661d1c92fdc2884d165589b2_5-p-2000.webp", alt: "Data and accountability illustration" },
     items: [
-      { title: "Easy-to-use", odScore: 15, ddScore: 100 },
-      { title: "Reporting", odScore: 30, ddScore: 100 },
-      { title: "Customizability", odScore: 30, ddScore: 100 },
+      { title: "Easy-to-use", odScore: 100, ddScore: 100 },
+      { title: "Reporting", odScore: 20, ddScore: 100 },
+      { title: "Customizability", odScore: 20, ddScore: 100 },
     ],
     summary: {
       dd: { title: "If you're preparing for a data-driven future, DataDocks is for you.", body: "Whether it's logging unscheduled trucks or editing past appointments, we make it easy." },
@@ -84,7 +80,7 @@ const sections = [
 >
   <Navigation />
 
-  <main class="bg-[#FFF8E9] min-h-screen">
+  <main class="bg-[#FFF8E9] min-h-screen overflow-x-hidden">
 
     <!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
     <section class="vs-hero">
@@ -95,7 +91,6 @@ const sections = [
 
         <div class="vs-hero__content">
 
-          {/* Single H1 with 3 styled spans — datadocks and OpenDock same size */}
           <h1 class="vs-hero__h1">
             <span class="vs-hero__datadocks">datadocks</span>
             <span class="vs-hero__second-line">
@@ -104,7 +99,6 @@ const sections = [
             </span>
           </h1>
 
-          <!-- Verified: Recoleta 17.36px/20.83px, max-width 486px -->
           <div class="vs-hero__body">
             <p class="vs-hero__body-text">
               How to Choose the Right Dock Scheduling Software?<br /><br />
@@ -112,10 +106,23 @@ const sections = [
               Any more than that, and we think you'll appreciate what
               <strong class="vs-hero__orange">DataDocks</strong> can do.
             </p>
-            <!-- Verified: flex 38px, bg #EFE2D2, black button, Recoleta -->
-            <form class="vs-hero__form" method="get" action="/demo">
-              <input class="vs-hero__form-input" type="email" name="email" id="hero-email" placeholder="Enter your email" aria-label="Enter your email" required />
-              <button class="vs-hero__form-btn" type="submit">Schedule a Demo</button>
+            <!-- Hero CTA — matches homepage CTA component style -->
+            <form
+              id="vs-hero-form"
+              class="vs-hero__form"
+              method="get"
+              action="/demo"
+            >
+              <input
+                class="vs-hero__form-input"
+                type="email"
+                name="email"
+                id="hero-email"
+                placeholder="Enter your email"
+                aria-label="Enter your email"
+                required
+              />
+              <button class="vs-hero__form-btn" type="submit">Get Free Demo</button>
             </form>
           </div>
 
@@ -137,15 +144,25 @@ const sections = [
                 <h3 class="gauge-item__title">{item.title}</h3>
                 <div class="gauge-group">
                   <div class="gauge">
-                    <span class="gauge__label">Opendock</span>
-                    <div class="gauge__track">
-                      <div class="gauge__fill js-gauge" style={`--score: ${item.odScore}%`}></div>
+                    <div class="gauge__label-row">
+                      <img src="/images/3.svg" alt="Opendock" class="gauge__logo" />
+                      <span class="gauge__label">Opendock</span>
+                    </div>
+                    <div class="gauge__track-wrap">
+                      <div class="gauge__track">
+                        <div class="gauge__fill js-gauge" style={`--score: ${item.odScore}%`}></div>
+                      </div>
                     </div>
                   </div>
                   <div class="gauge">
-                    <span class="gauge__label">DataDocks</span>
-                    <div class="gauge__track">
-                      <div class="gauge__fill gauge__fill--dd js-gauge" style={`--score: ${item.ddScore}%`}></div>
+                    <div class="gauge__label-row">
+                      <img src="/images/logo-3.svg" alt="DataDocks" class="gauge__logo" />
+                      <span class="gauge__label">DataDocks</span>
+                    </div>
+                    <div class="gauge__track-wrap">
+                      <div class="gauge__track">
+                        <div class="gauge__fill gauge__fill--dd js-gauge" style={`--score: ${item.ddScore}%`}></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -154,18 +171,14 @@ const sections = [
 
             <div class="vs-summary js-reveal">
               <div class="vs-summary__card">
-                <div class="vs-summary__icon-box vs-summary__icon-box--od">
-                  <img src="/images/3.svg" alt="Opendock" class="vs-summary__icon" />
-                </div>
+                <img src="/images/3.svg" alt="Opendock" class="vs-summary__icon" />
                 <div>
                   <p class="vs-summary__title">{section.summary.od.title}</p>
                   <p class="vs-summary__body" set:html={section.summary.od.body}></p>
                 </div>
               </div>
               <div class="vs-summary__card">
-                <div class="vs-summary__icon-box vs-summary__icon-box--dd">
-                  <img src="/images/logo-3.svg" alt="DataDocks" class="vs-summary__icon" />
-                </div>
+                <img src="/images/logo-3.svg" alt="DataDocks" class="vs-summary__icon" />
                 <div>
                   <p class="vs-summary__title">{section.summary.dd.title}</p>
                   <p class="vs-summary__body">{section.summary.dd.body}</p>
@@ -184,17 +197,8 @@ const sections = [
       <a href="https://www.g2.com/products/opendock/reviews/opendock-review-8691077" target="_blank" rel="noopener" class="vs-footnote"><sup>2</sup> Review posted to g2.com, October 2023</a>
     </div>
 
-    <!-- ═══ CTA SECTION ══════════════════════════════════════════════════ -->
-    <!-- TODO: pending verified computed styles -->
-    <section class="vs-cta">
-      <div class="vs-cta__inner">
-        <h2 class="vs-cta__heading">Let us help you decide if DataDocks is a good fit for your needs</h2>
-        <form class="vs-hero__form" method="get" action="/demo">
-          <input class="vs-hero__form-input" type="email" name="email" id="cta-email" placeholder="Enter your email" aria-label="Enter your email" required />
-          <button class="vs-hero__form-btn" type="submit">Schedule a Demo</button>
-        </form>
-      </div>
-    </section>
+    <!-- ═══ CTA SECTION — identical to homepage ═════════════════════════ -->
+    <CTA />
 
   </main>
 
@@ -203,34 +207,42 @@ const sections = [
 
 <style>
   /* ══ HERO ═══════════════════════════════════════════════════════════════ */
-  /* No overflow:hidden — images intentionally bleed into next section */
-  .vs-hero { display: block; padding-top: 34.72px; padding-bottom: 34.72px; position: relative; }
+  .vs-hero {
+    display: block;
+    padding-top: 34.72px;
+    padding-bottom: 0; /* Allow deco images to bleed into next section */
+    position: relative;
+    /* No overflow:hidden — deco images intentionally bleed downward */
+  }
+  /* Clip horizontal overflow at the page level via main */
+  main { overflow-x: hidden; }
   .vs-hero__inner { position: relative; }
 
-  /* Bigger images, bleeding below hero */
+  /* Deco images — fade at bottom via mask, bleed slightly below hero */
   .vs-hero__deco {
     position: absolute;
     top: 11.83px;
-    width: 25%; /* Verified */
-    overflow: clip;
+    width: 28%;
     pointer-events: none;
+    /* Fade out at bottom — start fade at 70%, fully transparent at 100% */
+    -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
   }
-  .vs-hero__deco--left  { left: 0;  height: 666.422px; }
-  .vs-hero__deco--right { right: 0; height: 702.906px; }
+  .vs-hero__deco--left  { left: 0;  height: 820px; }
+  .vs-hero__deco--right { right: 0; height: 860px; }
 
-  /* Clean flex col, scalable space-between, fluid margin */
   .vs-hero__content {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    gap: clamp(40px, 6vw, 80px); /* Scalable outer gap */
-    margin-inline: clamp(24px, 10vw, 150px);
+    gap: clamp(32px, 5vw, 72px);
+    margin-inline: clamp(24px, 12vw, 180px);
     z-index: 2;
   }
 
-  /* Single H1 — flex column so datadocks sits above vs+OpenDock row */
+  /* H1 — slightly smaller than before */
   .vs-hero__h1 {
     display: flex;
     flex-direction: column;
@@ -238,72 +250,85 @@ const sections = [
     margin: 0;
   }
 
-  /* datadocks span — Scales fluidly with the viewport */
   .vs-hero__datadocks {
     font-family: 'Bruta', sans-serif;
-    font-size: clamp(60px, 7.8vw, 140px); 
+    /* Fluid: 52px at 400px viewport → 110px at 1400px viewport */
+    font-size: clamp(52px, calc(52px + (110 - 52) * ((100vw - 400px) / (1400 - 400))), 110px);
     font-weight: 800;
     color: rgb(253, 79, 0);
     letter-spacing: -1px;
-    line-height: 0.95; /* Tighter line-height to reduce vertical gap */
+    line-height: 0.85;
     text-transform: uppercase;
     text-align: center;
     display: block;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
 
-  /* Second line: vs. + OpenDock row */
   .vs-hero__second-line {
     display: flex;
     flex-direction: row;
-    align-items: baseline; /* CRITICAL: baseline alignment fixes the "hanging vs." issue */
+    align-items: baseline;
     justify-content: center;
-    padding-right: clamp(16px, 3.5vw, 50px); /* Scalable optical offset */
-    margin-top: -0.1em; /* Cleanly pulls the second line up to fix the excessive gap */
+    padding-right: clamp(10px, 2.5vw, 40px);
+    margin-top: -0.15em;
   }
 
-  /* vs. span */
   .vs-hero__vs {
     font-family: 'Bruta', sans-serif;
-    font-size: clamp(28px, 3.5vw, 60px);
+    /* Fluid: 24px at 400px → 48px at 1400px */
+    font-size: clamp(24px, calc(24px + (48 - 24) * ((100vw - 400px) / (1400 - 400))), 48px);
     font-weight: 800;
     line-height: 1;
     color: rgb(0, 0, 0);
     -webkit-font-smoothing: antialiased;
   }
 
-  /* OpenDock span */
   .vs-hero__opendock {
     font-family: 'Bruta', sans-serif;
-    font-size: clamp(60px, 7.8vw, 140px);
+    font-size: clamp(52px, calc(52px + (110 - 52) * ((100vw - 400px) / (1400 - 400))), 110px);
     font-weight: 800;
     letter-spacing: -1px;
     line-height: 1;
     text-transform: uppercase;
     color: rgb(0, 0, 0);
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
 
-  /* Fluid max-width and fluid gap between text and form */
+  /* Hero body */
   .vs-hero__body {
-    max-width: clamp(340px, 40vw, 550px);
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: clamp(32px, 5.6vw, 80px); /* Increases the gap fluidly */
+    gap: clamp(24px, 3.5vw, 48px);
   }
 
   .vs-hero__body-text {
     font-family: 'Recoleta', sans-serif;
-    font-size: clamp(18px, 1.98vw, 28px);
-    font-weight: 500;  /* Dropped from 600 to thin it out visually */
-    line-height: 1.25; 
+    font-weight: 700;
+    line-height: 1.35;
     color: rgb(0, 0, 0);
     margin: 0;
     text-align: center;
-    -webkit-font-smoothing: antialiased; /* Renders thinner on macOS */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero Body Typography Adjustments */
+  /* Default (<575px): snaps to a narrower column, gradually expanding */
+  @media (max-width: 574px) {
+    .vs-hero__body { max-width: clamp(280px, 90vw, 380px); }
+    .vs-hero__body-text { font-size: clamp(16px, 4.5vw, 20px); }
+  }
+
+  /* 575px to 949px: scale down to ensure lines are not broken */
+  @media (min-width: 575px) and (max-width: 949px) {
+    .vs-hero__body { max-width: 100%; }
+    .vs-hero__body-text { font-size: clamp(16px, 2.5vw, 22px); }
+  }
+
+  /* >= 950px: font large enough so "Scheduling Software?" is line 2 */
+  @media (min-width: 950px) {
+    .vs-hero__body { max-width: 480px; }
+    .vs-hero__body-text { font-size: clamp(22px, 2.5vw, 26px); }
   }
 
   .vs-hero__orange {
@@ -311,32 +336,46 @@ const sections = [
     font-weight: inherit;
   }
 
-  /* Verified: flex 38px, bg #EFE2D2 */
-  .vs-hero__form { display: flex; align-items: center; height: 38px; width: 100%; background-color: rgb(239, 226, 210); }
-  .vs-hero__form-input { flex: 1; height: 100%; border: none; background: transparent; padding-inline: 17.3583px; font-family: 'Recoleta', sans-serif; font-size: 17.3583px; color: rgb(0, 0, 0); outline: none; }
+  /* Hero CTA form — taller, matching homepage CTA proportions */
+  .vs-hero__form {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+  }
+  .vs-hero__form-input {
+    flex: 1;
+    height: 3.35rem;
+    border: none;
+    background: rgb(239, 226, 210);
+    padding-inline: 18px;
+    font-family: 'Recoleta', sans-serif;
+    font-size: 19px;
+    color: rgb(0, 0, 0);
+    outline: none;
+    transition: padding-left 0.3s ease;
+  }
+  .vs-hero__form-input:hover { padding-left: 24px; }
   .vs-hero__form-input::placeholder { color: rgb(0, 0, 0); opacity: 0.5; }
 
-  /* Verified: 167.92px wide, black bg, white, Recoleta, no radius, transition 0.6s */
   .vs-hero__form-btn {
     flex-shrink: 0;
-    width: 167.922px;
-    height: 38px;
-    padding: 6.075px 17.3583px;
+    height: 3.35rem;
+    padding: 0 24px;
     font-family: 'Recoleta', sans-serif;
-    font-size: 17.3583px;
-    font-weight: 400;
+    font-size: 17px;
+    font-weight: 500;
+    /* Title case — no uppercase transform */
     color: rgb(255, 255, 255);
     background-color: rgb(0, 0, 0);
     border: none;
     border-radius: 0;
     cursor: pointer;
-    transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     white-space: nowrap;
   }
   .vs-hero__form-btn:hover { background-color: rgb(253, 79, 0); }
 
   /* ══ COMPARISON SECTIONS ════════════════════════════════════════════════ */
-  /* Verified: block, max-width 1400px, padding 69.43px 63.55px */
   .vs-section { display: block; }
   .vs-section__inner {
     max-width: 1400px;
@@ -344,99 +383,223 @@ const sections = [
     padding: 69.43px 63.55px;
     display: flex;
     flex-direction: column;
-    gap: 34.72px; /* replaces spacer-medium divs */
+    gap: 34.72px;
   }
 
-  /* Verified: Bruta, 54.68px/49.21px, uppercase, center, black */
+  /* H2 — desktop size kept, but clamped for mobile */
   .vs-section__heading {
     font-family: 'Bruta', sans-serif;
-    font-size: 54.6787px;
+    font-size: clamp(28px, 4.5vw, 54px);
     font-weight: 800;
-    line-height: 49.2109px;
+    line-height: 1.05;
     text-align: center;
     text-transform: uppercase;
     color: rgb(0, 0, 0);
     margin: 0;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
 
-  /* Verified: display grid, 3 cols, gap 69.43px, row 2 for summary */
+  /* 3-col grid on desktop */
   .vs-section__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 69.43px;
+    gap: 52px;
   }
 
-  /* Verified: flex col, justify-start */
   .gauge-item { display: flex; flex-direction: column; justify-content: flex-start; }
 
-  /* Verified: Recoleta SemiBold 600, 23.87px/28.64px */
+  /* Subhead — fluid sizing to stay smaller than H2 */
   .gauge-item__title {
     font-family: 'Recoleta', sans-serif;
-    font-size: 23.8677px;
-    font-weight: 600;
-    line-height: 28.6413px;
+    font-size: clamp(20px, 3.5vw, 27px);
+    font-weight: 700;
+    line-height: 1.25;
     color: rgb(0, 0, 0);
-    margin: 0 0 17.36px 0; /* replaces spacer-small */
+    margin: 0 0 18px 0;
   }
 
-  .gauge-group { display: flex; flex-direction: column; gap: 12px; }
+  .gauge-group { display: flex; flex-direction: column; gap: 16px; }
+  .gauge { display: flex; flex-direction: column; gap: 6px; }
 
-  .gauge { display: flex; flex-direction: column; gap: 8.68px; }
+  /* Label row with inline logo */
+  .gauge__label-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-  /* Verified: Recoleta 17.36px/20.83px */
-  .gauge__label { font-family: 'Recoleta', sans-serif; font-size: 17.3583px; line-height: 20.83px; color: rgb(0, 0, 0); }
+  /* Logo in gauge — no box, no border, clean */
+  .gauge__logo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
 
-  /* Gauge track — rounded and fluid height */
-  .gauge__track { height: 14px; background-color: rgb(239, 226, 210); width: 100%; overflow: hidden; border-radius: 99px; }
+  /* Body label text — slightly larger */
+  .gauge__label {
+    font-family: 'Recoleta', sans-serif;
+    font-size: 19px;
+    line-height: 1.3;
+    color: rgb(0, 0, 0);
+  }
 
-  /* Animated fill — starts at 0, animates to --score on scroll */
-  .gauge__fill { height: 100%; width: 0; background-color: #52D1A2; transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); border-radius: 99px; }
+  /* Track wrap — adds the outline offset around the bar */
+  .gauge__track-wrap {
+    padding: 2px;
+    border: 1.5px solid rgba(0, 0, 0, 0.18);
+    border-radius: 99px;
+  }
+
+  /* Track itself — sits inside the outline */
+  .gauge__track {
+    height: 14px;
+    background-color: rgb(239, 226, 210);
+    width: 100%;
+    overflow: hidden;
+    border-radius: 99px;
+  }
+
+  /* Animated fill */
+  .gauge__fill {
+    height: 100%;
+    width: 0;
+    background-color: #52D1A2;
+    /* ease-out — no overshoot/spring bounce */
+    transition: width 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+    border-radius: 99px;
+  }
   .gauge__fill--dd { background-color: rgb(253, 79, 0); }
   .gauge__fill.is-animated { width: var(--score); }
 
-  /* Summary row — spans all 3 columns, styled background box */
-  .vs-summary { 
-    grid-column: 1 / -1; 
-    display: flex; 
-    gap: 48px; 
-    background-color: #EFE2D2; 
-    padding: 48px; 
+  /* Summary row */
+  .vs-summary {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 48px;
+    background-color: #EFE2D2;
+    padding: 48px;
     border-radius: 40px;
     margin-top: 16px;
   }
-  .vs-summary__card { flex: 1; display: flex; gap: 20px; align-items: flex-start; }
-  
-  .vs-summary__icon-box {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    flex-shrink: 0;
-  }
-  .vs-summary__icon-box--od { background-color: #FFFFFF; border: 1px solid rgba(0,0,0,0.1); }
-  .vs-summary__icon-box--dd { background-color: rgb(253, 79, 0); }
+  .vs-summary__card { flex: 1; display: flex; gap: 16px; align-items: flex-start; }
 
-  .vs-summary__icon { width: 28px; height: 28px; object-fit: contain; }
-  .vs-summary__title { font-family: 'Recoleta', sans-serif; font-size: 19px; font-weight: 600; line-height: 1.2; color: rgb(0, 0, 0); margin: 0 0 10px 0; }
-  .vs-summary__body { font-family: 'Recoleta', sans-serif; font-size: 18px; line-height: 1.3; color: rgb(0, 0, 0); margin: 0; }
+  /* Icon box removed — logos are full SVGs, displayed directly */
+  .vs-summary__icon {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-top: 2px; /* Slight optical alignment with text */
+  }
+
+  /* Summary text — scaled up */
+  .vs-summary__title {
+    font-family: 'Recoleta', sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: rgb(0, 0, 0);
+    margin: 0 0 10px 0;
+  }
+  .vs-summary__body {
+    font-family: 'Recoleta', sans-serif;
+    font-size: 19px;
+    line-height: 1.4;
+    color: rgb(0, 0, 0);
+    margin: 0;
+  }
 
   /* ══ FOOTNOTES ══════════════════════════════════════════════════════════ */
-  .vs-footnotes { max-width: 1400px; margin-inline: auto; padding: 0 63.55px 69.43px; display: flex; flex-direction: column; gap: 8px; }
+  .vs-footnotes {
+    max-width: 1400px;
+    margin-inline: auto;
+    padding: 0 63.55px 69.43px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
   .vs-footnote { font-family: 'Recoleta', sans-serif; font-size: 14px; color: rgb(0, 0, 0); opacity: 0.6; }
-
-  /* ══ CTA ════════════════════════════════════════════════════════════════ */
-  /* TODO: verify computed styles for CTA section */
-  .vs-cta { background-color: rgb(0, 0, 0); padding: 69.43px 63.55px; }
-  .vs-cta__inner { max-width: 800px; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: 32px; }
-  .vs-cta__heading { font-family: 'Bruta', sans-serif; font-size: 40px; font-weight: 800; text-transform: uppercase; text-align: center; color: rgb(255, 255, 255); margin: 0; -webkit-font-smoothing: antialiased; }
 
   /* ══ SCROLL REVEAL ══════════════════════════════════════════════════════ */
   .js-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .js-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+  /* ══ MOBILE ═════════════════════════════════════════════════════════════ */
+  @media (max-width: 574px) {
+    /* Stack form vertically on very small screens */
+    .vs-hero__form {
+      flex-direction: column;
+    }
+    .vs-hero__form-input {
+      width: 100%;
+      text-align: center;
+      height: 3.35rem;
+      min-height: 3.35rem;
+    }
+    .vs-hero__form-btn {
+      width: 100%;
+      height: 3.35rem;
+      min-height: 3.35rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    /* Hide deco images on mobile — they overflow and look awkward */
+    .vs-hero__deco { display: none; }
+
+    /* Tighten hero margins on mobile */
+    .vs-hero__content {
+      margin-inline: 20px;
+      gap: 28px;
+    }
+
+    /* Section padding reduction */
+    .vs-section__inner {
+      padding: 40px 20px;
+      gap: 24px;
+    }
+
+    /* Stack grid to single column on mobile */
+    .vs-section__grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    /* Summary stacks vertically */
+    .vs-summary {
+      flex-direction: column;
+      gap: 28px;
+      padding: 28px 20px;
+      border-radius: 20px;
+    }
+
+    /* Footnotes padding */
+    .vs-footnotes {
+      padding: 0 20px 40px;
+    }
+  }
+
+  /* ══ TABLET (768–1023px) ════════════════════════════════════════════════ */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .vs-hero__deco { width: 20%; }
+    .vs-hero__deco--left  { height: 500px; }
+    .vs-hero__deco--right { height: 520px; }
+
+    .vs-hero__content { margin-inline: clamp(80px, 15vw, 140px); }
+    .vs-hero__body { max-width: 100%; }
+
+    .vs-section__inner { padding: 48px 32px; }
+
+    /* 2-col grid on tablet */
+    .vs-section__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+    }
+
+    /* Summary goes full-width under the 2-col items */
+    .vs-summary { flex-direction: column; gap: 28px; }
+  }
 </style>
 
 <script>
@@ -458,4 +621,24 @@ const sections = [
 
   gauges.forEach((el) => observer.observe(el));
   reveals.forEach((el) => observer.observe(el));
+
+  // Hero form — open Calendly
+  (function() {
+    const form = document.getElementById('vs-hero-form') as HTMLFormElement | null;
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement | null;
+        const email = emailInput?.value;
+        const calendlyUrl = 'https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722';
+        const bento = (window as any).bento;
+        if (email && bento) {
+          bento.identify(email);
+          bento.track('Demo Subscriber', { source: window.location.pathname });
+        }
+        window.open(calendlyUrl, '_blank', 'noopener');
+        form.reset();
+      });
+    }
+  })();
 </script>

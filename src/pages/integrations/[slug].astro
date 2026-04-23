@@ -34,7 +34,7 @@ if (!integration) {
   return Astro.rewrite('/404');
 }
 
-const { Content } = await integration.render();
+await integration.render();
 ---
 
 <Layout title={`${integration.data.pageTitle || integration.data.title} | DataDocks Integration`} description={integration.data.description}>
@@ -82,53 +82,87 @@ const { Content } = await integration.render();
                   </span>
               </h1>
 
-              {/* Unified Recoleta Body Copy using Overview as the longer-form copy */}
-              <p class="font-recoleta text-2xl md:text-4xl font-semibold text-gray-800 max-w-4xl mx-auto leading-[1.15] tracking-tight">
-                  {integration.data.overview}
+          {/* Unified Recoleta Body Copy using heroBody as the longer-form copy */}
+              <p class="font-recoleta text-lg md:text-2xl font-semibold text-gray-800 max-w-4xl mx-auto leading-[1.2] tracking-tight">
+                  {integration.data.heroBody}
               </p>
           </div>
 
-          {/* Centered CTA Section */}
-          <div class="w-full flex justify-center mt-12 bg-[#FFF8E9]/60 backdrop-blur-sm rounded-xl py-4">
-              <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                  <a href="https://calendly.com/nick-rakovsky/datadocks-demo" class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-black text-white hover:bg-brand-orange transition-all hover:-translate-y-1 uppercase tracking-widest shadow-2xl">
-                      Schedule a Demo
-                  </a>
-                  <a href="#advantages" class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-white text-gray-900 border-2 border-gray-900 hover:bg-gray-50 transition-all hover:-translate-y-1 uppercase tracking-widest">
-                      Learn More
-                  </a>
-              </div>
+          {/* Standard Hero CTA Form */}
+          <div class="w-full flex justify-center mt-12 relative z-30">
+            <form
+              id="integration-hero-form"
+              class="flex flex-col sm:flex-row items-stretch justify-center gap-0 bg-[#EFE2D2] sm:bg-transparent"
+            >
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
+                class="!h-12 sm:!h-14 w-full sm:w-[22rem] px-4 text-center sm:text-left sm:hover:pl-5 sm:focus:pl-5 transition-all duration-300 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none"
+                required
+              />
+              <button
+                type="submit"
+                class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#FE5000] hover:bg-black text-white font-medium transition-colors duration-500 whitespace-nowrap tracking-wide text-lg flex items-center justify-center font-recoleta [text-shadow:0px_1px_2px_rgba(0,0,0,0.4)] hover:[text-shadow:none]"
+              >
+                Schedule a Demo
+              </button>
+            </form>
           </div>
         </div>
       </section>
 
+      <script>
+        (function () {
+          const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+          const form = document.getElementById("integration-hero-form") as HTMLFormElement | null;
+      
+          if (form) {
+            form.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement | null;
+              const email = emailInput?.value;
+      
+              const bento = (window as any).bento;
+              if (email && bento) {
+                bento.identify(email);
+                bento.track("Demo Subscriber", { source: window.location.pathname });
+              }
+              window.open(calendlyUrl, "_blank", "noopener");
+              form.reset();
+            });
+          }
+        })();
+      </script>
+
       {/* Integration Advantages Section */}
       {integration.data.benefits && integration.data.benefits.length > 0 && (
-        <section id="advantages" class="py-24 bg-white border-y border-[#efe2d2] relative z-20">
+        <section id="advantages" class="py-24 relative z-20">
           <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-20">
-              <h2 class="font-bruta text-6xl md:text-7xl uppercase tracking-tight">
-                  Integration <span class="text-brand-orange">Advantages</span>
+            <div class="text-center mb-16">
+              <h2 class="font-bruta text-6xl md:text-7xl uppercase tracking-tight max-w-5xl mx-auto">
+                  {integration.data.advantagesTitle || "Integration Advantages"}
               </h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
               {integration.data.benefits.map((benefit: any) => (
-                <div class="flex flex-col items-start bg-[#f1e3d2] p-10 rounded-[1.25rem] shadow-sm hover:shadow-2xl transition-all border border-[#e3d5c4]/30 group">
+                <div class="flex flex-col items-start bg-[#f1e3d2] p-8 rounded-[1.25rem] shadow-sm hover:shadow-2xl transition-all border border-[#e3d5c4]/30 group">
                   {benefit.icon && (
-                    <div class="mb-10 w-20 h-20 flex items-center justify-center p-4 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">
+                    <div class="mb-8 w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                       <img src={benefit.icon} alt="" class="w-full h-full object-contain" />
                     </div>
                   )}
-                  <h3 class="text-3xl font-bold font-recoleta text-gray-900 mb-5 leading-tight tracking-tight">{benefit.title}</h3>
+                  <h3 class="text-2xl font-bold font-recoleta text-gray-900 mb-4 leading-tight tracking-tight">{benefit.title}</h3>
                   <p class="text-gray-700 leading-relaxed font-medium text-lg lg:text-xl opacity-90">{benefit.text}</p>
                 </div>
               ))}
             </div>
 
             {integration.data.disclaimer && (
-              <div class="mt-24 pt-12 border-t border-[#efe2d2] text-center">
-                  <p class="text-[10px] md:text-xs text-[#8d785c] uppercase tracking-[0.25em] font-bold opacity-60 max-w-3xl mx-auto leading-loose">
+              <div class="mt-20 text-center">
+                  <p class="text-sm font-recoleta font-normal leading-relaxed text-[#6F6452] max-w-6xl mx-auto">
                       {integration.data.disclaimer}
                   </p>
               </div>
@@ -136,18 +170,6 @@ const { Content } = await integration.render();
           </div>
         </section>
       )}
-
-      {/* Content Section */}
-      <section class="py-24 bg-[#FFF8E9] relative z-20">
-          <div class="max-w-4xl mx-auto px-6 lg:px-8">
-              <div class="prose prose-xl prose-orange mx-auto 
-                  prose-headings:font-bruta prose-headings:uppercase prose-headings:tracking-tight 
-                  prose-p:text-gray-800 prose-p:leading-relaxed prose-p:font-medium
-                  prose-li:text-gray-800 prose-li:font-medium">
-                  <Content />
-              </div>
-          </div>
-      </section>
 
     </main>
 
