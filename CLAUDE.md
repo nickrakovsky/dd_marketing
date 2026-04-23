@@ -50,6 +50,7 @@
 - `cardAlt` frontmatter field provides alt text for blog card/cover images — never leave empty
 - FAQ schema benefits AI/LLM citation but no longer triggers Google rich results on commercial sites (Aug 2023)
 - YouTube video posts (`/posts/yt-*`) must have a written summary/description in the MDX body — never leave them as embed-only
+- **Never link to competitor websites** (OpenDock, C3 Reservations, Transplace, etc.). Mentioning competitors by name is fine for comparison content, but never give them a backlink. Use neutral third-party sources (G2, Capterra, industry publications) if a citation is needed.
 
 ### Structured Data
 - JSON-LD uses `@graph` array pattern in Layout.astro
