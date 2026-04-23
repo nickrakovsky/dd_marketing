@@ -124,10 +124,25 @@ await integration.render();
               const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement | null;
               const email = emailInput?.value;
       
-              const bento = (window as any).bento;
-              if (email && bento) {
-                bento.identify(email);
-                bento.track("Demo Subscriber", { source: window.location.pathname });
+              if (email) {
+                const bento = (window as any).bento;
+                if (bento) {
+                  bento.identify(email);
+                  bento.track("Demo Subscriber", { source: window.location.pathname });
+                } else {
+                  let attempts = 0;
+                  const interval = setInterval(() => {
+                    const b = (window as any).bento;
+                    if (b) {
+                      clearInterval(interval);
+                      b.identify(email);
+                      b.track("Demo Subscriber", { source: window.location.pathname });
+                    } else if (++attempts >= 20) {
+                      clearInterval(interval);
+                      console.warn("Bento SDK not loaded; tracking failed. Check for missing PUBLIC_BENTO_SITE_UUID in .env");
+                    }
+                  }, 200);
+                }
               }
               window.open(calendlyUrl, "_blank", "noopener");
               form.reset();

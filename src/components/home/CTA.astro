@@ -50,10 +50,25 @@
     if (form) {
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var email = (form.querySelector('input[name="email"]') || {}).value;
-        if (email && window.bento) {
-          window.bento.identify(email);
-          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          if (window.bento) {
+            window.bento.identify(email);
+            window.bento.track('Demo Subscriber', { source: window.location.pathname });
+          } else {
+            var attempts = 0;
+            var interval = setInterval(function() {
+              if (window.bento) {
+                clearInterval(interval);
+                window.bento.identify(email);
+                window.bento.track('Demo Subscriber', { source: window.location.pathname });
+              } else if (++attempts >= 20) {
+                clearInterval(interval);
+                console.warn("Bento SDK not loaded; tracking failed. Check for missing PUBLIC_BENTO_SITE_UUID in .env");
+              }
+            }, 200);
+          }
         }
         window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
