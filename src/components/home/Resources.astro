@@ -75,7 +75,7 @@ const featured = featuredSlugs
       {featured.map((post: CollectionEntry<'posts'>) => (
         <a
           href={`/posts/${post.slug}`}
-          class="resource-card group flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(254,80,0,0.15)] transition-all duration-300 hover:-translate-y-1"
+          class="resource-card group flex flex-col bg-[#FFF8E9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(254,80,0,0.18)] transition-all duration-300 hover:-translate-y-1"
         >
           {/* Cover image */}
           {post.data.cardImage && (
@@ -109,7 +109,7 @@ const featured = featuredSlugs
             <p class="font-recoleta text-[15px] text-gray-600 leading-relaxed flex-grow mb-5 line-clamp-3">
               {post.data.description}
             </p>
-            <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+            <div class="flex items-center justify-between pt-4 border-t border-[#EFE2D2] mt-auto">
               <span class="font-recoleta text-xs uppercase tracking-wider text-gray-500">
                 {post.data.author}
               </span>
