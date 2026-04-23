@@ -1,9 +1,6 @@
 ---
 import { Mail, Phone, Linkedin, Youtube, X } from "lucide-react";
-import { Image } from "astro:assets";
 // import capterraBadge from "@/assets/capterra-logo.png";
-import soc2Badge from "@/assets/soc2-badge.png";
-import canadaBadge from "@/assets/canada-badge.png";
 
 const MAIN_SITE = "";
 
@@ -185,10 +182,11 @@ const columns = {
           rel="noopener noreferrer"
           class="hover:scale-105 transition-transform duration-300"
         >
-          <Image
-            src={soc2Badge}
+          <img
+            src="/images/soc2-badge.png"
             alt="AICPA SOC2 Certified"
-            width={120}
+            width="120"
+            height="119"
             loading="lazy"
             class="h-24 w-auto object-contain"
           />
@@ -204,10 +202,11 @@ const columns = {
           <div class="sr-only">
             Funded by the Federal Economic Development Agency for Southern Ontario
           </div>
-          <Image
-            src={canadaBadge}
+          <img
+            src="/images/canada-badge.png"
             alt="Government of Canada"
-            width={600}
+            width="600"
+            height="43"
             loading="lazy"
             class="h-10 w-auto object-contain"
           />
