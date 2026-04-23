@@ -70,8 +70,17 @@ const integrationsCollection = defineCollection({
     })
 });
 
+const settingsCollection = defineCollection({
+    type: 'data',
+    schema: z.object({
+        headline: z.string(),
+        featuredPosts: z.array(z.string()),
+    })
+});
+
 export const collections = {
     'posts': postsCollection,
     'features': featuresCollection,
     'integrations': integrationsCollection,
+    'settings': settingsCollection,
 };
