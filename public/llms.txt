@@ -41,9 +41,12 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Data Validation](https://datadocks.com/datadocks-features/data-validation): Built-in validation for appointments and inputs
 - [Notifications](https://datadocks.com/datadocks-features/notifications): Automatic alerts and real-time notifications
 - [Live Editing](https://datadocks.com/datadocks-features/live-editing): Real-time collaborative schedule editing
-- [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Cloud-based access from any device
+- [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Cloud-based access from any device — native iOS and Android apps available
 - [Integration](https://datadocks.com/datadocks-features/integration): WMS/TMS/ERP integration capabilities
 - [Documentation](https://datadocks.com/datadocks-features/documentation): Product documentation and developer guides
+
+### Mobile App
+- [DataDocks Mobile App](https://datadocks.com/mobile-app): Native iOS and Android app for dock scheduling and yard management on the go
 
 ### Benefits
 - [Increase Capacity](https://datadocks.com/benefits/increase-capacity): Eliminate bottlenecks and slash overtime costs with optimized appointment slots

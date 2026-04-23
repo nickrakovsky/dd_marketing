@@ -40,6 +40,11 @@
 ### URLs and Links
 - **No trailing slashes.** Internal links must be `/posts/slug` not `/posts/slug/`
 - Internal blog links use relative format: `/posts/slug` not `https://datadocks.com/posts/slug`
+
+### External Links
+- Never link to competitor websites (dock scheduling, yard management, or WMS software vendors)
+- OK to link to: news/media, academic/research sources, government sites, industry associations, and non-competing software (e.g. ERP, BI tools)
+- When citing a statistic or concept, prefer linking to the original research source, not a competitor's blog post about it
 - Links to product/feature pages (datadocks.com/benefits/, datadocks.com/datadocks-features/) are absolute since they're served from Webflow
 
 ### SEO
