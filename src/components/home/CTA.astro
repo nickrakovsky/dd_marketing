@@ -1,16 +1,6 @@
----
-// src/components/home/CTA.astro
----
-
 <section class="py-10 md:py-[3.25rem] bg-[#FF5507]">
   <div class="container mx-auto px-6 md:px-8">
     <div class="w-full text-center h-full flex flex-col justify-center items-center">
-      
-      {/* 
-        Fully compliant, clean DOM layout.
-        Horizontal centralization handled via inline-block text-center wrapper on mobile/tablet, 
-        and text-left left-flow exclusively on widescreen elements!
-      */}
       <div class="inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
         <h2 class="inline font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9] align-middle">
           Find out for yourself what DataDocks can do<br class="hidden min-[1020px]:inline" />
@@ -25,7 +15,7 @@
           <input
             type="email"
             name="email"
-            placeholder="Enter your email"
+            placeholder="Enter your work email"
             style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
             class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none transition-all duration-300 sm:hover:pl-6 sm:focus:pl-6"
             required
@@ -37,26 +27,77 @@
             Get Free Demo
           </button>
         </form>
-      </div>
 
+        <p
+          id="cta-bento-form-error"
+          class="mt-3 text-sm text-[#FFF8E9] min-[1020px]:ml-5"
+          role="alert"
+          aria-live="polite"
+        ></p>
+      </div>
     </div>
   </div>
 </section>
 
 <script is:inline>
-  (function() {
-    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    var form = document.getElementById('cta-bento-form');
-    if (form) {
-      form.addEventListener('submit', function(e) {
+  (function () {
+    var calendlyBase = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+
+    var blockedDomains = new Set([
+      "gmail.com",
+      "yahoo.com",
+      "outlook.com",
+      "hotmail.com",
+      "live.com",
+      "msn.com",
+      "icloud.com",
+      "me.com",
+      "aol.com",
+      "protonmail.com",
+      "proton.me",
+      "gmx.com",
+      "mail.com",
+      "yandex.com"
+    ]);
+
+    function getDomain(email) {
+      var parts = String(email || "").trim().toLowerCase().split("@");
+      return parts.length === 2 ? parts[1] : "";
+    }
+
+    function isBusinessEmail(email) {
+      var domain = getDomain(email);
+      return !!domain && !blockedDomains.has(domain);
+    }
+
+    var form = document.getElementById("cta-bento-form");
+    var emailInput = form ? form.querySelector('input[name="email"]') : null;
+    var errorEl = document.getElementById("cta-bento-form-error");
+
+    if (form && emailInput) {
+      form.addEventListener("submit", function (e) {
         e.preventDefault();
-        var email = (form.querySelector('input[name="email"]') || {}).value;
+
+        var email = String(emailInput.value || "").trim();
+        if (errorEl) errorEl.textContent = "";
+
+        if (!isBusinessEmail(email)) {
+          if (errorEl) {
+            errorEl.textContent = "Please enter your business email address.";
+          }
+          emailInput.focus();
+          return;
+        }
+
         if (email && window.bento) {
           window.bento.identify(email);
-          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+          window.bento.track("Demo Subscriber", { source: window.location.pathname });
         }
-        window.open(calendlyUrl, '_blank', 'noopener');
-        form.reset();
+
+        var url = new URL(calendlyBase);
+        url.searchParams.set("email", email);
+
+        window.location.href = url.toString();
       });
     }
   })();
