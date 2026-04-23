@@ -37,6 +37,12 @@ const postsCollection = defineCollection({
         ]).default({ discriminant: 'article', value: {} }),
         // Priority for sorting or hiding, but not displayed to end user.
         priority: z.string().optional(),
+        // FAQ array for FAQPage schema. Content must mirror the visible FAQ
+        // section in the MDX body (Google requires visible matching content).
+        faq: z.array(z.object({
+            question: z.string(),
+            answer: z.string(),
+        })).optional(),
     })
 });
 

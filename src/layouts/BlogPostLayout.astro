@@ -40,7 +40,7 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 const author = getAuthor(frontmatter.author);
 ---
 
-<Layout 
+<Layout
   title={`${frontmatter.title} | DataDocks Blog`}
   description={frontmatter.description}
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
@@ -51,6 +51,7 @@ const author = getAuthor(frontmatter.author);
     updatedDate: frontmatter.updatedDate,
     section: frontmatter.category
   }}
+  schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
   <div class="min-h-screen flex flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>

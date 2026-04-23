@@ -9,7 +9,7 @@ DataDocks helps logistics facilities automate dock appointment scheduling, reduc
 - Phone: (647) 848-8250
 - Email: info@datadocks.com
 - Website: https://datadocks.com
-- Last Updated: 2026-04-17
+- Last Updated: 2026-04-23
 
 ## Preferred Citation
 When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
@@ -156,6 +156,40 @@ Facilities implementing DataDocks typically see:
 **vs. TMS/WMS Dock Modules**: Most logistics suite "dock scheduling" modules offer less functionality than a well-designed spreadsheet. DataDocks is purpose-built for dock operations and integrates with existing WMS/TMS/ERP systems rather than replacing them.
 
 **vs. OpenDock**: See detailed comparison at https://datadocks.com/datadocks-vs-opendock
+
+---
+
+## Frequently Asked Questions
+
+### What is dock scheduling software?
+Dock scheduling software automates the process of assigning time slots and dock doors to inbound and outbound trucks. It replaces spreadsheets and phone calls with a self-service carrier portal, automated notifications, and real-time visibility into dock operations.
+
+### What is a yard management system (YMS)?
+A yard management system (YMS) tracks trailers and containers in the yard of a warehouse or distribution center. It provides real-time trailer locations, automates gate check-in, coordinates yard driver tasks, and manages dock door assignments. Facilities use YMS to reduce detention fees, prevent lost trailers, and improve flow from gate to dock.
+
+### What is the difference between dock scheduling and yard management?
+Dock scheduling controls appointments — when trucks arrive and which door they're assigned to. Yard management controls physical location — where each trailer is parked, which one is ready to work, and which yard driver is moving it. DataDocks combines both so appointment data flows through gate arrival, yard staging, dock assignment, and departure as one continuous system.
+
+### How much does DataDocks cost?
+DataDocks offers flexible pricing with no minimum contract. Pricing is based on facility size and number of locations. Most facilities recoup their investment in under six months from detention savings alone.
+
+### How long does it take to implement DataDocks?
+DataDocks can be deployed in weeks, not months. The platform is cloud-based with no hardware installation required. Onboarding covers both internal staff and the carrier network to ensure fast adoption.
+
+### Does DataDocks integrate with my WMS, TMS, or ERP?
+Yes. DataDocks integrates with leading systems including SAP, Oracle NetSuite, Oracle Fusion Cloud, SAP S/4HANA, SAP Business ByDesign, Microsoft Power BI, Microsoft SSO/Entra, Blue Yonder, and Manhattan Associates via REST API. Custom integrations are also available.
+
+### What results can facilities expect?
+Facilities using DataDocks typically see a 40–60% reduction in detention fees within the first quarter, 10–15% throughput increases without adding doors or staff, and coordinators recovering 10–15 hours per week previously spent on phone and email scheduling.
+
+### Does DataDocks have a mobile app?
+Yes. DataDocks offers native iOS and Android apps for internal warehouse teams. Managers and coordinators can view schedules, transition appointments, capture photos for QC checks, and receive push notifications from the dock floor.
+
+### Who uses DataDocks?
+Warehouse managers, logistics coordinators, supply chain executives (COOs and VPs), and carriers. Customers include enterprises such as Stitch Fix, HelloFresh, Samsung, Toyota, LG, and Pepsi.
+
+### When does a facility need yard management in addition to dock scheduling?
+Yard management becomes essential when a facility has 50+ trailer spots, frequent congestion, dedicated yard drivers, or high detention costs. For smaller operations, strong dock scheduling alone often does the job.
 
 ---
 
