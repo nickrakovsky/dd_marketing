@@ -1,0 +1,139 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import CTA from '../components/home/CTA.astro';
+import FAQ from '../components/FAQ.tsx';
+
+const appFaqs = {
+  frequentlyAskedQuestionsText: "Mobile App FAQ",
+  faqs: [
+    {
+      question: "Is the DataDocks mobile app free?",
+      answer: "Yes. The iOS and Android apps are included with every DataDocks subscription at no extra cost. Download them from the App Store or Google Play and log in with your existing credentials."
+    },
+    {
+      question: "What can I do on the mobile app that I can't do on the web?",
+      answer: "The app puts appointment details, photo capture, and QC checklists in your hand without needing a laptop. Push notifications mean you catch schedule changes and late arrivals the moment they happen, not when you walk back to your desk."
+    },
+    {
+      question: "Who is the mobile app for?",
+      answer: "The app is for internal warehouse and dock teams — managers, coordinators, supervisors, and receiving staff. It is not a carrier-facing or driver-facing tool. Carriers continue to use the web-based carrier portal to book and manage their appointments."
+    },
+    {
+      question: "Can I take photos directly in the app?",
+      answer: "Yes. You can capture photos of loads, trailer conditions, or documentation issues and attach them directly to an appointment record. This is especially useful for QC inspections and noncompliance documentation."
+    },
+    {
+      question: "Which devices are supported?",
+      answer: "The app runs on iPhones (iOS 15+) and Android phones (Android 10+). It also works on iPads and Android tablets for supervisors who want a larger screen on the dock floor."
+    }
+  ]
+};
+---
+
+<Layout
+  title="Dock Scheduling Mobile App for iOS & Android | DataDocks"
+  description="Manage dock schedules and yard operations from the floor with the DataDocks mobile app for iOS and Android. Photo capture, QC checklists, push notifications, and real-time appointment data."
+  schemaData={{ faq: appFaqs.faqs }}
+>
+  <Navigation />
+
+  <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">
+    <div class="max-w-5xl mx-auto px-6 lg:px-8">
+
+      <div class="text-center mb-16">
+        <h1 class="font-bruta text-5xl md:text-7xl font-black uppercase tracking-tight text-black leading-[0.9] mb-6">
+          Dock Scheduling <span class="text-[#FE5000]">In Your Pocket</span>
+        </h1>
+        <p class="font-recoleta text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+          The DataDocks mobile app gives warehouse managers and coordinators full appointment visibility, photo capture, and QC tools from the dock floor. Available on iOS and Android.
+        </p>
+        <p class="font-recoleta text-base text-gray-500 max-w-2xl mx-auto">
+          Don't want another app? The full DataDocks platform works in any mobile browser too.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+          <a
+            href="https://apps.apple.com/app/datadocks/id6747725100"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 bg-black text-white font-semibold px-8 py-4 rounded-xl hover:bg-gray-800 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            App Store
+          </a>
+          <a
+            href="https://play.google.com/store/apps/details?id=com.datadocks.datadocks"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 bg-black text-white font-semibold px-8 py-4 rounded-xl hover:bg-gray-800 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c-.36-.17-.58-.54-.58-.96V1.2c0-.42.22-.79.58-.96l11.07 11.76L3.18 23.76zM16.23 14l-2.5-2.64L16.23 8.72l3.21 1.85c.72.41.72 1.44 0 1.86L16.23 14zM13.73 11.36L5.27 2.35l10.96 6.37-2.5 2.64zM5.27 21.65l8.46-9.01 2.5 2.64-10.96 6.37z"/></svg>
+            Google Play
+          </a>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 mb-20">
+        <div class="bg-white rounded-2xl p-8 shadow-sm">
+          <h2 class="font-bruta text-2xl uppercase text-black mb-4">Appointment Management</h2>
+          <ul class="space-y-3 font-recoleta text-gray-700">
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> View and edit dock schedules from the floor</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Pull up full appointment details — PO, carrier, load type — instantly</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Transition appointments between statuses with a tap</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Get push notifications for late arrivals and schedule changes</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Approve or reject appointment requests on the go</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-2xl p-8 shadow-sm">
+          <h2 class="font-bruta text-2xl uppercase text-black mb-4">Yard & Dock Visibility</h2>
+          <ul class="space-y-3 font-recoleta text-gray-700">
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Monitor yard status and trailer locations in real time</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Check dock door availability without walking the floor</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> See which trailers are staged, in progress, or ready to ship</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Coordinate yard moves and dock assignments from anywhere on site</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-2xl p-8 shadow-sm">
+          <h2 class="font-bruta text-2xl uppercase text-black mb-4">QC & Documentation</h2>
+          <ul class="space-y-3 font-recoleta text-gray-700">
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Take photos of loads, trailers, and damage — attached directly to the appointment</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Run QC and noncompliance checks at the door</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Document issues in real time instead of writing them up later</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> All records sync to the web platform automatically</li>
+            <li class="flex gap-3"><span class="text-[#FE5000] font-bold">&#10003;</span> Build a photo trail for carrier disputes and claims</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mb-20">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-center text-black mb-12">
+          Why Go <span class="text-[#FE5000]">Mobile</span>?
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <p class="font-bruta text-5xl text-[#FE5000] mb-2">0</p>
+            <p class="font-recoleta text-gray-700">trips back to the office to check an appointment</p>
+          </div>
+          <div class="text-center">
+            <p class="font-bruta text-5xl text-[#FE5000] mb-2">2min</p>
+            <p class="font-recoleta text-gray-700">average response time to schedule changes with push notifications</p>
+          </div>
+          <div class="text-center">
+            <p class="font-bruta text-5xl text-[#FE5000] mb-2">100%</p>
+            <p class="font-recoleta text-gray-700">of appointment data available at the dock door</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <FAQ content={appFaqs} client:visible />
+
+  </main>
+
+  <CTA />
+  <Footer />
+</Layout>

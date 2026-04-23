@@ -75,7 +75,7 @@ Real-time collaborative schedule editing. Multiple users can view and modify the
 - URL: https://datadocks.com/datadocks-features/live-editing
 
 ### Access Anywhere
-Cloud-based access from any device — desktop, tablet, or mobile. No software installation required. Works from the office, the dock floor, or remotely.
+Cloud-based access from any device — desktop, tablet, or native iOS and Android mobile apps. Manage dock schedules and yard operations from the office, the dock floor, or on the road. The mobile apps provide push notifications, real-time schedule updates, and check-in capabilities for drivers and coordinators.
 - URL: https://datadocks.com/datadocks-features/access-anywhere
 
 ### Integration
@@ -86,6 +86,10 @@ WMS/TMS/ERP integration capabilities. Connect DataDocks with SAP, NetSuite, Orac
 ### Documentation
 Product documentation and developer guides for API integration and system configuration.
 - URL: https://datadocks.com/datadocks-features/documentation
+
+### Mobile App (iOS & Android)
+Native mobile apps for internal warehouse teams. Manage dock schedules, view full appointment details, transition appointment statuses, and receive push notifications from the dock floor. Capture photos of loads, trailer conditions, and documentation issues directly into appointment records for QC inspections and noncompliance documentation. Available on the App Store and Google Play at no extra cost with any DataDocks subscription. The app is for internal staff only — carriers continue to use the web-based carrier portal.
+- URL: https://datadocks.com/mobile-app
 
 ---
 
