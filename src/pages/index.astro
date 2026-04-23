@@ -9,6 +9,7 @@ import Benefits from '../components/home/Benefits.astro';
 import FeatureGrid from '../components/home/FeatureGrid.astro';
 import WhatIsDockScheduling from '../components/home/WhatIsDockScheduling.astro';
 import Testimonials from '../components/home/Testimonials.tsx';
+import Resources from '../components/home/Resources.astro';
 import FAQ from '../components/home/FAQ.astro';
 import CTA from '../components/home/CTA.astro';
 import Footer from '../components/Footer.astro';
@@ -38,6 +39,8 @@ const optimizedTestimonials = await getOptimizedTestimonials();
     <WhatIsDockScheduling />
 
     <Testimonials items={optimizedTestimonials} client:visible />
+
+    <Resources />
 
     <FAQ />
 

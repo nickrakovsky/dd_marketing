@@ -4,11 +4,39 @@ export const prerender = true;
 import Layout from "../layouts/Layout.astro";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
+
+const comparisonFaqs = [
+  {
+    question: "What is the difference between DataDocks and OpenDock?",
+    answer: "DataDocks is a dock scheduling and yard management platform built for facilities handling medium-to-high volumes (more than 20 loads per week). OpenDock is an entry-level tool aimed at lower-volume facilities. DataDocks offers deeper customization, custom business rules, multi-site management, and hands-on support from a team that works directly with warehouse operators."
+  },
+  {
+    question: "Which is better for high-volume facilities?",
+    answer: "DataDocks is the stronger choice for any facility handling more than 20 loads per week. It supports complex scheduling rules, multi-location rollouts, integrations with enterprise WMS and ERP systems, and real-time yard visibility. OpenDock works for smaller operations but its functionality is limited for busy distribution centers."
+  },
+  {
+    question: "Does DataDocks integrate with WMS and ERP systems like OpenDock?",
+    answer: "Yes. DataDocks integrates with SAP, Oracle NetSuite, Blue Yonder, Manhattan Associates, and other leading WMS, TMS, and ERP systems via REST API. Custom integrations are also supported for facilities with non-standard tech stacks."
+  },
+  {
+    question: "How much does DataDocks cost compared to OpenDock?",
+    answer: "DataDocks offers flexible pricing with no minimum contract, quoted based on facility size and number of locations. Most customers recoup their investment in under six months from detention savings alone. For a facility processing high volume, DataDocks often delivers lower total cost per appointment than entry-level alternatives."
+  },
+  {
+    question: "How long does it take to switch from OpenDock to DataDocks?",
+    answer: "Most facilities switch in a matter of weeks, not months. DataDocks is cloud-based with no hardware installation required. Our onboarding team handles data migration, carrier communication, and staff training to make the transition smooth for both your team and your carriers."
+  },
+  {
+    question: "Does DataDocks have a mobile app?",
+    answer: "Yes. DataDocks offers native iOS and Android apps for internal warehouse teams. Managers can view schedules, transition appointments, capture photos for QC checks, and receive push notifications — all from the dock floor."
+  }
+];
 ---
 
 <Layout
-  title="DataDocks vs OpenDock"
-  description="A comprehensive comparison between DataDocks and OpenDock"
+  title="DataDocks vs OpenDock: Dock Scheduling Software Comparison"
+  description="Compare DataDocks vs OpenDock for dock scheduling and yard management. See how each platform handles volume, integrations, customization, and pricing for warehouses and DCs."
+  schemaData={{ faq: comparisonFaqs }}
 >
   <Navigation />
 

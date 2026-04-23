@@ -37,7 +37,16 @@ if (!integration) {
 const { Content } = await integration.render();
 ---
 
-<Layout title={`${integration.data.pageTitle || integration.data.title} | DataDocks Integration`} description={integration.data.description}>
+<Layout
+  title={`${integration.data.pageTitle || integration.data.title} | DataDocks Integration`}
+  description={integration.data.description}
+  schemaData={{
+    integration: {
+      partner: integration.data.title,
+      description: integration.data.overview || integration.data.description || `DataDocks integration with ${integration.data.title}.`
+    }
+  }}
+>
   <style>
     .text-brand-orange {
       color: #fd4f00;

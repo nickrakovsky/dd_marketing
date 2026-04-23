@@ -37,7 +37,16 @@ if (!feature) {
 const { Content } = await feature.render();
 ---
 
-<Layout title={`${feature.data.title} | DataDocks - Dock Scheduling Features`} description={feature.data.description}>
+<Layout
+  title={`${feature.data.title} | DataDocks - Dock Scheduling Features`}
+  description={feature.data.description}
+  schemaData={{
+    softwareFeature: {
+      name: feature.data.title,
+      description: feature.data.description || `${feature.data.title} feature of DataDocks dock scheduling software.`
+    }
+  }}
+>
   <Navigation />
   
   <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">

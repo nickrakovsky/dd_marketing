@@ -16,6 +16,8 @@ interface Props {
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
+        softwareFeature?: { name: string; description: string };
+        integration?: { partner: string; description: string };
     };
     articleData?: {
         author: string;
@@ -216,6 +218,44 @@ if (schemaData?.faq) {
       "name": item.question,
       "acceptedAnswer": { "@type": "Answer", "text": item.answer }
     }))
+  });
+}
+
+// Feature page: a specific capability of the DataDocks SoftwareApplication
+if (schemaData?.softwareFeature) {
+  graph.push({
+    "@type": "SoftwareApplication",
+    "@id": `${canonicalURL.toString()}#software-feature`,
+    "name": `DataDocks — ${schemaData.softwareFeature.name}`,
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": schemaData.softwareFeature.name,
+    "operatingSystem": "Web, iOS, Android",
+    "description": schemaData.softwareFeature.description,
+    "isPartOf": { "@id": "https://datadocks.com/#software" },
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/OnlineOnly",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
+    }
+  });
+}
+
+// Integration page: DataDocks + partner system
+if (schemaData?.integration) {
+  graph.push({
+    "@type": "SoftwareApplication",
+    "@id": `${canonicalURL.toString()}#integration`,
+    "name": `DataDocks + ${schemaData.integration.partner} Integration`,
+    "applicationCategory": "BusinessApplication",
+    "applicationSubCategory": "Software Integration",
+    "operatingSystem": "Web",
+    "description": schemaData.integration.description,
+    "isPartOf": { "@id": "https://datadocks.com/#software" },
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/OnlineOnly",
+      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
+    }
   });
 }
 

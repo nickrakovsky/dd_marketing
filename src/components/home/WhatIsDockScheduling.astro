@@ -1,0 +1,207 @@
+---
+// src/components/home/WhatIsDockScheduling.astro
+// Keyword-targeted content sections for "what is dock scheduling software"
+// and related informational queries. "X is Y" definition paragraphs optimized
+// for AI Overview extraction. Mirrors the design system used in Benefits.astro:
+// orange accent bar under each H2, cream background, Bruta + Recoleta fonts.
+
+const comparisonRows = [
+  {
+    dimension: "How carriers book",
+    manual: "Email or call your coordinator, then wait for confirmation",
+    datadocks: "Self-service portal with instant confirmation",
+  },
+  {
+    dimension: "Arrival and departure data",
+    manual: "Manual note on a clipboard or spreadsheet",
+    datadocks: "Automatic timestamps, exportable for disputes",
+  },
+  {
+    dimension: "Detention disputes",
+    manual: "He-said-she-said, often conceded",
+    datadocks: "Data-backed, resolved in minutes",
+  },
+  {
+    dimension: "Schedule changes",
+    manual: "Chain of emails and missed notifications",
+    datadocks: "One click, driver and team auto-notified",
+  },
+  {
+    dimension: "Visibility across the team",
+    manual: "One person knows the schedule",
+    datadocks: "Shared dashboard for the whole floor",
+  },
+  {
+    dimension: "Preventing double-bookings",
+    manual: "Human error, no safety net",
+    datadocks: "Rules engine blocks conflicts before they happen",
+  },
+];
+
+const stats = [
+  { value: "40–60%", label: "reduction in detention fees within the first quarter" },
+  { value: "10–15%", label: "throughput increase without adding doors or staff" },
+  { value: "10–15 hrs", label: "recovered per coordinator per week" },
+];
+---
+
+<section class="py-20 md:py-24 bg-[#FFF8E9]">
+  <div class="container mx-auto px-4 max-w-4xl">
+
+    {/* What Is Dock Scheduling Software? */}
+    <div class="mb-20">
+      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
+        What Is Dock Scheduling Software?
+      </h2>
+      <div class="w-16 h-1 bg-[#FF5507] mb-8"></div>
+
+      <div class="space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
+        <p class="first-letter:font-bruta first-letter:text-5xl first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:text-[#FE5000]">
+          Dock scheduling software is a platform that automates how warehouses and distribution centers assign time slots and dock doors to inbound and outbound trucks. It replaces spreadsheets, phone calls, and email chains with a self-service carrier portal, automated notifications, and real-time visibility into every appointment. Facilities use it to cut detention fees, reduce driver wait times, and spread truck arrivals evenly across the day.
+        </p>
+
+        <p>
+          If your team still coordinates dock appointments over phone and email, the operational cost shows up in three places: carriers waiting for a door, coordinators spending half their day on scheduling calls, and detention invoices you can't dispute because there's no arrival data. DataDocks replaces all three with a shared system that both your team and your carriers can see.
+        </p>
+      </div>
+    </div>
+
+    {/* How Does DataDocks Work? */}
+    <div class="mb-20">
+      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
+        How Does DataDocks Work?
+      </h2>
+      <div class="w-16 h-1 bg-[#FF5507] mb-8"></div>
+
+      <div class="space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
+        <p>
+          DataDocks gives you three connected tools: a <a href="/datadocks-features/carrier-portal" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">carrier portal</a> where drivers and dispatchers book appointments against your calendar, a <a href="/datadocks-features/dock-dashboard" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">dock dashboard</a> where your team manages arrivals in real time, and a <a href="/datadocks-features/yard-management" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">yard management</a> layer that tracks trailers once they're on site.
+        </p>
+
+        <p>
+          You set the rules — how many trucks per hour, which doors handle which product types, which carriers get priority, how much advance notice is required. Carriers book against those rules without needing to call. When a truck arrives, your team checks it in from the dashboard, assigns a door, and the carrier gets a notification. When it departs, arrival and departure times are logged automatically — which is the data you need to dispute detention invoices or identify which carriers are costing you labor.
+        </p>
+
+        <blockquote class="border-l-4 border-[#FF5507] pl-6 py-2 my-8 font-recoleta text-lg md:text-xl text-gray-700 italic leading-relaxed bg-[#EFE2D2]/40 py-5 pr-5 rounded-r-lg">
+          DataDocks works alongside your existing stack. It integrates with WMS, TMS, and ERP systems including SAP, Oracle NetSuite, Blue Yonder, and Manhattan Associates via REST API, so appointment data flows into the systems your team already uses.
+        </blockquote>
+      </div>
+    </div>
+
+    {/* Why Warehouses Switch to DataDocks */}
+    <div class="mb-20">
+      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
+        Why Warehouses Switch to DataDocks
+      </h2>
+      <div class="w-16 h-1 bg-[#FF5507] mb-8"></div>
+
+      <p class="font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed mb-10">
+        Facilities using DataDocks typically see measurable results within the first quarter:
+      </p>
+
+      {/* Stats row */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {stats.map((stat) => (
+          <div class="bg-[#EFE2D2] p-6 md:p-8 rounded-2xl border-l-4 border-[#FF5507]">
+            <div class="font-bruta text-4xl md:text-5xl text-[#FE5000] leading-none mb-3">
+              {stat.value}
+            </div>
+            <p class="font-recoleta text-base text-gray-800 leading-snug">
+              {stat.label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div class="space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
+        <p>
+          The operational wins come from three changes. First, carriers stop calling because they can see the schedule themselves. Second, arrivals get spread across the day instead of bunching at 8 AM. Third, every appointment produces a timestamped record, which means detention disputes get resolved with data instead of back-and-forth arguments.
+        </p>
+
+        <p>
+          DataDocks was built in 2013 for warehouse operators by a team that works directly with the floor. Customers include Stitch Fix, HelloFresh, Samsung, Toyota, LG, and Pepsi.
+        </p>
+      </div>
+    </div>
+
+    {/* DataDocks vs. Spreadsheets and Manual Scheduling */}
+    <div>
+      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
+        DataDocks vs. Spreadsheets and Manual Scheduling
+      </h2>
+      <div class="w-16 h-1 bg-[#FF5507] mb-8"></div>
+
+      <p class="font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed mb-10">
+        Most facilities run dock scheduling on a mix of spreadsheets, email, and phone calls. Here's how that compares to running it on DataDocks.
+      </p>
+
+      {/* Mobile: stacked cards */}
+      <div class="block md:hidden space-y-4">
+        {comparisonRows.map((row) => (
+          <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+            <h3 class="font-bruta text-base uppercase text-black mb-4 leading-tight">
+              {row.dimension}
+            </h3>
+            <div class="space-y-3">
+              <div class="flex gap-3 items-start">
+                <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-sm font-bold">×</span>
+                <div>
+                  <div class="font-recoleta text-xs uppercase tracking-wide text-gray-500 mb-1">Spreadsheets + Phone</div>
+                  <p class="font-recoleta text-sm text-gray-700 leading-relaxed">{row.manual}</p>
+                </div>
+              </div>
+              <div class="flex gap-3 items-start">
+                <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#FE5000] text-white text-sm font-bold">✓</span>
+                <div>
+                  <div class="font-recoleta text-xs uppercase tracking-wide text-[#FE5000] font-semibold mb-1">DataDocks</div>
+                  <p class="font-recoleta text-sm text-gray-900 leading-relaxed">{row.datadocks}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: table */}
+      <div class="hidden md:block rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-[#EFE2D2]">
+              <th class="text-left py-5 px-6 font-bruta text-sm uppercase text-black w-1/4">
+                &nbsp;
+              </th>
+              <th class="text-left py-5 px-6 font-bruta text-sm uppercase text-gray-600 border-l border-gray-300">
+                Spreadsheets + Phone
+              </th>
+              <th class="text-left py-5 px-6 font-bruta text-sm uppercase text-[#FE5000] border-l border-gray-300 bg-[#FFF8E9]">
+                DataDocks
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row, i) => (
+              <tr class={i % 2 === 1 ? "bg-gray-50/50" : ""}>
+                <td class="py-5 px-6 font-bruta text-base uppercase text-black align-top leading-tight border-t border-gray-200">
+                  {row.dimension}
+                </td>
+                <td class="py-5 px-6 font-recoleta text-base text-gray-700 leading-relaxed align-top border-t border-l border-gray-200">
+                  <span class="flex gap-2 items-start">
+                    <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-xs font-bold mt-0.5">×</span>
+                    <span>{row.manual}</span>
+                  </span>
+                </td>
+                <td class="py-5 px-6 font-recoleta text-base text-gray-900 leading-relaxed align-top border-t border-l border-gray-200 bg-[#FFF8E9]/50">
+                  <span class="flex gap-2 items-start">
+                    <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#FE5000] text-white text-xs font-bold mt-0.5">✓</span>
+                    <span>{row.datadocks}</span>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>

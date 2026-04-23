@@ -1,0 +1,74 @@
+---
+// src/components/home/FAQ.astro
+// Visible FAQ section that mirrors the FAQPage JSON-LD schema in index.astro.
+// Google increasingly requires visible HTML content to validate FAQ schema
+// and AI Overview extraction works off visible DOM, not just schema.
+
+const faqs = [
+  {
+    q: "What is dock scheduling software?",
+    a: "Dock scheduling software automates the process of assigning time slots and dock doors to inbound and outbound trucks. It replaces spreadsheets and phone calls with a self-service carrier portal, automated notifications, and real-time visibility into dock operations."
+  },
+  {
+    q: "How much does DataDocks cost?",
+    a: "DataDocks offers flexible pricing with no minimum contract. Contact us for a custom quote based on your facility size and number of locations. Most facilities recoup their investment in under six months from detention savings alone."
+  },
+  {
+    q: "How long does it take to set up DataDocks?",
+    a: "DataDocks can be deployed in weeks, not months. The platform is cloud-based with no hardware installation required. Our team provides comprehensive onboarding to ensure both your staff and your carriers are up and running quickly."
+  },
+  {
+    q: "Does DataDocks integrate with my WMS or ERP?",
+    a: "Yes. DataDocks integrates with leading WMS, TMS, and ERP systems including SAP, Oracle NetSuite, Blue Yonder, and Manhattan Associates via REST API. Custom integrations are also available."
+  },
+  {
+    q: "What results can I expect from dock scheduling software?",
+    a: "Facilities using DataDocks typically see a 40-60% reduction in detention fees within the first quarter, 10-15% throughput increases without adding doors or staff, and coordinators recovering 10-15 hours per week previously spent on phone and email scheduling."
+  },
+  {
+    q: "Does DataDocks have a mobile app?",
+    a: "Yes. DataDocks offers native iOS and Android apps for internal warehouse teams. Managers and coordinators can view schedules, transition appointments, capture photos for QC checks, and receive push notifications — all from the dock floor without walking back to a desk."
+  }
+];
+---
+
+<section class="py-20 md:py-24 bg-[#FFF8E9]">
+  <div class="container mx-auto px-4 max-w-4xl">
+
+    <div class="text-center mb-14">
+      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
+        Frequently Asked Questions
+      </h2>
+      <div class="w-16 h-1 bg-[#FF5507] mx-auto"></div>
+    </div>
+
+    <div class="space-y-3">
+      {faqs.map((faq) => (
+        <details class="faq-item group bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-200 hover:border-[#EFE2D2] hover:shadow-md">
+          <summary class="flex items-center justify-between cursor-pointer list-none p-5 md:p-6">
+            <h3 class="font-bruta text-lg sm:text-xl md:text-2xl uppercase text-black leading-tight pr-4 transition-colors group-hover:text-[#FE5000] group-open:text-[#FE5000]">
+              {faq.q}
+            </h3>
+            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center text-[#FE5000] text-2xl font-bruta font-bold transition-transform duration-300 group-open:rotate-45 bg-[#FFF8E9] rounded-full">
+              +
+            </span>
+          </summary>
+          <div class="px-5 md:px-6 pb-6 pt-1">
+            <div class="w-12 h-0.5 bg-[#FF5507] mb-4"></div>
+            <p class="font-recoleta text-base md:text-lg text-gray-700 leading-relaxed">
+              {faq.a}
+            </p>
+          </div>
+        </details>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Remove default marker on WebKit */
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+</style>
