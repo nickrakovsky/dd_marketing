@@ -46,8 +46,11 @@
 <script is:inline>
   (function() {
     var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    var form = document.getElementById('cta-bento-form');
-    if (form) {
+
+    function attachCtaForm() {
+      var form = document.getElementById('cta-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         var emailInput = form.querySelector('input[name="email"]');
@@ -65,7 +68,7 @@
                 window.bento.track('Demo Subscriber', { source: window.location.pathname });
               } else if (++attempts >= 20) {
                 clearInterval(interval);
-                console.warn("Bento SDK not loaded; tracking failed. Check for missing PUBLIC_BENTO_SITE_UUID in .env");
+                console.warn('[Bento] SDK not loaded after 4s. Check PUBLIC_BENTO_SITE_UUID in env.');
               }
             }, 200);
           }
@@ -74,5 +77,8 @@
         form.reset();
       });
     }
+
+    attachCtaForm();
+    document.addEventListener('astro:page-load', attachCtaForm);
   })();
 </script>
