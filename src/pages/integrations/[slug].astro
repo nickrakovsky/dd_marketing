@@ -113,33 +113,33 @@ await integration.render();
         </div>
       </section>
 
-      <script>
+      <script is:inline>
         (function () {
-          const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-          const form = document.getElementById("integration-hero-form") as HTMLFormElement | null;
-      
-          if (form) {
-            form.addEventListener("submit", (e) => {
+          var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+
+          function attachIntegrationForm() {
+            var form = document.getElementById("integration-hero-form");
+            if (!form || form.dataset.bound) return;
+            form.dataset.bound = 'true';
+            form.addEventListener("submit", function(e) {
               e.preventDefault();
-              const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement | null;
-              const email = emailInput?.value;
-      
+              var emailInput = form.querySelector('input[name="email"]');
+              var email = emailInput ? emailInput.value : '';
+
               if (email) {
-                const bento = (window as any).bento;
-                if (bento) {
-                  bento.identify(email);
-                  bento.track("Demo Subscriber", { source: window.location.pathname });
+                if (window.bento) {
+                  window.bento.identify(email);
+                  window.bento.track("Demo Subscriber", { source: window.location.pathname });
                 } else {
-                  let attempts = 0;
-                  const interval = setInterval(() => {
-                    const b = (window as any).bento;
-                    if (b) {
+                  var attempts = 0;
+                  var interval = setInterval(function() {
+                    if (window.bento) {
                       clearInterval(interval);
-                      b.identify(email);
-                      b.track("Demo Subscriber", { source: window.location.pathname });
+                      window.bento.identify(email);
+                      window.bento.track("Demo Subscriber", { source: window.location.pathname });
                     } else if (++attempts >= 20) {
                       clearInterval(interval);
-                      console.warn("Bento SDK not loaded; tracking failed. Check for missing PUBLIC_BENTO_SITE_UUID in .env");
+                      console.warn('[Bento] SDK not loaded after 4s. Check PUBLIC_BENTO_SITE_UUID in env.');
                     }
                   }, 200);
                 }
@@ -148,6 +148,9 @@ await integration.render();
               form.reset();
             });
           }
+
+          attachIntegrationForm();
+          document.addEventListener('astro:page-load', attachIntegrationForm);
         })();
       </script>
 
