@@ -59,8 +59,8 @@ const integrationsCollection = defineCollection({
         description: z.string().optional(),
         pubDate: z.coerce.date().optional(),
         icon: z.string().optional(),
-        overview: z.string().optional(),
-        subheader: z.string().optional(),
+        heroBody: z.string().optional(),
+        advantagesTitle: z.string().optional(),
         disclaimer: z.string().optional(),
         benefits: z.array(z.object({
             title: z.string().optional(),
@@ -70,8 +70,17 @@ const integrationsCollection = defineCollection({
     })
 });
 
+const settingsCollection = defineCollection({
+    type: 'data',
+    schema: z.object({
+        headline: z.string(),
+        featuredPosts: z.array(z.string()),
+    })
+});
+
 export const collections = {
     'posts': postsCollection,
     'features': featuresCollection,
     'integrations': integrationsCollection,
+    'settings': settingsCollection,
 };

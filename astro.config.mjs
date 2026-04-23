@@ -40,6 +40,7 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   redirects: {
+    '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
   },
