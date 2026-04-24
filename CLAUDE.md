@@ -39,7 +39,17 @@
 
 ### URLs and Links
 - **No trailing slashes.** Internal links must be `/posts/slug` not `/posts/slug/`
+- **No `.html` extensions.** Internal links must be `/about` not `/about.html`
 - Internal blog links use relative format: `/posts/slug` not `https://datadocks.com/posts/slug`
+
+### URL Canonicalization — DO NOT BREAK
+The canonical URL format is **no trailing slash, no `.html` extension**. Three config pieces enforce this together — if any one is changed, Ahrefs/Google will flag redirect chains sitewide:
+
+1. **[astro.config.mjs](astro.config.mjs)** — must keep `trailingSlash: 'never'` AND `build.format: 'file'`. The `file` format makes Astro emit `page.html` instead of `page/index.html`, so Cloudflare serves it at `/page` with no auto-redirect.
+2. **[src/layouts/Layout.astro](src/layouts/Layout.astro)** — the canonical normalizer strips both `.html` and trailing slash: `Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '')`. Do not simplify.
+3. **[public/_redirects](public/_redirects)** — `/*.html /:splat 301` makes any `.html` URL 301 to the clean version. Do not remove.
+
+**Do not change any of these without updating all three.** Also do not add a `public/_redirects` rule that creates trailing slashes, and do not hardcode `.html` or trailing slashes in internal links, sitemap customPages, or schema `@id`/`url` fields.
 
 ### External Links
 - Never link to competitor websites (dock scheduling, yard management, or WMS software vendors)
