@@ -56,22 +56,12 @@
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
-          if (window.bento) {
-            window.bento.identify(email);
-            window.bento.track('Demo Subscriber', { source: window.location.pathname });
-          } else {
-            var attempts = 0;
-            var interval = setInterval(function() {
-              if (window.bento) {
-                clearInterval(interval);
-                window.bento.identify(email);
-                window.bento.track('Demo Subscriber', { source: window.location.pathname });
-              } else if (++attempts >= 20) {
-                clearInterval(interval);
-                console.warn('[Bento] SDK not loaded after 4s. Check PUBLIC_BENTO_SITE_UUID in env.');
-              }
-            }, 200);
-          }
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, event: 'Demo Subscriber', source: window.location.pathname }),
+            keepalive: true
+          }).catch(function() {});
         }
         window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
