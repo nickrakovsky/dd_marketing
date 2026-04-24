@@ -37,7 +37,7 @@ if (!integration) {
 await integration.render();
 ---
 
-<Layout title={`${integration.data.pageTitle || integration.data.title} | DataDocks Integration`} description={integration.data.description}>
+<Layout title={integration.data.pageTitle || integration.data.title} description={integration.data.description}>
   <style>
     .text-brand-orange {
       color: #fd4f00;

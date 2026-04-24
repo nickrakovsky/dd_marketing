@@ -82,6 +82,7 @@ The canonical URL format is **no trailing slash, no `.html` extension**. Three c
 - `description` — meta description
 - `author` — byline
 - `pubDate` / `updatedDate` — dates used in schema and sitemap lastmod
+- **When editing an existing blog post's body content, you MUST bump `updatedDate` to the current date/time.** This keeps sitemap `lastmod` and JSON-LD `dateModified` honest so Google/AI crawlers see the post as freshly updated. Skip this only for pure mechanical changes (link format, typo, whitespace). Format: `'Apr 23, 2026 4:30 PM'` (matches existing frontmatter style).
 - `cardImage` — relative path to cover image in `src/assets/blog-images/`
 - `cardAlt` — alt text for cover image (never leave empty)
 - `showToc` — enables table of contents
