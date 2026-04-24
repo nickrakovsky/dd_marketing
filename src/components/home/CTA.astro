@@ -59,7 +59,13 @@
           fetch('/api/bento-track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, event: 'Demo Subscriber', source: window.location.pathname }),
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+            }),
             keepalive: true
           }).catch(function() {});
         }
