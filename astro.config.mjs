@@ -43,6 +43,7 @@ export default defineConfig({
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
+    '/posts/yt-:id': '/videos/yt-:id',
   },
 
   integrations: [
@@ -88,6 +89,7 @@ export default defineConfig({
       }
     },
     tailwind(), react(), keystatic(), sitemap({
+      filter: (page) => !page.includes('/videos/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
