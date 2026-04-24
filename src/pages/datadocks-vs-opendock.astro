@@ -639,6 +639,11 @@ const sections = [
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
+          // Client-side identify
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
+
           fetch('/api/bento-track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

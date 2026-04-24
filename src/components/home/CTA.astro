@@ -56,6 +56,13 @@
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
+          // 1. Client-side identify (Primary stitching)
+          // If the SDK is loaded and not blocked, this handles the identity link officially.
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
+
+          // 2. Server-side proxy (Backup/Ad-block resistant)
           fetch('/api/bento-track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

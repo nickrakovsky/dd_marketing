@@ -21,23 +21,6 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
-// ── Diagnostic GET ──────────────────────────────────────────────────────────
-// Hit GET /api/bento-track in a browser on the live site.
-// Returns which env vars are present (true/false only — no values exposed).
-// Remove or gate this behind auth once confirmed working.
-export const GET: APIRoute = async ({ locals }) => {
-  const cfEnv = (locals as any)?.runtime?.env;
-  // List every key name present in the Cloudflare runtime env — no guessing.
-  const allKeys = cfEnv ? Object.keys(cfEnv) : [];
-  return new Response(
-    JSON.stringify({
-      runtimeEnvAvailable: !!cfEnv,
-      allRuntimeKeys: allKeys,
-    }, null, 2),
-    { status: 200, headers: { 'Content-Type': 'application/json' } },
-  );
-};
-
 export const POST: APIRoute = async ({ request, locals }) => {
   // ---------- 1. Parse request body ----------
   let body: {
@@ -65,43 +48,39 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   // ---------- 2. Read env vars ----------
-  // FIX: On Cloudflare Pages SSR, runtime secrets must come from
-  // locals.runtime.env, not import.meta.env (which is build-time only).
-  // Fall back to import.meta.env for local dev.
+  // On Cloudflare Pages SSR, runtime secrets must come from locals.runtime.env.
   const cfEnv = (locals as any)?.runtime?.env;
   const siteUuid  = cfEnv?.PUBLIC_BENTO_SITE_UUID  ?? import.meta.env.PUBLIC_BENTO_SITE_UUID;
   const pubKey    = cfEnv?.BENTO_PUBLISHABLE_KEY    ?? import.meta.env.BENTO_PUBLISHABLE_KEY;
   const secretKey = cfEnv?.BENTO_SECRET_KEY         ?? import.meta.env.BENTO_SECRET_KEY;
 
   if (!siteUuid || !pubKey || !secretKey) {
-    console.error(
-      '[bento-track] Missing env vars.',
-      'siteUuid:', !!siteUuid,
-      'pubKey:', !!pubKey,
-      'secretKey:', !!secretKey,
-      'cfEnv available:', !!cfEnv,
-    );
+    console.error('[bento-track] Missing env vars in Cloudflare runtime.');
     return new Response(
       JSON.stringify({ ok: false, error: 'Server misconfigured' }),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );
   }
 
-  // ---------- 3. Build fields payload ----------
-  // FIX: event type goes directly as the event name ("Demo Subscriber"),
-  // not wrapped in type:"$custom" + details.custom_event.
-  // FIX: include landing_page_url and bento_uuid for identity stitching
-  // so server-side subscribers are linked to the visitor's anonymous session.
-  const fields: Record<string, string> = {
-    source: source || '/',
+  // ---------- 3. Build Bento Payload ----------
+  // Per Bento Tanuki & Docs:
+  // - 'landing_page_url' is a reserved person attribute and should be top-level.
+  // - 'visitor_id' is the root key used to stitch events to the anonymous session.
+  const bentoPayload = {
+    events: [
+      {
+        type: event,
+        email: email,
+        // Top-level person attributes for built-in mapping and identity stitching
+        landing_page_url: landingPage,
+        visitor_id: visitorUuid, 
+        fields: {
+          // Custom tracking fields stay in the fields object
+          source: source || "/",
+        },
+      },
+    ],
   };
-  if (landingPage) {
-    fields['landing_page_url'] = landingPage;
-  }
-  if (visitorUuid) {
-    // Bento uses this to stitch the anonymous SDK session to the identified subscriber
-    fields['bento_uuid'] = visitorUuid;
-  }
 
   // ---------- 4. Call Bento API ----------
   const basicAuth = btoa(`${pubKey}:${secretKey}`);
@@ -113,17 +92,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: {
         Authorization: `Basic ${basicAuth}`,
         'Content-Type': 'application/json',
-        'User-Agent': 'DataDocks-AstroSite/1.0',
+        'User-Agent': 'DataDocks-Proxy/1.2',
       },
-      body: JSON.stringify({
-        events: [
-          {
-            type: event,   // "Demo Subscriber" — used directly, not wrapped
-            email,
-            fields,
-          },
-        ],
-      }),
+      body: JSON.stringify(bentoPayload),
     });
 
     const responseText = await res.text();

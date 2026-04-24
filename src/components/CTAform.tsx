@@ -25,11 +25,11 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     e.preventDefault();
     const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
     if (email) {
-      // Best-effort SDK call (works when SDK loaded and no ad blocker)
-      if ((window as any).bento) {
+      // Client-side identify
+      if (typeof (window as any).bento !== 'undefined' && typeof (window as any).bento.identify === 'function') {
         (window as any).bento.identify(email);
-        (window as any).bento.track("Demo Subscriber", { source: pagePath });
       }
+
       // Server-side proxy — ad-blocker proof
       fetch('/api/bento-track', {
         method: 'POST',
