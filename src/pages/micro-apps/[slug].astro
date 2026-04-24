@@ -31,10 +31,10 @@ const components = {
 >
     <Navigation />
     
-    <main class="bg-[#FFF8E9] pt-24 pb-20">
+    <main class="bg-[#FFF8E9] pt-24 pb-20 font-sans">
         <div class="container mx-auto px-4">
             <header class="max-w-4xl mx-auto text-center mb-12">
-                <h1 class="text-4xl md:text-6xl font-recoleta text-black mb-6">
+                <h1 class="text-5xl md:text-7xl font-bruta uppercase tracking-tight text-black mb-6">
                     {app.data.title}
                 </h1>
                 {app.data.description && (
@@ -44,7 +44,7 @@ const components = {
                 )}
             </header>
 
-            <article class="prose prose-lg max-w-4xl mx-auto prose-headings:font-recoleta prose-headings:font-normal prose-p:font-recoleta prose-p:font-normal prose-p:text-muted-foreground">
+            <article class="prose prose-lg max-w-4xl mx-auto prose-headings:font-bruta prose-headings:uppercase prose-headings:tracking-tight prose-headings:font-normal prose-p:font-recoleta prose-p:font-normal prose-p:text-muted-foreground">
                 <Content components={components} />
             </article>
         </div>
