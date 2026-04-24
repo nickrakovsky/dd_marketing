@@ -43,10 +43,10 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-// Strip trailing slash for canonical URL (accept both, default to no slash)
+// Normalize pathname: strip trailing slash AND strip .html suffix (build.format: 'file' emits paths with .html)
 const pathname = Astro.url.pathname === '/'
   ? '/'
-  : Astro.url.pathname.replace(/\/$/, '');
+  : Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '');
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
