@@ -108,10 +108,22 @@ const videosCollection = defineCollection({
     })
 });
 
+const microAppCollection = defineCollection({
+    type: 'content',
+    schema: ({ image }) => z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        pubDate: z.coerce.date(),
+        cardImage: image().optional(),
+        cardAlt: z.string().optional(),
+    })
+});
+
 export const collections = {
     'posts': postsCollection,
     'videos': videosCollection,
     'features': featuresCollection,
     'integrations': integrationsCollection,
     'settings': settingsCollection,
+    'micro-app': microAppCollection,
 };

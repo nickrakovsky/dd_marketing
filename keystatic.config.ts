@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { config, fields, collection, singleton } from '@keystatic/core';
 import { block } from '@keystatic/core/content-components';
 
@@ -221,6 +222,37 @@ export default config({
                         })
                     }
                 ),
+            },
+        }),
+        microApp: collection({
+            label: 'Micro Apps',
+            slugField: 'title',
+            path: 'src/content/micro-app/*',
+            format: { contentField: 'content' },
+            schema: {
+                title: fields.slug({ name: { label: 'Title' } }),
+                description: fields.text({ label: 'Short Description', multiline: true }),
+                pubDate: fields.text({ label: 'Publish Date' }),
+                cardImage: fields.image({
+                    label: 'Card Image',
+                    directory: 'src/assets/blog-images/',
+                    publicPath: '../../assets/blog-images/',
+                }),
+                cardAlt: fields.text({ label: 'Card Image Alt' }),
+                content: fields.mdx({
+                    label: 'App Content',
+                    components: {
+                        LeadMagnetForm: block({
+                            label: 'Lead Magnet Form',
+                            schema: {
+                                headline: fields.text({ label: 'Headline' }),
+                                eventName: fields.text({ label: 'Event Name' }),
+                                redirectUrl: fields.text({ label: 'Redirect URL' }),
+                                buttonText: fields.text({ label: 'Button Text' }),
+                            }
+                        })
+                    }
+                }),
             },
         }),
     },

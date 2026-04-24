@@ -1,0 +1,64 @@
+---
+export const prerender = true;
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import LTLCalculator from '../../components/micro-apps/LTLCalculator';
+
+export async function getStaticPaths() {
+    const apps = await getCollection('micro-app');
+    return apps.map(app => ({
+        params: { slug: app.slug },
+        props: { app },
+    }));
+}
+
+const { app } = Astro.props;
+const { Content } = await app.render();
+
+const components = {
+    LTLCalculator: LTLCalculator,
+};
+
+// Use the standard Card layout for micro-apps
+---
+
+<Layout 
+    title={`${app.data.title} | DataDocks`}
+    description={app.data.description}
+    image={app.data.cardImage?.src}
+>
+    <Navigation />
+    
+    <main class="bg-[#FFF8E9] pt-24 pb-20">
+        <div class="container mx-auto px-4">
+            <header class="max-w-4xl mx-auto text-center mb-12">
+                <h1 class="text-4xl md:text-6xl font-recoleta text-black mb-6">
+                    {app.data.title}
+                </h1>
+                {app.data.description && (
+                    <p class="text-xl md:text-2xl text-muted-foreground font-recoleta font-normal max-w-2xl mx-auto leading-relaxed">
+                        {app.data.description}
+                    </p>
+                )}
+            </header>
+
+            <article class="prose prose-lg max-w-4xl mx-auto prose-headings:font-recoleta prose-headings:font-normal prose-p:font-recoleta prose-p:font-normal prose-p:text-muted-foreground">
+                <Content components={components} />
+            </article>
+        </div>
+    </main>
+
+    <Footer />
+</Layout>
+
+<style is:global>
+    /* Add any custom micro-app specific global styles here */
+    .prose h2 {
+        @apply text-3xl mt-12 mb-6 text-black;
+    }
+    .prose p {
+        @apply mb-6 leading-relaxed;
+    }
+</style>
