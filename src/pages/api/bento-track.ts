@@ -27,18 +27,12 @@ export const prerender = false;
 // Remove or gate this behind auth once confirmed working.
 export const GET: APIRoute = async ({ locals }) => {
   const cfEnv = (locals as any)?.runtime?.env;
+  // List every key name present in the Cloudflare runtime env — no guessing.
+  const allKeys = cfEnv ? Object.keys(cfEnv) : [];
   return new Response(
     JSON.stringify({
       runtimeEnvAvailable: !!cfEnv,
-      PUBLIC_BENTO_SITE_UUID: !!(cfEnv?.PUBLIC_BENTO_SITE_UUID ?? import.meta.env.PUBLIC_BENTO_SITE_UUID),
-      BENTO_PUBLISHABLE_KEY:  !!(cfEnv?.BENTO_PUBLISHABLE_KEY  ?? import.meta.env.BENTO_PUBLISHABLE_KEY),
-      BENTO_SECRET_KEY:       !!(cfEnv?.BENTO_SECRET_KEY        ?? import.meta.env.BENTO_SECRET_KEY),
-      // Shows exactly where each key was found
-      source: {
-        PUBLIC_BENTO_SITE_UUID: cfEnv?.PUBLIC_BENTO_SITE_UUID ? 'runtime' : import.meta.env.PUBLIC_BENTO_SITE_UUID ? 'build-time' : 'MISSING',
-        BENTO_PUBLISHABLE_KEY:  cfEnv?.BENTO_PUBLISHABLE_KEY  ? 'runtime' : import.meta.env.BENTO_PUBLISHABLE_KEY  ? 'build-time' : 'MISSING',
-        BENTO_SECRET_KEY:       cfEnv?.BENTO_SECRET_KEY        ? 'runtime' : import.meta.env.BENTO_SECRET_KEY        ? 'build-time' : 'MISSING',
-      },
+      allRuntimeKeys: allKeys,
     }, null, 2),
     { status: 200, headers: { 'Content-Type': 'application/json' } },
   );
