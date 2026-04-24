@@ -41,16 +41,19 @@ const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('en-US', {
   day: 'numeric'
 });
 
-const allPosts = await getCollection('posts');
+const posts = await getCollection('posts');
+const videos = await getCollection('videos');
+const allPosts = [...posts, ...videos];
+
 const categoryPosts = allPosts
-  .filter((p: CollectionEntry<'posts'>) => p.slug !== entry.slug && p.data.category === entry.data.category)
-  .sort((a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+  .filter((p: any) => p.slug !== entry.slug && p.data.category === entry.data.category)
+  .sort((a: any, b: any) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
 let relatedPosts = categoryPosts.slice(0, 3);
 if (relatedPosts.length < 3) {
   const otherPosts = allPosts
-    .filter((p: CollectionEntry<'posts'>) => p.slug !== entry.slug && !relatedPosts.some((rp: any) => rp.slug === p.slug))
-    .sort((a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
+    .filter((p: any) => p.slug !== entry.slug && !relatedPosts.some((rp: any) => rp.slug === p.slug))
+    .sort((a: any, b: any) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
     .slice(0, 3 - relatedPosts.length);
   relatedPosts = [...relatedPosts, ...otherPosts];
 }
@@ -134,7 +137,7 @@ const getReadTime = (body: string) => {
               const isShort = relPostType === 'short';
               return (
                 <a 
-                  href={`${import.meta.env.BASE_URL}/posts/${post.slug}?autoplay=1`.replace('//posts', '/posts')}
+                  href={`${import.meta.env.BASE_URL}/${post.collection === 'videos' ? 'videos' : 'posts'}/${post.slug}${post.collection === 'videos' ? '?autoplay=1' : ''}`.replace('//', '/')}
                   class="group relative flex flex-col rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl border-2 border-white/20 hover:border-white w-full"
                 >
                 <div class="flex items-start gap-4 p-2 transition-colors">
@@ -159,7 +162,7 @@ const getReadTime = (body: string) => {
 
           return (
             <a 
-              href={`${import.meta.env.BASE_URL}/posts/${post.slug}`.replace('//posts', '/posts')} 
+              href={`${import.meta.env.BASE_URL}/${post.collection === 'videos' ? 'videos' : 'posts'}/${post.slug}`.replace('//', '/')} 
               class="group block w-full border-b border-white/10 last:border-0 pb-4 mb-4"
             >
               <div class="flex items-start gap-4 p-2 transition-colors">

@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { config, fields, collection, singleton } from '@keystatic/core';
 import { block } from '@keystatic/core/content-components';
 
@@ -144,6 +145,114 @@ export default config({
                         })
                     }
                 ),
+            },
+        }),
+        videos: collection({
+            label: 'YouTube Videos',
+            slugField: 'title',
+            path: 'src/content/videos/*',
+            format: { contentField: ['postType', 'value', 'content'] },
+            schema: {
+                title: fields.slug({ name: { label: 'Title' } }),
+                description: fields.text({ label: 'Short Description', multiline: true }),
+                author: fields.text({ label: 'Author Name' }),
+                category: fields.select({
+                    label: 'Category',
+                    options: [
+                        { label: 'Carrier Management', value: 'Carrier Management' },
+                        { label: 'Facility Operations', value: 'Facility Operations' },
+                        { label: 'Supply Chain Strategy', value: 'Supply Chain Strategy' },
+                        { label: 'Systems Integration', value: 'Systems Integration' },
+                    ],
+                    defaultValue: 'Carrier Management',
+                }),
+                pubDate: fields.text({ label: 'Publish Date' }),
+                updatedDate: fields.text({ label: 'Updated Date' }),
+                cardImage: fields.image({
+                    label: 'Card Image',
+                    directory: 'src/assets/blog-images/',
+                    publicPath: '../../assets/blog-images/',
+                }),
+                cardAlt: fields.text({ label: 'Card Image Alt' }),
+                postType: fields.conditional(
+                    fields.select({
+                        label: 'Post Type',
+                        options: [
+                            { label: 'Video', value: 'video' },
+                            { label: 'Short', value: 'short' },
+                        ],
+                        defaultValue: 'video',
+                    }),
+                    {
+                        video: fields.object({
+                            youtubeId: fields.text({ label: 'YouTube Video ID' }),
+                            duration: fields.text({ label: 'Video Duration (ISO 8601)' }),
+                            content: fields.mdx({ 
+                                label: 'Video Description',
+                                components: {
+                                    LeadMagnetForm: block({
+                                        label: 'Lead Magnet Form',
+                                        schema: {
+                                            headline: fields.text({ label: 'Headline' }),
+                                            eventName: fields.text({ label: 'Event Name' }),
+                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
+                                            buttonText: fields.text({ label: 'Button Text' }),
+                                        }
+                                    })
+                                }
+                            })
+                        }),
+                        short: fields.object({
+                            youtubeId: fields.text({ label: 'YouTube Video ID' }),
+                            duration: fields.text({ label: 'Video Duration (ISO 8601)' }),
+                            content: fields.mdx({ 
+                                label: 'Short Description',
+                                components: {
+                                    LeadMagnetForm: block({
+                                        label: 'Lead Magnet Form',
+                                        schema: {
+                                            headline: fields.text({ label: 'Headline' }),
+                                            eventName: fields.text({ label: 'Event Name' }),
+                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
+                                            buttonText: fields.text({ label: 'Button Text' }),
+                                        }
+                                    })
+                                }
+                            })
+                        })
+                    }
+                ),
+            },
+        }),
+        microApp: collection({
+            label: 'Micro Apps',
+            slugField: 'title',
+            path: 'src/content/micro-app/*',
+            format: { contentField: 'content' },
+            schema: {
+                title: fields.slug({ name: { label: 'Title' } }),
+                description: fields.text({ label: 'Short Description', multiline: true }),
+                pubDate: fields.text({ label: 'Publish Date' }),
+                cardImage: fields.image({
+                    label: 'Card Image',
+                    directory: 'src/assets/blog-images/',
+                    publicPath: '../../assets/blog-images/',
+                }),
+                cardAlt: fields.text({ label: 'Card Image Alt' }),
+                content: fields.mdx({
+                    label: 'App Content',
+                    components: {
+                        LeadMagnetForm: block({
+                            label: 'Lead Magnet Form',
+                            schema: {
+                                headline: fields.text({ label: 'Headline' }),
+                                eventName: fields.text({ label: 'Event Name' }),
+                                redirectUrl: fields.text({ label: 'Redirect URL' }),
+                                buttonText: fields.text({ label: 'Button Text' }),
+                            }
+                        })
+                    }
+                }),
             },
         }),
     },
