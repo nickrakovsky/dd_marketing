@@ -92,7 +92,13 @@ const uid = Math.random().toString(36).slice(2, 9);
           fetch('/api/bento-track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, event: eventName, source: window.location.pathname }),
+            body: JSON.stringify({
+              email: email,
+              event: eventName,
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+            }),
             keepalive: true
           }).catch(function() {});
 

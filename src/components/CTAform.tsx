@@ -34,7 +34,15 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
       fetch('/api/bento-track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, event: 'Demo Subscriber', source: pagePath }),
+        body: JSON.stringify({
+          email,
+          event: 'Demo Subscriber',
+          source: pagePath,
+          landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+          visitorUuid: typeof (window as any).getBentoVisitorUuid === 'function'
+            ? (window as any).getBentoVisitorUuid()
+            : null,
+        }),
         keepalive: true,
       }).catch(() => {});
     }
