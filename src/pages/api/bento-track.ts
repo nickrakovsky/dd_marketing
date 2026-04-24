@@ -21,6 +21,29 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+// ── Diagnostic GET ──────────────────────────────────────────────────────────
+// Hit GET /api/bento-track in a browser on the live site.
+// Returns which env vars are present (true/false only — no values exposed).
+// Remove or gate this behind auth once confirmed working.
+export const GET: APIRoute = async ({ locals }) => {
+  const cfEnv = (locals as any)?.runtime?.env;
+  return new Response(
+    JSON.stringify({
+      runtimeEnvAvailable: !!cfEnv,
+      PUBLIC_BENTO_SITE_UUID: !!(cfEnv?.PUBLIC_BENTO_SITE_UUID ?? import.meta.env.PUBLIC_BENTO_SITE_UUID),
+      BENTO_PUBLISHABLE_KEY:  !!(cfEnv?.BENTO_PUBLISHABLE_KEY  ?? import.meta.env.BENTO_PUBLISHABLE_KEY),
+      BENTO_SECRET_KEY:       !!(cfEnv?.BENTO_SECRET_KEY        ?? import.meta.env.BENTO_SECRET_KEY),
+      // Shows exactly where each key was found
+      source: {
+        PUBLIC_BENTO_SITE_UUID: cfEnv?.PUBLIC_BENTO_SITE_UUID ? 'runtime' : import.meta.env.PUBLIC_BENTO_SITE_UUID ? 'build-time' : 'MISSING',
+        BENTO_PUBLISHABLE_KEY:  cfEnv?.BENTO_PUBLISHABLE_KEY  ? 'runtime' : import.meta.env.BENTO_PUBLISHABLE_KEY  ? 'build-time' : 'MISSING',
+        BENTO_SECRET_KEY:       cfEnv?.BENTO_SECRET_KEY        ? 'runtime' : import.meta.env.BENTO_SECRET_KEY        ? 'build-time' : 'MISSING',
+      },
+    }, null, 2),
+    { status: 200, headers: { 'Content-Type': 'application/json' } },
+  );
+};
+
 export const POST: APIRoute = async ({ request, locals }) => {
   // ---------- 1. Parse request body ----------
   let body: {
