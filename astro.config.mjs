@@ -37,6 +37,7 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'never',
   build: {
+    format: 'file',
     inlineStylesheets: 'always',
   },
   redirects: {
