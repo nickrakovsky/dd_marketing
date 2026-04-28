@@ -1,9 +1,7 @@
 ---
 // src/components/home/WhatIsDockScheduling.astro
-// Keyword-targeted content sections for "what is dock scheduling software"
-// and related informational queries. "X is Y" definition paragraphs optimized
-// for AI Overview extraction. Mirrors the design system used in Benefits.astro:
-// orange accent bar under each H2, cream background, Bruta + Recoleta fonts.
+// Operational comparison and impact metrics for DataDocks.
+// Voice and tone aligned with GEMINI.md: practical, direct, and operator-led.
 
 const comparisonRows = [
   {
@@ -39,152 +37,67 @@ const comparisonRows = [
 ];
 
 const stats = [
-  { value: "40–60%", label: "reduction in detention fees within the first quarter" },
-  { value: "10–15%", label: "throughput increase without adding doors or staff" },
-  { value: "10–15 hrs", label: "recovered per coordinator per week" },
+  { value: "40–60%", label: "Reduction in detention fees within the first quarter" },
+  { value: "10–15%", label: "Throughput increase without adding doors or staff" },
+  { value: "10–15", label: "Hours recovered per coordinator per week" },
 ];
 ---
 
 <section class="py-20 md:py-28 bg-[#FFF8E9]">
   <div class="container mx-auto px-4 max-w-6xl">
 
-    {/* What Is Dock Scheduling Software? */}
-    <div class="mb-24">
-      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
-        What Is Dock Scheduling Software?
+    {/* Header Section */}
+    <div class="mb-12">
+      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black mb-10">
+        Stop Managing Your Dock<br />
+        <span class="text-[#FE5000]">With Spreadsheets</span>
       </h2>
-      <div class="w-16 h-1 bg-[#FF5507] mb-10"></div>
+      <div class="w-16 h-1 bg-[#FF5507] mb-12"></div>
 
-      <div class="max-w-4xl space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
-        <p class="first-letter:font-bruta first-letter:text-5xl first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:text-[#FE5000]">
-          Dock scheduling software is a platform that automates how warehouses and distribution centers assign time slots and dock doors to inbound and outbound trucks. It replaces spreadsheets, phone calls, and email chains with a self-service carrier portal, automated notifications, and real-time visibility into every appointment. Facilities use it to cut detention fees, reduce driver wait times, and spread truck arrivals evenly across the day.
-        </p>
-
-        <p>
-          If your team still coordinates dock appointments over phone and email, the operational cost shows up in three places: carriers waiting for a door, coordinators spending half their day on scheduling calls, and detention invoices you can't dispute because there's no arrival data. DataDocks replaces all three with a shared system that both your team and your carriers can see.
-        </p>
-      </div>
-    </div>
-
-    {/* How Does DataDocks Work? */}
-    <div class="mb-24">
-      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
-        How Does DataDocks Work?
-      </h2>
-      <div class="w-16 h-1 bg-[#FF5507] mb-10"></div>
-
-      <div class="max-w-4xl space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
-        <p>
-          DataDocks gives you three connected tools: a <a href="/datadocks-features/carrier-portal" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">carrier portal</a> where drivers and dispatchers book appointments against your calendar, a <a href="/datadocks-features/dock-dashboard" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">dock dashboard</a> where your team manages arrivals in real time, and a <a href="/datadocks-features/yard-management" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">yard management</a> layer that tracks trailers once they're on site.
-        </p>
-
-        <p>
-          You set the rules — how many trucks per hour, which doors handle which product types, which carriers get priority, how much advance notice is required. Carriers book against those rules without needing to call. When a truck arrives, your team checks it in from the dashboard, assigns a door, and the carrier gets a notification. When it departs, arrival and departure times are logged automatically — which is the data you need to dispute detention invoices or identify which carriers are costing you labor.
-        </p>
-
-        <div class="not-italic bg-[#EFE2D2] border-l-4 border-[#FE5000] rounded-2xl p-6 md:p-8 my-8">
-          <div class="font-recoleta text-xs uppercase tracking-[0.2em] text-[#FE5000] font-bold mb-3">Works with your stack</div>
-          <p class="font-recoleta text-base md:text-lg text-gray-800 leading-relaxed">
-            DataDocks integrates with WMS, TMS, and ERP systems including <strong class="text-black">SAP, Oracle NetSuite, Blue Yonder,</strong> and <strong class="text-black">Manhattan Associates</strong> via REST API, so appointment data flows into the systems your team already uses.
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-start">
+        <div class="font-recoleta text-lg text-gray-800 leading-relaxed">
+          <p>
+            Manually managing dock appointments is a recipe for congestion. When carriers have to call or email for every slot, your team spends half their shift on the phone instead of on the floor. DataDocks replaces that chaos with a self-service carrier portal that respects your facility's capacity and business rules.
+          </p>
+        </div>
+        <div class="font-recoleta text-lg text-gray-800 leading-relaxed">
+          <p>
+            This eliminates the back-and-forth, cuts detention fees, and ensures your team always knows exactly what’s hitting the dock next. By automating the schedule, you move from reactive firefighting to a controlled, predictable flow of freight from gate to door.
           </p>
         </div>
       </div>
     </div>
 
-    {/* What Is Yard Management? */}
-    <div class="mb-24">
-      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
-        What Is Yard Management?
-      </h2>
-      <div class="w-16 h-1 bg-[#FF5507] mb-10"></div>
-
-      <div class="max-w-4xl space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
-        <p class="first-letter:font-bruta first-letter:text-5xl first-letter:float-left first-letter:mr-3 first-letter:leading-none first-letter:text-[#FE5000]">
-          Yard management is the process of tracking and coordinating trailers, containers, and yard drivers across the space between your gate and your dock doors. A <a href="/posts/what-is-a-yard-management-system-yms" class="text-[#FE5000] font-semibold underline underline-offset-4 decoration-2 hover:text-black transition-colors">yard management system (YMS)</a> is the software that runs it — providing real-time trailer locations, gate check-in automation, and task assignments for yard drivers moving trailers between staging, doors, and departure.
-        </p>
-
-        <p>
-          Dock scheduling controls the <em>when</em> — what time each truck is due and which door it's assigned to. Yard management controls the <em>where</em> — which trailer is parked where, which one is ready to work next, and which driver is moving it. Run independently, each solves half the problem. Run together, they create end-to-end control from gate arrival to loaded departure.
-        </p>
-
-        <p>
-          DataDocks unifies both into one platform. When a carrier books an appointment, the system watches for gate arrival, assigns a staging spot, tracks the trailer's yard location, and creates a task for a yard driver to spot it at the right dock door before the appointment time. When loading finishes, departure timestamps log automatically. No radio calls, no walking the yard to find a trailer, no "where's the blue Freightliner" on the morning stand-up.
-        </p>
-
-        <p>
-          Yard management becomes essential when a facility has 50+ trailer spots, frequent congestion, dedicated yard drivers, or high detention costs. For smaller operations, strong dock scheduling alone often does the job.
-        </p>
-      </div>
-    </div>
-
-    {/* Why Warehouses Switch to DataDocks */}
-    <div class="mb-24">
-      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
-        Why Warehouses Switch to DataDocks
-      </h2>
-      <div class="w-16 h-1 bg-[#FF5507] mb-10"></div>
-
-      <p class="font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed mb-12 max-w-4xl">
-        Facilities using DataDocks typically see:
-      </p>
-
-      {/* Stats row — cream cards with top orange accent */}
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16">
-        {stats.map((stat) => (
-          <div class="relative bg-[#EFE2D2] p-8 md:p-10 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_32px_rgba(254,80,0,0.18)] transition-shadow duration-300 overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-[#FE5000]"></div>
-            <div class="font-bruta text-5xl md:text-6xl text-[#FE5000] leading-none mb-5">
-              {stat.value}
-            </div>
-            <p class="font-recoleta text-base md:text-lg text-gray-800 leading-relaxed">
-              {stat.label}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div class="max-w-4xl space-y-6 font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
-        <p>
-          The operational wins come from three changes. First, carriers stop calling because they can see the schedule themselves. Second, arrivals get spread across the day instead of bunching at 8 AM. Third, every appointment produces a timestamped record, which means detention disputes get resolved with data instead of back-and-forth arguments.
-        </p>
-
-        <p>
-          DataDocks was built in 2013 for warehouse operators by a team that works directly with the floor. Customers include <strong class="text-black">Stitch Fix, HelloFresh, Samsung, Toyota, LG,</strong> and <strong class="text-black">Pepsi</strong>.
-        </p>
-      </div>
-    </div>
-
-    {/* DataDocks vs. Spreadsheets and Manual Scheduling */}
-    <div>
-      <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-6">
-        DataDocks vs. Spreadsheets and Manual Scheduling
-      </h2>
-      <div class="w-16 h-1 bg-[#FF5507] mb-10"></div>
-
-      <p class="font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed mb-12 max-w-4xl">
-        Most facilities run dock scheduling on a mix of spreadsheets, email, and phone calls. Here's how that compares to running it on DataDocks.
-      </p>
-
+    {/* Comparison Table */}
+    <div class="mb-20">
       {/* Mobile: stacked cards */}
       <div class="block md:hidden space-y-4">
         {comparisonRows.map((row) => (
           <div class="bg-[#EFE2D2] rounded-2xl p-5 shadow-sm">
-            <h3 class="font-bruta text-base uppercase text-black mb-4 leading-tight">
+            <div class="font-sans text-xs uppercase tracking-wider text-gray-500 mb-4 font-bold">
               {row.dimension}
-            </h3>
+            </div>
             <div class="space-y-3">
               <div class="flex gap-3 items-start">
-                <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/60 text-gray-600 text-sm font-bold">×</span>
+                <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/60 text-gray-600">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </span>
                 <div>
-                  <div class="font-recoleta text-xs uppercase tracking-wide text-gray-500 mb-1">Spreadsheets + Phone</div>
-                  <p class="font-recoleta text-sm text-gray-700 leading-relaxed">{row.manual}</p>
+                  <div class="font-recoleta text-xs uppercase tracking-wide text-gray-500 mb-1 text-[10px]">Spreadsheets + Phone</div>
+                  <p class="font-recoleta text-sm text-gray-700">{row.manual}</p>
                 </div>
               </div>
               <div class="flex gap-3 items-start">
-                <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#FE5000] text-white text-sm font-bold">✓</span>
+                <span class="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#FE5000] text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </span>
                 <div>
-                  <div class="font-recoleta text-xs uppercase tracking-wide text-[#FE5000] font-semibold mb-1">DataDocks</div>
-                  <p class="font-recoleta text-sm text-gray-900 leading-relaxed">{row.datadocks}</p>
+                  <div class="font-recoleta text-xs uppercase tracking-wide text-[#FE5000] font-semibold mb-1 text-[10px]">DataDocks</div>
+                  <p class="font-recoleta text-sm text-gray-900 leading-tight">{row.datadocks}</p>
                 </div>
               </div>
             </div>
@@ -192,18 +105,18 @@ const stats = [
         ))}
       </div>
 
-      {/* Desktop: table */}
-      <div class="hidden md:block rounded-2xl overflow-hidden border border-[#EFE2D2] shadow-[0_4px_20px_rgba(0,0,0,0.04)] bg-[#EFE2D2]">
+      {/* Desktop: Tightened table */}
+      <div class="hidden md:block rounded-xl overflow-hidden border border-[#EFE2D2] shadow-[0_2px_15px_rgba(0,0,0,0.03)] bg-[#EFE2D2]">
         <table class="w-full border-collapse">
           <thead>
             <tr>
-              <th class="text-left py-6 px-7 font-bruta text-xs uppercase tracking-[0.15em] text-gray-500 w-1/4 bg-[#EFE2D2]">
+              <th class="text-left py-4 px-6 font-sans text-[10px] uppercase tracking-[0.15em] text-gray-500 w-1/4 bg-[#EFE2D2]">
                 &nbsp;
               </th>
-              <th class="text-left py-6 px-7 font-bruta text-sm uppercase tracking-wider text-gray-600 border-l border-[#FFF8E9] bg-[#EFE2D2]">
+              <th class="text-left py-4 px-6 font-sans text-xs uppercase tracking-wider text-gray-600 border-l border-[#FFF8E9] bg-[#EFE2D2]">
                 Spreadsheets + Phone
               </th>
-              <th class="text-left py-6 px-7 font-bruta text-sm uppercase tracking-wider text-[#FE5000] border-l border-[#FFF8E9] bg-[#FFF0E0] relative">
+              <th class="text-left py-4 px-6 font-sans text-xs uppercase tracking-wider text-[#FE5000] border-l border-[#FFF8E9] bg-[#FFF0E0] relative">
                 <span class="absolute top-0 left-0 w-full h-1 bg-[#FE5000]"></span>
                 DataDocks
               </th>
@@ -212,18 +125,26 @@ const stats = [
           <tbody>
             {comparisonRows.map((row) => (
               <tr>
-                <td class="py-6 px-7 font-bruta text-base uppercase text-black align-top leading-tight border-t border-[#FFF8E9] bg-[#EFE2D2]">
+                <td class="py-4 px-6 font-sans text-sm uppercase tracking-wide text-black align-top leading-tight border-t border-[#FFF8E9] bg-[#EFE2D2] font-bold">
                   {row.dimension}
                 </td>
-                <td class="py-6 px-7 font-recoleta text-base text-gray-700 leading-relaxed align-top border-t border-l border-[#FFF8E9] bg-[#EFE2D2]">
+                <td class="py-4 px-6 font-recoleta text-[15px] text-gray-700 leading-relaxed align-top border-t border-l border-[#FFF8E9] bg-[#EFE2D2]">
                   <span class="flex gap-3 items-start">
-                    <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/60 text-gray-600 text-xs font-bold mt-1">×</span>
+                    <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/60 text-gray-600 mt-1">
+                      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </span>
                     <span>{row.manual}</span>
                   </span>
                 </td>
-                <td class="py-6 px-7 font-recoleta text-base text-gray-900 leading-relaxed align-top border-t border-l border-[#FFF8E9] bg-[#FFF0E0]">
+                <td class="py-4 px-6 font-recoleta text-[15px] text-gray-900 leading-relaxed align-top border-t border-l border-[#FFF8E9] bg-[#FFF0E0]">
                   <span class="flex gap-3 items-start">
-                    <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#FE5000] text-white text-xs font-bold mt-1">✓</span>
+                    <span class="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#FE5000] text-white mt-1">
+                      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </span>
                     <span class="font-medium">{row.datadocks}</span>
                   </span>
                 </td>
@@ -231,6 +152,24 @@ const stats = [
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+
+    {/* Impact Statistics Section */}
+    <div class="border-t border-[#EFE2D2] pt-16">
+      <div class="mb-10 text-center md:text-left">
+        <h3 class="font-recoleta text-2xl md:text-3xl font-bold text-black mb-2">
+          Facilities using DataDocks typically see:
+        </h3>
+        <div class="w-16 h-1 bg-[#FF5507] mx-auto md:mx-0"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {stats.map((stat) => (
+          <div class="group bg-[#EFE2D2] rounded-2xl p-7 shadow-sm border border-[#E4D4C0]/50 transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-[#FE5000]/20">
+            <div class="font-bruta text-4xl lg:text-5xl text-[#FE5000] mb-3 font-extrabold">{stat.value}</div>
+            <p class="font-recoleta text-[1.1rem] text-gray-800 leading-snug">{stat.label}</p>
+          </div>
+        ))}
       </div>
     </div>
 

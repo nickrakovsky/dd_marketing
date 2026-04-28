@@ -9,6 +9,14 @@ import type { CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 import { getFriendlyDate } from "../../utils/dateFormatter";
 
+const categoryIcons: Record<string, string> = {
+  "Facility Operations": `<path d="M3 21h18M3 7v14M21 7v14M3 7l9-4 9 4M7 21v-7h10v7M9 10v2M15 10v2" />`,
+  "Carrier Management": `<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2m3 0h4m4 0h2a1 1 0 0 0 1-1v-5l-4-4h-4m0 4h9m-9-4h7" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" />`,
+  "Supply Chain Strategy": `<rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8" />`,
+  "Systems Integration": `<rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><path d="M14 3h7v7h-7zM3 14h7v7H3z" />`,
+};
+
+
 // Priority helper
 const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
 const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
@@ -250,18 +258,15 @@ const description =
               >
                 <div class="w-16 h-16 md:w-24 md:h-24 bg-white rounded-2xl shadow-md border-2 border-[#E5D3B3] flex items-center justify-center mb-4 group-hover:-translate-y-2 group-hover:border-[#fd4f00] group-hover:shadow-lg transition-all duration-300">
                   <svg
-                    class="w-8 h-8 md:w-10 md:h-10 text-black group-hover:text-[#fd4f00] transition-colors"
+                    class="w-8 h-8 md:w-12 md:h-12 text-black group-hover:text-[#fd4f00] transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="1.5"
-                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                    />
-                  </svg>
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    set:html={categoryIcons[category]}
+                  />
                 </div>
                 <span class="font-bruta uppercase text-base md:text-lg text-center text-gray-800 group-hover:text-[#fd4f00] transition-colors leading-tight">
                   {category}

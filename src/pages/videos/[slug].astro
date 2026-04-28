@@ -23,8 +23,7 @@ const { slug } = Astro.params;
 const entry: CollectionEntry<'videos'> = (Astro.props as Props).entry || await getEntry('videos', slug as string);
 
 if (!entry) {
-  Astro.response.status = 404;
-  return Astro.rewrite('/404');
+  return Astro.redirect('/404');
 }
 const { Content } = await entry.render();
 

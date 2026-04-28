@@ -1,33 +1,53 @@
 ---
 // src/components/home/Resources.astro
-// Homepage internal link section. The Webflow → Astro migration removed
-// homepage links to blog posts, costing internal link juice. This section
-// restores it with curated, high-value articles matched to commercial intent.
+// Homepage internal link section. Displays the most recent youtube short
+// and the highest priority editorial content.
 
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 
-// Curated featured posts — chosen because they match our highest-value
-// commercial keywords, support topical authority, AND have cover images.
-const featuredSlugs = [
-  'what-is-dock-scheduling',
-  'best-yard-management-options',
-  'what-is-a-yard-management-system-yms',
-  'warehouse-receiving-process',
-  'dwell-time-in-trucking',
-  'carrier-scorecards',
-];
-
+// 1. Get all posts
 const allPosts = await getCollection('posts');
-const featured = featuredSlugs
-  .map((slug) => allPosts.find((p: CollectionEntry<'posts'>) => p.slug === slug))
-  .filter((p): p is CollectionEntry<'posts'> => p !== undefined);
+
+// 2. Find the most recent YouTube short (must have a card image)
+const latestShort = allPosts
+  .filter(p => p.data.postType.discriminant === 'short' && p.data.cardImage)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())[0];
+
+// 3. Find the most recently updated "High" priority posts (must have a card image)
+// Exclude the short we already picked.
+const priorityPosts = allPosts
+  .filter(p => 
+    p.data.priority === 'High' && 
+    p.data.cardImage && 
+    p.slug !== latestShort?.slug
+  )
+  .sort((a, b) => {
+    const dateA = a.data.updatedDate || a.data.pubDate;
+    const dateB = b.data.updatedDate || b.data.pubDate;
+    return dateB.getTime() - dateA.getTime();
+  });
+
+// 4. Assemble the 3 posts
+let displayPosts: CollectionEntry<'posts'>[] = [];
+if (latestShort) displayPosts.push(latestShort);
+
+// Add top 2 priority posts
+displayPosts = [...displayPosts, ...priorityPosts.slice(0, 3 - displayPosts.length)];
+
+// 5. Final fallback if we still don't have 3 (just recent posts with images)
+if (displayPosts.length < 3) {
+  const fallbacks = allPosts
+    .filter(p => p.data.cardImage && !displayPosts.some(dp => dp.slug === p.slug))
+    .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+  displayPosts = [...displayPosts, ...fallbacks.slice(0, 3 - displayPosts.length)];
+}
 ---
 
 <section class="relative py-20 md:py-28 overflow-hidden">
 
-  {/* Layered background: deep cream base with a diagonal orange accent band */}
+  {/* Layered background */}
   <div class="absolute inset-0 bg-[#EFE2D2]" aria-hidden="true"></div>
   <div
     class="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -48,20 +68,17 @@ const featured = featuredSlugs
     {/* Section header */}
     <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-6">
       <div>
-        <div class="font-recoleta text-sm uppercase tracking-[0.2em] text-[#FE5000] font-bold mb-4">
-          Resources
-        </div>
-        <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-tight text-black mb-5">
-          Learn More About<br class="hidden md:block" />
-          <span class="text-[#FE5000]">Dock and Yard Operations</span>
+        <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black mb-5">
+          Guides, Checklists &<br class="hidden md:block" />
+          <span class="text-[#FE5000]">Insights for Operations Teams</span>
         </h2>
         <div class="w-16 h-1 bg-[#FF5507]"></div>
       </div>
       <a
         href="/posts"
-        class="group inline-flex items-center gap-2 font-recoleta text-sm uppercase tracking-[0.15em] font-bold text-black hover:text-[#FE5000] transition-colors self-start md:self-end"
+        class="group inline-flex items-center gap-2 font-recoleta text-base font-bold text-black hover:text-[#FE5000] transition-colors self-start md:self-end"
       >
-        See all articles
+        See all resources
         <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#FE5000] text-white transition-transform group-hover:translate-x-1">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <path d="m9 18 6-6-6-6"/>
@@ -72,7 +89,7 @@ const featured = featuredSlugs
 
     {/* Post grid */}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-      {featured.map((post: CollectionEntry<'posts'>) => (
+      {displayPosts.map((post) => (
         <a
           href={`/posts/${post.slug}`}
           class="resource-card group flex flex-col bg-[#FFF8E9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(254,80,0,0.18)] transition-all duration-300 hover:-translate-y-1"
@@ -90,11 +107,12 @@ const featured = featuredSlugs
               />
               {/* Gradient overlay */}
               <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
-              {/* Category badge */}
-              {post.data.category && (
+              
+              {/* Short Badge */}
+              {post.data.postType.discriminant === 'short' && (
                 <div class="absolute top-4 left-4">
-                  <span class="inline-block font-recoleta text-[10px] uppercase tracking-[0.15em] font-bold text-white bg-black/70 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                    {post.data.category}
+                  <span class="inline-block font-sans text-[10px] uppercase tracking-widest font-bold text-white bg-[#FE5000] px-3 py-1.5 rounded-full shadow-lg">
+                    Latest Short
                   </span>
                 </div>
               )}
@@ -102,24 +120,10 @@ const featured = featuredSlugs
           )}
 
           {/* Body */}
-          <div class="p-6 md:p-7 flex flex-col flex-grow">
-            <h3 class="font-bruta text-xl md:text-[1.4rem] uppercase text-black leading-[1.15] mb-3 group-hover:text-[#FE5000] transition-colors">
+          <div class="p-5 md:p-6 flex flex-col">
+            <h3 class="font-recoleta text-lg md:text-xl font-bold text-black leading-snug group-hover:text-[#FE5000] transition-colors">
               {post.data.title}
             </h3>
-            <p class="font-recoleta text-[15px] text-gray-600 leading-relaxed flex-grow mb-5 line-clamp-3">
-              {post.data.description}
-            </p>
-            <div class="flex items-center justify-between pt-4 border-t border-[#EFE2D2] mt-auto">
-              <span class="font-recoleta text-xs uppercase tracking-wider text-gray-500">
-                {post.data.author}
-              </span>
-              <div class="inline-flex items-center gap-1.5 font-recoleta text-sm font-bold text-[#FE5000]">
-                Read
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
-              </div>
-            </div>
           </div>
         </a>
       ))}
@@ -127,13 +131,3 @@ const featured = featuredSlugs
 
   </div>
 </section>
-
-<style>
-  /* line-clamp-3 fallback for older browsers (most modern ones already support it via Tailwind) */
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>

@@ -27,8 +27,7 @@ const entry: CollectionEntry<'posts'> = (Astro.props as Props).entry || await ge
 
 if (!entry) {
   // Fallback for types or edge cases
-  Astro.response.status = 404;
-  return Astro.rewrite('/404');
+  return Astro.redirect('/404');
 }
 const { Content, headings } = await entry.render();
 
