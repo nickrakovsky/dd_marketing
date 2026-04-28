@@ -39,7 +39,22 @@
 
 ### URLs and Links
 - **No trailing slashes.** Internal links must be `/posts/slug` not `/posts/slug/`
+- **No `.html` extensions.** Internal links must be `/about` not `/about.html`
 - Internal blog links use relative format: `/posts/slug` not `https://datadocks.com/posts/slug`
+
+### URL Canonicalization — DO NOT BREAK
+The canonical URL format is **no trailing slash, no `.html` extension**. Three config pieces enforce this together — if any one is changed, Ahrefs/Google will flag redirect chains sitewide:
+
+1. **[astro.config.mjs](astro.config.mjs)** — must keep `trailingSlash: 'never'` AND `build.format: 'file'`. The `file` format makes Astro emit `page.html` instead of `page/index.html`, so Cloudflare serves it at `/page` with no auto-redirect.
+2. **[src/layouts/Layout.astro](src/layouts/Layout.astro)** — the canonical normalizer strips both `.html` and trailing slash: `Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '')`. Do not simplify.
+3. **[public/_redirects](public/_redirects)** — `/*.html /:splat 301` makes any `.html` URL 301 to the clean version. Do not remove.
+
+**Do not change any of these without updating all three.** Also do not add a `public/_redirects` rule that creates trailing slashes, and do not hardcode `.html` or trailing slashes in internal links, sitemap customPages, or schema `@id`/`url` fields.
+
+### External Links
+- Never link to competitor websites (dock scheduling, yard management, or WMS software vendors)
+- OK to link to: news/media, academic/research sources, government sites, industry associations, and non-competing software (e.g. ERP, BI tools)
+- When citing a statistic or concept, prefer linking to the original research source, not a competitor's blog post about it
 - Links to product/feature pages (datadocks.com/benefits/, datadocks.com/datadocks-features/) are absolute since they're served from Webflow
 
 ### SEO
@@ -68,6 +83,7 @@
 - `description` — meta description
 - `author` — byline
 - `pubDate` / `updatedDate` — dates used in schema and sitemap lastmod
+- **When editing an existing blog post's body content, you MUST bump `updatedDate` to the current date/time.** This keeps sitemap `lastmod` and JSON-LD `dateModified` honest so Google/AI crawlers see the post as freshly updated. Skip this only for pure mechanical changes (link format, typo, whitespace). Format: `'Apr 23, 2026 4:30 PM'` (matches existing frontmatter style).
 - `cardImage` — relative path to cover image in `src/assets/blog-images/`
 - `cardAlt` — alt text for cover image (never leave empty)
 - `showToc` — enables table of contents

@@ -172,34 +172,49 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
   }
 </style>
 
-<script>
-  // 1. Form Handling
-  (function () {
-    const calendlyUrl =
-      "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    const form = document.getElementById(
-      "hero-bento-form",
-    ) as HTMLFormElement | null;
 
-    if (form) {
-      form.addEventListener("submit", (e) => {
+<script is:inline>
+  (function() {
+    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+
+    function attachHeroForm() {
+      var form = document.getElementById('hero-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
+      form.addEventListener('submit', function(e) {
         e.preventDefault();
-        const emailInput = form.querySelector(
-          'input[name="email"]',
-        ) as HTMLInputElement | null;
-        const email = emailInput?.value;
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          // Client-side identify
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
 
-        const bento = (window as any).bento;
-        if (email && bento) {
-          bento.identify(email);
-          bento.track("Demo Subscriber", { source: window.location.pathname });
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+            }),
+            keepalive: true
+          }).catch(function() {});
         }
-        window.open(calendlyUrl, "_blank", "noopener");
+        window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
       });
     }
-  })();
 
+    attachHeroForm();
+    document.addEventListener('astro:page-load', attachHeroForm);
+  })();
+</script>
+
+<script>
   // 2. Mobile Image Panning
   (function () {
     const frame = document.getElementById("hero-mobile-frame");
@@ -229,7 +244,6 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       function animate() {
         const now = Date.now();
         if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
-          // Calculate momentum (0 to 1) based on time since resume delay passed
           const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
           const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
           
@@ -245,7 +259,6 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           }
           img!.style.objectPosition = `${currentPct}% 50%`;
         } else {
-          // Reset speed when interacting
           currentSpeed = 0;
         }
         rafId = requestAnimationFrame(animate);

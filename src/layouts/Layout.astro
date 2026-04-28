@@ -45,10 +45,10 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-// Strip trailing slash for canonical URL (accept both, default to no slash)
+// Normalize pathname: strip trailing slash AND strip .html suffix (build.format: 'file' emits paths with .html)
 const pathname = Astro.url.pathname === '/'
   ? '/'
-  : Astro.url.pathname.replace(/\/$/, '');
+  : Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '');
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
@@ -389,6 +389,30 @@ const jsonLd = {
               }
             });
         </script>
+
+        {/* Capture landing page on first visit; expose Bento visitor UUID helper for form tracking */}
+        <script is:inline>
+          (function() {
+            // Record the very first URL the visitor landed on (persists for the session)
+            if (!sessionStorage.getItem('dd_landing_page')) {
+              sessionStorage.setItem('dd_landing_page', window.location.href);
+            }
+            // Helper used by all CTA forms to read the Bento SDK visitor UUID cookie.
+            // The SDK stores the anonymous visitor UUID in a cookie whose name starts with "bento_".
+            // Passing it server-side lets Bento stitch the anonymous session to the identified subscriber.
+            window.getBentoVisitorUuid = function() {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                var c = cookies[i].trim();
+                if (c.indexOf('bento_') === 0) {
+                  return c.split('=').slice(1).join('=');
+                }
+              }
+              return null;
+            };
+          })();
+        </script>
+
         {PUBLIC_BENTO_UUID && (
           <Fragment>
             <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>

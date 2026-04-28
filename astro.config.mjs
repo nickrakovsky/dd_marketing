@@ -37,11 +37,14 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'never',
   build: {
+    format: 'file',
     inlineStylesheets: 'always',
   },
   redirects: {
+    '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
+    '/posts/yt-:id': '/videos/yt-:id',
   },
 
   integrations: [
@@ -87,7 +90,7 @@ export default defineConfig({
       }
     },
     tailwind(), react(), keystatic(), sitemap({
-      filter: (page) => !page.includes('/compare/opendock'),
+      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {

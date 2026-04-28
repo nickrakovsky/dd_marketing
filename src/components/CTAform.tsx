@@ -24,9 +24,27 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
-    if (email && (window as any).bento) {
-      (window as any).bento.identify(email);
-      (window as any).bento.track("Demo Subscriber", { source: pagePath });
+    if (email) {
+      // Client-side identify
+      if (typeof (window as any).bento !== 'undefined' && typeof (window as any).bento.identify === 'function') {
+        (window as any).bento.identify(email);
+      }
+
+      // Server-side proxy — ad-blocker proof
+      fetch('/api/bento-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          event: 'Demo Subscriber',
+          source: pagePath,
+          landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+          visitorUuid: typeof (window as any).getBentoVisitorUuid === 'function'
+            ? (window as any).getBentoVisitorUuid()
+            : null,
+        }),
+        keepalive: true,
+      }).catch(() => {});
     }
     setIsSubmitted(true);
     window.open(calendlyUrl, "_blank", "noopener");

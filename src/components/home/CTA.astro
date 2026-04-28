@@ -27,7 +27,7 @@
             name="email"
             placeholder="Enter your email"
             style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
-            class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none"
+            class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none transition-all duration-300 sm:hover:pl-6 sm:focus:pl-6"
             required
           />
           <button
@@ -46,18 +46,42 @@
 <script is:inline>
   (function() {
     var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    var form = document.getElementById('cta-bento-form');
-    if (form) {
+
+    function attachCtaForm() {
+      var form = document.getElementById('cta-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var email = (form.querySelector('input[name="email"]') || {}).value;
-        if (email && window.bento) {
-          window.bento.identify(email);
-          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          // 1. Client-side identify (Primary stitching)
+          // If the SDK is loaded and not blocked, this handles the identity link officially.
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
+
+          // 2. Server-side proxy (Backup/Ad-block resistant)
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+            }),
+            keepalive: true
+          }).catch(function() {});
         }
         window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
       });
     }
+
+    attachCtaForm();
+    document.addEventListener('astro:page-load', attachCtaForm);
   })();
 </script>

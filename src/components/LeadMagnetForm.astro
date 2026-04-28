@@ -84,13 +84,28 @@ const uid = Math.random().toString(36).slice(2, 9);
           if (redirectUrl) formData.append('redirect', redirectUrl);
           formData.append('fields[source]', window.location.pathname);
 
-          if (uuid && eventName) {
-            fetch('https://track.bentonow.com/forms/' + uuid + '/' + eventName, {
+          if (email) {
+            // Client-side identify
+            if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+              window.bento.identify(email);
+              window.bento.track(eventName, { source: window.location.pathname });
+            }
+
+            fetch('/api/bento-track', {
               method: 'POST',
-              body: formData,
-              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: email,
+                event: eventName,
+                source: window.location.pathname,
+                landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+              }),
+              keepalive: true
             }).catch(function() {});
           }
+
+          form.reset();
 
           var container = form.closest('.lead-magnet-container');
           if (container) {
