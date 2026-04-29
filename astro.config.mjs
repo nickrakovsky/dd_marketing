@@ -38,7 +38,7 @@ export default defineConfig({
   trailingSlash: 'never',
   build: {
     format: 'file',
-    inlineStylesheets: 'always',
+    inlineStylesheets: 'auto',
   },
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
