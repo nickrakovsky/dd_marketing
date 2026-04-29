@@ -319,9 +319,9 @@ const jsonLd = {
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
 
         <style is:inline set:html={`
-            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: optional; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: optional; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: optional; }
         `}></style>
         {!disableTransitions && <ViewTransitions />}
     </head>
