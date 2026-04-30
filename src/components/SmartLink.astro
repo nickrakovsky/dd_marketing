@@ -1,0 +1,51 @@
+---
+// src/components/SmartLink.astro
+import { getEntry } from 'astro:content';
+
+interface Props {
+  id: string;
+  anchorText?: string;
+}
+
+const { id, anchorText } = Astro.props;
+
+// Fetch the glossary entry
+const glossaryEntry = await getEntry('glossary', id);
+
+let targetPostUrl = '';
+let contextSnippet = '';
+let termName = '';
+
+if (glossaryEntry) {
+  termName = glossaryEntry.data.termName;
+  contextSnippet = glossaryEntry.data.contextSnippet;
+  
+  // Fetch the target post to get its final URL
+  const targetPost = await getEntry(glossaryEntry.data.targetPost.collection as any, glossaryEntry.data.targetPost.id);
+  
+  if (targetPost) {
+    // The targetPost is currently limited to the 'posts' collection in the schema
+    targetPostUrl = `/posts/${targetPost.slug}`;
+  }
+}
+
+// Fallback logic for display text
+const displayText = anchorText || id.replace(/-/g, ' ');
+
+// If data is missing, we still render the link but without the special trigger attributes
+// so it behaves like a normal link or plain text if no URL.
+const isValid = !!(glossaryEntry && targetPostUrl);
+---
+
+{isValid ? (
+  <a 
+    href={targetPostUrl} 
+    data-smartlink-trigger="true"
+    data-smartlink-title={termName}
+    data-smartlink-snippet={contextSnippet}
+    data-smartlink-href={targetPostUrl}
+    class="inline underline decoration-dotted decoration-[#fd4f00] hover:decoration-[#fd4f00] hover:text-[#fd4f00] transition-colors cursor-help font-medium"
+  >{displayText}</a>
+) : (
+  <span class="font-medium">{displayText}</span>
+)}

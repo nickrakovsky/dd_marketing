@@ -20,6 +20,7 @@
 
 
 ## Project Structure
+- `COLORS.md` — Brand color palette and functional color codes for LLM agents
 - `src/content/posts/` — Blog posts (MDX files)
 - `src/pages/` — Astro pages (static with `export const prerender = true`)
 - `src/layouts/Layout.astro` — Main layout with JSON-LD `@graph` structured data

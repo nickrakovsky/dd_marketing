@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { config, fields, collection, singleton } from '@keystatic/core';
-import { block } from '@keystatic/core/content-components';
+import { block, inline } from '@keystatic/core/content-components';
 
 const isProd = import.meta.env.PROD;
 
@@ -69,6 +69,7 @@ export default config({
                     publicPath: '../../assets/blog-images/',
                 }),
                 cardAlt: fields.text({ label: 'Card Image Alt' }),
+                readTime: fields.text({ label: 'Read Time (e.g. 5 min read)' }),
                 isHighlighted: fields.checkbox({ label: 'Is Highlighted' }),
                 priority: fields.select({
                     label: 'Priority',
@@ -80,6 +81,16 @@ export default config({
                     defaultValue: 'Medium',
                 }),
                 showToc: fields.checkbox({ label: 'Show Table of Contents', defaultValue: true }),
+                faq: fields.array(
+                    fields.object({
+                        question: fields.text({ label: 'Question' }),
+                        answer: fields.text({ label: 'Answer', multiline: true }),
+                    }),
+                    {
+                        label: 'FAQ Items (Frontmatter)',
+                        itemLabel: (props) => props.fields.question.value || 'New FAQ Item',
+                    }
+                ),
                 postType: fields.conditional(
                     fields.select({
                         label: 'Post Type',
@@ -103,6 +114,32 @@ export default config({
                                             redirectUrl: fields.text({ label: 'Redirect URL' }),
                                             buttonText: fields.text({ label: 'Button Text' }),
                                         }
+                                    }),
+                                    FAQ: block({
+                                        label: 'FAQ Block',
+                                        schema: {
+                                            faqs: fields.array(
+                                                fields.object({
+                                                    question: fields.text({ label: 'Question' }),
+                                                    answer: fields.text({ label: 'Answer', multiline: true }),
+                                                }),
+                                                {
+                                                    label: 'Items',
+                                                    itemLabel: props => props.fields.question.value || 'New Item',
+                                                }
+                                            )
+                                        }
+                                    }),
+                                    SmartLink: inline({
+                                        label: 'Glossary SmartLink',
+                                        schema: {
+                                            id: fields.relationship({
+                                                label: 'Glossary Term',
+                                                collection: 'glossary',
+                                                validation: { isRequired: true }
+                                            }),
+                                            anchorText: fields.text({ label: 'Anchor Text' }),
+                                        }
                                     })
                                 }
                             })
@@ -121,6 +158,17 @@ export default config({
                                             redirectUrl: fields.text({ label: 'Redirect URL' }),
                                             buttonText: fields.text({ label: 'Button Text' }),
                                         }
+                                    }),
+                                    SmartLink: inline({
+                                        label: 'Glossary SmartLink',
+                                        schema: {
+                                            id: fields.relationship({
+                                                label: 'Glossary Term',
+                                                collection: 'glossary',
+                                                validation: { isRequired: true }
+                                            }),
+                                            anchorText: fields.text({ label: 'Anchor Text' }),
+                                        }
                                     })
                                 }
                             })
@@ -138,6 +186,17 @@ export default config({
                                             eventName: fields.text({ label: 'Event Name' }),
                                             redirectUrl: fields.text({ label: 'Redirect URL' }),
                                             buttonText: fields.text({ label: 'Button Text' }),
+                                        }
+                                    }),
+                                    SmartLink: inline({
+                                        label: 'Glossary SmartLink',
+                                        schema: {
+                                            id: fields.relationship({
+                                                label: 'Glossary Term',
+                                                collection: 'glossary',
+                                                validation: { isRequired: true }
+                                            }),
+                                            anchorText: fields.text({ label: 'Anchor Text' }),
                                         }
                                     })
                                 }
@@ -198,6 +257,17 @@ export default config({
                                             redirectUrl: fields.text({ label: 'Redirect URL' }),
                                             buttonText: fields.text({ label: 'Button Text' }),
                                         }
+                                    }),
+                                    SmartLink: inline({
+                                        label: 'Glossary SmartLink',
+                                        schema: {
+                                            id: fields.relationship({
+                                                label: 'Glossary Term',
+                                                collection: 'glossary',
+                                                validation: { isRequired: true }
+                                            }),
+                                            anchorText: fields.text({ label: 'Anchor Text' }),
+                                        }
                                     })
                                 }
                             })
@@ -215,6 +285,17 @@ export default config({
                                             eventName: fields.text({ label: 'Event Name' }),
                                             redirectUrl: fields.text({ label: 'Redirect URL' }),
                                             buttonText: fields.text({ label: 'Button Text' }),
+                                        }
+                                    }),
+                                    SmartLink: inline({
+                                        label: 'Glossary SmartLink',
+                                        schema: {
+                                            id: fields.relationship({
+                                                label: 'Glossary Term',
+                                                collection: 'glossary',
+                                                validation: { isRequired: true }
+                                            }),
+                                            anchorText: fields.text({ label: 'Anchor Text' }),
                                         }
                                     })
                                 }
@@ -250,10 +331,41 @@ export default config({
                                 redirectUrl: fields.text({ label: 'Redirect URL' }),
                                 buttonText: fields.text({ label: 'Button Text' }),
                             }
+                        }),
+                        SmartLink: inline({
+                            label: 'Glossary SmartLink',
+                            schema: {
+                                id: fields.relationship({
+                                    label: 'Glossary Term',
+                                    collection: 'glossary',
+                                    validation: { isRequired: true }
+                                }),
+                                anchorText: fields.text({ label: 'Anchor Text' }),
+                            }
                         })
                     }
                 }),
             },
+        }),
+        glossary: collection({
+            label: 'Glossary',
+            slugField: 'termName',
+            path: 'src/content/glossary/*',
+            format: { data: 'json' },
+            schema: {
+                termName: fields.slug({ name: { label: 'Term Name' } }),
+                contextSnippet: fields.text({ 
+                    label: 'Context Snippet', 
+                    description: 'A 1-2 sentence definition for the tooltip/bottom sheet.',
+                    multiline: true 
+                }),
+                targetPost: fields.relationship({
+                    label: 'Target Post',
+                    description: 'The deep-dive article this term should link to.',
+                    collection: 'posts',
+                    validation: { isRequired: true }
+                }),
+            }
         }),
     },
 });

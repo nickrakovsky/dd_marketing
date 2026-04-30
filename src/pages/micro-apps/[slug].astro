@@ -4,7 +4,9 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
+import SmartLinkController from '../../components/SmartLinkController.astro';
 import LTLCalculator from '../../components/micro-apps/LTLCalculator';
+import SmartLink from '../../components/SmartLink.astro';
 
 export async function getStaticPaths() {
     const apps = await getCollection('micro-app');
@@ -19,6 +21,7 @@ const { Content } = await app.render();
 
 const components = {
     LTLCalculator: LTLCalculator,
+    SmartLink: SmartLink,
 };
 
 // Use the standard Card layout for micro-apps
@@ -52,6 +55,7 @@ const components = {
     </main>
 
     <Footer />
+    <SmartLinkController />
 </Layout>
 
 <style is:global>

@@ -1,4 +1,4 @@
-import { z, defineCollection } from 'astro:content';
+import { z, defineCollection, reference } from 'astro:content';
 
 const postsCollection = defineCollection({
     type: 'content',
@@ -126,6 +126,15 @@ const microAppCollection = defineCollection({
     })
 });
 
+const glossaryCollection = defineCollection({
+    type: 'data',
+    schema: z.object({
+        termName: z.string(),
+        contextSnippet: z.string(),
+        targetPost: reference('posts'),
+    })
+});
+
 export const collections = {
     'posts': postsCollection,
     'videos': videosCollection,
@@ -133,4 +142,5 @@ export const collections = {
     'integrations': integrationsCollection,
     'settings': settingsCollection,
     'micro-app': microAppCollection,
-};
+    'glossary': glossaryCollection,
+};
