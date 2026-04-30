@@ -126,7 +126,7 @@ const author = getAuthor(frontmatter.author);
       <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
-        <aside class="hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky top-32 z-20 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pr-4">
+        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4">
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
@@ -134,12 +134,12 @@ const author = getAuthor(frontmatter.author);
                 <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[#ff7635] opacity-30"></div>
               </div>
               <nav>
-                <ul class="space-y-4">
+                <ul class={`space-y-4 ${h2Headings.length > 12 ? '!space-y-1' : h2Headings.length > 7 ? '!space-y-2' : ''}`}>
                   {h2Headings.map((heading: Heading) => (
                     <li>
                       <a 
                         href={`#${heading.slug}`} 
-                        class="toc-link block text-sm font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4"
+                        class={`toc-link block font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4 ${h2Headings.length > 12 ? 'text-[11px] py-0.5 leading-tight' : h2Headings.length > 7 ? 'text-xs py-1 leading-snug' : 'text-sm py-1'}`}
                       >
                         {heading.text}
                       </a>
@@ -155,23 +155,25 @@ const author = getAuthor(frontmatter.author);
         <div class="w-full max-w-3xl mx-auto lg:mx-0 flex-grow">
           {/* Static TOC for Mobile */}
           {h2Headings.length > 0 && (
-            <div class="lg:hidden mb-12 bg-[#F8EDD9] dark:bg-gray-800 p-6 rounded-2xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300">
-              <details class="group">
-                <summary class="list-none cursor-pointer flex items-center justify-between outline-none">
-                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider">Table of Contents</span>
+            <div class="lg:hidden relative z-40 mb-12">
+              <details class="group bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300 mobile-toc-details">
+                <summary class="list-none cursor-pointer p-4 flex items-center justify-between outline-none">
+                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider text-sm">Table of Contents</span>
                   <svg class="w-5 h-5 text-[#fd4f00] transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 </summary>
-                <nav class="mt-6 border-t border-[#E5D3B3] dark:border-gray-700 pt-4">
-                  <ul class="space-y-3">
-                    {h2Headings.map((heading: Heading) => (
-                      <li>
-                        <a href={`#${heading.slug}`} class="block text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] transition-colors">
-                          {heading.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+                <div class="absolute left-0 right-0 top-full mt-2 bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 shadow-xl p-4 z-50 max-h-[60vh] overflow-y-auto">
+                  <nav>
+                    <ul class="space-y-3">
+                      {h2Headings.map((heading: Heading) => (
+                        <li>
+                          <a href={`#${heading.slug}`} class="mobile-toc-link block text-sm text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-colors border-l-2 border-transparent pl-3">
+                            {heading.text}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </div>
               </details>
             </div>
           )}
@@ -352,7 +354,7 @@ const author = getAuthor(frontmatter.author);
               const id = entry.target.getAttribute('id');
               if (!id) return;
 
-              document.querySelectorAll('.toc-link').forEach(link => {
+              document.querySelectorAll('.toc-link, .mobile-toc-link').forEach(link => {
                 const isActive = link.getAttribute('href') === `#${id}`;
                 link.classList.toggle('active', isActive);
               });
@@ -363,9 +365,43 @@ const author = getAuthor(frontmatter.author);
         document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
       }
 
+      function setupMobileToc() {
+        const mobileTocLinks = document.querySelectorAll('.mobile-toc-link');
+        const detailsElem = document.querySelector('.mobile-toc-details');
+        mobileTocLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            if (detailsElem) {
+              detailsElem.removeAttribute('open');
+            }
+          });
+        });
+      }
+
+      function setupDesktopTocInteraction() {
+        const desktopToc = document.getElementById('desktop-toc');
+        if (!desktopToc) return;
+        const links = desktopToc.querySelectorAll('.toc-link');
+        let timeout;
+        links.forEach(link => {
+          link.addEventListener('click', () => {
+            desktopToc.classList.add('is-active-click');
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+              desktopToc.classList.remove('is-active-click');
+            }, 50);
+          });
+        });
+      }
+
       if (typeof window !== 'undefined') {
         setupScrollSpy();
-        document.addEventListener('astro:after-swap', setupScrollSpy);
+        setupMobileToc();
+        setupDesktopTocInteraction();
+        document.addEventListener('astro:after-swap', () => {
+          setupScrollSpy();
+          setupMobileToc();
+          setupDesktopTocInteraction();
+        });
       }
     </script>
 
@@ -440,15 +476,36 @@ const author = getAuthor(frontmatter.author);
     background-color: rgba(17, 24, 39, 0.4); /* gray-900 */
   }
 
+  @keyframes tocHighlightFlash {
+    0% { background-color: rgba(253, 79, 0, 0.15); }
+    100% { background-color: transparent; }
+  }
+
   /* Active state for scroll spy */
-  .toc-link.active {
+  .toc-link.active, .mobile-toc-link.active {
     color: #fd4f00 !important;
     border-left-color: #fd4f00 !important;
-    font-weight: 700;
+    -webkit-text-stroke: 0.4px currentColor;
+    animation: tocHighlightFlash 1.5s ease-out forwards;
   }
-  .dark .toc-link.active {
+  .dark .toc-link.active, .dark .mobile-toc-link.active {
     color: #ff7635 !important;
     border-left-color: #ff7635 !important;
+    -webkit-text-stroke: 0.4px currentColor;
+    animation: tocHighlightFlash 1.5s ease-out forwards;
+  }
+
+  /* Desktop TOC fading */
+  .desktop-toc-container {
+    opacity: 0.4;
+    filter: grayscale(100%);
+    transition: opacity 4s ease, filter 4s ease;
+  }
+  .desktop-toc-container:hover,
+  .desktop-toc-container.is-active-click {
+    opacity: 1;
+    filter: grayscale(0%);
+    transition: opacity 0.2s ease, filter 0.2s ease;
   }
 
   /* Smooth transitions for text resizing */

@@ -53,6 +53,7 @@ scratch/
 
 # Assets staging folder (used for one-off imports only)
 assets-for-import/
+temp-import/
 
 # SEO audit reports (working documents, not production code)
 /ACTION-PLAN.md

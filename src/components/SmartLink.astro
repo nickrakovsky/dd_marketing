@@ -44,8 +44,8 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     data-smartlink-title={termName}
     data-smartlink-snippet={contextSnippet}
     data-smartlink-href={targetPostUrl}
-    class="inline underline decoration-dotted decoration-[#fd4f00] hover:decoration-[#fd4f00] hover:text-[#fd4f00] transition-colors cursor-help font-medium"
-  >{displayText}</a>
+    class="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00]"
+  >{displayText}<span class="inline lg:hidden ml-0.5 text-[#fd4f00] text-xs font-bold align-super" aria-hidden="true">?</span></a>
 ) : (
   <span class="font-medium">{displayText}</span>
 )}

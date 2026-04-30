@@ -2,16 +2,25 @@
 
 This document defines the brand color palette and functional color systems for DataDocks. LLM agents should refer to these hex codes to maintain visual consistency across components and designs.
 
-## Core Brand Colors
-The primary identity colors for DataDocks.
+## Marketing Core
+The primary identity colors for DataDocks marketing and brand recognition.
+
+| Color Name | Hex Code | Usage |
+| :--- | :--- | :--- |
+| Official Orange | `#FE5000` | Primary brand color / Hero CTAs |
+| Paper White | `#FFF8EE` | Primary background canvas |
+| Solid Black | `#000000` | Primary typography |
+
+## Product Core (Neutrals)
+The secondary palette used within the DataDocks application interface.
 
 | Variable Name | Hex Code | Usage |
 | :--- | :--- | :--- |
-| `--datadocks-orange` | `#fd4f00` | Primary brand color / Action color |
-| `--datadocks-brown-dark` | `#ad9686` | Secondary brand color |
+| `--datadocks-orange` | `#fd4f00` | Primary interface action color |
+| `--datadocks-brown-dark` | `#ad9686` | Secondary brand color / Icons |
 | `--datadocks-brown-light` | `#ece6de` | Backgrounds / Neutral sections |
 | `--datadocks-brown-extra-light` | `#faf8f5` | Subtle backgrounds |
-| `--datadocks-brown-extra-dark` | `#5f483a` | Text / Dark accents |
+| `--datadocks-brown-extra-dark` | `#5f483a` | UI Text / Dark accents |
 | `--datadocks-brown-medium` | `#9c806d` | Accents / Borders |
 
 ## Appointment State Colors

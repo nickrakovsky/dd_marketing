@@ -61,6 +61,10 @@ export default defineConfig({
               pattern: '/internal/marketing-pdf',
               entrypoint: './src/offline-pages/marketing-pdf.astro'
             });
+            injectRoute({
+              pattern: '/brand-book',
+              entrypoint: './src/offline-pages/brand-book.astro'
+            });
           }
         },
         'astro:build:done': async ({ dir }) => {

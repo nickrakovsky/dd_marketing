@@ -1,0 +1,266 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+
+export const prerender = true;
+
+const branding = {
+  marketing: {
+    core: [
+      { name: "Official Orange", hex: "#FE5000", usage: "Primary identity" },
+      { name: "Paper White", hex: "#FFF8EE", usage: "Canvas" },
+      { name: "Solid Black", hex: "#000000", usage: "Typography" },
+    ],
+    secondary: [
+      { name: "Old Lace", hex: "#FFF8E9" },
+      { name: "Dark Beige", hex: "#E3D5C4" },
+      { name: "Stone Brown", hex: "#8D785C" },
+      { name: "Soft Peach", hex: "#FFE6D4" },
+    ]
+  },
+  typography: [
+    { 
+      name: "Bruta", 
+      fontClass: "font-bruta",
+      version: "ExtraBold", 
+      rules: "ALWAYS All Caps. Headlines only.",
+      examples: [
+        { label: "Headline", style: "text-5xl font-bruta uppercase tracking-tight leading-none" }
+      ]
+    },
+    { 
+      name: "Recoleta", 
+      fontClass: "font-recoleta",
+      version: "Regular / SemiBold", 
+      rules: "Editorial serif. Subheadings and storytelling.",
+      examples: [
+        { label: "Subheading", style: "text-3xl font-recoleta font-semibold" },
+        { label: "Body Accent", style: "text-xl font-recoleta" }
+      ]
+    },
+    { 
+      name: "Inter", 
+      fontClass: "font-sans",
+      version: "Regular / Bold", 
+      rules: "Functional sans-serif. Body and UI.",
+      examples: [
+        { label: "UI Label", style: "text-base font-sans font-bold" },
+        { label: "Body Text", style: "text-base font-sans" }
+      ]
+    }
+  ],
+  product: {
+    neutrals: [
+        { name: "Product Orange", var: "--datadocks-orange", hex: "#fd4f00" },
+        { name: "Brown Dark", var: "--datadocks-brown-dark", hex: "#ad9686" },
+        { name: "Brown Light", var: "--datadocks-brown-light", hex: "#ece6de" },
+        { name: "Brown Extra Light", var: "--datadocks-brown-extra-light", hex: "#faf8f5" },
+        { name: "Brown Extra Dark", var: "--datadocks-brown-extra-dark", hex: "#5f483a" },
+        { name: "Brown Medium", var: "--datadocks-brown-medium", hex: "#9c806d" },
+    ],
+    states: [
+      { name: "Unbooked", hex: "#e6e6e6" },
+      { name: "Pending", hex: "#d0ddf6" },
+      { name: "Booked", hex: "#9de9bb" },
+      { name: "Arrived", hex: "#a9efff" },
+      { name: "Started", hex: "#fff8bc" },
+      { name: "Completed", hex: "#92b4f5" },
+      { name: "Departed", hex: "#d7e0f1" },
+      { name: "Unscheduled", hex: "#feceff" },
+      { name: "Delayed", hex: "#ffdba5" },
+      { name: "Cancelled", hex: "#ffc1c1" },
+      { name: "No Show", hex: "#bababa" },
+    ],
+    semantic: [
+        { name: "Info", hexes: ["#d0ddf6", "#99bcff", "#4a69a4"] },
+        { name: "Error", hexes: ["#ffd7d7", "#ffa6a6", "#cb4949"] },
+        { name: "Success", hexes: ["#e0eedb", "#8DCA77", "#4a8136"] }
+    ]
+  }
+};
+---
+
+<Layout title="Visual Systems" noindex={true}>
+  <Navigation />
+
+  <main class="bg-[#FFF8EE] min-h-screen pt-32 pb-20 px-6 font-sans text-black">
+    <div class="max-w-5xl mx-auto space-y-24">
+      
+      {/* HEADER */}
+      <header>
+        <h1 class="text-6xl font-bruta uppercase mb-4">Visual Systems</h1>
+        <p class="text-xl font-recoleta text-black/60">DataDocks Brand & Product Guidelines</p>
+      </header>
+
+      {/* 01 / LOGOS */}
+      <section>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-[#FE5000] mb-8">01 / Logos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white border border-black/10 p-12 rounded-xl flex items-center justify-center h-48">
+                <img src="/brand-assets/logo-wordmark-black.svg" alt="Wordmark Black" class="max-h-full w-auto" />
+            </div>
+            <div class="bg-white border border-black/10 p-12 rounded-xl flex items-center justify-center h-48">
+                <img src="/brand-assets/logo-wordmark-orange.svg" alt="Wordmark Orange" class="max-h-full w-auto" />
+            </div>
+            <div class="bg-black p-12 rounded-xl flex items-center justify-center h-48">
+                <img src="/brand-assets/logo-wordmark-white.svg" alt="Wordmark White" class="max-h-full w-auto" />
+            </div>
+            <div class="grid grid-cols-3 gap-4 h-48">
+                <div class="bg-white border border-black/10 p-4 rounded-xl flex items-center justify-center">
+                    <img src="/brand-assets/logo-symbol-orange.svg" alt="Symbol Orange" class="h-10 w-auto" />
+                </div>
+                <div class="bg-black p-4 rounded-xl flex items-center justify-center">
+                    <img src="/brand-assets/logo-symbol-white.svg" alt="Symbol White" class="h-10 w-auto" />
+                </div>
+                <div class="bg-white border border-black/10 p-4 rounded-xl flex items-center justify-center overflow-hidden">
+                    <img src="/brand-assets/logo-stamp.jpg" alt="Stamp" class="h-16 w-16 rounded-full" />
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* 02 / TYPOGRAPHY */}
+      <section>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-[#FE5000] mb-8">02 / Typography</h2>
+        <div class="space-y-16">
+            {branding.typography.map(font => (
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start border-t border-black/5 pt-8">
+                    <div class="md:col-span-4">
+                        <h3 class={`text-3xl ${font.fontClass} uppercase mb-2`}>{font.name}</h3>
+                        <p class="text-xs text-black/40 mb-4">{font.version}</p>
+                        <p class="text-sm text-black/60">{font.rules}</p>
+                    </div>
+                    <div class="md:col-span-8 space-y-6">
+                        {font.examples.map(ex => (
+                            <div class="space-y-1">
+                                <span class="text-[9px] uppercase tracking-widest text-black/30">{ex.label}</span>
+                                <div class={ex.style}>The quick brown fox jumps over the lazy dog</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+      </section>
+
+      {/* 03 / COLOURS */}
+      <section>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-[#FE5000] mb-8">03 / Palette</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {branding.marketing.core.map(color => (
+                <button class="text-left cursor-copy group" data-hex={color.hex}>
+                    <div class="h-32 rounded-xl mb-4 border border-black/10" style={`background-color: ${color.hex}`}></div>
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold">{color.name}</h3>
+                        <code class="text-sm font-mono text-[#FE5000]">{color.hex}</code>
+                    </div>
+                </button>
+            ))}
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {branding.marketing.secondary.map(color => (
+                <button class="flex items-center gap-3 p-3 bg-white border border-black/10 rounded-lg cursor-copy" data-hex={color.hex}>
+                    <div class="w-8 h-8 rounded border border-black/10 shrink-0" style={`background-color: ${color.hex}`}></div>
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase">{color.name}</p>
+                        <code class="text-[9px] text-black/40 font-mono">{color.hex}</code>
+                    </div>
+                </button>
+            ))}
+        </div>
+      </section>
+
+      {/* 04 / PRODUCT */}
+      <section>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-[#FE5000] mb-8">04 / Product Specification</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-4">
+                <h3 class="text-[10px] font-bold uppercase text-black/40">Neutrals</h3>
+                <div class="grid grid-cols-1 gap-1">
+                    {branding.product.neutrals.map(color => (
+                        <button class="flex items-center justify-between p-3 bg-white border border-black/5 rounded-lg cursor-copy" data-hex={color.hex}>
+                            <div class="flex items-center gap-4">
+                                <div class="w-6 h-6 rounded border border-black/5" style={`background-color: ${color.hex}`}></div>
+                                <div class="text-left">
+                                    <p class="text-[10px] font-bold">{color.name}</p>
+                                    <code class="text-[9px] text-black/40 font-mono">{color.var}</code>
+                                </div>
+                            </div>
+                            <code class="text-[10px] font-mono font-bold text-[#FE5000]">{color.hex}</code>
+                        </button>
+                    ))}
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-[10px] font-bold uppercase text-black/40">Appointment States</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    {branding.product.states.map(state => (
+                        <button class="flex flex-col gap-2 p-3 bg-white border border-black/5 rounded-lg cursor-copy" data-hex={state.hex}>
+                            <div class="w-full h-8 rounded border border-black/5" style={`background-color: ${state.hex}`}></div>
+                            <p class="text-[9px] font-bold uppercase text-center truncate">{state.name}</p>
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+      </section>
+
+      {/* 05 / COLLATERAL */}
+      <section>
+        <h2 class="text-xs font-bold uppercase tracking-widest text-[#FE5000] mb-8">05 / Collateral</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="p-8 bg-white border border-black/10 rounded-xl flex flex-col justify-between h-64">
+                <div>
+                    <h3 class="text-2xl font-recoleta font-semibold mb-2">Proposal Assets</h3>
+                    <p class="text-sm text-black/60">Official PDF templates for sales and operations.</p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="/brand-assets/proposal-template-full.pdf" class="bg-[#FE5000] text-white py-2 px-4 rounded font-bold text-xs">Full PDF</a>
+                    <a href="/brand-assets/proposal-template.pdf" class="bg-black/5 text-black py-2 px-4 rounded font-bold text-xs">Cover Only</a>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <img src="/brand-assets/li-cover.jpg" alt="LinkedIn" class="rounded border border-black/5" />
+                <img src="/brand-assets/tw-cover.jpg" alt="Twitter" class="rounded border border-black/5" />
+                <img src="/brand-assets/fb-cover.jpg" alt="Facebook" class="rounded border border-black/5" />
+                <img src="/brand-assets/bc-front.png" alt="Card" class="rounded border border-black/5 col-span-1" />
+                <img src="/brand-assets/bc-back.png" alt="Card" class="rounded border border-black/5 col-span-1" />
+            </div>
+        </div>
+      </section>
+
+    </div>
+
+    {/* Toast notification */}
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg font-bold uppercase text-xs opacity-0 pointer-events-none transition-all duration-300 translate-y-4 z-50">
+        Copied
+    </div>
+  </main>
+
+  <Footer />
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toast = document.getElementById('toast');
+      document.querySelectorAll('[data-hex]').forEach(el => {
+        el.addEventListener('click', async () => {
+          const hex = el.getAttribute('data-hex');
+          try {
+            await navigator.clipboard.writeText(hex);
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+            toast.classList.remove('translate-y-4');
+            setTimeout(() => {
+              toast.style.opacity = '0';
+              toast.style.transform = 'translate(-50%, 4px)';
+              toast.classList.add('translate-y-4');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy!', err);
+          }
+        });
+      });
+    });
+  </script>
+</Layout>

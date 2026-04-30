@@ -23,8 +23,8 @@
     <a 
       id="sl-mobile-link" 
       href="#" 
-      class="block w-full py-4 px-4 bg-[#fd4f00] text-white text-center rounded-xl font-bruta uppercase font-bold tracking-wider hover:bg-[#e54700] transition-colors"
-    >Read Full Article</a>
+      class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
+    >Explore the full guide</a>
   </div>
 </div>
 
@@ -33,10 +33,13 @@
   id="smartlink-desktop-card" 
   class="fixed z-50 hidden w-80 bg-white shadow-2xl border border-[#E5D3B3] rounded-xl transition-opacity duration-200 opacity-0 group not-prose"
 >
-  <div class="p-4">
+  {/* Hover Bridge - an invisible area that connects the card to the cursor */}
+  <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
+  
+  <div class="relative p-4">
     <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 m-0 leading-tight"></h3>
     <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 mt-1 leading-snug"></p>
-    <a id="sl-desktop-link" href="#" class="font-sans text-xs font-semibold text-blue-600 mt-2 block hover:underline">
+    <a id="sl-desktop-link" href="#" class="font-sans text-xs font-semibold text-[#fd4f00] mt-2 w-fit inline-block hover:underline">
       Explore the full guide
     </a>
   </div>
@@ -86,14 +89,14 @@
 
     card.innerHTML = `
       <h3 class="font-sans text-sm font-bold text-gray-900 m-0 leading-tight">${title}</h3>
-      <p class="font-sans text-xs text-gray-600 mt-1 leading-snug line-clamp-4">${snippet}</p>
-      <a href="${href}" class="font-sans text-xs font-semibold text-blue-600 mt-2 block hover:underline">
+      <p class="font-sans text-xs text-gray-600 mt-1 leading-snug">${snippet}</p>
+      <a href="${href}" class="font-sans text-xs font-semibold text-[#fd4f00] mt-2 w-fit inline-block hover:underline">
         Explore guide
       </a>`;
     return card;
   }
 
-  function showHoverCard(trigger: HTMLElement) {
+  function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
     if (window.innerWidth < 1024) return;
     clearTimeout(hoverTimeout);
     const card    = document.getElementById('smartlink-desktop-card');
@@ -106,18 +109,21 @@
     if (dSnip)  dSnip.textContent  = trigger.dataset.smartlinkSnippet || '';
     if (dLink)  dLink.href          = trigger.dataset.smartlinkHref   || '#';
 
-    const triggerRect = trigger.getBoundingClientRect();
     const cardWidth  = 320; // w-80
     
-    // Position tooltip slightly offset to avoid stuttering
+    // Position tooltip very close to cursor with a tiny offset to avoid recursive flickering
     const cardH      = card.offsetHeight || 180;
-    const roomAbove  = triggerRect.top > cardH + 20;
+    const roomAbove  = e.clientY > cardH + 10;
     
-    card.style.left     = `${Math.max(16, Math.min(triggerRect.left, window.innerWidth - cardWidth - 16))}px`;
+    // Center the card horizontally on the cursor, but keep it within the screen bounds
+    let leftPos = e.clientX - (cardWidth / 2);
+    leftPos = Math.max(16, Math.min(leftPos, window.innerWidth - cardWidth - 16));
+    
+    card.style.left     = `${leftPos}px`;
     card.style.width    = `${cardWidth}px`;
     card.style.top      = roomAbove
-      ? `${triggerRect.top - cardH - 12}px`
-      : `${triggerRect.bottom + 12}px`;
+      ? `${e.clientY - cardH - 4}px`
+      : `${e.clientY + 4}px`;
 
     card.classList.remove('hidden');
     requestAnimationFrame(() => card.classList.add('opacity-100'));
@@ -131,7 +137,7 @@
       setTimeout(() => {
         if (!card.classList.contains('opacity-100')) card.classList.add('hidden');
       }, 200);
-    }, 100);
+    }, 150);
   }
 
   function initSmartLinks() {
@@ -149,14 +155,14 @@
     if (isDesktop) article.style.position = 'relative';
 
     const articleRect = article.getBoundingClientRect();
-    const cardWidth   = 320; // w-80
-    const gap         = 48; // ml-12
+    const cardWidth   = 240; // w-60
+    const gap         = 16; // ml-4
     const hasSpace    = isDesktop && (window.innerWidth - articleRect.right) >= cardWidth + gap;
 
     if (hasSpace) {
       const track = document.createElement('div');
       track.id = 'marginalia-track';
-      track.className = 'absolute top-0 left-full h-full w-80 ml-12 pointer-events-none hidden lg:block not-prose';
+      track.className = 'absolute top-0 left-full h-full w-60 ml-4 pointer-events-none hidden lg:block not-prose';
       article.appendChild(track);
 
       const persistentCards: { card: HTMLElement; top: number }[] = [];
@@ -176,9 +182,15 @@
         persistentCards.push({ card, top });
 
         const activate = () => {
-          if (window.innerWidth >= 1024) card.setAttribute('data-hovered', 'true');
+          if (window.innerWidth >= 1024) {
+            card.setAttribute('data-hovered', 'true');
+            trigger.setAttribute('data-highlighted', 'true');
+          }
         };
-        const deactivate = () => card.removeAttribute('data-hovered');
+        const deactivate = () => {
+          card.removeAttribute('data-hovered');
+          trigger.removeAttribute('data-highlighted');
+        };
         trigger.onmouseenter = activate;
         trigger.onmouseleave = deactivate;
         card.onmouseenter = activate;
@@ -217,8 +229,19 @@
         };
 
         if (isDesktop) {
-          trigger.onmouseenter = () => showHoverCard(trigger);
-          trigger.onmouseleave = hideHoverCard;
+          trigger.onmouseenter = (e) => {
+            showHoverCard(trigger, e);
+            trigger.setAttribute('data-highlighted', 'true');
+          };
+          trigger.onmouseleave = () => {
+            hideHoverCard();
+            trigger.removeAttribute('data-highlighted');
+          };
+          // For the tooltip fallback, we also want the card hover to highlight the trigger
+          if (card) {
+            card.addEventListener('mouseenter', () => trigger.setAttribute('data-highlighted', 'true'));
+            card.addEventListener('mouseleave', () => trigger.removeAttribute('data-highlighted'));
+          }
         }
       });
     }
