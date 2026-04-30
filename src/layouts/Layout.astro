@@ -16,8 +16,6 @@ interface Props {
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
-        softwareFeature?: { name: string; description: string };
-        integration?: { partner: string; description: string };
     };
     articleData?: {
         author: string;
@@ -221,43 +219,11 @@ if (schemaData?.faq) {
   });
 }
 
-// Feature page: a specific capability of the DataDocks SoftwareApplication
-if (schemaData?.softwareFeature) {
-  graph.push({
-    "@type": "SoftwareApplication",
-    "@id": `${canonicalURL.toString()}#software-feature`,
-    "name": `DataDocks — ${schemaData.softwareFeature.name}`,
-    "applicationCategory": "BusinessApplication",
-    "applicationSubCategory": schemaData.softwareFeature.name,
-    "operatingSystem": "Web, iOS, Android",
-    "description": schemaData.softwareFeature.description,
-    "isPartOf": { "@id": "https://datadocks.com/#software" },
-    "offers": {
-      "@type": "Offer",
-      "availability": "https://schema.org/OnlineOnly",
-      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
-    }
-  });
-}
-
-// Integration page: DataDocks + partner system
-if (schemaData?.integration) {
-  graph.push({
-    "@type": "SoftwareApplication",
-    "@id": `${canonicalURL.toString()}#integration`,
-    "name": `DataDocks + ${schemaData.integration.partner} Integration`,
-    "applicationCategory": "BusinessApplication",
-    "applicationSubCategory": "Software Integration",
-    "operatingSystem": "Web",
-    "description": schemaData.integration.description,
-    "isPartOf": { "@id": "https://datadocks.com/#software" },
-    "offers": {
-      "@type": "Offer",
-      "availability": "https://schema.org/OnlineOnly",
-      "url": "https://calendly.com/nick-rakovsky/datadocks-demo"
-    }
-  });
-}
+// Feature page: describe as part of the main DataDocks SoftwareApplication.
+// We use WebPage (not a second SoftwareApplication) so Google doesn't flag
+// missing aggregateRating/offers. The main SoftwareApplication on homepage
+// carries the rich result signals.
+// Integration pages: same pattern.
 
 if (type === 'article' && articleData) {
   const authorData = getAuthor(articleData.author);
@@ -353,9 +319,9 @@ const jsonLd = {
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
 
         <style is:inline set:html={`
-            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: optional; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: optional; }
+            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: optional; }
         `}></style>
         {!disableTransitions && <ViewTransitions />}
     </head>
