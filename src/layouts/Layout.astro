@@ -105,7 +105,7 @@ const graph: any[] = [
     "primaryImageOfPage": { "@type": "ImageObject", "url": socialImageURL.toString() },
     "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
     "accessibilityFeature": ["alternativeText", "ARIA"],
-    ...(Astro.url.pathname.split('/').filter(Boolean).length > 0 ? { "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` } } : {})
+    ...(pathname.split('/').filter(Boolean).length > 0 ? { "breadcrumb": { "@id": `${canonicalURL.toString()}#breadcrumb` } } : {})
   },
 ];
 
@@ -182,7 +182,7 @@ if (schemaData?.reviews) {
 }
 
 // 6. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
-const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
+const breadcrumbItems = pathname.split('/').filter(Boolean);
 if (breadcrumbItems.length > 0) {
   graph.push({
     "@type": "BreadcrumbList",
@@ -224,6 +224,26 @@ if (schemaData?.faq) {
 // missing aggregateRating/offers. The main SoftwareApplication on homepage
 // carries the rich result signals.
 // Integration pages: same pattern.
+
+// Feature pages: attach a TechArticle node so the specific capability
+// (dock dashboard, yard management, etc.) has its own citable entity
+// in the graph without competing aggregateRating signals with the main
+// SoftwareApplication. The article is "about" the homepage software node.
+if (pathname.startsWith('/datadocks-features/')) {
+  graph.push({
+    "@type": "TechArticle",
+    "@id": `${canonicalURL.toString()}#techarticle`,
+    "mainEntityOfPage": { "@id": canonicalURL.toString() },
+    "headline": title.replace(/\s*\|.*$/, ''),
+    "description": description,
+    "image": socialImageURL.toString(),
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "about": { "@id": "https://datadocks.com/#software" },
+    "proficiencyLevel": "Beginner"
+  });
+}
 
 if (type === 'article' && articleData) {
   const authorData = getAuthor(articleData.author);
@@ -280,7 +300,7 @@ const jsonLd = {
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
@@ -295,11 +315,12 @@ const jsonLd = {
         <meta property="og:image" content={socialImageURL} />
         <meta property="og:site_name" content="DataDocks" />
 
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={canonicalURL} />
-        <meta property="twitter:title" content={title} />
-        <meta property="twitter:description" content={description} />
-        <meta property="twitter:image" content={socialImageURL} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalURL} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={socialImageURL} />
+        <meta name="twitter:site" content="@datadocks" />
         <meta name="twitter:creator" content="@datadocks" />
 
         <link rel="icon" href="/favicon.png" />

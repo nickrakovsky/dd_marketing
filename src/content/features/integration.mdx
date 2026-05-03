@@ -4,6 +4,19 @@ description: "Use DataDocks as a standalone dock scheduling system or integrate 
 pubDate: "2026-02-23T16:10:17.000Z"
 icon: "/images/features/63d76f8d30313d7992525cb5_automation.svg"
 videoUrl: "https://youtu.be/D_dkfxwZKBY"
+faqs:
+  - question: "Do I have to integrate DataDocks with my WMS or TMS to use it?"
+    answer: "No. DataDocks works fully standalone — you can run the whole system on day one without touching your WMS, TMS, or ERP. Most facilities start standalone, prove the ROI, and integrate later once the team is confident with the workflow. Integration is there when you want it, not a prerequisite."
+  - question: "What does the Integration feature do inside DataDocks?"
+    answer: "It's the layer that lets DataDocks exchange appointment, load, gate, and status data with whatever systems your operation already runs — WMS, TMS, ERP, BI tools, or internal apps. You configure which fields flow in which direction, set up triggers for when data should sync, and let DataDocks handle the rest. See the DataDocks integrations page for the full list of supported platforms."
+  - question: "What data flows into BI tools like Power BI or Tableau?"
+    answer: "Appointment records, gate-in and gate-out times, dwell time, door utilization, carrier adherence, and any custom fields your team tracks. Most teams pipe this alongside WMS and TMS data so their existing operational dashboards gain a dock-and-yard layer without rebuilding reports. DataDocks has a dedicated Power BI integration page with more detail."
+  - question: "Will DataDocks break if my WMS is down for maintenance?"
+    answer: "No. DataDocks is independent infrastructure — if your WMS or ERP goes down for a scheduled window or an outage, the dock schedule, carrier portal, and yard view all keep running. Queued data catches up automatically once the connected system is back online, so your dock doesn't stop moving just because your back office is."
+  - question: "Can I trigger appointments in DataDocks from events in another system?"
+    answer: "Yes. When an inbound PO hits a specific status in your WMS, when a TMS tender is accepted, when an ERP order is released — any of those can trigger a DataDocks appointment to be created, updated, or confirmed via the API. This is what moves most facilities from 'we schedule after the order lands' to 'the schedule builds itself as orders move through our stack.'"
+  - question: "Where do I see the full list of systems DataDocks integrates with?"
+    answer: "The DataDocks integrations page lists the ERP, WMS, TMS, and BI platforms DataDocks connects to out of the box — SAP, Oracle NetSuite, Microsoft, Blue Yonder, Manhattan Associates, and more. If your system isn't on the list, DataDocks' REST API and customer success team handle custom integrations; in practice we haven't hit a system we couldn't connect to."
 ---
 
 <p id="">

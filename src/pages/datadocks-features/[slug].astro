@@ -7,6 +7,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
+import FAQ from '../../components/FAQ';
 
 export async function getStaticPaths() {
   const features = await getCollection('features');
@@ -35,11 +36,14 @@ if (!feature) {
 }
 
 const { Content } = await feature.render();
+const faqs = feature.data.faqs;
 ---
 
 <Layout
-  title={`${feature.data.title} | DataDocks`}
+  title={`${feature.data.seoTitle || feature.data.title} | DataDocks`}
   description={feature.data.description}
+  image={feature.data.ogImage || '/images/OG-Cover.png'}
+  schemaData={faqs ? { faq: faqs } : undefined}
 >
   <Navigation />
   
@@ -48,7 +52,12 @@ const { Content } = await feature.render();
       
       {/* Header section */}
       <div class="max-w-3xl mx-auto text-center mb-16">
-        <h3 class="text-brand-orange text-lg font-bold tracking-tight uppercase mb-4">DataDocks Features</h3>
+        <a
+          href="/#features"
+          class="inline-block font-sans text-xs sm:text-sm uppercase tracking-widest font-bold text-brand-orange mb-5 hover:opacity-70 transition-opacity"
+        >
+          DataDocks Features
+        </a>
         <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight font-recoleta mb-6">
           {feature.data.title}
         </h1>
@@ -85,6 +94,10 @@ const { Content } = await feature.render();
 
     </div>
   </main>
+
+  {faqs && faqs.length > 0 && (
+    <FAQ client:visible content={{ faqs }} />
+  )}
 
   <CTA />
   <Footer />

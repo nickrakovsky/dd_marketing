@@ -4,6 +4,19 @@ description: "Ensure cleaner data with built-in validation for appointments and 
 pubDate: "2026-02-23T16:10:17.000Z"
 icon: "/images/features/63d76ecb3d52f553d8721f73_data-quality.svg"
 videoUrl: "https://youtu.be/_v9xe0JqLnM"
+faqs:
+  - question: "What does data validation do in DataDocks?"
+    answer: "Data validation enforces the fields, formats, and values your appointments need to be accurate and useful — before the appointment is saved. That means no more appointments booked without a PO number, no free-text 'approx 12 pallets' entries, no mistyped carrier names that break your reporting. Clean data in, clean analytics and integrations out."
+  - question: "What kinds of validation rules can I set up?"
+    answer: "Any field on the appointment can drive a validation — PO number, BOL, carrier, customer, product, load type, pallet count, weight, temperature, document uploads, or any custom field your team tracks. You can also build separate validation workflows for different types of loads or customers, so a refrigerated inbound goes through one set of checks, a hazmat load goes through another, and a specific customer's appointments route through their own required fields. If it's on the appointment, it can be validated."
+  - question: "Can specific users override validation rules?"
+    answer: "Yes. Permit trusted internal users to bypass specific rules when a genuine exception comes up — a new carrier not yet in the approved list, a load with unusual specs. Carriers and external portal users can't override. Every override is logged so you have an audit trail of who bypassed what and why."
+  - question: "How does validation help with WMS, TMS, or ERP integrations?"
+    answer: "Dirty data is the #1 reason integrations fail. A validated appointment record has the fields, formats, and values downstream systems expect — so when DataDocks pushes data to your WMS, TMS, or ERP, you're not chasing down failed syncs or typo-corrupted records. Enforcing validation at entry pays off every time the data is used downstream."
+  - question: "Will data validation slow down booking?"
+    answer: "No — if anything, it speeds it up. Carriers see exactly what's required as they book (instead of being rejected after submission), and your team stops spending time chasing missing details after the fact. A booking that passes validation the first time is a booking your coordinators don't have to follow up on."
+  - question: "Can I fix bad data that already exists in my system?"
+    answer: "Yes. Validation rules can run against existing records to flag appointments with missing or malformed fields, so you can clean up historical data before it breaks a report or an integration. Most facilities run a one-time cleanup during onboarding, then rely on entry-time validation to keep new data clean."
 ---
 
 <p id="">

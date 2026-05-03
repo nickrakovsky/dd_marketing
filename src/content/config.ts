@@ -53,7 +53,21 @@ const featuresCollection = defineCollection({
         description: z.string().optional(),
         pubDate: z.coerce.date().optional(),
         icon: z.string().optional(),
-        videoUrl: z.string().optional()
+        videoUrl: z.string().optional(),
+        // Optional SEO-optimized title override (appears in <title>, OG, schema).
+        // Use when `title` alone doesn't carry the target keyword, e.g.
+        // "Real-Time Dock Scheduling Dashboard" for the Dock Dashboard feature.
+        seoTitle: z.string().optional(),
+        // Optional per-feature social/OG image. Path should be absolute from
+        // site root, e.g. "/images/features/dock-dashboard-og.png".
+        ogImage: z.string().optional(),
+        // Optional FAQ block. When present, rendered below the feature body
+        // in the homepage FAQ style AND emitted as FAQPage JSON-LD.
+        // Visible content must mirror schema (Google requirement).
+        faqs: z.array(z.object({
+            question: z.string(),
+            answer: z.string(),
+        })).optional(),
     })
 });
 
