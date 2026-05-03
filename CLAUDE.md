@@ -66,6 +66,10 @@ The canonical URL format is **no trailing slash, no `.html` extension**. Three c
 - FAQ schema benefits AI/LLM citation but no longer triggers Google rich results on commercial sites (Aug 2023)
 - YouTube video posts (`/posts/yt-*`) must have a written summary/description in the MDX body — never leave them as embed-only
 - **Never link to competitor websites** (OpenDock, C3 Reservations, Transplace, etc.). Mentioning competitors by name is fine for comparison content, but never give them a backlink. Use neutral third-party sources (G2, Capterra, industry publications) if a citation is needed.
+- **Avoid internal keyword cannibalization.** Before writing a new page (or FAQ answer) targeting a query, check `grep -r` whether an existing blog post is already optimized for that query. If one exists, do NOT duplicate its intent — Google and AI engines pick one page per query from the same site and bury the rest.
+  - **Blog posts own "what is X" (informational / definitional) queries.** Dedicated definition pages like `/posts/what-is-dock-scheduling`, `/posts/what-is-a-yard-management-system-yms` should be the canonical answer.
+  - **Feature pages own "what does X do / how does X work / does X support Y" (commercial / product-specific) queries.** Feature FAQs and body copy should target buyer-stage queries, not definitional ones.
+  - If a feature page needs a definitional FAQ for AI citation, reframe it to be product-specific (e.g. "What does DataDocks' Yard Management do?" instead of "What is yard management?") and link to the blog post inside the answer with appropriate anchor text to reinforce the blog post's authority.
 
 ### Structured Data
 - JSON-LD uses `@graph` array pattern in Layout.astro
