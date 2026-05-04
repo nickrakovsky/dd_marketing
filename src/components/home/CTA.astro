@@ -12,16 +12,15 @@
         and text-left left-flow exclusively on widescreen elements!
       */}
       <div class="inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
-        <h2 class="inline font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9] align-middle">
-          Find out for yourself what DataDocks can do<br class="hidden min-[1020px]:inline" />
+        <h2 class="font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9]">
+          <span class="inline min-[1020px]:block">Find out for yourself what DataDocks can do</span>
           <span class="inline min-[1020px]:hidden"> </span>
-          for your operations
-        </h2>
-
-        <form
-          id="cta-bento-form"
-          class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto align-middle min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0 translate-y-[2px] xl:translate-y-[-4px]"
-        >
+          <span class="inline min-[1020px]:inline-flex min-[1020px]:items-center">
+            <span>for your operations</span>
+            <form
+              id="cta-bento-form"
+              class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0"
+            >
           <input
             type="email"
             name="email"
@@ -37,6 +36,8 @@
             Get Free Demo
           </button>
         </form>
+          </span>
+        </h2>
       </div>
 
     </div>
