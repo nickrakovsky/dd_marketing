@@ -319,9 +319,25 @@ const jsonLd = {
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
 
         <style is:inline set:html={`
-            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: optional; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: optional; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: optional; }
+            @font-face {
+              font-family: 'Recoleta-Fallback';
+              src: local('Georgia');
+              size-adjust: 98.7952%;
+              ascent-override: 101.2195%;
+              descent-override: 36.4252%;
+              line-gap-override: 0%;
+            }
+            @font-face {
+              font-family: 'Bruta-Fallback';
+              src: local('Impact');
+              size-adjust: 102.5000%;
+              ascent-override: 73.1707%;
+              descent-override: 24.3902%;
+              line-gap-override: 33.1707%;
+            }
+            @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
         `}></style>
         {!disableTransitions && <ViewTransitions />}
     </head>

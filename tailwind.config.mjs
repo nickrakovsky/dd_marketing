@@ -19,8 +19,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        bruta: ['Bruta', 'system-ui', 'sans-serif'],
-        recoleta: ['Recoleta', 'Georgia', 'serif'],
+        bruta: ['Bruta', 'Bruta-Fallback', 'Impact', 'system-ui', 'sans-serif'],
+        recoleta: ['DD-Recoleta', 'Recoleta-Fallback', 'Georgia', 'serif'],
       },
       colors: {
 
