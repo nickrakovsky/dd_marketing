@@ -57,6 +57,7 @@ const homepageFaqs = [
 <Layout
   title="Dock Scheduling & Yard Management Software for Warehouses | DataDocks"
   description="DataDocks is dock scheduling and yard management software for warehouses. Cut detention fees, reduce truck wait times, and gain real-time dock visibility."
+  disableTransitions
   schemaData={{
     reviews: rawTestimonials.map(t => ({ author: t.author, quote: t.quote })),
     faq: homepageFaqs
@@ -64,7 +65,7 @@ const homepageFaqs = [
 >
 
   <link slot="head" rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" imagesrcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" imagesizes="100vw" media="(min-width: 860px)" fetchpriority="high" />
-  <link slot="head" rel="preload" as="image" href="/images/homepage-screenshot-mobile-750.webp" imagesrcset="/images/homepage-screenshot-mobile-500.webp 500w, /images/homepage-screenshot-mobile-750.webp 750w, /images/homepage-screenshot-mobile.webp 1724w" imagesizes="(max-width: 500px) 200vw, (max-width: 859px) 250vw, 100vw" media="(max-width: 859px)" fetchpriority="high" />
+  <link slot="head" rel="preload" as="image" href="/images/homepage-screenshot-mobile.webp" imagesrcset="/images/homepage-screenshot-mobile-750.webp 750w, /images/homepage-screenshot-mobile.webp 1724w" imagesizes="(max-width: 859px) 200vw, 100vw" media="(max-width: 859px)" fetchpriority="high" />
 
   <Navigation />
 
