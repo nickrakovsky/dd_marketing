@@ -54,9 +54,9 @@ export function ContactDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <span className="cursor-pointer text-primary hover:text-primary-glow transition-colors font-semibold">
+        <button type="button" className="cursor-pointer text-primary hover:text-primary-glow transition-colors font-semibold bg-transparent border-0 p-0 font-inherit">
           Get in touch with our team
-        </span>
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] sm:rounded-none">
         <DialogHeader>
