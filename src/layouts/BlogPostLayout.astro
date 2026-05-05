@@ -302,7 +302,9 @@ const author = getAuthor(frontmatter.author);
           } else {
             document.documentElement.classList.remove('dark');
           }
-        } catch (e) {}
+        } catch (e) {
+          // LocalStorage might be unavailable in some browser settings
+        }
       })();
 
       function setupBlogInteractions() {
@@ -327,7 +329,9 @@ const author = getAuthor(frontmatter.author);
           } else {
             article?.classList.remove('text-scaled');
           }
-        } catch (e) {}
+        } catch (e) {
+          // LocalStorage might be unavailable in some browser settings
+        }
 
         if (textSizeToggle) {
           textSizeToggle.onclick = () => {

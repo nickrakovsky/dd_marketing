@@ -10,10 +10,6 @@ interface HowItWorksProps {
 // 1. ASSETS & ICONS
 // ==========================================
 
-const getIcon = (iconName: "upload" | "toggle" | "refresh") => {
-  const icons = { upload: Upload, toggle: ToggleRight, refresh: RefreshCw };
-  return icons[iconName];
-};
 
 const MobileArrowRight = () => (
   <svg viewBox="0 0 60 140" fill="none" className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
@@ -53,8 +49,6 @@ const CommentBox = ({ text, className = "" }: { text: string; className?: string
 );
 
 const StepCard = ({ step, isLast }: { step: any; isLast: boolean }) => {
-  const Icon = getIcon(step.icon);
-
   return (
     <div
       className={`w-full border rounded-xl p-4 sm:p-6 shadow-lg relative hover:shadow-glow transition-all bg-card z-20 ${
@@ -71,7 +65,9 @@ const StepCard = ({ step, isLast }: { step: any; isLast: boolean }) => {
 
       <div className="flex items-start gap-3 sm:gap-4">
         <div className={`p-2 sm:p-3 rounded-lg flex-shrink-0 ${isLast ? "bg-background/10" : "bg-primary/10"}`}>
-          <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${isLast ? "text-primary" : "text-primary"}`} />
+          {step.icon === "upload" && <Upload className={`h-5 w-5 sm:h-6 sm:w-6 ${isLast ? "text-primary" : "text-primary"}`} />}
+          {step.icon === "toggle" && <ToggleRight className={`h-5 w-5 sm:h-6 sm:w-6 ${isLast ? "text-primary" : "text-primary"}`} />}
+          {step.icon === "refresh" && <RefreshCw className={`h-5 w-5 sm:h-6 sm:w-6 ${isLast ? "text-primary" : "text-primary"}`} />}
         </div>
         <div>
           <h3 className={`font-recoleta font-semibold mb-1 sm:mb-2 text-sm sm:text-base ${isLast ? "" : "text-foreground"}`}>
@@ -140,7 +136,7 @@ const HowItWorks = ({ content }: { content: HowItWorksContent }) => {
     
     const [label, ...rest] = text.split(":");
     const body = rest.join(":").trim();
-    const cleanBody = body.replace(/^[\(\s]+|[\)\s]+$/g, '');
+    const cleanBody = body.replace(/^[( \s]+|[) \s]+$/g, '');
     
     return { label, body: cleanBody };
   };

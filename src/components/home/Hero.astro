@@ -246,7 +246,7 @@ const optimizedMobileHero = await getImage({
 
       window.addEventListener('resize', () => { cachedFrameWidth = frame!.offsetWidth; }, { passive: true });
 
-      function animate() {
+      const animate = () => {
         const now = Date.now();
         if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
           const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
@@ -267,7 +267,7 @@ const optimizedMobileHero = await getImage({
           currentSpeed = 0;
         }
         rafId = requestAnimationFrame(animate);
-      }
+      };
 
       rafId = requestAnimationFrame(animate);
 

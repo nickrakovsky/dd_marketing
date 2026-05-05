@@ -28,11 +28,13 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
 
     {/* 2 cols on small screens, 3 cols on md+ (768px) */}
     <div class="grid grid-cols-2 md:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-4 md:gap-y-5">
-      {features.map((feature) => (
+      {features.map((feature) => {
+        const featureUrl = `/datadocks-features/${slugify(feature.title)}`;
+        return (
         <>
           {/* DESKTOP (md+): Whole card is a link */}
           <a 
-            href={`/datadocks-features/${slugify(feature.title)}`}
+            href={featureUrl}
             class="feature-card hidden md:block p-8 rounded-2xl border border-transparent bg-[#FFF8E9] transition-all duration-300"
           >
             <div class="flex flex-row items-center gap-3 mb-4">
@@ -59,6 +61,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
           <div 
             class="feature-card md:hidden p-3 rounded-2xl border border-transparent bg-[#FFF8E9] transition-all duration-300 flex flex-col focus:outline-none"
             tabindex="0"
+            role="button"
           >
             <h3 class="feature-title font-bruta text-base sm:text-lg uppercase text-black transition-colors leading-tight mb-2">
               {feature.title}
@@ -80,7 +83,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
             </div>
             
             {/* Mobile Affordance: Only this part is a link */}
-            <a href={`/datadocks-features/${slugify(feature.title)}`} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
+            <a href={featureUrl} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
               <span class="link-text font-recoleta text-[10px] sm:text-xs text-[#FE5000] font-bold transition-colors [text-shadow:0px_1px_2px_rgba(0,0,0,0.15)]">Learn More</span>
               <span class="sr-only"> about {feature.srTitle}</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FE5000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="sm:w-3 sm:h-3 drop-shadow-sm">
@@ -89,7 +92,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
             </a>
           </div>
         </>
-      ))}
+      )})}
     </div>
 
   </div>

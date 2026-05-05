@@ -91,9 +91,9 @@ const logos = [
     let rafId: number;
 
     // Compute the width of one "set" of logos (total / 5)
-    function getSetWidth() {
+    const getSetWidth = () => {
       return track!.scrollWidth / 5;
-    }
+    };
 
     let setW = getSetWidth();
 
@@ -105,7 +105,7 @@ const logos = [
       setW = getSetWidth();
     });
 
-    function animate() {
+    const animate = () => {
       if (!isDragging) {
         position -= speed;
         // Wrap around: when we've scrolled past 3 sets, jump back by 1 set
@@ -119,7 +119,7 @@ const logos = [
         track!.style.transform = `translateX(${position}px)`;
       }
       rafId = requestAnimationFrame(animate);
-    }
+    };
 
     rafId = requestAnimationFrame(animate);
 
