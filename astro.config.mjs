@@ -5,6 +5,7 @@ import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -93,6 +94,11 @@ export default defineConfig({
         }
       }
     },
+    partytown({
+      config: {
+        forward: ['bento.identify', 'bento.track', 'bento.view', 'bento.tag', 'bento.updateFields'],
+      },
+    }),
     tailwind(), react(), keystatic(), sitemap({
       filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
       serialize(item) {

@@ -396,22 +396,12 @@ const jsonLd = {
 
         {PUBLIC_BENTO_UUID && (
           <Fragment>
+            {/* Set bentoSettings on the main thread so Partytown can read it */}
             <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
                 window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
-                (function() {
-                  const loadBento = () => {
-                    var s = document.createElement('script');
-                    s.src = 'https://fast.bentonow.com?site_uuid=' + PUBLIC_BENTO_UUID;
-                    s.async = true;
-                    document.head.appendChild(s);
-                  };
-                  if ('requestIdleCallback' in window) {
-                    requestIdleCallback(loadBento);
-                  } else {
-                    setTimeout(loadBento, 2000);
-                  }
-                })();
             </script>
+            {/* Load the actual Bento SDK inside a Partytown Web Worker */}
+            <script is:inline type="text/partytown" src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
     </body>
