@@ -1,14 +1,9 @@
 ---
-import { getImage } from "astro:assets";
-import homepageMobileImg from "../../assets/images/homepage-screenshot-mobile.png";
+// Image and homepageMobileImg are unused
+// import { Image } from "astro:assets";
+// import homepageMobileImg from "../../assets/images/homepage-screenshot-mobile.png";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-const optimizedMobileHero = await getImage({
-  src: homepageMobileImg,
-  format: "avif",
-  widths: [750, 1080, 1400, 1724],
-});
 ---
 
 <section
@@ -124,8 +119,8 @@ const optimizedMobileHero = await getImage({
       >
         <img
           id="hero-mobile-img"
-          src={optimizedMobileHero.src}
-          srcset={optimizedMobileHero.srcSet.attribute}
+          src={`${basePath}/images/homepage-screenshot-mobile.webp`}
+          srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
           sizes="(max-width: 859px) 200vw, 100vw"
           alt="DataDocks Calendar Interface Mobile"
           width="1724"
