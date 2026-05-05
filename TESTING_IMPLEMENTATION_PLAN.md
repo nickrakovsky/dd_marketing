@@ -1,5 +1,50 @@
-
 # Comprehensive Testing Framework Implementation Plan
+
+## System Status: Fully Operational (Green)
+*All phases of the testing framework implementation are complete. The CI/CD pipeline is active, robust, and integrated with Cloudflare Pages.*
+
+### The Final Architecture
+1. **The Gatekeeper (`npm run check` & `npm run lint`):** 
+   * Runs first on every PR. 
+   * Strict Astro type-checking and custom ESLint rules (including AST validation to prevent trailing slashes on internal links).
+2. **Component Isolation (Vitest):**
+   * Validates state changes and rendering for React (`.tsx`) interactive islands.
+3. **Cloudflare Integration (CI/CD Polling):**
+   * The GitHub Action dynamically polls the GitHub Commits Status API to pause the workflow until Cloudflare finishes building the PR Preview URL.
+4. **End-to-End Validation (Playwright):**
+   * Targets the live Cloudflare Preview URL.
+   * Catches all hydration and browser console errors.
+   * Uses network interception (`page.route`) to validate Bento CRM payloads without polluting the production database.
+   * Uses `window.open` stubs to reliably test external routing (PDFs, Calendly) without popup flakiness.
+5. **Quality Assurance (Lighthouse CI & Linkinator):**
+   * Enforces a hard baseline for Core Web Vitals (0 CLS) and Axe-core accessibility standards.
+   * Crawls the live preview for 404s, explicitly ignoring rate-limiting external domains (LinkedIn, Twitter, Calendly).
+
+---
+
+# Historical Archive - Stage 3: Finalize CI/CD Integration & E2E Hardening
+
+## System Status: Green Baseline Achieved
+*CRITICAL CONTEXT FOR EXECUTING LLM: The repository has been completely scrubbed. All 1,175+ legacy Astro/React type and linting errors (e.g., `className` vs `class` attributes) have been successfully resolved. `npm run check` and `npm run lint` now pass cleanly. DO NOT spend time looking for or fixing component-level linting errors; your focus is strictly on the testing and deployment infrastructure.*
+
+## Immediate Directives
+Your task is to take the existing testing scaffolding and integrate it accurately with our actual codebase and Cloudflare environment.
+
+### 1. Hardening Playwright Tests (Kill False-Passes)
+*   **Action:** Update the existing E2E tests (e.g., `tests/forms.spec.ts` or `tests/lead-magnet.spec.ts`).
+*   **Constraint 1 (Strict Assertions):** Remove any conditionals or silent returns that check if an element exists. Use strict assertions (e.g., `await expect(page.locator('.lead-magnet-form')).toBeVisible()`). If the target form does not exist on the URL being tested, the test MUST fail loudly.
+*   **Constraint 2 (Popup Handling):** Handle external popups (like Calendly) safely. Do not wait for a flaky `page` event. Either stub `window.open` using `page.addInitScript()` to intercept the call, or assert that the CTA button's `href` or `onClick` handler contains the correct URL.
+
+### 2. CI/CD: Cloudflare Preview Polling
+*   **Action:** Modify `.github/workflows/ci.yml`. Remove the steps that build the site locally to run Playwright against `localhost`.
+*   **Constraint:** Write a bash step using `curl` and `jq` that polls the GitHub Commits Status API (`/repos/${{ github.repository }}/commits/${{ github.sha }}/statuses`). Have it loop until it finds a `success` state for the context matching Cloudflare Pages, and extract the `target_url` (the Cloudflare Preview URL) to save as an environment variable (e.g., `PREVIEW_URL` in `$GITHUB_ENV`).
+
+### 3. Dynamic Test Routing
+*   **Action:** Ensure the commands for Playwright, Lighthouse CI (`lhci autorun`), and Linkinator (`npm run crawl` or the respective script) dynamically ingest the newly extracted Cloudflare Preview URL. Pass it via the environment variable or override the config via CLI arguments so all automated checks run against the live preview.
+
+---
+
+# Historical Archive - Stage 2: Architectural Audit & Green Baseline Cleanup (Obsolete)
 
 ## Current Status: Scaffolding Complete, Needs Integration Review
 *A fast LLM agent (Gemini Flash) has scaffolded the core testing infrastructure. The current task is for an advanced LLM to audit, refine, and connect these systems to our actual codebase reality and Cloudflare environment.*
@@ -12,7 +57,7 @@
 
 ---
 
-## Current Task: The Integration & Reality Check
+## The Integration & Reality Check
 *Instruction for executing LLM: Review the existing setup and execute the following refinements.*
 
 ### 1. Audit Playwright Selectors
@@ -31,7 +76,7 @@
 
 **Final Directive:** Focus purely on making the existing scaffold robust, accurate to the codebase, and properly integrated with Cloudflare. Do not add new testing frameworks.
 
-# Previous Steps (already completed: do not repeat)
+# Historical Archive - Stage 1: Framework Scaffolding (Completed)
 
 ## Project Context for Executing LLMs
 This document outlines the step-by-step implementation of a multi-layered testing framework for the DataDocks marketing site. The primary goal is to prevent regressions (interaction crashes, SEO drops, broken links, canonical flapping) caused by rapid AI-assisted development. 

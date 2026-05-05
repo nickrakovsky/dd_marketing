@@ -16,7 +16,6 @@ const optimizedMobileHero = await getImage({
 >
   <div class="container mx-auto px-4">
     <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
-      {/* 1. Main Heading */}
       <div class="relative mb-10 w-full max-w-4xl mx-auto">
         <h1 class="font-bruta uppercase relative z-0 text-black">
           {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
@@ -24,39 +23,43 @@ const optimizedMobileHero = await getImage({
             class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
           >
             <span class="block relative inline-block">
-              <!--<div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
-                  <img
-                    src={`${basePath}/images/hero-badge.webp`}
-                    alt="Save Time Make It Visible"
-                    width="96"
-                    height="96"
-                    class="w-full h-full animate-[spin_12s_linear_infinite]"
-                  />
-                </div>-->
+              YOUR LOADING DOCK,
+              {/* Spinning badge inactive
+              <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
+                <img
+                  src={`${basePath}/images/hero-badge.webp`}
+                  alt="Save Time Make It Visible"
+                  width="96"
+                  height="96"
+                  class="w-full h-full animate-[spin_12s_linear_infinite]"
+                />
+              </div>
+              */}
             </span>
-            Dock Scheduling & Yard Management Software
+            <span class="block">YOUR RULES</span>
           </span>
 
           {
-            /* DESKTOP VIEW (860px+) — restored to original text-8xl that fits on 2 lines */
+            /* DESKTOP VIEW (860px+) — restored to "Your Loading Dock, Your Rules" */
           }
           <span
             class="hidden hero-desktop:block text-8xl leading-[0.85] text-black"
           >
-            <!--<span class="relative inline-block">
-                YOUR LOADING DOCK,
-                <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
-                  <img
-                    src={`${basePath}/images/hero-badge.webp`}
-                    alt="Save Time Make It Visible"
-                    width="96"
-                    height="96"
-                    class="w-full h-full animate-[spin_12s_linear_infinite]"
-                  />
-                </div>
-              </span>
-              <span class="block">YOUR RULES</span>-->
-            Dock Scheduling & Yard Management Software
+            <span class="relative inline-block">
+              YOUR LOADING DOCK,
+              {/* Spinning badge inactive
+              <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
+                <img
+                  src={`${basePath}/images/hero-badge.webp`}
+                  alt="Save Time Make It Visible"
+                  width="96"
+                  height="96"
+                  class="w-full h-full animate-[spin_12s_linear_infinite]"
+                />
+              </div>
+              */}
+            </span>
+            <span class="block">YOUR RULES</span>
           </span>
         </h1>
       </div>
@@ -65,10 +68,9 @@ const optimizedMobileHero = await getImage({
         /* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */
       }
       <p
-        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[640px] mx-auto leading-relaxed px-2"
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
       >
-        One platform for dock scheduling and yard management — known for the
-        easiest interface and the most helpful team in the industry.
+        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra mile.
         <br class="hidden lg:block" />
         <strong class="text-black block mt-3 md:mt-4"
           >Start turning trucks around faster today.</strong

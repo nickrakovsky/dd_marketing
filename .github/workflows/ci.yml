@@ -42,7 +42,7 @@ jobs:
   # ── Job 2: Integration Tests on Cloudflare Preview ─────────
   # Polls the GitHub Commit Status API until Cloudflare Pages
   # posts a success status, then runs E2E / a11y / perf / links
-  # against the live preview URL.
+  # against the live preview URL. Only runs on PRs.
   integration:
     name: E2E / A11y / Perf / Links
     runs-on: ubuntu-latest
@@ -79,8 +79,9 @@ jobs:
             STATUSES=$(curl -s -H "Authorization: token ${GH_TOKEN}" \
               "https://api.github.com/repos/${{ github.repository }}/commits/${COMMIT_SHA}/statuses")
 
-            # Look for a Cloudflare Pages status with state "success"
-            # Cloudflare's context string typically contains "Cloudflare Pages"
+            # Look for a Cloudflare Pages status with state "success".
+            # Cloudflare's context string contains "cloudflare" (case-insensitive).
+            # We use `first` on the sorted list so the most recent success wins.
             PREVIEW_URL=$(echo "$STATUSES" | jq -r '
               [ .[] | select(.context | test("cloudflare"; "i")) | select(.state == "success") ]
               | first | .target_url // empty
@@ -89,6 +90,8 @@ jobs:
             if [ -n "$PREVIEW_URL" ]; then
               echo "Found Cloudflare preview: $PREVIEW_URL"
               echo "preview_url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+              # Also export to GITHUB_ENV so subsequent steps can use $PREVIEW_URL directly
+              echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
               exit 0
             fi
 
@@ -96,7 +99,7 @@ jobs:
             sleep 10
           done
 
-          echo "::error::Timed out waiting for Cloudflare Pages deployment"
+          echo "::error::Timed out waiting for Cloudflare Pages deployment after $((MAX_ATTEMPTS * 10))s"
           exit 1
 
       - name: Install Playwright Browsers
@@ -105,16 +108,28 @@ jobs:
       - name: E2E & Accessibility Tests (Playwright)
         run: npx playwright test
         env:
+          # Playwright config reads PLAYWRIGHT_BASE_URL and disables the local webServer when set.
+          # See playwright.config.ts: const isRemote = baseURL.startsWith('https://')
           PLAYWRIGHT_BASE_URL: ${{ steps.cf-preview.outputs.preview_url }}
 
       - name: Performance Audit (Lighthouse CI)
         run: |
+          # Pass the preview URL via CLI flags which override lighthouserc.cjs defaults.
+          # Explicitly set startServerCommand to empty string to suppress local server launch.
           npx lhci autorun \
-            --collect.url="${{ steps.cf-preview.outputs.preview_url }}/" \
+            --collect.url="${PREVIEW_URL}/" \
             --collect.startServerCommand="" \
+            --collect.startServerReadyPattern="" \
             --collect.numberOfRuns=1
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Link Crawl (Linkinator)
-        run: npx linkinator ${{ steps.cf-preview.outputs.preview_url }} --recurse --timeout 30000
+        # Linkinator crawls the live preview, following all links recursively.
+        # --timeout 30000 gives external links up to 30s before failing.
+        # --skip handles known external domains that may rate-limit CI crawls.
+        run: |
+          npx linkinator "${PREVIEW_URL}" \
+            --recurse \
+            --timeout 30000 \
+            --skip "^https?://(www\.)?(linkedin|twitter|x|youtube|instagram|facebook|calendly)\.com"
