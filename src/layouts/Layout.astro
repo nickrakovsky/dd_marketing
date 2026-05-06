@@ -317,7 +317,7 @@ const jsonLd = {
 
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-        <!-- GTM deferred to requestIdleCallback, no preconnect needed -->
+        {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
 
         <style is:inline set:html={`
@@ -349,6 +349,7 @@ const jsonLd = {
     </head>
     <body>
         <slot />
+        {/* GA4 is now implemented via Cloudflare Zaraz
         <script is:inline>
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
@@ -370,6 +371,7 @@ const jsonLd = {
             })();
 
         </script>
+        */}
 
         {/* Capture landing page on first visit; expose Bento visitor UUID helper for form tracking */}
         <script is:inline>
