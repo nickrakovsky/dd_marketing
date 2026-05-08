@@ -56,6 +56,12 @@ export const authors: Record<string, Author> = {
     role: "DataDocks",
     shortBio: "DataDocks is a dock scheduling and yard management platform founded in 2013. This content is produced by the DataDocks team based on operational research, customer experience, and platform data.",
   },
+  "Tim Branch & Joe Fitzpatrick": {
+    name: "Tim Branch & Joe Fitzpatrick",
+    slug: "tim-branch",
+    role: "Researchers",
+    shortBio: "A collaborative research piece by Tim Branch and Joe Fitzpatrick focusing on operational efficiency and supply chain data.",
+  },
 };
 
 export function getAuthor(name: string): Author {
