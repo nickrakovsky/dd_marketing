@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // Loader2 is unused
 import { /* Loader2, */ ArrowRight, CheckCircle2 } from "lucide-react";
+import { bentoCall } from "@/lib/bento";
 
 interface CTAFormProps {
   buttonText?: string;
@@ -25,10 +26,7 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     e.preventDefault();
     const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
     if (email) {
-      // Client-side identify
-      if (typeof (window as any).bento !== 'undefined' && typeof (window as any).bento.identify === 'function') {
-        (window as any).bento.identify(email);
-      }
+      bentoCall('identify', email);
 
       // Server-side proxy — ad-blocker proof
       fetch('/api/bento-track', {
