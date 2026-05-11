@@ -16,7 +16,7 @@ module.exports = {
     },
     assert: {
       assertions: {
-        'categories:performance': ['warn', { minScore: 0.9 }],
+        'categories:performance': ['warn', { minScore: 0.93 }],
         'categories:accessibility': ['error', { minScore: 0.9 }],
         // CLS > 0.01 is an error (true zero is unrealistic for CWV measurement noise)
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.01 }],
