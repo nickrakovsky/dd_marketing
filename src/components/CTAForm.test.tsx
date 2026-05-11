@@ -10,7 +10,7 @@ global.fetch = vi.fn(() =>
   Promise.resolve({
     json: () => Promise.resolve({}),
   })
-) as any;
+) as unknown as typeof fetch;
 
 describe('CTAForm', () => {
   it('renders correctly with default props', () => {

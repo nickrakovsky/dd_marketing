@@ -48,7 +48,7 @@ const CommentBox = ({ text, className = "" }: { text: string; className?: string
   </div>
 );
 
-const StepCard = ({ step, isLast }: { step: any; isLast: boolean }) => {
+const StepCard = ({ step, isLast }: { step: HowItWorksContent['steps'][number]; isLast: boolean }) => {
   return (
     <div
       className={`w-full border rounded-xl p-4 sm:p-6 shadow-lg relative hover:shadow-glow transition-all bg-card z-20 ${
@@ -128,7 +128,7 @@ const MobileConnector = ({ index, annotation }: { index: number; annotation?: st
 // 3. MAIN COMPONENT
 // ==========================================
 
-const HowItWorks = ({ content }: { content: HowItWorksContent }) => {
+const HowItWorks = ({ content }: HowItWorksProps) => {
   
   // Helper to safely parse the footer annotation
   const getFooterParts = (text: string) => {
