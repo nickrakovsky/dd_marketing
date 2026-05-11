@@ -14,7 +14,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
             class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
           >
             <span class="block relative inline-block">
-              YOUR DOCK SCHEDULING,
+              YOUR YARD,
               {/* Spinning badge inactive
               <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
                 <img
@@ -37,7 +37,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
             class="hidden hero-desktop:block text-8xl leading-[0.85] text-black"
           >
             <span class="relative inline-block">
-              YOUR DOCK SCHEDULING,
+              YOUR YARD,
               {/* Spinning badge inactive
               <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
                 <img
@@ -110,25 +110,31 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     </div>
 
     {/* 5. Mobile/Tablet Hero Image — tappable/draggable pan */}
-    <div class="block hero-desktop:hidden mt-8 w-full px-0 mb-4">
+    {/*
+      On very small phones (< 480px) the image is pushed fully below the fold so
+      it never competes with the text for LCP. On larger phones and tablets it
+      stays in the hero section. The sizes attribute is tightened so the browser
+      picks 750w for throttled/small-screen devices instead of 1724w.
+    */}
+    <div class="block hero-desktop:hidden w-full px-0" id="hero-mobile-wrapper">
       <div
         id="hero-mobile-frame"
-        class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y"
+        class="relative w-full rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y hero-image-container"
       >
         <picture>
           <source
             type="image/avif"
             srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
-            sizes="(max-width: 859px) 200vw, 100vw"
+            sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
           />
           <source
             type="image/webp"
             srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-            sizes="(max-width: 859px) 200vw, 100vw"
+            sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
           />
           <img
             id="hero-mobile-img"
-            src={`${basePath}/images/homepage-screenshot-mobile.webp`}
+            src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
             alt="DataDocks Calendar Interface Mobile"
             width="1724"
             height="655"
@@ -160,22 +166,37 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     }
   }
 
-  @keyframes pan-x {
-    0%,
-    10% {
-      object-position: 0% 50%;
+  /* Default: image stays in hero section with standard height */
+  .hero-image-container {
+    height: 55vh;
+    min-height: 350px;
+    margin-top: 2rem;   /* mt-8 */
+    margin-bottom: 1rem; /* mb-4 */
+  }
+
+  /*
+    On very small phones (< 480px), move the image completely below the hero
+    section so the text/CTA is cleanly above the fold and the image becomes a
+    distinct section below. This prevents LCP ambiguity and ensures Lighthouse's
+    throttled mobile device hits the smaller image breakpoint.
+  */
+  @media (max-width: 479px) {
+    #hero-mobile-wrapper {
+      margin-top: 0;
+      /* Break out of the hero padding so the image bleeds edge-to-edge */
+      margin-left: calc(-1 * var(--hero-px, 1rem));
+      margin-right: calc(-1 * var(--hero-px, 1rem));
     }
-    45%,
-    55% {
-      object-position: 100% 50%;
-    }
-    90%,
-    100% {
-      object-position: 0% 50%;
+    .hero-image-container {
+      height: 56vw;      /* Keeps a consistent aspect ratio on narrow screens */
+      min-height: 200px;
+      margin-top: 0;
+      margin-bottom: 0;
+      border-radius: 0;  /* Edge-to-edge on tiny screens */
     }
   }
+
   .hero-pan-active {
-    /* No longer using CSS animation, handled by JS for smooth pausing/resuming */
     will-change: object-position;
   }
 </style>
@@ -223,102 +244,121 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 </script>
 
 <script>
-  // 2. Mobile Image Panning
-  (function () {
+  // 2. Mobile Image Panning — deferred until after LCP paints
+  //
+  // Three key performance fixes here:
+  //   a) Wrap everything in requestIdleCallback so parsing/execution of this
+  //      script never blocks the text render (eliminates the ~2,330 ms render
+  //      delay on the hero body text).
+  //   b) Replace the synchronous frame.offsetWidth read (forced reflow) with a
+  //      ResizeObserver — layout dimensions are read in the resize callback,
+  //      outside the critical path.
+  //   c) pointerup no longer calls getComputedStyle (another forced reflow);
+  //      instead we track currentPct directly from the last pointermove.
+
+  const initPanning = () => {
     const frame = document.getElementById("hero-mobile-frame");
     const img = document.getElementById(
       "hero-mobile-img",
     ) as HTMLImageElement | null;
 
-    if (frame && img) {
-      let isDragging = false;
-      let startX = 0;
-      let startY = 0;
-      let currentPct = 0;
-      const threshold = 7;
-      let cachedFrameWidth = frame.offsetWidth;
-      
-      // Animation state
-      const targetSpeed = 0.05; // target speed per frame
-      let currentSpeed = 0; // starts at zero, builds up momentum
-      let direction = 1; // 1 for forward, -1 for backward
-      let lastInteractionTime = 0;
-      const RESUME_DELAY = 500; // 0.5s short pause before regaining momentum
-      const ACCEL_DURATION = 1500; // 1.5s to reach full speed
-      let rafId: number;
+    if (!frame || !img) return;
 
-      window.addEventListener('resize', () => { cachedFrameWidth = frame!.offsetWidth; }, { passive: true });
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let currentPct = 0;
+    const threshold = 7;
 
-      const animate = () => {
-        const now = Date.now();
-        if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
-          const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
-          const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
-          
-          currentSpeed = targetSpeed * momentum;
-          currentPct += currentSpeed * direction;
-          
-          if (currentPct >= 100) {
-            currentPct = 100;
-            direction = -1;
-          } else if (currentPct <= 0) {
-            currentPct = 0;
-            direction = 1;
-          }
-          img!.style.objectPosition = `${currentPct}% 50%`;
-        } else {
-          currentSpeed = 0;
+    // Use ResizeObserver to track frame width without forcing a reflow.
+    let cachedFrameWidth = 0;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        cachedFrameWidth = entry.contentRect.width;
+      }
+    });
+    ro.observe(frame);
+
+    // Animation state
+    const targetSpeed = 0.05;
+    let currentSpeed = 0;
+    let direction = 1;
+    let lastInteractionTime = 0;
+    const RESUME_DELAY = 500;
+    const ACCEL_DURATION = 1500;
+
+    const animate = () => {
+      const now = Date.now();
+      if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
+        const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
+        const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
+        currentSpeed = targetSpeed * momentum;
+        currentPct += currentSpeed * direction;
+        if (currentPct >= 100) {
+          currentPct = 100;
+          direction = -1;
+        } else if (currentPct <= 0) {
+          currentPct = 0;
+          direction = 1;
         }
-        rafId = requestAnimationFrame(animate);
-      };
+        img.style.objectPosition = `${currentPct}% 50%`;
+      } else {
+        currentSpeed = 0;
+      }
+      requestAnimationFrame(animate);
+    };
 
-      rafId = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
-      frame.addEventListener("pointerdown", (e) => {
-        startX = e.clientX;
-        startY = e.clientY;
-        frame!.setPointerCapture(e.pointerId);
+    frame.addEventListener("pointerdown", (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      frame.setPointerCapture(e.pointerId);
+      if (e.pointerType === 'mouse') {
+        isDragging = true;
+        lastInteractionTime = Date.now();
+      }
+    });
 
-        if (e.pointerType === 'mouse') {
+    frame.addEventListener("pointermove", (e) => {
+      if (!isDragging) {
+        if (e.pointerType === 'mouse') return;
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        if (dx > threshold && dx > dy) {
           isDragging = true;
-          lastInteractionTime = Date.now();
+          startX = e.clientX;
         }
-      });
+        return;
+      }
+      lastInteractionTime = Date.now();
+      const dx = e.clientX - startX;
+      // Guard against zero-width during first frames before ResizeObserver fires
+      const fw = cachedFrameWidth || frame.getBoundingClientRect().width;
+      const deltaPct = -(dx / fw) * 100;
+      const movePct = Math.max(0, Math.min(100, currentPct + deltaPct));
+      currentPct = movePct;
+      img.style.objectPosition = `${movePct}% 50%`;
+    });
 
-      frame.addEventListener("pointermove", (e) => {
-        if (!isDragging) {
-          if (e.pointerType === 'mouse') return;
-          const dx = Math.abs(e.clientX - startX);
-          const dy = Math.abs(e.clientY - startY);
-          if (dx > threshold && dx > dy) {
-            isDragging = true;
-            startX = e.clientX; 
-          }
-          return;
-        }
+    frame.addEventListener("pointerup", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      lastInteractionTime = Date.now();
+      // currentPct is already up to date from pointermove — no getComputedStyle needed.
+    });
 
-        lastInteractionTime = Date.now();
-        const dx = e.clientX - startX;
-        const deltaPct = -(dx / cachedFrameWidth) * 100;
-        let movePct = currentPct + deltaPct;
-        movePct = Math.max(0, Math.min(100, movePct));
-        img!.style.objectPosition = `${movePct}% 50%`;
-      });
+    frame.addEventListener("pointercancel", () => {
+      isDragging = false;
+      lastInteractionTime = Date.now();
+    });
+  };
 
-      frame.addEventListener("pointerup", (e) => {
-        if (!isDragging) return;
-        isDragging = false;
-        lastInteractionTime = Date.now();
-        
-        const computed = getComputedStyle(img!).objectPosition;
-        const match = computed.match(/([\d.]+)%/);
-        currentPct = match ? parseFloat(match[1]) : currentPct;
-      });
-
-      frame.addEventListener("pointercancel", () => {
-        isDragging = false;
-        lastInteractionTime = Date.now();
-      });
-    }
-  })();
+  // Defer init until the browser is idle so this script never delays LCP.
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(initPanning, { timeout: 2000 });
+  } else {
+    // Fallback: wait for next paint then defer to a macrotask
+    requestAnimationFrame(() => setTimeout(initPanning, 0));
+  }
 </script>
