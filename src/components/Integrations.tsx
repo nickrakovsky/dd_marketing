@@ -31,11 +31,7 @@ const integrations = [
   },
 ];
 
-interface IntegrationsProps {
-  content?: any;
-}
-
-const Integrations = ({ content }: IntegrationsProps) => {
+const Integrations = () => {
   const ANIMATION_DURATION = "40s";
 
   const IntegrationCard = ({ integration }: { integration: (typeof integrations)[0] }) => (

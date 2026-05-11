@@ -1,15 +1,25 @@
 ---
-import { ImageCarousel } from "./react/carousel/ImageCarousel";
+import { ImageCarousel } from "./carousel/ImageCarousel";
 import { optimizeSlides } from "@/utils/images";
 
+import type { HeroSlide } from "@/data/types";
+import type { SlideConfig } from "./carousel/ImageCarousel";
+import type { RawSlide } from "@/utils/images";
+
+interface SlideImage {
+  src: string;
+  alt?: string;
+  [key: string]: unknown;
+}
+
 interface Props {
-  slides: any[];
+  slides: HeroSlide[];
 }
 
 const { slides } = Astro.props;
 
 // 1. Process images on the server
-const optimizedSlides = await optimizeSlides(slides);
+const optimizedSlides = await optimizeSlides(slides as unknown as RawSlide[]);
 const firstSlide = optimizedSlides[0];
 
 // --- HELPER: CSS Grid Logic for the Static Facade ---
@@ -42,12 +52,12 @@ function getSlotClass(type: string, index: number) {
 
 <div class="relative w-full max-w-6xl mx-auto h-[450px] rounded-2xl overflow-hidden bg-gray-50 border border-black/5 shadow-sm group">
   
-  <div class={`absolute inset-0 p-3 grid gap-3 ${getGridClass(firstSlide.type)}`}>
-    {firstSlide.images.map((img: any, i: number) => (
-       <div class={`relative rounded-lg overflow-hidden bg-white shadow-sm border border-gray-100 ${getSlotClass(firstSlide.type, i)}`}>
+  <div class={`absolute inset-0 p-3 grid gap-3 ${getGridClass((firstSlide?.type as string) || 'single')}`}>
+    {(firstSlide?.images as SlideImage[])?.map((img: SlideImage, i: number) => (
+       <div class={`relative rounded-lg overflow-hidden bg-white shadow-sm border border-gray-100 ${getSlotClass(firstSlide.type as string, i)}`}>
          <img 
            src={img.src} 
-           alt={img.alt} 
+           alt={img.alt || "Hero Image"} 
            class="w-full h-full object-contain"
            loading="eager"
            fetchpriority="high"
@@ -59,7 +69,7 @@ function getSlotClass(type: string, index: number) {
   <div class="absolute inset-0 z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
     <ImageCarousel 
       client:idle 
-      slides={optimizedSlides} 
+      slides={optimizedSlides as unknown as SlideConfig[]} 
       containerHeight={450} 
     />
   </div>

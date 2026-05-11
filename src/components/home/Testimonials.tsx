@@ -167,7 +167,7 @@ export default function Testimonials({ items = [] }: TestimonialsProps) {
                         <img
                           src={item.logo}
                           alt="Company Logo"
-                          width="auto"
+                          width="120"
                           height="32"
                           loading="lazy"
                           className="h-full w-auto object-contain brightness-0 flex-shrink-0"

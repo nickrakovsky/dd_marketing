@@ -44,7 +44,7 @@ export function ContactDialog() {
       setIsSuccess(true);
       setEmail("");
       setMessage("");
-    } catch (err) {
+    } catch {
       setError("Failed to submit. Please try again.");
     } finally {
       setIsLoading(false);

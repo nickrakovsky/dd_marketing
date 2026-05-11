@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import CTAForm from "./CTAform"; 
+import CTAForm from "../CTAform"; 
 
 interface HeroInteractionProps {
   buttonText?: string;
