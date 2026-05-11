@@ -58,10 +58,10 @@ export default function LTLCalculator() {
   };
 
   const results = useMemo(() => {
-    let l = parseFloat(length);
-    let w = parseFloat(width);
-    let h = parseFloat(height);
-    let wt = parseFloat(weight);
+    const l = parseFloat(length);
+    const w = parseFloat(width);
+    const h = parseFloat(height);
+    const wt = parseFloat(weight);
 
     if (isNaN(l) || isNaN(w) || isNaN(h) || isNaN(wt) || l <= 0 || w <= 0 || h <= 0 || wt <= 0) {
       return null;

@@ -91,6 +91,8 @@ const faqContent = {
               }
               iconPath = `/images/integrations/${cleanIcon}`;
             }
+
+            const integrationUrl = `/integrations/${app.slug}`;
               
             return (
               <div class="flex flex-col text-left rounded-xl bg-secondary p-6 shadow-sm transition-all duration-300 hover:shadow-md">
@@ -109,7 +111,7 @@ const faqContent = {
                     {app.data.description}
                   </p>
                   
-                  <a href={`/integrations/${app.slug}`} class="mt-10 flex items-center text-lg font-bold text-primary hover:text-black tracking-wider transition-colors font-recoleta">
+                  <a href={integrationUrl} class="mt-10 flex items-center text-lg font-bold text-primary hover:text-black tracking-wider transition-colors font-recoleta">
                     Learn More
                     <span class="ml-2 font-light text-2xl leading-none">&#8250;</span>
                   </a>

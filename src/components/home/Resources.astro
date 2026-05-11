@@ -89,11 +89,13 @@ if (displayPosts.length < 3) {
 
     {/* Post grid */}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-      {displayPosts.map((post) => (
-        <a
-          href={`/posts/${post.slug}`}
-          class="resource-card group flex flex-col bg-[#FFF8E9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(254,80,0,0.18)] transition-all duration-300 hover:-translate-y-1"
-        >
+      {displayPosts.map((post) => {
+        const postUrl = `/posts/${post.slug}`;
+        return (
+          <a
+            href={postUrl}
+            class="resource-card group flex flex-col bg-[#FFF8E9] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_rgba(254,80,0,0.18)] transition-all duration-300 hover:-translate-y-1"
+          >
           {/* Cover image */}
           {post.data.cardImage && (
             <div class="relative aspect-[16/10] overflow-hidden bg-[#EFE2D2]">
@@ -126,7 +128,7 @@ if (displayPosts.length < 3) {
             </h3>
           </div>
         </a>
-      ))}
+      )})}
     </div>
 
   </div>

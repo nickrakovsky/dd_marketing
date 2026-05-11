@@ -130,10 +130,10 @@ const author = getAuthor(frontmatter.author);
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
-                <h5 class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest">Contents</h5>
+                <p class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest" aria-hidden="true">Contents</p>
                 <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[#ff7635] opacity-30"></div>
               </div>
-              <nav>
+              <nav aria-label="Table of contents">
                 <ul class={`space-y-4 ${h2Headings.length > 12 ? '!space-y-1' : h2Headings.length > 7 ? '!space-y-2' : ''}`}>
                   {h2Headings.map((heading: Heading) => (
                     <li>
@@ -162,7 +162,7 @@ const author = getAuthor(frontmatter.author);
                   <svg class="w-5 h-5 text-[#fd4f00] transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 </summary>
                 <div class="absolute left-0 right-0 top-full mt-2 bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 shadow-xl p-4 z-50 max-h-[60vh] overflow-y-auto">
-                  <nav>
+                  <nav aria-label="Table of contents (mobile)">
                     <ul class="space-y-3">
                       {h2Headings.map((heading: Heading) => (
                         <li>
@@ -302,7 +302,9 @@ const author = getAuthor(frontmatter.author);
           } else {
             document.documentElement.classList.remove('dark');
           }
-        } catch (e) {}
+        } catch (e) {
+          // LocalStorage might be unavailable in some browser settings
+        }
       })();
 
       function setupBlogInteractions() {
@@ -327,7 +329,9 @@ const author = getAuthor(frontmatter.author);
           } else {
             article?.classList.remove('text-scaled');
           }
-        } catch (e) {}
+        } catch (e) {
+          // LocalStorage might be unavailable in some browser settings
+        }
 
         if (textSizeToggle) {
           textSizeToggle.onclick = () => {

@@ -1,8 +1,4 @@
 ---
-// Image and homepageMobileImg are unused
-// import { Image } from "astro:assets";
-// import homepageMobileImg from "../../assets/images/homepage-screenshot-mobile.png";
-
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
@@ -11,7 +7,6 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 >
   <div class="container mx-auto px-4">
     <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
-      {/* 1. Main Heading */}
       <div class="relative mb-10 w-full max-w-4xl mx-auto">
         <h1 class="font-bruta uppercase relative z-0 text-black">
           {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
@@ -19,39 +14,43 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
             class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
           >
             <span class="block relative inline-block">
-              <!--<div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
-                  <img
-                    src={`${basePath}/images/hero-badge.webp`}
-                    alt="Save Time Make It Visible"
-                    width="96"
-                    height="96"
-                    class="w-full h-full animate-[spin_12s_linear_infinite]"
-                  />
-                </div>-->
+              YOUR DOCK SCHEDULING,
+              {/* Spinning badge inactive
+              <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
+                <img
+                  src={`${basePath}/images/hero-badge.webp`}
+                  alt="Save Time Make It Visible"
+                  width="96"
+                  height="96"
+                  class="w-full h-full animate-[spin_12s_linear_infinite]"
+                />
+              </div>
+              */}
             </span>
-            Dock Scheduling & Yard Management Software
+            <span class="block">YOUR RULES</span>
           </span>
 
           {
-            /* DESKTOP VIEW (860px+) — restored to original text-8xl that fits on 2 lines */
+            /* DESKTOP VIEW (860px+) */
           }
           <span
             class="hidden hero-desktop:block text-8xl leading-[0.85] text-black"
           >
-            <!--<span class="relative inline-block">
-                YOUR LOADING DOCK,
-                <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
-                  <img
-                    src={`${basePath}/images/hero-badge.webp`}
-                    alt="Save Time Make It Visible"
-                    width="96"
-                    height="96"
-                    class="w-full h-full animate-[spin_12s_linear_infinite]"
-                  />
-                </div>
-              </span>
-              <span class="block">YOUR RULES</span>-->
-            Dock Scheduling & Yard Management Software
+            <span class="relative inline-block">
+              YOUR DOCK SCHEDULING,
+              {/* Spinning badge inactive
+              <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
+                <img
+                  src={`${basePath}/images/hero-badge.webp`}
+                  alt="Save Time Make It Visible"
+                  width="96"
+                  height="96"
+                  class="w-full h-full animate-[spin_12s_linear_infinite]"
+                />
+              </div>
+              */}
+            </span>
+            <span class="block">YOUR RULES</span>
           </span>
         </h1>
       </div>
@@ -60,10 +59,9 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         /* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */
       }
       <p
-        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[640px] mx-auto leading-relaxed px-2"
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
       >
-        One platform for dock scheduling and yard management — known for the
-        easiest interface and the most helpful team in the industry.
+        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra mile.
         <br class="hidden lg:block" />
         <strong class="text-black block mt-3 md:mt-4"
           >Start turning trucks around faster today.</strong
@@ -117,20 +115,30 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         id="hero-mobile-frame"
         class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y"
       >
-        <img
-          id="hero-mobile-img"
-          src={`${basePath}/images/homepage-screenshot-mobile.webp`}
-          srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-          sizes="(max-width: 859px) 200vw, 100vw"
-          alt="DataDocks Calendar Interface Mobile"
-          width="1724"
-          height="655"
-          fetchpriority="high"
-          loading="eager"
-          decoding="async"
-          class="w-full h-full object-cover hero-pan-active"
-          style="object-position: 0% 50%;"
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
+            sizes="(max-width: 859px) 200vw, 100vw"
+          />
+          <source
+            type="image/webp"
+            srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+            sizes="(max-width: 859px) 200vw, 100vw"
+          />
+          <img
+            id="hero-mobile-img"
+            src={`${basePath}/images/homepage-screenshot-mobile.webp`}
+            alt="DataDocks Calendar Interface Mobile"
+            width="1724"
+            height="655"
+            fetchpriority="high"
+            loading="eager"
+            decoding="async"
+            class="w-full h-full object-cover hero-pan-active"
+            style="object-position: 0% 50%;"
+          />
+        </picture>
       </div>
     </div>
   </div>
@@ -241,7 +249,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
       window.addEventListener('resize', () => { cachedFrameWidth = frame!.offsetWidth; }, { passive: true });
 
-      function animate() {
+      const animate = () => {
         const now = Date.now();
         if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
           const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
@@ -262,7 +270,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           currentSpeed = 0;
         }
         rafId = requestAnimationFrame(animate);
-      }
+      };
 
       rafId = requestAnimationFrame(animate);
 

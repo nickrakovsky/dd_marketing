@@ -5,10 +5,12 @@ import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
 const postsDir = path.resolve('./src/content/posts');
@@ -93,6 +95,11 @@ export default defineConfig({
         }
       }
     },
+    partytown({
+      config: {
+        forward: BENTO_PARTYTOWN_FORWARD,
+      },
+    }),
     tailwind(), react(), keystatic(), sitemap({
       filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
       serialize(item) {
