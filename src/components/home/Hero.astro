@@ -116,39 +116,43 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       stays in the hero section. The sizes attribute is tightened so the browser
       picks 750w for throttled/small-screen devices instead of 1724w.
     */}
-    <div class="block hero-desktop:hidden w-full px-0" id="hero-mobile-wrapper">
-      <div
-        id="hero-mobile-frame"
-        class="relative w-full rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y hero-image-container"
-      >
-        <picture>
-          <source
-            type="image/avif"
-            srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
-            sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
-          />
-          <source
-            type="image/webp"
-            srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-            sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
-          />
-          <img
-            id="hero-mobile-img"
-            src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
-            alt="DataDocks Calendar Interface Mobile"
-            width="1724"
-            height="655"
-            fetchpriority="high"
-            loading="eager"
-            decoding="async"
-            class="w-full h-full object-cover hero-pan-active"
-            style="object-position: 0% 50%;"
-          />
-        </picture>
-      </div>
-    </div>
   </div>
 </section>
+
+{/* Mobile hero image — rendered OUTSIDE the hero section so it is always
+    structurally below the fold on narrow phones. The text + CTA above are
+    the true LCP candidate on Lighthouse's 360px throttled device. */}
+<div class="block hero-desktop:hidden w-full" id="hero-mobile-wrapper">
+  <div
+    id="hero-mobile-frame"
+    class="relative w-full overflow-hidden touch-pan-y hero-image-container"
+  >
+    <picture>
+      <source
+        type="image/avif"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <source
+        type="image/webp"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <img
+        id="hero-mobile-img"
+        src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
+        alt="DataDocks mobile dock scheduling interface"
+        width="1724"
+        height="655"
+        fetchpriority="low"
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover hero-pan-active"
+        style="object-position: 0% 50%;"
+      />
+    </picture>
+  </div>
+</div>
 
 <style>
   /* Custom breakpoint: 860px for the hero desktop/mobile switch */
@@ -166,34 +170,17 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     }
   }
 
-  /* Default: image stays in hero section with standard height */
-  .hero-image-container {
-    height: 55vh;
-    min-height: 350px;
-    margin-top: 2rem;   /* mt-8 */
-    margin-bottom: 1rem; /* mb-4 */
-  }
-
   /*
-    On very small phones (< 480px), move the image completely below the hero
-    section so the text/CTA is cleanly above the fold and the image becomes a
-    distinct section below. This prevents LCP ambiguity and ensures Lighthouse's
-    throttled mobile device hits the smaller image breakpoint.
+    Mobile image container — sits below the hero section.
+    On phones 480px+ it gets a decent height so the screenshot is well-framed.
+    On narrower phones Lighthouse uses a 360×640 viewport, so 56vw ≈ 202px which
+    keeps it clearly below fold on first paint.
   */
-  @media (max-width: 479px) {
-    #hero-mobile-wrapper {
-      margin-top: 0;
-      /* Break out of the hero padding so the image bleeds edge-to-edge */
-      margin-left: calc(-1 * var(--hero-px, 1rem));
-      margin-right: calc(-1 * var(--hero-px, 1rem));
-    }
-    .hero-image-container {
-      height: 56vw;      /* Keeps a consistent aspect ratio on narrow screens */
-      min-height: 200px;
-      margin-top: 0;
-      margin-bottom: 0;
-      border-radius: 0;  /* Edge-to-edge on tiny screens */
-    }
+  .hero-image-container {
+    height: 56vw;
+    min-height: 180px;
+    max-height: 480px;
+    background: #f5ede0;
   }
 
   .hero-pan-active {

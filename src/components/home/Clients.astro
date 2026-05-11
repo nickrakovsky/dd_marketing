@@ -87,26 +87,28 @@ const logos = [
     let startY = 0;
     let dragStartPos = 0;
     const threshold = 7;
-    let animating = true;
     let rafId: number;
+    let initialized = false;
 
-    // Compute the width of one "set" of logos (total / 5)
-    const getSetWidth = () => {
-      return track!.scrollWidth / 5;
-    };
-
-    let setW = getSetWidth();
-
-    // Start from -2 sets so there's content to the left
-    position = -(setW * 2);
-    track.style.transform = `translateX(${position}px)`;
-
-    window.addEventListener('resize', () => {
-      setW = getSetWidth();
+    // Use ResizeObserver to read scrollWidth passively — avoids the forced
+    // synchronous layout that track.scrollWidth causes when read inline.
+    let setW = 0;
+    const ro = new ResizeObserver(() => {
+      const newSetW = track.scrollWidth / 5;
+      if (newSetW === setW) return;
+      setW = newSetW;
+      if (!initialized && setW > 0) {
+        // First measurement: position two sets to the left so there's content
+        // in both directions before the user interacts.
+        position = -(setW * 2);
+        track.style.transform = `translateX(${position}px)`;
+        initialized = true;
+      }
     });
+    ro.observe(track);
 
     const animate = () => {
-      if (!isDragging) {
+      if (!isDragging && setW > 0) {
         position -= speed;
         // Wrap around: when we've scrolled past 3 sets, jump back by 1 set
         if (position < -(setW * 4)) {
@@ -116,7 +118,7 @@ const logos = [
         if (position > -setW) {
           position -= setW;
         }
-        track!.style.transform = `translateX(${position}px)`;
+        track.style.transform = `translateX(${position}px)`;
       }
       rafId = requestAnimationFrame(animate);
     };
@@ -128,7 +130,7 @@ const logos = [
       startY = e.clientY;
       dragStartPos = position;
       marquee.setPointerCapture(e.pointerId);
-      
+
       // Desktop: immediate drag and prevent text selection
       if (e.pointerType === 'mouse') {
         isDragging = true;
