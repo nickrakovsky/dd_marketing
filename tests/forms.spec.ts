@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { BENTO_FORWARDED_METHODS } from '../src/lib/bento-config.mjs';
 
 /**
  * Form submission tests targeting the actual DOM structure in:
@@ -6,6 +7,67 @@ import { test, expect } from '@playwright/test';
  *   - src/components/home/CTA.astro        (homepage bottom CTA, id="cta-bento-form")
  *   - src/components/home/Hero.astro       (homepage hero, id="hero-bento-form")
  */
+
+test.describe('Bento SDK via Partytown', () => {
+  // Validates that the Partytown forward list in astro.config.mjs covers every method
+  // we care about. If the SDK fails to load (e.g. blocked by CSP, Partytown misconfig,
+  // or forward list drift), the `window.bento.<method>` proxy stubs won't exist and
+  // this test fails — the only automated signal we have that Bento is wired up.
+  test('forwarded methods are available on window.bento', async ({ page }) => {
+    await page.goto('/');
+
+    // Partytown creates proxy stubs on window.bento for every forwarded method,
+    // queuing calls until the worker-side SDK is ready. Wait up to 10s — the
+    // script is deferred and the worker takes a moment to spin up.
+    await page.waitForFunction(
+      () => typeof (window as { bento?: unknown }).bento !== 'undefined',
+      null,
+      { timeout: 10_000 }
+    );
+
+    for (const method of BENTO_FORWARDED_METHODS) {
+      const type = await page.evaluate(
+        (m) => typeof (window as { bento?: Record<string, unknown> }).bento?.[m],
+        method
+      );
+      expect(type, `window.bento.${method} should be a function (forward list drift?)`).toBe('function');
+    }
+  });
+
+  test('form submit triggers a Bento network request', async ({ page }) => {
+    // Capture any outbound request whose URL includes bentonow.com — covers both
+    // the main-thread SDK load (fast.bentonow.com) and the server-side proxy
+    // (/api/bento-track → app.bentonow.com). This is the end-to-end validation
+    // that a form submit actually reaches Bento infrastructure.
+    const bentoRequests: string[] = [];
+    page.on('request', (req) => {
+      const url = req.url();
+      if (url.includes('bentonow.com') || url.includes('/api/bento-track')) {
+        bentoRequests.push(url);
+      }
+    });
+
+    await page.addInitScript(() => {
+      window.open = () => null;
+    });
+
+    await page.goto('/');
+
+    const heroForm = page.locator('#hero-bento-form');
+    await expect(heroForm).toBeVisible();
+    await heroForm.locator('input[name="email"]').fill('bento-e2e@datadocks.com');
+    await heroForm.locator('button[type="submit"]').click();
+
+    // Give the network a moment to flush (form uses keepalive: true)
+    await page.waitForTimeout(1500);
+
+    expect(
+      bentoRequests.length,
+      `No Bento-bound requests captured — Partytown worker or server proxy may be broken. Saw: ${JSON.stringify(bentoRequests)}`
+    ).toBeGreaterThan(0);
+  });
+});
+
 
 test.describe('LeadMagnetForm (Blog Posts)', () => {
   // carrier-scorecards embeds multiple LeadMagnetForm instances — confirmed source of truth

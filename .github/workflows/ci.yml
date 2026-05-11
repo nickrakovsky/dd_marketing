@@ -75,27 +75,34 @@ jobs:
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             ATTEMPT=$((ATTEMPT + 1))
 
-            # Query the GitHub Commit Statuses API for this SHA
-            STATUSES=$(curl -s -H "Authorization: token ${GH_TOKEN}" \
-              "https://api.github.com/repos/${{ github.repository }}/commits/${COMMIT_SHA}/statuses")
+            # Cloudflare Pages reports via the Check Runs API (app slug
+            # "cloudflare-workers-and-pages"), not the legacy Commit Statuses API.
+            CHECK_RUNS=$(curl -s -H "Authorization: token ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/commits/${COMMIT_SHA}/check-runs?per_page=100")
 
-            # Look for a Cloudflare Pages status with state "success".
-            # Cloudflare's context string contains "cloudflare" (case-insensitive).
-            # We use `first` on the sorted list so the most recent success wins.
-            PREVIEW_URL=$(echo "$STATUSES" | jq -r '
-              [ .[] | select(.context | test("cloudflare"; "i")) | select(.state == "success") ]
-              | first | .target_url // empty
+            # Find the successful Cloudflare Pages check run and pull the
+            # preview URL out of output.summary (first *.pages.dev href).
+            SUMMARY=$(echo "$CHECK_RUNS" | jq -r '
+              [ .check_runs[]
+                | select(.app.slug == "cloudflare-workers-and-pages")
+                | select(.status == "completed")
+                | select(.conclusion == "success") ]
+              | first | .output.summary // empty
             ')
 
-            if [ -n "$PREVIEW_URL" ]; then
-              echo "Found Cloudflare preview: $PREVIEW_URL"
-              echo "preview_url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
-              # Also export to GITHUB_ENV so subsequent steps can use $PREVIEW_URL directly
-              echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
-              exit 0
+            if [ -n "$SUMMARY" ]; then
+              PREVIEW_URL=$(echo "$SUMMARY" | grep -oE "https://[a-z0-9.-]+\.pages\.dev" | head -1)
+              if [ -n "$PREVIEW_URL" ]; then
+                echo "Found Cloudflare preview: $PREVIEW_URL"
+                echo "preview_url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+                # Also export to GITHUB_ENV so subsequent steps can use $PREVIEW_URL directly
+                echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+                exit 0
+              fi
             fi
 
-            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS} — no success status yet, waiting 10s..."
+            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS} — no success check-run yet, waiting 10s..."
             sleep 10
           done
 
