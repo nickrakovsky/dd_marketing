@@ -90,19 +90,23 @@ const logos = [
     let rafId: number;
     let initialized = false;
 
-    // Use ResizeObserver to read scrollWidth passively — avoids the forced
-    // synchronous layout that track.scrollWidth causes when read inline.
+    // Use ResizeObserver to read the track width passively.
+    // entry.contentRect.width is provided by the browser after layout completes
+    // and does NOT trigger a forced reflow — unlike track.scrollWidth which
+    // forces synchronous layout when read outside a layout boundary.
     let setW = 0;
-    const ro = new ResizeObserver(() => {
-      const newSetW = track.scrollWidth / 5;
-      if (newSetW === setW) return;
-      setW = newSetW;
-      if (!initialized && setW > 0) {
-        // First measurement: position two sets to the left so there's content
-        // in both directions before the user interacts.
-        position = -(setW * 2);
-        track.style.transform = `translateX(${position}px)`;
-        initialized = true;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newSetW = entry.contentRect.width / 5;
+        if (newSetW === setW) return;
+        setW = newSetW;
+        if (!initialized && setW > 0) {
+          // First measurement: position two sets to the left so there's content
+          // in both directions before the user interacts.
+          position = -(setW * 2);
+          track.style.transform = `translateX(${position}px)`;
+          initialized = true;
+        }
       }
     });
     ro.observe(track);
