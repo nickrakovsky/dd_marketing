@@ -119,14 +119,6 @@ if (pathname === '/') {
     "applicationSubCategory": "Dock Scheduling and Yard Management Software",
     "operatingSystem": "Web, iOS, Android",
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
-    "offers": {
-      "@type": "Offer",
-      "availability": "https://schema.org/OnlineOnly",
-      "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
-      "description": "Custom pricing based on facility size and number of locations. Free demo available.",
-      "price": "",
-      "priceCurrency": "USD"
-    },
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": 4.9,
@@ -200,7 +192,7 @@ if (breadcrumbItems.length > 0) {
           "@type": "ListItem",
           "position": index + 2,
           "name": name,
-          "item": new URL(arr.slice(0, index + 1).join('/'), Astro.site).toString()
+          "item": new URL(arr.slice(0, index + 1).join('/').replace(/\.html$/, ''), Astro.site).toString()
         };
       })
     ]
@@ -280,7 +272,7 @@ const jsonLd = {
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
