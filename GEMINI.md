@@ -40,8 +40,7 @@
 
 ### URLs and Links
 - **No trailing slashes.** Internal links must be `/posts/slug` not `/posts/slug/`
-- Internal blog links use relative format: `/posts/slug` not `https://datadocks.com/posts/slug`
-- Links to product/feature pages (datadocks.com/benefits/, datadocks.com/datadocks-features/) are absolute since they're served from Webflow
+- Internal links use relative format (e.g., `/posts/slug`, `/benefits/slug`, `/datadocks-features/slug`) instead of absolute URLs.
 
 ### SEO
 - All bots allowed in robots.txt — do NOT block any crawlers (search or training). User wants maximum AI visibility
