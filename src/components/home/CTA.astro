@@ -1,25 +1,38 @@
+---
+// src/components/home/CTA.astro
+---
+
 <section class="py-10 md:py-[3.25rem] bg-[#FF5507]">
   <div class="container mx-auto px-6 md:px-8">
     <div class="w-full text-center h-full flex flex-col justify-center items-center">
+      
       <div class="inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
-        <h2 class="inline font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9] align-middle">
-          Find out for yourself what DataDocks can do<br class="hidden min-[1020px]:inline" />
+        <h2 class="font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9]">
+          <span class="inline min-[1020px]:block">Find out for yourself what DataDocks can do</span>
           <span class="inline min-[1020px]:hidden"> </span>
-          for your operations
-        </h2>
-
-        <form
-          id="cta-bento-form"
-          class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto align-middle min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0 translate-y-[2px] xl:translate-y-[-4px]"
-        >
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your work email"
-            style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
-            class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none"
-            required
-          />
+          <span class="inline min-[1020px]:inline-flex min-[1020px]:items-center">
+            <span>for your operations</span>
+            <form
+              id="cta-bento-form"
+              class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0"
+              novalidate
+            >
+          <div class="relative flex flex-col w-full sm:w-[18rem] lg:w-[22rem]">
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your work email"
+              style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
+              class="h-12 lg:h-[3.35rem] w-full px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none transition-all duration-300 sm:hover:pl-6 sm:focus:pl-6"
+              required
+            />
+            <p
+              id="cta-email-error"
+              class="absolute -bottom-6 left-0 text-[#FFF8E9] text-xs font-recoleta opacity-0 transition-opacity duration-200 whitespace-nowrap"
+            >
+              Please use a business email address.
+            </p>
+          </div>
           <button
             type="submit"
             class="h-12 lg:h-[3.35rem] px-6 lg:px-8 bg-black hover:bg-[#EFE2D2] hover:text-black md:hover:bg-[#FF5507] md:hover:text-white text-white font-bold transition-all duration-300 uppercase tracking-wide text-[14px] lg:text-[15px] font-recoleta whitespace-nowrap rounded-none flex-shrink-0"
@@ -27,23 +40,19 @@
             Get Free Demo
           </button>
         </form>
-
-        <p
-          id="cta-bento-form-error"
-          class="mt-3 text-sm text-[#FFF8E9] min-[1020px]:ml-5"
-          role="alert"
-          aria-live="polite"
-        ></p>
+          </span>
+        </h2>
       </div>
+
     </div>
   </div>
 </section>
 
 <script is:inline>
-  (function () {
-    var calendlyBase = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+  (function() {
+    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
 
-    var blockedDomains = new Set([
+    var BLOCKED_DOMAINS = new Set([
       "gmail.com",
       "yahoo.com",
       "outlook.com",
@@ -60,45 +69,73 @@
       "yandex.com"
     ]);
 
-    function getDomain(email) {
-      var parts = String(email || "").trim().toLowerCase().split("@");
-      return parts.length === 2 ? parts[1] : "";
-    }
-
     function isBusinessEmail(email) {
-      var domain = getDomain(email);
-      return !!domain && !blockedDomains.has(domain);
+      var parts = email.toLowerCase().trim().split('@');
+      if (parts.length !== 2) return false;
+      return !BLOCKED_DOMAINS.has(parts[1]);
     }
 
-    var form = document.getElementById("cta-bento-form");
-    var emailInput = form ? form.querySelector('input[name="email"]') : null;
-    var errorEl = document.getElementById("cta-bento-form-error");
+    function showError(form, show) {
+      var err = document.getElementById('cta-email-error');
+      var input = form.querySelector('input[name="email"]');
+      if (!err) return;
+      err.style.opacity = show ? '1' : '0';
+      if (input) {
+        if (show) input.classList.add('ring-1', 'ring-[#FFF8E9]');
+        else input.classList.remove('ring-1', 'ring-[#FFF8E9]');
+      }
+    }
 
-    if (form && emailInput) {
-      form.addEventListener("submit", function (e) {
+    function attachCtaForm() {
+      var form = document.getElementById('cta-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
+
+      var emailInput = form.querySelector('input[name="email"]');
+      if (emailInput) {
+        emailInput.addEventListener('input', function() {
+          showError(form, false);
+        });
+      }
+
+      form.addEventListener('submit', function(e) {
         e.preventDefault();
+        var email = emailInput ? emailInput.value.trim() : '';
 
-        var email = String(emailInput.value || "").trim();
-        if (errorEl) errorEl.textContent = "";
-
-        if (!isBusinessEmail(email)) {
-          if (errorEl) {
-            errorEl.textContent = "Please enter your business email address.";
-          }
-          emailInput.focus();
+        if (!email || !isBusinessEmail(email)) {
+          showError(form, true);
+          if (emailInput) emailInput.focus();
           return;
         }
 
-        if (email && window.bento) {
+        showError(form, false);
+
+        // 1. Client-side identify (Primary stitching)
+        // If the SDK is loaded and not blocked, this handles the identity link officially.
+        if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
           window.bento.identify(email);
-          window.bento.track("Demo Subscriber", { source: window.location.pathname });
         }
 
-        var url = new URL(calendlyBase);
-        url.searchParams.set("email", email);
+        // 2. Server-side proxy (Backup/Ad-block resistant)
+        fetch('/api/bento-track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            event: 'Demo Subscriber',
+            source: window.location.pathname,
+            landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+            visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+          }),
+          keepalive: true
+        }).catch(function() {});
 
-        window.location.href = url.toString();
+        window.open(calendlyUrl + '&email=' + encodeURIComponent(email), '_blank', 'noopener');
+        form.reset();
       });
     }
+
+    attachCtaForm();
+    document.addEventListener('astro:page-load', attachCtaForm);
   })();
 </script>
