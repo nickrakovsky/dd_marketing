@@ -5,7 +5,7 @@
 - **Styling:** Tailwind CSS
 - **Deployment:** Cloudflare Pages
 - **CMS:** Keystatic
-- **Interactive components:** React (islands architecture)
+- **Interactive components:** SolidJS islands (shadcn-solid pattern: Kobalte + Tailwind) for new work; legacy React islands for Keystatic CMS and some existing components
 - **Package manager:** npm
 
 ## Commands
@@ -26,6 +26,9 @@
 - `src/layouts/Layout.astro` — Main layout with JSON-LD `@graph` structured data
 - `src/layouts/BlogPostLayout.astro` — Blog post layout
 - `src/components/` — Astro and React components
+- `src/components/solid/` — SolidJS components (shadcn-solid pattern: Kobalte + Tailwind)
+- `src/components/solid/ui/` — SolidJS UI primitives (Button, Card, etc.)
+- `src/components/solid/micro-apps/` — Self-contained interactive micro-apps
 - `src/assets/blog-images/` — Blog images (processed by Astro)
 - `public/` — Static assets (robots.txt, llms.txt, llms-full.txt, images)
 - `public/_headers` — Cloudflare Pages response headers
@@ -58,8 +61,18 @@
 - `reviewCount` must be a number, not a string
 
 ### Components
-- Use `client:visible` for below-fold React components (not `client:load`)
+- Use `client:visible` for below-fold interactive components (not `client:load`)
 - `client:load` only for above-fold interactive components
+
+### Micro-App Architecture (SolidJS)
+- All new interactive components use SolidJS + shadcn-solid pattern (Kobalte). React is legacy only.
+- All SolidJS `.tsx` files MUST live under `**/solid/**` paths (required by Astro integration `include` routing).
+- All SolidJS `.tsx` files MUST start with `/** @jsxImportSource solid-js */` pragma (required for `astro check` to use correct JSX types).
+- Use `client:visible` for below-fold islands, `client:idle` for above-fold.
+- Never import SolidJS components into Layout.astro, Navigation, Footer, or global components.
+- Keep micro-apps self-contained — no global stores, no imports crossing the React/Solid boundary.
+- "Donut pattern": pass static text/HTML as Astro slots; keep SolidJS islands focused on interactivity.
+- No public-facing page should load both React AND SolidJS runtimes.
 
 ### Blog Post Frontmatter
 - `title` — page title and H1

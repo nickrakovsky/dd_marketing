@@ -3,15 +3,15 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section
-  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black"
+  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black hero-mobile-section"
 >
   <div class="container mx-auto px-4">
     <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
-      <div class="relative mb-10 w-full max-w-4xl mx-auto">
+      <div class="relative mb-10 hero-spacing-1 w-full max-w-4xl mx-auto">
         <h1 class="font-bruta uppercase relative z-0 text-black">
           {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
           <span
-            class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
+            class="block hero-desktop:hidden hero-mobile-title leading-[0.85] text-black w-full"
           >
             <span class="block relative inline-block">
               YOUR YARD
@@ -59,12 +59,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         /* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */
       }
       <p
-        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] hero-mobile-body text-black mb-12 hero-spacing-2 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
       >
-        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra mile.
+        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra&nbsp;mile.
         <br class="hidden lg:block" />
-        <strong class="text-black block mt-3 md:mt-4"
-          >Start turning trucks around faster today.</strong
+        <strong class="text-black block mt-6 md:mt-4"
+          >Start turning trucks around faster&nbsp;today.</strong
         >
       </p>
 
@@ -173,14 +173,116 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
   /*
     Mobile image container — sits below the hero section.
     On phones 480px+ it gets a decent height so the screenshot is well-framed.
-    On narrower phones Lighthouse uses a 360×640 viewport, so 56vw ≈ 202px which
-    keeps it clearly below fold on first paint.
+    We make it taller (85vw) so it doesn't look "very small", and give it a margin-top 
+    to push it far enough down that the H1 remains the true LCP candidate on Lighthouse.
   */
   .hero-image-container {
-    height: 56vw;
-    min-height: 180px;
-    max-height: 480px;
+    height: 85vw;
+    min-height: 250px;
+    max-height: 550px;
     background: #f5ede0;
+    margin-top: 15vh; /* Fallback */
+  }
+
+  /* Custom classes for height based scaling on mobile */
+  @media (max-width: 859px) {
+    /* Default mobile styles */
+    .hero-mobile-title {
+      font-size: clamp(3.2rem, 11vw, 4rem) !important;
+    }
+    .hero-mobile-body {
+      font-size: clamp(1.2rem, 3.2vw, 1.4rem) !important;
+    }
+    .hero-spacing-1 {
+      margin-bottom: 6vh !important;
+    }
+    .hero-spacing-2 {
+      margin-bottom: 6vh !important;
+    }
+    
+    /* Group 1: Very Small Screens (iPhone SE - 667px) */
+    @media (max-height: 680px) {
+      .hero-mobile-title {
+        font-size: clamp(3rem, 10vw, 3.3rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.2rem, 3.2vw, 1.25rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-image-container {
+        margin-top: 1vh !important;
+      }
+    }
+
+    /* Group 2: Medium Screens (iPhone XR - 698px, iPhone 12 Pro - 744px, Galaxy S8+ - 740px) */
+    @media (min-height: 681px) and (max-height: 780px) {
+      .hero-mobile-title {
+        font-size: clamp(3.5rem, 11vw, 3.8rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.25rem, 3.2vw, 1.35rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 6vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 6vh !important;
+      }
+      .hero-image-container {
+        margin-top: 1vh !important;
+      }
+    }
+
+    /* Group 3: Mid-Tall Screens (Moto G - 823px) */
+    @media (min-height: 781px) and (max-height: 850px) {
+      .hero-mobile-section {
+        padding-top: 14vh !important; /* Push H1 lower */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(3.8rem, 11vw, 4.2rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.3rem, 3.2vw, 1.5rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 8vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 6vh !important; /* CTA higher */
+      }
+      .hero-image-container {
+        margin-top: 1vh !important;
+      }
+    }
+
+    /* Group 4: Ultra Tall Screens (iPhone 14 Pro Max - 939px, Pixel 7 - 915px) */
+    @media (min-height: 851px) {
+      .hero-mobile-section {
+        padding-top: 16vh !important; /* Push H1 lower */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(4rem, 12vw, 4.5rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.4rem, 3.2vw, 1.6rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 12vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 10vh !important;
+      }
+      .hero-image-container {
+        margin-top: 6vh !important; /* Lever of last resort used for ultra tall screens */
+      }
+    }
   }
 
   .hero-pan-active {
