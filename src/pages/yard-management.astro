@@ -1,0 +1,219 @@
+---
+export const prerender = true;
+
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+import CTA from "../components/home/CTA.astro";
+import YardBuilder from "../components/solid/micro-apps/YardBuilder";
+import "../styles/yard-builder.css";
+
+const faqData = [
+  {
+    question: "What is yard management?",
+    answer: "Yard management is the coordination of trailer movements, parking, and dock assignments within a warehouse or distribution center's yard. It covers everything from gate check-in to trailer staging, dock door assignment, and departure tracking. In warehouse and DC operations, yard management focuses on reducing truck wait times, minimizing detention charges, and giving operations teams real-time visibility into every trailer on the property."
+  },
+  {
+    question: "What is the difference between yard management and dock scheduling?",
+    answer: "Dock scheduling controls when trucks arrive — it manages appointment windows, carrier self-service booking, and capacity limits per dock door. Yard management controls what happens after trucks arrive — where trailers park, which dock door they're assigned to, and how jockeys move assets around the yard. Most modern platforms like DataDocks combine both into a single system because scheduling without yard visibility leaves gaps, and yard management without scheduling creates congestion."
+  },
+  {
+    question: "What is a yard management system (YMS)?",
+    answer: "A yard management system (YMS) is software that provides real-time visibility and control over trailer movements within a facility's yard. A YMS typically includes gate check-in automation, live yard maps showing trailer locations and status, dock door assignment logic, jockey task management, and dwell time tracking. For warehouse operations, a YMS integrates with WMS and TMS platforms to close the gap between inbound transportation and warehouse receiving."
+  },
+  {
+    question: "Do I need a yard management system or just dock scheduling software?",
+    answer: "If your facility handles fewer than 20 loads per week with minimal drop trailers, dock scheduling alone may be enough. Once you're handling higher volumes, managing drop trailers, or running yard jockeys, you need yard management capabilities on top of scheduling. Signs you've outgrown scheduling-only: jockeys searching for trailers, detention charges from carrier wait times, no visibility into what's in the yard, and manual dispatch via whiteboard or radio."
+  },
+  {
+    question: "Is yard management software the same for warehouses and ports?",
+    answer: "No. Warehouse yard management and port terminal yard management are fundamentally different operations. Warehouse YMS focuses on trailer parking, dock door scheduling, carrier appointments, and jockey dispatch. Port terminal operating systems (TOS) handle container stacking, vessel berth planning, crane scheduling, and intermodal rail coordination. Similarly, rail yard management involves car switching, classification, and train building. DataDocks is purpose-built for warehouse and distribution center dock scheduling and yard management."
+  },
+  {
+    question: "What does DataDocks do for yard management?",
+    answer: "DataDocks is a dock scheduling and yard management platform built for warehouses and distribution centers. It provides carrier self-service appointment booking, real-time yard visibility, automated dock door assignments, jockey task management, and integration with WMS, TMS, and ERP systems. DataDocks helps facilities reduce detention charges, cut truck wait times, eliminate manual scheduling overhead, and gain visibility into every trailer on the property."
+  },
+  {
+    question: "How much does yard management software cost?",
+    answer: "Yard management software pricing varies based on facility size, number of dock doors, and feature requirements. DataDocks offers flexible pricing with no minimum contract, and most customers recoup their investment within six months through reduced detention charges and labor savings alone. For a facility-specific quote, the fastest path is to book a demo and walk through your operation."
+  },
+  {
+    question: "When should a warehouse invest in a yard management system?",
+    answer: "The clearest signals are: detention charges exceeding a few thousand dollars per month, jockeys spending more time searching for trailers than moving them, gate check-in causing street backups, and operations managers spending hours per day on scheduling calls and emails. If any two of those are true, a yard management system will likely pay for itself within the first quarter."
+  }
+];
+---
+
+<Layout
+  title="Yard Management Software for Warehouses | DataDocks"
+  description="Yard management software for warehouses and distribution centers. Build your facility, diagnose bottlenecks, and see how DataDocks eliminates dock congestion, detention charges, and yard blindness."
+  schemaData={{ faq: faqData }}
+>
+  <Navigation />
+
+  <main class="bg-[#FFF8E9] min-h-screen overflow-x-hidden">
+
+    <!-- ═══ HERO ══════════════════════════════════════════════════ -->
+    <section class="pt-28 pb-12 px-4 md:pt-36 md:pb-16">
+      <div class="max-w-5xl mx-auto text-center">
+        <h1 class="font-bruta text-5xl md:text-6xl lg:text-7xl uppercase text-black leading-[1.05] mb-6">
+          <span class="text-[#fd4f00]">Yard Management</span> Software
+        </h1>
+        <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-recoleta mb-4">
+          Yard management is the coordination of trailer movements, dock assignments, and parking within a warehouse or distribution center yard. It's the process that connects inbound transportation to warehouse receiving — and when it breaks down, everything downstream suffers.
+        </p>
+        <p class="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed font-recoleta">
+          Build your facility below. We'll diagnose where time and money are leaking.
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══ YARD BUILDER (Interactive Island) ═════════════════════ -->
+    <section class="px-4 pb-16" id="builder">
+      <div class="max-w-6xl mx-auto">
+        <YardBuilder client:visible />
+      </div>
+    </section>
+
+    <!-- ═══ DISAMBIGUATION — "Not a warehouse?" ══════════════════ -->
+    <section class="py-16 px-4 bg-[#EFE2D2]" id="disambiguation">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-black mb-8 text-center">
+          Not every yard is a warehouse yard
+        </h2>
+        <p class="text-lg text-gray-700 font-recoleta leading-relaxed text-center max-w-3xl mx-auto mb-12">
+          The term "yard management" means very different things depending on your industry. If you're not managing warehouse dock operations, here's where you should be looking.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white rounded-2xl p-6 border border-[#E5D3B3]">
+            <div class="text-3xl mb-3">🚢</div>
+            <h3 class="font-bruta text-lg uppercase text-black mb-2">Port and Marine Terminals</h3>
+            <p class="text-gray-600 font-recoleta text-sm leading-relaxed mb-4">
+              Container terminal operations need a Terminal Operating System (TOS) — software built for berth planning, container stacking, crane scheduling, and intermodal transfers. Different scale, different problem.
+            </p>
+            <a href="https://www.navis.com/" target="_blank" rel="noopener noreferrer" class="text-[#fd4f00] font-recoleta font-semibold text-sm hover:underline">
+              Explore TOS vendors →
+            </a>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-[#E5D3B3]">
+            <div class="text-3xl mb-3">🚂</div>
+            <h3 class="font-bruta text-lg uppercase text-black mb-2">Rail Yards</h3>
+            <p class="text-gray-600 font-recoleta text-sm leading-relaxed mb-4">
+              Rail yard management involves car switching, classification, and train building. Rail-specific systems handle track inventory, switch list optimization, and railroad interchange reporting.
+            </p>
+            <a href="https://www.railinc.com/" target="_blank" rel="noopener noreferrer" class="text-[#fd4f00] font-recoleta font-semibold text-sm hover:underline">
+              Explore rail solutions →
+            </a>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-[#E5D3B3]">
+            <div class="text-3xl mb-3">🏗️</div>
+            <h3 class="font-bruta text-lg uppercase text-black mb-2">Construction and Landscaping</h3>
+            <p class="text-gray-600 font-recoleta text-sm leading-relaxed mb-4">
+              If you're managing a material yard, equipment lot, or staging area for construction projects, you need asset tracking and fleet management tools rather than dock scheduling software.
+            </p>
+            <span class="text-gray-400 font-recoleta text-sm">
+              Different industry, different tools
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ WAREHOUSE YARD MANAGEMENT — Body Content ══════════════ -->
+    <section class="py-16 px-4" id="what-is-yard-management">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-black mb-6">
+          What does warehouse yard management actually involve?
+        </h2>
+        <div class="space-y-6 text-gray-700 font-recoleta text-lg leading-relaxed">
+          <p>
+            In a warehouse or distribution center, yard management covers the flow of trailers from the moment they approach the gate to the moment they leave. That includes gate check-in, trailer staging and parking, dock door assignment, jockey dispatch, and departure tracking.
+          </p>
+          <p>
+            When this process is manual — radios, whiteboards, spreadsheets — the failure modes are predictable. Trucks stack up at the gate because check-in takes too long. Jockeys drive laps looking for a specific trailer because nobody updated the whiteboard. Dock doors sit empty while loaded trailers wait in the lot because nobody knew they were ready.
+          </p>
+          <p>
+            A yard management system digitizes this process. It gives your team a live map of every trailer in the yard, automates dock assignments based on appointment data, and pushes tasks to jockeys on mobile devices instead of via radio. The result is measurable: less detention, less dwell time, fewer wasted labor hours, and a dock that runs on data instead of guesswork.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ KEY PROBLEMS ═════════════════════════════════════════ -->
+    <section class="py-16 px-4 bg-black text-white" id="problems">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase mb-12 text-center">
+          Common yard management <span class="text-[#fd4f00]">bottlenecks</span>
+        </h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="border border-gray-700 rounded-2xl p-6">
+            <h3 class="font-bruta text-xl uppercase text-[#fd4f00] mb-3">Gate Congestion</h3>
+            <p class="text-gray-300 font-recoleta leading-relaxed">
+              When check-in is manual and there's no appointment system, trucks arrive whenever they want. The result is street backups, frustrated drivers, and a gate guard drowning in paperwork while the yard fills up uncontrolled.
+            </p>
+          </div>
+          <div class="border border-gray-700 rounded-2xl p-6">
+            <h3 class="font-bruta text-xl uppercase text-[#fd4f00] mb-3">Yard Blindness</h3>
+            <p class="text-gray-300 font-recoleta leading-relaxed">
+              If your answer to "where's trailer 4721?" is "go drive around and look" — you have yard blindness. Jockeys waste hours per shift searching for assets because there's no real-time yard map.
+            </p>
+          </div>
+          <div class="border border-gray-700 rounded-2xl p-6">
+            <h3 class="font-bruta text-xl uppercase text-[#fd4f00] mb-3">Carrier Detention</h3>
+            <p class="text-gray-300 font-recoleta leading-relaxed">
+              When dock capacity doesn't match inbound volume, carriers wait. Detention fees of $50-100 per hour add up fast — and they damage carrier relationships that take years to build.
+            </p>
+          </div>
+          <div class="border border-gray-700 rounded-2xl p-6">
+            <h3 class="font-bruta text-xl uppercase text-[#fd4f00] mb-3">Data Silos</h3>
+            <p class="text-gray-300 font-recoleta leading-relaxed">
+              When yard operations run on spreadsheets and radios, nothing connects to your WMS or TMS. You can't measure dwell time, you can't prove detention claims, and you can't make the business case for more resources.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FAQ SECTION (Visible for SEO) ════════════════════════ -->
+    <section class="py-16 px-4" id="faq">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-black mb-10 text-center">
+          Frequently asked questions
+        </h2>
+        <div class="space-y-6">
+          {faqData.map((faq) => (
+            <details class="group bg-white border border-[#E5D3B3] rounded-xl">
+              <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-recoleta text-lg font-semibold text-black hover:text-[#fd4f00] transition-colors">
+                {faq.question}
+                <span class="text-[#fd4f00] text-2xl transition-transform group-open:rotate-45 ml-4 flex-shrink-0">+</span>
+              </summary>
+              <div class="px-6 pb-6 font-recoleta text-gray-700 leading-relaxed">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CTA ══════════════════════════════════════════════════ -->
+    <CTA />
+
+    <!-- ═══ Non-warehouse escape hatch ═══════════════════════════ -->
+    <div class="bg-[#FFF8E9] py-6 text-center">
+      <p class="font-recoleta text-sm text-gray-500">
+        Looking for <a href="https://www.navis.com/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#fd4f00]">port terminal management</a>,
+        <a href="https://www.railinc.com/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#fd4f00]">rail yard systems</a>, or
+        landscaping yard management? Those are different industries — we've pointed you in the right direction above.
+      </p>
+    </div>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+
