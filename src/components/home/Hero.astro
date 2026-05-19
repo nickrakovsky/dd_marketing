@@ -181,11 +181,22 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     min-height: 250px;
     max-height: 550px;
     background: #f5ede0;
-    margin-top: 15vh; /* Fallback */
+    margin-top: 0; /* Section min-height: 100svh guarantees image is below fold */
   }
 
   /* Custom classes for height based scaling on mobile */
   @media (max-width: 859px) {
+    /*
+      STRUCTURAL GUARANTEE: The section must always be at least as tall as the
+      viewport so the mobile image (rendered outside the section) always starts
+      below the fold. `svh` (small viewport height) accounts for browser chrome.
+      Any leftover space below the form stays inside the warm beige section bg
+      and looks intentional — it is not "between elements".
+    */
+    .hero-mobile-section {
+      min-height: 100svh;
+    }
+
     /* Default mobile styles */
     .hero-mobile-title {
       font-size: clamp(3.2rem, 11vw, 4rem) !important;
@@ -219,8 +230,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       }
     }
 
-    /* Group 2: Medium Screens (iPhone XR - 698px, iPhone 12 Pro - 744px, Galaxy S8+ - 740px) */
+    /* Group 2: Medium Screens (iPhone XR - 698px, iPhone 12 Pro/13 mini - 744-780px, Galaxy S8+ - 740px, Samsung A16 - 780px) */
     @media (min-height: 681px) and (max-height: 780px) {
+      .hero-mobile-section {
+        padding-top: 10vh !important; /* Push H1 down so content stack fills viewport */
+        padding-bottom: 2vh !important;
+      }
       .hero-mobile-title {
         font-size: clamp(3.5rem, 11vw, 3.8rem) !important;
       }
@@ -228,20 +243,20 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         font-size: clamp(1.25rem, 3.2vw, 1.35rem) !important;
       }
       .hero-spacing-1 {
-        margin-bottom: 6vh !important;
+        margin-bottom: 7vh !important;
       }
       .hero-spacing-2 {
-        margin-bottom: 6vh !important;
+        margin-bottom: 7vh !important;
       }
       .hero-image-container {
-        margin-top: 1vh !important;
+        margin-top: 0.5vh !important;
       }
     }
 
-    /* Group 3: Mid-Tall Screens (Moto G - 823px) */
+    /* Group 3: Mid-Tall Screens (Moto G - 823px, iPhone 13 - 844px) */
     @media (min-height: 781px) and (max-height: 850px) {
       .hero-mobile-section {
-        padding-top: 14vh !important; /* Push H1 lower */
+        padding-top: 13vh !important; /* Push H1 lower, ensures stack height > viewport on 844px */
         padding-bottom: 2vh !important;
       }
       .hero-mobile-title {
@@ -251,20 +266,20 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         font-size: clamp(1.3rem, 3.2vw, 1.5rem) !important;
       }
       .hero-spacing-1 {
-        margin-bottom: 8vh !important;
+        margin-bottom: 10vh !important; /* Increased to push image below fold on iPhone 13 */
       }
       .hero-spacing-2 {
-        margin-bottom: 6vh !important; /* CTA higher */
+        margin-bottom: 7vh !important;
       }
       .hero-image-container {
-        margin-top: 1vh !important;
+        margin-top: 0.5vh !important;
       }
     }
 
-    /* Group 4: Ultra Tall Screens (iPhone 14 Pro Max - 939px, Pixel 7 - 915px) */
+    /* Group 4: Ultra Tall Screens (iPhone 16 Pro/17 - 874px, iPhone 14 Pro Max - 939px, Pixel 7 - 915px) */
     @media (min-height: 851px) {
       .hero-mobile-section {
-        padding-top: 16vh !important; /* Push H1 lower */
+        padding-top: 13vh !important; /* Reduced from 16vh — prevents button cut-off at 874px */
         padding-bottom: 2vh !important;
       }
       .hero-mobile-title {
@@ -274,13 +289,13 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         font-size: clamp(1.4rem, 3.2vw, 1.6rem) !important;
       }
       .hero-spacing-1 {
-        margin-bottom: 12vh !important;
+        margin-bottom: 9vh !important; /* Reduced from 12vh — gives button room on 874px */
       }
       .hero-spacing-2 {
-        margin-bottom: 10vh !important;
+        margin-bottom: 7vh !important; /* Reduced from 10vh */
       }
       .hero-image-container {
-        margin-top: 6vh !important; /* Lever of last resort used for ultra tall screens */
+        margin-top: 8vh !important; /* Increased to compensate for reduced section padding */
       }
     }
   }
