@@ -414,28 +414,57 @@ const author = getAuthor(frontmatter.author);
 
 <style is:global>
   /* Table Wrapper & Mobile Scroll */
-  .prose table {
+  .prose .table-wrapper {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch; 
-    border-collapse: collapse;
     border-radius: 8px;
-    overflow: hidden;
     border: 1px solid #E5D3B3;
     transition: border-color 0.3s ease;
+    margin-bottom: 2rem;
   }
 
-  .dark .prose table {
+  .dark .prose .table-wrapper {
     border-color: #374151; /* gray-700 */
   }
 
   @media (min-width: 1024px) {
-    .prose table {
+    .prose .table-wrapper {
       width: calc(100% + 10rem) !important;
-      margin-left: -5rem !important;
+      margin-left: 0 !important;
+      border-left: 4px solid #fd4f00 !important;
+      border-radius: 0 8px 8px 0 !important;
+      box-shadow: 15px 0 30px -10px rgba(0,0,0,0.08);
     }
+    
+    .dark .prose .table-wrapper {
+      border-left-color: #ff7635 !important;
+      box-shadow: 15px 0 30px -10px rgba(0,0,0,0.3);
+    }
+  }
+
+  .prose table {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse;
+    margin: 0 !important;
+  }
+
+  .prose .table-wrapper table {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .prose > table {
+    border: 1px solid #E5D3B3;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .dark .prose > table {
+    border-color: #374151;
   }
 
   /* Table Headers */
