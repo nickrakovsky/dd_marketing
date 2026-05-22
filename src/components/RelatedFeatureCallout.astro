@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  feature: CollectionEntry<'features'>;
+}
+
+const { feature } = Astro.props;
+const { title, description, icon } = feature.data;
+---
+
+<div class="my-12 p-8 rounded-2xl border-2 border-[#FE5000]/20 dark:border-[#ff7635]/30 bg-gradient-to-br from-[#FE5000]/5 to-[#FFF8EE]/50 dark:from-[#ff7635]/10 dark:to-gray-900 shadow-sm relative overflow-hidden transition-all duration-300 hover:shadow-md hover:border-[#FE5000]/30 dark:hover:border-[#ff7635]/50">
+  {/* Decorative subtle background shapes */}
+  <div class="absolute -right-16 -top-16 w-40 h-40 rounded-full bg-[#FE5000]/5 dark:bg-[#ff7635]/5 blur-2xl pointer-events-none"></div>
+  <div class="absolute -left-16 -bottom-16 w-40 h-40 rounded-full bg-[#FE5000]/5 dark:bg-[#ff7635]/5 blur-2xl pointer-events-none"></div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center relative z-10">
+    <div class="md:col-span-2 flex flex-col items-start text-left">
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-widest text-[#FE5000] dark:text-[#ff7635] bg-[#FE5000]/10 dark:bg-[#ff7635]/15 uppercase mb-4">
+        Feature Spotlight
+      </span>
+      <h3 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white font-recoleta mb-3 leading-snug">
+        Streamline operations with our {title}
+      </h3>
+      <p class="text-base md:text-lg text-gray-600 dark:text-gray-300 font-recoleta leading-relaxed mb-1">
+        {description}
+      </p>
+      <a 
+        href={`/datadocks-features/${feature.slug}`} 
+        class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-bold rounded-xl text-white bg-[#fd4f00] hover:bg-[#e04600] dark:bg-[#ff7635] dark:hover:bg-[#ff621b] transition-all duration-300 shadow-sm hover:shadow-md mt-6 group"
+      >
+        Explore {title}
+        <svg class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+    {icon && (
+      <div class="w-full flex justify-center md:justify-end">
+        <div class="w-28 h-28 md:w-36 md:h-36 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center p-5 shadow-sm border border-[#E5D3B3]/40 dark:border-gray-700/60 transition-transform duration-300 hover:scale-105">
+          <img 
+            src={icon} 
+            alt={`${title} Icon`} 
+            class="w-full h-full object-contain filter dark:brightness-95" 
+            loading="lazy" 
+          />
+        </div>
+      </div>
+    )}
+  </div>
+</div>

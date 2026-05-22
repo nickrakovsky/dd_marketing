@@ -7,6 +7,8 @@ import SmartLinkController from '../components/SmartLinkController.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
 import { getAuthor } from '../data/authors';
+import { getEntry } from 'astro:content';
+import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 
 interface Heading {
   depth: number;
@@ -39,6 +41,16 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 
 // 4. Author Data
 const author = getAuthor(frontmatter.author);
+
+// 5. Related Feature Data
+let relatedFeatureEntry = null;
+if (frontmatter.relatedFeature) {
+  if (typeof frontmatter.relatedFeature === 'object' && 'id' in frontmatter.relatedFeature) {
+    relatedFeatureEntry = await getEntry(frontmatter.relatedFeature);
+  } else if (typeof frontmatter.relatedFeature === 'string') {
+    relatedFeatureEntry = await getEntry('features', frontmatter.relatedFeature);
+  }
+}
 ---
 
 <Layout
@@ -203,6 +215,10 @@ const author = getAuthor(frontmatter.author);
           
           <slot />
         </article>
+
+        {relatedFeatureEntry && (
+          <RelatedFeatureCallout feature={relatedFeatureEntry} />
+        )}
       </div>
     </div>
 
