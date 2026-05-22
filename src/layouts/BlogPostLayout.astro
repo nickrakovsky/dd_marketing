@@ -3,7 +3,6 @@
 import Layout from './Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import SmartLinkController from '../components/SmartLinkController.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
 import { getAuthor } from '../data/authors';
@@ -114,6 +113,8 @@ const author = getAuthor(frontmatter.author);
                   src={frontmatter.heroFigure}
                   alt={`Illustration for ${frontmatter.title}`}
                   loading="eager"
+                  widths={[360, 540, 720, 1024]}
+                  sizes="(max-width: 768px) 100vw, 500px"
                   class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300"
                 />
               </div>
@@ -196,12 +197,14 @@ const author = getAuthor(frontmatter.author);
                 src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
                 loading="eager"
+                widths={[360, 540, 720, 1024]}
+                sizes="(max-width: 768px) 100vw, 500px"
                 class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300"
               />
             </div>
           )}
           
-          <slot />
+          <Fragment set:html={htmlContent} />
         </article>
       </div>
     </div>
@@ -286,7 +289,6 @@ const author = getAuthor(frontmatter.author);
     </main>
 
     <Footer />
-    <SmartLinkController />
 
     <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
     <script is:inline src="/css/lite-yt-embed.js" defer></script>
