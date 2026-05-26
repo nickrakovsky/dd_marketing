@@ -6,6 +6,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import SmartLink from '../../components/SmartLink.astro';
+import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
 // getFriendlyDate is unused
 // import { getFriendlyDate } from '../../utils/dateFormatter';
@@ -126,7 +127,7 @@ if (!(globalThis as any).mdxImageCounts) {
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ SmartLink, img: MDXImage }} />
+                <Content components={{ SmartLink, table: MDXTable, img: MDXImage }} />
               </section>
             </div>
           </div>
@@ -195,6 +196,6 @@ if (!(globalThis as any).mdxImageCounts) {
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
-    <Content components={{ SmartLink, img: MDXImage }} />
+    <Content components={{ SmartLink, table: MDXTable, img: MDXImage }} />
   </BlogPostLayout>
 )}
