@@ -1,0 +1,35 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HelloSolid from "../../components/solid/micro-apps/HelloSolid";
+
+export const prerender = true;
+---
+
+<Layout
+  title="SolidJS Integration Test — DataDocks"
+  description="Internal test page for validating SolidJS island hydration."
+  noindex={true}
+>
+  <main class="py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <!-- Static Astro HTML (donut pattern — outer shell) -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bruta uppercase text-foreground mb-4">
+        SolidJS Integration Test
+      </h1>
+      <p class="text-muted-foreground font-recoleta text-lg max-w-2xl mx-auto">
+        This page validates the SolidJS island architecture. The card below is a hydrated SolidJS component. 
+        The text you're reading now is pure static HTML from Astro — zero JavaScript.
+      </p>
+    </div>
+
+    <!-- SolidJS island (hydrates on scroll into view) -->
+    <HelloSolid client:visible />
+
+    <!-- More static content below the island -->
+    <div class="mt-12 text-center text-sm text-muted-foreground space-y-2">
+      <p>✓ If the card above rendered with DataDocks brand colors — CSS variables are shared correctly.</p>
+      <p>✓ If the counter increments on click — SolidJS reactivity is working inside the Astro island.</p>
+      <p>✓ If the fonts match the rest of the site — Tailwind config is being picked up.</p>
+    </div>
+  </main>
+</Layout>
