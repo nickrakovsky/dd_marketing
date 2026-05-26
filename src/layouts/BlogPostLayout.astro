@@ -223,11 +223,14 @@ if (frontmatter.relatedFeature) {
         )}
       </div>
 
-      {relatedFeatureEntry && (
-        <aside class="hidden xl:block w-60 xl:w-64 flex-shrink-0 sticky top-24 self-start">
-          <RelatedFeatureCallout feature={relatedFeatureEntry} isSidebar={true} />
-        </aside>
-      )}
+      {/* Right Sidebar (Visible on LG+) */}
+      <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch">
+        {relatedFeatureEntry && (
+          <div id="sidebar-feature-callout" class="hidden xl:block mb-8">
+            <RelatedFeatureCallout feature={relatedFeatureEntry} isSidebar={true} />
+          </div>
+        )}
+      </aside>
     </div>
 
     {relatedPosts.length > 0 && (

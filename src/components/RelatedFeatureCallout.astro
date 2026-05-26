@@ -16,10 +16,10 @@ const cleanIcon = icon ? icon.replace(/\/([0-9a-fA-F]{24})_/, '/') : '';
 
 {isSidebar ? (
   /* Sidebar Layout (Desktop) */
-  <div class="border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm transition-all duration-300 not-prose">
+  <div class="border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md transition-all duration-300 not-prose">
     <div class="flex items-center gap-2.5 mb-2">
       {cleanIcon && (
-        <div class="w-7 h-7 bg-gray-50 dark:bg-gray-900 border border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center p-1 rounded-lg shrink-0">
+        <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-lg shrink-0">
           <img 
             src={cleanIcon} 
             alt="" 
@@ -47,10 +47,10 @@ const cleanIcon = icon ? icon.replace(/\/([0-9a-fA-F]{24})_/, '/') : '';
   </div>
 ) : (
   /* Inline Layout (Mobile / Tablet) */
-  <div class="border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm transition-all duration-300 not-prose">
+  <div class="border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-xl shadow-md transition-all duration-300 not-prose">
     <div class="flex flex-row items-start gap-4">
       {cleanIcon && (
-        <div class="w-9 h-9 bg-gray-50 dark:bg-gray-900 border border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center p-1.5 rounded-lg shrink-0">
+        <div class="w-9 h-9 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1.5 rounded-lg shrink-0">
           <img 
             src={cleanIcon} 
             alt="" 
