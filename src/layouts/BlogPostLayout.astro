@@ -38,6 +38,27 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 
 // 4. Author Data
 const author = getAuthor(frontmatter.author);
+
+// 5. LCP Optimisation
+// Detect YouTube embeds — only load lite-yt JS when actually needed
+const hasYouTube = htmlContent.includes('lite-youtube');
+
+// Find the first priority image rendered by MDXImage for a preload hint in <head>
+// MDXImage marks the first body image with fetchpriority="high"; we extract its src
+// so the browser can start fetching it before parsing the full body HTML.
+let lcpImageSrc: string | null = null;
+let lcpImageSrcset: string | null = null;
+let lcpImageSizes: string | null = null;
+const priorityImgMatch = htmlContent.match(/<img[^>]+fetchpriority="high"[^>]*>/);
+if (priorityImgMatch) {
+  const img = priorityImgMatch[0];
+  const srcM = img.match(/[\s]src="([^"]+)"/);
+  const srcsetM = img.match(/[\s]srcset="([^"]+)"/);
+  const sizesM = img.match(/[\s]sizes="([^"]+)"/);
+  if (srcM) lcpImageSrc = srcM[1];
+  if (srcsetM) lcpImageSrcset = srcsetM[1];
+  if (sizesM) lcpImageSizes = sizesM[1];
+}
 ---
 
 <Layout
@@ -53,6 +74,19 @@ const author = getAuthor(frontmatter.author);
   }}
   schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
+  {/* Preload the first LCP image so the browser fetches it before body parsing completes */}
+  {lcpImageSrc && (
+    <Fragment slot="head">
+      <link
+        rel="preload"
+        as="image"
+        href={lcpImageSrc}
+        {...(lcpImageSrcset ? { imagesrcset: lcpImageSrcset } : {})}
+        {...(lcpImageSizes ? { imagesizes: lcpImageSizes } : {})}
+        fetchpriority="high"
+      />
+    </Fragment>
+  )}
   <div class="min-h-screen flex flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
     <Navigation />
@@ -290,8 +324,11 @@ const author = getAuthor(frontmatter.author);
 
     <Footer />
 
-    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
-    <script is:inline src="/css/lite-yt-embed.js" defer></script>
+    {/* lite-yt-embed.css is already inlined in Layout.astro — no external load needed.
+         lite-yt-embed.js is only needed when the post actually contains a YouTube embed. */}
+    {hasYouTube && (
+      <script is:inline src="/css/lite-yt-embed.js" defer></script>
+    )}
 
     <script is:inline>
       // Immediately apply theme preference to avoid FOUC
