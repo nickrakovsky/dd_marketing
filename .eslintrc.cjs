@@ -49,6 +49,7 @@ module.exports = {
     },
     {
       files: ['*.jsx', '*.tsx'],
+      excludedFiles: ['**/solid/**/*.tsx', '**/solid/**/*.jsx'],
       extends: [
         'plugin:react/recommended',
         'plugin:react-hooks/recommended',

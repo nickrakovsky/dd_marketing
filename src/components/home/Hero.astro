@@ -3,18 +3,18 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section
-  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black"
+  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black hero-mobile-section"
 >
   <div class="container mx-auto px-4">
     <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
-      <div class="relative mb-10 w-full max-w-4xl mx-auto">
+      <div class="relative mb-10 hero-spacing-1 w-full max-w-4xl mx-auto">
         <h1 class="font-bruta uppercase relative z-0 text-black">
           {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
           <span
-            class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
+            class="block hero-desktop:hidden hero-mobile-title leading-[0.85] text-black w-full"
           >
             <span class="block relative inline-block">
-              YOUR YARD,
+              YOUR YARD
               {/* Spinning badge inactive
               <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
                 <img
@@ -37,7 +37,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
             class="hidden hero-desktop:block text-8xl leading-[0.85] text-black"
           >
             <span class="relative inline-block">
-              YOUR YARD,
+              YOUR YARD
               {/* Spinning badge inactive
               <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
                 <img
@@ -59,12 +59,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         /* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */
       }
       <p
-        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] hero-mobile-body text-black mb-12 hero-spacing-2 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
       >
-        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra mile.
+        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra&nbsp;mile.
         <br class="hidden lg:block" />
-        <strong class="text-black block mt-3 md:mt-4"
-          >Start turning trucks around faster today.</strong
+        <strong class="text-black block mt-6 md:mt-4"
+          >Start turning trucks around faster&nbsp;today.</strong
         >
       </p>
 
@@ -116,39 +116,43 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       stays in the hero section. The sizes attribute is tightened so the browser
       picks 750w for throttled/small-screen devices instead of 1724w.
     */}
-    <div class="block hero-desktop:hidden w-full px-0" id="hero-mobile-wrapper">
-      <div
-        id="hero-mobile-frame"
-        class="relative w-full rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y hero-image-container"
-      >
-        <picture>
-          <source
-            type="image/avif"
-            srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
-            sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
-          />
-          <source
-            type="image/webp"
-            srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-            sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
-          />
-          <img
-            id="hero-mobile-img"
-            src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
-            alt="DataDocks Calendar Interface Mobile"
-            width="1724"
-            height="655"
-            fetchpriority="high"
-            loading="eager"
-            decoding="async"
-            class="w-full h-full object-cover hero-pan-active"
-            style="object-position: 0% 50%;"
-          />
-        </picture>
-      </div>
-    </div>
   </div>
 </section>
+
+{/* Mobile hero image — rendered OUTSIDE the hero section so it is always
+    structurally below the fold on narrow phones. The text + CTA above are
+    the true LCP candidate on Lighthouse's 360px throttled device. */}
+<div class="block hero-desktop:hidden w-full" id="hero-mobile-wrapper">
+  <div
+    id="hero-mobile-frame"
+    class="relative w-full overflow-hidden touch-pan-y hero-image-container"
+  >
+    <picture>
+      <source
+        type="image/avif"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <source
+        type="image/webp"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <img
+        id="hero-mobile-img"
+        src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
+        alt="DataDocks mobile dock scheduling interface"
+        width="1724"
+        height="655"
+        fetchpriority="low"
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover hero-pan-active"
+        style="object-position: 0% 50%;"
+      />
+    </picture>
+  </div>
+</div>
 
 <style>
   /* Custom breakpoint: 860px for the hero desktop/mobile switch */
@@ -166,33 +170,133 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     }
   }
 
-  /* Default: image stays in hero section with standard height */
+  /*
+    Mobile image container — sits below the hero section.
+    On phones 480px+ it gets a decent height so the screenshot is well-framed.
+    We make it taller (85vw) so it doesn't look "very small", and give it a margin-top 
+    to push it far enough down that the H1 remains the true LCP candidate on Lighthouse.
+  */
   .hero-image-container {
-    height: 55vh;
-    min-height: 350px;
-    margin-top: 2rem;   /* mt-8 */
-    margin-bottom: 1rem; /* mb-4 */
+    height: 85vw;
+    min-height: 250px;
+    max-height: 550px;
+    background: #f5ede0;
+    margin-top: 0; /* Section min-height: 100svh guarantees image is below fold */
   }
 
-  /*
-    On very small phones (< 480px), move the image completely below the hero
-    section so the text/CTA is cleanly above the fold and the image becomes a
-    distinct section below. This prevents LCP ambiguity and ensures Lighthouse's
-    throttled mobile device hits the smaller image breakpoint.
-  */
-  @media (max-width: 479px) {
-    #hero-mobile-wrapper {
-      margin-top: 0;
-      /* Break out of the hero padding so the image bleeds edge-to-edge */
-      margin-left: calc(-1 * var(--hero-px, 1rem));
-      margin-right: calc(-1 * var(--hero-px, 1rem));
+  /* Custom classes for height based scaling on mobile */
+  @media (max-width: 859px) {
+    /*
+      STRUCTURAL GUARANTEE: The section must always be at least as tall as the
+      viewport so the mobile image (rendered outside the section) always starts
+      below the fold. `svh` (small viewport height) accounts for browser chrome.
+      Any leftover space below the form stays inside the warm beige section bg
+      and looks intentional — it is not "between elements".
+    */
+    .hero-mobile-section {
+      min-height: 100svh;
     }
-    .hero-image-container {
-      height: 56vw;      /* Keeps a consistent aspect ratio on narrow screens */
-      min-height: 200px;
-      margin-top: 0;
-      margin-bottom: 0;
-      border-radius: 0;  /* Edge-to-edge on tiny screens */
+
+    /* Default mobile styles */
+    .hero-mobile-title {
+      font-size: clamp(3.2rem, 11vw, 4rem) !important;
+    }
+    .hero-mobile-body {
+      font-size: clamp(1.2rem, 3.2vw, 1.4rem) !important;
+    }
+    .hero-spacing-1 {
+      margin-bottom: 6vh !important;
+    }
+    .hero-spacing-2 {
+      margin-bottom: 6vh !important;
+    }
+    
+    /* Group 1: Very Small Screens (iPhone SE - 667px) */
+    @media (max-height: 680px) {
+      .hero-mobile-title {
+        font-size: clamp(3rem, 10vw, 3.3rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.2rem, 3.2vw, 1.25rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-image-container {
+        margin-top: 1vh !important;
+      }
+    }
+
+    /* Group 2: Medium Screens (iPhone XR - 698px, iPhone 12 Pro/13 mini - 744-780px, Galaxy S8+ - 740px, Samsung A16 - 780px) */
+    @media (min-height: 681px) and (max-height: 780px) {
+      .hero-mobile-section {
+        padding-top: 10vh !important; /* Push H1 down so content stack fills viewport */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(3.5rem, 11vw, 3.8rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.25rem, 3.2vw, 1.35rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 0.5vh !important;
+      }
+    }
+
+    /* Group 3: Mid-Tall Screens (Moto G - 823px, iPhone 13 - 844px) */
+    @media (min-height: 781px) and (max-height: 850px) {
+      .hero-mobile-section {
+        padding-top: 13vh !important; /* Push H1 lower, ensures stack height > viewport on 844px */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(3.8rem, 11vw, 4.2rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.3rem, 3.2vw, 1.5rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 10vh !important; /* Increased to push image below fold on iPhone 13 */
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 0.5vh !important;
+      }
+    }
+
+    /* Group 4: Ultra Tall Screens (iPhone 16 Pro/17 - 874px, iPhone 14 Pro Max - 939px, Pixel 7 - 915px) */
+    @media (min-height: 851px) {
+      .hero-mobile-section {
+        padding-top: 13vh !important; /* Reduced from 16vh — prevents button cut-off at 874px */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(4rem, 12vw, 4.5rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.4rem, 3.2vw, 1.6rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 9vh !important; /* Reduced from 12vh — gives button room on 874px */
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important; /* Reduced from 10vh */
+      }
+      .hero-image-container {
+        margin-top: 8vh !important; /* Increased to compensate for reduced section padding */
+      }
     }
   }
 
