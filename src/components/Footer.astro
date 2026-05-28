@@ -78,7 +78,7 @@ const columns = {
 };
 ---
 
-<footer class="bg-black text-[#FFF8E9] py-12 border-t border-white/10 font-sans text-[1rem] min-[330px]:text-[1.1rem] min-[480px]:text-base transition-[font-size] duration-300">
+<footer class="bg-black text-[#FFF8E9] py-12 border-t border-white/10 font-sans text-[1rem] min-[330px]:text-[1.1rem] min-[480px]:text-base transition-[font-size] duration-300" style="content-visibility: auto; contain-intrinsic-size: auto 500px;">
   <div class="container mx-auto px-6 max-w-7xl">
 
     {/* ── DESKTOP LAYOUT (lg+) ────────────────────────────────────────────────── */}
@@ -122,13 +122,13 @@ const columns = {
     <div class="hidden lg:flex flex-row justify-between items-center gap-8 pt-8 border-t border-white/10">
       <div class="flex flex-row items-center gap-12">
         <a href="/" class="hover:scale-105 transition-transform duration-300">
-          <img src="/images/Orange-Logo.svg" alt="DataDocks Logo" width="56" height="56" class="w-14 h-14" />
+          <img src="/images/Orange-Logo.svg" alt="DataDocks Logo" width="56" height="56" class="w-14 h-14" loading="lazy" decoding="async" />
         </a>
         <a href="https://www.aicpa.org/soc4so" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-          <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" width="120" height="119" class="h-20 w-auto object-contain" />
+          <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" width="120" height="119" class="h-20 w-auto object-contain" loading="lazy" decoding="async" />
         </a>
         <a href="https://feddev-ontario.canada.ca/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-          <img src="/images/canada-badge.png" alt="Government of Canada" width="600" height="43" class="h-10 w-auto object-contain" />
+          <img src="/images/canada-badge.png" alt="Government of Canada" width="600" height="43" class="h-10 w-auto object-contain" loading="lazy" decoding="async" />
         </a>
       </div>
       <div class="flex flex-col items-end gap-3">
@@ -184,8 +184,8 @@ const columns = {
         </div>
         <div class="flex flex-col gap-5">
           <div class="flex items-center gap-5">
-            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-14 h-14" />
-            <img src="/images/soc2-badge.png" alt="SOC2" class="h-20 w-auto object-contain" />
+            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-14 h-14" loading="lazy" decoding="async" />
+            <img src="/images/soc2-badge.png" alt="SOC2" class="h-20 w-auto object-contain" loading="lazy" decoding="async" />
           </div>
           <div class="flex gap-6">
             <a href="https://www.linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors"><Linkedin aria-hidden="true" className="w-6 h-6" /></a>
@@ -197,7 +197,7 @@ const columns = {
       {/* Canada banner: Cols 1–2, Row 2 — slots into the leftover space below Contact & How It Helps */}
       <a href="https://feddev-ontario.canada.ca/" target="_blank" rel="noopener noreferrer"
          class="col-start-1 col-span-2 row-start-2 flex items-end hover:scale-105 transition-transform duration-300">
-        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full h-auto object-contain" />
+        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full h-auto object-contain" loading="lazy" decoding="async" />
       </a>
     </div>
     <p class="hidden md:block lg:hidden text-sm text-[#FFF8E9]/60 pb-8">© Northfire {new Date().getFullYear()}</p>
@@ -215,8 +215,8 @@ const columns = {
         </div>
         <div class="space-y-6 pt-12">
           <div class="flex flex-row items-center gap-6">
-            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-14 h-14" />
-            <img src="/images/soc2-badge.png" alt="SOC2" class="h-20 w-auto object-contain" />
+            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-14 h-14" loading="lazy" decoding="async" />
+            <img src="/images/soc2-badge.png" alt="SOC2" class="h-20 w-auto object-contain" loading="lazy" decoding="async" />
           </div>
           <div class="flex flex-row gap-6">
             <a href="https://www.linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors"><Linkedin aria-hidden="true" className="w-6 h-6" /></a>
@@ -246,7 +246,7 @@ const columns = {
         </ul>
       </div>
       <div class="col-span-3 pt-8 flex justify-center border-t border-white/10">
-        <img src="/images/canada-badge.png" alt="Canada" class="h-10 w-auto" />
+        <img src="/images/canada-badge.png" alt="Canada" class="h-10 w-auto" loading="lazy" decoding="async" />
       </div>
     </div>
 
@@ -283,8 +283,8 @@ const columns = {
         </div>
         <div class="pt-12 space-y-8">
           <div class="flex items-center gap-6">
-            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-10 h-10" />
-            <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" class="h-16 w-auto" />
+            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-10 h-10" loading="lazy" decoding="async" />
+            <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" class="h-16 w-auto" loading="lazy" decoding="async" />
           </div>
           <div class="flex gap-6">
             <Linkedin className="w-6 h-6 opacity-60" />
@@ -294,7 +294,7 @@ const columns = {
         </div>
       </div>
       <div class="col-span-2 flex justify-center pt-8 border-t border-white/10">
-        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full max-w-[300px] h-auto" />
+        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full max-w-[300px] h-auto" loading="lazy" decoding="async" />
       </div>
     </div>
 
@@ -328,10 +328,10 @@ const columns = {
       </div>
       <div class="flex flex-col items-center gap-10 pt-12 border-t border-white/10">
         <div class="flex items-center gap-8">
-          <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-12 h-12" />
-          <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" class="h-16 w-auto" />
+          <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-12 h-12" loading="lazy" decoding="async" />
+          <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" class="h-16 w-auto" loading="lazy" decoding="async" />
         </div>
-        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full max-w-[240px] h-auto" />
+        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full max-w-[240px] h-auto" loading="lazy" decoding="async" />
         <p class="text-sm opacity-50">© {new Date().getFullYear()}</p>
       </div>
     </div>
