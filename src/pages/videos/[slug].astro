@@ -6,6 +6,7 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import SmartLinkController from '../../components/SmartLinkController.astro';
 import SmartLink from '../../components/SmartLink.astro';
+import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 
 export const prerender = true;
 
@@ -127,7 +128,7 @@ let sidebarItems = [...relatedVideos.slice(0, 2), ...relatedPosts.slice(0, 2)];
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ SmartLink }} />
+                <Content components={{ SmartLink, RelatedFeatureCallout }} />
               </section>
             </div>
           </div>

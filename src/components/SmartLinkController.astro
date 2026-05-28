@@ -159,7 +159,8 @@
     clearTimeout(hoverTimeout);
 
     const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-smartlink-trigger="true"]'));
-    if (triggers.length === 0) return;
+    const featureCallout = document.getElementById('sidebar-feature-callout');
+    if (triggers.length === 0 && !featureCallout) return;
 
     const isDesktop = window.innerWidth >= 1024;
     const article = document.getElementById('content') || document.querySelector('article');
@@ -170,17 +171,23 @@
     const hasSpace = isDesktop && sidebar && window.getComputedStyle(sidebar).display !== 'none';
 
     if (hasSpace && sidebar) {
-      const persistentCards: { card: HTMLElement; top: number; isFeatureCallout: boolean }[] = [];
+      const calloutAnchor = document.querySelector('[data-feature-callout-anchor="true"]') as HTMLElement | null;
 
-      // Check if there is a static feature callout at the top of the sidebar
-      const featureCallout = document.getElementById('sidebar-feature-callout');
-      if (featureCallout && featureCallout.offsetHeight > 0) {
-        persistentCards.push({
-          card: featureCallout,
-          top: featureCallout.offsetTop,
-          isFeatureCallout: true
-        });
+      if (featureCallout) {
+        if (calloutAnchor) {
+          featureCallout.style.position = 'absolute';
+          featureCallout.style.left = '0';
+          featureCallout.style.width = '100%';
+        } else {
+          // Reset styling for backward compatibility
+          featureCallout.style.position = '';
+          featureCallout.style.left = '';
+          featureCallout.style.width = '';
+          featureCallout.style.top = '';
+        }
       }
+
+      const glossaryCards: { card: HTMLElement; trigger: HTMLElement }[] = [];
 
       triggers.forEach(trigger => {
         trigger.onclick = (e) => {
@@ -192,10 +199,9 @@
 
         const card = createPersistentCard(trigger);
         card.classList.add('smartlink-persistent-card');
-        const top = trigger.offsetTop;
-        card.style.top = `${top}px`;
+        card.style.top = `${trigger.offsetTop}px`;
         sidebar.appendChild(card);
-        persistentCards.push({ card, top, isFeatureCallout: false });
+        glossaryCards.push({ card, trigger });
 
         const activate = () => {
           if (window.innerWidth >= 1024) {
@@ -216,17 +222,82 @@
       // Wait for next frame to ensure offsetHeight is accurate
       requestAnimationFrame(() => {
         const verticalGap = 24;
-        persistentCards.sort((a, b) => a.top - b.top);
-        for (let i = 1; i < persistentCards.length; i++) {
-          const prev = persistentCards[i - 1];
-          const curr = persistentCards[i];
-          const prevBottom = prev.top + prev.card.offsetHeight;
-          if (curr.top < prevBottom + verticalGap) {
-            curr.top = prevBottom + verticalGap;
-            if (!curr.isFeatureCallout) {
-              curr.card.style.top = `${curr.top}px`;
-            }
+
+        if (featureCallout) {
+          const sidebarRect = sidebar.getBoundingClientRect();
+          const F_top = calloutAnchor 
+            ? (calloutAnchor.getBoundingClientRect().top - sidebarRect.top) 
+            : featureCallout.offsetTop;
+          
+          if (calloutAnchor) {
+            featureCallout.style.top = `${F_top}px`;
           }
+
+          const F_height = featureCallout.offsetHeight;
+
+          // Separate glossary cards into above and below the feature callout
+          const aboveCards: { card: HTMLElement; top: number }[] = [];
+          const belowCards: { card: HTMLElement; top: number }[] = [];
+
+          glossaryCards.forEach(item => {
+            const preferredTop = item.trigger.getBoundingClientRect().top - sidebarRect.top;
+            const cardData = { card: item.card, top: preferredTop };
+            if (preferredTop < F_top) {
+              aboveCards.push(cardData);
+            } else {
+              belowCards.push(cardData);
+            }
+          });
+
+          // Resolve aboveCards (stack upwards from F_top)
+          aboveCards.sort((a, b) => b.top - a.top); // sort descending (closest to F_top first)
+          let upperLimit = F_top;
+          aboveCards.forEach(item => {
+            const h = item.card.offsetHeight;
+            let targetTop = item.top;
+            if (targetTop + h + verticalGap > upperLimit) {
+              targetTop = upperLimit - h - verticalGap;
+            }
+            if (targetTop < 0) targetTop = 0;
+            item.top = targetTop;
+            item.card.style.top = `${targetTop}px`;
+            upperLimit = targetTop;
+          });
+
+          // Resolve belowCards (stack downwards from F_top + F_height)
+          belowCards.sort((a, b) => a.top - b.top); // sort ascending (closest to F_top first)
+          let lowerLimit = F_top + F_height;
+          belowCards.forEach(item => {
+            let targetTop = item.top;
+            if (targetTop < lowerLimit + verticalGap) {
+              targetTop = lowerLimit + verticalGap;
+            }
+            item.top = targetTop;
+            item.card.style.top = `${targetTop}px`;
+            lowerLimit = targetTop + item.card.offsetHeight;
+          });
+
+        } else {
+          // Fallback: no feature callout, just stack downwards
+          const sidebarRect = sidebar.getBoundingClientRect();
+          const mappedCards = glossaryCards.map(item => ({
+            card: item.card,
+            top: item.trigger.getBoundingClientRect().top - sidebarRect.top
+          }));
+
+          mappedCards.sort((a, b) => a.top - b.top);
+          mappedCards.forEach((item, idx) => {
+            let targetTop = item.top;
+            if (idx > 0) {
+              const prev = mappedCards[idx - 1];
+              const prevBottom = prev.top + prev.card.offsetHeight;
+              if (targetTop < prevBottom + verticalGap) {
+                targetTop = prevBottom + verticalGap;
+              }
+            }
+            item.top = targetTop;
+            item.card.style.top = `${targetTop}px`;
+          });
         }
       });
     } else {

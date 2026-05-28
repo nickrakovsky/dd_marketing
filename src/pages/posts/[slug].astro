@@ -6,6 +6,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import SmartLink from '../../components/SmartLink.astro';
+import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 // getFriendlyDate is unused
 // import { getFriendlyDate } from '../../utils/dateFormatter';
 
@@ -119,7 +120,7 @@ const getReadTime = (body: string) => {
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ SmartLink }} />
+                <Content components={{ SmartLink, RelatedFeatureCallout }} />
               </section>
             </div>
           </div>
@@ -188,6 +189,6 @@ const getReadTime = (body: string) => {
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
-    <Content components={{ SmartLink }} />
+    <Content components={{ SmartLink, RelatedFeatureCallout }} />
   </BlogPostLayout>
 )}

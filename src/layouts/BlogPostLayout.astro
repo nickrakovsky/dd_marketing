@@ -215,18 +215,12 @@ if (frontmatter.relatedFeature) {
           
           <slot />
         </article>
-
-        {relatedFeatureEntry && (
-          <div class="xl:hidden mt-12 mb-8">
-            <RelatedFeatureCallout feature={relatedFeatureEntry} />
-          </div>
-        )}
       </div>
 
       {/* Right Sidebar (Visible on LG+) */}
       <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch">
         {relatedFeatureEntry && (
-          <div id="sidebar-feature-callout" class="hidden xl:block mb-8">
+          <div id="sidebar-feature-callout" class="mb-8">
             <RelatedFeatureCallout feature={relatedFeatureEntry} isSidebar={true} />
           </div>
         )}

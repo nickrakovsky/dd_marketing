@@ -124,6 +124,8 @@ A lot of facilities don’t realize how much hidden capacity they can free up wi
 
 A warehouse that works with DataDocks configured day-of-week and customer-specific quotas to match service levels and staffing. Outbound is capped at 15 appointments on weekdays, 4 on Saturdays, and 2 on Sundays across all clients. Inbound quotas vary by account, such as 5 per day for Customer A and 7 for Customer B. 
 
+<RelatedFeatureCallout id="capacity-limits" />
+
 These constraints are enforced at search and booking through dynamic capacity modelling. When a requested time would break a limit, the platform’s conflict resolution engine proposes the next valid options, avoiding manual back-and-forth while protecting SLAs.
 
 The same principle applies to any situation where demand and resources fluctuate. Rules can hold back weekend capacity, reserve slots for priority flows, or smooth peaks across shifts. You can let the system enforce those allocations automatically, so coordinators aren’t stuck making judgment calls on every booking.
