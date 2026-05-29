@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
+import solid from '@astrojs/solid-js';
 import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
@@ -100,7 +101,14 @@ export default defineConfig({
         forward: BENTO_PARTYTOWN_FORWARD,
       },
     }),
-    tailwind(), react(), keystatic(), sitemap({
+    tailwind(),
+    react({
+      include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
+    }),
+    solid({
+      include: ['**/solid/**'],
+    }),
+    keystatic(), sitemap({
       filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)

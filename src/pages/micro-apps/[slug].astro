@@ -4,10 +4,10 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import SmartLinkController from '../../components/SmartLinkController.astro';
 import LTLCalculator from '../../components/micro-apps/LTLCalculator';
 import SmartLink from '../../components/SmartLink.astro';
 import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
+import MDXImage from '../../components/MDXImage.astro';
 
 export async function getStaticPaths() {
     const apps = await getCollection('micro-app');
@@ -24,7 +24,14 @@ const components = {
     LTLCalculator: LTLCalculator,
     SmartLink: SmartLink,
     RelatedFeatureCallout: RelatedFeatureCallout,
+    img: MDXImage,
 };
+
+// Reset MDXImage counter for this page
+if (!(globalThis as any).mdxImageCounts) {
+  (globalThis as any).mdxImageCounts = new Map();
+}
+(globalThis as any).mdxImageCounts.set(Astro.url.pathname, 0);
 
 // Use the standard Card layout for micro-apps
 ---
@@ -57,7 +64,6 @@ const components = {
     </main>
 
     <Footer />
-    <SmartLinkController />
 </Layout>
 
 <style is:global>

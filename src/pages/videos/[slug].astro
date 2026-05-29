@@ -4,9 +4,10 @@ import type { CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import SmartLinkController from '../../components/SmartLinkController.astro';
 import SmartLink from '../../components/SmartLink.astro';
 import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
+import MDXTable from '../../components/MDXTable.astro';
+import MDXImage from '../../components/MDXImage.astro';
 
 export const prerender = true;
 
@@ -52,6 +53,12 @@ const relatedPosts = allPosts
   .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
 let sidebarItems = [...relatedVideos.slice(0, 2), ...relatedPosts.slice(0, 2)];
+
+// Reset MDXImage counter for this page
+if (!(globalThis as any).mdxImageCounts) {
+  (globalThis as any).mdxImageCounts = new Map();
+}
+(globalThis as any).mdxImageCounts.set(Astro.url.pathname, 0);
 ---
 
 <Layout
@@ -128,7 +135,7 @@ let sidebarItems = [...relatedVideos.slice(0, 2), ...relatedPosts.slice(0, 2)];
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ SmartLink, RelatedFeatureCallout }} />
+                <Content components={{ SmartLink, RelatedFeatureCallout, table: MDXTable, img: MDXImage }} />
               </section>
             </div>
           </div>
@@ -179,5 +186,4 @@ let sidebarItems = [...relatedVideos.slice(0, 2), ...relatedPosts.slice(0, 2)];
   </main>
 
   <Footer />
-  <SmartLinkController />
 </Layout>

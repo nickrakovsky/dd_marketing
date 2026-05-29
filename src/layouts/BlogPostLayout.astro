@@ -3,7 +3,6 @@
 import Layout from './Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import SmartLinkController from '../components/SmartLinkController.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
 import { getAuthor } from '../data/authors';
@@ -51,6 +50,27 @@ if (frontmatter.relatedFeature) {
     relatedFeatureEntry = await getEntry('features', frontmatter.relatedFeature);
   }
 }
+
+// 6. LCP Optimisation
+// Detect YouTube embeds — only load lite-yt JS when actually needed
+const hasYouTube = htmlContent.includes('lite-youtube');
+
+// Find the first priority image rendered by MDXImage for a preload hint in <head>
+// MDXImage marks the first body image with fetchpriority="high"; we extract its src
+// so the browser can start fetching it before parsing the full body HTML.
+let lcpImageSrc: string | null = null;
+let lcpImageSrcset: string | null = null;
+let lcpImageSizes: string | null = null;
+const priorityImgMatch = htmlContent.match(/<img[^>]+fetchpriority="high"[^>]*>/);
+if (priorityImgMatch) {
+  const img = priorityImgMatch[0];
+  const srcM = img.match(/[\s]src="([^"]+)"/);
+  const srcsetM = img.match(/[\s]srcset="([^"]+)"/);
+  const sizesM = img.match(/[\s]sizes="([^"]+)"/);
+  if (srcM) lcpImageSrc = srcM[1];
+  if (srcsetM) lcpImageSrcset = srcsetM[1];
+  if (sizesM) lcpImageSizes = sizesM[1];
+}
 ---
 
 <Layout
@@ -66,6 +86,19 @@ if (frontmatter.relatedFeature) {
   }}
   schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
+  {/* Preload the first LCP image so the browser fetches it before body parsing completes */}
+  {lcpImageSrc && (
+    <Fragment slot="head">
+      <link
+        rel="preload"
+        as="image"
+        href={lcpImageSrc}
+        {...(lcpImageSrcset ? { imagesrcset: lcpImageSrcset } : {})}
+        {...(lcpImageSizes ? { imagesizes: lcpImageSizes } : {})}
+        fetchpriority="high"
+      />
+    </Fragment>
+  )}
   <div class="min-h-screen flex flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
     <Navigation />
@@ -126,6 +159,8 @@ if (frontmatter.relatedFeature) {
                   src={frontmatter.heroFigure}
                   alt={`Illustration for ${frontmatter.title}`}
                   loading="eager"
+                  widths={[360, 540, 720, 1024]}
+                  sizes="(max-width: 768px) 100vw, 500px"
                   class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300"
                 />
               </div>
@@ -138,7 +173,7 @@ if (frontmatter.relatedFeature) {
       <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
-        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-56 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4">
+        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-56 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4" aria-label="Table of Contents">
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
@@ -208,17 +243,19 @@ if (frontmatter.relatedFeature) {
                 src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
                 loading="eager"
+                widths={[360, 540, 720, 1024]}
+                sizes="(max-width: 768px) 100vw, 500px"
                 class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300"
               />
             </div>
           )}
           
-          <slot />
+          <Fragment set:html={htmlContent} />
         </article>
       </div>
 
       {/* Right Sidebar (Visible on LG+) */}
-      <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch">
+      <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch" aria-label="Related Resources">
         {relatedFeatureEntry && (
           <div id="sidebar-feature-callout" class="mb-8">
             <RelatedFeatureCallout feature={relatedFeatureEntry} isSidebar={true} />
@@ -307,10 +344,12 @@ if (frontmatter.relatedFeature) {
     </main>
 
     <Footer />
-    <SmartLinkController />
 
-    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
-    <script is:inline src="/css/lite-yt-embed.js" defer></script>
+    {/* lite-yt-embed.css is already inlined in Layout.astro — no external load needed.
+         lite-yt-embed.js is only needed when the post actually contains a YouTube embed. */}
+    {hasYouTube && (
+      <script is:inline src="/css/lite-yt-embed.js" defer></script>
+    )}
 
     <script is:inline>
       // Immediately apply theme preference to avoid FOUC
@@ -435,28 +474,57 @@ if (frontmatter.relatedFeature) {
 
 <style is:global>
   /* Table Wrapper & Mobile Scroll */
-  .prose table {
+  .prose .table-wrapper {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch; 
-    border-collapse: collapse;
     border-radius: 8px;
-    overflow: hidden;
     border: 1px solid #E5D3B3;
     transition: border-color 0.3s ease;
+    margin-bottom: 2rem;
   }
 
-  .dark .prose table {
+  .dark .prose .table-wrapper {
     border-color: #374151; /* gray-700 */
   }
 
   @media (min-width: 1024px) {
-    .prose table {
+    .prose .table-wrapper {
       width: calc(100% + 10rem) !important;
-      margin-left: -5rem !important;
+      margin-left: 0 !important;
+      border-left: 4px solid #fd4f00 !important;
+      border-radius: 0 8px 8px 0 !important;
+      box-shadow: 15px 0 30px -10px rgba(0,0,0,0.08);
     }
+    
+    .dark .prose .table-wrapper {
+      border-left-color: #ff7635 !important;
+      box-shadow: 15px 0 30px -10px rgba(0,0,0,0.3);
+    }
+  }
+
+  .prose table {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse;
+    margin: 0 !important;
+  }
+
+  .prose .table-wrapper table {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .prose > table {
+    border: 1px solid #E5D3B3;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .dark .prose > table {
+    border-color: #374151;
   }
 
   /* Table Headers */
