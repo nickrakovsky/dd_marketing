@@ -43,6 +43,7 @@ const postsCollection = defineCollection({
             question: z.string(),
             answer: z.string(),
         })).optional(),
+        relatedFeature: reference('features'),
     })
 });
 
