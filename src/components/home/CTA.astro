@@ -46,8 +46,6 @@
 
 <script is:inline>
   (function() {
-    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-
     function attachCtaForm() {
       var form = document.getElementById('cta-bento-form');
       if (!form || form.dataset.bound) return;
@@ -57,13 +55,10 @@
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
-          // 1. Client-side identify (Primary stitching)
-          // If the SDK is loaded and not blocked, this handles the identity link officially.
           if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
             window.bento.identify(email);
           }
 
-          // 2. Server-side proxy (Backup/Ad-block resistant)
           fetch('/api/bento-track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -72,12 +67,17 @@
               event: 'Demo Subscriber',
               source: window.location.pathname,
               landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+              attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
             }),
             keepalive: true
           }).catch(function() {});
         }
-        window.open(calendlyUrl, '_blank', 'noopener');
+        if (typeof window.ddOpenCalendly === 'function') {
+          window.ddOpenCalendly('primary_color=FF5722');
+        } else {
+          window.open('https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722', '_blank', 'noopener');
+        }
         form.reset();
       });
     }

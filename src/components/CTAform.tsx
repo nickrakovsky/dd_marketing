@@ -28,7 +28,7 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     if (email) {
       bentoCall('identify', email);
 
-      // Server-side proxy — ad-blocker proof
+      const w = window as any;
       fetch('/api/bento-track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,15 +37,19 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
           event: 'Demo Subscriber',
           source: pagePath,
           landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-          visitorUuid: typeof (window as any).getBentoVisitorUuid === 'function'
-            ? (window as any).getBentoVisitorUuid()
-            : null,
+          visitorUuid: typeof w.getBentoVisitorUuid === 'function' ? w.getBentoVisitorUuid() : null,
+          attribution: typeof w.ddGetAttribution === 'function' ? w.ddGetAttribution() : null,
         }),
         keepalive: true,
       }).catch(() => {});
     }
     setIsSubmitted(true);
-    window.open(calendlyUrl, "_blank", "noopener");
+    const w = window as any;
+    if (typeof w.ddOpenCalendly === 'function') {
+      w.ddOpenCalendly('primary_color=FF5722');
+    } else {
+      window.open(calendlyUrl, "_blank", "noopener");
+    }
   };
 
   return (

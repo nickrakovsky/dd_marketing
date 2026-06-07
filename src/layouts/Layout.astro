@@ -368,16 +368,59 @@ const jsonLd = {
         </script>
         */}
 
-        {/* Capture landing page on first visit; expose Bento visitor UUID helper for form tracking */}
+        {/* Attribution capture, Bento UUID helper, and Calendly popup launcher.
+             First-touch attribution persists in localStorage so even a direct
+             return visit weeks later still books the demo with the original
+             utm_source. Calendly's popup widget loads on demand so we hear the
+             event_scheduled postMessage and forward to Zaraz/GA4 only on real
+             completed bookings — links to calendly.com/* are intercepted and
+             reopened in the popup. */}
         <script is:inline>
           (function() {
-            // Record the very first URL the visitor landed on (persists for the session)
+            // --- Landing page (session-scoped, kept for Bento) -----------
             if (!sessionStorage.getItem('dd_landing_page')) {
               sessionStorage.setItem('dd_landing_page', window.location.href);
             }
-            // Helper used by all CTA forms to read the Bento SDK visitor UUID cookie.
-            // The SDK stores the anonymous visitor UUID in a cookie whose name starts with "bento_".
-            // Passing it server-side lets Bento stitch the anonymous session to the identified subscriber.
+
+            // --- Attribution: first-touch and last-touch -----------------
+            var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            var params = new URLSearchParams(window.location.search);
+            var hasUtm = UTM_KEYS.some(function(k) { return params.get(k); });
+
+            var ref = '';
+            try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+            var sameHost = ref && ref === window.location.hostname;
+
+            var touch = {
+              utm_source: params.get('utm_source') || (hasUtm ? '' : (ref && !sameHost ? ref : 'direct')),
+              utm_medium: params.get('utm_medium') || (hasUtm ? '' : (ref && !sameHost ? 'referral' : 'direct')),
+              utm_campaign: params.get('utm_campaign') || '',
+              utm_term: params.get('utm_term') || '',
+              utm_content: params.get('utm_content') || '',
+              gclid: params.get('gclid') || '',
+              referrer: ref,
+              landing: window.location.pathname,
+              ts: new Date().toISOString()
+            };
+
+            try {
+              if (!localStorage.getItem('dd_first_touch')) {
+                localStorage.setItem('dd_first_touch', JSON.stringify(touch));
+              }
+              // Update last-touch only when the visit carries a real source signal
+              if (hasUtm || (ref && !sameHost)) {
+                localStorage.setItem('dd_last_touch', JSON.stringify(touch));
+              }
+            } catch (e) {}
+
+            window.ddGetAttribution = function() {
+              var first = {}, last = {};
+              try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch (e) {}
+              try { last = JSON.parse(localStorage.getItem('dd_last_touch') || '{}'); } catch (e) {}
+              return { first: first, last: last };
+            };
+
+            // --- Bento visitor UUID helper -------------------------------
             window.getBentoVisitorUuid = function() {
               var cookies = document.cookie.split(';');
               for (var i = 0; i < cookies.length; i++) {
@@ -388,6 +431,108 @@ const jsonLd = {
               }
               return null;
             };
+
+            // --- Calendly popup loader + UTM injection -------------------
+            var CALENDLY_BASE = 'https://calendly.com/nick-rakovsky/datadocks-demo';
+            var calendlyAssetsLoaded = false;
+
+            function loadCalendlyAssets() {
+              if (calendlyAssetsLoaded) return Promise.resolve();
+              calendlyAssetsLoaded = true;
+              var css = document.createElement('link');
+              css.rel = 'stylesheet';
+              css.href = 'https://assets.calendly.com/assets/external/widget.css';
+              document.head.appendChild(css);
+              return new Promise(function(resolve) {
+                var s = document.createElement('script');
+                s.src = 'https://assets.calendly.com/assets/external/widget.js';
+                s.async = true;
+                s.onload = function() { resolve(); };
+                s.onerror = function() { calendlyAssetsLoaded = false; resolve(); };
+                document.head.appendChild(s);
+              });
+            }
+
+            function buildUtm() {
+              var first = {};
+              try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch (e) {}
+              return {
+                utmSource: first.utm_source || 'direct',
+                utmMedium: first.utm_medium || 'direct',
+                utmCampaign: first.utm_campaign || '',
+                utmTerm: first.utm_term || '',
+                utmContent: first.utm_content || ''
+              };
+            }
+
+            window.ddOpenCalendly = function(extraUrlParams) {
+              loadCalendlyAssets().then(function() {
+                var utm = buildUtm();
+                // Preserve any query params already on the link (e.g. primary_color)
+                var url = CALENDLY_BASE;
+                if (extraUrlParams) {
+                  url += (url.indexOf('?') === -1 ? '?' : '&') + extraUrlParams;
+                }
+                if (window.Calendly && typeof window.Calendly.initPopupWidget === 'function') {
+                  window.Calendly.initPopupWidget({ url: url, utm: utm });
+                } else {
+                  // Fallback if the widget script failed — append UTMs to the URL and open new tab
+                  var qp = new URLSearchParams();
+                  Object.keys(utm).forEach(function(k) {
+                    if (utm[k]) {
+                      var snake = k.replace(/[A-Z]/g, function(m) { return '_' + m.toLowerCase(); });
+                      qp.set(snake, utm[k]);
+                    }
+                  });
+                  var sep = url.indexOf('?') === -1 ? '?' : '&';
+                  window.open(url + sep + qp.toString(), '_blank', 'noopener');
+                }
+              });
+            };
+
+            // --- Intercept calendly.com links and route through the popup
+            document.addEventListener('click', function(e) {
+              var a = e.target && e.target.closest && e.target.closest('a[href*="calendly.com/nick-rakovsky/datadocks-demo"]');
+              if (!a) return;
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return; // let user open in new tab
+              e.preventDefault();
+              var href = a.getAttribute('href') || '';
+              var qIdx = href.indexOf('?');
+              var extra = qIdx >= 0 ? href.slice(qIdx + 1) : '';
+              window.ddOpenCalendly(extra);
+            });
+
+            // --- Listen for completed bookings and forward to GA4/Zaraz
+            window.addEventListener('message', function(e) {
+              if (!e.data || typeof e.data !== 'object') return;
+              if (e.origin && e.origin.indexOf('calendly.com') === -1) return;
+              var ev = e.data.event;
+              if (ev !== 'calendly.event_scheduled') return;
+
+              var attribution = window.ddGetAttribution();
+              var payload = {
+                event_category: 'demo',
+                first_utm_source: attribution.first.utm_source || 'direct',
+                first_utm_medium: attribution.first.utm_medium || 'direct',
+                first_utm_campaign: attribution.first.utm_campaign || '',
+                first_landing_page: attribution.first.landing || '',
+                last_utm_source: attribution.last.utm_source || '',
+                last_utm_medium: attribution.last.utm_medium || '',
+                last_utm_campaign: attribution.last.utm_campaign || ''
+              };
+
+              // Cloudflare Zaraz forwards to GA4
+              if (window.zaraz && typeof window.zaraz.track === 'function') {
+                window.zaraz.track('demo_booked', payload);
+              }
+              // Direct gtag fallback if present
+              if (typeof window.gtag === 'function') {
+                window.gtag('event', 'demo_booked', payload);
+              }
+              // dataLayer fallback (GTM / future tags)
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push(Object.assign({ event: 'demo_booked' }, payload));
+            });
           })();
         </script>
 
