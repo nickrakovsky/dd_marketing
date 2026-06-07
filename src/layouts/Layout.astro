@@ -388,7 +388,7 @@ const jsonLd = {
             var hasUtm = UTM_KEYS.some(function(k) { return params.get(k); });
 
             var ref = '';
-            try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+            try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch { /* noop */ }
             var sameHost = ref && ref === window.location.hostname;
 
             var touch = {
@@ -411,12 +411,12 @@ const jsonLd = {
               if (hasUtm || (ref && !sameHost)) {
                 localStorage.setItem('dd_last_touch', JSON.stringify(touch));
               }
-            } catch (e) {}
+            } catch { /* noop */ }
 
             window.ddGetAttribution = function() {
               var first = {}, last = {};
-              try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch (e) {}
-              try { last = JSON.parse(localStorage.getItem('dd_last_touch') || '{}'); } catch (e) {}
+              try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch { /* noop */ }
+              try { last = JSON.parse(localStorage.getItem('dd_last_touch') || '{}'); } catch { /* noop */ }
               return { first: first, last: last };
             };
 
@@ -455,7 +455,7 @@ const jsonLd = {
 
             function buildUtm() {
               var first = {};
-              try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch (e) {}
+              try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch { /* noop */ }
               return {
                 utmSource: first.utm_source || 'direct',
                 utmMedium: first.utm_medium || 'direct',

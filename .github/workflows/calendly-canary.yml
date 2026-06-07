@@ -1,0 +1,43 @@
+name: Calendly Canary
+
+# Runs the live Calendly reachability check daily and on demand.
+# This catches Calendly outages or a renamed/deleted booking handle,
+# either of which silently kills every "Book a demo" CTA on the site.
+#
+# Kept separate from CI so a Calendly outage doesn't block PR merges.
+
+on:
+  schedule:
+    # Daily at 13:00 UTC (~9am ET / 6am PT) — early enough to fix before
+    # the workday but after Calendly's deploy windows.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  live-canary:
+    name: Live Calendly URL check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run live Calendly test
+        run: npx playwright test calendly-attribution.spec.ts -g "actually reachable"
+        env:
+          # No baseURL needed — the live test fetches calendly.com directly.
+          # Setting this skips the local webServer in playwright.config.ts.
+          PLAYWRIGHT_BASE_URL: https://datadocks.com
+          RUN_LIVE_CALENDLY: '1'
