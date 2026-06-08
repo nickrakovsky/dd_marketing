@@ -224,6 +224,161 @@ test.describe('Calendly entry points (mocked)', () => {
     ).toBe('linkedin');
     expect(calls[0].utm?.utmCampaign).toBe('launch');
   });
+
+  test('hero form submission stores email and pre-fills Calendly', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.desktop);
+    await page.route('**/api/bento-track', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' })
+    );
+    await page.goto('/');
+
+    const heroForm = page.locator('#hero-bento-form');
+    await heroForm.locator('input[name="email"]').fill('lead@datadocks.com');
+    await heroForm.locator('button[type="submit"]').click();
+
+    await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
+    const calls = await getCalendlyCalls(page);
+    expect(
+      (calls[0] as { prefill?: { email?: string } }).prefill?.email,
+      'Email captured by form should pre-fill the Calendly booking form'
+    ).toBe('lead@datadocks.com');
+  });
+});
+
+test.describe('Calendly funnel tracking', () => {
+  test('all four funnel events fire to dataLayer', async ({ page }) => {
+    await page.goto('/?utm_source=meta&utm_campaign=funnel_test');
+
+    const stages = [
+      { calendly: 'calendly.profile_page_viewed', dd: 'demo_profile_viewed' },
+      { calendly: 'calendly.event_type_viewed', dd: 'demo_event_type_viewed' },
+      { calendly: 'calendly.date_and_time_selected', dd: 'demo_date_selected' },
+      { calendly: 'calendly.event_scheduled', dd: 'demo_booked' },
+    ];
+
+    for (const stage of stages) {
+      await page.evaluate((calendlyEvent) => {
+        const ev = new MessageEvent('message', {
+          data: { event: calendlyEvent },
+          origin: 'https://calendly.com',
+        });
+        window.dispatchEvent(ev);
+      }, stage.calendly);
+    }
+
+    const dataLayer = await page.evaluate(
+      () => (window as unknown as { dataLayer?: Array<Record<string, unknown>> }).dataLayer || []
+    );
+
+    for (const stage of stages) {
+      const entry = dataLayer.find((e) => e.event === stage.dd);
+      expect(entry, `${stage.dd} missing from dataLayer — funnel tracking is broken`).toBeDefined();
+      expect(entry?.first_utm_source).toBe('meta');
+      expect(entry?.funnel_stage).toBe(stage.dd);
+    }
+  });
+
+  test('funnel events fire to Bento when email is known', async ({ page }) => {
+    const bentoCalls: Array<{ email: string; event: string }> = [];
+    await page.route('**/api/bento-track', async (route) => {
+      const req = route.request();
+      if (req.method() === 'POST') {
+        const body = JSON.parse(req.postData() || '{}');
+        bentoCalls.push({ email: body.email, event: body.event });
+      }
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+    });
+
+    await page.goto('/');
+    // Simulate prior form capture
+    await page.evaluate(() => (window as Window).ddGetEmail && localStorage.setItem('dd_known_email', 'abandoner@datadocks.com'));
+
+    // User views the calendar then drops off — never books
+    await page.evaluate(() => {
+      window.dispatchEvent(new MessageEvent('message', {
+        data: { event: 'calendly.date_and_time_selected' },
+        origin: 'https://calendly.com',
+      }));
+    });
+
+    // Allow keepalive fetch to flush
+    await page.waitForTimeout(500);
+
+    const stalled = bentoCalls.find((c) => c.event === 'demo_date_selected');
+    expect(
+      stalled,
+      'Bento should receive demo_date_selected for known emails — this is what enables abandonment follow-up'
+    ).toBeDefined();
+    expect(stalled?.email).toBe('abandoner@datadocks.com');
+  });
+
+  test('funnel stages dedupe within a page load', async ({ page }) => {
+    await page.goto('/');
+
+    // Simulate Calendly firing the same stage 3 times (e.g. user opens, closes,
+    // reopens the popup). We should only see ONE entry in dataLayer per stage.
+    await page.evaluate(() => {
+      for (let i = 0; i < 3; i++) {
+        window.dispatchEvent(new MessageEvent('message', {
+          data: { event: 'calendly.date_and_time_selected' },
+          origin: 'https://calendly.com',
+        }));
+      }
+    });
+
+    const dataLayer = await page.evaluate(
+      () => (window as unknown as { dataLayer?: Array<Record<string, unknown>> }).dataLayer || []
+    );
+    const dateSelected = dataLayer.filter((e) => e.event === 'demo_date_selected');
+    expect(
+      dateSelected,
+      'demo_date_selected should fire exactly once per page load even when Calendly emits multiple times'
+    ).toHaveLength(1);
+  });
+
+  test('messages from non-calendly.com origins are ignored', async ({ page }) => {
+    await page.goto('/');
+
+    // An attacker injects a message claiming to be Calendly but from a
+    // different origin. Substring origin matching ('calendly.com') would have
+    // accepted https://calendly.com.evil.example — strict matching rejects it.
+    await page.evaluate(() => {
+      window.dispatchEvent(new MessageEvent('message', {
+        data: { event: 'calendly.event_scheduled' },
+        origin: 'https://calendly.com.evil.example',
+      }));
+    });
+
+    const dataLayer = await page.evaluate(
+      () => (window as unknown as { dataLayer?: Array<Record<string, unknown>> }).dataLayer || []
+    );
+    expect(
+      dataLayer.find((e) => e.event === 'demo_booked'),
+      'demo_booked should NOT fire for messages from non-calendly.com origins'
+    ).toBeUndefined();
+  });
+
+  test('funnel events do NOT hit Bento for anonymous visitors', async ({ page }) => {
+    let bentoHit = false;
+    await page.route('**/api/bento-track', async (route) => {
+      bentoHit = true;
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+    });
+
+    await page.goto('/');
+    // No email captured — anonymous visitor
+    await page.evaluate(() => localStorage.removeItem('dd_known_email'));
+
+    await page.evaluate(() => {
+      window.dispatchEvent(new MessageEvent('message', {
+        data: { event: 'calendly.date_and_time_selected' },
+        origin: 'https://calendly.com',
+      }));
+    });
+
+    await page.waitForTimeout(500);
+    expect(bentoHit, 'Anonymous visitors should not generate Bento records — no email to send to').toBe(false);
+  });
 });
 
 /**

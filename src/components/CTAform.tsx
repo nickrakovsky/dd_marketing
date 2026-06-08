@@ -26,9 +26,10 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     e.preventDefault();
     const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
     if (email) {
+      const w = window as any;
+      if (typeof w.ddSetEmail === 'function') w.ddSetEmail(email);
       bentoCall('identify', email);
 
-      const w = window as any;
       fetch('/api/bento-track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,9 +45,9 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
       }).catch(() => {});
     }
     setIsSubmitted(true);
-    const w = window as any;
-    if (typeof w.ddOpenCalendly === 'function') {
-      w.ddOpenCalendly('primary_color=FF5722');
+    const ddOpen = (window as any).ddOpenCalendly;
+    if (typeof ddOpen === 'function') {
+      ddOpen('primary_color=FF5722');
     } else {
       window.open(calendlyUrl, "_blank", "noopener");
     }

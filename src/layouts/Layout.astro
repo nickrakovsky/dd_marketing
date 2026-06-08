@@ -377,6 +377,27 @@ const jsonLd = {
              reopened in the popup. */}
         <script is:inline>
           (function() {
+            // --- Telemetry helper ----------------------------------------
+            // We swallow most errors silently so the script doesn't halt and
+            // break the booking flow. But silent failure means we never know
+            // when localStorage is broken, Calendly assets fail to load, or
+            // postMessages are getting rejected. This emits a single rate-
+            // limited dataLayer event per error type per session so GA4 can
+            // surface aggregate breakage trends without flooding logs.
+            var telemetrySeen = {};
+            function ddReportError(stage, detail) {
+              if (telemetrySeen[stage]) return;
+              telemetrySeen[stage] = true;
+              try {
+                var payload = { event: 'dd_attribution_error', stage: stage, detail: String(detail || '').slice(0, 200) };
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push(payload);
+                if (window.zaraz && typeof window.zaraz.track === 'function') {
+                  window.zaraz.track('dd_attribution_error', { stage: stage, detail: payload.detail });
+                }
+              } catch { /* nothing more we can do */ }
+            }
+
             // --- Landing page (session-scoped, kept for Bento) -----------
             if (!sessionStorage.getItem('dd_landing_page')) {
               sessionStorage.setItem('dd_landing_page', window.location.href);
@@ -411,13 +432,29 @@ const jsonLd = {
               if (hasUtm || (ref && !sameHost)) {
                 localStorage.setItem('dd_last_touch', JSON.stringify(touch));
               }
-            } catch { /* noop */ }
+            } catch (err) {
+              // Most likely Safari private mode quota or storage full. Means
+              // attribution is degraded for this user — they'll show as direct.
+              ddReportError('storage_write', err && err.message);
+            }
 
             window.ddGetAttribution = function() {
               var first = {}, last = {};
               try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch { /* noop */ }
               try { last = JSON.parse(localStorage.getItem('dd_last_touch') || '{}'); } catch { /* noop */ }
               return { first: first, last: last };
+            };
+
+            // --- Known-email helpers (set when user submits any CTA form) ---
+            // The email is what makes funnel-stage drop-off actionable in Bento.
+            // Without it we can still see aggregate drop-off in GA4 but can't follow up
+            // with the specific person who abandoned.
+            window.ddSetEmail = function(email) {
+              if (!email || typeof email !== 'string') return;
+              try { localStorage.setItem('dd_known_email', email); } catch { /* noop */ }
+            };
+            window.ddGetEmail = function() {
+              try { return localStorage.getItem('dd_known_email') || ''; } catch { return ''; }
             };
 
             // --- Bento visitor UUID helper -------------------------------
@@ -448,7 +485,13 @@ const jsonLd = {
                 s.src = 'https://assets.calendly.com/assets/external/widget.js';
                 s.async = true;
                 s.onload = function() { resolve(); };
-                s.onerror = function() { calendlyAssetsLoaded = false; resolve(); };
+                s.onerror = function() {
+                  calendlyAssetsLoaded = false;
+                  // Calendly's CDN failing is a critical event — booking is
+                  // about to fall back to opening a new tab. We want to know.
+                  ddReportError('calendly_assets_load', 'widget.js failed');
+                  resolve();
+                };
                 document.head.appendChild(s);
               });
             }
@@ -473,9 +516,19 @@ const jsonLd = {
                 if (extraUrlParams) {
                   url += (url.indexOf('?') === -1 ? '?' : '&') + extraUrlParams;
                 }
+                // Pre-fill email if a prior CTA form already captured it.
+                // Calendly uses the `prefill` config, not URL params, when launched
+                // via initPopupWidget — saves the user a step on return visits.
+                var prefill = {};
+                var knownEmail = window.ddGetEmail();
+                if (knownEmail) prefill.email = knownEmail;
+
                 if (window.Calendly && typeof window.Calendly.initPopupWidget === 'function') {
-                  window.Calendly.initPopupWidget({ url: url, utm: utm });
+                  var opts = { url: url, utm: utm };
+                  if (knownEmail) opts.prefill = prefill;
+                  window.Calendly.initPopupWidget(opts);
                 } else {
+                  ddReportError('popup_fallback', 'window.Calendly missing');
                   // Fallback if the widget script failed — append UTMs to the URL and open new tab
                   var qp = new URLSearchParams();
                   Object.keys(utm).forEach(function(k) {
@@ -502,16 +555,48 @@ const jsonLd = {
               window.ddOpenCalendly(extra);
             });
 
-            // --- Listen for completed bookings and forward to GA4/Zaraz
+            // --- Listen for Calendly funnel events --------------------------
+            // We track all four stages so GA4 can show drop-off rates and Bento
+            // can drive abandonment follow-ups for known emails.
+            //
+            //   profile_page_viewed     → saw the calendar
+            //   event_type_viewed       → opened the demo event type
+            //   date_and_time_selected  → picked a slot
+            //   event_scheduled         → completed the booking (the conversion)
+            var FUNNEL_EVENTS = {
+              'calendly.profile_page_viewed':    'demo_profile_viewed',
+              'calendly.event_type_viewed':      'demo_event_type_viewed',
+              'calendly.date_and_time_selected': 'demo_date_selected',
+              'calendly.event_scheduled':        'demo_booked'
+            };
+
+            // Strict origin allow-list — Calendly only ever postMessages from
+            // the apex (https://calendly.com). Substring matching ('calendly.com')
+            // would also accept https://calendly.com.attacker.example.
+            var ALLOWED_ORIGINS = { 'https://calendly.com': true };
+            // Track which funnel stages have already fired this page load so we
+            // don't double-count when users open/close/reopen the popup.
+            var firedStages = {};
+
             window.addEventListener('message', function(e) {
               if (!e.data || typeof e.data !== 'object') return;
-              if (e.origin && e.origin.indexOf('calendly.com') === -1) return;
-              var ev = e.data.event;
-              if (ev !== 'calendly.event_scheduled') return;
+              if (!ALLOWED_ORIGINS[e.origin]) return;
+              var calendlyEvent = e.data.event;
+              if (!calendlyEvent || !FUNNEL_EVENTS[calendlyEvent]) return;
+
+              var ddEvent = FUNNEL_EVENTS[calendlyEvent];
+              // Dedupe: profile_viewed/event_type_viewed/date_selected can fire
+              // many times in a single popup session as the user navigates
+              // around. We only want one record per stage per page load —
+              // matches how a sane funnel report should count.
+              if (firedStages[ddEvent]) return;
+              firedStages[ddEvent] = true;
 
               var attribution = window.ddGetAttribution();
+              var knownEmail = window.ddGetEmail();
               var payload = {
                 event_category: 'demo',
+                funnel_stage: ddEvent,
                 first_utm_source: attribution.first.utm_source || 'direct',
                 first_utm_medium: attribution.first.utm_medium || 'direct',
                 first_utm_campaign: attribution.first.utm_campaign || '',
@@ -521,17 +606,34 @@ const jsonLd = {
                 last_utm_campaign: attribution.last.utm_campaign || ''
               };
 
-              // Cloudflare Zaraz forwards to GA4
+              // GA4 (via Zaraz) — anonymous funnel reporting
               if (window.zaraz && typeof window.zaraz.track === 'function') {
-                window.zaraz.track('demo_booked', payload);
+                window.zaraz.track(ddEvent, payload);
               }
-              // Direct gtag fallback if present
               if (typeof window.gtag === 'function') {
-                window.gtag('event', 'demo_booked', payload);
+                window.gtag('event', ddEvent, payload);
               }
-              // dataLayer fallback (GTM / future tags)
               window.dataLayer = window.dataLayer || [];
-              window.dataLayer.push(Object.assign({ event: 'demo_booked' }, payload));
+              window.dataLayer.push(Object.assign({ event: ddEvent }, payload));
+
+              // Bento — only when we know who they are. This is what enables
+              // per-person abandonment follow-up. Skipped silently for
+              // anonymous visitors (the nav button path) since we have no
+              // way to email them.
+              if (knownEmail) {
+                fetch('/api/bento-track', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: knownEmail,
+                    event: ddEvent,
+                    source: window.location.pathname,
+                    landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                    visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+                  }),
+                  keepalive: true
+                }).catch(function() {});
+              }
             });
           })();
         </script>

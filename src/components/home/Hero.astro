@@ -317,6 +317,9 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
+          if (typeof window.ddSetEmail === 'function') {
+            window.ddSetEmail(email);
+          }
           if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
             window.bento.identify(email);
           }
