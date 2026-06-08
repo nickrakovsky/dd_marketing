@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 // Loader2 is unused
 import { /* Loader2, */ ArrowRight, CheckCircle2 } from "lucide-react";
 import { bentoCall } from "@/lib/bento";
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
 
 interface CTAFormProps {
   buttonText?: string;
@@ -20,7 +21,7 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     }
   }, []);
 
-  const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+  const calendlyUrl = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +48,7 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     setIsSubmitted(true);
     const ddOpen = (window as any).ddOpenCalendly;
     if (typeof ddOpen === 'function') {
-      ddOpen('primary_color=FF5722');
+      ddOpen(CALENDLY_BRAND_PARAMS);
     } else {
       window.open(calendlyUrl, "_blank", "noopener");
     }
