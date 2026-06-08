@@ -13,4 +13,10 @@
 
 export const CALENDLY_BOOKING_URL = 'https://calendly.com/nick-rakovsky/datadocks-demo';
 export const CALENDLY_BOOKING_FRAGMENT = 'calendly.com/nick-rakovsky/datadocks-demo';
+// URL param fallback used only when the popup widget script fails and we
+// open Calendly in a new tab. The widget itself applies branding via the
+// pageSettings config below — Calendly's initPopupWidget ignores the
+// primary_color URL param so the URL-param approach alone left the
+// "Schedule Event" button blue inside the iframe.
 export const CALENDLY_BRAND_PARAMS = 'primary_color=FF5722';
+export const CALENDLY_BRAND_COLOR = 'FF5722';

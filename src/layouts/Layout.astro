@@ -5,7 +5,7 @@ import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
 import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
 import { getAuthor } from '../data/authors';
-import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT } from '../lib/calendly-config.mjs';
+import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
 
 interface Props {
     title: string;
@@ -376,7 +376,7 @@ const jsonLd = {
              event_scheduled postMessage and forward to Zaraz/GA4 only on real
              completed bookings — links to calendly.com/* are intercepted and
              reopened in the popup. */}
-        <script is:inline define:vars={{ CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT }}>
+        <script is:inline define:vars={{ CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR }}>
           (function() {
             // --- Telemetry helper ----------------------------------------
             // We swallow most errors silently so the script doesn't halt and
@@ -527,7 +527,11 @@ const jsonLd = {
                 if (knownEmail) prefill.email = knownEmail;
 
                 if (window.Calendly && typeof window.Calendly.initPopupWidget === 'function') {
-                  var opts = { url: url, utm: utm };
+                  var opts = {
+                    url: url,
+                    utm: utm,
+                    pageSettings: { primaryColor: CALENDLY_BRAND_COLOR }
+                  };
                   if (knownEmail) opts.prefill = prefill;
                   window.Calendly.initPopupWidget(opts);
                 } else {
