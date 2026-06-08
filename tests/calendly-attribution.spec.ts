@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 /**
  * Calendly booking-flow tests, split into two suites:
@@ -158,21 +160,40 @@ test.describe('Calendly entry points (mocked)', () => {
     await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
   });
 
-  test('blog post Calendly link is intercepted', async ({ page }) => {
-    await page.setViewportSize(VIEWPORTS.desktop);
-    await page.goto('/posts/loading-dock-congestion');
+  // Auto-discover every blog post that contains a Calendly link. Self-
+  // maintaining: a new post with a "Book a demo" link gets a test for free.
+  // If you remove a Calendly link from every post the discovery returns []
+  // and Playwright would skip silently — that's why the canary `expect`
+  // below asserts at least one post was found.
+  const POSTS_DIR = join(process.cwd(), 'src/content/posts');
+  const postsWithCalendly = readdirSync(POSTS_DIR)
+    .filter((f) => f.endsWith('.mdx'))
+    .filter((f) => readFileSync(join(POSTS_DIR, f), 'utf8').includes(BOOKING_URL_FRAGMENT))
+    .map((f) => f.replace(/\.mdx$/, ''));
 
-    // Click the first calendly link in the post body
-    const link = page.locator(`article a[href*="${BOOKING_URL_FRAGMENT}"]`).first();
-    await link.scrollIntoViewIfNeeded();
-    await link.click();
-
-    await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
+  test('discovery sanity: at least one post contains a Calendly link', () => {
     expect(
-      await getOpenCount(page),
-      'Blog Calendly link must be intercepted, not opened in a new tab — UTMs would be lost'
-    ).toBe(0);
+      postsWithCalendly.length,
+      'No blog posts with Calendly links found — auto-discovery may be looking at the wrong directory'
+    ).toBeGreaterThan(0);
   });
+
+  for (const slug of postsWithCalendly) {
+    test(`blog post /${slug}: Calendly link is intercepted`, async ({ page }) => {
+      await page.setViewportSize(VIEWPORTS.desktop);
+      await page.goto(`/posts/${slug}`);
+
+      const link = page.locator(`article a[href*="${BOOKING_URL_FRAGMENT}"]`).first();
+      await link.scrollIntoViewIfNeeded();
+      await link.click();
+
+      await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
+      expect(
+        await getOpenCount(page),
+        `Blog post /${slug} Calendly link must route through the popup — falling through to window.open loses UTMs`
+      ).toBe(0);
+    });
+  }
 
   test('about page CTA opens the popup', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
