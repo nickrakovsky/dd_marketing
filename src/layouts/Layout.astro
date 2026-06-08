@@ -514,11 +514,14 @@ const jsonLd = {
             window.ddOpenCalendly = function(extraUrlParams) {
               loadCalendlyAssets().then(function() {
                 var utm = buildUtm();
-                // Preserve any query params already on the link (e.g. primary_color)
-                var url = CALENDLY_BASE;
-                if (extraUrlParams) {
-                  url += (url.indexOf('?') === -1 ? '?' : '&') + extraUrlParams;
-                }
+                // Always inject primary_color into the URL itself. pageSettings
+                // alone wasn't reliable across every Calendly screen (the deep-
+                // funnel "Schedule Event" button reverted to default blue).
+                // Caller-supplied params win — but in practice nothing else
+                // sets primary_color so this just guarantees the brand color.
+                var qp = new URLSearchParams(extraUrlParams || '');
+                if (!qp.has('primary_color')) qp.set('primary_color', CALENDLY_BRAND_COLOR);
+                var url = CALENDLY_BASE + '?' + qp.toString();
                 // Pre-fill email if a prior CTA form already captured it.
                 // Calendly uses the `prefill` config, not URL params, when launched
                 // via initPopupWidget — saves the user a step on return visits.
