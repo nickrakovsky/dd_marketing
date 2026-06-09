@@ -539,16 +539,16 @@ const jsonLd = {
                   window.Calendly.initPopupWidget(opts);
                 } else {
                   ddReportError('popup_fallback', 'window.Calendly missing');
-                  // Fallback if the widget script failed — append UTMs to the URL and open new tab
-                  var qp = new URLSearchParams();
+                  // Fallback if the widget script failed — append UTMs to the
+                  // existing query (qp already has primary_color) and open
+                  // Calendly in a new tab.
                   Object.keys(utm).forEach(function(k) {
                     if (utm[k]) {
                       var snake = k.replace(/[A-Z]/g, function(m) { return '_' + m.toLowerCase(); });
                       qp.set(snake, utm[k]);
                     }
                   });
-                  var sep = url.indexOf('?') === -1 ? '?' : '&';
-                  window.open(url + sep + qp.toString(), '_blank', 'noopener');
+                  window.open(CALENDLY_BASE + '?' + qp.toString(), '_blank', 'noopener');
                 }
               });
             };
