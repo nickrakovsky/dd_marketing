@@ -315,6 +315,8 @@ const jsonLd = {
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
+        <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
+        <link rel="preconnect" href="https://calendly.com" crossorigin />
 
         <style is:inline set:html={`
             @font-face {
@@ -557,6 +559,18 @@ const jsonLd = {
             // Selector uses CALENDLY_BOOKING_FRAGMENT so blog posts and any
             // other inline-Markdown links to the handle are auto-caught.
             var INTERCEPT_SELECTOR = 'a[href*="' + CALENDLY_BOOKING_FRAGMENT + '"]';
+
+            // Warm widget.js + widget.css on first hover/focus of any Calendly
+            // trigger. By the time the user clicks, assets are in the HTTP
+            // cache and the popup opens near-instantly instead of waiting on
+            // a cold ~6s fetch. loadCalendlyAssets is idempotent.
+            function warmOnIntent(e) {
+              var a = e.target && e.target.closest && e.target.closest(INTERCEPT_SELECTOR);
+              if (a) loadCalendlyAssets();
+            }
+            document.addEventListener('mouseenter', warmOnIntent, { capture: true, passive: true });
+            document.addEventListener('focusin', warmOnIntent, { passive: true });
+
             document.addEventListener('click', function(e) {
               var a = e.target && e.target.closest && e.target.closest(INTERCEPT_SELECTOR);
               if (!a) return;
