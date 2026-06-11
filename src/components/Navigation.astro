@@ -1,6 +1,7 @@
 ---
 import datadocksLogo from "../assets/datadocks-logo.svg";
 import datadocksLogoWhite from "../assets/datadocks-logo-white.svg";
+import { CALENDLY_BOOKING_URL } from "../lib/calendly-config.mjs";
 
 interface Props {
   isOrange?: boolean;
@@ -97,7 +98,7 @@ const mobileDropdownLinkClass = isOrange
         <a href="https://booking.datadocks.com/sessions/new" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Login</a>
 
         <a
-          href="https://calendly.com/nick-rakovsky/datadocks-demo"
+          href={CALENDLY_BOOKING_URL}
           target="_blank"
           rel="noopener noreferrer"
           class={`inline-flex items-center justify-center whitespace-nowrap h-10 px-6 font-recoleta font-normal rounded-none text-[1.2rem] xl:text-[1.2rem] border-b-4 transition-all shadow-none ${desktopBtnClass}`}
@@ -148,7 +149,7 @@ const mobileDropdownLinkClass = isOrange
 
         <div class="p-0">
           <a
-            href="https://calendly.com/nick-rakovsky/datadocks-demo"
+            href={CALENDLY_BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
             class={`w-full inline-flex items-center justify-center rounded-none border-b-4 transition-all shadow-none font-recoleta font-normal py-8 text-[1.2rem] ${mobileBtnClass}`}

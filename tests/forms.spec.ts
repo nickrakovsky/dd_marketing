@@ -135,7 +135,7 @@ test.describe('LeadMagnetForm (Blog Posts)', () => {
 
 
 test.describe('CTA Form (Homepage — bottom section)', () => {
-  test('submits email to /api/bento-track and opens Calendly', async ({ page }) => {
+  test('submits email to /api/bento-track and opens Calendly popup', async ({ page }) => {
     let bentoPayload: Record<string, unknown> | null = null;
 
     await page.route('**/api/bento-track', async (route) => {
@@ -152,35 +152,37 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
       }
     });
 
-    // Capture the URL that window.open is called with instead of actually opening a tab.
-    // This avoids waiting for a flaky popup page event.
+    // Block the real Calendly widget assets and stub initPopupWidget so we
+    // can capture the call without depending on Calendly's CDN.
+    await page.route('https://assets.calendly.com/**', (route) => route.abort());
     await page.addInitScript(() => {
-      (window as any).__openedUrls = [];
-      window.open = (url?: string | URL) => {
-        (window as any).__openedUrls.push(typeof url === 'string' ? url : url?.toString() ?? '');
-        return null;
+      (window as any).__calendlyCalls = [];
+      (window as any).Calendly = {
+        initPopupWidget: (opts: { url: string }) => {
+          (window as any).__calendlyCalls.push(opts);
+        },
       };
     });
 
     await page.goto('/');
 
-    // The bottom CTA is an Astro component with id="cta-bento-form"
-    // (src/components/home/CTA.astro line 21)
     const ctaForm = page.locator('#cta-bento-form');
     await ctaForm.scrollIntoViewIfNeeded();
-    // STRICT: form must exist — no conditional guard.
     await expect(ctaForm).toBeVisible();
 
     await ctaForm.locator('input[name="email"]').fill('e2e-test@datadocks.com');
     await ctaForm.locator('button[type="submit"]').click();
 
-    // The CTA.astro script calls window.open(calendlyUrl, '_blank', 'noopener')
-    // Retrieve the captured URL from the stubbed window.open — no popup event dependency.
-    const openedUrls: string[] = await page.evaluate(() => (window as any).__openedUrls || []);
-    expect(openedUrls.length).toBeGreaterThan(0);
-    expect(openedUrls[0]).toContain('calendly.com');
+    // Wait for the form's Calendly popup invocation to land.
+    await expect.poll(async () =>
+      page.evaluate(() => ((window as any).__calendlyCalls || []).length)
+    ).toBeGreaterThan(0);
 
-    // Verify the Bento payload
+    const calls: Array<{ url: string }> = await page.evaluate(
+      () => (window as any).__calendlyCalls || []
+    );
+    expect(calls[0].url).toContain('calendly.com');
+
     expect(bentoPayload).not.toBeNull();
     expect((bentoPayload as Record<string, unknown>).email).toBe('e2e-test@datadocks.com');
     expect((bentoPayload as Record<string, unknown>).event).toBe('Demo Subscriber');
@@ -189,7 +191,7 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
 
 
 test.describe('Hero Form (Homepage — above the fold)', () => {
-  test('submits email to /api/bento-track and opens Calendly', async ({ page }) => {
+  test('submits email to /api/bento-track and opens Calendly popup', async ({ page }) => {
     let bentoPayload: Record<string, unknown> | null = null;
 
     await page.route('**/api/bento-track', async (route) => {
@@ -206,30 +208,33 @@ test.describe('Hero Form (Homepage — above the fold)', () => {
       }
     });
 
+    await page.route('https://assets.calendly.com/**', (route) => route.abort());
     await page.addInitScript(() => {
-      (window as any).__openedUrls = [];
-      window.open = (url?: string | URL) => {
-        (window as any).__openedUrls.push(typeof url === 'string' ? url : url?.toString() ?? '');
-        return null;
+      (window as any).__calendlyCalls = [];
+      (window as any).Calendly = {
+        initPopupWidget: (opts: { url: string }) => {
+          (window as any).__calendlyCalls.push(opts);
+        },
       };
     });
 
     await page.goto('/');
 
-    // The hero form has id="hero-bento-form" (src/components/home/Hero.astro)
     const heroForm = page.locator('#hero-bento-form');
-    // STRICT: this is above the fold — if it doesn't exist the routing/content model broke.
     await expect(heroForm).toBeVisible();
 
     await heroForm.locator('input[name="email"]').fill('e2e-hero@datadocks.com');
     await heroForm.locator('button[type="submit"]').click();
 
-    // Hero form also calls window.open with the Calendly URL
-    const openedUrls: string[] = await page.evaluate(() => (window as any).__openedUrls || []);
-    expect(openedUrls.length).toBeGreaterThan(0);
-    expect(openedUrls[0]).toContain('calendly.com');
+    await expect.poll(async () =>
+      page.evaluate(() => ((window as any).__calendlyCalls || []).length)
+    ).toBeGreaterThan(0);
 
-    // Verify Bento payload
+    const calls: Array<{ url: string }> = await page.evaluate(
+      () => (window as any).__calendlyCalls || []
+    );
+    expect(calls[0].url).toContain('calendly.com');
+
     expect(bentoPayload).not.toBeNull();
     expect((bentoPayload as Record<string, unknown>).email).toBe('e2e-hero@datadocks.com');
   });

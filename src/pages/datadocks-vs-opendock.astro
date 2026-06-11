@@ -5,6 +5,9 @@ import Layout from "../layouts/Layout.astro";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 import CTA from "../components/home/CTA.astro";
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "../lib/calendly-config.mjs";
+
+const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 
 const comparisonFaqs = [
   {
@@ -654,10 +657,8 @@ const sections = [
   // Hero form — open Calendly — moved to is:inline below
 </script>
 
-<script is:inline>
+<script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
   (function() {
-    var calendlyUrl = 'https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722';
-
     function attachVsForm() {
       var form = document.getElementById('vs-hero-form');
       if (!form || form.dataset.bound) return;
@@ -667,7 +668,9 @@ const sections = [
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
-          // Client-side identify
+          if (typeof window.ddSetEmail === 'function') {
+            window.ddSetEmail(email);
+          }
           if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
             window.bento.identify(email);
           }
@@ -680,12 +683,17 @@ const sections = [
               event: 'Demo Subscriber',
               source: window.location.pathname,
               landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+              attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
             }),
             keepalive: true
           }).catch(function() {});
         }
-        window.open(calendlyUrl, '_blank', 'noopener');
+        if (typeof window.ddOpenCalendly === 'function') {
+          window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
+        } else {
+          window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
+        }
         form.reset();
       });
     }

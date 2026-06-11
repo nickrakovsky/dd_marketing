@@ -1,5 +1,7 @@
 ---
-// src/components/home/CTA.astro
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
+
+const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 ---
 
 <section class="py-10 md:py-[3.25rem] bg-[#FF5507]">
@@ -44,10 +46,8 @@
   </div>
 </section>
 
-<script is:inline>
+<script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
   (function() {
-    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-
     function attachCtaForm() {
       var form = document.getElementById('cta-bento-form');
       if (!form || form.dataset.bound) return;
@@ -57,13 +57,13 @@
         var emailInput = form.querySelector('input[name="email"]');
         var email = emailInput ? emailInput.value : '';
         if (email) {
-          // 1. Client-side identify (Primary stitching)
-          // If the SDK is loaded and not blocked, this handles the identity link officially.
+          if (typeof window.ddSetEmail === 'function') {
+            window.ddSetEmail(email);
+          }
           if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
             window.bento.identify(email);
           }
 
-          // 2. Server-side proxy (Backup/Ad-block resistant)
           fetch('/api/bento-track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -72,12 +72,17 @@
               event: 'Demo Subscriber',
               source: window.location.pathname,
               landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+              attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
             }),
             keepalive: true
           }).catch(function() {});
         }
-        window.open(calendlyUrl, '_blank', 'noopener');
+        if (typeof window.ddOpenCalendly === 'function') {
+          window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
+        } else {
+          window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
+        }
         form.reset();
       });
     }

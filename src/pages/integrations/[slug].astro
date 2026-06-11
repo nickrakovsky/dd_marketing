@@ -7,6 +7,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
+import { CALENDLY_BOOKING_URL } from '../../lib/calendly-config.mjs';
 
 export async function getStaticPaths() {
   const integrations = await getCollection('integrations');
@@ -94,7 +95,7 @@ const { Content } = await integration.render();
           {/* Centered CTA Section */}
           <div class="w-full flex justify-center mt-12 bg-[#FFF8E9]/60 backdrop-blur-sm rounded-xl py-4">
               <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                  <a href="https://calendly.com/nick-rakovsky/datadocks-demo" class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-black text-white hover:bg-brand-orange transition-all hover:-translate-y-1 uppercase tracking-widest shadow-2xl">
+                  <a href={CALENDLY_BOOKING_URL} class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-black text-white hover:bg-brand-orange transition-all hover:-translate-y-1 uppercase tracking-widest shadow-2xl">
                       Schedule a Demo
                   </a>
                   <a href="#advantages" class="inline-flex justify-center rounded-lg text-sm font-bold py-5 px-12 bg-white text-gray-900 border-2 border-gray-900 hover:bg-gray-50 transition-all hover:-translate-y-1 uppercase tracking-widest">
