@@ -478,6 +478,24 @@ const jsonLd = {
             var CALENDLY_BASE = CALENDLY_BOOKING_URL;
             var calendlyAssetsLoaded = false;
 
+            // Idle-prefetch widget.js + widget.css 10s post-load. <link
+            // rel="prefetch"> warms the HTTP cache without parsing or
+            // executing anything. Skipped on Save-Data and 2G connections.
+            window.addEventListener('load', function() {
+              setTimeout(function() {
+                var c = navigator.connection;
+                if (c && (c.saveData || /2g/.test(c.effectiveType || ''))) return;
+                ['https://assets.calendly.com/assets/external/widget.css',
+                 'https://assets.calendly.com/assets/external/widget.js'].forEach(function(href) {
+                  var l = document.createElement('link');
+                  l.rel = 'prefetch';
+                  l.href = href;
+                  l.as = href.slice(-3) === 'css' ? 'style' : 'script';
+                  document.head.appendChild(l);
+                });
+              }, 10000);
+            });
+
             function loadCalendlyAssets() {
               if (calendlyAssetsLoaded) return Promise.resolve();
               calendlyAssetsLoaded = true;
