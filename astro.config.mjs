@@ -5,10 +5,12 @@ import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
 const postsDir = path.resolve('./src/content/posts');
@@ -37,13 +39,14 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'never',
   build: {
+    format: 'file',
     inlineStylesheets: 'always',
   },
   redirects: {
+    '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
-    '/datadocks-vs/opendock/': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
-    '/privacy-policy-datadocks/': '/privacy-policy',
+    '/posts/yt-:id': '/videos/yt-:id',
   },
 
   integrations: [
@@ -64,6 +67,10 @@ export default defineConfig({
               pattern: '/internal/florida-pharma-pdf',
               entrypoint: './src/offline-pages/florida-pharma-pdf.astro'
             });
+            injectRoute({
+              pattern: '/brand-book',
+              entrypoint: './src/offline-pages/brand-book.astro'
+            });
           }
         },
         'astro:build:done': async ({ dir }) => {
@@ -71,11 +78,34 @@ export default defineConfig({
           if (fs.existsSync(offlinePath)) {
             fs.rmSync(offlinePath, { recursive: true, force: true });
           }
+
+          // Cloudflare _routes.json has a 100-entry limit.
+          // Collapse individual /posts/*, /integrations/*, /datadocks-features/* into wildcards.
+          const routesPath = fileURLToPath(new URL('_routes.json', dir));
+          if (fs.existsSync(routesPath)) {
+            const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
+            const wildcardPrefixes = ['/posts/', '/integrations/', '/datadocks-features/', '/benefits/'];
+            routes.exclude = routes.exclude.filter(rule => {
+              return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
+            });
+            wildcardPrefixes.forEach(prefix => {
+              const wildcard = prefix + '*';
+              if (!routes.exclude.includes(wildcard)) {
+                routes.exclude.push(wildcard);
+              }
+            });
+            fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
+          }
         }
       }
     },
+    partytown({
+      config: {
+        forward: BENTO_PARTYTOWN_FORWARD,
+      },
+    }),
     tailwind(), react(), keystatic(), sitemap({
-      filter: (page) => !page.includes('/home-draft') && !page.includes('/debug'),
+      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {

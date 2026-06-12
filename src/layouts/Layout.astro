@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+
 import '../styles/global.css';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
@@ -12,7 +12,7 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
-    disableTransitions?: boolean;
+
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
@@ -36,17 +36,17 @@ const {
   image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
-  disableTransitions = false,
+
   schemaData,
   articleData,
   videoData
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
-// Strip trailing slash for canonical URL (accept both, default to no slash)
+// Normalize pathname: strip trailing slash AND strip .html suffix (build.format: 'file' emits paths with .html)
 const pathname = Astro.url.pathname === '/'
   ? '/'
-  : Astro.url.pathname.replace(/\/$/, '');
+  : Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '');
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
@@ -89,15 +89,7 @@ const graph: any[] = [
     "url": "https://datadocks.com",
     "name": "DataDocks",
     "description": "Dock Scheduling Software for Warehouses",
-    "publisher": { "@id": "https://datadocks.com/#organization" },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://datadocks.com/posts?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
+    "publisher": { "@id": "https://datadocks.com/#organization" }
   },
   // 3. WebPage (Accessibility & Context) — use specific types for known pages
   {
@@ -125,26 +117,22 @@ if (pathname === '/') {
     "name": "DataDocks",
     "applicationCategory": "BusinessApplication",
     "applicationSubCategory": "Dock Scheduling and Yard Management Software",
-    "operatingSystem": "Web, Cloud-based",
+    "operatingSystem": "Web, iOS, Android",
     "description": "Dock scheduling and yard management software for logistics facilities. Automate dock appointments, reduce detention charges, and increase warehouse capacity.",
     "offers": {
       "@type": "Offer",
       "availability": "https://schema.org/OnlineOnly",
       "url": "https://calendly.com/nick-rakovsky/datadocks-demo",
-      "description": "Free demo available. Custom pricing based on facility size.",
-      "priceSpecification": {
-        "@type": "UnitPriceSpecification",
-        "priceCurrency": "USD",
-        "price": "0",
-        "description": "Free demo"
-      }
+      "description": "Custom pricing based on facility size and number of locations. Free demo available.",
+      "price": "",
+      "priceCurrency": "USD"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "50",
-      "bestRating": "5",
-      "worstRating": "1"
+      "ratingValue": 4.9,
+      "reviewCount": 50,
+      "bestRating": 5,
+      "worstRating": 1
     },
     "featureList": [
       "Self-service carrier portal",
@@ -155,13 +143,45 @@ if (pathname === '/') {
       "Custom business rules engine",
       "Efficiency reporting and analytics",
       "Yard management",
-      "Dock scheduling"
+      "Dock scheduling",
+      "Native iOS and Android mobile apps"
     ],
     "screenshot": "https://datadocks.com/images/DataDocks-Calendar-Screenshot.webp"
   });
 }
 
-// 5. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
+// 5. Reviews (Social Proof)
+if (schemaData?.reviews) {
+  schemaData.reviews.forEach((review: any) => {
+    graph.push({
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": review.author
+      },
+      "reviewBody": review.quote,
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": 5,
+        "bestRating": 5
+      },
+      ...(review.source ? { 
+        "publisher": { 
+          "@type": "Organization", 
+          "name": review.source 
+        } 
+      } : {}),
+      ...(review.url ? { "url": review.url } : {}),
+      "itemReviewed": { 
+        "@type": "SoftwareApplication",
+        "@id": "https://datadocks.com/#software",
+        "name": "DataDocks"
+      }
+    });
+  });
+}
+
+// 6. Breadcrumbs (Structure) — only add when there are path segments (not homepage)
 const breadcrumbItems = Astro.url.pathname.split('/').filter(Boolean);
 if (breadcrumbItems.length > 0) {
   graph.push({
@@ -199,6 +219,12 @@ if (schemaData?.faq) {
   });
 }
 
+// Feature page: describe as part of the main DataDocks SoftwareApplication.
+// We use WebPage (not a second SoftwareApplication) so Google doesn't flag
+// missing aggregateRating/offers. The main SoftwareApplication on homepage
+// carries the rich result signals.
+// Integration pages: same pattern.
+
 if (type === 'article' && articleData) {
   const authorData = getAuthor(articleData.author);
   graph.push({
@@ -220,9 +246,12 @@ if (type === 'article' && articleData) {
       ...(authorData.linkedIn ? { "sameAs": [authorData.linkedIn] } : {})
     },
     "publisher": { "@id": "https://datadocks.com/#organization" },
-    "articleSection": articleData.section
+    "articleSection": articleData.section,
+    "inLanguage": "en",
+    "isAccessibleForFree": true
   });
 }
+
 
 if (videoData) {
   graph.push({
@@ -278,79 +307,108 @@ const jsonLd = {
         <meta name="theme-color" content="#FFF8E9" />
 
 <link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
-        <link rel="preload" as="font" type="font/woff2" href={recoletaReg} crossorigin />
-        <link rel="preload" as="font" type="font/woff2" href={recoletaSemi} crossorigin />
+<link rel="preload" as="font" type="font/woff2" href={recoletaReg} crossorigin />
+<link rel="preload" as="font" type="font/woff2" href={recoletaSemi} crossorigin />
+        {/* All fonts are preloaded because they are used for critical above-the-fold content:
+             Bruta for the main hero heading, and Recoleta for the subheading and CTA buttons. */}
 
         <style is:inline>lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}</style>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lite-youtube-embed/0.3.3/lite-yt-embed.js" is:inline defer></script>
-
         <slot name="head" />
 
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
-        <!-- GTM deferred to requestIdleCallback, no preconnect needed -->
+        {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
 
         <style is:inline set:html={`
+            @font-face {
+              font-family: 'Recoleta-Fallback';
+              src: local('Georgia');
+              size-adjust: 98.7952%;
+              ascent-override: 101.2195%;
+              descent-override: 36.4252%;
+              line-gap-override: 0%;
+            }
+            @font-face {
+              font-family: 'Bruta-Fallback';
+              src: local('Impact');
+              size-adjust: 102.5000%;
+              ascent-override: 73.1707%;
+              descent-override: 24.3902%;
+              line-gap-override: 33.1707%;
+            }
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+
+            @view-transition {
+              navigation: auto;
+            }
         `}></style>
-        {!disableTransitions && <ViewTransitions />}
+
     </head>
     <body>
         <slot />
+        {/* GA4 is now implemented via Cloudflare Zaraz
         <script is:inline>
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
+            function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-EZMTT6QYLJ');
             // Defer GTM load to after page is interactive
             (function() {
-              function loadGTM() {
+              const loadGTM = () => {
                 var s = document.createElement('script');
                 s.src = 'https://www.googletagmanager.com/gtag/js?id=G-EZMTT6QYLJ';
                 s.async = true;
                 document.head.appendChild(s);
-              }
+              };
               if ('requestIdleCallback' in window) {
                 requestIdleCallback(loadGTM);
               } else {
                 setTimeout(loadGTM, 2000);
               }
             })();
-            // Re-fire GA pageview on Astro View Transitions (client-side navigations only, not initial load)
-            var _gaInitialLoad = true;
-            document.addEventListener('astro:page-load', function() {
-              if (_gaInitialLoad) { _gaInitialLoad = false; return; }
-              if (typeof gtag === 'function') {
-                gtag('event', 'page_view', { page_path: window.location.pathname, page_location: window.location.href });
-              }
-            });
+
         </script>
+        */}
+
+        {/* Capture landing page on first visit; expose Bento visitor UUID helper for form tracking */}
+        <script is:inline>
+          (function() {
+            // Record the very first URL the visitor landed on (persists for the session)
+            if (!sessionStorage.getItem('dd_landing_page')) {
+              sessionStorage.setItem('dd_landing_page', window.location.href);
+            }
+            // Helper used by all CTA forms to read the Bento SDK visitor UUID cookie.
+            // The SDK stores the anonymous visitor UUID in a cookie whose name starts with "bento_".
+            // Passing it server-side lets Bento stitch the anonymous session to the identified subscriber.
+            window.getBentoVisitorUuid = function() {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                var c = cookies[i].trim();
+                if (c.indexOf('bento_') === 0) {
+                  return c.split('=').slice(1).join('=');
+                }
+              }
+              return null;
+            };
+          })();
+        </script>
+
         {PUBLIC_BENTO_UUID && (
           <Fragment>
+            {/* Set bentoSettings on the main thread so Partytown can read it */}
             <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
                 window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
-                (function() {
-                  function loadBento() {
-                    var s = document.createElement('script');
-                    s.src = 'https://fast.bentonow.com?site_uuid=' + PUBLIC_BENTO_UUID;
-                    s.async = true;
-                    document.head.appendChild(s);
-                  }
-                  if ('requestIdleCallback' in window) {
-                    requestIdleCallback(loadBento);
-                  } else {
-                    setTimeout(loadBento, 2000);
-                  }
-                })();
             </script>
+            {/* Load the actual Bento SDK inside a Partytown Web Worker */}
+            <script is:inline type="text/partytown" src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
     </body>
 </html>
 
 <style>
-    html, body { margin: 0; width: 100%; overflow-x: hidden; }
+    html, body { margin: 0; width: 100%; overflow-x: clip; }
 </style>

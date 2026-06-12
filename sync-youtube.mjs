@@ -39,7 +39,7 @@ async function syncYouTube() {
     const channelId = process.env.YOUTUBE_CHANNEL_ID;
 
     if (!apiKey || !channelId) {
-        console.error("❌ Missing YOUTUBE_API_KEY or YOUTUBE_CHANNEL_ID in .env file");
+        console.warn("⚠️ Skipping YouTube sync: YOUTUBE_API_KEY or YOUTUBE_CHANNEL_ID not found in .env");
         return;
     }
 

@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import PageLayout from '../../components/PageLayout.astro'; 
+import PageLayout from '../../components/benefits/PageLayout.astro'; 
 import { yardappContent } from '../../data/pagesData';
 
 // FIXED: Define the schemaData variable
@@ -11,7 +11,9 @@ const schemaData = {
   reviews: yardappContent.testimonial ? [{
     author: yardappContent.testimonial.name,
     quote: yardappContent.testimonial.quote,
-    role: yardappContent.testimonial.role
+    role: yardappContent.testimonial.role,
+    source: yardappContent.testimonial.source,
+    url: yardappContent.testimonial.sourceUrl
   }] : []
 };
 ---

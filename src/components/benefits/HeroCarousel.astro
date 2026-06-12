@@ -1,0 +1,77 @@
+---
+import { ImageCarousel } from "./carousel/ImageCarousel";
+import { optimizeSlides } from "@/utils/images";
+
+import type { HeroSlide } from "@/data/types";
+import type { SlideConfig } from "./carousel/ImageCarousel";
+import type { RawSlide } from "@/utils/images";
+
+interface SlideImage {
+  src: string;
+  alt?: string;
+  [key: string]: unknown;
+}
+
+interface Props {
+  slides: HeroSlide[];
+}
+
+const { slides } = Astro.props;
+
+// 1. Process images on the server
+const optimizedSlides = await optimizeSlides(slides as unknown as RawSlide[]);
+const firstSlide = optimizedSlides[0];
+
+// --- HELPER: CSS Grid Logic for the Static Facade ---
+// This mimics the visual layout of "SmartCollage.tsx" using Tailwind Grid
+function getGridClass(type: string) {
+  switch (type) {
+    case 'single': return 'grid-cols-1';
+    case 'double': return 'grid-cols-2';
+    case 'triple': return 'grid-cols-12 grid-rows-2'; 
+    case 'quad':   return 'grid-cols-2 grid-rows-2';
+    case 'overlay': return 'block'; // Special case for overlay
+    default: return 'grid-cols-1';
+  }
+}
+
+function getSlotClass(type: string, index: number) {
+  if (type === 'triple') {
+    if (index === 0) return 'col-span-7 row-span-2'; // Big Left
+    return 'col-span-5'; // Small Rights
+  }
+  if (type === 'overlay') {
+    if (index === 0) return 'w-full h-full object-cover'; 
+    // Floating Phone style
+    return 'absolute bottom-0 right-8 w-[28%] h-auto shadow-2xl z-10 rounded-t-xl border-x border-t border-white/20';
+  }
+  return 'w-full h-full object-contain';
+}
+// ----------------------------------------------------
+---
+
+<div class="relative w-full max-w-6xl mx-auto h-[450px] rounded-2xl overflow-hidden bg-gray-50 border border-black/5 shadow-sm group">
+  
+  <div class={`absolute inset-0 p-3 grid gap-3 ${getGridClass((firstSlide?.type as string) || 'single')}`}>
+    {(firstSlide?.images as SlideImage[])?.map((img: SlideImage, i: number) => (
+       <div class={`relative rounded-lg overflow-hidden bg-white shadow-sm border border-gray-100 ${getSlotClass(firstSlide.type as string, i)}`}>
+         <img 
+           src={img.src} 
+           alt={img.alt || "Hero Image"} 
+           class="w-full h-full object-contain"
+           loading="eager"
+           fetchpriority="high"
+         />
+       </div>
+    ))}
+  </div>
+
+  <div class="absolute inset-0 z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+    <ImageCarousel 
+      client:idle 
+      slides={optimizedSlides as unknown as SlideConfig[]} 
+      containerHeight={450} 
+    />
+  </div>
+  
+</div>
