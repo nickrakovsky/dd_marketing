@@ -43,6 +43,11 @@ export default defineConfig({
     format: 'file',
     inlineStylesheets: 'auto',
   },
+  vite: {
+    build: {
+      cssCodeSplit: false,
+    },
+  },
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',

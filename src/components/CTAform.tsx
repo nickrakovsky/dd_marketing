@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 // Loader2 is unused
 import { /* Loader2, */ ArrowRight, CheckCircle2 } from "lucide-react";
 import { bentoCall } from "@/lib/bento";
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
 
 interface CTAFormProps {
   buttonText?: string;
@@ -20,15 +21,16 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
     }
   }, []);
 
-  const calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+  const calendlyUrl = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
     if (email) {
+      const w = window as any;
+      if (typeof w.ddSetEmail === 'function') w.ddSetEmail(email);
       bentoCall('identify', email);
 
-      // Server-side proxy — ad-blocker proof
       fetch('/api/bento-track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,15 +39,19 @@ export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "E
           event: 'Demo Subscriber',
           source: pagePath,
           landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-          visitorUuid: typeof (window as any).getBentoVisitorUuid === 'function'
-            ? (window as any).getBentoVisitorUuid()
-            : null,
+          visitorUuid: typeof w.getBentoVisitorUuid === 'function' ? w.getBentoVisitorUuid() : null,
+          attribution: typeof w.ddGetAttribution === 'function' ? w.ddGetAttribution() : null,
         }),
         keepalive: true,
       }).catch(() => {});
     }
     setIsSubmitted(true);
-    window.open(calendlyUrl, "_blank", "noopener");
+    const ddOpen = (window as any).ddOpenCalendly;
+    if (typeof ddOpen === 'function') {
+      ddOpen(CALENDLY_BRAND_PARAMS);
+    } else {
+      window.open(calendlyUrl, "_blank", "noopener");
+    }
   };
 
   return (
