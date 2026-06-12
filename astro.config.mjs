@@ -60,6 +60,10 @@ export default defineConfig({
               pattern: '/internal/marketing-pdf',
               entrypoint: './src/offline-pages/marketing-pdf.astro'
             });
+            injectRoute({
+              pattern: '/internal/florida-pharma-pdf',
+              entrypoint: './src/offline-pages/florida-pharma-pdf.astro'
+            });
           }
         },
         'astro:build:done': async ({ dir }) => {

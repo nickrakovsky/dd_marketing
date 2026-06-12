@@ -29,3 +29,7 @@ webflow-migration/
 # Offline print assets - excluded from production build
 public/_offline_print/*
 !public/_offline_print/.gitkeep
+
+# Local marketing data & exports - NOT FOR GITHUB
+src/offline-pages/*.txt
+src/offline-pages/*.csv
