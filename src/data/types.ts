@@ -68,7 +68,9 @@ export interface TestimonialContent {
   quote: string;
   name: string;
   role: string;
-  image: ImageMetadata; 
+  image: ImageMetadata;
+  source?: "G2" | "Capterra" | "Direct";
+  sourceUrl?: string;
 }
 
 export interface Benefit {

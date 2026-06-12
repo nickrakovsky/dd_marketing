@@ -1,7 +1,4 @@
-User-agent: *
-Allow: /
-
-# Allow AI search bots (serve search results)
+# AI Search Bots
 User-agent: GPTBot
 Allow: /
 
@@ -14,17 +11,24 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-# Block training-only crawlers
-User-agent: Google-Extended
-Disallow: /
+User-agent: Bytespider
+Allow: /
 
+# AI Training Bots
 User-agent: CCBot
-Disallow: /
+Allow: /
 
 User-agent: anthropic-ai
-Disallow: /
+Allow: /
 
 User-agent: cohere-ai
-Disallow: /
+Allow: /
 
-Sitemap: https://datadocks.com/sitemap.xml
+User-agent: Google-Extended
+Allow: /
+
+# Default
+User-agent: *
+Allow: /
+
+Sitemap: https://datadocks.com/sitemap-index.xml

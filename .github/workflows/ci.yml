@@ -1,0 +1,142 @@
+name: CI – Quality Gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - staging-v2
+
+jobs:
+  # ── Job 1: Fast Fails ──────────────────────────────────────
+  # Runs on raw source — no build required.
+  # If any fail, no point waiting for the Cloudflare preview.
+  fast-checks:
+    name: Lint / Typecheck / Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Linting (ESLint)
+        run: npm run lint
+
+      - name: Type-check (astro check)
+        run: npm run check
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+
+      - name: Unit Tests (Vitest)
+        run: npm test
+
+  # ── Job 2: Integration Tests on Cloudflare Preview ─────────
+  # Polls the GitHub Commit Status API until Cloudflare Pages
+  # posts a success status, then runs E2E / a11y / perf / links
+  # against the live preview URL. Only runs on PRs.
+  integration:
+    name: E2E / A11y / Perf / Links
+    runs-on: ubuntu-latest
+    needs: fast-checks
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for Cloudflare Pages preview deployment
+        id: cf-preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          echo "Polling for Cloudflare Pages deployment on commit ${COMMIT_SHA}..."
+          MAX_ATTEMPTS=60   # 60 × 10s = 10 minutes
+          ATTEMPT=0
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+
+            # Cloudflare Pages reports via the Check Runs API (app slug
+            # "cloudflare-workers-and-pages"), not the legacy Commit Statuses API.
+            CHECK_RUNS=$(curl -s -H "Authorization: token ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/commits/${COMMIT_SHA}/check-runs?per_page=100")
+
+            # Find the successful Cloudflare Pages check run and pull the
+            # preview URL out of output.summary (first *.pages.dev href).
+            SUMMARY=$(echo "$CHECK_RUNS" | jq -r '
+              [ .check_runs[]
+                | select(.app.slug == "cloudflare-workers-and-pages")
+                | select(.status == "completed")
+                | select(.conclusion == "success") ]
+              | first | .output.summary // empty
+            ')
+
+            if [ -n "$SUMMARY" ]; then
+              PREVIEW_URL=$(echo "$SUMMARY" | grep -oE "https://[a-z0-9.-]+\.pages\.dev" | head -1)
+              if [ -n "$PREVIEW_URL" ]; then
+                echo "Found Cloudflare preview: $PREVIEW_URL"
+                echo "preview_url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+                # Also export to GITHUB_ENV so subsequent steps can use $PREVIEW_URL directly
+                echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+                exit 0
+              fi
+            fi
+
+            echo "  Attempt ${ATTEMPT}/${MAX_ATTEMPTS} — no success check-run yet, waiting 10s..."
+            sleep 10
+          done
+
+          echo "::error::Timed out waiting for Cloudflare Pages deployment after $((MAX_ATTEMPTS * 10))s"
+          exit 1
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E & Accessibility Tests (Playwright)
+        run: npx playwright test
+        env:
+          # Playwright config reads PLAYWRIGHT_BASE_URL and disables the local webServer when set.
+          # See playwright.config.ts: const isRemote = baseURL.startsWith('https://')
+          PLAYWRIGHT_BASE_URL: ${{ steps.cf-preview.outputs.preview_url }}
+
+      - name: Performance Audit (Lighthouse CI)
+        run: |
+          # Pass the preview URL via CLI flags which override lighthouserc.cjs defaults.
+          # Explicitly set startServerCommand to empty string to suppress local server launch.
+          npx lhci autorun \
+            --collect.url="${PREVIEW_URL}/" \
+            --collect.startServerCommand="" \
+            --collect.startServerReadyPattern="" \
+            --collect.numberOfRuns=1
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Link Crawl (Linkinator)
+        # Linkinator crawls the live preview, following all links recursively.
+        # --timeout 30000 gives external links up to 30s before failing.
+        # --skip handles known external domains that may rate-limit CI crawls.
+        run: |
+          npx linkinator "${PREVIEW_URL}" \
+            --recurse \
+            --timeout 30000 \
+            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com)"

@@ -2,44 +2,53 @@
 export const prerender = true;
 
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation.jsx';
+import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
 
 export async function getStaticPaths() {
   const features = await getCollection('features');
-  return features.map(feature => ({
+  return features.map((feature: CollectionEntry<'features'>) => ({
     params: { slug: feature.slug },
     props: { feature },
   }));
 }
 
-const { feature: propFeature } = Astro.props;
+interface Props {
+  feature: CollectionEntry<'features'>;
+}
+
+const { feature: propFeature } = Astro.props as Props;
 const { slug } = Astro.params;
 
-let feature = propFeature;
+let feature: CollectionEntry<'features'> | undefined = propFeature;
 if (!feature) {
   const features = await getCollection('features');
-  feature = (features as any[]).find(f => f.slug === slug);
+  feature = features.find((f: CollectionEntry<'features'>) => f.slug === slug);
 }
 
 if (!feature) {
-  return Astro.redirect('/404');
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
 }
 
-const { Content } = await (feature as any).render();
+const { Content } = await feature.render();
 ---
 
-<Layout title={`${feature.data.title} | DataDocks - Dock Scheduling Features`} description={feature.data.description}>
-  <Navigation client:idle />
+<Layout
+  title={`${feature.data.title} | DataDocks`}
+  description={feature.data.description}
+>
+  <Navigation />
   
   <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
       
       {/* Header section */}
       <div class="max-w-3xl mx-auto text-center mb-16">
-        <h3 class="text-brand-orange text-lg font-bold tracking-tight uppercase mb-4">DataDocks' Features</h3>
+        <h3 class="text-brand-orange text-lg font-bold tracking-tight uppercase mb-4">DataDocks Features</h3>
         <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight font-recoleta mb-6">
           {feature.data.title}
         </h1>
@@ -61,6 +70,7 @@ const { Content } = await (feature as any).render();
                <!-- Basic video embed; could be enhanced with lite-youtube-embed if the URL is extracted to ID -->
                <iframe 
                  src={feature.data.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')} 
+                 title={feature.data.title}
                  class="w-full h-full border-0" 
                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                  allowfullscreen

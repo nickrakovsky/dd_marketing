@@ -12,22 +12,21 @@
         and text-left left-flow exclusively on widescreen elements!
       */}
       <div class="inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
-        <h2 class="inline font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9] align-middle">
-          Find out for yourself what DataDocks can do<br class="hidden min-[1020px]:inline" />
+        <h2 class="font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9]">
+          <span class="inline min-[1020px]:block">Find out for yourself what DataDocks can do</span>
           <span class="inline min-[1020px]:hidden"> </span>
-          for your operations
-        </h2>
-
-        <form
-          id="cta-bento-form"
-          class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto align-middle min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0 translate-y-[2px] xl:translate-y-[-4px]"
-        >
+          <span class="inline min-[1020px]:inline-flex min-[1020px]:items-center">
+            <span>for your operations</span>
+            <form
+              id="cta-bento-form"
+              class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0"
+            >
           <input
             type="email"
             name="email"
             placeholder="Enter your email"
             style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
-            class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none"
+            class="h-12 lg:h-[3.35rem] w-full sm:w-[18rem] lg:w-[22rem] px-5 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-base lg:text-[17px] border-none font-recoleta focus:ring-0 focus:outline-none rounded-none transition-all duration-300 sm:hover:pl-6 sm:focus:pl-6"
             required
           />
           <button
@@ -37,6 +36,8 @@
             Get Free Demo
           </button>
         </form>
+          </span>
+        </h2>
       </div>
 
     </div>
@@ -46,18 +47,42 @@
 <script is:inline>
   (function() {
     var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    var form = document.getElementById('cta-bento-form');
-    if (form) {
+
+    function attachCtaForm() {
+      var form = document.getElementById('cta-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        var email = (form.querySelector('input[name="email"]') || {}).value;
-        if (email && window.bento) {
-          window.bento.identify(email);
-          window.bento.track('Demo Subscriber', { source: window.location.pathname });
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          // 1. Client-side identify (Primary stitching)
+          // If the SDK is loaded and not blocked, this handles the identity link officially.
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
+
+          // 2. Server-side proxy (Backup/Ad-block resistant)
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+            }),
+            keepalive: true
+          }).catch(function() {});
         }
         window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
       });
     }
+
+    attachCtaForm();
+    document.addEventListener('astro:page-load', attachCtaForm);
   })();
 </script>

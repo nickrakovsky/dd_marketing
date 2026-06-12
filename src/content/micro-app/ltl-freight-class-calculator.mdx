@@ -1,0 +1,40 @@
+---
+title: "LTL Freight Class Calculator"
+description: "Calculate your freight density (PCF) and estimate your NMFC freight class instantly. Essential for accurate LTL shipping quotes."
+pubDate: "2024-04-24"
+---
+import LTLCalculator from '../../components/micro-apps/LTLCalculator';
+
+<LTLCalculator client:load />
+
+## What is LTL Freight Class?
+
+Freight class is a standardized shipping industry pricing category used for **Less-Than-Truckload (LTL)** shipments. It was developed by the National Motor Freight Traffic Association (NMFTA) to provide a uniform pricing structure across different carriers and commodities.
+
+There are 18 possible freight classes, ranging from **Class 50** (the cheapest) to **Class 500** (the most expensive).
+
+## How is Freight Class Determined?
+
+While density is the most common factor used to estimate class, the NMFTA actually evaluates four primary characteristics:
+
+1.  **Density:** The weight per cubic foot. Higher density usually means a lower class.
+2.  **Stowability:** How easily the freight can be stacked or fit with other cargo.
+3.  **Handling:** The degree of care or special equipment needed to move the shipment.
+4.  **Liability:** The value of the goods and their likelihood of being damaged, stolen, or causing damage to other freight.
+
+## How to Calculate Density (PCF)
+
+To use the calculator above, you'll need the total dimensions and weight of your shipment (including the pallet).
+
+**The formula is:**
+1.  **Calculate Volume in Cubic Inches:** Length × Width × Height
+2.  **Convert to Cubic Feet:** Cubic Inches ÷ 1,728
+3.  **Calculate Density:** Weight ÷ Cubic Feet
+
+For example, a standard 48" x 48" x 48" pallet weighing 500 lbs has a density of **7.81 PCF**, which typically falls into **Class 125**.
+
+## Why Accuracy Matters
+
+Entering the wrong freight class on your Bill of Lading (BOL) can lead to **Reclassification Fees**. If a carrier inspects your shipment and finds the density doesn't match the declared class, they will adjust the rate and often add a significant inspection fee.
+
+Using a density calculator helps you stay ahead of these costs and ensures your shipping quotes are as accurate as possible.

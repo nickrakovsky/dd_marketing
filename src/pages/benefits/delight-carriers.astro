@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import PageLayout from '../../components/PageLayout.astro'; 
+import PageLayout from '../../components/benefits/PageLayout.astro'; 
 import { carriersContent } from '../../data/pagesData';
 
 // FIXED: Define the schemaData variable
@@ -11,7 +11,9 @@ const schemaData = {
   reviews: carriersContent.testimonial ? [{
     author: carriersContent.testimonial.name,
     quote: carriersContent.testimonial.quote,
-    role: carriersContent.testimonial.role
+    role: carriersContent.testimonial.role,
+    source: carriersContent.testimonial.source,
+    url: carriersContent.testimonial.sourceUrl
   }] : []
 };
 ---

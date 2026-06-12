@@ -2,13 +2,13 @@
 export const prerender = true;
 
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.jsx';
+import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import CTA from '../components/home/CTA.astro';
 ---
 
-<Layout title="Privacy Policy | DataDocks" description="DataDocks Privacy Policy">
-  <Navigation client:idle />
+<Layout title="Privacy Policy - How DataDocks Protects Your Data | DataDocks" description="Read how DataDocks collects, uses, and protects your personal information. Learn about your data rights and our security practices.">
+  <Navigation />
   
   <main class="bg-[#FFF8E9] min-h-screen pt-32 font-sans text-black">
     
@@ -209,7 +209,7 @@ import CTA from '../components/home/CTA.astro';
         
         <div class="md:w-[40%] space-y-6">
           <h3 class="font-recoleta text-3xl md:text-5xl font-semibold leading-[1.1]">
-            Don't see your question here? We'd be happy to answer them.
+            Don't see your question here? We'd be happy to answer it.
           </h3>
           <div class="flex flex-col gap-1 md:gap-2">
             <a href="mailto:info@datadocks.com" class="text-xl md:text-2xl text-[#FF5507] font-medium hover:opacity-80 transition-all">info@datadocks.com</a>

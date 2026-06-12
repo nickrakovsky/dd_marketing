@@ -1,7 +1,7 @@
 ---
 // 1. Imports
 import Layout from './Layout.astro';
-import Navigation from '../components/Navigation';
+import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
@@ -13,7 +13,7 @@ interface Heading {
   text: string;
 }
 
-const { frontmatter, headings = [] as Heading[] } = Astro.props;
+const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
 const h2Headings = headings.filter((h: Heading) => h.depth === 2);
 
 // 2. Date Formatting
@@ -38,10 +38,31 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 
 // 4. Author Data
 const author = getAuthor(frontmatter.author);
+
+// 5. LCP Optimisation
+// Detect YouTube embeds — only load lite-yt JS when actually needed
+const hasYouTube = htmlContent.includes('lite-youtube');
+
+// Find the first priority image rendered by MDXImage for a preload hint in <head>
+// MDXImage marks the first body image with fetchpriority="high"; we extract its src
+// so the browser can start fetching it before parsing the full body HTML.
+let lcpImageSrc: string | null = null;
+let lcpImageSrcset: string | null = null;
+let lcpImageSizes: string | null = null;
+const priorityImgMatch = htmlContent.match(/<img[^>]+fetchpriority="high"[^>]*>/);
+if (priorityImgMatch) {
+  const img = priorityImgMatch[0];
+  const srcM = img.match(/[\s]src="([^"]+)"/);
+  const srcsetM = img.match(/[\s]srcset="([^"]+)"/);
+  const sizesM = img.match(/[\s]sizes="([^"]+)"/);
+  if (srcM) lcpImageSrc = srcM[1];
+  if (srcsetM) lcpImageSrcset = srcsetM[1];
+  if (sizesM) lcpImageSizes = sizesM[1];
+}
 ---
 
-<Layout 
-  title={`${frontmatter.title} | DataDocks Blog`}
+<Layout
+  title={`${frontmatter.title} | DataDocks`}
   description={frontmatter.description}
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
@@ -51,10 +72,27 @@ const author = getAuthor(frontmatter.author);
     updatedDate: frontmatter.updatedDate,
     section: frontmatter.category
   }}
+  schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
+  {/* Head slot: LCP image preload + conditional lite-youtube CSS */}
+  <Fragment slot="head">
+    {lcpImageSrc && (
+      <link
+        rel="preload"
+        as="image"
+        href={lcpImageSrc}
+        {...(lcpImageSrcset ? { imagesrcset: lcpImageSrcset } : {})}
+        {...(lcpImageSizes ? { imagesizes: lcpImageSizes } : {})}
+        fetchpriority="high"
+      />
+    )}
+    {hasYouTube && (
+      <style is:inline>lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}</style>
+    )}
+  </Fragment>
   <div class="min-h-screen flex flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
-    <Navigation client:idle />
+    <Navigation />
 
     <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-gray-900 font-recoleta text-gray-800 dark:text-gray-200 transition-colors duration-300">
       
@@ -112,6 +150,8 @@ const author = getAuthor(frontmatter.author);
                   src={frontmatter.heroFigure}
                   alt={`Illustration for ${frontmatter.title}`}
                   loading="eager"
+                  widths={[360, 540, 720, 1024]}
+                  sizes="(max-width: 768px) 100vw, 500px"
                   class="w-full h-full object-contain drop-shadow-[0_20px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] transition-all duration-300"
                 />
               </div>
@@ -124,20 +164,20 @@ const author = getAuthor(frontmatter.author);
       <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
-        <aside class="hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky top-32 z-20 max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide pr-4">
+        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4">
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
-                <h5 class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest">Contents</h5>
+                <p class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest" aria-hidden="true">Contents</p>
                 <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[#ff7635] opacity-30"></div>
               </div>
-              <nav>
-                <ul class="space-y-4">
+              <nav aria-label="Table of contents">
+                <ul class={`space-y-4 ${h2Headings.length > 12 ? '!space-y-1' : h2Headings.length > 7 ? '!space-y-2' : ''}`}>
                   {h2Headings.map((heading: Heading) => (
                     <li>
                       <a 
                         href={`#${heading.slug}`} 
-                        class="toc-link block text-sm font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4"
+                        class={`toc-link block font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4 ${h2Headings.length > 12 ? 'text-[11px] py-0.5 leading-tight' : h2Headings.length > 7 ? 'text-xs py-1 leading-snug' : 'text-sm py-1'}`}
                       >
                         {heading.text}
                       </a>
@@ -153,23 +193,25 @@ const author = getAuthor(frontmatter.author);
         <div class="w-full max-w-3xl mx-auto lg:mx-0 flex-grow">
           {/* Static TOC for Mobile */}
           {h2Headings.length > 0 && (
-            <div class="lg:hidden mb-12 bg-[#F8EDD9] dark:bg-gray-800 p-6 rounded-2xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300">
-              <details class="group">
-                <summary class="list-none cursor-pointer flex items-center justify-between outline-none">
-                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider">Table of Contents</span>
+            <div class="lg:hidden relative z-40 mb-12">
+              <details class="group bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300 mobile-toc-details">
+                <summary class="list-none cursor-pointer p-4 flex items-center justify-between outline-none">
+                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider text-sm">Table of Contents</span>
                   <svg class="w-5 h-5 text-[#fd4f00] transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 </summary>
-                <nav class="mt-6 border-t border-[#E5D3B3] dark:border-gray-700 pt-4">
-                  <ul class="space-y-3">
-                    {h2Headings.map((heading: Heading) => (
-                      <li>
-                        <a href={`#${heading.slug}`} class="block text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] transition-colors">
-                          {heading.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+                <div class="absolute left-0 right-0 top-full mt-2 bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 shadow-xl p-4 z-50 max-h-[60vh] overflow-y-auto">
+                  <nav aria-label="Table of contents (mobile)">
+                    <ul class="space-y-3">
+                      {h2Headings.map((heading: Heading) => (
+                        <li>
+                          <a href={`#${heading.slug}`} class="mobile-toc-link block text-sm text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-colors border-l-2 border-transparent pl-3">
+                            {heading.text}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </div>
               </details>
             </div>
           )}
@@ -192,22 +234,104 @@ const author = getAuthor(frontmatter.author);
                 src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
                 loading="eager"
+                widths={[360, 540, 720, 1024]}
+                sizes="(max-width: 768px) 100vw, 500px"
                 class="w-full max-h-[40vh] object-contain drop-shadow-md dark:drop-shadow-[0_10px_10px_rgba(0,0,0,0.4)] mx-auto transition-all duration-300"
               />
             </div>
           )}
           
-          <slot />
+          <Fragment set:html={htmlContent} />
         </article>
       </div>
     </div>
+
+    {relatedPosts.length > 0 && (
+      <section class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 border-t border-[#E5D3B3] dark:border-gray-800 pt-16 mt-8">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-10 gap-4">
+          <div>
+            <h2 class="font-bruta uppercase text-black dark:text-white text-3xl md:text-4xl font-bold tracking-tight mb-4">Related Content</h2>
+            <div class="w-16 h-1 bg-[#fd4f00]"></div>
+          </div>
+          <a href="/posts" class="text-[#fd4f00] font-recoleta font-bold flex items-center gap-2 hover:underline">
+            View all resources
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {relatedPosts.map((item: any) => {
+            const isVideo = item.collection === 'videos' || (item.data.postType?.discriminant === 'video' || item.data.postType?.discriminant === 'short');
+            const href = item.collection === 'videos' ? `/videos/${item.slug}` : `/posts/${item.slug}`;
+            
+            return (
+              <a href={href} class="group flex flex-col bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[#E5D3B3] dark:border-gray-700 hover:-translate-y-1">
+                {/* Image / Thumbnail */}
+                <div class="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-900">
+                  {item.data.cardImage ? (
+                    <Image 
+                      src={item.data.cardImage} 
+                      alt={item.data.cardAlt || item.data.title}
+                      width={600}
+                      height={375}
+                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : isVideo && item.data.postType?.value?.youtubeId ? (
+                    <img 
+                      src={`https://i.ytimg.com/vi/${item.data.postType.value.youtubeId}/hqdefault.jpg`} 
+                      alt={item.data.title}
+                      class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center bg-[#FBC3AD]/30">
+                      <svg class="w-12 h-12 text-[#fd4f00] opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                  )}
+                  {isVideo && (
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                      <div class="w-12 h-12 bg-[#fd4f00] rounded-full flex items-center justify-center text-white">
+                        <svg class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div class="p-6 flex flex-col flex-grow">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-[#fd4f00] bg-[#fd4f00]/5 px-2 py-1 rounded">
+                      {item.data.category || 'Logistics'}
+                    </span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                      {isVideo ? 'Video' : 'Article'}
+                    </span>
+                  </div>
+                  <h3 class="font-recoleta text-lg md:text-xl font-bold text-gray-900 dark:text-white group-hover:text-[#fd4f00] transition-colors leading-tight mb-3 line-clamp-2">
+                    {item.data.title}
+                  </h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4">
+                    {item.data.description}
+                  </p>
+                  <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
+                    <span class="text-[11px] font-medium text-gray-500">{isVideo ? 'Watch Now' : 'Read More'}</span>
+                    <svg class="w-4 h-4 text-[#fd4f00] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
 
     </main>
 
     <Footer />
 
-    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
-    <script is:inline src="/css/lite-yt-embed.js" defer></script>
+    {/* lite-yt-embed.css is already inlined in Layout.astro — no external load needed.
+         lite-yt-embed.js is only needed when the post actually contains a YouTube embed. */}
+    {hasYouTube && (
+      <script is:inline src="/css/lite-yt-embed.js" defer></script>
+    )}
 
     <script is:inline>
       // Immediately apply theme preference to avoid FOUC
@@ -220,7 +344,9 @@ const author = getAuthor(frontmatter.author);
           } else {
             document.documentElement.classList.remove('dark');
           }
-        } catch (e) {}
+        } catch (e) {
+          // LocalStorage might be unavailable in some browser settings
+        }
       })();
 
       function setupBlogInteractions() {
@@ -245,7 +371,9 @@ const author = getAuthor(frontmatter.author);
           } else {
             article?.classList.remove('text-scaled');
           }
-        } catch (e) {}
+        } catch (e) {
+          // LocalStorage might be unavailable in some browser settings
+        }
 
         if (textSizeToggle) {
           textSizeToggle.onclick = () => {
@@ -272,7 +400,7 @@ const author = getAuthor(frontmatter.author);
               const id = entry.target.getAttribute('id');
               if (!id) return;
 
-              document.querySelectorAll('.toc-link').forEach(link => {
+              document.querySelectorAll('.toc-link, .mobile-toc-link').forEach(link => {
                 const isActive = link.getAttribute('href') === `#${id}`;
                 link.classList.toggle('active', isActive);
               });
@@ -283,9 +411,43 @@ const author = getAuthor(frontmatter.author);
         document.querySelectorAll('article h2').forEach(h2 => observer.observe(h2));
       }
 
+      function setupMobileToc() {
+        const mobileTocLinks = document.querySelectorAll('.mobile-toc-link');
+        const detailsElem = document.querySelector('.mobile-toc-details');
+        mobileTocLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            if (detailsElem) {
+              detailsElem.removeAttribute('open');
+            }
+          });
+        });
+      }
+
+      function setupDesktopTocInteraction() {
+        const desktopToc = document.getElementById('desktop-toc');
+        if (!desktopToc) return;
+        const links = desktopToc.querySelectorAll('.toc-link');
+        let timeout;
+        links.forEach(link => {
+          link.addEventListener('click', () => {
+            desktopToc.classList.add('is-active-click');
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+              desktopToc.classList.remove('is-active-click');
+            }, 50);
+          });
+        });
+      }
+
       if (typeof window !== 'undefined') {
         setupScrollSpy();
-        document.addEventListener('astro:after-swap', setupScrollSpy);
+        setupMobileToc();
+        setupDesktopTocInteraction();
+        document.addEventListener('astro:after-swap', () => {
+          setupScrollSpy();
+          setupMobileToc();
+          setupDesktopTocInteraction();
+        });
       }
     </script>
 
@@ -294,28 +456,57 @@ const author = getAuthor(frontmatter.author);
 
 <style is:global>
   /* Table Wrapper & Mobile Scroll */
-  .prose table {
+  .prose .table-wrapper {
     display: block !important;
     width: 100% !important;
     max-width: none !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch; 
-    border-collapse: collapse;
     border-radius: 8px;
-    overflow: hidden;
     border: 1px solid #E5D3B3;
     transition: border-color 0.3s ease;
+    margin-bottom: 2rem;
   }
 
-  .dark .prose table {
+  .dark .prose .table-wrapper {
     border-color: #374151; /* gray-700 */
   }
 
   @media (min-width: 1024px) {
-    .prose table {
+    .prose .table-wrapper {
       width: calc(100% + 10rem) !important;
-      margin-left: -5rem !important;
+      margin-left: 0 !important;
+      border-left: 4px solid #fd4f00 !important;
+      border-radius: 0 8px 8px 0 !important;
+      box-shadow: 15px 0 30px -10px rgba(0,0,0,0.08);
     }
+    
+    .dark .prose .table-wrapper {
+      border-left-color: #ff7635 !important;
+      box-shadow: 15px 0 30px -10px rgba(0,0,0,0.3);
+    }
+  }
+
+  .prose table {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse;
+    margin: 0 !important;
+  }
+
+  .prose .table-wrapper table {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .prose > table {
+    border: 1px solid #E5D3B3;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .dark .prose > table {
+    border-color: #374151;
   }
 
   /* Table Headers */
@@ -360,15 +551,36 @@ const author = getAuthor(frontmatter.author);
     background-color: rgba(17, 24, 39, 0.4); /* gray-900 */
   }
 
+  @keyframes tocHighlightFlash {
+    0% { background-color: rgba(253, 79, 0, 0.15); }
+    100% { background-color: transparent; }
+  }
+
   /* Active state for scroll spy */
-  .toc-link.active {
+  .toc-link.active, .mobile-toc-link.active {
     color: #fd4f00 !important;
     border-left-color: #fd4f00 !important;
-    font-weight: 700;
+    -webkit-text-stroke: 0.4px currentColor;
+    animation: tocHighlightFlash 1.5s ease-out forwards;
   }
-  .dark .toc-link.active {
+  .dark .toc-link.active, .dark .mobile-toc-link.active {
     color: #ff7635 !important;
     border-left-color: #ff7635 !important;
+    -webkit-text-stroke: 0.4px currentColor;
+    animation: tocHighlightFlash 1.5s ease-out forwards;
+  }
+
+  /* Desktop TOC fading */
+  .desktop-toc-container {
+    opacity: 0.4;
+    filter: grayscale(100%);
+    transition: opacity 4s ease, filter 4s ease;
+  }
+  .desktop-toc-container:hover,
+  .desktop-toc-container.is-active-click {
+    opacity: 1;
+    filter: grayscale(0%);
+    transition: opacity 0.2s ease, filter 0.2s ease;
   }
 
   /* Smooth transitions for text resizing */

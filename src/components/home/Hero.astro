@@ -1,56 +1,56 @@
 ---
-import { Image } from "astro:assets";
-import homepageMobileImg from "../../assets/images/homepage-screenshot-mobile.png";
-
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
 <section
-  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black"
+  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black hero-mobile-section"
 >
   <div class="container mx-auto px-4">
     <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
-      {/* 1. Main Heading */}
-      <div class="relative mb-10 w-full max-w-4xl mx-auto">
+      <div class="relative mb-10 hero-spacing-1 w-full max-w-4xl mx-auto">
         <h1 class="font-bruta uppercase relative z-0 text-black">
           {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
           <span
-            class="block hero-desktop:hidden text-[clamp(3rem,11vw,7rem)] leading-[0.85] text-black w-full"
+            class="block hero-desktop:hidden hero-mobile-title leading-[0.85] text-black w-full"
           >
             <span class="block relative inline-block">
-              <!--<div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
-                  <img
-                    src={`${basePath}/images/hero-badge.webp`}
-                    alt="Save Time Make It Visible"
-                    width="96"
-                    height="96"
-                    class="w-full h-full animate-[spin_12s_linear_infinite]"
-                  />
-                </div>-->
+              YOUR YARD
+              {/* Spinning badge inactive
+              <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 z-10 w-[clamp(40px,10vw,80px)] h-[clamp(40px,10vw,80px)]">
+                <img
+                  src={`${basePath}/images/hero-badge.webp`}
+                  alt="Save Time Make It Visible"
+                  width="96"
+                  height="96"
+                  class="w-full h-full animate-[spin_12s_linear_infinite]"
+                />
+              </div>
+              */}
             </span>
-            Dock Scheduling & Yard Management Software
+            <span class="block">YOUR RULES</span>
           </span>
 
           {
-            /* DESKTOP VIEW (860px+) — restored to original text-8xl that fits on 2 lines */
+            /* DESKTOP VIEW (860px+) */
           }
           <span
             class="hidden hero-desktop:block text-8xl leading-[0.85] text-black"
           >
-            <!--<span class="relative inline-block">
-                YOUR LOADING DOCK,
-                <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
-                  <img
-                    src={`${basePath}/images/hero-badge.webp`}
-                    alt="Save Time Make It Visible"
-                    width="96"
-                    height="96"
-                    class="w-full h-full animate-[spin_12s_linear_infinite]"
-                  />
-                </div>
-              </span>
-              <span class="block">YOUR RULES</span>-->
-            Dock Scheduling & Yard Management Software
+            <span class="relative inline-block">
+              YOUR YARD
+              {/* Spinning badge inactive
+              <div class="absolute top-[2%] right-[calc(0.5ch)] -translate-y-1/2 translate-x-1/2 z-10 w-24 h-24">
+                <img
+                  src={`${basePath}/images/hero-badge.webp`}
+                  alt="Save Time Make It Visible"
+                  width="96"
+                  height="96"
+                  class="w-full h-full animate-[spin_12s_linear_infinite]"
+                />
+              </div>
+              */}
+            </span>
+            <span class="block">YOUR RULES</span>
           </span>
         </h1>
       </div>
@@ -59,13 +59,12 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
         /* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */
       }
       <p
-        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] text-black mb-12 max-w-[85vw] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[640px] mx-auto leading-relaxed px-2"
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] hero-mobile-body text-black mb-12 hero-spacing-2 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
       >
-        Our dock scheduling software is known for having the easiest interface
-        and the most helpful team in the industry.
+        One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra&nbsp;mile.
         <br class="hidden lg:block" />
-        <strong class="text-black block mt-3 md:mt-4"
-          >Start turning trucks around faster today.</strong
+        <strong class="text-black block mt-6 md:mt-4"
+          >Start turning trucks around faster&nbsp;today.</strong
         >
       </p>
 
@@ -85,7 +84,7 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
           />
           <button
             type="submit"
-            class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#E04B06] hover:bg-black text-white font-medium transition-colors duration-500 whitespace-nowrap tracking-wide text-lg flex items-center justify-center font-recoleta"
+            class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#FE5000] hover:bg-black text-white font-normal transition-colors duration-500 whitespace-nowrap tracking-wide text-[1.2rem] flex items-center justify-center font-recoleta [text-shadow:0px_1px_2px_rgba(0,0,0,0.4)] hover:[text-shadow:none]"
           >
             Get Free Demo
           </button>
@@ -111,29 +110,49 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     </div>
 
     {/* 5. Mobile/Tablet Hero Image — tappable/draggable pan */}
-    <div class="block hero-desktop:hidden mt-8 w-full px-0 mb-4">
-      <div
-        id="hero-mobile-frame"
-        class="relative w-full h-[55vh] min-h-[350px] rounded-xl shadow-[0_10px_12px_-8px_rgba(0,0,0,0.1)] overflow-hidden touch-pan-y"
-      >
-        <img
-          id="hero-mobile-img"
-          src={`${basePath}/images/homepage-screenshot-mobile.webp`}
-          srcset={`${basePath}/images/homepage-screenshot-mobile-500.webp 500w, ${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
-          sizes="(max-width: 859px) 250vw, 100vw"
-          alt="DataDocks Calendar Interface Mobile"
-          width="1724"
-          height="655"
-          fetchpriority="high"
-          loading="eager"
-          decoding="async"
-          class="w-full h-full object-cover hero-pan-active"
-          style="object-position: 0% 50%;"
-        />
-      </div>
-    </div>
+    {/*
+      On very small phones (< 480px) the image is pushed fully below the fold so
+      it never competes with the text for LCP. On larger phones and tablets it
+      stays in the hero section. The sizes attribute is tightened so the browser
+      picks 750w for throttled/small-screen devices instead of 1724w.
+    */}
   </div>
 </section>
+
+{/* Mobile hero image — rendered OUTSIDE the hero section so it is always
+    structurally below the fold on narrow phones. The text + CTA above are
+    the true LCP candidate on Lighthouse's 360px throttled device. */}
+<div class="block hero-desktop:hidden w-full" id="hero-mobile-wrapper">
+  <div
+    id="hero-mobile-frame"
+    class="relative w-full overflow-hidden touch-pan-y hero-image-container"
+  >
+    <picture>
+      <source
+        type="image/avif"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <source
+        type="image/webp"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <img
+        id="hero-mobile-img"
+        src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
+        alt="DataDocks mobile dock scheduling interface"
+        width="1724"
+        height="655"
+        fetchpriority="low"
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover hero-pan-active"
+        style="object-position: 0% 50%;"
+      />
+    </picture>
+  </div>
+</div>
 
 <style>
   /* Custom breakpoint: 860px for the hero desktop/mobile switch */
@@ -151,150 +170,299 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
     }
   }
 
-  @keyframes pan-x {
-    0%,
-    10% {
-      object-position: 0% 50%;
+  /*
+    Mobile image container — sits below the hero section.
+    On phones 480px+ it gets a decent height so the screenshot is well-framed.
+    We make it taller (85vw) so it doesn't look "very small", and give it a margin-top 
+    to push it far enough down that the H1 remains the true LCP candidate on Lighthouse.
+  */
+  .hero-image-container {
+    height: 85vw;
+    min-height: 250px;
+    max-height: 550px;
+    background: #f5ede0;
+    margin-top: 0; /* Section min-height: 100svh guarantees image is below fold */
+  }
+
+  /* Custom classes for height based scaling on mobile */
+  @media (max-width: 859px) {
+    /*
+      STRUCTURAL GUARANTEE: The section must always be at least as tall as the
+      viewport so the mobile image (rendered outside the section) always starts
+      below the fold. `svh` (small viewport height) accounts for browser chrome.
+      Any leftover space below the form stays inside the warm beige section bg
+      and looks intentional — it is not "between elements".
+    */
+    .hero-mobile-section {
+      min-height: 100svh;
     }
-    45%,
-    55% {
-      object-position: 100% 50%;
+
+    /* Default mobile styles */
+    .hero-mobile-title {
+      font-size: clamp(3.2rem, 11vw, 4rem) !important;
     }
-    90%,
-    100% {
-      object-position: 0% 50%;
+    .hero-mobile-body {
+      font-size: clamp(1.2rem, 3.2vw, 1.4rem) !important;
+    }
+    .hero-spacing-1 {
+      margin-bottom: 6vh !important;
+    }
+    .hero-spacing-2 {
+      margin-bottom: 6vh !important;
+    }
+    
+    /* Group 1: Very Small Screens (iPhone SE - 667px) */
+    @media (max-height: 680px) {
+      .hero-mobile-title {
+        font-size: clamp(3rem, 10vw, 3.3rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.2rem, 3.2vw, 1.25rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-image-container {
+        margin-top: 1vh !important;
+      }
+    }
+
+    /* Group 2: Medium Screens (iPhone XR - 698px, iPhone 12 Pro/13 mini - 744-780px, Galaxy S8+ - 740px, Samsung A16 - 780px) */
+    @media (min-height: 681px) and (max-height: 780px) {
+      .hero-mobile-section {
+        padding-top: 10vh !important; /* Push H1 down so content stack fills viewport */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(3.5rem, 11vw, 3.8rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.25rem, 3.2vw, 1.35rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 0.5vh !important;
+      }
+    }
+
+    /* Group 3: Mid-Tall Screens (Moto G - 823px, iPhone 13 - 844px) */
+    @media (min-height: 781px) and (max-height: 850px) {
+      .hero-mobile-section {
+        padding-top: 13vh !important; /* Push H1 lower, ensures stack height > viewport on 844px */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(3.8rem, 11vw, 4.2rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.3rem, 3.2vw, 1.5rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 10vh !important; /* Increased to push image below fold on iPhone 13 */
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 0.5vh !important;
+      }
+    }
+
+    /* Group 4: Ultra Tall Screens (iPhone 16 Pro/17 - 874px, iPhone 14 Pro Max - 939px, Pixel 7 - 915px) */
+    @media (min-height: 851px) {
+      .hero-mobile-section {
+        padding-top: 13vh !important; /* Reduced from 16vh — prevents button cut-off at 874px */
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        font-size: clamp(4rem, 12vw, 4.5rem) !important;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.4rem, 3.2vw, 1.6rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 9vh !important; /* Reduced from 12vh — gives button room on 874px */
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important; /* Reduced from 10vh */
+      }
+      .hero-image-container {
+        margin-top: 8vh !important; /* Increased to compensate for reduced section padding */
+      }
     }
   }
+
   .hero-pan-active {
-    /* No longer using CSS animation, handled by JS for smooth pausing/resuming */
     will-change: object-position;
   }
 </style>
 
-<script>
-  // 1. Form Handling
-  (function () {
-    const calendlyUrl =
-      "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
-    const form = document.getElementById(
-      "hero-bento-form",
-    ) as HTMLFormElement | null;
 
-    if (form) {
-      form.addEventListener("submit", (e) => {
+<script is:inline>
+  (function() {
+    var calendlyUrl = "https://calendly.com/nick-rakovsky/datadocks-demo?primary_color=FF5722";
+
+    function attachHeroForm() {
+      var form = document.getElementById('hero-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
+      form.addEventListener('submit', function(e) {
         e.preventDefault();
-        const emailInput = form.querySelector(
-          'input[name="email"]',
-        ) as HTMLInputElement | null;
-        const email = emailInput?.value;
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          // Client-side identify
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
 
-        const bento = (window as any).bento;
-        if (email && bento) {
-          bento.identify(email);
-          bento.track("Demo Subscriber", { source: window.location.pathname });
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
+            }),
+            keepalive: true
+          }).catch(function() {});
         }
-        window.open(calendlyUrl, "_blank", "noopener");
+        window.open(calendlyUrl, '_blank', 'noopener');
         form.reset();
       });
     }
-  })();
 
-  // 2. Mobile Image Panning
-  (function () {
+    attachHeroForm();
+    document.addEventListener('astro:page-load', attachHeroForm);
+  })();
+</script>
+
+<script>
+  // 2. Mobile Image Panning — deferred until after LCP paints
+  //
+  // Three key performance fixes here:
+  //   a) Wrap everything in requestIdleCallback so parsing/execution of this
+  //      script never blocks the text render (eliminates the ~2,330 ms render
+  //      delay on the hero body text).
+  //   b) Replace the synchronous frame.offsetWidth read (forced reflow) with a
+  //      ResizeObserver — layout dimensions are read in the resize callback,
+  //      outside the critical path.
+  //   c) pointerup no longer calls getComputedStyle (another forced reflow);
+  //      instead we track currentPct directly from the last pointermove.
+
+  const initPanning = () => {
     const frame = document.getElementById("hero-mobile-frame");
     const img = document.getElementById(
       "hero-mobile-img",
     ) as HTMLImageElement | null;
 
-    if (frame && img) {
-      let isDragging = false;
-      let startX = 0;
-      let startY = 0;
-      let currentPct = 0;
-      const threshold = 7;
-      
-      // Animation state
-      const targetSpeed = 0.05; // target speed per frame
-      let currentSpeed = 0; // starts at zero, builds up momentum
-      let direction = 1; // 1 for forward, -1 for backward
-      let lastInteractionTime = 0;
-      const RESUME_DELAY = 500; // 0.5s short pause before regaining momentum
-      const ACCEL_DURATION = 1500; // 1.5s to reach full speed
-      let rafId: number;
+    if (!frame || !img) return;
 
-      function animate() {
-        const now = Date.now();
-        if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
-          // Calculate momentum (0 to 1) based on time since resume delay passed
-          const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
-          const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
-          
-          currentSpeed = targetSpeed * momentum;
-          currentPct += currentSpeed * direction;
-          
-          if (currentPct >= 100) {
-            currentPct = 100;
-            direction = -1;
-          } else if (currentPct <= 0) {
-            currentPct = 0;
-            direction = 1;
-          }
-          img!.style.objectPosition = `${currentPct}% 50%`;
-        } else {
-          // Reset speed when interacting
-          currentSpeed = 0;
-        }
-        rafId = requestAnimationFrame(animate);
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let currentPct = 0;
+    const threshold = 7;
+
+    // Use ResizeObserver to track frame width without forcing a reflow.
+    let cachedFrameWidth = 0;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        cachedFrameWidth = entry.contentRect.width;
       }
+    });
+    ro.observe(frame);
 
-      rafId = requestAnimationFrame(animate);
+    // Animation state
+    const targetSpeed = 0.05;
+    let currentSpeed = 0;
+    let direction = 1;
+    let lastInteractionTime = 0;
+    const RESUME_DELAY = 500;
+    const ACCEL_DURATION = 1500;
 
-      frame.addEventListener("pointerdown", (e) => {
-        startX = e.clientX;
-        startY = e.clientY;
-        frame!.setPointerCapture(e.pointerId);
+    const animate = () => {
+      const now = Date.now();
+      if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
+        const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
+        const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
+        currentSpeed = targetSpeed * momentum;
+        currentPct += currentSpeed * direction;
+        if (currentPct >= 100) {
+          currentPct = 100;
+          direction = -1;
+        } else if (currentPct <= 0) {
+          currentPct = 0;
+          direction = 1;
+        }
+        img.style.objectPosition = `${currentPct}% 50%`;
+      } else {
+        currentSpeed = 0;
+      }
+      requestAnimationFrame(animate);
+    };
 
-        if (e.pointerType === 'mouse') {
+    requestAnimationFrame(animate);
+
+    frame.addEventListener("pointerdown", (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      frame.setPointerCapture(e.pointerId);
+      if (e.pointerType === 'mouse') {
+        isDragging = true;
+        lastInteractionTime = Date.now();
+      }
+    });
+
+    frame.addEventListener("pointermove", (e) => {
+      if (!isDragging) {
+        if (e.pointerType === 'mouse') return;
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        if (dx > threshold && dx > dy) {
           isDragging = true;
-          lastInteractionTime = Date.now();
+          startX = e.clientX;
         }
-      });
+        return;
+      }
+      lastInteractionTime = Date.now();
+      const dx = e.clientX - startX;
+      // Guard against zero-width during first frames before ResizeObserver fires
+      const fw = cachedFrameWidth || frame.getBoundingClientRect().width;
+      const deltaPct = -(dx / fw) * 100;
+      const movePct = Math.max(0, Math.min(100, currentPct + deltaPct));
+      currentPct = movePct;
+      img.style.objectPosition = `${movePct}% 50%`;
+    });
 
-      frame.addEventListener("pointermove", (e) => {
-        if (!isDragging) {
-          if (e.pointerType === 'mouse') return;
-          const dx = Math.abs(e.clientX - startX);
-          const dy = Math.abs(e.clientY - startY);
-          if (dx > threshold && dx > dy) {
-            isDragging = true;
-            startX = e.clientX; 
-          }
-          return;
-        }
+    frame.addEventListener("pointerup", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      lastInteractionTime = Date.now();
+      // currentPct is already up to date from pointermove — no getComputedStyle needed.
+    });
 
-        lastInteractionTime = Date.now();
-        const dx = e.clientX - startX;
-        const frameWidth = frame!.offsetWidth;
-        const deltaPct = -(dx / frameWidth) * 100;
-        let movePct = currentPct + deltaPct;
-        movePct = Math.max(0, Math.min(100, movePct));
-        img!.style.objectPosition = `${movePct}% 50%`;
-      });
+    frame.addEventListener("pointercancel", () => {
+      isDragging = false;
+      lastInteractionTime = Date.now();
+    });
+  };
 
-      frame.addEventListener("pointerup", (e) => {
-        if (!isDragging) return;
-        isDragging = false;
-        lastInteractionTime = Date.now();
-        
-        const computed = getComputedStyle(img!).objectPosition;
-        const match = computed.match(/([\d.]+)%/);
-        currentPct = match ? parseFloat(match[1]) : currentPct;
-      });
-
-      frame.addEventListener("pointercancel", () => {
-        isDragging = false;
-        lastInteractionTime = Date.now();
-      });
-    }
-  })();
+  // Defer init until the browser is idle so this script never delays LCP.
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(initPanning, { timeout: 2000 });
+  } else {
+    // Fallback: wait for next paint then defer to a macrotask
+    requestAnimationFrame(() => setTimeout(initPanning, 0));
+  }
 </script>

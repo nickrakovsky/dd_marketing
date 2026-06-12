@@ -19,8 +19,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        bruta: ['Bruta', 'system-ui', 'sans-serif'],
-        recoleta: ['Recoleta', 'Georgia', 'serif'],
+        bruta: ['Bruta', 'Bruta-Fallback', 'Impact', 'system-ui', 'sans-serif'],
+        recoleta: ['DD-Recoleta', 'Recoleta-Fallback', 'Georgia', 'serif'],
       },
       colors: {
 
@@ -59,6 +59,7 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
 
+        'brand-orange': '#fd4f00',
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
@@ -70,6 +71,7 @@ export default {
       },
       transitionTimingFunction: {
         'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
       },
       borderRadius: {
         lg: "var(--radius)",

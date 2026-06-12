@@ -1,0 +1,47 @@
+---
+// src/components/MDXImage.astro
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: string | ImageMetadata;
+  alt: string;
+  class?: string;
+}
+
+const { src, alt, ...rest } = Astro.props;
+
+// A global map to track image counts per page pathname
+if (!(globalThis as any).mdxImageCounts) {
+  (globalThis as any).mdxImageCounts = new Map();
+}
+const pathname = Astro.url.pathname;
+const currentCount = ((globalThis as any).mdxImageCounts.get(pathname) || 0) + 1;
+(globalThis as any).mdxImageCounts.set(pathname, currentCount);
+
+const isFirstImage = currentCount === 1;
+// Determine if we should treat it as a local/optimized image
+const isImageMetadata = typeof src === 'object';
+---
+
+{isImageMetadata ? (
+  <Image
+    src={src as ImageMetadata}
+    alt={alt || ''}
+    widths={[360, 540, 720, 1024, 1600]}
+    sizes="(max-width: 768px) calc(100vw - 2rem), (max-width: 1024px) 720px, 768px"
+    class="w-full h-auto rounded-xl object-contain drop-shadow-md transition-all duration-300"
+    loading={isFirstImage ? "eager" : "lazy"}
+    fetchpriority={isFirstImage ? "high" : "auto"}
+    {...rest}
+  />
+) : (
+  <img 
+    src={src as string} 
+    alt={alt || ''} 
+    class="w-full h-auto rounded-xl object-contain drop-shadow-md transition-all duration-300" 
+    loading={isFirstImage ? "eager" : "lazy"}
+    fetchpriority={isFirstImage ? "high" : "auto"}
+    {...rest} 
+  />
+)}

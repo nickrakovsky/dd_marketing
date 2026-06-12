@@ -40,6 +40,8 @@ export const defaultContent: PageContent = {
     name: "Nick Steinman",
     role: "Warehouse Supervisor, Food Industry",
     image: nickSteinman,
+    source: "Capterra",
+    sourceUrl: "https://www.capterra.com/p/179266/DataDocks/#Capterra___6872822/",
   },
   benefits: {
     benefits: [

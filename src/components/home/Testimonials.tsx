@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+// React and useState are unused
+import { useCallback, useEffect, useRef /*, useState */ } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useIsMobile } from '../../hooks/use-mobile';
@@ -20,12 +21,12 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export default function Testimonials({ items }: TestimonialsProps) {
+export default function Testimonials({ items = [] }: TestimonialsProps) {
   const isMobile = useIsMobile();
   
   // For desktop loop, we double the tests to avoid jumpiness on small slide counts
   // But on mobile, we keep it exactly as-is for native scroll behavior
-  const displayTestimonials = !isMobile ? [...items, ...items] : items;
+  const displayTestimonials = !isMobile && items.length > 0 ? [...items, ...items] : items;
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
@@ -166,7 +167,7 @@ export default function Testimonials({ items }: TestimonialsProps) {
                         <img
                           src={item.logo}
                           alt="Company Logo"
-                          width="auto"
+                          width="120"
                           height="32"
                           loading="lazy"
                           className="h-full w-auto object-contain brightness-0 flex-shrink-0"

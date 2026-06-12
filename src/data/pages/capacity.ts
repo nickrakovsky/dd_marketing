@@ -62,6 +62,8 @@ export const capacityContent: PageContent = {
     name: "Isaac Morley",
     role: "Director of Operations, Quality Distribution LLC",
     image: isaacMorley,
+    source: "Capterra",
+    sourceUrl: "https://www.capterra.com/p/179266/DataDocks/#Capterra___6856549/",
   },
   benefits: {
     benefits: [

@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import Layout from '../../layouts/Layout.astro';
-import PageLayout from '../../components/PageLayout.astro'; 
+import PageLayout from '../../components/benefits/PageLayout.astro'; 
 import { defaultContent } from '../../data/pagesData';
 
 // FIXED: Define the schemaData variable
@@ -11,14 +11,16 @@ const schemaData = {
   reviews: defaultContent.testimonial ? [{
     author: defaultContent.testimonial.name,
     quote: defaultContent.testimonial.quote,
-    role: defaultContent.testimonial.role
+    role: defaultContent.testimonial.role,
+    source: defaultContent.testimonial.source,
+    url: defaultContent.testimonial.sourceUrl
   }] : []
 };
 ---
 
 <Layout 
   title="Digitize Dock Operations | DataDocks"
-  description="Replace spreadsheets with a digital audit trail. Sync dock data with your WMS/TMS automatically."
+  description="Replace spreadsheets and phone calls with a digital audit trail for every dock appointment. Syncs scheduling data to your WMS and TMS automatically."
   schemaData={schemaData} 
 >
   <PageLayout content={defaultContent} isOrangeNav={true} />
