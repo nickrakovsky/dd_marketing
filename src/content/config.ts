@@ -4,6 +4,7 @@ const postsCollection = defineCollection({
     type: 'content',
     schema: ({ image }) => z.object({
         title: z.string(),
+        seoTitle: z.string().optional(),
         description: z.string().optional(),
         // z.coerce.date() forces Webflow's weird string dates into standard Date objects
         pubDate: z.coerce.date(),
@@ -50,6 +51,7 @@ const featuresCollection = defineCollection({
     type: 'content',
     schema: () => z.object({
         title: z.string(),
+        seoTitle: z.string().optional(),
         description: z.string().optional(),
         pubDate: z.coerce.date().optional(),
         icon: z.string().optional(),

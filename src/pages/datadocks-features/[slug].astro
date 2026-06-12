@@ -38,7 +38,7 @@ const { Content } = await feature.render();
 ---
 
 <Layout
-  title={`${feature.data.title} | DataDocks`}
+  title={feature.data.seoTitle || `${feature.data.title} | DataDocks`}
   description={feature.data.description}
 >
   <Navigation />

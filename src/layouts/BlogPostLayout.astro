@@ -62,7 +62,7 @@ if (priorityImgMatch) {
 ---
 
 <Layout
-  title={`${frontmatter.title} | DataDocks`}
+  title={frontmatter.seoTitle || `${frontmatter.title} | DataDocks`}
   description={frontmatter.description}
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
