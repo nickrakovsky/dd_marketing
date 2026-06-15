@@ -441,6 +441,41 @@ const jsonLd = {
               ddReportError('storage_write', err && err.message);
             }
 
+            // --- Push first-touch as user properties so EVERY GA4 event ---
+            // (page_view, scroll, click, demo_booked) carries first-touch
+            // attribution, not just our funnel events. Reads from localStorage
+            // so a returning visitor's first-touch persists across sessions.
+            //
+            // GA4 ingestion path: Cloudflare Zaraz GA4 action. To surface these
+            // in reports, register matching User-scoped Custom Definitions in
+            // GA4 Admin → Custom definitions for first_utm_source/medium/campaign.
+            try {
+              var first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}');
+              var userProps = {
+                first_utm_source:   first.utm_source   || 'direct',
+                first_utm_medium:   first.utm_medium   || 'direct',
+                first_utm_campaign: first.utm_campaign || '',
+                first_landing_page: first.landing      || ''
+              };
+              // gtag path (no-op today since GA4 is Zaraz-only, but future-proof)
+              if (typeof window.gtag === 'function') {
+                window.gtag('set', 'user_properties', userProps);
+              }
+              // Zaraz variables — readable by Zaraz Actions configured to map
+              // them onto GA4 user_properties or event params.
+              if (window.zaraz && typeof window.zaraz.set === 'function') {
+                Object.keys(userProps).forEach(function(k) {
+                  window.zaraz.set(k, userProps[k]);
+                });
+              }
+              // dataLayer — for any GTM listener that's been configured to read
+              // user_properties off the data layer.
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({ event: 'dd_user_properties_set', user_properties: userProps });
+            } catch (err) {
+              ddReportError('user_properties_set', err && err.message);
+            }
+
             window.ddGetAttribution = function() {
               var first = {}, last = {};
               try { first = JSON.parse(localStorage.getItem('dd_first_touch') || '{}'); } catch { /* noop */ }

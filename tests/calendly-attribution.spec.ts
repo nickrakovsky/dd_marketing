@@ -267,6 +267,54 @@ test.describe('Calendly entry points (mocked)', () => {
 });
 
 test.describe('Calendly funnel tracking', () => {
+  test('first-touch user_properties are pushed at page load (GA4)', async ({ page }) => {
+    // Verifies that landing with UTMs immediately writes first-touch values
+    // to all three GA4-bound sinks: gtag user_properties, Zaraz variables,
+    // and the dataLayer dd_user_properties_set event. This is what gets
+    // first-touch attribution onto EVERY GA4 event, not just demo_booked.
+    const zarazSets: Array<[string, unknown]> = [];
+    const gtagSets: Array<[string, unknown]> = [];
+    await page.addInitScript(() => {
+      (window as unknown as { __gtagSets?: Array<unknown[]> }).__gtagSets = [];
+      (window as unknown as { gtag?: (...a: unknown[]) => void }).gtag = (...args: unknown[]) => {
+        (window as unknown as { __gtagSets: Array<unknown[]> }).__gtagSets.push(args);
+      };
+      (window as unknown as { __zarazSets?: Array<[string, unknown]> }).__zarazSets = [];
+      (window as unknown as { zaraz?: { set: (k: string, v: unknown) => void; track: (...a: unknown[]) => void } }).zaraz = {
+        set: (k, v) => (window as unknown as { __zarazSets: Array<[string, unknown]> }).__zarazSets.push([k, v]),
+        track: () => {},
+      };
+    });
+
+    await page.goto('/?utm_source=google&utm_medium=cpc&utm_campaign=brand_2026&utm_term=dock_software&utm_content=ad_a');
+
+    const collected = await page.evaluate(() => ({
+      gtag: (window as unknown as { __gtagSets: unknown[][] }).__gtagSets,
+      zaraz: (window as unknown as { __zarazSets: [string, unknown][] }).__zarazSets,
+      dataLayer: (window as unknown as { dataLayer?: Array<Record<string, unknown>> }).dataLayer || [],
+    }));
+    gtagSets.push(...(collected.gtag as Array<[string, unknown]>));
+    zarazSets.push(...collected.zaraz);
+
+    // gtag('set', 'user_properties', {...}) — find the call
+    const gtagUserProps = gtagSets.find((args) => args[0] === 'set' && args[1] === 'user_properties');
+    expect(gtagUserProps, 'gtag(set, user_properties) must fire on page load').toBeDefined();
+    const gtagPayload = gtagUserProps![2] as Record<string, string>;
+    expect(gtagPayload.first_utm_source).toBe('google');
+    expect(gtagPayload.first_utm_medium).toBe('cpc');
+    expect(gtagPayload.first_utm_campaign).toBe('brand_2026');
+
+    // Zaraz variables — should have one set call per user prop
+    const zarazSource = zarazSets.find(([k]) => k === 'first_utm_source');
+    expect(zarazSource?.[1], 'zaraz.set(first_utm_source) must fire — this is the live GA4 path').toBe('google');
+    expect(zarazSets.find(([k]) => k === 'first_utm_campaign')?.[1]).toBe('brand_2026');
+
+    // dataLayer — single dd_user_properties_set event
+    const dlEntry = collected.dataLayer.find((e) => e.event === 'dd_user_properties_set');
+    expect(dlEntry, 'dd_user_properties_set must be pushed to dataLayer').toBeDefined();
+    expect((dlEntry!.user_properties as Record<string, string>).first_utm_source).toBe('google');
+  });
+
   test('all four funnel events fire to dataLayer', async ({ page }) => {
     await page.goto('/?utm_source=meta&utm_campaign=funnel_test');
 
