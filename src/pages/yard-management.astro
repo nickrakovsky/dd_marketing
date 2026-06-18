@@ -1,0 +1,151 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import CTA from '../components/home/CTA.astro';
+
+// FAQ data for JSON-LD FAQPage schema and page accordion
+const yardManagementFaqs = [
+  {
+    question: "What does using a Yard Management System (YMS) look like day-to-day?",
+    answer: "Yard management is an incredibly diverse software category, so it's difficult to pinpoint a universal way these systems work. Each vendor builds with a slightly different core use case in mind. Generally speaking, almost all yard management systems involve two or three of the following touchpoints:<br/><br/><strong>At the gate:</strong> A digital app (either in the hands of a security guard or the driver themselves) can be used to replace clipboards and radios, check in a truck, create a record in the system and notify the shipping team of the arrival.<br/><br/><strong>In the facility:</strong> Managers and coordinators get a live digital map to find specific P.O.s or track empty and loaded trailers across the property.<br/><br/><strong>On the concrete:</strong> The software acts as a dispatch engine, tracking pending or completed move orders or even sending notifications directly to the yard jockeys."
+  },
+  {
+    question: "What's the difference between yard management and dock scheduling?",
+    answer: "Yard Management and Dock Scheduling are sometimes used interchangeably, and have some features in common, but many solutions exist that provide one side and not the other.<br/><br/>Dock Scheduling typically refers to the management of appointments prior to a truck arriving at the facility, plus the information processing that takes place during loading and unloading (such as inspections and time tracking). Yard Management typically refers to the control of events that occur when the truck is on the property but not actively being loaded or unloaded."
+  },
+  {
+    question: "How do I know if I need a YMS?",
+    answer: "There are three kinds of telltale signs that a facility is in need of a digital upgrade:<br/><ol class=\"list-decimal pl-5 mt-2 space-y-2\"><li><strong>Financial bleeding:</strong> You are consistently leaking money on unplanned overtime, idle time, shrinkage, detention fees or other carrier penalties.</li><li><strong>The visibility black hole:</strong> Your TMS tracks what's on the road, your WMS knows about the inventory inside your four walls, but you couldn't say what's sitting in your yard at any given moment.</li><li><strong>Process bottlenecks:</strong> Trucks are queuing up outside on public roads, warehouse crews are waiting around for confirmation of what trailer to work, or work gets delayed while you confirm the identity of a mystery load.</li></ol>"
+  },
+  {
+    question: "Is there a difference between a standalone YMS and the \u201Cyard management\u201D module in my WMS or TMS?",
+    answer: "The difference is huge.<br/><br/>From a WMS perspective, yard space is an extension of the warehouse. The WMS is chiefly interested in what inventory is where. It doesn't treat the P.O., the carrier or the schedule as essential pieces of information.<br/><br/>A TMS yard module tends to have the opposite problem. It rarely understands the constraints of space. It thinks of the yard as a timeline of discrete events rather than a collection of assets located in different places around the property.<br/><br/>Standalone systems are built with this fact in mind: that every operation is different and handles the handover between transportation and inventory differently. While each YMS vendor specializes in a different slice of use cases, they almost all do a better job at keeping up with the messy reality of daily operations than bundled modules."
+  },
+  {
+    question: "Do we need to be using RFID or automation to use a YMS?",
+    answer: "No. The baseline value of a YMS is getting a digital ledger to replace your clipboards and spreadsheets.<br/><br/>Human-in-the-loop is the norm: guards selecting P.O.s on a tablet or jockeys getting specific move orders from a coordinator with a map of everything immediately creates a big efficiency boost.<br/><br/>Automating further by integrating RFID tags or computer vision is just one possible upgrade for large, complex operations."
+  },
+  {
+    question: "How do you implement a YMS?",
+    answer: "Most modern YMS solutions are cloud-based, and some include a mobile app.<br/><br/>Your vendor should assist you with comprehensive onboarding, including some up-front configuration and customization based on the needs of your facility.<br/><br/>Most implementations involve a computer inside the facility that can serve as a central command station for the coordinator, supervisor or manager. Some facilities install a large screen visible for the internal warehouse team, while others make extensive use of mobile devices.<br/><br/>Getting the relevant data into the system can be done with a combination of methods, but it's often helpful to map out the physical reality of the yard (including parking slots, gate zones, etc) at least roughly.<br/><br/>P.O. and carrier data can be bulk imported, populated manually, or even connected to existing systems (WMS, TMS, ERP, etc) to establish the baseline, and then expanded gradually.<br/><br/>From there it's a case of managing change, training all the relevant personnel on the features relevant to them, and getting deeper over time, ideally with the support of a vendor that sticks around to see you succeed."
+  },
+  {
+    question: "How do I figure out which YMS is right for my facility?",
+    answer: "The key to choosing the right YMS is understanding the constraints of your own operations in context. Every vendor has its own idea of what a \"typical\" operation and its yard looks like.<br/><br/>The first question to ask, which can eliminate about half the vendors, is: are you a container terminal? That is to say, you answer yes to three or more of the following:<br/><ul class=\"list-disc pl-5 mt-2 space-y-1\"><li>We get more containers than trailers.</li><li>We manage chassis as a separate asset from containers or trailers.</li><li>We stack assets vertically and/or use cranes to move them around.</li><li>We carry out breakbulk or consolidation operations directly outside on the tarmac.</li><li>Our facility connects directly onto rail, sea, or air freight infrastructure.</li><li>Most of our moves are \"rehandles\" or \"shuffles\" within the yard rather than to and from dock doors.</li></ul><br/>If you fit into that category, you can completely rule out the \"warehouse yard management\" vendors; if you don't, you can filter out the \"terminal operating system\" vendors. And if it looks like a coin flip, the decider is going to be vertical container stacking.<br/><br/>Let's assume you've ruled out the terminal systems. Your yard is fundamentally a warehouse yard; it exists to feed your loading docks, not external infrastructure. Now your choices are going to come down to the interplay between:<br/><ul class=\"list-disc pl-5 mt-2 space-y-1\"><li>Cost</li><li>Involvement of IT</li><li>Need for customization</li></ul><br/>A full guide to that stage of the selection process is available at <a href=\"/posts/best-yard-management-options\" class=\"text-[#fd4f00] hover:underline\">best yard mgmt systems</a>."
+  },
+  {
+    question: "How does a YMS interact with a WMS and a TMS?",
+    answer: "Some facilities run their systems in isolation or share data using simple file transfers, while others connect them together. There's no one standard for this; what one facility deeply automates another will keep as a manual process, and vice-versa:<br/><ul class=\"list-disc pl-5 mt-2 space-y-2\"><li>You can have your TMS push ASNs into the schedule with the P.O. data, either as a security measure or to streamline scheduling.</li><li>The YMS could fire timestamps to the TMS to ensure fairer detention tracking and update its transit status for the next destination.</li><li>If a carrier misses its slot, the YMS could query the TMS for an alternative slot (or in a very advanced integration, even an alternative carrier for outbound loads!)</li><li>The WMS could automate move requests based on the flow of internal operations (e.g. the floor is clear so we're ready to unload that difficult drop trailer).</li></ul>"
+  },
+  {
+    question: "Do truck drivers need to download a specific app for gate check-ins to work?",
+    answer: "No, most YMS solutions don't require this. In many cases, a web-app (no download) is one option for allowing self-check-in. Other implementations include having a guard confirm the check in, SMS or QR code systems, or a self-service kiosk with an integrated tablet."
+  }
+];
+
+
+---
+
+<Layout
+  title="Yard Management: What It Is, How It Works, and When You Need It"
+  description="Yard management is the practice of controlling trailer movements, staging, and visibility in a warehouse yard. Learn how it differs from dock scheduling and YMS, and when you need each."
+  schemaData={{ faq: yardManagementFaqs }}
+>
+  <Navigation />
+
+  <main class="bg-[#FFF8E9] min-h-screen font-recoleta text-gray-800">
+
+    {/* ═══ HERO ═══════════════════════════════════════════════════════════ */}
+    <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="font-bruta text-5xl md:text-6xl lg:text-7xl uppercase text-[#fd4f00] leading-[1.05] mb-8 text-center">
+          Yard Management
+        </h1>
+        <div class="prose prose-lg md:prose-xl prose-orange max-w-3xl mx-auto font-sans text-gray-700">
+          <p>
+            <strong class="text-black font-semibold">Yard management is the strategic coordination of assets</strong> in the outdoor space of a property. When that property is a warehouse or production facility, yard management is concerned with the visibility, scheduling, and effective movement of trucks, and sometimes unhooked trailers or containers.
+          </p>
+          <p>
+            At its most basic, yard management might consist of nothing more than the oversight of traffic flowing between the gate of the property and its loading docks, ensuring that trucks can smoothly back up to their assigned dock doors and later depart with a minimum of obstruction or risk of accidents.
+          </p>
+          <p>
+            But most facilities have additional requirements, such as a guard shack verifying the identity of trucks, dedicated spotters or yard jockeys to ferry dropped trailers between parking spaces and dock doors, or a predictive scheduling and planning system to optimize yard efficiency and prevent bottlenecks.
+          </p>
+          <p>
+            For this reason, many facilities employ Yard Management Software, which often overlaps with, but is not identical to, Dock Scheduling Software.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ═══ RESERVED: MICRO-APP SLOT ═══════════════════════════════════════ */}
+    {/* This section will host the 2.5D Visual Assessment / Decision Tree App
+        from the micro-app branch. For now, the written Q&A content below serves
+        as the primary page content and will move below-fold when the app ships. */}
+
+    {/* ═══ FAQ (Native HTML to avoid React/Solid mixing) ═══════════════ */}
+    <section class="bg-secondary py-24 border-t border-orange-100/50">
+      <div class="mx-auto max-w-6xl px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-start">
+          <div class="w-full flex flex-col gap-4">
+            {yardManagementFaqs.slice(0, Math.ceil(yardManagementFaqs.length / 2)).map((faq) => (
+              <details class="group rounded-lg border border-gray-200 bg-white px-5 shadow-sm overflow-hidden">
+                <summary class="flex flex-1 items-center justify-between py-4 font-recoleta font-semibold text-black text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors">
+                  {faq.question}
+                  <svg class="h-4 w-4 shrink-0 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <div class="text-gray-700 text-base pb-4 pt-0 font-sans leading-relaxed" set:html={faq.answer} />
+              </details>
+            ))}
+          </div>
+
+          <div class="w-full flex flex-col gap-4">
+            {yardManagementFaqs.slice(Math.ceil(yardManagementFaqs.length / 2)).map((faq) => (
+              <details class="group rounded-lg border border-gray-200 bg-white px-5 shadow-sm overflow-hidden">
+                <summary class="flex flex-1 items-center justify-between py-4 font-recoleta font-semibold text-black text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors">
+                  {faq.question}
+                  <svg class="h-4 w-4 shrink-0 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <div class="text-gray-700 text-base pb-4 pt-0 font-sans leading-relaxed" set:html={faq.answer} />
+              </details>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {/* ═══ CONTENT HUB — INTERNAL LINKS ══════════════════════════════════ */}
+    <section class="py-16 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-black mb-8 text-center">
+          Explore Yard Management
+        </h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          <a href="/posts/yard-management-process-flow" class="group block bg-transparent rounded-xl p-6 border border-[#fd4f00]/20 hover:border-[#fd4f00]/50 hover:bg-white hover:shadow-md transition-all">
+            <h3 class="font-bruta text-lg uppercase text-black group-hover:text-[#fd4f00] transition-colors mb-2">Yard Management Process Flow</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">Step-by-step operational blueprint: from gate check-in to departure, with roles and best practices for every stage.</p>
+          </a>
+          <a href="/posts/best-yard-management-options" class="group block bg-transparent rounded-xl p-6 border border-[#fd4f00]/20 hover:border-[#fd4f00]/50 hover:bg-white hover:shadow-md transition-all">
+            <h3 class="font-bruta text-lg uppercase text-black group-hover:text-[#fd4f00] transition-colors mb-2">Best Yard Management Software</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">Side-by-side comparison of the top yard management platforms for warehouses and distribution centers.</p>
+          </a>
+          <a href="/datadocks-features/yard-management" class="group block bg-transparent rounded-xl p-6 border border-[#fd4f00]/20 hover:border-[#fd4f00]/50 hover:bg-white hover:shadow-md transition-all">
+            <h3 class="font-bruta text-lg uppercase text-black group-hover:text-[#fd4f00] transition-colors mb-2">DataDocks Yard Management</h3>
+            <p class="text-gray-600 text-sm leading-relaxed">See how DataDocks handles yard visibility, trailer tracking, and integration with your existing WMS and TMS.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* ═══ CTA ════════════════════════════════════════════════════════════ */}
+    <CTA />
+
+  </main>
+
+  <Footer />
+</Layout>

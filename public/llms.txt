@@ -65,11 +65,10 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [How to Run Peak Season Without Dock Chaos](https://datadocks.com/posts/peak-season-without-dock-chaos-a-complete-playbook): Complete peak season playbook
 
 ### Guides -- Yard Management
-- [What is a Yard Management System (YMS)?](https://datadocks.com/posts/what-is-a-yard-management-system-yms): Complete guide to yard management systems
-- [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Steps, roles, and best practices
-- [Yard Management vs Dock Scheduling vs YMS](https://datadocks.com/posts/yard-management-vs-dock-scheduling-vs-yms): Key differences explained
-- [8 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options): Software comparison guide
-- [Crucial Components to Successful Yard Management](https://datadocks.com/posts/crucial-components-to-successful-yard-management): Essential yard management elements
+- [Yard Management](https://datadocks.com/yard-management): What yard management is, how it differs from dock scheduling and YMS, and when you need each
+- [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Steps, roles, and best practices for yard operations
+- [10 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options): Software comparison guide for warehouse and logistics buyers
+- [The Cost of Yard Chaos](https://datadocks.com/posts/cost-of-yard-chaos): Detention fee benchmarks, dwell time data, and ROI framework
 - [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations): Automation roadmap for yard management
 - [Yard Visibility](https://datadocks.com/posts/yard-visibility): 3 easy ways to improve yard visibility fast
 

@@ -53,6 +53,9 @@ export default defineConfig({
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
+    '/posts/what-is-a-yard-management-system-yms': '/yard-management',
+    '/posts/yard-management-vs-dock-scheduling-vs-yms': '/yard-management',
+    '/posts/crucial-components-to-successful-yard-management': '/posts/yard-management-process-flow',
   },
 
   integrations: [
@@ -129,6 +132,7 @@ export default defineConfig({
         return item;
       },
       customPages: [
+        'https://datadocks.com/yard-management',
         'https://datadocks.com/datadocks-features/dock-dashboard',
         'https://datadocks.com/datadocks-features/carrier-portal',
         'https://datadocks.com/datadocks-features/yard-management',
