@@ -68,7 +68,6 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Yard Management](https://datadocks.com/yard-management): What yard management is, how it differs from dock scheduling and YMS, and when you need each
 - [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Steps, roles, and best practices for yard operations
 - [10 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options): Software comparison guide for warehouse and logistics buyers
-- [The Cost of Yard Chaos](https://datadocks.com/posts/cost-of-yard-chaos): Detention fee benchmarks, dwell time data, and ROI framework
 - [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations): Automation roadmap for yard management
 - [Yard Visibility](https://datadocks.com/posts/yard-visibility): 3 easy ways to improve yard visibility fast
 
