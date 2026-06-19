@@ -6,6 +6,8 @@ import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
 import { getAuthor } from '../data/authors';
+import { getEntry } from 'astro:content';
+import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 
 interface Heading {
   depth: number;
@@ -39,7 +41,17 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 // 4. Author Data
 const author = getAuthor(frontmatter.author);
 
-// 5. LCP Optimisation
+// 5. Related Feature Data
+let relatedFeatureEntry = null;
+if (frontmatter.relatedFeature) {
+  if (typeof frontmatter.relatedFeature === 'object' && 'id' in frontmatter.relatedFeature) {
+    relatedFeatureEntry = await getEntry(frontmatter.relatedFeature);
+  } else if (typeof frontmatter.relatedFeature === 'string') {
+    relatedFeatureEntry = await getEntry('features', frontmatter.relatedFeature);
+  }
+}
+
+// 6. LCP Optimisation
 // Detect YouTube embeds — only load lite-yt JS when actually needed
 const hasYouTube = htmlContent.includes('lite-youtube');
 
@@ -161,10 +173,10 @@ if (priorityImgMatch) {
         </div>
       </div>
       
-      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-12">
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
-        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4">
+        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-56 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4" aria-label="Table of Contents">
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
@@ -190,7 +202,7 @@ if (priorityImgMatch) {
         </aside>
 
         {/* Main Content Area */}
-        <div class="w-full max-w-3xl mx-auto lg:mx-0 flex-grow">
+        <div class="w-full min-w-0 max-w-2xl xl:max-w-3xl lg:mx-0 flex-grow relative">
           {/* Static TOC for Mobile */}
           {h2Headings.length > 0 && (
             <div class="lg:hidden relative z-40 mb-12">
@@ -244,6 +256,15 @@ if (priorityImgMatch) {
           <Fragment set:html={htmlContent} />
         </article>
       </div>
+
+      {/* Right Sidebar (Visible on LG+) */}
+      <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch" aria-label="Related Resources">
+        {relatedFeatureEntry && (
+          <div id="sidebar-feature-callout" class="mb-8">
+            <RelatedFeatureCallout feature={relatedFeatureEntry} isSidebar={true} />
+          </div>
+        )}
+      </aside>
     </div>
 
     {relatedPosts.length > 0 && (
@@ -605,4 +626,5 @@ if (priorityImgMatch) {
       line-height: 1.85 !important;
     }
   }
+
 </style>

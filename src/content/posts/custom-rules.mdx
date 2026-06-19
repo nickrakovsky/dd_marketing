@@ -15,6 +15,7 @@ showToc: true
 postType:
   discriminant: article
   value: {}
+relatedFeature: capacity-limits
 ---
 
 A lot of facilities are finding out that first-come-first-serve just doesn’t cut it anymore. Demand spikes unpredictably, competing for the same limited doors and workforce, not to mention the inconsistent or straight-up missing paperwork. Operations managers know something needs to change. But there’s a difficult conversation to have with carriers and customers:
@@ -122,6 +123,8 @@ You can also set up special rules for temperature-control and loads that require
 A lot of facilities don’t realize how much hidden capacity they can free up with more strategic allocation. Setting a flat daily limit seems straightforward, but it ignores the fact that throughput varies day-by-day, and the need to balance inbound/outbound availability and keep some slots free for late-booking customers. Without rules to account for all that, coordinators are left policing the balance manually, and capacity never quite lines up with actual demand.
 
 A warehouse that works with DataDocks configured day-of-week and customer-specific quotas to match service levels and staffing. Outbound is capped at 15 appointments on weekdays, 4 on Saturdays, and 2 on Sundays across all clients. Inbound quotas vary by account, such as 5 per day for Customer A and 7 for Customer B. 
+
+<RelatedFeatureCallout id="capacity-limits" />
 
 These constraints are enforced at search and booking through dynamic capacity modelling. When a requested time would break a limit, the platform’s conflict resolution engine proposes the next valid options, avoiding manual back-and-forth while protecting SLAs.
 

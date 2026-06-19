@@ -95,14 +95,17 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     // Create Desktop Card
     const card = document.createElement('div');
     card.id = 'smartlink-desktop-card';
-    card.className = 'fixed z-50 hidden w-80 bg-white shadow-2xl border border-[#E5D3B3] rounded-xl transition-opacity duration-200 opacity-0 group not-prose';
+    card.className = 'fixed z-50 hidden w-80 bg-white dark:bg-gray-800 shadow-2xl border border-[#E5D3B3] dark:border-gray-700 rounded-xl transition-opacity duration-200 opacity-0 group not-prose';
     card.innerHTML = `
       <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
       <div class="relative p-4">
-        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 m-0 leading-tight">Related Guide</h3>
-        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 mt-1 leading-snug"></p>
-        <a id="sl-desktop-link" href="/posts" class="font-sans text-xs font-semibold text-[#fd4f00] mt-2 w-fit inline-block hover:underline">
+        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight">Related Guide</h3>
+        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug"></p>
+        <a id="sl-desktop-link" href="/posts" class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] hover:underline mt-3 w-fit">
           Explore the full guide
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
         </a>
       </div>
     `;
@@ -140,9 +143,9 @@ const isValid = !!(glossaryEntry && targetPostUrl);
   function createPersistentCard(trigger: HTMLElement): HTMLElement {
     const card = document.createElement('div');
     card.className = [
-      'absolute left-0 z-30 w-full bg-white border border-[#E5D3B3] rounded-xl shadow-md p-4 not-prose',
-      'opacity-40 grayscale transition-all duration-300 pointer-events-auto transform translate-x-0',
-      'data-[hovered=true]:opacity-100 data-[hovered=true]:grayscale-0 data-[hovered=true]:-translate-x-4 data-[hovered=true]:z-40'
+      'absolute left-0 z-30 w-full bg-white dark:bg-gray-800 border border-[#E5D3B3] dark:border-gray-700 rounded-xl shadow-md p-4 not-prose smartlink-persistent-card group',
+      'opacity-40 grayscale dark:opacity-50 dark:grayscale transition-all duration-300 pointer-events-auto transform',
+      'data-[hovered=true]:opacity-100 data-[hovered=true]:grayscale-0 data-[hovered=true]:z-40'
     ].join(' ');
 
     const title   = (trigger.dataset.smartlinkTitle   || '').replace(/</g, '&lt;');
@@ -150,10 +153,13 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     const href    = trigger.dataset.smartlinkHref || '#';
 
     card.innerHTML = `
-      <h3 class="font-sans text-sm font-bold text-gray-900 m-0 leading-tight">${title}</h3>
-      <p class="font-sans text-xs text-gray-600 mt-1 leading-snug">${snippet}</p>
-      <a href="${href}" class="font-sans text-xs font-semibold text-[#fd4f00] mt-2 w-fit inline-block hover:underline">
+      <h3 class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight">${title}</h3>
+      <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug">${snippet}</p>
+      <a href="${href}" class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 group-hover:text-[#fd4f00] group-data-[hovered=true]:text-[#fd4f00] dark:group-hover:text-[#ff7635] dark:group-data-[hovered=true]:text-[#ff7635] hover:underline mt-3 w-fit">
         Explore guide
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </a>`;
     return card;
   }
@@ -204,46 +210,43 @@ const isValid = !!(glossaryEntry && targetPostUrl);
   }
 
   function initSmartLinks() {
-    // Cleanup
-    document.getElementById('marginalia-track')?.remove();
+    // Cleanup old persistent cards from sidebar if present
+    const sidebar = document.getElementById('blog-right-sidebar');
+    if (sidebar) {
+      sidebar.querySelectorAll('.smartlink-persistent-card').forEach(c => c.remove());
+    }
     clearTimeout(hoverTimeout);
 
     const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-smartlink-trigger="true"]'));
-    if (triggers.length === 0) return;
+    const featureCallout = document.getElementById('sidebar-feature-callout');
+    if (triggers.length === 0 && !featureCallout) return;
 
     const isDesktop = window.innerWidth >= 1024;
-
-    if (!isDesktop) {
-      // Mobile-only flow: absolutely NO offset measurements/reflows!
-      triggers.forEach(trigger => {
-        trigger.onclick = (e) => {
-          e.preventDefault();
-          openMobileSheet(trigger);
-        };
-      });
-      return;
-    }
-
-    // Desktop logic: setup UI elements
-    ensureUIElements();
-
     const article = document.getElementById('content') || document.querySelector('article');
     if (!article) return;
 
-    article.style.position = 'relative';
+    if (isDesktop) article.style.position = 'relative';
 
-    const articleRect = article.getBoundingClientRect();
-    const cardWidth   = 240; // w-60
-    const gap         = 16; // ml-4
-    const hasSpace    = (window.innerWidth - articleRect.right) >= cardWidth + gap;
+    const hasSpace = isDesktop && sidebar && window.getComputedStyle(sidebar).display !== 'none';
 
-    if (hasSpace) {
-      const track = document.createElement('div');
-      track.id = 'marginalia-track';
-      track.className = 'absolute top-0 left-full h-full w-60 ml-4 pointer-events-none hidden lg:block not-prose';
-      article.appendChild(track);
+    if (hasSpace && sidebar) {
+      const calloutAnchor = document.querySelector('[data-feature-callout-anchor="true"]') as HTMLElement | null;
 
-      const persistentCards: { card: HTMLElement; top: number }[] = [];
+      if (featureCallout) {
+        if (calloutAnchor) {
+          featureCallout.style.position = 'absolute';
+          featureCallout.style.left = '0';
+          featureCallout.style.width = '100%';
+        } else {
+          // Reset styling for backward compatibility
+          featureCallout.style.position = '';
+          featureCallout.style.left = '';
+          featureCallout.style.width = '';
+          featureCallout.style.top = '';
+        }
+      }
+
+      const glossaryCards: { card: HTMLElement; trigger: HTMLElement }[] = [];
 
       triggers.forEach(trigger => {
         trigger.onclick = (e) => {
@@ -254,10 +257,10 @@ const isValid = !!(glossaryEntry && targetPostUrl);
         };
 
         const card = createPersistentCard(trigger);
-        const top = trigger.offsetTop;
-        card.style.top = `${top}px`;
-        track.appendChild(card);
-        persistentCards.push({ card, top });
+        card.classList.add('smartlink-persistent-card');
+        card.style.top = `${trigger.offsetTop}px`;
+        sidebar.appendChild(card);
+        glossaryCards.push({ card, trigger });
 
         const activate = () => {
           if (window.innerWidth >= 1024) {
@@ -278,20 +281,82 @@ const isValid = !!(glossaryEntry && targetPostUrl);
       // Wait for next frame to ensure offsetHeight is accurate
       requestAnimationFrame(() => {
         const verticalGap = 24;
-        persistentCards.sort((a, b) => a.top - b.top);
-        // Batch read to avoid layout thrashing
-        const heights = persistentCards.map(item => item.card.offsetHeight);
-        
-        for (let i = 1; i < persistentCards.length; i++) {
-          const prev = persistentCards[i - 1];
-          const curr = persistentCards[i];
-          const prevBottom = prev.top + heights[i - 1];
-          if (curr.top < prevBottom + verticalGap) {
-            curr.top = prevBottom + verticalGap;
-            curr.card.style.top = `${curr.top}px`;
-            // Keep top in array updated for next calculation
-            curr.top = prevBottom + verticalGap;
+
+        if (featureCallout) {
+          const sidebarRect = sidebar.getBoundingClientRect();
+          const F_top = calloutAnchor 
+            ? (calloutAnchor.getBoundingClientRect().top - sidebarRect.top) 
+            : featureCallout.offsetTop;
+          
+          if (calloutAnchor) {
+            featureCallout.style.top = `${F_top}px`;
           }
+
+          const F_height = featureCallout.offsetHeight;
+
+          // Separate glossary cards into above and below the feature callout
+          const aboveCards: { card: HTMLElement; top: number }[] = [];
+          const belowCards: { card: HTMLElement; top: number }[] = [];
+
+          glossaryCards.forEach(item => {
+            const preferredTop = item.trigger.getBoundingClientRect().top - sidebarRect.top;
+            const cardData = { card: item.card, top: preferredTop };
+            if (preferredTop < F_top) {
+              aboveCards.push(cardData);
+            } else {
+              belowCards.push(cardData);
+            }
+          });
+
+          // Resolve aboveCards (stack upwards from F_top)
+          aboveCards.sort((a, b) => b.top - a.top); // sort descending (closest to F_top first)
+          let upperLimit = F_top;
+          aboveCards.forEach(item => {
+            const h = item.card.offsetHeight;
+            let targetTop = item.top;
+            if (targetTop + h + verticalGap > upperLimit) {
+              targetTop = upperLimit - h - verticalGap;
+            }
+            if (targetTop < 0) targetTop = 0;
+            item.top = targetTop;
+            item.card.style.top = `${targetTop}px`;
+            upperLimit = targetTop;
+          });
+
+          // Resolve belowCards (stack downwards from F_top + F_height)
+          belowCards.sort((a, b) => a.top - b.top); // sort ascending (closest to F_top first)
+          let lowerLimit = F_top + F_height;
+          belowCards.forEach(item => {
+            let targetTop = item.top;
+            if (targetTop < lowerLimit + verticalGap) {
+              targetTop = lowerLimit + verticalGap;
+            }
+            item.top = targetTop;
+            item.card.style.top = `${targetTop}px`;
+            lowerLimit = targetTop + item.card.offsetHeight;
+          });
+
+        } else {
+          // Fallback: no feature callout, just stack downwards
+          const sidebarRect = sidebar.getBoundingClientRect();
+          const mappedCards = glossaryCards.map(item => ({
+            card: item.card,
+            top: item.trigger.getBoundingClientRect().top - sidebarRect.top
+          }));
+
+          mappedCards.sort((a, b) => a.top - b.top);
+          mappedCards.forEach((item, idx) => {
+            let targetTop = item.top;
+            if (idx > 0) {
+              const prev = mappedCards[idx - 1];
+              const prevBottom = prev.top + prev.card.offsetHeight;
+              if (targetTop < prevBottom + verticalGap) {
+                targetTop = prevBottom + verticalGap;
+              }
+            }
+            item.top = targetTop;
+            item.card.style.top = `${targetTop}px`;
+          });
         }
       });
     } else {
@@ -311,18 +376,20 @@ const isValid = !!(glossaryEntry && targetPostUrl);
           }
         };
 
-        trigger.onmouseenter = (e) => {
-          showHoverCard(trigger, e);
-          trigger.setAttribute('data-highlighted', 'true');
-        };
-        trigger.onmouseleave = () => {
-          hideHoverCard();
-          trigger.removeAttribute('data-highlighted');
-        };
-        // For the tooltip fallback, we also want the card hover to highlight the trigger
-        if (card) {
-          card.addEventListener('mouseenter', () => trigger.setAttribute('data-highlighted', 'true'));
-          card.addEventListener('mouseleave', () => trigger.removeAttribute('data-highlighted'));
+        if (isDesktop) {
+          trigger.onmouseenter = (e) => {
+            showHoverCard(trigger, e);
+            trigger.setAttribute('data-highlighted', 'true');
+          };
+          trigger.onmouseleave = () => {
+            hideHoverCard();
+            trigger.removeAttribute('data-highlighted');
+          };
+          // For the tooltip fallback, we also want the card hover to highlight the trigger
+          if (card) {
+            card.addEventListener('mouseenter', () => trigger.setAttribute('data-highlighted', 'true'));
+            card.addEventListener('mouseleave', () => trigger.removeAttribute('data-highlighted'));
+          }
         }
       });
     }
