@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
-    "@astrojs/cloudflare": "^12.6.13",
+    "@astrojs/cloudflare": "^13.7.0",
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/partytown": "^2.1.7",
     "@astrojs/react": "^5.0.2",
@@ -88,7 +88,7 @@
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^5.9.3",
     "vaul": "^1.1.2",
-    "wrangler": "^4.79.0"
+    "wrangler": "^4.102.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
