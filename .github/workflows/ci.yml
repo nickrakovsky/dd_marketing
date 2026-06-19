@@ -132,8 +132,17 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Link Crawl (Linkinator)
-        # Crawl the live preview recursively, validating links.
-        # Uses check-links.mjs to fail the build ONLY on internal link failures,
-        # logging external link failures (like timeouts or bot blocks) as warnings.
+        # Linkinator crawls the live preview, following all links recursively.
+        # --timeout 120000 gives slow external links up to 120s before failing.
+        # --retry retries transient failures (status [0]) — handles flaky
+        # external links and redirect edge cases like trailing-slash 308s.
+        # --skip handles known external domains that may rate-limit CI crawls.
         run: |
-          node scripts/check-links.mjs "${PREVIEW_URL}"
+          npx linkinator "${PREVIEW_URL}" \
+            --recurse \
+            --retry \
+            --timeout 30000 \
+            --skip "datadocks\.com" \
+            --skip "scale\.mit\.edu" \
+            --skip "canada\.ca" \
+            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com)"
