@@ -142,4 +142,5 @@ jobs:
             --recurse \
             --retry \
             --timeout 30000 \
-            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com|datadocks\.com)"
+            --skip "datadocks\.com" \
+            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com)"
