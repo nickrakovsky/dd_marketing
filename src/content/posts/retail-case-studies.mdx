@@ -67,11 +67,16 @@ import BibliographyItem from '../../components/BibliographyItem.astro';
 
 
 export const Cite = ({ id }) => (
-  <sup className="text-[10px] ml-0.5 leading-none">
-    <a href={`#ref-${id}`} className="text-[#FE5000] hover:opacity-80 no-underline font-bold transition-all" aria-label={`Go to reference ${id}`}>
-      [{id}]
-    </a>
-  </sup>
+  <a 
+    href={`#ref-${id}`} 
+    data-smartlink-trigger="true"
+    data-smartlink-type="academic"
+    data-smartlink-bibref={`#ref-${id}`}
+    className="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-[#fd4f00] hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium text-xs align-super"
+    aria-label={`Reference ${id}`}
+  >
+    [{id}]
+  </a>
 );
 
 ![Delivery van, forklift, and shopping cart representing the supply chain process on an orange background](../../assets/blog-images/retail-case-studies-1.jpeg)
