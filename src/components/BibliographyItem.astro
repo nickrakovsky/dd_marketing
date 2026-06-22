@@ -11,6 +11,7 @@ const { id } = Astro.props;
       {id}
     </span>
     <div class="ml-4 [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white break-words">
+      <a href={`#cite-${id}`} class="text-gray-400 hover:text-[#fd4f00] mr-2 no-underline" aria-label={`Jump back to citation ${id}`}>^</a>
       <slot />
     </div>
   </div>

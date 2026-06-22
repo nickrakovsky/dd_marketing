@@ -614,7 +614,7 @@ if (priorityImgMatch) {
     }
   }
 
-  function getPremiumCardHTML(dataset: any) {
+  function getPremiumCardHTML(dataset: any, isInline: boolean = false) {
     const type = dataset.smartlinkType;
     const href = dataset.smartlinkHref || '#';
     const title = (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
@@ -622,33 +622,65 @@ if (priorityImgMatch) {
     const icon = dataset.smartlinkIcon || '';
     
     let iconHtml = '';
-    if (icon) {
-      iconHtml = `
-        <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-none shrink-0">
-          <img src="${icon}" alt="" class="w-full h-full object-contain" loading="lazy" />
-        </div>`;
-    }
     
-    return `
-      <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-none shadow-md hover:shadow-lg transition-all duration-300 not-prose group/feature">
-        <div class="flex items-center gap-2.5 mb-2">
-          ${iconHtml}
-          <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight m-0">
-            <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline">
-              ${title}
-            </a>
-          </h3>
+    if (isInline) {
+      if (icon) {
+        iconHtml = `
+          <div class="w-9 h-9 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1.5 rounded-none shrink-0">
+            <img src="${icon}" alt="" class="w-full h-full object-contain" loading="lazy" />
+          </div>`;
+      }
+      return `
+        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-none shadow-md transition-all duration-300 not-prose group/feature">
+          <div class="flex flex-row items-start gap-4">
+            ${iconHtml}
+            <div class="flex-grow">
+              <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight mb-1 m-0">
+                <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline">
+                  ${title}
+                </a>
+              </h3>
+              <p class="font-sans text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                ${snippet}
+              </p>
+              <div class="inline-flex items-center gap-1 font-sans text-sm font-semibold text-[#fd4f00] dark:text-[#ff7635] group-hover/feature:underline">
+                Explore DataDocks
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
-        <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed pr-6">
-          ${snippet}
-        </p>
-        <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
-          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+      `;
+    } else {
+      if (icon) {
+        iconHtml = `
+          <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-none shrink-0">
+            <img src="${icon}" alt="" class="w-full h-full object-contain" loading="lazy" />
+          </div>`;
+      }
+      return `
+        <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-none shadow-md hover:shadow-lg transition-all duration-300 not-prose group/feature">
+          <div class="flex items-center gap-2.5 mb-2">
+            ${iconHtml}
+            <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight m-0">
+              <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline">
+                ${title}
+              </a>
+            </h3>
+          </div>
+          <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed pr-6">
+            ${snippet}
+          </p>
+          <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
   }
 
   window.closeSmartLinkUI = function() {
@@ -762,6 +794,14 @@ if (priorityImgMatch) {
     if (title) title.textContent = trigger.dataset.smartlinkTitle  || 'Reference';
     if (snip)  snip.textContent  = trigger.dataset.smartlinkSnippet || '';
     
+    if (type === 'academic') {
+      if (title) title.className = 'text-xl font-bruta uppercase text-gray-900 dark:text-white mb-2';
+      if (snip) snip.className = 'text-gray-600 dark:text-gray-400 font-sans text-base leading-relaxed mb-6';
+    } else {
+      if (title) title.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3';
+      if (snip) snip.className = 'text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6';
+    }
+
     actions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
 
     scrim.classList.remove('hidden');
@@ -927,8 +967,6 @@ if (priorityImgMatch) {
         for (const f of features) {
             const isLinked = allTriggers.some(el => {
                 return el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id);
-            }) || Array.from(document.querySelectorAll('[data-feature-callout-anchor="true"] a')).some(a => {
-                return (a.getAttribute('href') || '').includes(f.id);
             });
             if (!isLinked) { featureFallback = { type: 'feature', ...f }; break; }
         }
@@ -1172,7 +1210,7 @@ if (priorityImgMatch) {
                     }
                 } else {
                     inlineCard.className = 'smartlink-tablet-card hidden md:block lg:hidden my-6';
-                    inlineCard.innerHTML = getPremiumCardHTML(trigger.dataset);
+                    inlineCard.innerHTML = getPremiumCardHTML(trigger.dataset, true);
                 }
                 
                 parentP.after(inlineCard);
@@ -1193,7 +1231,8 @@ if (priorityImgMatch) {
         
         let featureFallback: any = null;
         for (const f of features) {
-            const isLinked = triggers.some((el: any) => el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id));
+            const isLinked = triggers.some((el: any) => el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id)) || 
+                             Array.from(document.querySelectorAll('[data-feature-callout-anchor="true"] a')).some(a => (a.getAttribute('href') || '').includes(f.id));
             if (!isLinked) { featureFallback = { type: 'feature', ...f }; break; }
         }
         let benefitFallback: any = null;
@@ -1219,7 +1258,7 @@ if (priorityImgMatch) {
                 };
                 const inlineCard = document.createElement('div');
                 inlineCard.className = 'smartlink-tablet-card hidden md:block lg:hidden my-6';
-                inlineCard.innerHTML = getPremiumCardHTML(dummyData);
+                inlineCard.innerHTML = getPremiumCardHTML(dummyData, true);
                 heading.after(inlineCard);
                 heading.dataset.hasInlineCard = 'true';
             }
@@ -1244,6 +1283,11 @@ if (priorityImgMatch) {
         if (useMobileSheet) {
           e.preventDefault();
           openMobileSheet(trigger);
+        } else if (window.innerWidth >= 768 && window.innerWidth < 1024 && window.matchMedia('(pointer: coarse)').matches) {
+          if (type !== 'feature' && type !== 'benefit') {
+            e.preventDefault();
+            showHoverCard(trigger, e);
+          }
         }
       });
 
