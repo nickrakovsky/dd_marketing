@@ -18,7 +18,11 @@ postType:
   discriminant: article
   value: {}
 relatedFeature: dock-dashboard
+relatedFeatures: ['dock-dashboard']
+relatedBenefits: ['increase-capacity', 'digitize-operations']
 ---
+
+import BibliographyItem from '../../components/BibliographyItem.astro';
 
 
 <lite-youtube videoid="EBz5ZOUYNZY" playlabel="Play: How to Solve 5 of the Most Costly Warehouse Management Challenges"></lite-youtube>
@@ -164,6 +168,8 @@ The only way around this is to implement dock scheduling. Even then, you need a 
 
 ## Bibliography
 
-*   Fleisch, Elgar, and Christian Tellkamp. “Inventory Inaccuracy and Supply Chain Performance: A Simulation Study of a Retail Supply Chain.” International Journal of Production Economics. Elsevier BV, March 2005. [https://doi.org/10.1016/j.ijpe.2004.02.003](https://doi.org/10.1016/j.ijpe.2004.02.003).
 
-*   Mangano, Giulio, and Alberto De Marco. “The Role of Maintenance and Facility Management in Logistics: A Literature Review.” Facilities. Emerald, April 1, 2014. [https://doi.org/10.1108/f-08-2012-0065](https://doi.org/10.1108/f-08-2012-0065).
+<ol className="pl-0 space-y-4 m-0">
+  <BibliographyItem id="1">Fleisch, Elgar, and Christian Tellkamp. “Inventory Inaccuracy and Supply Chain Performance: A Simulation Study of a Retail Supply Chain.” International Journal of Production Economics. Elsevier BV, March 2005. [https://doi.org/10.1016/j.ijpe.2004.02.003](https://doi.org/10.1016/j.ijpe.2004.02.003).</BibliographyItem>
+  <BibliographyItem id="2">Mangano, Giulio, and Alberto De Marco. “The Role of Maintenance and Facility Management in Logistics: A Literature Review.” Facilities. Emerald, April 1, 2014. [https://doi.org/10.1108/f-08-2012-0065](https://doi.org/10.1108/f-08-2012-0065).</BibliographyItem>
+</ol>

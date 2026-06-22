@@ -1,0 +1,17 @@
+---
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<li id={`ref-${id}`} class="mb-4 scroll-mt-24 list-none not-prose">
+  <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-3 pl-4 rounded-lg shadow-sm text-sm text-gray-800 dark:text-gray-200">
+    <span class="absolute -left-[14px] top-3 w-7 h-7 bg-[#fd4f00] text-white text-sm font-bold rounded-full flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
+      {id}
+    </span>
+    <div class="ml-4 [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white break-words">
+      <slot />
+    </div>
+  </div>
+</li>

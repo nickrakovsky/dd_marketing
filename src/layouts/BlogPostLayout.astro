@@ -8,6 +8,9 @@ import { getFriendlyDate } from '../utils/dateFormatter';
 import { getAuthor } from '../data/authors';
 import { getEntry } from 'astro:content';
 import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
+import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
+import LeadMagnetForm from '../components/LeadMagnetForm.astro';
+import SidebarShortVideo from '../components/SidebarShortVideo.astro';
 
 interface Heading {
   depth: number;
@@ -51,9 +54,40 @@ if (frontmatter.relatedFeature) {
   }
 }
 
+const relatedFeatureEntries = [];
+if (frontmatter.relatedFeatures?.length) {
+  for (const ref of frontmatter.relatedFeatures) {
+    const entry = typeof ref === 'object' && 'id' in ref ? await getEntry(ref) : await getEntry('features', ref);
+    if (entry) relatedFeatureEntries.push(entry);
+  }
+} else if (relatedFeatureEntry) {
+  relatedFeatureEntries.push(relatedFeatureEntry); // Fallback to singular for backwards compatibility
+}
+
+const benefitsData: Record<string, {title: string, desc: string, icon: string}> = {
+  'increase-capacity': { title: 'Increase Capacity', desc: 'Eliminate bottlenecks and slash overtime costs. DataDocks optimizes your appointment slots based on actual load times.', icon: '/images/features/linechart-file.svg' },
+  'digitize-operations': { title: 'Digitize Operations', desc: 'Move away from paper and spreadsheets. Get real-time visibility into your yard and docks.', icon: '/images/features/checked-laptop.svg' },
+  'delight-carriers': { title: 'Delight Carriers', desc: 'Become a shipper of choice. Give carriers a self-serve portal to book appointments 24/7.', icon: '/images/features/people.svg' },
+  'see-everything': { title: 'See Everything', desc: 'A single dashboard for all your operations. Connect your teams with live updates.', icon: '/images/features/vision.svg' }
+};
+
+const relatedBenefits = (frontmatter.relatedBenefits || []).map((b: string) => {
+  const bData = benefitsData[b];
+  if (bData) {
+    return {
+      id: b,
+      title: `${bData.title} with DataDocks`,
+      description: bData.desc,
+      icon: bData.icon,
+      url: `/benefits/${b}`
+    };
+  }
+  return null;
+}).filter(Boolean);
+
 // 6. LCP Optimisation
 // Detect YouTube embeds — only load lite-yt JS when actually needed
-const hasYouTube = htmlContent.includes('lite-youtube');
+const hasYouTube = htmlContent.includes('lite-youtube') || htmlContent.includes('data-smartlink-type="video');
 
 // Find the first priority image rendered by MDXImage for a preload hint in <head>
 // MDXImage marks the first body image with fetchpriority="high"; we extract its src
@@ -255,14 +289,36 @@ if (priorityImgMatch) {
           
           <Fragment set:html={htmlContent} />
         </article>
+
+        {frontmatter.leadCapture && (
+          <div class="block lg:hidden mt-12 w-full max-w-xl mx-auto">
+            <LeadMagnetForm {...frontmatter.leadCapture} />
+          </div>
+        )}
       </div>
 
       {/* Right Sidebar (Visible on LG+) */}
       <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch" aria-label="Related Resources">
-        {relatedFeatureEntry && (
-          <div id="sidebar-feature-callout" class="mb-8">
-            <RelatedFeatureCallout feature={relatedFeatureEntry} isSidebar={true} />
-          </div>
+        {/* Hidden Fallback Data for SmartLink script */}
+        <div 
+          id="smartlink-fallback-data" 
+          class="hidden" 
+          data-features={JSON.stringify(relatedFeatureEntries.map(e => ({
+            id: e.slug,
+            title: e.data.title,
+            description: e.data.description,
+            icon: e.data.icon ? e.data.icon.replace(new RegExp('/([0-9a-fA-F]{24})_'), '/') : '',
+            url: `/datadocks-features/${e.slug}`
+          })))}
+          data-benefits={JSON.stringify(relatedBenefits)}
+        ></div>
+        
+        {frontmatter.leadCapture && (
+          <LeadCaptureWidget {...frontmatter.leadCapture} />
+        )}
+        
+        {frontmatter.relatedShortVideo && (
+          <SidebarShortVideo videoId={frontmatter.relatedShortVideo} />
         )}
       </aside>
     </div>

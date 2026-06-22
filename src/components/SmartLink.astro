@@ -3,60 +3,148 @@
 import { getEntry } from 'astro:content';
 
 interface Props {
-  id: string;
+  href?: string;
+  id?: string;
+  type?: 'feature' | 'benefit' | 'post' | 'glossary' | 'academic' | 'video' | 'external';
+  title?: string;
+  snippet?: string;
+  bibRef?: string;
+  citation?: string;
+  class?: string;
   anchorText?: string;
 }
 
-const { id, anchorText } = Astro.props;
+const props = Astro.props;
+let { href, id, type, title, snippet, bibRef, citation, class: className, anchorText } = props;
 
-// Fetch the glossary entry
-const glossaryEntry = await getEntry('glossary', id);
+// Infer type and id from href if possible
+let parsedHref = href || '';
+if (parsedHref.startsWith('/') && !parsedHref.startsWith('//')) {
+  parsedHref = parsedHref.replace(/\.mdx?(#.*)?$/, '$1');
+  if (href) href = parsedHref;
+}
+if (parsedHref.startsWith('http://datadocks.com') || parsedHref.startsWith('https://datadocks.com') || parsedHref.startsWith('https://www.datadocks.com')) {
+  try {
+    const url = new URL(parsedHref);
+    parsedHref = url.pathname + url.search + url.hash;
+  } catch(e) {}
+}
 
-let targetPostUrl = '';
-let contextSnippet = '';
-let termName = '';
-
-if (glossaryEntry) {
-  termName = glossaryEntry.data.termName;
-  contextSnippet = glossaryEntry.data.contextSnippet;
-  
-  console.log("SMARTLINK DEBUG:", {
-    id,
-    glossaryEntryData: glossaryEntry.data,
-    targetPostType: typeof glossaryEntry.data.targetPost,
-    targetPostVal: glossaryEntry.data.targetPost
-  });
-
-  // Fetch the target post to get its final URL
-  const targetPost = await getEntry(glossaryEntry.data.targetPost.collection as any, glossaryEntry.data.targetPost.id);
-  
-  console.log("SMARTLINK DEBUG targetPost:", targetPost);
-
-  if (targetPost) {
-    // The targetPost is currently limited to the 'posts' collection in the schema
-    targetPostUrl = `/posts/${targetPost.slug}`;
+if (parsedHref && !type) {
+  if (parsedHref.startsWith('/posts/')) {
+    type = 'post';
+    id = id || parsedHref.replace('/posts/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('/videos/')) {
+    type = 'video';
+    id = id || parsedHref.replace('/videos/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('/datadocks-features/')) {
+    type = 'feature';
+    id = id || parsedHref.replace('/datadocks-features/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('/benefits/')) {
+    type = 'benefit';
+    id = id || parsedHref.replace('/benefits/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('#ref') || parsedHref.startsWith('#cite')) {
+    type = 'academic';
+    bibRef = bibRef || parsedHref;
+  } else if (parsedHref.startsWith('http://') || parsedHref.startsWith('https://')) {
+    type = 'external' as any;
+    try {
+      const extUrl = new URL(parsedHref);
+      title = title || extUrl.hostname.replace(/^www\./, '');
+      snippet = snippet || '';
+    } catch(e) {
+      title = title || 'External Link';
+    }
   }
 }
 
-// Fallback logic for display text
-const displayText = anchorText || id.replace(/-/g, ' ');
+if (id) {
+  id = id.replace(/\.mdx?$/, '');
+}
 
-// If data is missing, we still render the link but without the special trigger attributes
-// so it behaves like a normal link or plain text if no URL.
-const isValid = !!(glossaryEntry && targetPostUrl);
+// Fetch data
+let youtubeId = '';
+let iconStr = '';
+if (type === 'glossary' && id) {
+  const entry = await getEntry('glossary', id);
+  if (entry) {
+    title = title || entry.data.termName;
+    snippet = snippet || entry.data.contextSnippet;
+    href = href || (entry.data.targetPost ? `/posts/${entry.data.targetPost.id}` : '#');
+  }
+} else if (type === 'post' && id) {
+  const entry = await getEntry('posts', id);
+  if (entry) {
+    title = title || entry.data.title;
+    snippet = snippet || entry.data.description;
+    href = href || `/posts/${id}`;
+  }
+} else if (type === 'video' && id) {
+  const entry = await getEntry('videos', id);
+  if (entry) {
+    title = title || entry.data.title;
+    snippet = snippet || entry.data.description;
+    href = href || `/videos/${id}`;
+    youtubeId = entry.data.postType?.value?.youtubeId || '';
+    if (entry.data.postType?.discriminant === 'video') {
+      type = 'video-widescreen' as any;
+    }
+  }
+} else if (type === 'feature' && id) {
+  const entry = await getEntry('features', id);
+  if (entry) {
+    title = title || entry.data.title;
+    snippet = snippet || entry.data.description;
+    href = href || `/datadocks-features/${id}`;
+    if (entry.data.icon) {
+      iconStr = entry.data.icon.replace(/\/([0-9a-fA-F]{24})_/, '/');
+    }
+  }
+} else if (type === 'benefit' && id) {
+  href = href || `/benefits/${id}`;
+  const benefitsData: Record<string, {title: string, desc: string, icon: string}> = {
+    'increase-capacity': { title: 'Increase Capacity', desc: 'Eliminate bottlenecks and slash overtime costs. DataDocks optimizes your appointment slots based on actual load times.', icon: '/images/features/linechart-file.svg' },
+    'digitize-operations': { title: 'Digitize Operations', desc: 'Move away from paper and spreadsheets. Get real-time visibility into your yard and docks.', icon: '/images/features/checked-laptop.svg' },
+    'delight-carriers': { title: 'Delight Carriers', desc: 'Become a shipper of choice. Give carriers a self-serve portal to book appointments 24/7.', icon: '/images/features/people.svg' },
+    'see-everything': { title: 'See Everything', desc: 'A single dashboard for all your operations. Connect your teams with live updates.', icon: '/images/features/vision.svg' }
+  };
+  if (benefitsData[id]) {
+    title = title || `${benefitsData[id].title} with DataDocks`;
+    snippet = snippet || benefitsData[id].desc;
+    iconStr = benefitsData[id].icon;
+  }
+} else if (type === 'academic') {
+  // Academic links rely on manually passed title/snippet and bibRef or href.
+  href = href || '#';
+  title = title || "Academic Source";
+} else if (type === 'external') {
+  // External links — title is the domain, snippet can be overridden
+  title = title || 'External Link';
+}
+
+const isSmartLink = !!type && (title || snippet);
 ---
 
-{isValid ? (
-  <a 
-    href={targetPostUrl} 
-    data-smartlink-trigger="true"
-    data-smartlink-title={termName}
-    data-smartlink-snippet={contextSnippet}
-    data-smartlink-href={targetPostUrl}
-    class="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00]"
-  >{displayText}<span class="inline lg:hidden ml-0.5 text-[#fd4f00] text-xs font-bold align-super" aria-hidden="true">?</span></a>
+{!isSmartLink ? (
+  <a href={href} class={className || "font-medium text-[#fd4f00] hover:underline"}
+    {...(href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  >
+    <slot>{anchorText || href}</slot>
+  </a>
 ) : (
-  <span class="font-medium">{displayText}</span>
+  <a 
+    href={href !== '#' ? href : undefined} 
+    data-smartlink-trigger="true"
+    data-smartlink-type={type}
+    data-smartlink-title={title}
+    data-smartlink-snippet={snippet}
+    data-smartlink-href={href}
+    data-smartlink-bibref={bibRef}
+    data-smartlink-youtube-id={youtubeId}
+    data-smartlink-icon={iconStr}
+    class={`inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00] ${className || ''}`}
+    {...(type === 'external' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  ><slot>{anchorText || id}</slot>{citation && <sup class="text-[#fd4f00] dark:text-[#ff7635] ml-0.5 font-bold">{citation}</sup>}{type === 'external' && <svg class="inline w-3 h-3 ml-0.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>}<span class="inline lg:hidden ml-0.5 text-[#fd4f00] text-xs font-bold align-super" aria-hidden="true">?</span></a>
 )}
 
 <script>
@@ -75,19 +163,15 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     // Create Mobile Sheet
     const sheet = document.createElement('div');
     sheet.id = 'smartlink-mobile-sheet';
-    sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] rounded-t-2xl shadow-2xl border-t border-[#E5D3B3] overflow-hidden not-prose';
+    sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-t-2xl shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
     sheet.setAttribute('role', 'dialog');
     sheet.setAttribute('aria-labelledby', 'sl-mobile-title');
     sheet.innerHTML = `
-      <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3 mb-2"></div>
+      <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mt-3 mb-2"></div>
       <div class="px-6 pb-8 pt-2">
-        <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] mb-3">Related Guide</h3>
-        <p id="sl-mobile-snippet" class="text-gray-700 font-recoleta text-lg leading-relaxed mb-6"></p>
-        <a 
-          id="sl-mobile-link" 
-          href="/posts" 
-          class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
-        >Explore the full guide</a>
+        <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3"></h3>
+        <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6"></p>
+        <div id="sl-mobile-actions" class="flex flex-col gap-3"></div>
       </div>
     `;
     document.body.appendChild(sheet);
@@ -99,18 +183,104 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     card.innerHTML = `
       <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
       <div class="relative p-4">
-        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight">Related Guide</h3>
+        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight"></h3>
         <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug"></p>
-        <a id="sl-desktop-link" href="/posts" class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] hover:underline mt-3 w-fit">
-          Explore the full guide
-          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
+        <div id="sl-desktop-actions" class="mt-3 flex items-center gap-3"></div>
       </div>
     `;
     document.body.appendChild(card);
   }
+
+  function getActionLinksHTML(type: string, href: string, bibRef: string, isMobile: boolean): string {
+    if (type === 'academic') {
+      const btnClass = isMobile 
+        ? "inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
+        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit";
+      const secClass = isMobile
+        ? "inline-flex items-center justify-center w-full py-3 px-4 bg-gray-200 text-gray-800 rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-gray-300 transition-all"
+        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline w-fit";
+        
+      let html = '';
+      if (href && href !== '#') {
+        html += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${btnClass}">View Source</a>`;
+      }
+      if (bibRef) {
+        html += `<a href="${bibRef}" class="${secClass}" onclick="closeSmartLinkUI()">Go to Bibliography</a>`;
+      }
+      return html;
+    } 
+    
+    if (type === 'glossary' && (!href || href === '#')) {
+      return ''; 
+    }
+
+    const linkText = type === 'video' ? 'Watch video' : type === 'feature' ? 'Explore feature' : type === 'external' ? 'Visit site' : 'Read more';
+    const targetAttrs = type === 'external' ? 'target="_blank" rel="noopener noreferrer"' : '';
+    
+    if (isMobile) {
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
+    } else {
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
+        ${linkText}
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+          ${type === 'external' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />' : '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />'}
+        </svg>
+      </a>`;
+    }
+  }
+
+  function getPremiumCardHTML(dataset: any) {
+    const type = dataset.smartlinkType;
+    const href = dataset.smartlinkHref || '#';
+    const title = (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
+    const snippet = (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
+    const icon = dataset.smartlinkIcon || '';
+    
+    let iconHtml = '';
+    if (icon) {
+      iconHtml = `
+        <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-lg shrink-0">
+          <img src="${icon}" alt="" class="w-full h-full object-contain" loading="lazy" />
+        </div>`;
+    }
+    
+    return `
+      <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 not-prose group/feature">
+        <div class="flex items-center gap-2.5 mb-2">
+          ${iconHtml}
+          <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight m-0">
+            <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline">
+              ${title}
+            </a>
+          </h3>
+        </div>
+        <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed pr-6">
+          ${snippet}
+        </p>
+        <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    `;
+  }
+
+  window.closeSmartLinkUI = function() {
+    const sheet = document.getElementById('smartlink-mobile-sheet');
+    const scrim = document.getElementById('smartlink-scrim');
+    const card  = document.getElementById('smartlink-desktop-card');
+    
+    if (sheet && scrim) {
+      sheet.classList.add('translate-y-full');
+      scrim.classList.remove('opacity-100');
+      setTimeout(() => scrim.classList.add('hidden'), 300);
+    }
+    if (card) {
+      card.classList.remove('opacity-100');
+      setTimeout(() => card.classList.add('hidden'), 200);
+    }
+  };
 
   function openMobileSheet(trigger: HTMLElement) {
     ensureUIElements();
@@ -118,12 +288,17 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     const scrim  = document.getElementById('smartlink-scrim');
     const title  = document.getElementById('sl-mobile-title');
     const snip   = document.getElementById('sl-mobile-snippet');
-    const link   = document.getElementById('sl-mobile-link') as HTMLAnchorElement | null;
-    if (!sheet || !scrim) return;
+    const actions = document.getElementById('sl-mobile-actions');
+    if (!sheet || !scrim || !actions) return;
 
-    if (title) title.textContent = trigger.dataset.smartlinkTitle  || '';
+    const type = trigger.dataset.smartlinkType || 'post';
+    const href = trigger.dataset.smartlinkHref || '#';
+    const bibRef = trigger.dataset.smartlinkBibref || '';
+
+    if (title) title.textContent = trigger.dataset.smartlinkTitle  || 'Reference';
     if (snip)  snip.textContent  = trigger.dataset.smartlinkSnippet || '';
-    if (link)  link.href          = trigger.dataset.smartlinkHref   || '#';
+    
+    actions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
 
     scrim.classList.remove('hidden');
     requestAnimationFrame(() => {
@@ -132,59 +307,80 @@ const isValid = !!(glossaryEntry && targetPostUrl);
     });
 
     const closeOnScrim = () => {
-      sheet.classList.add('translate-y-full');
-      scrim.classList.remove('opacity-100');
-      setTimeout(() => scrim.classList.add('hidden'), 300);
+      window.closeSmartLinkUI();
       scrim.removeEventListener('click', closeOnScrim);
     };
     scrim.addEventListener('click', closeOnScrim);
   }
 
   function createPersistentCard(trigger: HTMLElement): HTMLElement {
-    const card = document.createElement('div');
-    card.className = [
-      'absolute left-0 z-30 w-full bg-white dark:bg-gray-800 border border-[#E5D3B3] dark:border-gray-700 rounded-xl shadow-md p-4 not-prose smartlink-persistent-card group',
-      'opacity-40 grayscale dark:opacity-50 dark:grayscale transition-all duration-300 pointer-events-auto transform',
-      'data-[hovered=true]:opacity-100 data-[hovered=true]:grayscale-0 data-[hovered=true]:z-40'
-    ].join(' ');
-
-    const title   = (trigger.dataset.smartlinkTitle   || '').replace(/</g, '&lt;');
+    const type = trigger.dataset.smartlinkType || 'post';
+    const href = trigger.dataset.smartlinkHref || '#';
+    const bibRef = trigger.dataset.smartlinkBibref || '';
+    const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
+    const title = (trigger.dataset.smartlinkTitle || 'Reference').replace(/</g, '&lt;');
     const snippet = (trigger.dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
-    const href    = trigger.dataset.smartlinkHref || '#';
 
-    card.innerHTML = `
-      <h3 class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight">${title}</h3>
-      <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug">${snippet}</p>
-      <a href="${href}" class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 group-hover:text-[#fd4f00] group-data-[hovered=true]:text-[#fd4f00] dark:group-hover:text-[#ff7635] dark:group-data-[hovered=true]:text-[#ff7635] hover:underline mt-3 w-fit">
-        Explore guide
-        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>`;
+    const card = document.createElement('div');
+    card.className = 'absolute left-0 z-30 w-full smartlink-persistent-card group transition-all duration-300 pointer-events-auto transform';
+
+    if (type === 'feature' || type === 'benefit') {
+       card.classList.add('opacity-70', 'data-[hovered=true]:opacity-100', 'data-[hovered=true]:z-40');
+       card.innerHTML = getPremiumCardHTML(trigger.dataset);
+    } else {
+       card.classList.add('sidebar-card', 'opacity-40', 'grayscale', 'dark:opacity-50', 'dark:grayscale', 'data-[hovered=true]:opacity-100', 'data-[hovered=true]:grayscale-0', 'data-[hovered=true]:z-40');
+       const actionsHtml = getActionLinksHTML(type, href, bibRef, false);
+
+       let mediaHtml = '';
+       if (type === 'video' && youtubeId) {
+         card.classList.remove('grayscale', 'dark:grayscale', 'opacity-40', 'dark:opacity-50');
+         card.classList.add('opacity-100');
+         card.dataset.hovered = 'true';
+         card.style.padding = '0px';
+         mediaHtml = `
+           <div class="p-3 border-b border-[#E5D3B3] dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-xl">
+             <div class="sidebar-card-title">${title}</div>
+           </div>
+           <div class="w-full bg-black relative rounded-b-xl overflow-hidden" style="padding-bottom: calc(100% / (9 / 16));">
+             <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+           </div>
+         `;
+         card.innerHTML = mediaHtml;
+       } else {
+         card.innerHTML = `
+           <h3 class="sidebar-card-title">${title}</h3>
+           <p class="sidebar-card-snippet">${snippet}</p>
+           <div class="mt-3 flex items-center gap-3">
+             ${actionsHtml}
+           </div>`;
+       }
+    }
     return card;
   }
 
   function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
-    if (window.innerWidth < 1024) return;
+    if (window.innerWidth < 768 || window.innerWidth >= 1024) return;
     clearTimeout(hoverTimeout);
     ensureUIElements();
     const card    = document.getElementById('smartlink-desktop-card');
     const dTitle  = document.getElementById('sl-desktop-title');
     const dSnip   = document.getElementById('sl-desktop-snippet');
-    const dLink   = document.getElementById('sl-desktop-link') as HTMLAnchorElement | null;
-    if (!card) return;
+    const actions = document.getElementById('sl-desktop-actions');
+    if (!card || !actions) return;
 
-    if (dTitle) dTitle.textContent = trigger.dataset.smartlinkTitle  || '';
+    const type = trigger.dataset.smartlinkType || 'post';
+    const href = trigger.dataset.smartlinkHref || '#';
+    const bibRef = trigger.dataset.smartlinkBibref || '';
+
+    if (dTitle) dTitle.textContent = trigger.dataset.smartlinkTitle  || 'Reference';
     if (dSnip)  dSnip.textContent  = trigger.dataset.smartlinkSnippet || '';
-    if (dLink)  dLink.href          = trigger.dataset.smartlinkHref   || '#';
+    
+    actions.innerHTML = getActionLinksHTML(type, href, bibRef, false);
 
     const cardWidth  = 320; // w-80
-    
-    // Position tooltip very close to cursor with a tiny offset to avoid recursive flickering
     const cardH      = card.offsetHeight || 180;
     const roomAbove  = e.clientY > cardH + 10;
     
-    // Center the card horizontally on the cursor, but keep it within the screen bounds
     let leftPos = e.clientX - (cardWidth / 2);
     leftPos = Math.max(16, Math.min(leftPos, window.innerWidth - cardWidth - 16));
     
@@ -201,201 +397,409 @@ const isValid = !!(glossaryEntry && targetPostUrl);
   function hideHoverCard() {
     hoverTimeout = window.setTimeout(() => {
       const card = document.getElementById('smartlink-desktop-card');
-      if (!card) return;
-      card.classList.remove('opacity-100');
-      setTimeout(() => {
-        if (!card.classList.contains('opacity-100')) card.classList.add('hidden');
-      }, 200);
+      if (card) {
+        card.classList.remove('opacity-100');
+        setTimeout(() => {
+          if (!card.classList.contains('opacity-100')) {
+            card.classList.add('hidden');
+          }
+        }, 200);
+      }
     }, 150);
   }
 
-  function initSmartLinks() {
-    // Cleanup old persistent cards from sidebar if present
+  function positionPersistentCards() {
+    if (window.innerWidth < 1024) return;
     const sidebar = document.getElementById('blog-right-sidebar');
-    if (sidebar) {
-      sidebar.querySelectorAll('.smartlink-persistent-card').forEach(c => c.remove());
+    if (!sidebar) return;
+
+    // Remove existing dynamic cards to recalculate cleanly
+    sidebar.querySelectorAll('.smartlink-persistent-card').forEach(c => c.remove());
+
+    const contentArea = document.getElementById('content');
+    if (!contentArea) return;
+    const contentTop = contentArea.getBoundingClientRect().top + window.scrollY;
+
+    const placedCards: { top: number; bottom: number; el: HTMLElement; isFallback?: boolean }[] = [];
+    const minGap = 32;
+    const minTopOffset = 400; // Fallback cards must not appear within first 400px of article
+    const minFallbackSeparation = 250; // Min vertical distance between fallback cards
+    
+    // Account for existing static sidebar items (Lead Capture, Video)
+    const staticItems = Array.from(sidebar.children).filter(el => !el.classList.contains('smartlink-persistent-card')) as HTMLElement[];
+    let staticHeightUsed = 0;
+    
+    if (staticItems.length > 0) {
+        const lastItem = staticItems[staticItems.length - 1];
+        staticHeightUsed = lastItem.offsetTop + lastItem.offsetHeight + minGap;
+        
+        staticItems.forEach(item => {
+           placedCards.push({
+               top: item.offsetTop,
+               bottom: item.offsetTop + item.offsetHeight,
+               el: item
+           });
+        });
     }
-    clearTimeout(hoverTimeout);
 
-    const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-smartlink-trigger="true"]'));
-    const featureCallout = document.getElementById('sidebar-feature-callout');
-    if (triggers.length === 0 && !featureCallout) return;
+    const allTriggers = Array.from(document.querySelectorAll('[data-smartlink-trigger="true"]')) as HTMLElement[];
 
-    const isDesktop = window.innerWidth >= 1024;
-    const article = document.getElementById('content') || document.querySelector('article');
-    if (!article) return;
+    // Fallback Logic: Inject at most 1 feature + 1 benefit card
+    const fallbackDataEl = document.getElementById('smartlink-fallback-data');
+    if (fallbackDataEl) {
+        let features: any[] = [];
+        let benefits: any[] = [];
+        try {
+            features = JSON.parse(fallbackDataEl.dataset.features || '[]');
+            benefits = JSON.parse(fallbackDataEl.dataset.benefits || '[]');
+        } catch(e) {}
+        
+        // Find first unlinked feature
+        let featureFallback: any = null;
+        for (const f of features) {
+            const isLinked = allTriggers.some(el => {
+                return el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id);
+            }) || Array.from(document.querySelectorAll('[data-feature-callout-anchor="true"] a')).some(a => {
+                return (a.getAttribute('href') || '').includes(f.id);
+            });
+            if (!isLinked) { featureFallback = { type: 'feature', ...f }; break; }
+        }
+        
+        // Find first unlinked benefit
+        let benefitFallback: any = null;
+        for (const b of benefits) {
+            const isLinked = allTriggers.some(el => {
+                return el.dataset.smartlinkType === 'benefit' && (el.dataset.smartlinkHref || '').includes(b.id);
+            });
+            if (!isLinked) { benefitFallback = { type: 'benefit', ...b }; break; }
+        }
 
-    if (isDesktop) article.style.position = 'relative';
+        const fallbackItems = [featureFallback, benefitFallback].filter(Boolean);
+        const headings = Array.from(document.querySelectorAll('.prose h2')) as HTMLElement[];
+        
+        // Place feature at H2#1, benefit at H2#3+ (with minimum separation)
+        const targetIndices = [1, Math.max(3, Math.min(headings.length - 1, 4))];
+        let lastFallbackY = -Infinity;
+        
+        fallbackItems.forEach((item, index) => {
+            const hIdx = Math.min(targetIndices[index] || 1, headings.length - 1);
+            const heading = headings[hIdx];
+            if (heading) {
+                const dummyTrigger = document.createElement('span');
+                Object.assign(dummyTrigger.dataset, {
+                    smartlinkType: item.type,
+                    smartlinkHref: item.url,
+                    smartlinkTitle: item.title,
+                    smartlinkSnippet: item.description,
+                    smartlinkIcon: item.icon
+                });
+                const pCard = createPersistentCard(dummyTrigger);
+                pCard.dataset.hovered = 'true'; 
+                pCard.classList.remove('opacity-70'); // fully opaque fallback
+                
+                sidebar.appendChild(pCard);
+                const h = pCard.offsetHeight || 120;
+                
+                let idealY = (heading.getBoundingClientRect().top + window.scrollY) - contentTop;
+                idealY = Math.max(idealY, staticHeightUsed);
+                idealY = Math.max(idealY, minTopOffset); // Enforce minimum distance from top
+                idealY = Math.max(idealY, lastFallbackY + minFallbackSeparation); // Enforce separation
+                lastFallbackY = idealY + h;
 
-    const hasSpace = isDesktop && sidebar && window.getComputedStyle(sidebar).display !== 'none';
+                placedCards.push({
+                    top: idealY,
+                    bottom: idealY + h,
+                    el: pCard,
+                    isFallback: true
+                });
+            }
+        });
+    }
 
-    if (hasSpace && sidebar) {
-      const calloutAnchor = document.querySelector('[data-feature-callout-anchor="true"]') as HTMLElement | null;
+    // Now place natural triggers
+    allTriggers.forEach((trigger) => {
+      if (trigger.dataset.smartlinkType === 'video-widescreen') return;
 
-      if (featureCallout) {
-        if (calloutAnchor) {
-          featureCallout.style.position = 'absolute';
-          featureCallout.style.left = '0';
-          featureCallout.style.width = '100%';
-        } else {
-          // Reset styling for backward compatibility
-          featureCallout.style.position = '';
-          featureCallout.style.left = '';
-          featureCallout.style.width = '';
-          featureCallout.style.top = '';
+      let cardEl = trigger.cardEl;
+      if (!cardEl) {
+        cardEl = createPersistentCard(trigger);
+        trigger.cardEl = cardEl;
+
+        const currentCardEl = cardEl; // Capture in closure
+        currentCardEl.addEventListener('mouseenter', () => {
+          currentCardEl.dataset.hovered = 'true';
+          trigger.dataset.highlighted = 'true';
+        });
+        currentCardEl.addEventListener('mouseleave', () => {
+          currentCardEl.dataset.hovered = 'false';
+          trigger.dataset.highlighted = 'false';
+        });
+      }
+      sidebar.appendChild(cardEl);
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const triggerY = (triggerRect.top + window.scrollY) - contentTop;
+
+      let idealY = triggerY;
+      idealY = Math.max(idealY, staticHeightUsed);
+
+      const h = cardEl.offsetHeight || 120;
+      placedCards.push({ top: idealY, bottom: idealY + h, el: cardEl });
+    });
+
+    // Identify table blocker regions
+    const tables = Array.from(document.querySelectorAll('.prose .table-wrapper')) as HTMLElement[];
+    const tableBlockers = tables.map(t => {
+      const rect = t.getBoundingClientRect();
+      const top = (rect.top + window.scrollY) - contentTop - minGap;
+      const bottom = (rect.bottom + window.scrollY) - contentTop + minGap;
+      return { top, bottom };
+    });
+
+    // Resolve overlaps (Shift DOWN)
+    placedCards.sort((a, b) => a.top - b.top);
+    for (let i = 0; i < placedCards.length; i++) {
+      const curr = placedCards[i];
+      const cardH = curr.bottom - curr.top;
+      
+      // 1. Avoid previous cards
+      if (i > 0) {
+        const prev = placedCards[i - 1];
+        if (curr.top < prev.bottom + minGap) {
+          const shift = (prev.bottom + minGap) - curr.top;
+          curr.top += shift;
+          curr.bottom += shift;
         }
       }
 
-      const glossaryCards: { card: HTMLElement; trigger: HTMLElement }[] = [];
-
-      triggers.forEach(trigger => {
-        trigger.onclick = (e) => {
-          if (window.innerWidth < 1024) {
-            e.preventDefault();
-            openMobileSheet(trigger);
+      // 2. Avoid tables — try placing ABOVE the table first, then below
+      for (const tb of tableBlockers) {
+        if (curr.top < tb.bottom && curr.bottom > tb.top) {
+          // Card overlaps this table. Try above first.
+          const abovePos = tb.top - cardH - minGap;
+          const belowPos = tb.bottom;
+          // Only place above if there's room (not overlapping previous card)
+          const prevBottom = i > 0 ? placedCards[i - 1].bottom + minGap : staticHeightUsed;
+          if (abovePos >= prevBottom && abovePos >= 0) {
+            curr.top = abovePos;
+            curr.bottom = abovePos + cardH;
+          } else {
+            // Place below the table
+            curr.top = belowPos;
+            curr.bottom = belowPos + cardH;
           }
-        };
-
-        const card = createPersistentCard(trigger);
-        card.classList.add('smartlink-persistent-card');
-        card.style.top = `${trigger.offsetTop}px`;
-        sidebar.appendChild(card);
-        glossaryCards.push({ card, trigger });
-
-        const activate = () => {
-          if (window.innerWidth >= 1024) {
-            card.setAttribute('data-hovered', 'true');
-            trigger.setAttribute('data-highlighted', 'true');
+        }
+      }
+      // Final check: if still overlapping any table after repositioning, push below
+      let overlapWithTable = true;
+      let safetyCounter = 0;
+      while (overlapWithTable && safetyCounter < 10) {
+        overlapWithTable = false;
+        safetyCounter++;
+        for (const tb of tableBlockers) {
+          if (curr.top < tb.bottom && curr.bottom > tb.top) {
+            curr.top = tb.bottom;
+            curr.bottom = tb.bottom + cardH;
+            overlapWithTable = true;
           }
-        };
-        const deactivate = () => {
-          card.removeAttribute('data-hovered');
-          trigger.removeAttribute('data-highlighted');
-        };
-        trigger.onmouseenter = activate;
-        trigger.onmouseleave = deactivate;
-        card.onmouseenter = activate;
-        card.onmouseleave = deactivate;
-      });
+        }
+      }
+    }
 
-      // Wait for next frame to ensure offsetHeight is accurate
-      requestAnimationFrame(() => {
-        const verticalGap = 24;
-
-        if (featureCallout) {
-          const sidebarRect = sidebar.getBoundingClientRect();
-          const F_top = calloutAnchor 
-            ? (calloutAnchor.getBoundingClientRect().top - sidebarRect.top) 
-            : featureCallout.offsetTop;
+    // Resolve bottom collision (Shift UP)
+    const prose = document.querySelector('.prose') as HTMLElement;
+    if (prose && placedCards.length > 0) {
+       const proseBottom = prose.offsetTop + prose.offsetHeight;
+       const lastCard = placedCards[placedCards.length - 1];
+       if (lastCard.bottom > proseBottom) {
+          const shiftUp = lastCard.bottom - proseBottom;
+          lastCard.top -= shiftUp;
+          lastCard.bottom -= shiftUp;
           
-          if (calloutAnchor) {
-            featureCallout.style.top = `${F_top}px`;
+          for (let i = placedCards.length - 2; i >= 0; i--) {
+             const curr = placedCards[i];
+             const next = placedCards[i + 1];
+             if (curr.bottom > next.top - minGap) {
+                const overlap = curr.bottom - (next.top - minGap);
+                curr.top -= overlap;
+                curr.bottom -= overlap;
+             }
           }
+       }
+    }
 
-          const F_height = featureCallout.offsetHeight;
+    // Apply styles
+    placedCards.forEach(c => {
+       if (c.el.classList.contains('smartlink-persistent-card')) {
+           c.el.style.top = `${c.top}px`;
+       }
+    });
 
-          // Separate glossary cards into above and below the feature callout
-          const aboveCards: { card: HTMLElement; top: number }[] = [];
-          const belowCards: { card: HTMLElement; top: number }[] = [];
-
-          glossaryCards.forEach(item => {
-            const preferredTop = item.trigger.getBoundingClientRect().top - sidebarRect.top;
-            const cardData = { card: item.card, top: preferredTop };
-            if (preferredTop < F_top) {
-              aboveCards.push(cardData);
-            } else {
-              belowCards.push(cardData);
-            }
-          });
-
-          // Resolve aboveCards (stack upwards from F_top)
-          aboveCards.sort((a, b) => b.top - a.top); // sort descending (closest to F_top first)
-          let upperLimit = F_top;
-          aboveCards.forEach(item => {
-            const h = item.card.offsetHeight;
-            let targetTop = item.top;
-            if (targetTop + h + verticalGap > upperLimit) {
-              targetTop = upperLimit - h - verticalGap;
-            }
-            if (targetTop < 0) targetTop = 0;
-            item.top = targetTop;
-            item.card.style.top = `${targetTop}px`;
-            upperLimit = targetTop;
-          });
-
-          // Resolve belowCards (stack downwards from F_top + F_height)
-          belowCards.sort((a, b) => a.top - b.top); // sort ascending (closest to F_top first)
-          let lowerLimit = F_top + F_height;
-          belowCards.forEach(item => {
-            let targetTop = item.top;
-            if (targetTop < lowerLimit + verticalGap) {
-              targetTop = lowerLimit + verticalGap;
-            }
-            item.top = targetTop;
-            item.card.style.top = `${targetTop}px`;
-            lowerLimit = targetTop + item.card.offsetHeight;
-          });
-
-        } else {
-          // Fallback: no feature callout, just stack downwards
-          const sidebarRect = sidebar.getBoundingClientRect();
-          const mappedCards = glossaryCards.map(item => ({
-            card: item.card,
-            top: item.trigger.getBoundingClientRect().top - sidebarRect.top
-          }));
-
-          mappedCards.sort((a, b) => a.top - b.top);
-          mappedCards.forEach((item, idx) => {
-            let targetTop = item.top;
-            if (idx > 0) {
-              const prev = mappedCards[idx - 1];
-              const prevBottom = prev.top + prev.card.offsetHeight;
-              if (targetTop < prevBottom + verticalGap) {
-                targetTop = prevBottom + verticalGap;
-              }
-            }
-            item.top = targetTop;
-            item.card.style.top = `${targetTop}px`;
-          });
-        }
-      });
-    } else {
-      const card = document.getElementById('smartlink-desktop-card');
-      if (card) {
-        card.onmouseenter = () => {
-          if (window.innerWidth >= 1024) clearTimeout(hoverTimeout);
-        };
-        card.onmouseleave = hideHoverCard;
-      }
-
-      triggers.forEach(trigger => {
-        trigger.onclick = (e) => {
-          if (window.innerWidth < 1024) {
-            e.preventDefault();
-            openMobileSheet(trigger);
-          }
-        };
-
-        if (isDesktop) {
-          trigger.onmouseenter = (e) => {
-            showHoverCard(trigger, e);
-            trigger.setAttribute('data-highlighted', 'true');
-          };
-          trigger.onmouseleave = () => {
-            hideHoverCard();
-            trigger.removeAttribute('data-highlighted');
-          };
-          // For the tooltip fallback, we also want the card hover to highlight the trigger
-          if (card) {
-            card.addEventListener('mouseenter', () => trigger.setAttribute('data-highlighted', 'true'));
-            card.addEventListener('mouseleave', () => trigger.removeAttribute('data-highlighted'));
-          }
-        }
-      });
+    const lastCardFinal = placedCards[placedCards.length - 1];
+    if (lastCardFinal) {
+      sidebar.style.minHeight = `${lastCardFinal.bottom + minGap}px`;
     }
   }
 
-  document.addEventListener('astro:page-load', initSmartLinks);
-  initSmartLinks();
+  function attachSmartLinkEvents() {
+    const triggers = document.querySelectorAll('[data-smartlink-trigger="true"]');
+    
+    // Inject inline tablet cards
+    triggers.forEach(el => {
+        const trigger = el as HTMLElement;
+        if (trigger.dataset.smartlinkInlineBound) return;
+        trigger.dataset.smartlinkInlineBound = 'true';
+        
+        const type = trigger.dataset.smartlinkType;
+        if (type === 'feature' || type === 'benefit' || type === 'video-widescreen') {
+            const parentP = trigger.closest('p, li') as HTMLElement;
+            if (parentP && parentP.parentNode && !parentP.dataset.hasInlineCard) {
+                const inlineCard = document.createElement('div');
+                
+                if (type === 'video-widescreen') {
+                    const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
+                    if (youtubeId) {
+                        inlineCard.className = 'w-full my-8 not-prose';
+                        inlineCard.innerHTML = `
+                            <div class="w-full bg-black relative rounded-xl overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-gray-700" style="padding-bottom: calc(100% / (16 / 9));">
+                                <lite-youtube videoid="${youtubeId}" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+                            </div>
+                        `;
+                        // Keep the original text trigger in place
+                    }
+                } else {
+                    inlineCard.className = 'hidden md:block lg:hidden my-6';
+                    inlineCard.innerHTML = getPremiumCardHTML(trigger.dataset);
+                }
+                
+                parentP.after(inlineCard);
+                parentP.dataset.hasInlineCard = 'true';
+            }
+        }
+    });
+    
+    // Tablet Fallback Injection — max 1 feature + 1 benefit
+    const fallbackDataEl = document.getElementById('smartlink-fallback-data');
+    if (fallbackDataEl) {
+        let features: any[] = [];
+        let benefits: any[] = [];
+        try {
+            features = JSON.parse(fallbackDataEl.dataset.features || '[]');
+            benefits = JSON.parse(fallbackDataEl.dataset.benefits || '[]');
+        } catch(e) {}
+        
+        let featureFallback: any = null;
+        for (const f of features) {
+            const isLinked = Array.from(triggers).some((el: any) => el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id));
+            if (!isLinked) { featureFallback = { type: 'feature', ...f }; break; }
+        }
+        let benefitFallback: any = null;
+        for (const b of benefits) {
+            const isLinked = Array.from(triggers).some((el: any) => el.dataset.smartlinkType === 'benefit' && (el.dataset.smartlinkHref || '').includes(b.id));
+            if (!isLinked) { benefitFallback = { type: 'benefit', ...b }; break; }
+        }
+        
+        const fallbackItems = [featureFallback, benefitFallback].filter(Boolean);
+        const headings = Array.from(document.querySelectorAll('.prose h2')) as HTMLElement[];
+        const targetIndices = [1, Math.max(3, Math.min(headings.length - 1, 4))];
+        
+        fallbackItems.forEach((item: any, index: number) => {
+            const hIdx = Math.min(targetIndices[index] || 1, headings.length - 1);
+            const heading = headings[hIdx];
+            if (heading && !heading.dataset.hasInlineCard) {
+                const dummyData = {
+                    smartlinkType: item.type,
+                    smartlinkHref: item.url,
+                    smartlinkTitle: item.title,
+                    smartlinkSnippet: item.description,
+                    smartlinkIcon: item.icon
+                };
+                const inlineCard = document.createElement('div');
+                inlineCard.className = 'hidden md:block lg:hidden my-6';
+                inlineCard.innerHTML = getPremiumCardHTML(dummyData);
+                heading.after(inlineCard);
+                heading.dataset.hasInlineCard = 'true';
+            }
+        });
+    }
+
+    const card = document.getElementById('smartlink-desktop-card');
+    
+    triggers.forEach(el => {
+      const trigger = el as HTMLElement;
+      if (trigger.dataset.smartlinkEventsBound) return;
+      trigger.dataset.smartlinkEventsBound = 'true';
+      
+      trigger.addEventListener('click', (e) => {
+        if (window.innerWidth < 1024) {
+          const type = trigger.dataset.smartlinkType;
+          if (type === 'feature' || type === 'benefit') {
+             // Let mobile inline card or standard tap-through handle it?
+             // Actually mobile has inline cards? No, tablet has inline cards (`md:block lg:hidden`). Mobile is `< 768`.
+             // So mobile triggers bottom sheet.
+             e.preventDefault();
+             openMobileSheet(trigger);
+          } else {
+             e.preventDefault();
+             openMobileSheet(trigger);
+          }
+        }
+      });
+
+      trigger.addEventListener('mouseenter', (e) => {
+        if (window.innerWidth >= 1024) {
+          const pCard = trigger.cardEl;
+          if (pCard) pCard.dataset.hovered = 'true';
+        } else if (window.innerWidth >= 768) {
+          const type = trigger.dataset.smartlinkType;
+          if (type !== 'feature' && type !== 'benefit') {
+              showHoverCard(trigger, e);
+          }
+        }
+      });
+
+      trigger.addEventListener('mouseleave', () => {
+        if (window.innerWidth >= 1024) {
+          const pCard = trigger.cardEl;
+          if (pCard) pCard.dataset.hovered = 'false';
+        } else if (window.innerWidth >= 768) {
+          hideHoverCard();
+        }
+      });
+    });
+
+    if (card) {
+      card.addEventListener('mouseenter', () => {
+        clearTimeout(hoverTimeout);
+      });
+      card.addEventListener('mouseleave', hideHoverCard);
+    }
+    
+    requestAnimationFrame(positionPersistentCards);
+    setTimeout(positionPersistentCards, 500);
+  }
+
+  // Custom typings
+  declare global {
+    interface HTMLElement {
+      cardEl?: HTMLElement;
+    }
+    interface Window {
+      closeSmartLinkUI: () => void;
+    }
+  }
+
+  // Initialize
+  if (!document.getElementById('smartlink-scrim')) {
+    ensureUIElements();
+  }
+  attachSmartLinkEvents();
+  document.addEventListener('astro:page-load', attachSmartLinkEvents);
+
+  let resizeTimer: number;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(positionPersistentCards, 100);
+  });
 </script>
 

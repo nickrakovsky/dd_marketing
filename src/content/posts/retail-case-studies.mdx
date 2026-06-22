@@ -59,7 +59,11 @@ faq:
       last-mile fulfillment. This makes receiving workflows, dock scheduling,
       and predictable carrier performance more important than ever.
 relatedFeature: efficiency-reports
+relatedFeatures: ['efficiency-reports']
+relatedBenefits: ['increase-capacity', 'digitize-operations']
 ---
+
+import BibliographyItem from '../../components/BibliographyItem.astro';
 
 
 export const Cite = ({ id }) => (
@@ -69,13 +73,6 @@ export const Cite = ({ id }) => (
     </a>
   </sup>
 );
-
-export const BibliographyItem = ({ id, children }) => (
-  <li id={`ref-${id}`} className="mb-3 scroll-mt-24">
-    {children}
-  </li>
-);
-
 
 ![Delivery van, forklift, and shopping cart representing the supply chain process on an orange background](../../assets/blog-images/retail-case-studies-1.jpeg)
 
@@ -331,7 +328,7 @@ Ahold Delhaize is shifting toward more e-commerce-driven grocery delivery, which
 
 ## Bibliography
 
-<ol className="list-decimal space-y-2 ml-6">
+<ol className="pl-0 space-y-4">
   <BibliographyItem id="1">[**Retail Dive: Dollar General Inventory Strategy**](https://www.retaildive.com/news/dollar-general-inventory-clearing-Q2-Jeff-Owen/693282/)</BibliographyItem>
   <BibliographyItem id="2">[**Dollar General Investor Relations: Q2 2023 Performance Update**](https://investor.dollargeneral.com/websites/dollargeneral/English/2120/us-press-release.html?airportNewsID=44c8c5ef-9bd4-4f65-80d8-8b4c1e936db7)</BibliographyItem>
   <BibliographyItem id="3">[**Entrepreneur Magazine: Safety Concerns Due to Excess Inventory**](https://www.entrepreneur.com/business-news/dollar-generals-massive-inventory-leads-to-safety/446652)</BibliographyItem>
