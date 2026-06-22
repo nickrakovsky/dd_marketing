@@ -300,12 +300,12 @@ test.describe('Calendly funnel tracking', () => {
   });
 
   test('funnel events fire to Bento when email is known', async ({ page }) => {
-    const bentoCalls: Array<{ email: string; event: string }> = [];
+    const bentoCalls: Array<{ email: string; event: string; firstTouch?: Record<string, string> }> = [];
     await page.route('**/api/bento-track', async (route) => {
       const req = route.request();
       if (req.method() === 'POST') {
         const body = JSON.parse(req.postData() || '{}');
-        bentoCalls.push({ email: body.email, event: body.event });
+        bentoCalls.push({ email: body.email, event: body.event, firstTouch: body.firstTouch });
       }
       await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
     });
@@ -331,6 +331,47 @@ test.describe('Calendly funnel tracking', () => {
       'Bento should receive demo_date_selected for known emails — this is what enables abandonment follow-up'
     ).toBeDefined();
     expect(stalled?.email).toBe('abandoner@datadocks.com');
+  });
+
+  test('first-touch UTMs flow through to Bento on demo_booked', async ({ page }) => {
+    // Regression test: previously the funnel listener sent { email, event,
+    // source, landingPage, visitorUuid } to /api/bento-track but DID NOT
+    // include UTMs, so Bento visitor records had no campaign attribution
+    // even when Calendly's own meeting record did. The fix adds firstTouch
+    // and lastTouch to the payload.
+    const bentoCalls: Array<Record<string, unknown>> = [];
+    await page.route('**/api/bento-track', async (route) => {
+      const req = route.request();
+      if (req.method() === 'POST') {
+        bentoCalls.push(JSON.parse(req.postData() || '{}'));
+      }
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+    });
+
+    // Land with UTMs (first-touch is captured in localStorage)
+    await page.goto('/?utm_source=meta&utm_medium=cpc&utm_campaign=q4_demo&utm_term=dock_scheduling&utm_content=ad_b');
+    await page.evaluate(() => localStorage.setItem('dd_known_email', 'lead@datadocks.com'));
+
+    // Simulate the booking conversion event from Calendly
+    await page.evaluate(() => {
+      window.dispatchEvent(new MessageEvent('message', {
+        data: { event: 'calendly.event_scheduled' },
+        origin: 'https://calendly.com',
+      }));
+    });
+
+    await page.waitForTimeout(500);
+
+    const booked = bentoCalls.find((c) => c.event === 'demo_booked');
+    expect(booked, 'demo_booked should hit Bento for known emails').toBeDefined();
+
+    const firstTouch = booked!.firstTouch as Record<string, string>;
+    expect(firstTouch, 'firstTouch must be in the Bento payload — this is the bug fix').toBeDefined();
+    expect(firstTouch.utm_source).toBe('meta');
+    expect(firstTouch.utm_medium).toBe('cpc');
+    expect(firstTouch.utm_campaign).toBe('q4_demo');
+    expect(firstTouch.utm_term).toBe('dock_scheduling');
+    expect(firstTouch.utm_content).toBe('ad_b');
   });
 
   test('funnel stages dedupe within a page load', async ({ page }) => {
