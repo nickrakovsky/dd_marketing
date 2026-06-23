@@ -786,7 +786,7 @@ if (priorityImgMatch) {
           // Try to extract a human-readable title from the snippet.
           let title = 'Academic Reference';
           
-          const quoteMatch = snippet.match(/[“"']([^”"']+)[”"']/);
+          const quoteMatch = snippet.match(/["'“”‘’]([^"'“”‘’]+)["'“”‘’]/);
           if (quoteMatch) {
              title = quoteMatch[1];
           } else if (extLink) {
