@@ -847,18 +847,10 @@ if (priorityImgMatch) {
         if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
       }
       
-      // If the link text is basically just the domain, try to make a nice title out of the domain
-      const isUrlText = linkText.toLowerCase().includes(domain.replace(/\.[^.]+$/, '').toLowerCase());
-      
-      if (linkText && linkText.length > 3 && !isUrlText) {
-        trigger.dataset.smartlinkTitle = linkText;
-        trigger.dataset.smartlinkSnippet = surroundingText ? surroundingText : `External resource: ${domain}`;
-      } else {
-        // Format domain as brand (e.g. sciencedirect.com -> Sciencedirect)
-        const brandName = domain.split('.')[0];
-        trigger.dataset.smartlinkTitle = brandName.charAt(0).toUpperCase() + brandName.slice(1);
-        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
-      }
+      // Format domain as brand (e.g. sciencedirect.com -> Sciencedirect)
+      const brandName = domain.split('.')[0];
+      trigger.dataset.smartlinkTitle = brandName.charAt(0).toUpperCase() + brandName.slice(1);
+      trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
     }
   }
 
@@ -1573,13 +1565,14 @@ if (priorityImgMatch) {
   }
 
   /* Desktop TOC fading */
-  .desktop-toc-container {
+  .desktop-toc-container, .sidebar-card {
     opacity: 0.4;
     filter: grayscale(100%);
     transition: opacity 4s ease, filter 4s ease;
   }
   .desktop-toc-container:hover,
-  .desktop-toc-container.is-active-click {
+  .desktop-toc-container.is-active-click,
+  .sidebar-card:hover, .sidebar-card[data-hovered="true"], .sidebar-card:has(.lyt-activated) {
     opacity: 1;
     filter: grayscale(0%);
     transition: opacity 0.2s ease, filter 0.2s ease;
