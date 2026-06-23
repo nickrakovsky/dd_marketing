@@ -621,6 +621,19 @@ if (priorityImgMatch) {
     const snippet = (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
     const icon = dataset.smartlinkIcon || '';
     
+    if (type === 'academic') {
+      return `
+        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-4 pl-6 rounded-none shadow-md transition-all duration-300 not-prose mt-2 mb-2">
+          <span class="absolute -left-[14px] top-4 w-7 h-7 bg-[#fd4f00] text-white text-sm font-bold rounded-none flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
+            ${title}
+          </span>
+          <div class="font-sans text-sm text-gray-800 dark:text-gray-200 leading-relaxed [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white">
+            ${snippet}
+          </div>
+        </div>
+      `;
+    }
+
     let iconHtml = '';
     
     if (isInline) {
@@ -795,8 +808,14 @@ if (priorityImgMatch) {
     if (snip)  snip.textContent  = trigger.dataset.smartlinkSnippet || '';
     
     if (type === 'academic') {
-      if (title) title.className = 'text-xl font-bruta uppercase text-gray-900 dark:text-white mb-2';
-      if (snip) snip.className = 'text-gray-600 dark:text-gray-400 font-sans text-base leading-relaxed mb-6';
+      if (title) {
+        title.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        title.textContent = `Citation [${trigger.dataset.smartlinkTitle || ''}]`;
+      }
+      if (snip) {
+        snip.className = 'text-gray-700 dark:text-gray-300 font-sans text-base leading-relaxed mb-6';
+        snip.innerHTML = trigger.dataset.smartlinkSnippet || '';
+      }
     } else {
       if (title) title.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3';
       if (snip) snip.className = 'text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6';
@@ -1209,7 +1228,7 @@ if (priorityImgMatch) {
                         `;
                     }
                 } else {
-                    inlineCard.className = 'smartlink-tablet-card hidden md:block lg:hidden my-6';
+                    inlineCard.className = 'smartlink-tablet-card block lg:hidden my-6';
                     inlineCard.innerHTML = getPremiumCardHTML(trigger.dataset, true);
                 }
                 
@@ -1257,7 +1276,7 @@ if (priorityImgMatch) {
                     smartlinkIcon: item.icon
                 };
                 const inlineCard = document.createElement('div');
-                inlineCard.className = 'smartlink-tablet-card hidden md:block lg:hidden my-6';
+                inlineCard.className = 'smartlink-tablet-card block lg:hidden my-6';
                 inlineCard.innerHTML = getPremiumCardHTML(dummyData, true);
                 heading.after(inlineCard);
                 heading.dataset.hasInlineCard = 'true';
