@@ -786,27 +786,25 @@ if (priorityImgMatch) {
           // Try to extract a human-readable title from the snippet.
           let title = 'Academic Reference';
           
-          if (extLink) {
+          const quoteMatch = snippet.match(/[“"']([^”"']+)[”"']/);
+          if (quoteMatch) {
+             title = quoteMatch[1];
+          } else if (extLink) {
              const linkText = (extLink.textContent || '').trim();
              const isUrl = /^https?:\/\//i.test(linkText) || /doi\.org/i.test(linkText);
              if (linkText && !isUrl) {
                 title = linkText;
                 snippet = snippet.replace(linkText, '').replace(/\(\s*\)/, '').trim();
              } else {
-                const quoteMatch = snippet.match(/[“"']([^”"']+)[”"']/);
-                if (quoteMatch) {
-                   title = quoteMatch[1];
-                }
-             }
-          } else {
-             const quoteMatch = snippet.match(/[“"']([^”"']+)[”"']/);
-             if (quoteMatch) {
-                title = quoteMatch[1];
-             } else {
                 const periodMatch = snippet.match(/^([^.]+)\./);
                 if (periodMatch && periodMatch[1].length < 100) {
                    title = periodMatch[1];
                 }
+             }
+          } else {
+             const periodMatch = snippet.match(/^([^.]+)\./);
+             if (periodMatch && periodMatch[1].length < 100) {
+                title = periodMatch[1];
              }
           }
           
