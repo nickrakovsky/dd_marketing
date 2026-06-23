@@ -587,10 +587,16 @@ if (priorityImgMatch) {
         
       let html = '';
       if (href && href !== '#') {
-        html += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${btnClass}">View Source</a>`;
+        html += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${btnClass}">
+          Source
+          ${!isMobile ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>' : ''}
+        </a>`;
       }
       if (bibRef) {
-        html += `<a href="${bibRef}" class="${secClass}" onclick="closeSmartLinkUI()">Go to Bibliography</a>`;
+        html += `<a href="${bibRef}" class="${secClass}" onclick="closeSmartLinkUI()">
+          Full citation
+          ${!isMobile ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 17l-4 4m0 0l-4-4m4 4V3" /></svg>' : ''}
+        </a>`;
       }
       return html;
     } 
@@ -632,6 +638,9 @@ if (priorityImgMatch) {
           <div class="font-sans text-sm text-gray-800 dark:text-gray-200 leading-relaxed [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white">
             ${snippet}
           </div>
+          <div class="mt-3 flex items-center gap-3">
+            ${getActionLinksHTML(type, dataset.smartlinkHref, dataset.smartlinkBibref, false)}
+          </div>
         </div>
       `;
     }
@@ -647,6 +656,9 @@ if (priorityImgMatch) {
             </div>
             <div class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1">
               ${snippet}
+            </div>
+            <div class="mt-2 flex items-center gap-3">
+              ${getActionLinksHTML(type, dataset.smartlinkHref, dataset.smartlinkBibref, false)}
             </div>
           </div>
         </div>
