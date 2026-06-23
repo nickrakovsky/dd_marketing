@@ -599,16 +599,15 @@ if (priorityImgMatch) {
       return ''; 
     }
 
-    const linkText = type === 'video' ? 'Watch video' : type === 'feature' ? 'Explore feature' : type === 'external' ? 'Visit site' : 'Read more';
-    const targetAttrs = type === 'external' ? 'target="_blank" rel="noopener noreferrer"' : '';
+    const linkText = type === 'video' ? 'Watch video' : type === 'feature' ? 'Explore feature' : 'Read more';
     
     if (isMobile) {
-      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
+      return `<a href="${href}" class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
     } else {
-      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
+      return `<a href="${href}" class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
         ${linkText}
         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-          ${type === 'external' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />' : '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />'}
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </a>`;
     }
@@ -644,25 +643,23 @@ if (priorityImgMatch) {
           </div>`;
       }
       return `
-        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-none shadow-md transition-all duration-300 not-prose group/feature">
+        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-none shadow-md transition-all duration-300 not-prose group/feature block">
+          <a href="${href}" class="absolute inset-0 z-10"><span class="sr-only">${title}</span></a>
           <div class="flex flex-row items-start gap-4">
             ${iconHtml}
-            <div class="flex-grow">
-              <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight mb-1 m-0">
-                <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline">
-                  ${title}
-                </a>
+            <div class="flex-grow pr-6">
+              <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight mb-1 m-0 group-hover/feature:underline">
+                ${title}
               </h3>
-              <p class="font-sans text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+              <p class="font-sans text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-0">
                 ${snippet}
               </p>
-              <div class="inline-flex items-center gap-1 font-sans text-sm font-semibold text-[#fd4f00] dark:text-[#ff7635] group-hover/feature:underline">
-                Explore DataDocks
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
             </div>
+          </div>
+          <div class="absolute bottom-5 right-5 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
           </div>
         </div>
       `;
@@ -726,46 +723,36 @@ if (priorityImgMatch) {
         const bibId = bibRef.replace('#', '');
         const bibEl = document.getElementById(bibId);
         if (bibEl) {
-          const links = Array.from(bibEl.querySelectorAll('a'));
-          // Find the first link that isn't a hash/internal link
-          const extLink = links.find(l => l.getAttribute('href') && !l.getAttribute('href')?.startsWith('#'));
+          // Find the content div, skipping the badge span
+          const contentDiv = bibEl.querySelector('[data-bib-content]') || bibEl;
+          
+          const links = Array.from(contentDiv.querySelectorAll('a'));
+          // Find the first link that isn't a hash/internal link or a jumpback
+          const extLink = links.find(l => {
+            const h = l.getAttribute('href');
+            return h && !h.startsWith('#') && !l.classList.contains('bib-jumpback');
+          });
           
           let href = '#';
           if (extLink) {
             href = extLink.getAttribute('href') || '#';
           }
           
-          let title = `Reference [${bibId.replace('ref-', '')}]`;
+          let title = bibId.replace('ref-', '');
+          
+          // Get the citation text, excluding jumpback links
           let snippet = '';
-          
-          // Get the full text of the bibliography item
-          let fullText = bibEl.textContent || '';
-          // Clean up leading numbers or spaces
-          fullText = fullText.replace(/^\d+\s*/, '').trim();
-          
-          // If there is an external link, let's see if its text is a descriptive title
-          if (extLink) {
-            const linkText = (extLink.textContent || '').trim();
-            const isUrl = /^https?:\/\//i.test(linkText) || /doi\.org/i.test(linkText);
-            if (linkText && !isUrl) {
-              title = linkText;
-              // The snippet can be the rest of the text
-              snippet = fullText.replace(linkText, '').replace(/\(\s*\)/, '').trim();
-            } else {
-              // The link text is a URL, so the title should be extracted from the beginning of the bibliography item text
-              // e.g. up to the URL, or if there is quotes, the quoted title.
-              const quoteMatch = fullText.match(/[“"']([^”"']+)[”"']/);
-              if (quoteMatch) {
-                title = quoteMatch[1];
-                snippet = fullText;
-              } else {
-                title = `Reference [${bibId.replace('ref-', '')}]`;
-                snippet = fullText;
+          contentDiv.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              snippet += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              const el = node as HTMLElement;
+              if (!el.classList.contains('bib-jumpback') && !el.hasAttribute('data-bib-badge')) {
+                snippet += el.textContent;
               }
             }
-          } else {
-            snippet = fullText;
-          }
+          });
+          snippet = snippet.replace(/^\d+\s*/, '').trim();
           
           // Clean up snippet: remove any trailing URLs or brackets
           if (href && href !== '#') {
@@ -784,7 +771,7 @@ if (priorityImgMatch) {
           
           trigger.dataset.smartlinkHref = href;
           trigger.dataset.smartlinkTitle = title;
-          trigger.dataset.smartlinkSnippet = snippet || 'Academic source citation reference details.';
+          trigger.dataset.smartlinkSnippet = snippet || '';
         }
       }
     }
@@ -809,16 +796,21 @@ if (priorityImgMatch) {
     
     if (type === 'academic') {
       if (title) {
-        title.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        title.className = 'text-xl font-sans font-bold text-[#fd4f00] dark:text-[#ff7635] mb-2';
         title.textContent = `Citation [${trigger.dataset.smartlinkTitle || ''}]`;
       }
       if (snip) {
-        snip.className = 'text-gray-700 dark:text-gray-300 font-sans text-base leading-relaxed mb-6';
+        snip.className = 'text-gray-700 dark:text-gray-300 font-serif text-base leading-relaxed mb-6';
         snip.innerHTML = trigger.dataset.smartlinkSnippet || '';
       }
     } else {
-      if (title) title.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3';
-      if (snip) snip.className = 'text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6';
+      if (title) {
+        title.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3';
+        title.textContent = trigger.dataset.smartlinkTitle || 'Reference';
+      }
+      if (snip) {
+        snip.className = 'text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6';
+      }
     }
 
     actions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
@@ -842,7 +834,10 @@ if (priorityImgMatch) {
     const href = trigger.dataset.smartlinkHref || '#';
     const bibRef = trigger.dataset.smartlinkBibref || '';
     const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
-    const title = (trigger.dataset.smartlinkTitle || 'Reference').replace(/</g, '&lt;');
+    let title = (trigger.dataset.smartlinkTitle || 'Reference').replace(/</g, '&lt;');
+    if (type === 'academic') {
+      title = `Citation [${title}]`;
+    }
     const snippet = (trigger.dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
 
     const card = document.createElement('div');
