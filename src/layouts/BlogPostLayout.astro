@@ -599,15 +599,16 @@ if (priorityImgMatch) {
       return ''; 
     }
 
-    const linkText = type === 'video' ? 'Watch video' : type === 'feature' ? 'Explore feature' : 'Read more';
+    const linkText = type === 'video' ? 'Watch video' : type === 'feature' ? 'Explore feature' : type === 'external' ? 'Visit site' : 'Read more';
+    const targetAttrs = type === 'external' ? 'target="_blank" rel="noopener noreferrer"' : '';
     
     if (isMobile) {
-      return `<a href="${href}" class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
     } else {
-      return `<a href="${href}" class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
         ${linkText}
         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          ${type === 'external' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />' : '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />'}
         </svg>
       </a>`;
     }
@@ -621,13 +622,32 @@ if (priorityImgMatch) {
     const icon = dataset.smartlinkIcon || '';
     
     if (type === 'academic') {
+      const citeNum = dataset.smartlinkBibref ? dataset.smartlinkBibref.replace('#ref-', '') : '';
       return `
         <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-4 pl-6 rounded-none shadow-md transition-all duration-300 not-prose mt-2 mb-2">
-          <span class="absolute -left-[14px] top-4 w-7 h-7 bg-[#fd4f00] text-white text-sm font-bold rounded-none flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
+          ${citeNum ? `<span class="absolute -left-[14px] top-4 w-7 h-7 bg-[#fd4f00] text-white text-sm font-bold rounded-none flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">${citeNum}</span>` : ''}
+          <div class="font-sans text-sm font-bold text-gray-900 dark:text-white mb-1">
             ${title}
-          </span>
+          </div>
           <div class="font-sans text-sm text-gray-800 dark:text-gray-200 leading-relaxed [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white">
             ${snippet}
+          </div>
+        </div>
+      `;
+    }
+    if (type === 'external') {
+      return `
+        <div class="relative w-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-none shadow-sm transition-all duration-300 not-prose mt-2 mb-2 flex items-start gap-3">
+          <div class="w-8 h-8 shrink-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center rounded-none text-gray-500 dark:text-gray-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+          </div>
+          <div>
+            <div class="font-sans text-sm font-bold text-gray-900 dark:text-white leading-tight">
+              ${title}
+            </div>
+            <div class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1">
+              ${snippet}
+            </div>
           </div>
         </div>
       `;
@@ -738,9 +758,6 @@ if (priorityImgMatch) {
             href = extLink.getAttribute('href') || '#';
           }
           
-          let title = bibId.replace('ref-', '');
-          
-          // Get the citation text, excluding jumpback links
           let snippet = '';
           contentDiv.childNodes.forEach(node => {
             if (node.nodeType === Node.TEXT_NODE) {
@@ -753,6 +770,33 @@ if (priorityImgMatch) {
             }
           });
           snippet = snippet.replace(/^\d+\s*/, '').trim();
+
+          // Try to extract a human-readable title from the snippet.
+          let title = 'Academic Reference';
+          
+          if (extLink) {
+             const linkText = (extLink.textContent || '').trim();
+             const isUrl = /^https?:\/\//i.test(linkText) || /doi\.org/i.test(linkText);
+             if (linkText && !isUrl) {
+                title = linkText;
+                snippet = snippet.replace(linkText, '').replace(/\(\s*\)/, '').trim();
+             } else {
+                const quoteMatch = snippet.match(/[“"']([^”"']+)[”"']/);
+                if (quoteMatch) {
+                   title = quoteMatch[1];
+                }
+             }
+          } else {
+             const quoteMatch = snippet.match(/[“"']([^”"']+)[”"']/);
+             if (quoteMatch) {
+                title = quoteMatch[1];
+             } else {
+                const periodMatch = snippet.match(/^([^.]+)\./);
+                if (periodMatch && periodMatch[1].length < 100) {
+                   title = periodMatch[1];
+                }
+             }
+          }
           
           // Clean up snippet: remove any trailing URLs or brackets
           if (href && href !== '#') {
@@ -777,8 +821,24 @@ if (priorityImgMatch) {
     }
   }
 
+  function resolveExternalDetails(trigger: HTMLElement) {
+    if (trigger.dataset.smartlinkType === 'external') {
+      const domain = trigger.dataset.smartlinkTitle || 'External Link';
+      const linkText = trigger.textContent?.trim() || '';
+      
+      if (linkText && linkText.length > 3 && !linkText.toLowerCase().includes(domain.toLowerCase())) {
+        trigger.dataset.smartlinkTitle = linkText;
+        trigger.dataset.smartlinkSnippet = `External resource: ${domain}`;
+      } else {
+        trigger.dataset.smartlinkTitle = domain;
+        trigger.dataset.smartlinkSnippet = 'External resource';
+      }
+    }
+  }
+
   function openMobileSheet(trigger: HTMLElement) {
     resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
     ensureUIElements();
     const sheet  = document.getElementById('smartlink-mobile-sheet');
     const scrim  = document.getElementById('smartlink-scrim');
@@ -796,8 +856,8 @@ if (priorityImgMatch) {
     
     if (type === 'academic') {
       if (title) {
-        title.className = 'text-xl font-sans font-bold text-[#fd4f00] dark:text-[#ff7635] mb-2';
-        title.textContent = `Citation [${trigger.dataset.smartlinkTitle || ''}]`;
+        title.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        title.textContent = trigger.dataset.smartlinkTitle || 'Academic Reference';
       }
       if (snip) {
         snip.className = 'text-gray-700 dark:text-gray-300 font-serif text-base leading-relaxed mb-6';
