@@ -826,12 +826,27 @@ if (priorityImgMatch) {
       const domain = trigger.dataset.smartlinkTitle || 'External Link';
       const linkText = trigger.textContent?.trim() || '';
       
-      if (linkText && linkText.length > 3 && !linkText.toLowerCase().includes(domain.toLowerCase())) {
+      let surroundingText = '';
+      if (trigger.parentElement) {
+        const textContent = trigger.parentElement.textContent || '';
+        const sentences = textContent.match(/[^.!?]+[.!?]+/g) || [textContent];
+        const linkSentence = sentences.find(s => s.includes(linkText)) || textContent;
+        // Clean up the sentence to be a nice snippet
+        surroundingText = linkSentence.replace(/\s+/g, ' ').trim();
+        if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
+      }
+      
+      // If the link text is basically just the domain, try to make a nice title out of the domain
+      const isUrlText = linkText.toLowerCase().includes(domain.replace(/\.[^.]+$/, '').toLowerCase());
+      
+      if (linkText && linkText.length > 3 && !isUrlText) {
         trigger.dataset.smartlinkTitle = linkText;
-        trigger.dataset.smartlinkSnippet = `External resource: ${domain}`;
+        trigger.dataset.smartlinkSnippet = surroundingText ? surroundingText : `External resource: ${domain}`;
       } else {
-        trigger.dataset.smartlinkTitle = domain;
-        trigger.dataset.smartlinkSnippet = 'External resource';
+        // Format domain as brand (e.g. sciencedirect.com -> Sciencedirect)
+        const brandName = domain.split('.')[0];
+        trigger.dataset.smartlinkTitle = brandName.charAt(0).toUpperCase() + brandName.slice(1);
+        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
       }
     }
   }
@@ -890,20 +905,18 @@ if (priorityImgMatch) {
 
   function createPersistentCard(trigger: HTMLElement): HTMLElement {
     resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
     const type = trigger.dataset.smartlinkType || 'post';
     const href = trigger.dataset.smartlinkHref || '#';
     const bibRef = trigger.dataset.smartlinkBibref || '';
     const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
     let title = (trigger.dataset.smartlinkTitle || 'Reference').replace(/</g, '&lt;');
-    if (type === 'academic') {
-      title = `Citation [${title}]`;
-    }
     const snippet = (trigger.dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
 
     const card = document.createElement('div');
     card.className = 'absolute left-0 z-30 w-full smartlink-persistent-card group transition-all duration-300 pointer-events-auto transform rounded-none';
 
-    if (type === 'feature' || type === 'benefit') {
+    if (type === 'feature' || type === 'benefit' || type === 'academic' || type === 'external') {
        card.classList.add('opacity-70', 'data-[hovered=true]:opacity-100', 'data-[hovered=true]:z-40');
        card.innerHTML = getPremiumCardHTML(trigger.dataset);
     } else {
