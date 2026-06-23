@@ -833,6 +833,7 @@ if (priorityImgMatch) {
 
   function resolveExternalDetails(trigger: HTMLElement) {
     if (trigger.dataset.smartlinkType === 'external') {
+      if (trigger.dataset.smartlinkManual === 'true') return;
       const domain = trigger.dataset.smartlinkTitle || 'External Link';
       const linkText = trigger.textContent?.trim() || '';
       

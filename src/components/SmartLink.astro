@@ -14,8 +14,13 @@ interface Props {
   anchorText?: string;
 }
 
-const props = Astro.props;
-let { href, id, type, title, snippet, bibRef, citation, class: className, anchorText } = props;
+const { class: className, anchorText, id: rawId } = Astro.props;
+let { href, type, title: propTitle, snippet: propSnippet, bibRef, citation } = Astro.props;
+
+let id = rawId;
+let title = propTitle;
+let snippet = propSnippet;
+const isManual = !!(propTitle || propSnippet);
 
 // Infer type and id from href if possible
 let parsedHref = href || '';
@@ -143,6 +148,7 @@ const isSmartLink = !!type && (title || snippet);
     data-smartlink-snippet={snippet}
     data-smartlink-href={href}
     data-smartlink-bibref={bibRef}
+    data-smartlink-manual={isManual ? "true" : undefined}
     data-smartlink-youtube-id={youtubeId}
     data-smartlink-icon={iconStr}
     class={`inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00] ${className || ''}`}
