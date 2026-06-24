@@ -847,10 +847,34 @@ if (priorityImgMatch) {
         if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
       }
       
-      // Format domain as brand (e.g. sciencedirect.com -> Sciencedirect)
-      const brandName = domain.split('.')[0];
-      trigger.dataset.smartlinkTitle = brandName.charAt(0).toUpperCase() + brandName.slice(1);
-      trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
+      // Format domain as brand (e.g. assets.kpmg.com -> Kpmg)
+      let parts = domain.split('.');
+      const commonSubdomains = ['www', 'assets', 'blog', 'app', 'docs', 'help', 'support', 'info', 'news', 'shop', 'store', 'go', 'investors', 'investor', 'my', 'portal'];
+      while (parts.length > 1 && commonSubdomains.includes(parts[0].toLowerCase())) {
+        parts.shift();
+      }
+      const brandName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+      trigger.dataset.smartlinkTitle = brandName;
+      
+      // Try to extract a meaningful snippet from the URL path
+      let urlContext = '';
+      try {
+        const urlObj = new URL(trigger.dataset.smartlinkHref || '');
+        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 3 && !p.includes('.php') && !p.includes('.html'));
+        if (pathSegments.length > 0) {
+          let lastSegment = pathSegments[pathSegments.length - 1];
+          // Replace hyphens/underscores with spaces and remove common file extensions
+          lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
+          // Capitalize words
+          urlContext = lastSegment.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').trim();
+        }
+      } catch(e) {}
+
+      if (urlContext && urlContext.toLowerCase() !== brandName.toLowerCase()) {
+        trigger.dataset.smartlinkSnippet = `Resource: ${urlContext}`;
+      } else {
+        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
+      }
     }
   }
 

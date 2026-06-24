@@ -151,7 +151,7 @@ const isSmartLink = !!type && (title || snippet);
     data-smartlink-manual={isManual ? "true" : undefined}
     data-smartlink-youtube-id={youtubeId}
     data-smartlink-icon={iconStr}
-    class={`inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00] ${className || ''}`}
+    class={`inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00] [&_strong]:!text-inherit [&_em]:!text-inherit ${className || ''}`}
     {...((type === 'external' && href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
   ><slot>{anchorText || id}</slot>{citation && <sup class="text-[#fd4f00] dark:text-[#ff7635] ml-0.5 font-bold">{citation}</sup>}{type === 'external' && <svg class="inline w-3 h-3 ml-0.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>}{(type && type !== 'external' && type !== 'academic' && !citation) && <span class="inline lg:hidden ml-0.5 text-[#fd4f00] text-xs font-bold align-super" aria-hidden="true">?</span>}</a>
 )}
