@@ -555,7 +555,7 @@ if (priorityImgMatch) {
       <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-none mx-auto mt-3 mb-2"></div>
       <div class="px-6 pb-8 pt-2">
         <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3"></h3>
-        <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6"></p>
+        <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
         <div id="sl-mobile-actions" class="flex flex-col gap-3"></div>
       </div>
     `;
@@ -569,7 +569,7 @@ if (priorityImgMatch) {
       <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
       <div class="relative p-4">
         <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight"></h3>
-        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug"></p>
+        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug break-words line-clamp-3"></p>
         <div id="sl-desktop-actions" class="mt-3 flex items-center gap-3"></div>
       </div>
     `;
@@ -654,7 +654,7 @@ if (priorityImgMatch) {
             <div class="font-sans text-sm font-bold text-gray-900 dark:text-white leading-tight">
               ${title}
             </div>
-            <div class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1">
+            <div class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 break-words line-clamp-3">
               ${snippet}
             </div>
             <div class="mt-2 flex items-center gap-3">
@@ -860,13 +860,21 @@ if (priorityImgMatch) {
       let urlContext = '';
       try {
         const urlObj = new URL(trigger.dataset.smartlinkHref || '');
-        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 3 && !p.includes('.php') && !p.includes('.html'));
-        if (pathSegments.length > 0) {
-          let lastSegment = pathSegments[pathSegments.length - 1];
+        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 0 && !p.includes('.php') && !p.includes('.html'));
+        
+        // Find the last segment that contains some letters (ignoring trailing ID segments)
+        let meaningfulSegments = pathSegments.filter(p => /[a-zA-Z]{3,}/.test(p));
+        if (meaningfulSegments.length > 0) {
+          let lastSegment = meaningfulSegments[meaningfulSegments.length - 1];
+          try { lastSegment = decodeURIComponent(lastSegment); } catch(e) {}
+          
           // Replace hyphens/underscores with spaces and remove common file extensions
           lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
+          
           // Capitalize words
           urlContext = lastSegment.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').trim();
+          
+          if (urlContext.length < 5) urlContext = '';
         }
       } catch(e) {}
 
