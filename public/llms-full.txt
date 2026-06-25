@@ -215,11 +215,9 @@ Yard management becomes essential when a facility has 50+ trailer spots, frequen
 - [Peak Season Without Dock Chaos: Complete Playbook](https://datadocks.com/posts/peak-season-without-dock-chaos-a-complete-playbook)
 
 ### Yard Management
-- [What is a Yard Management System (YMS)?](https://datadocks.com/posts/what-is-a-yard-management-system-yms)
+- [Yard Management](https://datadocks.com/yard-management)
 - [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow)
-- [Yard Management vs Dock Scheduling vs YMS](https://datadocks.com/posts/yard-management-vs-dock-scheduling-vs-yms)
-- [8 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options)
-- [Crucial Components to Successful Yard Management](https://datadocks.com/posts/crucial-components-to-successful-yard-management)
+- [10 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options)
 - [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations)
 - [3 Easy Ways to Improve Yard Visibility Fast](https://datadocks.com/posts/yard-visibility)
 
