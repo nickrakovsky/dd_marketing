@@ -34,7 +34,9 @@ if (parsedHref.startsWith('http://datadocks.com') || parsedHref.startsWith('http
   try {
     const url = new URL(parsedHref);
     parsedHref = url.pathname + url.search + url.hash;
-  } catch(e) {}
+  } catch {
+    // Ignore invalid URL
+  }
 }
 
 if (parsedHref && !type) {
@@ -60,7 +62,7 @@ if (parsedHref && !type) {
       const url = new URL(parsedHref);
       title = title || (parsedHref.includes('apple') ? 'App Store' : 'Google Play');
       snippet = snippet || 'Get the DataDocks app for your device.';
-    } catch(e) {
+    } catch {
       title = title || 'App Store';
     }
   } else if (parsedHref.startsWith('http://') || parsedHref.startsWith('https://')) {
@@ -70,7 +72,7 @@ if (parsedHref && !type) {
         const extUrl = new URL(parsedHref);
         title = title || extUrl.hostname.replace(/^www\./, '');
         snippet = snippet || '';
-      } catch(e) {
+      } catch {
         title = title || 'External Link';
       }
     }

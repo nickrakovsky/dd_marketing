@@ -944,7 +944,9 @@ if (priorityImgMatch) {
         let meaningfulSegments = pathSegments.filter(p => /[a-zA-Z]{3,}/.test(p));
         if (meaningfulSegments.length > 0) {
           let lastSegment = meaningfulSegments[meaningfulSegments.length - 1];
-          try { lastSegment = decodeURIComponent(lastSegment); } catch(e) {}
+          try { lastSegment = decodeURIComponent(lastSegment); } catch {
+            // Ignore decode error
+          }
           
           // Replace hyphens/underscores with spaces and remove common file extensions
           lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
@@ -954,7 +956,9 @@ if (priorityImgMatch) {
           
           if (urlContext.length < 5) urlContext = '';
         }
-      } catch(e) {}
+      } catch {
+        // Ignore URL parsing error
+      }
 
       if (urlContext && urlContext.toLowerCase() !== brandName.toLowerCase()) {
         trigger.dataset.smartlinkSnippet = `Resource: ${urlContext}`;
@@ -1214,7 +1218,9 @@ if (priorityImgMatch) {
         try {
             features = JSON.parse(fallbackDataEl.dataset.features || '[]');
             benefits = JSON.parse(fallbackDataEl.dataset.benefits || '[]');
-        } catch(e) {}
+        } catch {
+            // Ignore parse errors
+        }
         
         // Find first unlinked feature
         let featureFallback: any = null;
@@ -1277,8 +1283,8 @@ if (priorityImgMatch) {
     }
 
     // Now place natural triggers
-    const keyToCard = new Map<string, HTMLElement>();
-    const seenKeys = new Set<string>();
+    const keyToCard = new Map();
+    const seenKeys = new Set();
 
     allTriggers.forEach((trigger) => {
       if (trigger.dataset.smartlinkType === 'video-widescreen') return;
@@ -1569,7 +1575,9 @@ if (priorityImgMatch) {
         try {
             features = JSON.parse(fallbackDataEl.dataset.features || '[]');
             benefits = JSON.parse(fallbackDataEl.dataset.benefits || '[]');
-        } catch(e) {}
+        } catch {
+            // Ignore parse errors
+        }
         
         let featureFallback: any = null;
         for (const f of features) {
