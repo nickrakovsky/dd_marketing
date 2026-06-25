@@ -1184,6 +1184,7 @@ if (priorityImgMatch) {
       let cardEl = keyToCard.get(key);
       if (!cardEl) {
         cardEl = trigger.cardEl || createPersistentCard(trigger);
+        if (!cardEl) return;
         keyToCard.set(key, cardEl);
 
         const currentCardEl = cardEl; // Capture in closure
@@ -1526,7 +1527,7 @@ if (priorityImgMatch) {
 
   @media (min-width: 1024px) {
     .prose .table-wrapper {
-      width: 100% !important;
+      width: calc(100% + 10rem) !important;
       margin-left: 0 !important;
       border-left: 4px solid #fd4f00 !important;
       border-radius: 0 8px 8px 0 !important;

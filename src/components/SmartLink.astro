@@ -17,7 +17,7 @@ interface Props {
 const { class: className, anchorText, id: rawId } = Astro.props;
 let { href, type, title: propTitle, snippet: propSnippet, bibRef, citation } = Astro.props;
 
-console.log("SMARTLINK CALLED:", href); let id = rawId;
+let id = rawId;
 let title = propTitle;
 let snippet = propSnippet;
 const isManual = !!(propTitle || propSnippet);
