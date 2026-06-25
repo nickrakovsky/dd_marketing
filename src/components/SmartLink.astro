@@ -22,6 +22,8 @@ let title = propTitle;
 let snippet = propSnippet;
 const isManual = !!(propTitle || propSnippet);
 
+console.log('SmartLink Render:', { href, id, text: Astro.slots.has('default') ? 'has_slot' : 'no_slot' });
+
 // Infer type and id from href if possible
 let parsedHref = href || '';
 if (parsedHref.startsWith('/') && !parsedHref.startsWith('//')) {
@@ -51,6 +53,7 @@ if (parsedHref && !type) {
   } else if (parsedHref.startsWith('#ref') || parsedHref.startsWith('#cite')) {
     type = 'academic';
     bibRef = bibRef || parsedHref;
+    citation = citation || bibRef.replace('#ref-', '').replace('#cite-', '');
   } else if (parsedHref.includes('play.google.com/store/apps') || parsedHref.includes('apps.apple.com')) {
     type = 'app-store' as any;
     try {
