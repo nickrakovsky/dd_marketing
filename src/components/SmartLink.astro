@@ -17,7 +17,7 @@ interface Props {
 const { class: className, anchorText, id: rawId } = Astro.props;
 let { href, type, title: propTitle, snippet: propSnippet, bibRef, citation } = Astro.props;
 
-let id = rawId;
+console.log("SMARTLINK CALLED:", href); let id = rawId;
 let title = propTitle;
 let snippet = propSnippet;
 const isManual = !!(propTitle || propSnippet);
@@ -51,6 +51,15 @@ if (parsedHref && !type) {
   } else if (parsedHref.startsWith('#ref') || parsedHref.startsWith('#cite')) {
     type = 'academic';
     bibRef = bibRef || parsedHref;
+  } else if (parsedHref.includes('play.google.com/store/apps') || parsedHref.includes('apps.apple.com')) {
+    type = 'app-store' as any;
+    try {
+      const url = new URL(parsedHref);
+      title = title || (parsedHref.includes('apple') ? 'App Store' : 'Google Play');
+      snippet = snippet || 'Get the DataDocks app for your device.';
+    } catch(e) {
+      title = title || 'App Store';
+    }
   } else if (parsedHref.startsWith('http://') || parsedHref.startsWith('https://')) {
     if (!parsedHref.includes('calendly.com')) {
       type = 'external' as any;
@@ -72,22 +81,29 @@ if (id) {
 // Fetch data
 let youtubeId = '';
 let iconStr = '';
+
+async function getEntryCaseInsensitive(collection: any, idToFind: string): Promise<any> {
+  if (!idToFind) return null;
+  const { getCollection } = await import('astro:content');
+  const allEntries = await getCollection(collection);
+  return allEntries.find((e: any) => e.slug.toLowerCase() === idToFind.toLowerCase());
+}
 if (type === 'glossary' && id) {
-  const entry = await getEntry('glossary', id);
+  const entry = await getEntryCaseInsensitive('glossary', id);
   if (entry) {
     title = title || entry.data.termName;
     snippet = snippet || entry.data.contextSnippet;
     href = href || (entry.data.targetPost ? `/posts/${entry.data.targetPost.id}` : '#');
   }
 } else if (type === 'post' && id) {
-  const entry = await getEntry('posts', id);
+  const entry = await getEntryCaseInsensitive('posts', id);
   if (entry) {
     title = title || entry.data.title;
     snippet = snippet || entry.data.description;
     href = href || `/posts/${id}`;
   }
 } else if (type === 'video' && id) {
-  const entry = await getEntry('videos', id);
+  const entry = await getEntryCaseInsensitive('videos', id);
   if (entry) {
     title = title || entry.data.title;
     snippet = snippet || entry.data.description;
@@ -98,7 +114,7 @@ if (type === 'glossary' && id) {
     }
   }
 } else if (type === 'feature' && id) {
-  const entry = await getEntry('features', id);
+  const entry = await getEntryCaseInsensitive('features', id);
   if (entry) {
     title = title || entry.data.title;
     snippet = snippet || entry.data.description;
