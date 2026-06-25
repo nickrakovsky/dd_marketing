@@ -1241,6 +1241,57 @@ if (priorityImgMatch) {
       return { top, bottom };
     });
 
+    // Helper to check if cards can be nudged up to accommodate a target position
+    function canNudgeUp(cardIndex: number, targetTop: number) {
+      const tempPos = placedCards.slice(0, cardIndex + 1).map(c => ({
+        top: c.top,
+        bottom: c.bottom,
+        el: c.el,
+        h: c.bottom - c.top
+      }));
+
+      tempPos[cardIndex].top = targetTop;
+      tempPos[cardIndex].bottom = targetTop + tempPos[cardIndex].h;
+
+      // Check table blocker collisions for target card itself
+      for (const tb of tableBlockers) {
+        if (tempPos[cardIndex].top < tb.bottom && tempPos[cardIndex].bottom > tb.top) {
+          return null;
+        }
+      }
+
+      for (let j = cardIndex - 1; j >= 0; j--) {
+        const next = tempPos[j + 1];
+        const curr = tempPos[j];
+
+        const isDynamic = curr.el.classList.contains('smartlink-persistent-card');
+        if (!isDynamic) {
+          if (next.top < curr.bottom + minGap) {
+            return null;
+          }
+          continue;
+        }
+
+        if (next.top < curr.bottom + minGap) {
+          const requiredBottom = next.top - minGap;
+          const shiftUp = curr.bottom - requiredBottom;
+          curr.top -= shiftUp;
+          curr.bottom -= shiftUp;
+
+          if (curr.top < staticHeightUsed) {
+            return null;
+          }
+
+          for (const tb of tableBlockers) {
+            if (curr.top < tb.bottom && curr.bottom > tb.top) {
+              return null;
+            }
+          }
+        }
+      }
+      return tempPos;
+    }
+
     // Resolve overlaps (Shift DOWN)
     placedCards.sort((a, b) => a.top - b.top);
     for (let i = 0; i < placedCards.length; i++) {
@@ -1263,13 +1314,19 @@ if (priorityImgMatch) {
           // Card overlaps this table. Try above first.
           const abovePos = tb.top - cardH - minGap;
           const belowPos = tb.bottom;
-          // Only place above if there's room (not overlapping previous card)
-          const prevBottom = i > 0 ? placedCards[i - 1].bottom + minGap : staticHeightUsed;
-          if (abovePos >= prevBottom && abovePos >= 0) {
-            curr.top = abovePos;
-            curr.bottom = abovePos + cardH;
+          
+          if (abovePos >= staticHeightUsed) {
+            const nudged = canNudgeUp(i, abovePos);
+            if (nudged) {
+              for (let j = 0; j <= i; j++) {
+                placedCards[j].top = nudged[j].top;
+                placedCards[j].bottom = nudged[j].bottom;
+              }
+            } else {
+              curr.top = belowPos;
+              curr.bottom = belowPos + cardH;
+            }
           } else {
-            // Place below the table
             curr.top = belowPos;
             curr.bottom = belowPos + cardH;
           }
@@ -1527,7 +1584,7 @@ if (priorityImgMatch) {
 
   @media (min-width: 1024px) {
     .prose .table-wrapper {
-      width: calc(100% + 10rem) !important;
+      width: calc(100% + 17rem) !important;
       margin-left: 0 !important;
       border-left: 4px solid #fd4f00 !important;
       border-radius: 0 8px 8px 0 !important;
@@ -1537,6 +1594,12 @@ if (priorityImgMatch) {
     .dark .prose .table-wrapper {
       border-left-color: #ff7635 !important;
       box-shadow: 15px 0 30px -10px rgba(0,0,0,0.3);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .prose .table-wrapper {
+      width: calc(100% + 19rem) !important;
     }
   }
 
