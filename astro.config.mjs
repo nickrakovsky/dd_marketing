@@ -117,7 +117,7 @@ export default defineConfig({
       include: ['**/solid/**'],
     }),
     keystatic(), sitemap({
-      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
+      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
