@@ -22,7 +22,7 @@ faq:
       When retailers lose control of distribution, the issues often stem from
       a lack of coordination between suppliers, transportation partners,
       warehouse operations, and store teams. This leads to inconsistent
-      inventory flow, stockouts, overloaded storage areas, and shrinkage from
+      inventory flow, [stockouts](/posts/what-is-otif-and-why-is-it-valued-as-an-essential-supply-chain-metric), overloaded storage areas, and shrinkage from
       damage or theft.
   - question: Why did Dollar General struggle with inventory and warehouse congestion?
     answer: >-
@@ -58,23 +58,27 @@ faq:
       delivery, which requires tight control over warehouse automation and
       last-mile fulfillment. This makes receiving workflows, dock scheduling,
       and predictable carrier performance more important than ever.
+relatedFeature: efficiency-reports
+relatedFeatures: ['efficiency-reports']
+relatedBenefits: ['increase-capacity', 'digitize-operations']
 ---
+
+import BibliographyItem from '../../components/BibliographyItem.astro';
 
 
 export const Cite = ({ id }) => (
-  <sup className="text-[10px] ml-0.5 leading-none">
-    <a href={`#ref-${id}`} className="text-[#FE5000] hover:opacity-80 no-underline font-bold transition-all" aria-label={`Go to reference ${id}`}>
-      [{id}]
-    </a>
-  </sup>
+  <a 
+    href={`#ref-${id}`} 
+    id={`cite-${id}`}
+    data-smartlink-trigger="true"
+    data-smartlink-type="academic"
+    data-smartlink-bibref={`#ref-${id}`}
+    className="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-[#fd4f00] hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium text-xs align-super"
+    aria-label={`Reference ${id}`}
+  >
+    [{id}]
+  </a>
 );
-
-export const BibliographyItem = ({ id, children }) => (
-  <li id={`ref-${id}`} className="mb-3 scroll-mt-24">
-    {children}
-  </li>
-);
-
 
 ![Delivery van, forklift, and shopping cart representing the supply chain process on an orange background](../../assets/blog-images/retail-case-studies-1.jpeg)
 
@@ -90,7 +94,7 @@ When we look at the shifting fortunes of the biggest retailers, the symptoms of 
 
 In many cases, the story starts with a period of success. This often blinds companies to operational vulnerabilities, which they only notice once the impact on profitability has already become obvious.
 
-In the following five case studies, we’ll see how major US retail businesses grappled with the supply chain challenges of the last few years, what they’ve done to take control of the situation, and what their current plans might be overlooking. And for each company we’ll suggest how [dock scheduling](https://datadocks.com/) could help them become more operationally flexible and resilient.
+In the following five case studies, we’ll see how major US retail businesses grappled with the supply chain challenges of the last few years, what they’ve done to take control of the situation, and what their current plans might be overlooking. And for each company we’ll suggest how dock scheduling could help them become more operationally flexible and resilient.
 
 
 ## **Dollar General: Mishandling of Goods at Overflowing Warehouses**
@@ -101,7 +105,7 @@ In the following five case studies, we’ll see how major US retail businesses g
 
 Dollar General was one of the big covid winners. People were stocking up on everyday household items, and liked to find bargains a short drive away, rather than face the crowds at Walmart.
 
-The company ramped up inventory of non-perishable goods, hoping to minimize stockouts of those more profitable SKUs. But the covid-era mindset wouldn’t last. As life got back to normal, Dollar General was left with a glut of stock it couldn’t move.<Cite id="1" /> And that’s when everything started falling apart.
+The company ramped up inventory of non-perishable goods, hoping to minimize stockouts of those more profitable SKUs (and improve their [OTIF score](/posts/otif-supply-chain)). But the covid-era mindset wouldn’t last. As life got back to normal, Dollar General was left with a glut of stock it couldn’t move.<Cite id="1" /> And that’s when everything started falling apart.
 
 First they had a hard time finding temporary warehouse space on acceptable terms.<Cite id="2" /> In the meantime, distribution centers tried to offload as much as possible to retail storerooms.<Cite id="3" /> These deliveries would come at unexpected times, often at the end of the day when there was just one employee watching the store, about to lock up for the evening.<Cite id="4" />
 
@@ -131,7 +135,9 @@ Could they be overlooking a critical gap?
 
 Dollar General contracts integrated 3PLs for receiving at all its DCs. It also leverages its buying power to transfer a lot of transportation liability onto its non-FOB domestic suppliers, including chargebacks for late arrivals and other issues, while drivers are asked to bring cash or cheques to pay those unloading teams!<Cite id="13" />
 
-In this way, the company minimizes direct contact with carriers, effectively washing its hands of most aspects of inbound logistics. The justification is probably that it reduces exposure to volatility from things like fuel prices, detention fees and employee risk factors.
+In this way, the company minimizes direct contact with carriers, effectively washing its hands of most aspects of inbound logistics. The justification is probably that it reduces exposure to volatility from things like fuel prices, detention fees (often caused by high [dwell time](/posts/dwell-time-in-trucking)) and employee risk factors.
+
+<RelatedFeatureCallout id="efficiency-reports" />
 
 But smooth seas never made a skilled sailor. By trying to avoid headaches, Dollar General may have missed out on:
 * **Building strong carrier relationships based on accountability and trust.**
@@ -169,9 +175,9 @@ While the brands are becoming increasingly data-driven, Foot Locker is merely re
 
 Foot Locker knows that it’s ‘digitally behind,’ and is scrambling to remedy that. But with its tech strategy focussed on sales, it could neglect the importance of behind-the-scenes data. 
 
-The company’s future success will depend on its ability to bring new partners on board, and track their performance alongside the existing ones. That means not just brands, but transportation providers as well.
+The company’s future success will depend on its ability to bring new partners on board, and track their performance alongside the existing ones using clear [warehouse KPIs](/posts/warehouse-kpis). That means not just brands, but transportation providers as well.
 
-If Foot Locker implemented DataDocks at its distribution centers, it could start to collect operational data, combat shrinkage, and build partnerships based on mutual accountability. That would give it a firm foundation to develop its sustainability practices, demand forecasting, and e-commerce capabilities.
+If Foot Locker implemented DataDocks at its distribution centers, it could start to collect [operational data](/datadocks-features/efficiency-reports), combat shrinkage, and build partnerships based on mutual accountability. That would give it a firm foundation to develop its sustainability practices, demand forecasting, and e-commerce capabilities.
 
 
 ## **Ace Hardware: Owning Distribution, but Exposed to Disruption**
@@ -212,7 +218,7 @@ Ace has overlooked innovations that could make it more resilient and responsive 
 
 Adopting a specialized dock scheduling solution could be a smart move for Ace. This change would serve as a gateway to richer supply chain data, facilitating more accountable interactions with logistics partners and bridging gaps between information silos. 
 
-Such a transformation would not only shore up current inefficiencies but also catalyze a more data-driven supply chain, enabling Ace to predict disruptions earlier and adapt more quickly.
+Such a transformation would not only shore up current inefficiencies but also catalyze a more data-driven supply chain (by tracking the right [supply chain KPIs](/posts/supply-chain-kpis-you-need-to-track)), enabling Ace to predict disruptions earlier and adapt more quickly.
 
 ## **TJX Companies: Positioned to Benefit from Supply Chain Chaos**
 
@@ -328,13 +334,13 @@ Ahold Delhaize is shifting toward more e-commerce-driven grocery delivery, which
 
 ## Bibliography
 
-<ol className="list-decimal space-y-2 ml-6">
+<ol className="pl-0 space-y-4">
   <BibliographyItem id="1">[**Retail Dive: Dollar General Inventory Strategy**](https://www.retaildive.com/news/dollar-general-inventory-clearing-Q2-Jeff-Owen/693282/)</BibliographyItem>
   <BibliographyItem id="2">[**Dollar General Investor Relations: Q2 2023 Performance Update**](https://investor.dollargeneral.com/websites/dollargeneral/English/2120/us-press-release.html?airportNewsID=44c8c5ef-9bd4-4f65-80d8-8b4c1e936db7)</BibliographyItem>
   <BibliographyItem id="3">[**Entrepreneur Magazine: Safety Concerns Due to Excess Inventory**](https://www.entrepreneur.com/business-news/dollar-generals-massive-inventory-leads-to-safety/446652)</BibliographyItem>
   <BibliographyItem id="4">[**Reddit: User-shared Experience on Early Truck Delivery**](https://www.reddit.com/r/DollarGeneral/comments/1201r0q/100_piece_fresh_truck_630_pm_one_day_early/)</BibliographyItem>
   <BibliographyItem id="5">[**New York Times: OSHA Fines for Dollar General**](https://www.nytimes.com/2023/03/28/business/dollar-general-osha-fines.html)</BibliographyItem>
-  <BibliographyItem id="6">Per **DG employee training video** cited by [**comments on various posts**](https://www.reddit.com/r/DollarGeneral/comments/1916x6m/camera_placement/) **to reddit.com**</BibliographyItem>
+  <BibliographyItem id="6">"Dollar General Employee Training Video." As cited by users on [Reddit](https://www.reddit.com/r/DollarGeneral/comments/1916x6m/camera_placement/).</BibliographyItem>
   <BibliographyItem id="7">Based on COGS of $20 billion for the year ending November 3, 2023 ([**DG Investor Report**](https://investor.dollargeneral.com/websites/dollargeneral/English/2120/us-press-release.html?airportNewsID=6e45bcfc-f067-4bdb-8d4b-bda9534b04c9)) and an estimated shrink rate of 3%.</BibliographyItem>
   <BibliographyItem id="8">[**Reddit: User Discussion on Dollar General Practices**](https://www.reddit.com/r/DollarGeneral/comments/1bkyuz7/how_does_dg_get_away_with_this/kw6p6tw/)</BibliographyItem>
   <BibliographyItem id="9">[**The Motley Fool: Dollar General Q3 2023 Earnings Call**](https://www.fool.com/earnings/call-transcripts/2023/12/07/dollar-general-dg-q3-2023-earnings-call-transcript/)</BibliographyItem>
@@ -344,7 +350,7 @@ Ahold Delhaize is shifting toward more e-commerce-driven grocery delivery, which
   <BibliographyItem id="13">[**Dollar General Vendor Guide**](https://www.dgpartners.com/content/vendors/partnershipguidemt/Domestic%20Vendor%20Guide.pdf)</BibliographyItem>
   <BibliographyItem id="14">^ ibid</BibliographyItem>
   <BibliographyItem id="15">[**Bloomberg: Foot Locker's New CEO and Sales Goals**](https://www.bloomberg.com/news/articles/2023-03-20/foot-locker-s-fl-new-ceo-plots-route-to-9-5-billion-in-sales)</BibliographyItem>
-  <BibliographyItem id="16">[****](https://www.bloomberg.com/news/articles/2023-03-20/foot-locker-s-fl-new-ceo-plots-route-to-9-5-billion-in-sales)[**Foot Locker Investor Relations: Q4 2023 Earnings and 2024 Forecast**](https://investors.footlocker-inc.com/news-releases/news-release-details/foot-locker-inc-reports-fourth-quarter-2023-results-issues-2024)</BibliographyItem>
+  <BibliographyItem id="16">[**Foot Locker Investor Relations: Q4 2023 Earnings and 2024 Forecast**](https://investors.footlocker-inc.com/news-releases/news-release-details/foot-locker-inc-reports-fourth-quarter-2023-results-issues-2024)</BibliographyItem>
   <BibliographyItem id="17">[**Financial Times: Shoplifting, Shrinkage, and a $95bn Problem for US Retailers**](https://www.ft.com/content/2901bd8b-2118-4677-9d01-ad94931cfbb1?shareType=nongift)</BibliographyItem>
   <BibliographyItem id="18">[**Daily Herald: Major Theft from Carol Stream Distributor**](https://www.dailyherald.com/20240216/crime/couple-pleads-guilty-to-stealing-2-1-million-in-merchandise-from-carol-stream-distributor/)</BibliographyItem>
   <BibliographyItem id="19">[**Reuters: Foot Locker Cuts Annual Forecast Due to Weak Demand**](https://www.reuters.com/business/retail-consumer/foot-locker-slumps-weak-demand-heavy-discounts-drive-annual-forecast-cut-2023-05-19/)</BibliographyItem>
