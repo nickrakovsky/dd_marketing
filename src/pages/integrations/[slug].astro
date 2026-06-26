@@ -60,7 +60,7 @@ const { Content } = await integration.render();
             {/* Left Visual Group */}
             <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[35%] max-w-[350px] -translate-x-[40%]">
                 <div class="relative w-full h-full">
-                    <img src="/images/integrations/hero-shape-1.svg" alt="" aria-hidden="true" class="w-full h-auto opacity-70" />
+                    <img src="/images/integrations/hero-shape-1.svg" alt="" class="w-full h-auto opacity-70" />
                     <img src="/images/integrations/datadocks-icon.svg" alt="DataDocks" class="absolute top-1/2 right-[5%] -translate-y-1/2 w-28 h-28 lg:w-36 lg:h-36 object-contain filter drop-shadow-2xl" />
                 </div>
             </div>
@@ -68,7 +68,7 @@ const { Content } = await integration.render();
             {/* Right Visual Group */}
             <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[35%] max-w-[350px] translate-x-[40%]">
                 <div class="relative w-full h-full">
-                    <img src="/images/integrations/hero-shape-2.svg" alt="" aria-hidden="true" class="w-full h-auto opacity-70" />
+                    <img src="/images/integrations/hero-shape-2.svg" alt="" class="w-full h-auto opacity-70" />
                     <img src={integration.data.icon} alt={integration.data.title} class="absolute top-1/2 left-[5%] -translate-y-1/2 w-28 h-28 lg:w-36 lg:h-36 object-contain filter drop-shadow-2xl transform rotate-[15deg]" />
                 </div>
             </div>
@@ -121,7 +121,7 @@ const { Content } = await integration.render();
                 <div class="flex flex-col items-start bg-[#f1e3d2] p-10 rounded-[1.25rem] shadow-sm hover:shadow-2xl transition-all border border-[#e3d5c4]/30 group">
                   {benefit.icon && (
                     <div class="mb-10 w-20 h-20 flex items-center justify-center p-4 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">
-                      <img src={benefit.icon} alt="" aria-hidden="true" class="w-full h-full object-contain" />
+                      <img src={benefit.icon} alt="" class="w-full h-full object-contain" />
                     </div>
                   )}
                   <h3 class="text-3xl font-bold font-recoleta text-gray-900 mb-5 leading-tight tracking-tight">{benefit.title}</h3>
