@@ -1,0 +1,80 @@
+---
+description: 'Empower your operations with an intelligent assistant that helps parse schedules, resolve conflicts, and answer questions based on your specific rules and data.'
+pubDate: '2026-06-22T12:00:00.000Z'
+icon: /images/features/ai-assistant.svg
+faq:
+  - question: Does the AI have access to our confidential operational data outside of DataDocks?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: 'Can the AI make changes to the schedule, or does it only suggest?'
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How does the AI handle questions it can't answer?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Is there a limit to how many questions we can ask?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'The AI Assistant learns from your existing DataDocks configuration; your scheduling rules, capacity limits, carrier history, and appointment patterns. There''s no training period or data migration. Once enabled, your team can ask natural-language questions like "Which carriers were late more than twice this month?" or "Can I fit three more pallets on Thursday afternoon?" It works alongside your existing workflow, not instead of it.'
+  differentiation: 'Generic AI tools don''t understand dock operations. They can''t tell you whether adding a load to Thursday will breach your capacity rule for refrigerated docks, or that a specific carrier historically runs 45 minutes late on Fridays. The DataDocks AI Assistant is trained on logistics context and grounded in your actual operational data; it gives answers, not guesses.'
+  businessImpact: 'The immediate value is speed of decision-making. Instead of pulling a report, filtering by date range, and manually cross-referencing carrier performance, a coordinator can ask a question and get an answer in seconds. For scheduling conflicts, the assistant can suggest alternatives before they become problems. Early adopters report spending 30–40% less time on schedule optimization tasks.'
+  vision: 'AI assistance is the bridge between reactive scheduling and predictive operations. Today it answers questions and flags conflicts. Tomorrow it proactively suggests schedule adjustments based on weather forecasts, carrier reliability patterns, and seasonal volume trends. The more data your operation generates through DataDocks, the smarter the assistant becomes.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef good fill:#ffffff,stroke:#4a8136,stroke-width:2px,color:#4a8136,font-weight:bold;
+        classDef manual fill:#faf8f5,stroke:#9c806d,stroke-width:2px,color:#000000,stroke-dasharray: 5 5;
+
+        A["Scheduling Conflict"]:::default
+
+        subgraph Manual ["Manual Execution (15+ Minutes)"]
+          direction TB
+          B1[Check Calendar]:::manual --> B2[Cross-reference Carrier History]:::manual
+          B2 --> B3[Review Capacity Limits]:::manual
+        end
+
+        subgraph AI ["AI Execution (3 Seconds)"]
+          direction TB
+          C1["'When can Carrier X deliver?'"]:::action --> C2["'Dock 4 at 2:00 PM is optimal. Book it?'"]:::good
+        end
+
+        A --> Manual
+        A --> AI
+    caption: Time to answer common scheduling questions
+  table:
+    title: What You Can Ask the AI
+    headers:
+       - Question Type
+       - Example
+       - What It Uses
+    rows:
+       - - Capacity check
+         - '"Can dock 4 handle two more loads Friday AM?"'
+         - Your capacity rules + current bookings
+       - - Carrier performance
+         - '"How often does ABC Freight arrive late?"'
+         - Historical appointment data
+       - - Conflict detection
+         - '"Are there any overlaps next week?"'
+         - Full schedule scan + buffer rules
+       - - Optimization
+         - '"What''s the best time to schedule this LTL pickup?"'
+         - Volume patterns + dock availability
+  tableContext: 'The AI Assistant is designed to understand natural logistics questions. It looks at your unique constraints, historical carrier data, and current schedule to provide instant operational answers.'
+  visionSegue: 'While the AI provides immediate answers today, its ultimate value lies in recognizing patterns that humans miss.'
+  layoutConfig:
+    implementationColSpan: 7
+    implementationOrder: 1
+    differentiationColSpan: 5
+    differentiationOrder: 2
+    dataVizColSpan: 6
+    dataVizOrder: 3
+    businessImpactColSpan: 6
+    businessImpactOrder: 4
+    dataVizPadding: p-8
+title: AI Logistics Assistant
+---
+\n

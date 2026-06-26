@@ -7,6 +7,7 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
+import mermaid from 'astro-mermaid';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,12 +48,16 @@ export default defineConfig({
     build: {
       cssCodeSplit: false,
     },
+    ssr: {
+      noExternal: ['@kobalte/core'],
+    },
   },
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
+    '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
   },
 
   integrations: [
@@ -142,6 +147,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
       ],
-    }), mdx()],
+    }), mermaid(), mdx()],
 
 });

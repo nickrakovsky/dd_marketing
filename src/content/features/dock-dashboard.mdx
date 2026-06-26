@@ -1,19 +1,65 @@
 ---
-title: "Dock Dashboard"
-description: "Manage dock appointments in real-time with an intuitive dashboard designed to reduce congestion, delays, and improve communication across teams."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76fa62fb109775099f66e_dashboard-layout.svg"
-videoUrl: "https://youtu.be/BGgbS-vXQKc"
+description: 'Manage dock appointments in real-time with an intuitive dashboard designed to reduce congestion, delays, and improve communication across teams.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76fa62fb109775099f66e_dashboard-layout.svg
+videoUrl: 'https://youtu.be/BGgbS-vXQKc'
+faq:
+  - question: Can I display the dock board on a TV screen in the warehouse?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How quickly do changes sync across all screens?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can different users have different default views?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I filter the board to show only specific docks or carriers?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Put the dock board on a large screen in your shipping office; or wherever your coordinators work. The calendar view gives an instant picture of what''s happening across all docks. Most teams start with the day view for real-time management, then use the week view for planning. Colour coding is configurable: set colours by status (booked, arrived, loading, complete), by carrier, or by product type; whatever makes sense for how your team thinks.'
+  differentiation: 'Most scheduling tools give you a calendar. DataDocks gives you a live operational board. The difference: appointments update in real time across all connected screens with no refresh needed. Drag-and-drop rescheduling works the way you''d move a sticky note on a whiteboard. Six different calendar views (day, week, timeline, dock-by-dock, list, and Gantt) mean everyone from coordinators to supervisors to senior management can see the information the way they need it.'
+  businessImpact: 'The dock board replaces the most common question in any warehouse: "What''s happening at Dock 6?" When everyone can see the live status, you eliminate constant interruptions between the floor and the office. Coordinators spend less time answering status questions and more time managing the schedule proactively. Teams that use the dock board consistently report fewer miscommunications about which dock a load is assigned to and faster reaction times when schedules change.'
+  vision: 'The dock board is the operational nerve centre. It''s where real-time data becomes real-time awareness. As you add features like automated alerts, carrier self-scheduling, and capacity management, they all feed back into the dock board; giving your team a single place to monitor everything. It''s also the most natural place to surface AI-powered insights: "Dock 3 is running 20 minutes behind" or "Carrier XYZ just checked in early; Dock 7 is open."'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef alert fill:#ffd7d7,stroke:#cb4949,stroke-width:2px,color:#cb4949;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+        classDef data fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
+
+        A[Truck Arrives 45m Late]:::alert --> B{Dashboard Exception Engine}:::action
+        B -->|Flags Conflict| C[Highlights Clashing Appointments]:::data
+        B -->|Prompts Action| D[Drag & Drop to Open Door]:::good
+        D --> E[Spotter Notified via App]:::good
+        D --> F[Floor TVs Update Instantly]:::good
+    caption: Visual representation of a balanced dock schedule
+  table:
+    title: Who Uses the Dock Board?
+    headers:
+       - View
+       - Best For
+       - Who Uses It
+    rows:
+       - - Day (timeline)
+         - Real-time dock management
+         - 'Coordinators, dock supervisors'
+       - - Week
+         - Planning and load balancing
+         - 'Planners, operations managers'
+       - - Dock-by-dock
+         - Monitoring individual dock performance
+         - Dock leads
+       - - List
+         - Filtering and searching specific loads
+         - 'Customer service, carrier relations'
+       - - Gantt
+         - Visualising overlaps and gaps
+         - Operations managers
+  tableContext: 'A visual, live representation of the day''s events keeps everyone aligned. The Dock Board serves as the single source of truth for the office, the floor, and the gate.'
+  visionSegue: 'When the entire facility operates from a single, live visual board, the next step is automating the execution of that board.'
+title: Live Dock Board
 ---
-
-<p id="">
-Boost your scheduling visibility with DataDocks' versatile calendar views. Choose from six different perspectives to suit your workflow. Color-coded appointments, live updates, and drag-and-drop functionality make navigation and operations management a breeze.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-Personalize your dashboard based on your role and needs, and allow DataDocks to transform your approach to scheduling. Experience intuitive, efficient, and flexible dock management like never before
-</p>
+\n

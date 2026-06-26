@@ -1,139 +1,67 @@
 ---
-title: "Carrier Portal"
-description: "Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling and improves logistics coordination."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d7697c25c16a4676e57014_checked-laptop.svg"
-videoUrl: "https://youtu.be/LL7tTxGeH2o"
+description: 'Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling and improves logistics coordination.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d7697c25c16a4676e57014_checked-laptop.svg
+videoUrl: 'https://youtu.be/LL7tTxGeH2o'
+faq:
+  - question: What if a carrier doesn't want to use the portal?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can carriers see other carriers' appointments?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How do I handle carriers who need to reschedule frequently?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: 'Can I require document uploads (BOL, insurance) before confirming a booking?'
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'You don''t need to onboard all your carriers at once. Start with your top 5–10 by volume. Send them a branded portal link, set up their access level, and let them book their first appointment. Most carriers figure it out in under a minute; it''s designed to be simpler than sending an email. As carriers adopt, your coordinators gradually shift from manual booking to exception management.'
+  differentiation: 'Other platforms offer carrier portals, but they''re often clunky secondary interfaces that carriers avoid. DataDocks'' portal is built as a first-class experience: mobile-friendly, branded to your facility, and fast enough that booking takes less time than composing an email. Carriers see only what they need; open slots, their own history, required documents; with zero clutter. The system enforces your rules automatically, so carriers can''t book outside your parameters.'
+  businessImpact: 'Every appointment your coordinator books manually takes 3–5 minutes of back-and-forth; email, phone call, confirmation. At 80 loads per day, that''s 4–7 hours of coordinator time consumed by scheduling mechanics. Facilities that roll out carrier self-scheduling typically see 60–80% of appointments shift to self-service within 90 days. That''s your shipping coordinator''s day back; to focus on exceptions, carrier performance, and operational improvements instead of living in their inbox.'
+  vision: 'Carrier self-scheduling is the entry point for a digital carrier relationship. Once carriers are booking through the portal, you have a clean data trail: booking patterns, punctuality trends, document compliance. That data feeds your analytics, powers your AI assistant, and gives you leverage in carrier negotiations. It also sets the stage for automated check-in, real-time ETA updates, and carrier scorecarding.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef good fill:#ffffff,stroke:#4a8136,stroke-width:2px,color:#4a8136,font-weight:bold;
+
+        A(Carrier Opens Booking Link) --> B{Carrier Portal}:::action
+        B -->|Sees Only Approved Slots| C(Selects Appointment Time)
+        C -->|Requires BOL & PO| D{Data Validation}
+        D -->|Missing/Bad Data| E[Blocks Submission]
+        D -->|Clean Data| F[Instant Confirmation]:::good
+    caption: The Carrier Self-Scheduling Journey
+  table:
+    title: Self-Scheduling vs. Manual Methods
+    headers:
+       - Challenge
+       - What the portal does
+       - Business win
+    rows:
+       - - Overflowing email & phone traffic
+         - 'Carriers self-book, reschedule, and get instant confirmation'
+         - 60–80% drop in coordinator call volume
+       - - \"Who moved the slot?\" disputes
+         - Every action is time-stamped and visible to both sides
+         - 'Faster, fact-based carrier negotiations'
+       - - Missed windows that hurt OTIF
+         - Auto-alerts remind drivers 2h / 30 min before arrival
+         - Higher OTIF scores and fewer fines
+  tableContext: 'Moving carriers to a self-service model eliminates the endless back-and-forth emails. By exposing only the times you want them to see, you maintain control while offloading the administrative work.'
+  visionSegue: Getting carriers to schedule their own times is just the beginning of a fully collaborative logistics ecosystem.
+  layoutConfig:
+    implementationColSpan: 12
+    implementationOrder: 1
+    differentiationColSpan: 7
+    differentiationOrder: 2
+    dataVizColSpan: 5
+    dataVizRowSpan: 2
+    dataVizOrder: 3
+    businessImpactColSpan: 7
+    businessImpactOrder: 4
+title: Carrier Self-Scheduling
 ---
 
-<p id="">
-Secure and streamline your dock scheduling process with DataDocks’ Carrier Portal. This powerful carrier appointment scheduling software gives approved carriers and customers 24/7 access to book, manage, and confirm dock appointments—while keeping your operational data safe. The intuitive, customizable interface ensures a seamless experience for both your team and your logistics partners.
-</p>
-
-<p id="">
-Enjoy peace of mind with automatic notifications for any changes, and trust in the system's ability to enforce your set rules. With DataDocks, you can be sure appointments are always managed correctly.
-</p>
-
-<p id="">
-‍
-</p>
-
-<h3 id="">
-Self-Service Appointments with Zero Guesswork
-</h3>
-
-<p id="">
-Secure your scheduling process with DataDocks’ Carrier Portal. Approved carriers can see open doors, pick a time, and upload load details in under 30 seconds—from a phone or desktop—while your planners keep full control of capacity rules.
-</p>
-
-<h4 id="">
-Why facilities adopt the portal
-</h4>
-
-<div data-rt-embed-type='true'>
-
-<table>
-
-  
-<thead>
-
-    
-<tr>
-
-      <th>Challenge</th>
-      <th>What the portal does</th>
-      <th>Business win</th>
-    
-</tr>
-
-  
-</thead>
-
-  
-<tbody>
-
-    
-<tr>
-
-      <td>Overflowing email &amp; phone traffic</td>
-      <td>Carriers self-book, reschedule, and get instant confirmation</td>
-      <td>60–80 % drop in coordinator call volume</td>
-    
-</tr>
-
-    
-<tr>
-
-      <td>“Who moved the slot?” disputes</td>
-      <td>Every action is time-stamped and visible to both sides</td>
-      <td>Faster, fact-based <a href="/posts/negotiate-with-carriers">carrier negotiations</a></td>
-    
-</tr>
-
-    
-<tr>
-
-      <td>Missed windows that hurt OTIF</td>
-      <td>Auto-alerts remind drivers 2 h / 30 min before arrival</td>
-      <td>Higher <a href="/posts/otif-supply-chain">OTIF scores</a> and fewer fines</td>
-    
-</tr>
-
-  
-</tbody>
-
-</table>
-
-</div>
-
-<h4 id="">
-Security and control
-</h4>
-
-<ul id="">
-
-<li id="">
-<strong id="">Role-based access</strong> — carriers see only their own loads.
-</li>
-
-<li id="">
-<strong id="">One-click NDA</strong> — attach facility rules; drivers accept before booking.
-</li>
-
-<li id="">
-<strong id="">Custom field masks</strong> — capture temp, pallet count, doc uploads without exposing other loads.
-</li>
-
-</ul>
-
-<p id="">
-All activity feeds your site’s analytics and, rolled up, gives a clean data layer to any <a id="" href="/posts/what-is-a-supply-chain-center-of-excellence">Center of Excellence</a> effort.
-</p>
-
-<h4 id="">
-Works with your stack
-</h4>
-
-<ul id="">
-
-<li id="">
-<strong id="">REST API</strong> out of the box; optional <strong id="">X12 / EDIFACT bridge</strong> for legacy feeds.
-</li>
-
-<li id="">
-Webhooks push status updates to WMS, TMS, or visibility tools.
-</li>
-
-<li id="">
-SSO available (OAuth 2.0 / SAML).
-</li>
-
-</ul>
-
-<p id="">
-No rip-and-replace: switch one door or one day of the week to pilot, then expand.
-</p>
-
-<p id="">
-‍
-</p>

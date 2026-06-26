@@ -1,17 +1,17 @@
 ---
 const features = [
-  { title: "Carrier Portal", srTitle: "how DataDocks' carrier portal works", text: "Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling.", icon: "/images/features/checked-laptop.svg" },
-  { title: "Yard Management", srTitle: "how to get real-time yard visibility", text: "Get real-time yard visibility. Track trailers, reduce congestion, and streamline dock operations for peak efficiency.", icon: "/images/features/vision.svg" },
-  { title: "Documentation", srTitle: "accessing our product documentation", text: "Access comprehensive product documentation and developer guides to help you integrate and configure DataDocks.", icon: "/images/features/submit-document.svg" },
-  { title: "Capacity Limits", srTitle: "setting constraints on docks and yard areas", text: "Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safety.", icon: "/images/features/partially-shipped.svg" },
-  { title: "Custom Rules", srTitle: "creating flexible business rules", text: "Create flexible business rules for scheduling, approvals, and compliance to match your site's unique workflow.", icon: "/images/features/delivery.svg" },
-  { title: "Data Validation", srTitle: "how built-in data validation works", text: "Ensure cleaner data with built-in validation for appointments and inputs - reducing errors and rework.", icon: "/images/features/data-quality.svg" },
-  { title: "Efficiency Reports", srTitle: "tracking operational performance metrics", text: "Track performance metrics like dwell time and appointment adherence to identify bottlenecks.", icon: "/images/features/linechart-file.svg" },
-  { title: "Notifications", srTitle: "staying ahead with automatic alerts", text: "Stay ahead of delays and changes with automatic alerts and real-time notifications for teams and drivers.", icon: "/images/features/push-notifications.svg" },
-  { title: "Access Anywhere", srTitle: "using DataDocks across any device", text: "Use DataDocks from any device — desktop, tablet, or native iOS and Android apps. Manage docks from the floor, the yard, or on the road.", icon: "/images/features/multiple-devices.svg" },
-  { title: "Live Editing", srTitle: "making real-time collaborative edits", text: "Make real-time edits to schedules, trailers, and contact info with collaborative tools that keep everyone updated.", icon: "/images/features/people.svg" },
-  { title: "Integration", srTitle: "integrating seamlessly with your WMS or TMS", text: "Integrate seamlessly with your WMS/TMS to eliminate double entry and streamline operations.", icon: "/images/features/automation.svg" },
-  { title: "Dock Dashboard", srTitle: "managing appointments with the intuitive dashboard", text: "Manage appointments in real-time with an intuitive dashboard designed to reduce congestion and delays.", icon: "/images/features/dashboard-layout.svg" }
+  { title: "Carrier Self-Scheduling", slug: "carrier-portal", srTitle: "how DataDocks' carrier portal works", text: "Let carriers self-manage dock appointments and check-ins with a branded, easy-to-use portal that streamlines scheduling.", icon: "/images/features/checked-laptop.svg" },
+  { title: "Yard Visibility & Execution", slug: "yard-management", srTitle: "how to get real-time yard visibility", text: "Get real-time yard visibility. Track trailers, reduce congestion, and streamline dock operations for peak efficiency.", icon: "/images/features/vision.svg" },
+  { title: "Document Management & Checklists", slug: "documentation", srTitle: "accessing our product documentation", text: "Access comprehensive product documentation and developer guides to help you integrate and configure DataDocks.", icon: "/images/features/submit-document.svg" },
+  { title: "Dock Capacity Management", slug: "capacity-limits", srTitle: "setting constraints on docks and yard areas", text: "Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safety.", icon: "/images/features/partially-shipped.svg" },
+  { title: "Automated Scheduling Rules", slug: "custom-rules", srTitle: "creating flexible business rules", text: "Create flexible business rules for scheduling, approvals, and compliance to match your site's unique workflow.", icon: "/images/features/delivery.svg" },
+  { title: "Appointment Data Controls", slug: "data-validation", srTitle: "how built-in data validation works", text: "Ensure cleaner data with built-in validation for appointments and inputs - reducing errors and rework.", icon: "/images/features/data-quality.svg" },
+  { title: "Detention Analytics & Executive Reporting", slug: "efficiency-reports", srTitle: "tracking operational performance metrics", text: "Track performance metrics like dwell time and appointment adherence to identify bottlenecks.", icon: "/images/features/linechart-file.svg" },
+  { title: "Automated Partner & Internal Alerts", slug: "notifications", srTitle: "staying ahead with automatic alerts", text: "Stay ahead of delays and changes with automatic alerts and real-time notifications for teams and drivers.", icon: "/images/features/push-notifications.svg" },
+  { title: "Mobile Companion App", slug: "access-anywhere", srTitle: "using DataDocks across any device", text: "Use DataDocks from any device — desktop, tablet, or native iOS and Android apps. Manage docks from the floor, the yard, or on the road.", icon: "/images/features/multiple-devices.svg" },
+  { title: "AI Logistics Assistant", slug: "ai-assistant", srTitle: "getting intelligent insights with AI", text: "Get answers to operational questions in seconds using natural language, powered by your own facility's data.", icon: "/images/features/people.svg" },
+  { title: "WMS & TMS Integrations", slug: "integration", srTitle: "integrating seamlessly with your WMS or TMS", text: "Integrate seamlessly with your WMS/TMS to eliminate double entry and streamline operations.", icon: "/images/features/automation.svg" },
+  { title: "Live Dock Board", slug: "dock-dashboard", srTitle: "managing appointments with the intuitive dashboard", text: "Manage appointments in real-time with an intuitive dashboard designed to reduce congestion and delays.", icon: "/images/features/dashboard-layout.svg" }
 ];
 
 const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
@@ -29,7 +29,7 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
     {/* 2 cols on small screens, 3 cols on md+ (768px) */}
     <div class="grid grid-cols-2 md:grid-cols-3 gap-x-2 md:gap-x-4 gap-y-4 md:gap-y-5">
       {features.map((feature) => {
-        const featureUrl = `/datadocks-features/${slugify(feature.title)}`;
+        const featureUrl = `/datadocks-features/${feature.slug || slugify(feature.title)}`;
         return (
         <>
           {/* DESKTOP (md+): Whole card is a link */}

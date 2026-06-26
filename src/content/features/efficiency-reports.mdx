@@ -1,23 +1,77 @@
 ---
-title: "Efficiency Reports"
-description: "Track performance metrics like dwell time and appointment adherence to identify bottlenecks and drive operational efficiency improvements."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76ee554c09df7ad89d0d2_linechart-file.svg"
-videoUrl: "https://youtu.be/0bWaIYbx3e8"
+description: Track performance metrics like dwell time and appointment adherence to identify bottlenecks and drive operational efficiency improvements.
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76ee554c09df7ad89d0d2_linechart-file.svg
+videoUrl: 'https://youtu.be/0bWaIYbx3e8'
+faq:
+  - question: Can I schedule reports to be emailed automatically?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I compare performance across multiple facilities?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How far back does the reporting data go?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I export reports to PDF or Excel for board presentations?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: What counts as "detention" in the DataDocks calculation?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'If you''re already using DataDocks for scheduling, your data is already flowing into the reporting engine. No additional setup needed; just open the reports dashboard. Start with the detention summary: it shows average dwell time by carrier, by dock, and by day of week. Share the first report with your ops manager and ask them what surprises them. That conversation will tell you which metrics matter most and which views to set up as recurring reports.'
+  differentiation: 'Most reporting in dock scheduling is either too raw (spreadsheet exports that need hours of manipulation) or too generic (canned reports that don''t match your KPIs). DataDocks sits in the middle: pre-built reports for the metrics that matter most (dwell time, detention, appointment adherence, carrier punctuality), with the ability to filter, compare, and drill down. The reports are designed to be handed directly to a VP of Operations or a COO; clean, visual, and self-explanatory without a 10-minute preamble.'
+  businessImpact: 'Detention fees alone can cost a mid-size facility $5,000–$15,000 per month. But you can''t reduce what you can''t measure. DataDocks'' detention analytics show you exactly which carriers, which days, and which docks are generating the most detention; so you can address root causes instead of paying invoices blindly. The executive reporting layer means your senior leadership can review performance in 5 minutes instead of waiting for someone to compile a monthly report.'
+  vision: 'Analytics is how you move from running a warehouse to optimising a supply chain node. Detention and dwell time data feeds carrier scorecards, which feed procurement negotiations, which feed cost reduction. Dock utilisation data feeds capacity planning, which feeds capital expenditure decisions. The reporting layer is what connects daily dock operations to boardroom strategy; and it''s what makes DataDocks valuable beyond the shipping office.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef data fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
+        classDef report fill:#011E26,stroke:#97E5D7,stroke-width:2px,color:#FFF8EE;
+
+        A[Gate Check-in]:::data --> D{Analytics Engine}:::action
+        B[Dock Start]:::data --> D
+        C[Dock Complete]:::data --> D
+        
+        D --> R1[Carrier Scorecards]:::report
+        D --> R2[Detention Trends]:::report
+        D --> R3[Labor Utilization]:::report
+    caption: Average detention times dropping over a 5-month period
+  table:
+    title: Key Performance Metrics Tracked
+    headers:
+       - Report
+       - What It Shows
+       - Who Cares
+    rows:
+       - - Detention summary
+         - Average dwell time by carrier/dock/day
+         - 'Ops managers, finance'
+       - - Appointment adherence
+         - On-time vs. late arrivals by carrier
+         - 'Carrier relations, procurement'
+       - - Dock utilisation
+         - How fully each dock is used
+         - 'Facility planning, ops directors'
+       - - Carrier scorecard
+         - 'Punctuality, compliance, volume trends'
+         - 'Procurement, carrier management'
+       - - Daily/weekly summary
+         - High-level operational snapshot
+         - 'VPs, COOs, site directors'
+  tableContext: 'You can''t improve what you don''t measure. Executive reporting surfaces the hidden costs in your operation, highlighting which carriers and processes are driving detention.'
+  visionSegue: Reporting tells you what happened yesterday. The future lies in predictive analytics that tell you what will happen tomorrow.
+  layoutConfig:
+    implementationColSpan: 5
+    implementationOrder: 1
+    dataVizColSpan: 7
+    dataVizOrder: 2
+    differentiationColSpan: 6
+    differentiationOrder: 3
+    businessImpactColSpan: 6
+    businessImpactOrder: 4
+title: Detention Analytics & Executive Reporting
 ---
-
-<p id="">
-Unlock the power of your data with DataDocks' Efficiency Reports. This tool aggregates vital data points from carriers, customers, and team appointments, converting them into easily understandable reports for strategic decision-making.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-Identify bottlenecks, compare dock performance over time, and measure carrier punctuality with precision. Our reports equip you to take decisive actions and streamline your operations. Discover the full potential of your data with DataDocks.
-</p>
-
-<p id="">
-‍
-</p>
+\n

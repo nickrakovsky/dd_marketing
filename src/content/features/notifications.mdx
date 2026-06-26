@@ -1,19 +1,67 @@
 ---
-title: "Notifications"
-description: "Stay ahead of delays and changes with automatic alerts and real-time notifications for teams, drivers, and vendors across your operation."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76f232fb109864899efaf_push-notifications.svg"
-videoUrl: "https://youtu.be/gmkTgS8rVjM"
+description: 'Stay ahead of delays and changes with automatic alerts and real-time notifications for teams, drivers, and vendors across your operation.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76f232fb109864899efaf_push-notifications.svg
+videoUrl: 'https://youtu.be/gmkTgS8rVjM'
+faq:
+  - question: Can carriers choose how they receive notifications (email vs. SMS)?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I set up alerts only for specific carriers or load types?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How do I prevent alert fatigue from too many notifications?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I see a log of all alerts that have been sent?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Configure your first alert in under a minute: pick a trigger (appointment created, status changed, carrier running late), pick the recipients (coordinator, carrier contact, supervisor), and pick the channel (email, in-app, SMS). Start with the highest-value alert: notifying carriers when their appointment is confirmed or changed. That single automation eliminates the most common reason coordinators are stuck in their email inbox.'
+  differentiation: 'Most platforms send internal notifications; a bell icon inside the app. DataDocks sends alerts to external parties: carriers, brokers, vendors, and customers. The carrier gets an email when their appointment changes. The broker gets notified when their driver checks in. Your customer gets a status update when their outbound load departs. This turns DataDocks into a communication layer, not just a scheduling tool. Your coordinator stops being the message relay.'
+  businessImpact: 'The shipping coordinator role at most facilities is 40–60% communication: calling carriers about changes, emailing customers about delays, fielding "is my truck there yet?" calls. Automated alerts handle the routine communications, freeing coordinators to focus on exceptions and optimization. Facilities that fully configure their alert rules report that their coordinators reclaim 2–3 hours per day previously spent on status update communications.'
+  vision: 'Automated communication is the foundation of a connected supply chain. When every status change automatically notifies the right people, you create transparency without effort. This reduces finger-pointing between carriers and facilities, improves carrier satisfaction (they know what''s happening without calling), and builds the data trail for measuring communication effectiveness. It''s also the prerequisite for real-time visibility platforms: alerts are the push mechanism that keeps all parties synchronised.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef alert fill:#ffd7d7,stroke:#cb4949,stroke-width:2px,color:#cb4949;
+
+        A[Trigger: Truck Delayed 30m]:::alert --> B{Rules Engine}:::action
+        B -->|Carrier Info| C[SMS to Driver]
+        B -->|Dock Info| D[Alert to Receiver]
+        B -->|Office Info| E[Email to Coordinator]
+    caption: The Automated Notification Web
+  table:
+    title: Proactive Problem Solving
+    headers:
+       - Trigger Event
+       - The Legacy Method
+       - The DataDocks Way
+       - The Win
+    rows:
+       - - Carrier schedules outside constraints
+         - Dock coordinator has to manually reject and email back-and-forth.
+         - System auto-blocks the booking and suggests valid alternates instantly.
+         - Zero administrative overhead.
+       - - Truck is 30+ mins late
+         - Dock sits empty until someone physically notices and calls dispatch.
+         - System flags ETA breach and prompts coordinator to pull up next load.
+         - Zero idle dock time.
+       - - Schedule changes mid-shift
+         - Supervisor walks the floor to tell staging team about the change.
+         - Floor TVs and handhelds ping with the updated sequence.
+         - Staging team always preps the right pallets.
+       - - Door is ready for waiting truck
+         - Yard jockey physically hunts for the truck in the lot.
+         - Automated SMS text sent directly to driver's phone with door assignment.
+         - 5-10 minutes saved per yard move.
+  tableContext: Proactive communication prevents bottlenecks. Automated alerts ensure that the right people, whether internal staff or external partners, are notified the second an exception occurs.
+  visionSegue: 'Intelligent alerting paves the way for exception-only management, where supervisors only intervene when the system flags an anomaly.'
+  layoutConfig:
+    dataVizColSpan: 7
+    implementationColSpan: 5
+title: Automated Partner & Internal Alerts
 ---
-
-<p id="">
-Simplify your scheduling process with DataDocks' automatic notifications. Our system keeps carriers informed about scheduling changes, freeing you from the task of manual updates.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-No more lost time on excessive calls or long email threads. With DataDocks, your coordinators can focus on creating the most efficient schedules. Say goodbye to communication hiccups and enhance your dock operations with DataDocks.
-</p>
+\n

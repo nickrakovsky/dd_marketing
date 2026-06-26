@@ -1,23 +1,66 @@
 ---
-title: "Data Validation"
-description: "Ensure cleaner data with built-in validation for appointments and inputs - reducing errors, confusion, and rework for your team."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76ecb3d52f553d8721f73_data-quality.svg"
-videoUrl: "https://youtu.be/_v9xe0JqLnM"
+description: 'Ensure cleaner data with built-in validation for appointments and inputs; reducing errors, confusion, and rework for your team.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76ecb3d52f553d8721f73_data-quality.svg
+videoUrl: 'https://youtu.be/_v9xe0JqLnM'
+faq:
+  - question: Can carriers override validation rules?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: What happens to existing appointments that don't meet new validation rules?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I make certain fields required for some carriers but optional for others?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How do validation rules work with our WMS integration?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Start with the fields your team complains about most; the ones that are always blank, misspelled, or entered in the wrong format. Common starting points: PO number format (must be 8 digits), trailer number (required before confirmation), and product type (dropdown instead of free text). Configure these as validation rules in DataDocks. Carriers and internal users see clear prompts; submissions that don''t meet the rules get rejected with a specific error message, not a generic "try again."'
+  differentiation: 'Spreadsheets and email have no validation; whatever someone types goes in. Most scheduling tools offer basic required fields, but DataDocks goes further: format masks (PO must match pattern XX-####), conditional requirements (if product type is temperature-controlled, require target temp), and role-based overrides (supervisors can waive certain requirements in emergencies). The result is data clean enough to feed directly into your WMS or BI tools without manual cleanup.'
+  businessImpact: 'Bad data creates invisible costs. A missing PO number means someone has to chase it down; 5–10 minutes per occurrence. A wrong trailer number means the wrong load gets staged. Multiply these small errors across hundreds of daily appointments, and you''re looking at hours of rework. Clean data also unlocks analytics: you can''t measure carrier performance or dock utilisation if half your records are incomplete or inconsistent.'
+  vision: Data quality is the prerequisite for everything else on the digital transformation roadmap. AI assistants need clean data to give accurate answers. Executive dashboards need consistent data to be trustworthy. Integration with WMS and TMS depends on field formats matching. Investing in data controls now means every downstream system and feature works better; and every report your leadership sees is one they can trust.
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef check fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+        classDef error fill:#ffd7d7,stroke:#cb4949,stroke-width:2px,color:#cb4949;
+
+        A[Carrier Inputs PO Number]:::action --> B{"API Validation<br>(WMS Check)"}:::check
+        B -->|Match Found| C[Booking Allowed]:::good
+        B -->|Missing/Wrong| D[Booking Blocked<br>Alert Sent]:::error
+    caption: Data Validation Flow
+  table:
+    title: Mandatory Fields & Validation
+    headers:
+       - Field
+       - Rule
+       - What Happens on Violation
+    rows:
+       - - PO Number
+         - Must match format XX-####
+         - Booking blocked; user sees format hint
+       - - Trailer Number
+         - Required before confirmation
+         - Can save draft but can't confirm
+       - - Product Type
+         - Dropdown only (no free text)
+         - User selects from approved list
+       - - Target Temperature
+         - Required if product = refrigerated
+         - Conditional field appears
+       - - BOL Upload
+         - Required for outbound loads
+         - File upload prompt before submit
+  tableContext: Bad data at the point of booking leads to delays at the gate and confusion on the dock. Enforcing strict data validation upfront prevents downstream exceptions.
+  visionSegue: 'Clean, validated appointment data is the foundation required for any advanced automation or analytics.'
+  layoutConfig:
+    dataVizColSpan: 4
+    implementationColSpan: 8
+title: Appointment Data Controls
 ---
-
-<p id="">
-Optimize the quality of your data with DataDocks' Data Validation feature. Our software promotes accuracy and consistency, making your inbound and outbound load information more valuable to your business.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-Configure data entry rules, reduce errors, and permit specific users to override those rules when needed. DataDocks helps you clean up your data and bolster your supply chain visibility efforts.
-</p>
-
-<p id="">
-‍
-</p>
+\n

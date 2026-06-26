@@ -1,19 +1,78 @@
 ---
-title: "Capacity Limits"
-description: "Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safe, efficient operations."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76a0f318b0b5862ac459c_partially-shipped.svg"
-videoUrl: "https://youtu.be/YhhFunmst-M"
+description: 'Set maximum limits for docks and yard areas to prevent overbooking, reduce bottlenecks, and maintain safe, efficient operations.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76a0f318b0b5862ac459c_partially-shipped.svg
+videoUrl: 'https://youtu.be/YhhFunmst-M'
+faq:
+  - question: What happens when a carrier tries to book a slot that's at capacity?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I set different capacity limits for different days of the week?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How do I handle exceptions when I need to go over capacity?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: 'Can capacity limits be set per dock, per facility, or both?'
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Start with your most congested day. Look at your historical peak; how many loads hit your busiest dock on your busiest day last month? Set that as your initial capacity ceiling, then dial it down 10–15% to create buffer. From there, you can layer in rules: weight limits per dock, maximum trailer length for certain doors, or blocked time slots for maintenance. Most teams have their initial capacity rules configured in under an hour.'
+  differentiation: 'Spreadsheet-based scheduling can''t enforce limits; someone can always type another row. Other platforms offer basic slot caps but can''t handle the nuance of real operations: overlapping time windows, weight-based limits, dock-type restrictions, or seasonal overrides. DataDocks lets you stack multiple capacity dimensions (count, weight, volume, product type) on the same dock and time window, with automatic enforcement and clear visibility when you''re approaching limits.'
+  businessImpact: 'Overbooking a dock creates a chain reaction: trucks queue up, drivers hit detention, your team scrambles to rearrange, and receiving falls behind. A single overbooking incident can cost $300–$500 in detention fees alone, plus the knock-on labour cost. Capacity management eliminates overbooking entirely. Facilities that implement it typically see detention incidents drop by 40–60% in the first quarter.'
+  vision: 'Capacity management is the foundation of predictable operations. Without it, you''re always reacting. With it, you can forecast dock utilisation weeks ahead, plan labour around confirmed volumes, and give carriers reliable time windows. It''s also the prerequisite for meaningful analytics; you can''t measure performance against a plan if you don''t have capacity guardrails defining the plan.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+        classDef check fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
+        classDef error fill:#ffd7d7,stroke:#cb4949,stroke-width:2px,color:#cb4949;
+
+        A[Carrier Requests Time]:::action --> B{Capacity Engine}:::check
+        B --> C[Check Door Availability]:::check
+        B --> D[Check Labor Availability]:::check
+        B --> E[Check Temp Zone]:::check
+        
+        C & D & E --> F{All Clear?}
+        F -->|Yes| G[Confirm Appointment]:::good
+        F -->|Over Limit| H[Suggest Alternate Time]:::error
+    caption: Automated Capacity Protection Logic
+  table:
+    title: Granular Capacity Controls
+    headers:
+       - Rule Type
+       - What It Controls
+       - Example
+    rows:
+       - - Slot count
+         - Max appointments per time window
+         - No more than 3 loads per hour on Dock 1
+       - - Weight limit
+         - Max combined weight per dock/day
+         - 'Dock 5 capped at 40,000 lbs per shift'
+       - - Product type
+         - Restricts which loads go where
+         - Refrigerated loads only on Docks 8–10
+       - - Time block
+         - Blocks scheduling during set periods
+         - No inbound before 6 AM or during lunch
+       - - Seasonal override
+         - Adjusts limits for peak/slow periods
+         - Double capacity November–December
+  tableContext: 'True capacity isn''t just about how many dock doors you have. It''s about balancing labor, equipment, product types, and time constraints so your warehouse never gets overwhelmed.'
+  visionSegue: 'Mastering capacity limits creates a predictable flow, but the long-term goal is to dynamically adjust those limits based on real-time operational conditions.'
+  layoutConfig:
+    implementationColSpan: 12
+    implementationOrder: 1
+    differentiationColSpan: 6
+    differentiationOrder: 2
+    dataVizColSpan: 6
+    dataVizRowSpan: 2
+    dataVizOrder: 3
+    businessImpactColSpan: 6
+    businessImpactOrder: 4
+title: Dock Capacity Management
 ---
-
-<p id="">
-Overbooking and inefficient resource allocation can be a thing of the past with Capacity Limits. This feature equips you to fine-tune availability, allowing total control over your schedule.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-Adapt to your operational needs, adjusting for daily volume, load weights, or specific times and days. Manage seasonal shifts, holidays, or maintenance closures with ease. With DataDocks, you can streamline your operations, ensuring each appointment aligns perfectly with your capacity limits.
-</p>
+\n

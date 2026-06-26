@@ -1,19 +1,77 @@
 ---
-title: "Yard Management"
-description: "Get real-time yard visibility with DataDocks’ yard management system. Track trailers, reduce congestion, and streamline dock operations for peak efficiency."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/vision.svg"
-videoUrl: "https://youtu.be/iSLzwQ3ZJFg"
+description: 'Get real-time yard visibility with DataDocks’ yard management system. Track trailers, reduce congestion, and streamline dock operations for peak efficiency.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/vision.svg
+videoUrl: 'https://youtu.be/iSLzwQ3ZJFg'
+faq:
+  - question: Do I need GPS tags or RFID to use yard management?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can drivers check themselves in without downloading an app?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How does the yard map handle facilities with multiple lots or overflow areas?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I see yard status from my phone?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How does yard management connect to dock scheduling?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Start by mapping your yard in DataDocks; define your parking spots, staging lanes, and dock doors. This takes 30–60 minutes for a typical facility. Once the map is set, your team can start logging trailer positions using drag-and-drop. You don''t need hardware or GPS tags to begin; manual tracking on a digital yard map is already a massive upgrade from clipboard-based systems. As you grow, you can layer in driver self-check-in and automated yard moves.'
+  differentiation: 'Standalone YMS platforms are expensive, complex, and often require dedicated yard jockeys with handheld devices. DataDocks builds yard management directly into the dock scheduling workflow; so when a trailer arrives and checks in, it automatically appears on your yard map. No duplicate entry, no separate system. The drag-and-drop interface lets anyone move a trailer on the map in seconds. Driver self-check-in via mobile means drivers update their own position, reducing the need for yard personnel to physically track every move.'
+  businessImpact: 'The average facility loses 15–30 minutes per trailer in yard search time; someone physically walking or driving the yard to find where a trailer is parked. With 20+ trailers on-site, that''s hours per day. Digital yard visibility eliminates search time entirely. It also reduces detention: if you know exactly where every trailer is and how long it''s been sitting, you can prioritise moves and avoid letting detention clocks run. Facilities using DataDocks yard management report 20–40% reductions in average yard dwell time.'
+  vision: 'Yard management is the missing link between dock scheduling and supply chain visibility. Most facilities have decent visibility inside the warehouse (WMS) and decent visibility on the road (TMS), but the yard is a black hole. DataDocks closes that gap. With yard visibility, you can answer questions that were previously unanswerable: "How many trailers are waiting right now? How long has the oldest one been sitting? Which ones are ready for dock-in?" This data feeds labour planning, carrier negotiations, and facility design decisions.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+        classDef spot fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
+
+        A[Gate Check-in] --> B[Assign Yard Spot]
+        B --> C{Dock Door Ready?}
+        C -->|Yes| D[Direct to Door]:::good
+        C -->|No| E[Request Spotter Move]:::action
+        E --> F[Spotter Confirms Move]:::spot
+        F --> G[Trailer at Door]:::good
+    caption: The Yard Move Lifecycle
+  table:
+    title: Yard Management Features
+    headers:
+       - Capability
+       - What It Does
+       - Who Benefits
+    rows:
+       - - Digital yard map
+         - Visual representation of all trailer positions
+         - 'Yard managers, coordinators'
+       - - Drag-and-drop moves
+         - Reassign trailers to spots or docks instantly
+         - 'Yard jockeys, supervisors'
+       - - Driver self-check-in
+         - Drivers report arrival and parking location via mobile
+         - 'Drivers, gate staff'
+       - - Trailer dwell tracking
+         - Automatic timer on every trailer from arrival to departure
+         - 'Ops managers, finance'
+       - - Yard move requests
+         - Request and track trailer moves between spots and docks
+         - 'Dock supervisors, yard team'
+  tableContext: A congested yard acts as a choke point for the entire warehouse. True yard visibility means knowing exactly what is sitting in every spot and orchestrating moves efficiently.
+  visionSegue: 'Full yard visibility is the prerequisite for an autonomous yard, where moves are orchestrated without human intervention.'
+  layoutConfig:
+    implementationColSpan: 6
+    implementationOrder: 1
+    dataVizColSpan: 6
+    dataVizRowSpan: 2
+    dataVizOrder: 2
+    differentiationColSpan: 6
+    differentiationOrder: 3
+    businessImpactColSpan: 12
+    businessImpactOrder: 4
+title: Yard Visibility & Execution
 ---
-
-<p id="">
-Gain complete visibility into your trailers, containers, and yard operations with DataDocks’ Yard Management System. Get a real-time, bird’s-eye view of your facility to track assets, manage dock traffic, and streamline logistics workflows—all through an intuitive drag-and-drop interface designed to enhance warehouse efficiency.Never let a trailer sit idle or lose sight of your assets again. 
-</p>
-
-<p id="">
-DataDocks delivers actionable yard analytics that help you reduce congestion, improve turnaround times, and keep every load moving. Take control of your yard performance with the trusted yard and dock management software built for modern logistics teams.
-</p>
-
-<p id="">
-Never let a trailer sit idle or lose sight of your assets again. DataDocks presents actionable insights, allowing your team to stay in control and optimize your yard performance. Take the first step with DataDocks today.
-</p>
+\n

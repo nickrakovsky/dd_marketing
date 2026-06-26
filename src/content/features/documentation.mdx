@@ -1,19 +1,83 @@
 ---
-title: "Documentation"
-description: "Access comprehensive product documentation and developer guides to help you integrate, configure, and use DataDocks efficiently."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d769d316c8c04184d4fa8b_submit-document.svg"
-videoUrl: "https://youtu.be/RZTKgEyd8eg"
+description: 'Access comprehensive product documentation and developer guides to help you integrate, configure, and use DataDocks efficiently.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d769d316c8c04184d4fa8b_submit-document.svg
+videoUrl: 'https://youtu.be/RZTKgEyd8eg'
+faq:
+  - question: Can checklists be different for different docks or product types?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can drivers upload documents from their phone?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How long are documents retained in the system?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I export inspection data for compliance reporting?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Start with one checklist; your most common inspection type. Build it in DataDocks using the checklist builder: add your line items, set which ones are required vs. optional, and attach it to a dock or load type. When a load arrives, the checklist appears automatically for the inspector. Results are stored against the appointment record, so there''s a permanent, searchable audit trail. No more paper forms getting lost or filed incorrectly.'
+  differentiation: 'Paper checklists and standalone inspection apps create data silos; the inspection results live somewhere separate from the appointment record. DataDocks ties documents and checklists directly to the load. Every BOL, inspection result, photo, and sign-off is attached to the appointment it belongs to. When you need to look up what happened with a specific load six months ago, everything is in one place. Print-ready output means you can still produce paper when a driver or auditor needs it.'
+  businessImpact: 'Document management is about risk reduction and time savings. A missing inspection record during an audit can cost hours of searching; or worse, a compliance finding. Load identity verification (confirming the right trailer is at the right dock) prevents mispicks and cross-contamination. Facilities that digitise their checklists typically cut inspection-related admin time by 50% and eliminate "where''s the paperwork?" conversations entirely.'
+  vision: 'Digital document management is the foundation of operational traceability. Every checklist result, every uploaded BOL, every sign-off creates a data point. Over time, this data reveals patterns: which carriers consistently fail inspections, which product types have the most exceptions, which docks have the most documentation gaps. It also prepares your operation for increasingly stringent food safety, pharmaceutical, and supply chain compliance requirements.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef doc fill:#ece6de,stroke:#9c806d,stroke-width:2px,color:#5f483a;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+
+        subgraph Gate ["Gate / Driver"]
+          G1[Arrive & Snap BOL]:::action --> G2[Upload to App]:::doc
+        end
+
+        subgraph Dock ["Receiver"]
+          D1[View BOL Instantly]:::doc --> D2[Digital Signature]:::good
+        end
+
+        subgraph Office ["Back Office"]
+          O1[Audit Trail Archived]:::good
+        end
+
+        G2 -.-> D1
+        D2 -.-> O1
+    caption: Digital Paper Trail Workflow
+  table:
+    title: Supported Document Workflows
+    headers:
+       - Document Type
+       - Attached To
+       - Use Case
+    rows:
+       - - BOL (Bill of Lading)
+         - Appointment
+         - Load identity verification
+       - - Inspection checklist
+         - Dock or load type
+         - Quality control on arrival/departure
+       - - Photos
+         - Appointment
+         - Damage documentation
+       - - Carrier agreements/NDAs
+         - Carrier profile
+         - Compliance before first booking
+       - - Custom forms
+         - Configurable
+         - Site-specific requirements
+  tableContext: Chasing down missing BOLs or inspection sheets slows down the entire receiving process. Digitizing these documents ties them permanently to the appointment record.
+  visionSegue: A paperless dock isn't just about saving trees; it's about making critical data searchable and actionable instantly.
+  layoutConfig:
+    implementationColSpan: 12
+    implementationOrder: 1
+    differentiationColSpan: 6
+    differentiationOrder: 2
+    dataVizColSpan: 6
+    dataVizRowSpan: 2
+    dataVizOrder: 3
+    businessImpactColSpan: 6
+    businessImpactOrder: 4
+title: Document Management & Checklists
 ---
-
-<p id="">
-Streamline your quality control with DataDocks' custom checklists. Ensure every load aligns with your standards while enhancing inspection precision and compliance.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-Generate print-ready checklists, associate documents with specific loads, and export clean, structured data. Make your paper trail intuitive and hassle-free with DataDocks, transforming your documentation process for the better.
-</p>
+\n
