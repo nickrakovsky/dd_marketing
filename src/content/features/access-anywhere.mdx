@@ -26,7 +26,7 @@ bentoContent:
       flowchart TD
         classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
         classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
-        classDef bad fill:#ece6de,stroke:#ad9686,stroke-width:1px,color:#5f483a,stroke-dasharray: 5 5;
+        classDef bad fill:#ece6de,stroke:#ad9686,stroke-width:2px,color:#5f483a,stroke-dasharray: 5 5;
         classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
 
         subgraph Legacy ["Without Mobile App (Slow & Reactive)"]
@@ -62,6 +62,16 @@ bentoContent:
          - Push notification to all devices
   tableContext: 'Equipping your team with mobile devices changes the fundamental communication patterns on the floor. Instead of relying on a central office to act as an information bottleneck, workers have exactly what they need at the dock door.'
   visionSegue: This immediate access to information doesn't just save walking time today, it fundamentally changes what's possible tomorrow.
+  layoutConfig:
+    implementationColSpan: 7
+    implementationOrder: 1
+    dataVizColSpan: 5
+    dataVizRowSpan: 2
+    dataVizOrder: 2
+    differentiationColSpan: 7
+    differentiationOrder: 3
+    businessImpactColSpan: 12
+    businessImpactOrder: 4
 title: Mobile Companion App
 ---
 \n

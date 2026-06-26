@@ -321,7 +321,6 @@ const renderDataViz = (dataViz: any) => {
         function styleMermaidSvgs() {
           const svgs = document.querySelectorAll('.dataviz-container svg');
           svgs.forEach(svg => {
-            svg.style.setProperty('width', '100%', 'important');
             svg.style.setProperty('max-width', '100%', 'important');
             svg.style.setProperty('height', 'auto', 'important');
           });
@@ -346,9 +345,14 @@ const renderDataViz = (dataViz: any) => {
   </main>
 
   <style is:inline>
+    .dataviz-container pre.mermaid {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      min-height: auto !important;
+    }
     .dataviz-container svg {
       max-width: 100% !important;
-      width: 100% !important;
       height: auto !important;
     }
   </style>

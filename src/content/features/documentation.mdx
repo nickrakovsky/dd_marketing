@@ -23,26 +23,16 @@ bentoContent:
   dataViz:
     type: mermaid
     content: |-
-      flowchart TD
+      flowchart LR
         classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
         classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
-        classDef doc fill:#ece6de,stroke:#9c806d,stroke-width:2px,color:#5f483a;
+        classDef doc fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
         classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
 
-        subgraph Gate ["Gate / Driver"]
-          G1[Arrive & Snap BOL]:::action --> G2[Upload to App]:::doc
-        end
-
-        subgraph Dock ["Receiver"]
-          D1[View BOL Instantly]:::doc --> D2[Digital Signature]:::good
-        end
-
-        subgraph Office ["Back Office"]
-          O1[Audit Trail Archived]:::good
-        end
-
-        G2 -.-> D1
-        D2 -.-> O1
+        A[Driver Snaps BOL]:::action --> B[Upload to App]:::doc
+        B -.-> C[Receiver Views Instantly]:::doc
+        C --> D[Digital Signature]:::good
+        D -.-> E[Audit Trail Archived]:::good
     caption: Digital Paper Trail Workflow
   table:
     title: Supported Document Workflows
@@ -69,15 +59,14 @@ bentoContent:
   tableContext: Chasing down missing BOLs or inspection sheets slows down the entire receiving process. Digitizing these documents ties them permanently to the appointment record.
   visionSegue: A paperless dock isn't just about saving trees; it's about making critical data searchable and actionable instantly.
   layoutConfig:
-    implementationColSpan: 12
+    implementationColSpan: 7
     implementationOrder: 1
-    differentiationColSpan: 6
+    differentiationColSpan: 5
     differentiationOrder: 2
-    dataVizColSpan: 6
-    dataVizRowSpan: 2
-    dataVizOrder: 3
-    businessImpactColSpan: 6
-    businessImpactOrder: 4
+    businessImpactColSpan: 12
+    businessImpactOrder: 3
+    dataVizColSpan: 12
+    dataVizOrder: 4
 title: Document Management & Checklists
 ---
 \n
