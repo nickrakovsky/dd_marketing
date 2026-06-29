@@ -1,11 +1,11 @@
 /** @jsxImportSource solid-js */
 import { splitProps } from "solid-js";
 import type { ComponentProps } from "solid-js";
-import { Accordion as AccordionPrimitive } from "@kobalte/core/accordion";
+import { Accordion as AccordionPrimitive } from "@kobalte/core";
 
 import { cn } from "@/components/solid/lib/utils";
 
-export const Accordion = AccordionPrimitive;
+export const Accordion = AccordionPrimitive.Root;
 
 export const AccordionItem = (props: ComponentProps<typeof AccordionPrimitive.Item>) => {
   const [local, rest] = splitProps(props, ["class"]);

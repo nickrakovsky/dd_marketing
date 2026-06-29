@@ -48,6 +48,9 @@ export default defineConfig({
     build: {
       cssCodeSplit: false,
     },
+    optimizeDeps: {
+      exclude: ['@kobalte/core', '@kobalte/core/accordion'],
+    },
     ssr: {
       noExternal: ['@kobalte/core'],
     },
@@ -119,7 +122,7 @@ export default defineConfig({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
     }),
     solid({
-      include: ['**/solid/**'],
+      include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
       filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
