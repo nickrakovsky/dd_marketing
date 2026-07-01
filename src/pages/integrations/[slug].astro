@@ -32,7 +32,7 @@ if (!integration) {
 
 if (!integration) {
   Astro.response.status = 404;
-  return Astro.rewrite('/404');
+  return Astro.redirect('/404');
 }
 
 const { Content } = await integration.render();
