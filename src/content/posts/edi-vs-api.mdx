@@ -15,6 +15,9 @@ showToc: true
 postType:
   discriminant: article
   value: {}
+relatedFeature: integration
+relatedFeatures: ['integration']
+relatedBenefits: ['increase-capacity', 'digitize-operations']
 ---
 
 A lot of supply chain data still moves through scheduled batch transmissions via **Electronic Data Interchange (EDI)**. Meanwhile, modern **APIs** can push the same information in real time. The challenge isn't choosing one over the other — it’s gaining the speed and visibility of APIs **without disrupting the EDI connections that partners already depend on**. EDI may be older technology, but it’s deeply standardized, reliable, and widely trusted across the industry.
@@ -25,7 +28,7 @@ EDI (Electronic Data Interchange) automates the exchange of structured business 
 
 ## **What Is an API?**
 
-An API (Application Programming Interface) lets two software systems exchange data in real time, over the web, the moment an event happens—a dock slot booked, a gate check-in logged, or inventory updated. Modern logistics platforms, WMS, TMS, and [dock scheduling software](https://datadocks.com) all expose REST APIs and webhooks that trigger live, connected workflows without waiting for a scheduled batch.
+An API (Application Programming Interface) lets two software systems exchange data in real time, over the web, the moment an event happens—a dock slot booked, a gate check-in logged, or inventory updated. When learning [how to build your logistics tech stack](/posts/how-to-build-your-logistics-tech-stack), you'll see that modern logistics platforms, WMS, TMS, and [dock scheduling software](https://datadocks.com) all expose REST APIs and webhooks that trigger live, connected workflows without waiting for a scheduled batch.
 
 ![Diagram comparing EDI and API data flows showing traditional EDI with batch processing versus modern API with real-time data exchange between manufacturers and retailers](../../assets/blog-images/edi-vs-api-1.webp)
 
@@ -47,6 +50,8 @@ EDI bundles orders, invoices, and shipment notices into standard file formats li
 | **Compliance / audit** | Structured files; auditors and regulators trust them | Timestamped logs exportable as PDF snapshots | **EDI for regulated documents** |
 | **Dock & yard data** | Not captured; appointments and check-ins invisible to EDI | Native; every booking and gate event is a live API call | **API: EDI can't see the dock** |
 | **Network Fees** | Per‑kB VAN or AS2 service charges | Ordinary web traffic plus usage fees | **VAN fees only for remaining EDI files** |
+
+<RelatedFeatureCallout id="integration" />
 
 ## **EDI vs API: Cost Comparison**
 
@@ -73,7 +78,7 @@ Going “API-only” promises real-time updates and cost savings, but the realit
 With partners and core systems scattered on both sides of that divide, full EDI retirement only becomes viable when three hurdles clear: 
 
 1.  **Partner Readiness** - every carrier and customer can send/receive APIs or at least use a self‑service web portal.
-2.  **System Limits** - your WMS, TMS, or ERP can send and receive API messages without messy workarounds.
+2.  **System Limits** - your WMS, TMS, [freight management system](/posts/what-is-a-freight-management-system), or ERP can send and receive API messages without messy workarounds.
 3.  **Compliance Comfort** - finance and quality teams are confident using digital logs in place of traditional EDI control reports. 
 
 Until all three align, a compromise is necessary.
@@ -134,7 +139,7 @@ Addressing these points first makes a **Hybrid Approach** far less risky.
 
 ![Step-by-step infographic illustrating the process to migrate from EDI to API-based data flows with stages: audit, map, pilot, hybrid, and retire](../../assets/blog-images/edi-vs-api-3.webp)
 
-Start with a walkthrough of the current paperwork: trace one high‑volume file from the shipping desk to the ERP and note every manual hand‑off or delay. Turn that route map into a plain‑language list of “shipment status,” “inventory balance,” and similar business objects, so ops, IT, and each trading partner agree what will change.
+Start with a walkthrough of the current paperwork: trace one high‑volume file from the shipping desk to the ERP and note every manual hand‑off or delay. Turn that route map (or even a [logistics digital twin](/posts/logistics-digital-twin)) into a plain‑language list of “shipment status,” “inventory balance,” and similar business objects, so ops, IT, and each trading partner agree what will change.
 
 Pick one partner and run the new API alongside the old file for a short pilot. While both are live, track three things: error rate, manual touch time, and how quickly exceptions reach the planner’s screen. If API errors stay below 0.1 % and staff effort drops, keep the dual feed running for a full quarter, then shut the file off on that lane.
 
@@ -176,7 +181,7 @@ If the data needs to be **auditable and consistent,** use **EDI**.
    * Staffing rosters update by the hour instead of by shift.
 
 2. **Yard-time analytics without the 214**  
-   *Workflow: Webhook "check-in / check-out" ➞ BI dashboard*
+   *Workflow: Webhook "check-in / check-out" ➞ BI dashboard (or [machine learning](/posts/machine-learning-in-supply-chains) models)*
    * Live dwell-time clocks and detention alerts.
    * Drop the carrier-supplied 214 feed for any partner willing to subscribe to the portal.
 

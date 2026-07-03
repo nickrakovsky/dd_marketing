@@ -6,6 +6,11 @@ import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
 import { getFriendlyDate } from '../utils/dateFormatter';
 import { getAuthor } from '../data/authors';
+import { getEntry } from 'astro:content';
+import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
+import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
+import LeadMagnetForm from '../components/LeadMagnetForm.astro';
+import SidebarShortVideo from '../components/SidebarShortVideo.astro';
 
 interface Heading {
   depth: number;
@@ -39,9 +44,50 @@ const finalReadTime = frontmatter.readTime || calculatedReadTime;
 // 4. Author Data
 const author = getAuthor(frontmatter.author);
 
-// 5. LCP Optimisation
+// 5. Related Feature Data
+let relatedFeatureEntry = null;
+if (frontmatter.relatedFeature) {
+  if (typeof frontmatter.relatedFeature === 'object' && 'id' in frontmatter.relatedFeature) {
+    relatedFeatureEntry = await getEntry(frontmatter.relatedFeature);
+  } else if (typeof frontmatter.relatedFeature === 'string') {
+    relatedFeatureEntry = await getEntry('features', frontmatter.relatedFeature);
+  }
+}
+
+const relatedFeatureEntries = [];
+if (frontmatter.relatedFeatures?.length) {
+  for (const ref of frontmatter.relatedFeatures) {
+    const entry = typeof ref === 'object' && 'id' in ref ? await getEntry(ref) : await getEntry('features', ref);
+    if (entry) relatedFeatureEntries.push(entry);
+  }
+} else if (relatedFeatureEntry) {
+  relatedFeatureEntries.push(relatedFeatureEntry); // Fallback to singular for backwards compatibility
+}
+
+const benefitsData: Record<string, {title: string, desc: string, icon: string}> = {
+  'increase-capacity': { title: 'Increase Capacity', desc: 'Eliminate bottlenecks and slash overtime costs. DataDocks optimizes your appointment slots based on actual load times.', icon: '/images/features/linechart-file.svg' },
+  'digitize-operations': { title: 'Digitize Operations', desc: 'Move away from paper and spreadsheets. Get real-time visibility into your yard and docks.', icon: '/images/features/checked-laptop.svg' },
+  'delight-carriers': { title: 'Delight Carriers', desc: 'Become a shipper of choice. Give carriers a self-serve portal to book appointments 24/7.', icon: '/images/features/people.svg' },
+  'see-everything': { title: 'See Everything', desc: 'A single dashboard for all your operations. Connect your teams with live updates.', icon: '/images/features/vision.svg' }
+};
+
+const relatedBenefits = (frontmatter.relatedBenefits || []).map((b: string) => {
+  const bData = benefitsData[b];
+  if (bData) {
+    return {
+      id: b,
+      title: `${bData.title} with DataDocks`,
+      description: bData.desc,
+      icon: bData.icon,
+      url: `/benefits/${b}`
+    };
+  }
+  return null;
+}).filter(Boolean);
+
+// 6. LCP Optimisation
 // Detect YouTube embeds — only load lite-yt JS when actually needed
-const hasYouTube = htmlContent.includes('lite-youtube');
+const hasYouTube = htmlContent.includes('lite-youtube') || htmlContent.includes('data-smartlink-type="video');
 
 // Find the first priority image rendered by MDXImage for a preload hint in <head>
 // MDXImage marks the first body image with fetchpriority="high"; we extract its src
@@ -161,10 +207,10 @@ if (priorityImgMatch) {
         </div>
       </div>
       
-      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-12">
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
-        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-64 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4">
+        <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-56 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4" aria-label="Table of Contents">
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
@@ -190,7 +236,7 @@ if (priorityImgMatch) {
         </aside>
 
         {/* Main Content Area */}
-        <div class="w-full max-w-3xl mx-auto lg:mx-0 flex-grow">
+        <div class="w-full min-w-0 max-w-2xl xl:max-w-3xl lg:mx-0 flex-grow relative">
           {/* Static TOC for Mobile */}
           {h2Headings.length > 0 && (
             <div class="lg:hidden relative z-40 mb-12">
@@ -243,7 +289,38 @@ if (priorityImgMatch) {
           
           <Fragment set:html={htmlContent} />
         </article>
+
+        {frontmatter.leadCapture && (
+          <div class="block lg:hidden mt-12 w-full max-w-xl mx-auto">
+            <LeadMagnetForm {...frontmatter.leadCapture} />
+          </div>
+        )}
       </div>
+
+      {/* Right Sidebar (Visible on LG+) */}
+      <aside id="blog-right-sidebar" class="hidden lg:block w-60 xl:w-64 flex-shrink-0 relative self-stretch" aria-label="Related Resources">
+        {/* Hidden Fallback Data for SmartLink script */}
+        <div 
+          id="smartlink-fallback-data" 
+          class="hidden" 
+          data-features={JSON.stringify(relatedFeatureEntries.map(e => ({
+            id: e.slug,
+            title: e.data.title,
+            description: e.data.description,
+            icon: e.data.icon ? e.data.icon.replace(new RegExp('/([0-9a-fA-F]{24})_'), '/') : '',
+            url: `/datadocks-features/${e.slug}`
+          })))}
+          data-benefits={JSON.stringify(relatedBenefits)}
+        ></div>
+        
+        {frontmatter.leadCapture && (
+          <LeadCaptureWidget {...frontmatter.leadCapture} />
+        )}
+        
+        {frontmatter.relatedShortVideo && (
+          <SidebarShortVideo videoId={frontmatter.relatedShortVideo} />
+        )}
+      </aside>
     </div>
 
     {relatedPosts.length > 0 && (
@@ -454,8 +531,1223 @@ if (priorityImgMatch) {
   </div>
 </Layout>
 
+
+<script>
+  let hoverTimeout: number | undefined;
+
+  function ensureUIElements() {
+    if (document.getElementById('smartlink-scrim')) return;
+
+    // Create Scrim
+    const scrim = document.createElement('div');
+    scrim.id = 'smartlink-scrim';
+    scrim.className = 'fixed inset-0 bg-black/40 hidden z-40 transition-opacity duration-300 opacity-0';
+    scrim.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(scrim);
+
+    // Create Mobile Sheet
+    const sheet = document.createElement('div');
+    sheet.id = 'smartlink-mobile-sheet';
+    sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
+    sheet.setAttribute('role', 'dialog');
+    sheet.setAttribute('aria-labelledby', 'sl-mobile-title');
+    sheet.innerHTML = `
+      <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-none mx-auto mt-3 mb-2"></div>
+      <div class="px-6 pb-8 pt-2">
+        <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3">More Information</h3>
+        <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
+        <div id="sl-mobile-actions" class="flex flex-col gap-3"></div>
+      </div>
+    `;
+    document.body.appendChild(sheet);
+
+    // Swipe-to-dismiss gestures
+    let startY = 0;
+    let currentY = 0;
+    let isSwiping = false;
+
+    sheet.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      isSwiping = true;
+      sheet.style.transition = 'none';
+    }, { passive: true });
+
+    sheet.addEventListener('touchmove', (e) => {
+      if (!isSwiping) return;
+      currentY = e.touches[0].clientY;
+      const diffY = currentY - startY;
+      if (diffY > 0) {
+        sheet.style.transform = `translateY(${diffY}px)`;
+      }
+    }, { passive: true });
+
+    sheet.addEventListener('touchend', () => {
+      if (!isSwiping) return;
+      isSwiping = false;
+      sheet.style.transition = 'transform 0.3s ease';
+      const diffY = currentY - startY;
+      if (diffY > 120) {
+        window.closeSmartLinkUI();
+      } else {
+        sheet.style.transform = '';
+      }
+    });
+
+    // Create Desktop Card
+    const card = document.createElement('div');
+    card.id = 'smartlink-desktop-card';
+    card.className = 'fixed z-50 hidden w-80 bg-white dark:bg-gray-800 shadow-2xl border border-[#E5D3B3] dark:border-gray-700 rounded-none transition-opacity duration-200 opacity-0 group not-prose';
+    card.innerHTML = `
+      <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
+      <div class="relative p-4">
+        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight"></h3>
+        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug break-words line-clamp-3"></p>
+        <div id="sl-desktop-actions" class="mt-3 flex items-center gap-3"></div>
+      </div>
+    `;
+    document.body.appendChild(card);
+  }
+
+  function getActionLinksHTML(type: string, href: string, bibRef: string, isMobile: boolean): string {
+    if (type === 'academic') {
+      const btnClass = isMobile 
+        ? "inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
+        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit";
+      const secClass = isMobile
+        ? "inline-flex items-center justify-center w-full py-3 px-4 bg-gray-200 text-gray-800 rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-gray-300 transition-all"
+        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline w-fit";
+        
+      let html = '';
+      if (href && href !== '#') {
+        html += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="${btnClass}">
+          Source
+          ${!isMobile ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>' : ''}
+        </a>`;
+      }
+      if (bibRef) {
+        html += `<a href="${bibRef}" class="${secClass}" onclick="closeSmartLinkUI()">
+          Full citation
+          ${!isMobile ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 17l-4 4m0 0l-4-4m4 4V3" /></svg>' : ''}
+        </a>`;
+      }
+      return html;
+    } 
+    
+    if (type === 'glossary' && (!href || href === '#')) {
+      return ''; 
+    }
+
+    const linkText = type === 'video' ? 'Watch video' : type === 'feature' ? 'Explore feature' : type === 'external' ? 'Visit site' : 'Read more';
+    const targetAttrs = type === 'external' ? 'target="_blank" rel="noopener noreferrer"' : '';
+    
+    if (isMobile) {
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
+    } else {
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
+        ${linkText}
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+          ${type === 'external' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />' : '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />'}
+        </svg>
+      </a>`;
+    }
+  }
+
+  function getPremiumCardHTML(dataset: any, isInline: boolean = false): string {
+    const type = dataset.smartlinkType;
+    const href = dataset.smartlinkHref || '#';
+    const title = (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
+    const snippet = (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
+    const icon = dataset.smartlinkIcon || '';
+    
+    if (type === 'academic') {
+      const citeNum = dataset.smartlinkBibref ? dataset.smartlinkBibref.replace('#ref-', '') : '';
+      return `
+        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-4 pl-6 rounded-none shadow-md transition-all duration-300 not-prose mt-2 mb-2">
+          ${citeNum ? `<span class="absolute -left-[14px] top-4 w-7 h-7 bg-[#fd4f00] text-white text-sm font-bold rounded-none flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">${citeNum}</span>` : ''}
+          <div class="font-sans text-sm font-bold text-gray-900 dark:text-white mb-1">
+            ${title}
+          </div>
+          <div class="font-sans text-sm text-gray-800 dark:text-gray-200 leading-relaxed [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white">
+            ${snippet}
+          </div>
+          <div class="mt-3 flex items-center gap-3">
+            ${getActionLinksHTML(type, dataset.smartlinkHref, dataset.smartlinkBibref, false)}
+          </div>
+        </div>
+      `;
+    }
+    if (type === 'external') {
+      return `
+        <div class="relative w-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-none shadow-sm transition-all duration-300 not-prose mt-2 mb-2 flex items-start gap-3">
+          <div class="w-8 h-8 shrink-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center rounded-none text-gray-500 dark:text-gray-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+          </div>
+          <div>
+            <div class="font-sans text-sm font-bold text-gray-900 dark:text-white leading-tight">
+              ${title}
+            </div>
+            <div class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 break-words line-clamp-3">
+              ${snippet}
+            </div>
+            <div class="mt-2 flex items-center gap-3">
+              ${getActionLinksHTML(type, dataset.smartlinkHref, dataset.smartlinkBibref, false)}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    let currentTitle = title;
+    let currentIcon = icon;
+    
+    if (type === 'app-store') {
+      const isApple = href.includes('apple');
+      currentTitle = isApple ? 'Available on the App Store' : 'Available on Google Play';
+      currentIcon = isApple 
+        ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-black dark:text-white" fill="currentColor" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>`
+        : `<svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full" viewBox="0 0 24 24" fill="none"><path d="M3.715 2.124A1.85 1.85 0 003 3.65v16.7c0 .548.243 1.05.658 1.39l.067.054 9.516-9.513v-.37l-9.46-9.46-.066.073z" fill="#00e5ff"/><path d="M17.472 15.932l-4.23-4.23v-.37l4.233-4.233.1.56 5.013 2.844c1.433.81 1.433 2.133 0 2.946l-5.116 2.483z" fill="#ffeb3b"/><path d="M17.575 16.03l-4.333-4.33-10-10C3.784 1.258 4.606 1.11 5.485 1.6l12.09 6.85-4.333 4.33" fill="#00e676"/><path d="M17.575 8.16l-4.333 4.33-10 10c.542.44 1.36.494 2.243 0l12.09-6.85-4.333-4.33z" fill="#f44336"/></svg>`;
+    }
+
+    let iconHtml = '';
+    
+    if (isInline) {
+      if (currentIcon) {
+        iconHtml = `
+          <div class="w-9 h-9 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1.5 rounded-none shrink-0">
+            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="" class="w-full h-full object-contain" loading="lazy" />`}
+          </div>`;
+      }
+      const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
+      return `
+        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-none shadow-md transition-all duration-300 not-prose group/feature block">
+          <a href="${href}" class="absolute inset-0 z-10" ${targetAttr}><span class="sr-only">${currentTitle}</span></a>
+          <div class="flex flex-row items-start gap-4">
+            ${iconHtml}
+            <div class="flex-grow pr-6">
+              <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight mb-1 m-0 group-hover/feature:underline">
+                ${currentTitle}
+              </h3>
+              <p class="font-sans text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-0">
+                ${snippet}
+              </p>
+            </div>
+          </div>
+          <div class="absolute bottom-5 right-5 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      `;
+    } else {
+      if (currentIcon) {
+        iconHtml = `
+          <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-none shrink-0">
+            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="" class="w-full h-full object-contain" loading="lazy" />`}
+          </div>`;
+      }
+      const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
+      return `
+        <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-none shadow-md hover:shadow-lg transition-all duration-300 not-prose group/feature">
+          <div class="flex items-center gap-2.5 mb-2">
+            ${iconHtml}
+            <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight m-0">
+              <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline" ${targetAttr}>
+                ${currentTitle}
+              </a>
+            </h3>
+          </div>
+          <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed pr-6">
+            ${snippet}
+          </p>
+          <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  window.closeSmartLinkUI = function() {
+    const sheet = document.getElementById('smartlink-mobile-sheet');
+    const scrim = document.getElementById('smartlink-scrim');
+    const card  = document.getElementById('smartlink-desktop-card');
+    
+    if (sheet && scrim) {
+      sheet.style.transform = '';
+      sheet.classList.add('translate-y-full');
+      scrim.classList.remove('opacity-100');
+      setTimeout(() => {
+        scrim.classList.add('hidden');
+        // Clear sheet content to stop any playing videos/audio
+        sheet.innerHTML = '';
+      }, 300);
+    }
+    if (card) {
+      card.classList.remove('opacity-100');
+      setTimeout(() => card.classList.add('hidden'), 200);
+    }
+  };
+
+  function getActiveTriggers(): HTMLElement[] {
+    return Array.from(document.querySelectorAll('#content [data-smartlink-trigger="true"]')).filter((el: any) => {
+      // Exclude triggers nested inside a bibliography reference
+      return !el.closest('[id^="ref-"]');
+    }) as HTMLElement[];
+  }
+
+  function resolveAcademicDetails(trigger: HTMLElement) {
+    if (trigger.dataset.smartlinkType === 'academic') {
+      if (trigger.dataset.smartlinkResolved === 'true') return;
+      const bibRef = trigger.dataset.smartlinkBibref || '';
+      if (bibRef && (!trigger.dataset.smartlinkHref || trigger.dataset.smartlinkHref === '#' || trigger.dataset.smartlinkHref.startsWith('#'))) {
+        const bibId = bibRef.replace('#', '');
+        const bibEl = document.getElementById(bibId);
+        if (bibEl) {
+          // Find the content div, skipping the badge span
+          const contentDiv = bibEl.querySelector('[data-bib-content]') || bibEl;
+          
+          const links = Array.from(contentDiv.querySelectorAll('a'));
+          // Find the first link that isn't a hash/internal link or a jumpback
+          const extLink = links.find(l => {
+            const h = l.getAttribute('href');
+            return h && !h.startsWith('#') && !l.classList.contains('bib-jumpback');
+          });
+          
+          let href = '#';
+          if (extLink) {
+            href = extLink.getAttribute('href') || '#';
+          }
+          
+          let snippet = '';
+          contentDiv.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              snippet += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              const el = node as HTMLElement;
+              if (!el.classList.contains('bib-jumpback') && !el.hasAttribute('data-bib-badge')) {
+                snippet += el.textContent;
+              }
+            }
+          });
+          snippet = snippet.replace(/^\d+\s*/, '').trim();
+
+          // Try to extract a human-readable title from the snippet.
+          let title = 'Academic Reference';
+          
+          const quoteMatch = snippet.match(/["'“”‘’]([^"'“”‘’]+)["'“”‘’]/);
+          if (quoteMatch) {
+             title = quoteMatch[1];
+          } else if (extLink) {
+             const linkText = (extLink.textContent || '').trim();
+             const isUrl = /^https?:\/\//i.test(linkText) || /doi\.org/i.test(linkText);
+             if (linkText && !isUrl) {
+                title = linkText;
+                snippet = snippet.replace(linkText, '').replace(/\(\s*\)/, '').trim();
+             } else {
+                const periodMatch = snippet.match(/^([^.]+)\./);
+                if (periodMatch && periodMatch[1].length < 100) {
+                   title = periodMatch[1];
+                }
+             }
+          } else {
+             const periodMatch = snippet.match(/^([^.]+)\./);
+             if (periodMatch && periodMatch[1].length < 100) {
+                title = periodMatch[1];
+             }
+          }
+          
+          // Clean up snippet: remove any trailing URLs or brackets
+          if (href && href !== '#') {
+            snippet = snippet.replace(href, '').trim();
+          }
+          // Remove trailing dots/punctuation from title
+          title = title.replace(/\.$/, '').trim();
+          
+          // Limit length
+          if (title.length > 100) {
+            title = title.substring(0, 97) + '...';
+          }
+
+          // Generate shortened citation for the card's snippet/description
+          let shortenedCitation = '';
+          const yearMatch = snippet.match(/\b(19\d\d|20\d\d)\b/);
+          if (yearMatch) {
+            const year = yearMatch[1];
+            const beforeYear = snippet.split(year)[0].trim().replace(/[.,;]+$/, '');
+            const hasMultiple = beforeYear.includes(',') || /\band\b/i.test(beforeYear);
+            let lastName = '';
+            if (beforeYear.includes(',')) {
+              lastName = beforeYear.split(',')[0].trim();
+            } else {
+              const words = beforeYear.split(/\s+/);
+              lastName = words[words.length - 1].trim();
+            }
+            lastName = lastName.replace(/^(and|&)\s+/i, '').trim();
+            if (lastName && lastName.length < 40) {
+              shortenedCitation = hasMultiple ? `${lastName} et al. (${year})` : `${lastName} (${year})`;
+            }
+          }
+
+          // If no clean author-year was parsed, or it's a website reference
+          if (!shortenedCitation) {
+            shortenedCitation = snippet;
+            if (shortenedCitation.length > 120) {
+              shortenedCitation = shortenedCitation.substring(0, 117) + '...';
+            }
+          }
+          
+          trigger.dataset.smartlinkHref = href;
+          trigger.dataset.smartlinkTitle = title;
+          trigger.dataset.smartlinkSnippet = shortenedCitation;
+          trigger.dataset.smartlinkResolved = 'true';
+        }
+      }
+    }
+  }
+
+  function resolveExternalDetails(trigger: HTMLElement) {
+    if (trigger.dataset.smartlinkType === 'external') {
+      if (trigger.dataset.smartlinkManual === 'true') return;
+      const domain = trigger.dataset.smartlinkTitle || 'External Link';
+      const linkText = trigger.textContent?.trim() || '';
+      
+      let surroundingText = '';
+      if (trigger.parentElement) {
+        const textContent = trigger.parentElement.textContent || '';
+        const sentences = textContent.match(/[^.!?]+[.!?]+/g) || [textContent];
+        const linkSentence = sentences.find(s => s.includes(linkText)) || textContent;
+        // Clean up the sentence to be a nice snippet
+        surroundingText = linkSentence.replace(/\s+/g, ' ').trim();
+        if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
+      }
+      
+      // Format domain as brand (e.g. assets.kpmg.com -> Kpmg)
+      let parts = domain.split('.');
+      const commonSubdomains = ['www', 'assets', 'blog', 'app', 'docs', 'help', 'support', 'info', 'news', 'shop', 'store', 'go', 'investors', 'investor', 'my', 'portal'];
+      while (parts.length > 1 && commonSubdomains.includes(parts[0].toLowerCase())) {
+        parts.shift();
+      }
+      const brandName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+      trigger.dataset.smartlinkTitle = brandName;
+      
+      // Try to extract a meaningful snippet from the URL path
+      let urlContext = '';
+      try {
+        const urlObj = new URL(trigger.dataset.smartlinkHref || '');
+        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 0 && !p.includes('.php') && !p.includes('.html'));
+        
+        // Find the last segment that contains some letters (ignoring trailing ID segments)
+        let meaningfulSegments = pathSegments.filter(p => /[a-zA-Z]{3,}/.test(p));
+        if (meaningfulSegments.length > 0) {
+          let lastSegment = meaningfulSegments[meaningfulSegments.length - 1];
+          try { lastSegment = decodeURIComponent(lastSegment); } catch {
+            // Ignore decode error
+          }
+          
+          // Replace hyphens/underscores with spaces and remove common file extensions
+          lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
+          
+          // Capitalize words
+          urlContext = lastSegment.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').trim();
+          
+          if (urlContext.length < 5) urlContext = '';
+        }
+      } catch {
+        // Ignore URL parsing error
+      }
+
+      if (urlContext && urlContext.toLowerCase() !== brandName.toLowerCase()) {
+        trigger.dataset.smartlinkSnippet = `Resource: ${urlContext}`;
+      } else {
+        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
+      }
+    }
+  }
+
+  function openMobileSheet(trigger: HTMLElement) {
+    resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
+    ensureUIElements();
+    const sheet  = document.getElementById('smartlink-mobile-sheet');
+    const scrim  = document.getElementById('smartlink-scrim');
+    if (!sheet || !scrim) return;
+
+    const type = trigger.dataset.smartlinkType || 'post';
+    const href = trigger.dataset.smartlinkHref || '#';
+    const bibRef = trigger.dataset.smartlinkBibref || '';
+    const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
+    const title = trigger.dataset.smartlinkTitle || 'Reference';
+
+    const isPortraitVideo = type === 'video' && youtubeId && (window.innerHeight / window.innerWidth > 1.1);
+
+    if (isPortraitVideo) {
+      sheet.className = 'fixed inset-0 z-50 translate-y-full transition-transform duration-300 bg-black overflow-hidden not-prose flex flex-col justify-between';
+      sheet.innerHTML = `
+        <!-- Floating Close Button -->
+        <button id="sl-mobile-close" class="absolute top-5 right-5 z-50 p-2 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors border border-white/20 focus:outline-none" aria-label="Close video">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+        
+        <!-- Video Container -->
+        <div class="flex-grow flex items-center justify-center bg-black relative w-full h-full p-2">
+          <div class="w-full max-w-sm aspect-[9/16] bg-black relative overflow-hidden shadow-2xl border border-white/10" style="height: calc(100dvh - 120px);">
+            <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=1&autoplay=1" class="absolute inset-0 w-full h-full"></lite-youtube>
+          </div>
+        </div>
+
+        <!-- Video Overlay Info -->
+        <div class="p-6 bg-gradient-to-t from-black via-black/80 to-transparent text-white w-full relative z-40">
+          <h3 class="text-[clamp(1rem,4.5vw,1.25rem)] font-sans font-bold leading-snug text-white">${title}</h3>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        const closeBtn = document.getElementById('sl-mobile-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            window.closeSmartLinkUI();
+          });
+        }
+      }, 0);
+    } else {
+      // Re-setup standard layout just in case it was modified by portrait video
+      sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
+      sheet.innerHTML = `
+        <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-none mx-auto mt-3 mb-2"></div>
+        <div class="px-6 pb-8 pt-2">
+          <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3">More Information</h3>
+          <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
+          <div id="sl-mobile-actions" class="flex flex-col gap-3"></div>
+        </div>
+      `;
+
+      const slTitle = document.getElementById('sl-mobile-title');
+      const slSnip  = document.getElementById('sl-mobile-snippet');
+      const slActions = document.getElementById('sl-mobile-actions');
+      if (!slTitle || !slSnip || !slActions) return;
+
+      if (type === 'video' && youtubeId) {
+        slTitle.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        slTitle.textContent = title;
+        slSnip.className = 'w-full my-4 not-prose flex justify-center';
+        slSnip.innerHTML = `
+          <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-gray-700" style="padding-bottom: calc(100% / (9 / 16)); max-width: 260px; width: 260px;">
+            <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+          </div>
+        `;
+        slActions.innerHTML = '';
+      } else if (type === 'academic') {
+        slTitle.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        slTitle.textContent = trigger.dataset.smartlinkTitle || 'Academic Reference';
+        slSnip.className = 'text-gray-700 dark:text-gray-300 font-serif text-base leading-relaxed mb-6';
+        slSnip.innerHTML = trigger.dataset.smartlinkSnippet || '';
+        slActions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
+      } else {
+        slTitle.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3';
+        slTitle.textContent = trigger.dataset.smartlinkTitle || 'Reference';
+        slSnip.className = 'text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6';
+        slSnip.textContent = trigger.dataset.smartlinkSnippet || '';
+        slActions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
+      }
+    }
+
+    scrim.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      scrim.classList.add('opacity-100');
+      sheet.classList.remove('translate-y-full');
+    });
+
+    // Auto play video when mobile sheet is opened
+    setTimeout(() => {
+      const sheetYoutube = sheet.querySelector('lite-youtube') as HTMLElement | null;
+      if (sheetYoutube) {
+        sheetYoutube.click();
+      }
+    }, 150);
+
+    const closeOnScrim = () => {
+      window.closeSmartLinkUI();
+      scrim.removeEventListener('click', closeOnScrim);
+    };
+    scrim.addEventListener('click', closeOnScrim);
+  }
+
+  function createPersistentCard(trigger: HTMLElement): HTMLElement {
+    resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
+    const type = trigger.dataset.smartlinkType || 'post';
+    const href = trigger.dataset.smartlinkHref || '#';
+    const bibRef = trigger.dataset.smartlinkBibref || '';
+    const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
+    let title = (trigger.dataset.smartlinkTitle || 'Reference').replace(/</g, '&lt;');
+    const snippet = (trigger.dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
+
+    const card = document.createElement('div');
+    card.className = 'absolute left-0 z-30 w-full smartlink-persistent-card group transition-all duration-300 pointer-events-auto transform rounded-none';
+
+    if (type === 'feature' || type === 'benefit' || type === 'academic' || type === 'external' || type === 'app-store') {
+       card.classList.add('opacity-70', 'data-[hovered=true]:opacity-100', 'data-[hovered=true]:z-40');
+       card.innerHTML = getPremiumCardHTML(trigger.dataset);
+    } else {
+       card.classList.add('sidebar-card', 'opacity-40', 'grayscale', 'dark:opacity-50', 'dark:grayscale', 'data-[hovered=true]:opacity-100', 'data-[hovered=true]:grayscale-0', 'data-[hovered=true]:z-40', 'rounded-none');
+       const actionsHtml = getActionLinksHTML(type, href, bibRef, false);
+
+       let mediaHtml = '';
+       if (type === 'video' && youtubeId) {
+         card.classList.remove('grayscale', 'dark:grayscale');
+         card.classList.replace('opacity-40', 'opacity-60');
+         card.classList.replace('dark:opacity-50', 'opacity-60');
+         card.classList.add('opacity-60', 'transition-all', 'duration-300');
+         card.dataset.hovered = 'false';
+         card.style.padding = '0px';
+         mediaHtml = `
+           <div class="p-3 border-b border-[#E5D3B3] dark:border-gray-700 bg-white dark:bg-gray-800 rounded-none group-data-[hovered=true]:border-[#fd4f00]">
+             <div class="sidebar-card-title">${title}</div>
+           </div>
+           <div class="w-full bg-black relative rounded-none overflow-hidden" style="padding-bottom: calc(100% / (9 / 16));">
+             <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+           </div>
+         `;
+         card.innerHTML = mediaHtml;
+       } else {
+         card.innerHTML = `
+           <h3 class="sidebar-card-title">${title}</h3>
+           <p class="sidebar-card-snippet">${snippet}</p>
+           <div class="mt-3 flex items-center gap-3">
+             ${actionsHtml}
+           </div>`;
+       }
+    }
+    return card;
+  }
+
+  function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
+    if (window.innerWidth < 768 || window.innerWidth >= 1024) return;
+    resolveAcademicDetails(trigger);
+    clearTimeout(hoverTimeout);
+    ensureUIElements();
+    const card    = document.getElementById('smartlink-desktop-card');
+    const dTitle  = document.getElementById('sl-desktop-title');
+    const dSnip   = document.getElementById('sl-desktop-snippet');
+    const actions = document.getElementById('sl-desktop-actions');
+    if (!card || !actions) return;
+
+    const type = trigger.dataset.smartlinkType || 'post';
+    const href = trigger.dataset.smartlinkHref || '#';
+    const bibRef = trigger.dataset.smartlinkBibref || '';
+
+    if (dTitle) dTitle.textContent = trigger.dataset.smartlinkTitle  || 'Reference';
+    if (dSnip)  dSnip.textContent  = trigger.dataset.smartlinkSnippet || '';
+    
+    actions.innerHTML = getActionLinksHTML(type, href, bibRef, false);
+
+    const cardWidth  = 320; // w-80
+    const cardH      = card.offsetHeight || 180;
+    const roomAbove  = e.clientY > cardH + 10;
+    
+    let leftPos = e.clientX - (cardWidth / 2);
+    leftPos = Math.max(16, Math.min(leftPos, window.innerWidth - cardWidth - 16));
+    
+    card.style.left     = `${leftPos}px`;
+    card.style.width    = `${cardWidth}px`;
+    card.style.top      = roomAbove
+      ? `${e.clientY - cardH - 4}px`
+      : `${e.clientY + 4}px`;
+
+    card.classList.remove('hidden');
+    requestAnimationFrame(() => card.classList.add('opacity-100'));
+  }
+
+  function hideHoverCard() {
+    hoverTimeout = window.setTimeout(() => {
+      const card = document.getElementById('smartlink-desktop-card');
+      if (card) {
+        card.classList.remove('opacity-100');
+        setTimeout(() => {
+          if (!card.classList.contains('opacity-100')) {
+            card.classList.add('hidden');
+          }
+        }, 200);
+      }
+    }, 150);
+  }
+
+  function positionPersistentCards() {
+    if (window.innerWidth < 1024) return;
+    const sidebar = document.getElementById('blog-right-sidebar');
+    if (!sidebar) return;
+
+    // Remove existing dynamic cards to recalculate cleanly
+    sidebar.querySelectorAll('.smartlink-persistent-card').forEach(c => c.remove());
+
+    const sidebarTop = sidebar.getBoundingClientRect().top + window.scrollY;
+
+    const placedCards: { top: number; bottom: number; el: HTMLElement; isFallback?: boolean }[] = [];
+    const minGap = 32;
+    const minTopOffset = 400; // Fallback cards must not appear within first 400px of article
+    const minFallbackSeparation = 250; // Min vertical distance between fallback cards
+    
+    // Account for existing static sidebar items (Lead Capture, Video)
+    const staticItems = Array.from(sidebar.children).filter(el => !el.classList.contains('smartlink-persistent-card')) as HTMLElement[];
+    let staticHeightUsed = 0;
+    
+    if (staticItems.length > 0) {
+        const lastItem = staticItems[staticItems.length - 1];
+        staticHeightUsed = lastItem.offsetTop + lastItem.offsetHeight + minGap;
+        
+        staticItems.forEach(item => {
+           placedCards.push({
+               top: item.offsetTop,
+               bottom: item.offsetTop + item.offsetHeight,
+               el: item
+           });
+        });
+    }
+
+    const allTriggers = getActiveTriggers();
+
+    // Fallback Logic: Inject at most 1 feature + 1 benefit card
+    const fallbackDataEl = document.getElementById('smartlink-fallback-data');
+    if (fallbackDataEl) {
+        let features: any[] = [];
+        let benefits: any[] = [];
+        try {
+            features = JSON.parse(fallbackDataEl.dataset.features || '[]');
+            benefits = JSON.parse(fallbackDataEl.dataset.benefits || '[]');
+        } catch {
+            // Ignore parse errors
+        }
+        
+        // Find first unlinked feature
+        let featureFallback: any = null;
+        for (const f of features) {
+            const isLinked = allTriggers.some(el => {
+                return el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id);
+            }) || Array.from(document.querySelectorAll('[data-feature-callout-anchor="true"] a')).some(a => (a.getAttribute('href') || '').includes(f.id));
+            if (!isLinked) { featureFallback = { type: 'feature', ...f }; break; }
+        }
+        
+        // Find first unlinked benefit
+        let benefitFallback: any = null;
+        for (const b of benefits) {
+            const isLinked = allTriggers.some(el => {
+                return el.dataset.smartlinkType === 'benefit' && (el.dataset.smartlinkHref || '').includes(b.id);
+            });
+            if (!isLinked) { benefitFallback = { type: 'benefit', ...b }; break; }
+        }
+
+        const fallbackItems = [featureFallback, benefitFallback].filter(Boolean);
+        const headings = Array.from(document.querySelectorAll('.prose h2')) as HTMLElement[];
+        
+        // Place feature at H2#1, benefit at H2#3+ (with minimum separation)
+        const targetIndices = [1, Math.max(3, Math.min(headings.length - 1, 4))];
+        let lastFallbackY = -Infinity;
+        
+        fallbackItems.forEach((item, index) => {
+            const hIdx = Math.min(targetIndices[index] || 1, headings.length - 1);
+            const heading = headings[hIdx];
+            if (heading) {
+                const dummyTrigger = document.createElement('span');
+                Object.assign(dummyTrigger.dataset, {
+                    smartlinkType: item.type,
+                    smartlinkHref: item.url,
+                    smartlinkTitle: item.title,
+                    smartlinkSnippet: item.description,
+                    smartlinkIcon: item.icon
+                });
+                const pCard = createPersistentCard(dummyTrigger);
+                pCard.dataset.hovered = 'true'; 
+                pCard.classList.remove('opacity-70'); // fully opaque fallback
+                
+                sidebar.appendChild(pCard);
+                const h = pCard.offsetHeight || 120;
+                
+                let idealY = (heading.getBoundingClientRect().top + window.scrollY) - sidebarTop;
+                idealY = Math.max(idealY, staticHeightUsed);
+                idealY = Math.max(idealY, minTopOffset); // Enforce minimum distance from top
+                idealY = Math.max(idealY, lastFallbackY + minFallbackSeparation); // Enforce separation
+                lastFallbackY = idealY + h;
+
+                placedCards.push({
+                    top: idealY,
+                    bottom: idealY + h,
+                    el: pCard,
+                    isFallback: true
+                });
+            }
+        });
+    }
+
+    // Now place natural triggers
+    const keyToCard = new Map();
+    const seenKeys = new Set();
+
+    allTriggers.forEach((trigger) => {
+      if (trigger.dataset.smartlinkType === 'video-widescreen') return;
+
+      resolveAcademicDetails(trigger);
+      const key = trigger.dataset.smartlinkBibref || trigger.dataset.smartlinkHref || trigger.dataset.smartlinkTitle || '';
+      if (!key) return;
+
+      let cardEl = keyToCard.get(key);
+      if (!cardEl) {
+        cardEl = trigger.cardEl || createPersistentCard(trigger);
+        if (!cardEl) return;
+        keyToCard.set(key, cardEl);
+
+        const currentCardEl = cardEl; // Capture in closure
+        if (!currentCardEl.dataset.cardHoverBound) {
+          currentCardEl.dataset.cardHoverBound = 'true';
+          currentCardEl.addEventListener('mouseenter', () => {
+            currentCardEl.dataset.hovered = 'true';
+            allTriggers.forEach(t => {
+              if (t.cardEl === currentCardEl) {
+                t.dataset.highlighted = 'true';
+              }
+            });
+            if (currentCardEl.dataset.smartlinkType === 'video') {
+              currentCardEl.classList.replace('opacity-60', 'opacity-100');
+            }
+          });
+          currentCardEl.addEventListener('mouseleave', () => {
+            currentCardEl.dataset.hovered = 'false';
+            allTriggers.forEach(t => {
+              if (t.cardEl === currentCardEl) {
+                t.dataset.highlighted = 'false';
+              }
+            });
+            if (currentCardEl.dataset.smartlinkType === 'video') {
+              currentCardEl.classList.replace('opacity-100', 'opacity-60');
+            }
+          });
+        }
+      }
+
+      trigger.cardEl = cardEl;
+      sidebar.appendChild(cardEl);
+
+      if (!seenKeys.has(key)) {
+        seenKeys.add(key);
+
+        const triggerRect = trigger.getBoundingClientRect();
+        const triggerY = (triggerRect.top + window.scrollY) - sidebarTop;
+
+        let idealY = triggerY;
+        idealY = Math.max(idealY, staticHeightUsed);
+
+        const h = cardEl.offsetHeight || 120;
+        placedCards.push({ top: idealY, bottom: idealY + h, el: cardEl });
+      }
+    });
+
+    // Identify table blocker regions
+    const tables = Array.from(document.querySelectorAll('.prose .table-wrapper, .prose > table')) as HTMLElement[];
+    const tableBlockers = tables.map(t => {
+      const rect = t.getBoundingClientRect();
+      const top = (rect.top + window.scrollY) - sidebarTop - minGap;
+      const bottom = (rect.bottom + window.scrollY) - sidebarTop + minGap;
+      return { top, bottom };
+    });
+
+    // Helper to check if cards can be nudged up to accommodate a target position
+    function canNudgeUp(cardIndex: number, targetTop: number) {
+      const tempPos = placedCards.slice(0, cardIndex + 1).map(c => ({
+        top: c.top,
+        bottom: c.bottom,
+        el: c.el,
+        h: c.bottom - c.top
+      }));
+
+      tempPos[cardIndex].top = targetTop;
+      tempPos[cardIndex].bottom = targetTop + tempPos[cardIndex].h;
+
+      // Check table blocker collisions for target card itself
+      for (const tb of tableBlockers) {
+        if (tempPos[cardIndex].top < tb.bottom && tempPos[cardIndex].bottom > tb.top) {
+          return null;
+        }
+      }
+
+      for (let j = cardIndex - 1; j >= 0; j--) {
+        const next = tempPos[j + 1];
+        const curr = tempPos[j];
+
+        const isDynamic = curr.el.classList.contains('smartlink-persistent-card');
+        if (!isDynamic) {
+          if (next.top < curr.bottom + minGap) {
+            return null;
+          }
+          continue;
+        }
+
+        if (next.top < curr.bottom + minGap) {
+          const requiredBottom = next.top - minGap;
+          const shiftUp = curr.bottom - requiredBottom;
+          curr.top -= shiftUp;
+          curr.bottom -= shiftUp;
+
+          if (curr.top < staticHeightUsed) {
+            return null;
+          }
+
+          for (const tb of tableBlockers) {
+            if (curr.top < tb.bottom && curr.bottom > tb.top) {
+              return null;
+            }
+          }
+        }
+      }
+      return tempPos;
+    }
+
+    // Resolve overlaps (Shift DOWN)
+    placedCards.sort((a, b) => a.top - b.top);
+    for (let i = 0; i < placedCards.length; i++) {
+      const curr = placedCards[i];
+      const cardH = curr.bottom - curr.top;
+      
+      // 1. Avoid previous cards
+      if (i > 0) {
+        const prev = placedCards[i - 1];
+        if (curr.top < prev.bottom + minGap) {
+          const shift = (prev.bottom + minGap) - curr.top;
+          curr.top += shift;
+          curr.bottom += shift;
+        }
+      }
+
+      // 2. Avoid tables — try placing ABOVE the table first, then below
+      for (const tb of tableBlockers) {
+        if (curr.top < tb.bottom && curr.bottom > tb.top) {
+          // Card overlaps this table. Try above first.
+          const abovePos = tb.top - cardH - minGap;
+          const belowPos = tb.bottom;
+          
+          if (abovePos >= staticHeightUsed) {
+            const nudged = canNudgeUp(i, abovePos);
+            if (nudged) {
+              for (let j = 0; j <= i; j++) {
+                placedCards[j].top = nudged[j].top;
+                placedCards[j].bottom = nudged[j].bottom;
+              }
+            } else {
+              curr.top = belowPos;
+              curr.bottom = belowPos + cardH;
+            }
+          } else {
+            curr.top = belowPos;
+            curr.bottom = belowPos + cardH;
+          }
+        }
+      }
+      // Final check: if still overlapping any table after repositioning, push below
+      let overlapWithTable = true;
+      let safetyCounter = 0;
+      while (overlapWithTable && safetyCounter < 10) {
+        overlapWithTable = false;
+        safetyCounter++;
+        for (const tb of tableBlockers) {
+          if (curr.top < tb.bottom && curr.bottom > tb.top) {
+            curr.top = tb.bottom;
+            curr.bottom = tb.bottom + cardH;
+            overlapWithTable = true;
+          }
+        }
+      }
+    }
+
+    // Resolve bottom collision (Shift UP)
+    const prose = document.querySelector('.prose') as HTMLElement;
+    if (prose && placedCards.length > 0) {
+       const proseRect = prose.getBoundingClientRect();
+       const proseBottom = (proseRect.bottom + window.scrollY) - sidebarTop;
+       const lastCard = placedCards[placedCards.length - 1];
+       if (lastCard.bottom > proseBottom) {
+          const shiftUp = lastCard.bottom - proseBottom;
+          lastCard.top -= shiftUp;
+          lastCard.bottom -= shiftUp;
+          
+          for (let i = placedCards.length - 2; i >= 0; i--) {
+             const curr = placedCards[i];
+             const next = placedCards[i + 1];
+             if (curr.bottom > next.top - minGap) {
+                const overlap = curr.bottom - (next.top - minGap);
+                curr.top -= overlap;
+                curr.bottom -= overlap;
+             }
+          }
+       }
+       
+       // Second pass: ensure NO card overlaps a table after any shifts.
+       // We iterate bottom-up, and if a card overlaps a table, we push it ABOVE the table.
+       for (let i = placedCards.length - 1; i >= 0; i--) {
+          const curr = placedCards[i];
+          const cardH = curr.bottom - curr.top;
+          let overlapWithTable = true;
+          let safetyCounter = 0;
+          while (overlapWithTable && safetyCounter < 10) {
+             overlapWithTable = false;
+             safetyCounter++;
+             for (const tb of tableBlockers) {
+                if (curr.top < tb.bottom && curr.bottom > tb.top) {
+                   curr.bottom = tb.top - minGap;
+                   curr.top = curr.bottom - cardH;
+                   overlapWithTable = true;
+                }
+             }
+          }
+          // Propagate push upwards
+          if (i > 0) {
+             const prev = placedCards[i - 1];
+             if (prev.bottom > curr.top - minGap) {
+                const overlap = prev.bottom - (curr.top - minGap);
+                prev.top -= overlap;
+                prev.bottom -= overlap;
+             }
+          }
+       }
+    }
+
+    // Apply styles
+    placedCards.forEach(c => {
+       if (c.el.classList.contains('smartlink-persistent-card')) {
+           c.el.style.top = `${c.top}px`;
+       }
+    });
+
+    const lastCardFinal = placedCards[placedCards.length - 1];
+    if (lastCardFinal) {
+      sidebar.style.minHeight = `${lastCardFinal.bottom + minGap}px`;
+    }
+  }
+
+  function attachSmartLinkEvents() {
+    // Reset bindings and remove dynamic tablet cards to prevent duplication on re-runs
+    document.querySelectorAll('.smartlink-tablet-card').forEach(c => c.remove());
+    document.querySelectorAll('[data-has-inline-card]').forEach(el => el.removeAttribute('data-has-inline-card'));
+    document.querySelectorAll('[data-smartlink-inline-bound]').forEach(el => el.removeAttribute('data-smartlink-inline-bound'));
+    document.querySelectorAll('[data-smartlink-events-bound]').forEach(el => el.removeAttribute('data-smartlink-events-bound'));
+
+    const triggers = getActiveTriggers();
+    
+    // Inject inline tablet cards
+    triggers.forEach(el => {
+        const trigger = el as HTMLElement;
+        if (trigger.dataset.smartlinkInlineBound) return;
+        trigger.dataset.smartlinkInlineBound = 'true';
+        
+        const type = trigger.dataset.smartlinkType;
+        if (type === 'feature' || type === 'benefit' || type === 'video-widescreen' || type === 'app-store') {
+            const parentP = trigger.closest('p, li') as HTMLElement;
+            if (parentP && parentP.parentNode && !parentP.dataset.hasInlineCard) {
+                const inlineCard = document.createElement('div');
+                
+                if (type === 'video-widescreen') {
+                    const youtubeId = trigger.dataset.smartlinkYoutubeId || '';
+                    if (youtubeId) {
+                        inlineCard.className = 'smartlink-tablet-card w-full my-8 not-prose';
+                        inlineCard.innerHTML = `
+                            <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-gray-700" style="padding-bottom: calc(100% / (16 / 9));">
+                                <lite-youtube videoid="${youtubeId}" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+                            </div>
+                        `;
+                    }
+                } else {
+                    inlineCard.className = 'smartlink-tablet-card block lg:hidden my-6';
+                    inlineCard.innerHTML = getPremiumCardHTML(trigger.dataset, true);
+                }
+                
+                parentP.after(inlineCard);
+                parentP.dataset.hasInlineCard = 'true';
+            }
+        }
+    });
+    
+    // Tablet Fallback Injection — max 1 feature + 1 benefit
+    const fallbackDataEl = document.getElementById('smartlink-fallback-data');
+    if (fallbackDataEl) {
+        let features: any[] = [];
+        let benefits: any[] = [];
+        try {
+            features = JSON.parse(fallbackDataEl.dataset.features || '[]');
+            benefits = JSON.parse(fallbackDataEl.dataset.benefits || '[]');
+        } catch {
+            // Ignore parse errors
+        }
+        
+        let featureFallback: any = null;
+        for (const f of features) {
+            const isLinked = triggers.some((el: any) => el.dataset.smartlinkType === 'feature' && (el.dataset.smartlinkHref || '').includes(f.id)) || 
+                             Array.from(document.querySelectorAll('[data-feature-callout-anchor="true"] a')).some(a => (a.getAttribute('href') || '').includes(f.id));
+            if (!isLinked) { featureFallback = { type: 'feature', ...f }; break; }
+        }
+        let benefitFallback: any = null;
+        for (const b of benefits) {
+            const isLinked = triggers.some((el: any) => el.dataset.smartlinkType === 'benefit' && (el.dataset.smartlinkHref || '').includes(b.id));
+            if (!isLinked) { benefitFallback = { type: 'benefit', ...b }; break; }
+        }
+        
+        const fallbackItems = [featureFallback, benefitFallback].filter(Boolean);
+        const headings = Array.from(document.querySelectorAll('.prose h2')) as HTMLElement[];
+        const targetIndices = [1, Math.max(3, Math.min(headings.length - 1, 4))];
+        
+        fallbackItems.forEach((item: any, index: number) => {
+            const hIdx = Math.min(targetIndices[index] || 1, headings.length - 1);
+            const heading = headings[hIdx];
+            if (heading && !heading.dataset.hasInlineCard) {
+                const dummyData = {
+                    smartlinkType: item.type,
+                    smartlinkHref: item.url,
+                    smartlinkTitle: item.title,
+                    smartlinkSnippet: item.description,
+                    smartlinkIcon: item.icon
+                };
+                const inlineCard = document.createElement('div');
+                inlineCard.className = 'smartlink-tablet-card block lg:hidden my-6';
+                inlineCard.innerHTML = getPremiumCardHTML(dummyData, true);
+                heading.after(inlineCard);
+                heading.dataset.hasInlineCard = 'true';
+            }
+        });
+    }
+
+    const card = document.getElementById('smartlink-desktop-card');
+    
+    triggers.forEach(el => {
+      const trigger = el as HTMLElement;
+      if (trigger.dataset.smartlinkEventsBound) return;
+      trigger.dataset.smartlinkEventsBound = 'true';
+      
+      trigger.addEventListener('click', (e) => {
+        const type = trigger.dataset.smartlinkType;
+        const isMobileOrTablet = window.innerWidth < 1024;
+        
+        if (type === 'video') {
+          e.preventDefault();
+          if (isMobileOrTablet) {
+            openMobileSheet(trigger);
+          } else {
+            const pCard = trigger.cardEl;
+            if (pCard) {
+              pCard.dataset.hovered = 'true';
+              pCard.classList.replace('opacity-60', 'opacity-100');
+              
+              const rect = pCard.getBoundingClientRect();
+              const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+              const is50PercentVisible = rect.height > 0 && (visibleHeight >= (rect.height * 0.5));
+              
+              if (!is50PercentVisible) {
+                pCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+              
+              const liteYoutube = pCard.querySelector('lite-youtube') as HTMLElement | null;
+              if (liteYoutube) {
+                liteYoutube.click();
+              }
+            }
+          }
+          return;
+        }
+
+        const useMobileSheet = window.innerWidth < 768 && window.matchMedia('(pointer: coarse)').matches;
+        if (useMobileSheet) {
+          e.preventDefault();
+          openMobileSheet(trigger);
+        } else if (window.innerWidth >= 768 && window.innerWidth < 1024 && window.matchMedia('(pointer: coarse)').matches) {
+          if (type !== 'feature' && type !== 'benefit') {
+            e.preventDefault();
+            showHoverCard(trigger, e);
+          }
+        }
+      });
+
+      trigger.addEventListener('mouseenter', (e) => {
+        if (window.innerWidth >= 1024) {
+          const pCard = trigger.cardEl;
+          if (pCard) {
+            pCard.dataset.hovered = 'true';
+            if (pCard.dataset.smartlinkType === 'video') {
+              pCard.classList.replace('opacity-60', 'opacity-100');
+            }
+          }
+        } else if (window.innerWidth >= 768) {
+          const type = trigger.dataset.smartlinkType;
+          if (type !== 'feature' && type !== 'benefit') {
+              showHoverCard(trigger, e);
+          }
+        }
+      });
+
+      trigger.addEventListener('mouseleave', () => {
+        if (window.innerWidth >= 1024) {
+          const pCard = trigger.cardEl;
+          if (pCard) {
+            pCard.dataset.hovered = 'false';
+            if (pCard.dataset.smartlinkType === 'video') {
+              pCard.classList.replace('opacity-100', 'opacity-60');
+            }
+          }
+        } else if (window.innerWidth >= 768) {
+          hideHoverCard();
+        }
+      });
+    });
+
+    if (card) {
+      card.addEventListener('mouseenter', () => {
+        clearTimeout(hoverTimeout);
+      });
+      card.addEventListener('mouseleave', hideHoverCard);
+    }
+    
+    requestAnimationFrame(positionPersistentCards);
+    setTimeout(positionPersistentCards, 500);
+  }
+
+  // Custom typings
+  declare global {
+    interface HTMLElement {
+      cardEl?: HTMLElement;
+    }
+    interface Window {
+      closeSmartLinkUI: () => void;
+    }
+  }
+
+  // Initialize
+  if (!document.getElementById('smartlink-scrim')) {
+    ensureUIElements();
+  }
+  attachSmartLinkEvents();
+  document.addEventListener('astro:page-load', attachSmartLinkEvents);
+
+  let resizeTimer: number;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(positionPersistentCards, 100);
+  });
+
+  // Setup ResizeObserver to handle layout settlement changes dynamically
+  let contentResizeObserver: ResizeObserver | null = null;
+  function setupResizeObserver() {
+    if (contentResizeObserver) contentResizeObserver.disconnect();
+    const contentArea = document.getElementById('content');
+    if (contentArea) {
+      contentResizeObserver = new ResizeObserver(() => {
+        positionPersistentCards();
+      });
+      contentResizeObserver.observe(contentArea);
+    }
+  }
+  setupResizeObserver();
+  document.addEventListener('astro:page-load', setupResizeObserver);
+</script>
+
 <style is:global>
-  /* Table Wrapper & Mobile Scroll */
   .prose .table-wrapper {
     display: block !important;
     width: 100% !important;
@@ -466,6 +1758,8 @@ if (priorityImgMatch) {
     border: 1px solid #E5D3B3;
     transition: border-color 0.3s ease;
     margin-bottom: 2rem;
+    position: relative;
+    z-index: 10;
   }
 
   .dark .prose .table-wrapper {
@@ -474,7 +1768,7 @@ if (priorityImgMatch) {
 
   @media (min-width: 1024px) {
     .prose .table-wrapper {
-      width: calc(100% + 10rem) !important;
+      width: calc(100% + 17rem) !important;
       margin-left: 0 !important;
       border-left: 4px solid #fd4f00 !important;
       border-radius: 0 8px 8px 0 !important;
@@ -484,6 +1778,12 @@ if (priorityImgMatch) {
     .dark .prose .table-wrapper {
       border-left-color: #ff7635 !important;
       box-shadow: 15px 0 30px -10px rgba(0,0,0,0.3);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .prose .table-wrapper {
+      width: calc(100% + 19rem) !important;
     }
   }
 
@@ -571,13 +1871,14 @@ if (priorityImgMatch) {
   }
 
   /* Desktop TOC fading */
-  .desktop-toc-container {
+  .desktop-toc-container, .sidebar-card {
     opacity: 0.4;
     filter: grayscale(100%);
     transition: opacity 4s ease, filter 4s ease;
   }
   .desktop-toc-container:hover,
-  .desktop-toc-container.is-active-click {
+  .desktop-toc-container.is-active-click,
+  .sidebar-card:hover, .sidebar-card[data-hovered="true"], .sidebar-card:has(.lyt-activated) {
     opacity: 1;
     filter: grayscale(0%);
     transition: opacity 0.2s ease, filter 0.2s ease;
@@ -605,4 +1906,5 @@ if (priorityImgMatch) {
       line-height: 1.85 !important;
     }
   }
+
 </style>

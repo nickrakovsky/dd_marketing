@@ -1,0 +1,91 @@
+---
+// src/components/RelatedFeatureCallout.astro
+import type { CollectionEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
+
+interface Props {
+  feature?: CollectionEntry<'features'>;
+  id?: string;
+  isSidebar?: boolean;
+}
+
+const { feature: propFeature, id, isSidebar = false } = Astro.props;
+
+let feature = propFeature;
+if (!feature && id) {
+  feature = await getEntry('features', id) as CollectionEntry<'features'>;
+}
+
+if (!feature) {
+  return null;
+}
+
+const { title, description, icon } = feature.data;
+
+// Clean up the icon path if it contains a Keystatic hash prefix (e.g. /images/features/63d76..._name.svg)
+const cleanIcon = icon ? icon.replace(/\/([0-9a-fA-F]{24})_/, '/') : '';
+
+const featureUrl = `/datadocks-features/${feature.slug}`;
+---
+
+{isSidebar ? (
+  /* Sidebar Layout (Desktop) */
+  <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-none shadow-md transition-all duration-300 not-prose group/feature">
+    <a href={featureUrl} class="absolute inset-0 z-10"><span class="sr-only">{title}</span></a>
+    <div class="flex items-center gap-2.5 mb-2">
+      {cleanIcon && (
+        <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-none shrink-0">
+          <img 
+            src={cleanIcon} 
+            alt="" 
+            class="w-full h-full object-contain" 
+            loading="lazy" 
+          />
+        </div>
+      )}
+      <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight m-0 group-hover/feature:underline">
+        {title}
+      </h3>
+    </div>
+    <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed pr-6">
+      {description}
+    </p>
+    <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+) : (
+  /* Inline Layout (Mobile / Tablet) */
+  <div class="relative w-full" data-feature-callout-anchor="true">
+    <div class="lg:hidden border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-none shadow-md transition-all duration-300 not-prose relative group/feature block">
+      <a href={featureUrl} class="absolute inset-0 z-10"><span class="sr-only">Explore {title}</span></a>
+      <div class="flex flex-row items-start gap-4">
+        {cleanIcon && (
+          <div class="w-9 h-9 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1.5 rounded-none shrink-0">
+            <img 
+              src={cleanIcon} 
+              alt="" 
+              class="w-full h-full object-contain" 
+              loading="lazy" 
+            />
+          </div>
+        )}
+        <div class="flex-grow pr-6">
+          <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight mb-1 m-0 group-hover/feature:underline">
+            {title}
+          </h3>
+          <p class="font-sans text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-0">
+            {description}
+          </p>
+        </div>
+      </div>
+      <div class="absolute bottom-5 right-5 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </div>
+  </div>
+)}
