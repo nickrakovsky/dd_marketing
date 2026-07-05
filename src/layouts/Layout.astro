@@ -311,7 +311,9 @@ const jsonLd = {
              render-blocking CSS on pages without YouTube embeds. */}
         <slot name="head" />
 
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+        {/* JSON-LD lives at the end of <body>, not here. Google/Bing read structured
+             data anywhere in the document, and keeping this ~3KB block out of <head>
+             lets the browser reach the stylesheet + critical head tags sooner. */}
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
@@ -695,6 +697,10 @@ const jsonLd = {
             <script is:inline type="text/partytown" src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
+
+        {/* Structured data (moved out of <head> so it doesn't sit ahead of the
+             stylesheet in the critical path — valid for SEO anywhere in the doc). */}
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
     </body>
 </html>
 
