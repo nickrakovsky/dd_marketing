@@ -98,7 +98,7 @@ export default defineConfig({
           const routesPath = fileURLToPath(new URL('_routes.json', dir));
           if (fs.existsSync(routesPath)) {
             const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
-            const wildcardPrefixes = ['/posts/', '/integrations/', '/datadocks-features/', '/benefits/'];
+            const wildcardPrefixes = ['/posts/', '/integrations/', '/datadocks-features/', '/benefits/', '/videos/'];
             routes.exclude = routes.exclude.filter(rule => {
               return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
             });
