@@ -64,6 +64,7 @@ export default defineConfig({
     '/posts/what-is-a-yard-management-system-yms': '/yard-management',
     '/posts/yard-management-vs-dock-scheduling-vs-yms': '/yard-management',
     '/posts/crucial-components-to-successful-yard-management': '/posts/yard-management-process-flow',
+    '/posts/how-shippers-and-receivers-are-eliminating-detention-and-demurrage-fees': '/posts/truck-detention-accessorial-fees',
   },
 
   integrations: [
@@ -125,7 +126,7 @@ export default defineConfig({
       include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
-      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/'),
+      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {

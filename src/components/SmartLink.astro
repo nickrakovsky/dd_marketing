@@ -3,332 +3,179 @@
 import { getEntry } from 'astro:content';
 
 interface Props {
-  id: string;
+  href?: string;
+  id?: string;
+  type?: 'feature' | 'benefit' | 'post' | 'glossary' | 'academic' | 'video' | 'external';
+  title?: string;
+  snippet?: string;
+  bibRef?: string;
+  citation?: string;
+  class?: string;
   anchorText?: string;
 }
 
-const { id, anchorText } = Astro.props;
+const { class: className, anchorText, id: rawId } = Astro.props;
+let { href, type, title: propTitle, snippet: propSnippet, bibRef, citation } = Astro.props;
 
-// Fetch the glossary entry
-const glossaryEntry = await getEntry('glossary', id);
+let id = rawId;
+let title = propTitle;
+let snippet = propSnippet;
+const isManual = !!(propTitle || propSnippet);
 
-let targetPostUrl = '';
-let contextSnippet = '';
-let termName = '';
+console.log('SmartLink Render:', { href, id, text: Astro.slots.has('default') ? 'has_slot' : 'no_slot' });
 
-if (glossaryEntry) {
-  termName = glossaryEntry.data.termName;
-  contextSnippet = glossaryEntry.data.contextSnippet;
-  
-  console.log("SMARTLINK DEBUG:", {
-    id,
-    glossaryEntryData: glossaryEntry.data,
-    targetPostType: typeof glossaryEntry.data.targetPost,
-    targetPostVal: glossaryEntry.data.targetPost
-  });
-
-  // Fetch the target post to get its final URL
-  const targetPost = await getEntry(glossaryEntry.data.targetPost.collection as any, glossaryEntry.data.targetPost.id);
-  
-  console.log("SMARTLINK DEBUG targetPost:", targetPost);
-
-  if (targetPost) {
-    // The targetPost is currently limited to the 'posts' collection in the schema
-    targetPostUrl = `/posts/${targetPost.slug}`;
+// Infer type and id from href if possible
+let parsedHref = href || '';
+if (parsedHref.startsWith('/') && !parsedHref.startsWith('//')) {
+  parsedHref = parsedHref.replace(/\.mdx?(#.*)?$/, '$1');
+  if (href) href = parsedHref;
+}
+if (parsedHref.startsWith('http://datadocks.com') || parsedHref.startsWith('https://datadocks.com') || parsedHref.startsWith('https://www.datadocks.com')) {
+  try {
+    const url = new URL(parsedHref);
+    parsedHref = url.pathname + url.search + url.hash;
+  } catch {
+    // Ignore invalid URL
   }
 }
 
-// Fallback logic for display text
-const displayText = anchorText || id.replace(/-/g, ' ');
+if (parsedHref && !type) {
+  if (parsedHref.startsWith('/posts/')) {
+    type = 'post';
+    id = id || parsedHref.replace('/posts/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('/videos/')) {
+    type = 'video';
+    id = id || parsedHref.replace('/videos/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('/datadocks-features/')) {
+    type = 'feature';
+    id = id || parsedHref.replace('/datadocks-features/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('/benefits/')) {
+    type = 'benefit';
+    id = id || parsedHref.replace('/benefits/', '').replace(/\/$/, '').split('#')[0];
+  } else if (parsedHref.startsWith('#ref') || parsedHref.startsWith('#cite')) {
+    type = 'academic';
+    bibRef = bibRef || parsedHref;
+    citation = citation || bibRef.replace('#ref-', '').replace('#cite-', '');
+  } else if (parsedHref.includes('play.google.com/store/apps') || parsedHref.includes('apps.apple.com')) {
+    type = 'app-store' as any;
+    try {
+      const url = new URL(parsedHref);
+      title = title || (parsedHref.includes('apple') ? 'App Store' : 'Google Play');
+      snippet = snippet || 'Get the DataDocks app for your device.';
+    } catch {
+      title = title || 'App Store';
+    }
+  } else if (parsedHref.startsWith('http://') || parsedHref.startsWith('https://')) {
+    if (!parsedHref.includes('calendly.com')) {
+      type = 'external' as any;
+      try {
+        const extUrl = new URL(parsedHref);
+        title = title || extUrl.hostname.replace(/^www\./, '');
+        snippet = snippet || '';
+      } catch {
+        title = title || 'External Link';
+      }
+    }
+  }
+}
 
-// If data is missing, we still render the link but without the special trigger attributes
-// so it behaves like a normal link or plain text if no URL.
-const isValid = !!(glossaryEntry && targetPostUrl);
+if (id) {
+  id = id.replace(/\.mdx?$/, '');
+}
+
+// Fetch data
+let youtubeId = '';
+let iconStr = '';
+
+async function getEntryCaseInsensitive(collection: any, idToFind: string): Promise<any> {
+  if (!idToFind) return null;
+  const { getCollection } = await import('astro:content');
+  const allEntries = await getCollection(collection);
+  return allEntries.find((e: any) => e.slug.toLowerCase() === idToFind.toLowerCase());
+}
+if (type === 'glossary' && id) {
+  const entry = await getEntryCaseInsensitive('glossary', id);
+  if (entry) {
+    title = title || entry.data.termName;
+    snippet = snippet || entry.data.contextSnippet;
+    href = href || (entry.data.targetPost ? `/posts/${entry.data.targetPost.id}` : '#');
+  }
+} else if (type === 'post' && id) {
+  const entry = await getEntryCaseInsensitive('posts', id);
+  if (entry) {
+    title = title || entry.data.title;
+    snippet = snippet || entry.data.description;
+    href = href || `/posts/${id}`;
+  }
+} else if (type === 'video' && id) {
+  const entry = await getEntryCaseInsensitive('videos', id);
+  if (entry) {
+    title = title || entry.data.title;
+    snippet = snippet || entry.data.description;
+    href = href || `/videos/${id}`;
+    youtubeId = entry.data.postType?.value?.youtubeId || '';
+    if (entry.data.postType?.discriminant === 'video') {
+      type = 'video-widescreen' as any;
+    }
+  }
+} else if (type === 'feature' && id) {
+  const entry = await getEntryCaseInsensitive('features', id);
+  if (entry) {
+    title = title || entry.data.title;
+    snippet = snippet || entry.data.description;
+    href = href || `/datadocks-features/${id}`;
+    if (entry.data.icon) {
+      iconStr = entry.data.icon.replace(/\/([0-9a-fA-F]{24})_/, '/');
+    }
+  }
+} else if (type === 'benefit' && id) {
+  href = href || `/benefits/${id}`;
+  const benefitsData: Record<string, {title: string, desc: string, icon: string}> = {
+    'increase-capacity': { title: 'Increase Capacity', desc: 'Eliminate bottlenecks and slash overtime costs. DataDocks optimizes your appointment slots based on actual load times.', icon: '/images/features/linechart-file.svg' },
+    'digitize-operations': { title: 'Digitize Operations', desc: 'Move away from paper and spreadsheets. Get real-time visibility into your yard and docks.', icon: '/images/features/checked-laptop.svg' },
+    'delight-carriers': { title: 'Delight Carriers', desc: 'Become a shipper of choice. Give carriers a self-serve portal to book appointments 24/7.', icon: '/images/features/people.svg' },
+    'see-everything': { title: 'See Everything', desc: 'A single dashboard for all your operations. Connect your teams with live updates.', icon: '/images/features/vision.svg' }
+  };
+  if (benefitsData[id]) {
+    title = title || `${benefitsData[id].title} with DataDocks`;
+    snippet = snippet || benefitsData[id].desc;
+    iconStr = benefitsData[id].icon;
+  }
+} else if (type === 'academic') {
+  // Academic links rely on manually passed title/snippet and bibRef or href.
+  href = href || '#';
+  title = title || "Academic Source";
+} else if (type === 'external') {
+  // External links — title is the domain, snippet can be overridden
+  title = title || 'External Link';
+}
+
+const isSmartLink = !!type && (title || snippet);
 ---
 
-{isValid ? (
-  <a 
-    href={targetPostUrl} 
-    data-smartlink-trigger="true"
-    data-smartlink-title={termName}
-    data-smartlink-snippet={contextSnippet}
-    data-smartlink-href={targetPostUrl}
-    class="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00]"
-  >{displayText}<span class="inline lg:hidden ml-0.5 text-[#fd4f00] text-xs font-bold align-super" aria-hidden="true">?</span></a>
+{!isSmartLink ? (
+  <a href={href} class={className || "font-medium text-[#fd4f00] hover:underline"}
+    {...(href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  >
+    <slot>{anchorText || href}</slot>
+  </a>
 ) : (
-  <span class="font-medium">{displayText}</span>
+  <a 
+    id={bibRef && bibRef.startsWith('#ref-') ? bibRef.replace('#ref-', 'cite-') : undefined}
+    href={type === 'video' ? undefined : (href !== '#' ? href : undefined)} 
+    data-smartlink-trigger="true"
+    data-smartlink-type={type}
+    data-smartlink-title={title}
+    data-smartlink-snippet={snippet}
+    data-smartlink-href={href}
+    data-smartlink-bibref={bibRef}
+    data-smartlink-manual={isManual ? "true" : undefined}
+    data-smartlink-youtube-id={youtubeId}
+    data-smartlink-icon={iconStr}
+    class={`inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-inherit hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium data-[highlighted=true]:!text-[#fd4f00] data-[highlighted=true]:decoration-[#fd4f00] [&_strong]:!text-inherit [&_em]:!text-inherit ${className || ''}`}
+    {...((type === 'external' && href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  ><slot>{anchorText || id}</slot>{citation && <sup class="text-[#fd4f00] dark:text-[#ff7635] ml-0.5 font-bold">{citation}</sup>}{type === 'external' && <svg class="inline w-3 h-3 ml-0.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>}{(type && type !== 'external' && type !== 'academic' && !citation) && <span class="inline lg:hidden ml-0.5 text-[#fd4f00] text-xs font-bold align-super" aria-hidden="true">?</span>}</a>
 )}
 
-<script>
-  let hoverTimeout: number | undefined;
 
-  function ensureUIElements() {
-    if (document.getElementById('smartlink-scrim')) return;
-
-    // Create Scrim
-    const scrim = document.createElement('div');
-    scrim.id = 'smartlink-scrim';
-    scrim.className = 'fixed inset-0 bg-black/40 hidden z-40 transition-opacity duration-300 opacity-0';
-    scrim.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(scrim);
-
-    // Create Mobile Sheet
-    const sheet = document.createElement('div');
-    sheet.id = 'smartlink-mobile-sheet';
-    sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] rounded-t-2xl shadow-2xl border-t border-[#E5D3B3] overflow-hidden not-prose';
-    sheet.setAttribute('role', 'dialog');
-    sheet.setAttribute('aria-labelledby', 'sl-mobile-title');
-    sheet.innerHTML = `
-      <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3 mb-2"></div>
-      <div class="px-6 pb-8 pt-2">
-        <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] mb-3">Related Guide</h3>
-        <p id="sl-mobile-snippet" class="text-gray-700 font-recoleta text-lg leading-relaxed mb-6"></p>
-        <a 
-          id="sl-mobile-link" 
-          href="/posts" 
-          class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
-        >Explore the full guide</a>
-      </div>
-    `;
-    document.body.appendChild(sheet);
-
-    // Create Desktop Card
-    const card = document.createElement('div');
-    card.id = 'smartlink-desktop-card';
-    card.className = 'fixed z-50 hidden w-80 bg-white shadow-2xl border border-[#E5D3B3] rounded-xl transition-opacity duration-200 opacity-0 group not-prose';
-    card.innerHTML = `
-      <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
-      <div class="relative p-4">
-        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 m-0 leading-tight">Related Guide</h3>
-        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 mt-1 leading-snug"></p>
-        <a id="sl-desktop-link" href="/posts" class="font-sans text-xs font-semibold text-[#fd4f00] mt-2 w-fit inline-block hover:underline">
-          Explore the full guide
-        </a>
-      </div>
-    `;
-    document.body.appendChild(card);
-  }
-
-  function openMobileSheet(trigger: HTMLElement) {
-    ensureUIElements();
-    const sheet  = document.getElementById('smartlink-mobile-sheet');
-    const scrim  = document.getElementById('smartlink-scrim');
-    const title  = document.getElementById('sl-mobile-title');
-    const snip   = document.getElementById('sl-mobile-snippet');
-    const link   = document.getElementById('sl-mobile-link') as HTMLAnchorElement | null;
-    if (!sheet || !scrim) return;
-
-    if (title) title.textContent = trigger.dataset.smartlinkTitle  || '';
-    if (snip)  snip.textContent  = trigger.dataset.smartlinkSnippet || '';
-    if (link)  link.href          = trigger.dataset.smartlinkHref   || '#';
-
-    scrim.classList.remove('hidden');
-    requestAnimationFrame(() => {
-      scrim.classList.add('opacity-100');
-      sheet.classList.remove('translate-y-full');
-    });
-
-    const closeOnScrim = () => {
-      sheet.classList.add('translate-y-full');
-      scrim.classList.remove('opacity-100');
-      setTimeout(() => scrim.classList.add('hidden'), 300);
-      scrim.removeEventListener('click', closeOnScrim);
-    };
-    scrim.addEventListener('click', closeOnScrim);
-  }
-
-  function createPersistentCard(trigger: HTMLElement): HTMLElement {
-    const card = document.createElement('div');
-    card.className = [
-      'absolute left-0 z-30 w-full bg-white border border-[#E5D3B3] rounded-xl shadow-md p-4 not-prose',
-      'opacity-40 grayscale transition-all duration-300 pointer-events-auto transform translate-x-0',
-      'data-[hovered=true]:opacity-100 data-[hovered=true]:grayscale-0 data-[hovered=true]:-translate-x-4 data-[hovered=true]:z-40'
-    ].join(' ');
-
-    const title   = (trigger.dataset.smartlinkTitle   || '').replace(/</g, '&lt;');
-    const snippet = (trigger.dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
-    const href    = trigger.dataset.smartlinkHref || '#';
-
-    card.innerHTML = `
-      <h3 class="font-sans text-sm font-bold text-gray-900 m-0 leading-tight">${title}</h3>
-      <p class="font-sans text-xs text-gray-600 mt-1 leading-snug">${snippet}</p>
-      <a href="${href}" class="font-sans text-xs font-semibold text-[#fd4f00] mt-2 w-fit inline-block hover:underline">
-        Explore guide
-      </a>`;
-    return card;
-  }
-
-  function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
-    if (window.innerWidth < 1024) return;
-    clearTimeout(hoverTimeout);
-    ensureUIElements();
-    const card    = document.getElementById('smartlink-desktop-card');
-    const dTitle  = document.getElementById('sl-desktop-title');
-    const dSnip   = document.getElementById('sl-desktop-snippet');
-    const dLink   = document.getElementById('sl-desktop-link') as HTMLAnchorElement | null;
-    if (!card) return;
-
-    if (dTitle) dTitle.textContent = trigger.dataset.smartlinkTitle  || '';
-    if (dSnip)  dSnip.textContent  = trigger.dataset.smartlinkSnippet || '';
-    if (dLink)  dLink.href          = trigger.dataset.smartlinkHref   || '#';
-
-    const cardWidth  = 320; // w-80
-    
-    // Position tooltip very close to cursor with a tiny offset to avoid recursive flickering
-    const cardH      = card.offsetHeight || 180;
-    const roomAbove  = e.clientY > cardH + 10;
-    
-    // Center the card horizontally on the cursor, but keep it within the screen bounds
-    let leftPos = e.clientX - (cardWidth / 2);
-    leftPos = Math.max(16, Math.min(leftPos, window.innerWidth - cardWidth - 16));
-    
-    card.style.left     = `${leftPos}px`;
-    card.style.width    = `${cardWidth}px`;
-    card.style.top      = roomAbove
-      ? `${e.clientY - cardH - 4}px`
-      : `${e.clientY + 4}px`;
-
-    card.classList.remove('hidden');
-    requestAnimationFrame(() => card.classList.add('opacity-100'));
-  }
-
-  function hideHoverCard() {
-    hoverTimeout = window.setTimeout(() => {
-      const card = document.getElementById('smartlink-desktop-card');
-      if (!card) return;
-      card.classList.remove('opacity-100');
-      setTimeout(() => {
-        if (!card.classList.contains('opacity-100')) card.classList.add('hidden');
-      }, 200);
-    }, 150);
-  }
-
-  function initSmartLinks() {
-    // Cleanup
-    document.getElementById('marginalia-track')?.remove();
-    clearTimeout(hoverTimeout);
-
-    const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-smartlink-trigger="true"]'));
-    if (triggers.length === 0) return;
-
-    const isDesktop = window.innerWidth >= 1024;
-
-    if (!isDesktop) {
-      // Mobile-only flow: absolutely NO offset measurements/reflows!
-      triggers.forEach(trigger => {
-        trigger.onclick = (e) => {
-          e.preventDefault();
-          openMobileSheet(trigger);
-        };
-      });
-      return;
-    }
-
-    // Desktop logic: setup UI elements
-    ensureUIElements();
-
-    const article = document.getElementById('content') || document.querySelector('article');
-    if (!article) return;
-
-    article.style.position = 'relative';
-
-    const articleRect = article.getBoundingClientRect();
-    const cardWidth   = 240; // w-60
-    const gap         = 16; // ml-4
-    const hasSpace    = (window.innerWidth - articleRect.right) >= cardWidth + gap;
-
-    if (hasSpace) {
-      const track = document.createElement('div');
-      track.id = 'marginalia-track';
-      track.className = 'absolute top-0 left-full h-full w-60 ml-4 pointer-events-none hidden lg:block not-prose';
-      article.appendChild(track);
-
-      const persistentCards: { card: HTMLElement; top: number }[] = [];
-
-      triggers.forEach(trigger => {
-        trigger.onclick = (e) => {
-          if (window.innerWidth < 1024) {
-            e.preventDefault();
-            openMobileSheet(trigger);
-          }
-        };
-
-        const card = createPersistentCard(trigger);
-        const top = trigger.offsetTop;
-        card.style.top = `${top}px`;
-        track.appendChild(card);
-        persistentCards.push({ card, top });
-
-        const activate = () => {
-          if (window.innerWidth >= 1024) {
-            card.setAttribute('data-hovered', 'true');
-            trigger.setAttribute('data-highlighted', 'true');
-          }
-        };
-        const deactivate = () => {
-          card.removeAttribute('data-hovered');
-          trigger.removeAttribute('data-highlighted');
-        };
-        trigger.onmouseenter = activate;
-        trigger.onmouseleave = deactivate;
-        card.onmouseenter = activate;
-        card.onmouseleave = deactivate;
-      });
-
-      // Wait for next frame to ensure offsetHeight is accurate
-      requestAnimationFrame(() => {
-        const verticalGap = 24;
-        persistentCards.sort((a, b) => a.top - b.top);
-        // Batch read to avoid layout thrashing
-        const heights = persistentCards.map(item => item.card.offsetHeight);
-        
-        for (let i = 1; i < persistentCards.length; i++) {
-          const prev = persistentCards[i - 1];
-          const curr = persistentCards[i];
-          const prevBottom = prev.top + heights[i - 1];
-          if (curr.top < prevBottom + verticalGap) {
-            curr.top = prevBottom + verticalGap;
-            curr.card.style.top = `${curr.top}px`;
-            // Keep top in array updated for next calculation
-            curr.top = prevBottom + verticalGap;
-          }
-        }
-      });
-    } else {
-      const card = document.getElementById('smartlink-desktop-card');
-      if (card) {
-        card.onmouseenter = () => {
-          if (window.innerWidth >= 1024) clearTimeout(hoverTimeout);
-        };
-        card.onmouseleave = hideHoverCard;
-      }
-
-      triggers.forEach(trigger => {
-        trigger.onclick = (e) => {
-          if (window.innerWidth < 1024) {
-            e.preventDefault();
-            openMobileSheet(trigger);
-          }
-        };
-
-        trigger.onmouseenter = (e) => {
-          showHoverCard(trigger, e);
-          trigger.setAttribute('data-highlighted', 'true');
-        };
-        trigger.onmouseleave = () => {
-          hideHoverCard();
-          trigger.removeAttribute('data-highlighted');
-        };
-        // For the tooltip fallback, we also want the card hover to highlight the trigger
-        if (card) {
-          card.addEventListener('mouseenter', () => trigger.setAttribute('data-highlighted', 'true'));
-          card.addEventListener('mouseleave', () => trigger.removeAttribute('data-highlighted'));
-        }
-      });
-    }
-  }
-
-  document.addEventListener('astro:page-load', initSmartLinks);
-  initSmartLinks();
-</script>
 
