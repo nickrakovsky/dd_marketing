@@ -37,7 +37,7 @@
     
     --ring: 19 100% 51%; 
 
-    --radius: 0.75rem;
+    --radius: 0;
 
     /* UPDATED: Hero Gradient = Orange -> Light Beige (#FFF8E9) */
     /* Keeps the top 25% solid orange, then fades to the page background color */

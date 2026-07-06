@@ -1,19 +1,77 @@
 ---
-title: "Access Anywhere"
-description: "Use DataDocks from any device, anywhere. No downloads required - just simple, secure, browser-based access to manage your docks and yard."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76f3e20934a027d4ca0ec_multiple-devices.svg"
-videoUrl: "https://youtu.be/i6-qB6ucm4k"
+description: 'Use DataDocks from any device, anywhere. No downloads required; just simple, secure, browser-based access to manage your docks and yard.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76f3e20934a027d4ca0ec_multiple-devices.svg
+videoUrl: 'https://youtu.be/i6-qB6ucm4k'
+faq:
+  - question: Does the app work offline or in areas with poor signal?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Do I need to install anything on employee phones?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I restrict what information certain users see on mobile?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Does it work on both iOS and Android?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Most teams start by putting the app on one supervisor''s phone for a week. They use it to check the dock calendar during walkarounds instead of radioing the office. Once they see how much time that saves, adoption spreads naturally. No IT project required; it runs in the browser, so there''s nothing to install or manage through MDM. Give your receiving team a shared tablet at the dock door if individual phones aren''t practical.'
+  differentiation: 'Most dock scheduling tools were built for desktop screens and then squeezed onto mobile as an afterthought. The DataDocks mobile experience is purpose-built for the warehouse floor; large touch targets, high-contrast status indicators visible in bright loading dock light, and the ability to update an appointment with one hand. Changes sync instantly; there''s no "refresh to see updates" delay.'
+  businessImpact: 'The biggest win is eliminating information relay. When a dock worker can check the next inbound load themselves instead of calling the office, you remove a 2–3 minute interruption for two people. Across a 20-door facility handling 80+ loads per day, that adds up to hours of recovered productive time. Supervisors spend less time as information middlemen and more time managing exceptions.'
+  vision: 'Mobile access is the first step toward a connected warehouse floor. When every team member can see the schedule and update statuses in real time, you create the data density needed for meaningful analytics. It also lays the groundwork for driver self-check-in, yard move confirmations, and eventually IoT-triggered status updates; all flowing through the same real-time layer.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef bad fill:#ece6de,stroke:#ad9686,stroke-width:2px,color:#5f483a,stroke-dasharray: 5 5;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+
+        subgraph Legacy ["Without Mobile App (Slow & Reactive)"]
+          direction TD
+          A1[Leave Dock]:::bad --> A2[Walk to Office]:::bad
+          A2 --> A3[Ask Status]:::bad
+          A3 --> A4[Walk Back]:::bad
+        end
+
+        subgraph Mobile ["DataDocks Mobile (Instant & Proactive)"]
+          direction TD
+          B1[Check App at Dock]:::action --> B2[Update Status Instantly]:::good
+        end
+    caption: 'Information Flow: Traditional vs. Mobile'
+  table:
+    title: 'Before vs. After: Information Flow'
+    headers:
+       - Scenario
+       - Without Mobile App
+       - With Mobile App
+    rows:
+       - - Checking next inbound load
+         - Walk to office or radio coordinator
+         - Glance at phone/tablet
+       - - Confirming a trailer is loaded
+         - 'Call office, wait for calendar update'
+         - Tap "Complete" on the floor
+       - - Supervisor shift handoff
+         - Verbal briefing + printed schedule
+         - 'Shared live view, nothing to hand off'
+       - - Schedule change mid-shift
+         - Coordinator calls/walks to each dock
+         - Push notification to all devices
+  tableContext: 'Equipping your team with mobile devices changes the fundamental communication patterns on the floor. Instead of relying on a central office to act as an information bottleneck, workers have exactly what they need at the dock door.'
+  visionSegue: This immediate access to information doesn't just save walking time today, it fundamentally changes what's possible tomorrow.
+  layoutConfig:
+    implementationColSpan: 7
+    implementationOrder: 1
+    dataVizColSpan: 5
+    dataVizRowSpan: 2
+    dataVizOrder: 2
+    differentiationColSpan: 7
+    differentiationOrder: 3
+    businessImpactColSpan: 12
+    businessImpactOrder: 4
+title: Mobile Companion App
 ---
-
-<p id="">
-Offering real-time dock scheduling details at your fingertips, we ensure that crucial information is accessible to all relevant team members, anywhere, anytime.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-No more treks across the warehouse to verify a schedule or clarify a load's status. Warehouse associates and supervisors can instantly check the live calendar and specific load details right from their mobile devices. Experience the convenience and time-saving potential of DataDocks - redefining how you navigate your operational flow.
-</p>
+\n

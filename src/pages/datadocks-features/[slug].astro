@@ -3,12 +3,17 @@ export const prerender = true;
 
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { marked } from 'marked';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
+// import { FAQAccordion } from '../../components/solid/FAQAccordion';
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
 import FeatureRelatedPosts from '../../components/FeatureRelatedPosts.astro';
 
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 
 export async function getStaticPaths() {
   const features = await getCollection('features');
@@ -32,11 +37,19 @@ if (!feature) {
 }
 
 if (!feature) {
-  Astro.response.status = 404;
-  return Astro.rewrite('/404');
+  return Astro.redirect('/404');
 }
 
-const { Content } = await feature.render();
+const bento = feature.data.bentoContent;
+
+// Helper to safely render mermaid code blocks
+const renderDataViz = (dataViz: any) => {
+  if (!dataViz) return '';
+  if (dataViz.type === 'mermaid') {
+    return `<pre class="mermaid">\n${dataViz.content}\n</pre>`;
+  }
+  return `<img src="${dataViz.content}" alt="Data Visualization" class="w-full h-auto object-contain" />`;
+};
 ---
 
 <Layout
@@ -45,49 +58,307 @@ const { Content } = await feature.render();
 >
   <Navigation />
   
-  <main class="bg-[#FFF8E9] min-h-screen pt-32 pb-24">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      
-      {/* Header section */}
-      <div class="max-w-3xl mx-auto text-center mb-16">
-        <h3 class="text-brand-orange text-lg font-bold tracking-tight uppercase mb-4">DataDocks Features</h3>
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight font-recoleta mb-6">
-          {feature.data.title}
-        </h1>
-        <p class="text-xl text-gray-600">
-          {feature.data.description}
-        </p>
-      </div>
+  <main class="bg-[#FFF8EE] min-h-screen pt-32 pb-6 lg:pb-8">
+    
+    {/* Hero Container */}
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-16">
+      <div class="bg-white border border-[#9c806d] shadow-custom-lg flex flex-col lg:flex-row rounded-none">
+        
+        {/* Hero Text Area */}
+        <div class="flex-1 p-8 lg:p-12 lg:pr-16 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-[#9c806d]">
+          <h3 class="text-[#FE5000] text-sm font-bold tracking-tight uppercase mb-4">DataDocks Features</h3>
+          <h1 class="text-4xl lg:text-5xl font-extrabold text-[#000000] tracking-tight font-recoleta mb-6 leading-tight">
+            {feature.data.title}
+          </h1>
+          <p class="text-xl text-[#5f483a] leading-relaxed mb-8">
+            {feature.data.description}
+          </p>
+          
+          {/* Hero Bento Form from Homepage */}
+          <div class="w-full max-w-xl mb-12">
+            <form
+              id="feature-hero-form"
+              class="flex flex-col sm:flex-row items-stretch gap-0"
+            >
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
+                class="!h-12 sm:!h-14 w-full px-4 text-center sm:text-left transition-all duration-300 bg-[#faf8f5] text-black placeholder:text-[#9c806d] text-lg border border-[#9c806d] sm:border-r-0 font-recoleta focus:ring-0 focus:outline-none rounded-none"
+                required
+              />
+              <button
+                type="submit"
+                class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#FE5000] hover:bg-[#000000] text-white font-normal transition-colors duration-500 whitespace-nowrap tracking-wide text-[1.2rem] flex items-center justify-center font-recoleta rounded-none border border-[#FE5000] hover:border-[#000000]"
+              >
+                Get Free Demo
+              </button>
+            </form>
+          </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-        {/* Content Section */}
-        <div class="prose prose-lg prose-orange max-w-none">
-          <Content />
+          {/* Inline Trust Ribbon */}
+          <div class="mt-auto pt-6 border-t border-[#9c806d] flex flex-col xl:flex-row xl:items-center gap-4 xl:gap-6">
+            <p class="text-xs font-bold text-[#5f483a] uppercase tracking-wide shrink-0">Trusted by the best</p>
+            <div class="flex items-center gap-6 md:gap-8 opacity-70 grayscale">
+              <img src={`${basePath}/images/Group.svg`} class="h-5 object-contain" alt="StitchFix" />
+              <img src={`${basePath}/images/Group-1.svg`} class="h-6 object-contain" alt="HelloFresh" />
+              <img src={`${basePath}/images/Samsung.svg`} class="h-5 object-contain" alt="Samsung" />
+            </div>
+          </div>
         </div>
-
-        {/* Video / Visual Section */}
-        <div class="w-full flex justify-center sticky top-32">
+        
+        {/* Hero Visual Area */}
+        <div class="w-full lg:w-5/12 bg-[#faf8f5] flex items-center justify-center p-8 lg:p-0 relative overflow-hidden">
           {feature.data.videoUrl ? (
-            <div class="w-full aspect-video rounded-2xl overflow-hidden shadow-xl">
-               <!-- Basic video embed; could be enhanced with lite-youtube-embed if the URL is extracted to ID -->
-               <iframe 
-                 src={feature.data.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')} 
-                 title={feature.data.title}
-                 class="w-full h-full border-0" 
-                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                 allowfullscreen
-               ></iframe>
+            <div class="w-full h-full min-h-[300px] lg:min-h-full relative overflow-hidden">
+              <iframe 
+                src={feature.data.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')} 
+                title={feature.data.title}
+                class="absolute inset-0 w-full h-full border-0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen
+              ></iframe>
             </div>
           ) : feature.data.icon ? (
-            <div class="w-64 h-64 p-12 bg-white rounded-full shadow-[0_0_50px_rgba(0,0,0,0.05)] flex items-center justify-center">
-               <img src={feature.data.icon} alt={feature.data.title} class="w-full h-full object-contain" />
+            <div class="p-12 flex flex-col items-center justify-center h-full">
+              <img src={feature.data.icon} alt={feature.data.title} class="w-48 h-48 object-contain mb-6 drop-shadow-lg" />
             </div>
           ) : null}
         </div>
-      </div>
 
+      </div>
     </div>
+
+    {/* Bento Grid Core Layout */}
+    {bento && (
+      <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-16">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
+          
+          {/* Tile 1: Implementation (Dynamic cols) */}
+          {bento.implementation && (
+            <div class={`bg-white border border-[#9c806d] p-8 lg:p-12 rounded-[8px] shadow-sm hover:shadow-md transition-all duration-300 relative ${bento.layoutConfig?.implementationColSpan ? 'md:col-span-' + bento.layoutConfig.implementationColSpan : 'md:col-span-8'} ${bento.layoutConfig?.implementationRowSpan ? 'md:row-span-' + bento.layoutConfig.implementationRowSpan : ''} ${bento.layoutConfig?.implementationOrder ? 'md:order-' + bento.layoutConfig.implementationOrder : ''}`}>
+              <div class="absolute top-0 left-0 w-1.5 h-full bg-[#FE5000]"></div>
+              <h3 class="text-2xl font-recoleta font-bold text-[#000000] mb-6 border-b border-[#ece6de] pb-4">How to Implement This in Your Operations</h3>
+              <div class="prose prose-lg max-w-none text-[#000000] marker:text-[#FE5000]" set:html={marked.parse(bento.implementation)} />
+            </div>
+          )}
+
+          {/* Tile 2: Data Visualization (Dynamic cols) */}
+          {bento.dataViz && (
+            <div class={`bg-[#faf8f5] border border-[#9c806d] ${bento.layoutConfig?.dataVizPadding || 'p-8'} flex flex-col items-center justify-center relative rounded-[8px] text-center group shadow-sm hover:shadow-md hover:border-[#FE5000] transition-all duration-300 ${bento.layoutConfig?.dataVizColSpan ? 'md:col-span-' + bento.layoutConfig.dataVizColSpan : 'md:col-span-4'} ${bento.layoutConfig?.dataVizRowSpan ? 'md:row-span-' + bento.layoutConfig.dataVizRowSpan : ''} ${bento.layoutConfig?.dataVizOrder ? 'md:order-' + bento.layoutConfig.dataVizOrder : ''}`}>
+              <div class="w-full overflow-x-auto text-[#5f483a] dataviz-container" set:html={renderDataViz(bento.dataViz)} />
+              {bento.dataViz.caption && (
+                <p class="text-sm font-bold text-[#FE5000] mt-6 uppercase tracking-wide border-t border-[#ece6de] w-full pt-4">{bento.dataViz.caption}</p>
+              )}
+            </div>
+          )}
+
+          {/* Tile 3: Differentiation (Dynamic cols) */}
+          {bento.differentiation && (
+            <div class={`bg-white border border-[#9c806d] p-8 lg:p-10 rounded-[8px] shadow-sm hover:shadow-md hover:border-[#FE5000] transition-all duration-300 relative ${bento.layoutConfig?.differentiationColSpan ? 'md:col-span-' + bento.layoutConfig.differentiationColSpan : 'md:col-span-6'} ${bento.layoutConfig?.differentiationRowSpan ? 'md:row-span-' + bento.layoutConfig.differentiationRowSpan : ''} ${bento.layoutConfig?.differentiationOrder ? 'md:order-' + bento.layoutConfig.differentiationOrder : ''}`}>
+              <h3 class="text-xl font-bold text-[#000000] mb-4 flex items-center gap-3">
+                <img src="/brand-assets/logo-orange.svg" class="w-6 h-6 object-contain" alt="" aria-hidden="true" />
+                How DataDocks Does it Differently
+              </h3>
+              <div class="prose max-w-none text-[#5f483a] marker:text-[#FE5000]" set:html={marked.parse(bento.differentiation)} />
+            </div>
+          )}
+
+          {/* Tile 4: Business Impact (Dynamic cols) */}
+          {bento.businessImpact && (
+            <div class={`bg-white border border-[#9c806d] p-8 lg:p-10 rounded-[8px] shadow-sm hover:shadow-md hover:border-[#FE5000] transition-all duration-300 relative ${bento.layoutConfig?.businessImpactColSpan ? 'md:col-span-' + bento.layoutConfig.businessImpactColSpan : 'md:col-span-6'} ${bento.layoutConfig?.businessImpactRowSpan ? 'md:row-span-' + bento.layoutConfig.businessImpactRowSpan : ''} ${bento.layoutConfig?.businessImpactOrder ? 'md:order-' + bento.layoutConfig.businessImpactOrder : ''}`}>
+              <h3 class="text-xl font-bold text-[#000000] mb-4 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#FE5000]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                Business Impact
+              </h3>
+              <div class="prose max-w-none text-[#5f483a] marker:text-[#FE5000]" set:html={marked.parse(bento.businessImpact)} />
+            </div>
+          )}
+
+          {/* Tile 5: Combined Table & Vision Box (12 cols) */}
+          {(bento.table || bento.vision) && (
+            <div class="md:col-span-12 border border-[#9c806d] bg-white rounded-[8px] shadow-sm hover:shadow-md hover:border-[#FE5000] transition-all duration-300 p-8 lg:p-12 relative flex flex-col items-start md:order-last">
+              
+              {/* Context Paragraph Before Table */}
+              {bento.tableContext && (
+                <div class="max-w-4xl mb-8">
+                  <div class="prose prose-lg max-w-none text-[#5f483a]" set:html={marked.parse(bento.tableContext)} />
+                </div>
+              )}
+
+              {/* Table */}
+              {bento.table && (
+                <div class="w-full overflow-x-auto mb-12 pb-4">
+                  {bento.table.title && (
+                    <h3 class="text-2xl font-recoleta font-bold text-[#000000] mb-6">{bento.table.title}</h3>
+                  )}
+                  <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                      <tr>
+                        {bento.table.headers.map((th: string) => (
+                          <th class="py-4 px-6 bg-[#faf8f5] border border-[#9c806d] font-bold text-[#000000]">{th}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bento.table.rows.map((row: string[]) => (
+                        <tr class="hover:bg-[#FFF8EE] transition-colors">
+                          {row.map((td: string, index: number) => (
+                            <td class={`py-4 px-6 border border-[#9c806d] text-[#5f483a] ${index === 0 ? 'font-bold' : ''}`}>
+                              <div set:html={marked.parseInline(td)} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Segue Paragraph */}
+              {bento.visionSegue && bento.vision && (
+                <div class="max-w-4xl mb-8 mt-4 pt-8 border-t border-[#ece6de]">
+                  <div class="prose prose-lg max-w-none text-[#5f483a]" set:html={marked.parse(bento.visionSegue)} />
+                </div>
+              )}
+
+              {/* Vision Content (No longer has its own black box) */}
+              {bento.vision && (
+                <div class="max-w-4xl relative z-10">
+                  <div class="prose prose-lg max-w-none text-[#5f483a] marker:text-[#FE5000]" set:html={marked.parse(bento.vision)} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tile 7: Testimonial (12 cols - Austere Redesign) */}
+          {feature.data.testimonial && (
+            <div class="md:col-span-12 bg-white border border-[#9c806d] p-8 lg:p-16 mt-4 relative rounded-none flex flex-col md:flex-row items-center gap-12">
+              <div class="text-[#FE5000] opacity-20 shrink-0">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="w-32 h-32">
+                   <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                   <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.99c1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                 </svg>
+              </div>
+              <div class="relative z-10">
+                <p class="text-2xl lg:text-3xl font-recoleta text-[#000000] leading-snug mb-8">
+                  "{feature.data.testimonial.quote}"
+                </p>
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-1 bg-[#FE5000]"></div>
+                  <div>
+                    <p class="font-bold text-lg text-[#000000]">{feature.data.testimonial.author}</p>
+                    <p class="text-[#5f483a] uppercase text-xs tracking-widest mt-1 font-bold">{feature.data.testimonial.role}{feature.data.testimonial.company ? ` // ${feature.data.testimonial.company}` : ''}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    )}
+
+    {/* FAQ Block - Commented out because we do not have content for this section yet and the SolidJS Accordion doesn't work/mount properly on this page type yet */}
+    {/*
+    {feature.data.faq && feature.data.faq.length > 0 && (
+      <div class="max-w-4xl mx-auto px-6 lg:px-8 mb-8">
+         <FAQAccordion faqs={feature.data.faq} client:only="solid" />
+      </div>
+    )}
+    */}
+
+    {/* Client Script for Calendly and Bento (Ported from Hero.astro) */}
+    <script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
+      (function() {
+        function attachHeroForm() {
+          var form = document.getElementById('feature-hero-form');
+          if (!form || form.dataset.bound) return;
+          form.dataset.bound = 'true';
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var emailInput = form.querySelector('input[name="email"]');
+            var email = emailInput ? emailInput.value : '';
+            if (email) {
+              if (typeof window.ddSetEmail === 'function') {
+                window.ddSetEmail(email);
+              }
+              if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+                window.bento.identify(email);
+              }
+
+              fetch('/api/bento-track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: email,
+                  event: 'Demo Subscriber',
+                  source: window.location.pathname,
+                  landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                  visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+                  attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
+                }),
+                keepalive: true
+              }).catch(function() {});
+            }
+            if (typeof window.ddOpenCalendly === 'function') {
+              window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
+            } else {
+              window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
+            }
+            form.reset();
+          });
+        }
+
+        attachHeroForm();
+        document.addEventListener('astro:page-load', attachHeroForm);
+      })();
+    </script>
+
+    {/* Client Script to initialize Mermaid if dataViz is mermaid */}
+    <script is:inline>
+      document.addEventListener('astro:page-load', () => {
+        const mermaidContainers = document.querySelectorAll('.mermaid');
+
+        function styleMermaidSvgs() {
+          const svgs = document.querySelectorAll('.dataviz-container svg');
+          svgs.forEach(svg => {
+            svg.style.setProperty('max-width', '100%', 'important');
+            svg.style.setProperty('height', 'auto', 'important');
+          });
+        }
+
+        if (mermaidContainers.length > 0 && typeof window.mermaid === 'undefined') {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js';
+          script.onload = () => {
+            window.mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+            window.mermaid.init(undefined, mermaidContainers);
+            styleMermaidSvgs();
+          };
+          document.head.appendChild(script);
+        } else if (mermaidContainers.length > 0 && typeof window.mermaid !== 'undefined') {
+          window.mermaid.init(undefined, mermaidContainers);
+          styleMermaidSvgs();
+        }
+      });
+    </script>
+
   </main>
+
+  <style is:inline>
+    .dataviz-container pre.mermaid {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      min-height: auto !important;
+    }
+    .dataviz-container svg {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+  </style>
 
   <FeatureRelatedPosts featureSlug={feature.slug} />
 

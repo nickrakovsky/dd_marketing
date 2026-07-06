@@ -7,6 +7,7 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
+import mermaid from 'astro-mermaid';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,12 +48,19 @@ export default defineConfig({
     build: {
       cssCodeSplit: false,
     },
+    optimizeDeps: {
+      exclude: ['@kobalte/core', '@kobalte/core/accordion'],
+    },
+    ssr: {
+      noExternal: ['@kobalte/core'],
+    },
   },
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
+    '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
     '/posts/what-is-a-yard-management-system-yms': '/yard-management',
     '/posts/yard-management-vs-dock-scheduling-vs-yms': '/yard-management',
     '/posts/crucial-components-to-successful-yard-management': '/posts/yard-management-process-flow',
@@ -115,7 +123,7 @@ export default defineConfig({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
     }),
     solid({
-      include: ['**/solid/**'],
+      include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
       filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !page.endsWith('/404') && !page.endsWith('/404/'),
@@ -147,6 +155,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
       ],
-    }), mdx()],
+    }), mermaid(), mdx()],
 
 });

@@ -56,7 +56,51 @@ const featuresCollection = defineCollection({
         description: z.string().optional(),
         pubDate: z.coerce.date().optional(),
         icon: z.string().optional(),
-        videoUrl: z.string().optional()
+        videoUrl: z.string().optional(),
+        faq: z.array(z.object({
+            question: z.string(),
+            answer: z.string(),
+        })).optional(),
+        testimonial: z.object({
+            quote: z.string(),
+            author: z.string(),
+            role: z.string(),
+            company: z.string().optional()
+        }).optional(),
+        bentoContent: z.object({
+            layoutConfig: z.object({
+                dataVizColSpan: z.number().optional(),
+                implementationColSpan: z.number().optional(),
+                differentiationColSpan: z.number().optional(),
+                businessImpactColSpan: z.number().optional(),
+                dataVizRowSpan: z.number().optional(),
+                implementationRowSpan: z.number().optional(),
+                differentiationRowSpan: z.number().optional(),
+                businessImpactRowSpan: z.number().optional(),
+                dataVizOrder: z.number().optional(),
+                implementationOrder: z.number().optional(),
+                differentiationOrder: z.number().optional(),
+                businessImpactOrder: z.number().optional(),
+                dataVizPadding: z.string().optional()
+            }).optional(),
+            implementation: z.string(),
+            differentiation: z.string(),
+            businessImpact: z.string(),
+            vision: z.string().optional(),
+            tableContext: z.string().optional(),
+            visionSegue: z.string().optional(),
+            dataViz: z.object({
+                type: z.enum(['mermaid', 'image']),
+                content: z.string(),
+                caption: z.string().optional()
+            }).optional(),
+            table: z.object({
+                title: z.string().optional(),
+                headers: z.array(z.string()),
+                rows: z.array(z.array(z.string()))
+            }).optional()
+        }).optional(),
+        microApp: z.string().optional(),
     })
 });
 
