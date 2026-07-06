@@ -56,6 +56,7 @@ export default defineConfig({
     '/posts/what-is-a-yard-management-system-yms': '/yard-management',
     '/posts/yard-management-vs-dock-scheduling-vs-yms': '/yard-management',
     '/posts/crucial-components-to-successful-yard-management': '/posts/yard-management-process-flow',
+    '/posts/how-shippers-and-receivers-are-eliminating-detention-and-demurrage-fees': '/posts/truck-detention-accessorial-fees',
   },
 
   integrations: [
