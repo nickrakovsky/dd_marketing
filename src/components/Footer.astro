@@ -87,7 +87,7 @@ const columns = {
         CSS grid: 2 cols on small phones → 3 at 480px → 4 at desktop. Features holds
         all 12 links and flows into 2 sub-columns on desktop via CSS columns.
     ─────────────────────────────────────────────────────────────────────────────── */}
-    <div class="grid grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-x-8 gap-y-10 mb-10">
+    <div class="grid grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-x-8 gap-y-10 mb-10">
       {/* Contact — semantic <address> for NAP consistency (local SEO) */}
       <div>
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.contact.title}</h3>
@@ -111,7 +111,7 @@ const columns = {
       {/* Features — all 12 links; 2-up on desktop via CSS multi-column */}
       <div>
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.features1.title}</h3>
-        <ul class="space-y-1.5 lg:columns-2 lg:gap-8 [&>li]:break-inside-avoid">
+        <ul class="space-y-1.5 md:columns-2 md:gap-8 [&>li]:break-inside-avoid">
           {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
         </ul>
       </div>
@@ -130,9 +130,9 @@ const columns = {
         on mobile; spreads into a row on desktop. Social icons are real links at every
         size (previously the small-screen variants were non-clickable icons).
     ─────────────────────────────────────────────────────────────────────────────── */}
-    <div class="flex flex-col items-center gap-8 pt-8 border-t border-white/10 lg:flex-row lg:justify-between lg:items-center">
+    <div class="flex flex-col items-center gap-8 pt-8 border-t border-white/10 md:flex-row md:justify-between md:items-center">
       {/* Logo + trust badges */}
-      <div class="flex flex-wrap items-center justify-center gap-6 min-[480px]:gap-10 lg:justify-start">
+      <div class="flex flex-nowrap items-center justify-center gap-6 min-[480px]:gap-10 md:justify-start">
         <a href="/" class="hover:scale-105 transition-transform duration-300">
           <img src="/images/Orange-Logo.svg" alt="DataDocks Logo" width="56" height="56" class="w-14 h-14" loading="lazy" decoding="async" />
         </a>
@@ -143,7 +143,7 @@ const columns = {
       </div>
 
       {/* Social links + copyright */}
-      <div class="flex flex-col items-center gap-3 lg:items-end">
+      <div class="flex flex-col items-center gap-3 md:items-end">
         <div class="flex items-center gap-5">
           <a href="https://www.linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors"><Linkedin aria-hidden="true" className="w-5 h-5" /></a>
           <a href="https://x.com/datadocks" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="text-[#FFF8E9]/60 hover:text-[#FFF8E9] transition-colors">
