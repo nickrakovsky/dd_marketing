@@ -116,8 +116,9 @@ const columns = {
         </ul>
       </div>
 
-      {/* Quick Links */}
-      <div>
+      {/* Quick Links — at the 3-col breakpoint it lands under Contact by DOM order;
+          nudge it under "How DataDocks Helps" (col 2), then reset for the 4-col md grid. */}
+      <div class="min-[480px]:col-start-2 min-[480px]:row-start-2 md:col-start-auto md:row-start-auto">
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.quickLinks.title}</h3>
         <ul class="space-y-1.5">
           {columns.quickLinks.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
