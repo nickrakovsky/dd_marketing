@@ -81,55 +81,71 @@ const columns = {
 <footer class="bg-black text-[#FFF8E9] py-12 border-t border-white/10 font-sans text-[1rem] min-[330px]:text-[1.1rem] min-[480px]:text-base transition-[font-size] duration-300" style="content-visibility: auto; contain-intrinsic-size: auto 500px;">
   <div class="container mx-auto px-6 max-w-7xl">
 
-    {/* ── DESKTOP LAYOUT (lg+) ────────────────────────────────────────────────── */}
-    <div class="hidden lg:grid lg:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-x-12 gap-y-12 mb-12">
+    {/* ── LINK COLUMNS ─────────────────────────────────────────────────────────────
+        Single responsive markup tree (previously five duplicate breakpoint blocks).
+        Each link/image/heading now appears exactly ONCE in the DOM and reflows via
+        CSS grid: 2 cols on small phones → 3 at 480px → 4 at desktop. Features holds
+        all 12 links and flows into 2 sub-columns on desktop via CSS columns.
+    ─────────────────────────────────────────────────────────────────────────────── */}
+    <div class="grid grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-x-8 gap-y-10 mb-10">
+      {/* Contact — semantic <address> for NAP consistency (local SEO) */}
       <div>
-        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">Contact Us</h3>
-        <div class="text-[#FFF8E9]/90 leading-snug space-y-0 mb-4">
+        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.contact.title}</h3>
+        <address class="not-italic text-[#FFF8E9]/90 leading-snug space-y-0 mb-4">
           {columns.contact.address.map(line => <p>{line}</p>)}
-        </div>
+        </address>
         <div class="flex flex-col gap-1">
           <a href={`mailto:${columns.contact.email}`} class={hoverLinkClass}>{columns.contact.email}</a>
           <a href={`tel:${columns.contact.phone.replace(/\D/g,'')}`} class={hoverLinkClass}>{columns.contact.phone}</a>
         </div>
       </div>
+
+      {/* How DataDocks Helps */}
       <div>
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.howItHelps.title}</h3>
         <ul class="space-y-1.5">
           {columns.howItHelps.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
         </ul>
       </div>
-      <div class="grid grid-cols-2 gap-8">
-        <div>
-          <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.features1.title}</h3>
-          <ul class="space-y-1.5">
-            {columns.features1.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-          </ul>
-        </div>
-        <div class="pt-[2.75rem]">
-          <ul class="space-y-1.5">
-            {columns.features2.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-          </ul>
-        </div>
+
+      {/* Features — all 12 links; 2-up on desktop via CSS multi-column.
+          Spans both rows at the 3-col breakpoint so Quick Links can tuck under How DataDocks Helps. */}
+      <div class="min-[480px]:row-span-2 md:row-span-1">
+        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.features1.title}</h3>
+        <ul class="space-y-1.5 md:columns-2 md:gap-8 [&>li]:break-inside-avoid">
+          {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
+        </ul>
       </div>
-      <div>
+
+      {/* Quick Links — at the 3-col breakpoint it lands under Contact by DOM order;
+          nudge it under "How DataDocks Helps" (col 2), then reset for the 4-col md grid. */}
+      <div class="min-[480px]:col-start-2 min-[480px]:row-start-2 md:col-start-auto md:row-start-auto">
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.quickLinks.title}</h3>
         <ul class="space-y-1.5">
           {columns.quickLinks.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
         </ul>
       </div>
     </div>
-    <div class="hidden lg:flex flex-row justify-between items-center gap-8 pt-8 border-t border-white/10">
-      <div class="flex flex-row items-center gap-12">
+
+    {/* ── BRAND + LEGAL BAR ────────────────────────────────────────────────────────
+        Logo, badges, social links and copyright each appear ONCE. Stacks and centers
+        on mobile; spreads into a row on desktop. Social icons are real links at every
+        size (previously the small-screen variants were non-clickable icons).
+    ─────────────────────────────────────────────────────────────────────────────── */}
+    <div class="flex flex-col items-center gap-8 pt-8 border-t border-white/10 md:flex-row md:justify-between md:items-center">
+      {/* Logo + trust badges */}
+      <div class="flex flex-nowrap items-center justify-center gap-6 min-[480px]:gap-10 md:justify-start">
         <a href="/" class="hover:scale-105 transition-transform duration-300">
-          <img src="/images/Orange-Logo.svg" alt="DataDocks Logo" width="56" height="56" class="w-14 h-14" loading="lazy" decoding="async" />
+          <img src="/images/Orange-Logo.svg" alt="DataDocks Logo" width="56" height="56" class="h-16 w-16 min-[480px]:h-20 min-[480px]:w-20 max-w-full object-contain" loading="lazy" decoding="async" />
         </a>
-        <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" width="120" height="119" class="h-20 w-auto object-contain" loading="lazy" decoding="async" />
+        <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" width="120" height="119" class="h-16 min-[480px]:h-20 w-auto max-w-full object-contain" loading="lazy" decoding="async" />
         <a href="https://feddev-ontario.canada.ca/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-          <img src="/images/canada-badge.png" alt="Government of Canada" width="600" height="43" class="h-10 w-auto object-contain" loading="lazy" decoding="async" />
+          <img src="/images/canada-badge.png" alt="Government of Canada" width="600" height="43" class="h-10 w-auto max-w-full object-contain" loading="lazy" decoding="async" />
         </a>
       </div>
-      <div class="flex flex-col items-end gap-3">
+
+      {/* Social links + copyright */}
+      <div class="flex flex-col items-center gap-3 md:items-end">
         <div class="flex items-center gap-5">
           <a href="https://www.linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors"><Linkedin aria-hidden="true" className="w-5 h-5" /></a>
           <a href="https://x.com/datadocks" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="text-[#FFF8E9]/60 hover:text-[#FFF8E9] transition-colors">
@@ -138,201 +154,6 @@ const columns = {
           <a href="https://www.youtube.com/@datadocks" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="text-[#FFF8E9]/60 hover:text-[#FF0000] transition-colors"><Youtube aria-hidden="true" className="w-5 h-5" /></a>
         </div>
         <p class="text-sm text-[#FFF8E9]/80">©{new Date().getFullYear()} Northfire Inc.</p>
-      </div>
-    </div>
-
-
-    {/* ── 4-COLUMN TABLET (768px - 1023px) ─────────────────────────────────────────
-        Strategy: explicit grid placement with row-span.
-        - Col 1 (Contact) and Col 2 (How It Helps): auto height, row 1 only.
-        - Col 3 (Features) and Col 4 (Quick Links + logos): row-span-2, filling both rows.
-        - Canada banner: col-start-1, col-span-2, row-start-2 — fills the leftover space
-          at the bottom of the first two columns, naturally, with no hacks.
-    ─────────────────────────────────────────────────────────────────────────────── */}
-    <div class="hidden md:grid lg:hidden grid-cols-4 grid-rows-[auto_auto] gap-x-8 gap-y-8 mb-8 border-b border-white/10 pb-8">
-      {/* Col 1, Row 1: Contact */}
-      <div class="col-start-1 row-start-1">
-        <h3 class="font-recoleta font-bold text-lg mb-4">Contact Us</h3>
-        <div class="text-[#FFF8E9]/90 space-y-0 leading-snug mb-4">
-          {columns.contact.address.map(line => <p>{line}</p>)}
-        </div>
-        <a href={`tel:${columns.contact.phone.replace(/\D/g,'')}`} class={hoverLinkClass}>{columns.contact.phone}</a>
-      </div>
-      {/* Col 2, Row 1: How It Helps */}
-      <div class="col-start-2 row-start-1">
-        <h3 class="font-recoleta font-bold text-lg mb-4">{columns.howItHelps.title}</h3>
-        <ul class="space-y-1.5">
-          {columns.howItHelps.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-        </ul>
-      </div>
-      {/* Col 3, Rows 1–2: Features */}
-      <div class="col-start-3 row-start-1 row-span-2">
-        <h3 class="font-recoleta font-bold text-lg mb-4">Features</h3>
-        <ul class="space-y-1.5">
-          {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-        </ul>
-      </div>
-      {/* Col 4, Rows 1–2: Quick Links + logos at bottom */}
-      <div class="col-start-4 row-start-1 row-span-2 flex flex-col justify-between">
-        <div>
-          <h3 class="font-recoleta font-bold text-lg mb-4">Quick Links</h3>
-          <ul class="space-y-1.5">
-            {columns.quickLinks.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-          </ul>
-        </div>
-        <div class="flex flex-col gap-5">
-          <div class="flex items-center gap-5">
-            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-14 h-14" loading="lazy" decoding="async" />
-            <img src="/images/soc2-badge.png" alt="SOC2" class="h-20 w-auto object-contain" loading="lazy" decoding="async" />
-          </div>
-          <div class="flex gap-6">
-            <a href="https://www.linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors"><Linkedin aria-hidden="true" className="w-6 h-6" /></a>
-            <a href="https://x.com/datadocks" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="text-[#FFF8E9]/60 hover:text-[#FFF8E9] transition-colors"><svg viewBox="0 0 24 24" aria-hidden="true" class="w-6 h-6 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
-            <a href="https://www.youtube.com/@datadocks" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="text-[#FFF8E9]/60 hover:text-[#FF0000] transition-colors"><Youtube aria-hidden="true" className="w-6 h-6" /></a>
-          </div>
-        </div>
-      </div>
-      {/* Canada banner: Cols 1–2, Row 2 — slots into the leftover space below Contact & How It Helps */}
-      <a href="https://feddev-ontario.canada.ca/" target="_blank" rel="noopener noreferrer"
-         class="col-start-1 col-span-2 row-start-2 flex items-end hover:scale-105 transition-transform duration-300">
-        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full h-auto object-contain" loading="lazy" decoding="async" />
-      </a>
-    </div>
-    <p class="hidden md:block lg:hidden text-sm text-[#FFF8E9]/60 pb-8">© {new Date().getFullYear()} Northfire Inc.</p>
-
-
-    {/* ── 3-COLUMN LAYOUT (480px - 767px) ────────────────────────────────────────── */}
-    <div class="hidden min-[480px]:grid md:hidden grid-cols-3 gap-8 mb-8 border-b border-white/10 pb-8">
-      <div class="flex flex-col justify-between">
-        <div>
-          <h3 class="font-recoleta font-bold text-lg mb-4">Contact</h3>
-          <div class="text-[#FFF8E9]/90 text-sm mb-4 space-y-1">
-            <p>{columns.contact.email}</p>
-            <p>{columns.contact.phone}</p>
-          </div>
-        </div>
-        <div class="space-y-6 pt-12">
-          <div class="flex flex-row items-center gap-6">
-            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-14 h-14" loading="lazy" decoding="async" />
-            <img src="/images/soc2-badge.png" alt="SOC2" class="h-20 w-auto object-contain" loading="lazy" decoding="async" />
-          </div>
-          <div class="flex flex-row gap-6">
-            <a href="https://www.linkedin.com/company/datadocks" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-[#FFF8E9]/60 hover:text-[#0077b5] transition-colors"><Linkedin aria-hidden="true" className="w-6 h-6" /></a>
-            <a href="https://x.com/datadocks" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="text-[#FFF8E9]/60 hover:text-[#FFF8E9] transition-colors"><svg viewBox="0 0 24 24" aria-hidden="true" class="w-6 h-6 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
-            <a href="https://www.youtube.com/@datadocks" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="text-[#FFF8E9]/60 hover:text-[#FF0000] transition-colors"><Youtube aria-hidden="true" className="w-6 h-6" /></a>
-          </div>
-        </div>
-      </div>
-      <div class="space-y-12 flex flex-col">
-        <div>
-          <h3 class="font-recoleta font-bold text-lg mb-4">Benefits</h3>
-          <ul class="text-sm space-y-2">
-            {columns.howItHelps.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-          </ul>
-        </div>
-        <div class="mt-auto">
-          <h3 class="font-recoleta font-bold text-lg mb-4">Quick Links</h3>
-          <ul class="text-sm space-y-2">
-            {columns.quickLinks.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-          </ul>
-        </div>
-      </div>
-      <div>
-        <h3 class="font-recoleta font-bold text-lg mb-4">Features</h3>
-        <ul class="text-sm space-y-1.5">
-          {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-        </ul>
-      </div>
-      <div class="col-span-3 pt-8 flex justify-center border-t border-white/10">
-        <img src="/images/canada-badge.png" alt="Canada" class="h-10 w-auto" loading="lazy" decoding="async" />
-      </div>
-    </div>
-    <p class="hidden min-[480px]:block md:hidden text-sm text-[#FFF8E9]/60 pb-8">© {new Date().getFullYear()} Northfire Inc.</p>
-
-
-    {/* ── 2-COLUMN LAYOUT (330px - 479px) ────────────────────────────────────────── */}
-    <div class="hidden min-[330px]:grid min-[480px]:hidden grid-cols-2 gap-x-8 gap-y-12 mb-8">
-      <div class="flex flex-col gap-12">
-        <div class="space-y-4">
-          <h3 class="font-recoleta font-bold text-lg">Contact</h3>
-          <div class="text-sm opacity-80 space-y-1">
-            <p>{columns.contact.email}</p>
-            <p>{columns.contact.phone}</p>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <h3 class="font-recoleta font-bold text-lg">Benefits</h3>
-          <ul class="text-sm space-y-2">
-            {columns.howItHelps.links.map(link => (<li><a href={link.href}>{link.label}</a></li>))}
-          </ul>
-        </div>
-        <div class="space-y-4">
-          <h3 class="font-recoleta font-bold text-lg">More</h3>
-          <ul class="text-sm space-y-2">
-            {columns.quickLinks.links.map(link => (<li><a href={link.href}>{link.label}</a></li>))}
-          </ul>
-        </div>
-      </div>
-      <div class="flex flex-col justify-between h-full">
-        <div>
-          <h3 class="font-recoleta font-bold text-lg mb-4">Features</h3>
-          <ul class="text-sm space-y-2">
-            {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href}>{link.label}</a></li>))}
-          </ul>
-        </div>
-        <div class="pt-12 space-y-8">
-          <div class="flex items-center gap-6">
-            <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-10 h-10" loading="lazy" decoding="async" />
-            <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" class="h-16 w-auto" loading="lazy" decoding="async" />
-          </div>
-          <div class="flex gap-6">
-            <Linkedin className="w-6 h-6 opacity-60" />
-            <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current opacity-60"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-            <Youtube className="w-6 h-6 opacity-60" />
-          </div>
-        </div>
-      </div>
-      <div class="col-span-2 flex justify-center pt-8 border-t border-white/10">
-        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full max-w-[300px] h-auto" loading="lazy" decoding="async" />
-      </div>
-    </div>
-    <p class="hidden min-[330px]:block min-[480px]:hidden text-sm text-[#FFF8E9]/60 pb-8 text-center">© {new Date().getFullYear()} Northfire Inc.</p>
-
-
-    {/* ── 1-COLUMN LAYOUT (< 330px) ─────────────────────────────────────────────── */}
-    <div class="min-[330px]:hidden space-y-12 text-center pb-8">
-      <div>
-        <h3 class="font-recoleta font-bold text-xl mb-6">Features</h3>
-        <ul class="space-y-4">
-          {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href}>{link.label}</a></li>))}
-        </ul>
-      </div>
-      <div>
-        <h3 class="font-recoleta font-bold text-xl mb-6">Benefits</h3>
-        <ul class="space-y-4">
-          {columns.howItHelps.links.map(link => (<li><a href={link.href}>{link.label}</a></li>))}
-        </ul>
-      </div>
-      <div>
-        <h3 class="font-recoleta font-bold text-xl mb-6">More</h3>
-        <ul class="space-y-4">
-          {columns.quickLinks.links.map(link => (<li><a href={link.href}>{link.label}</a></li>))}
-        </ul>
-      </div>
-      <div>
-        <h3 class="font-recoleta font-bold text-xl mb-6">Contact</h3>
-        <div class="space-y-2">
-          <p>{columns.contact.email}</p>
-          <p>{columns.contact.phone}</p>
-        </div>
-      </div>
-      <div class="flex flex-col items-center gap-10 pt-12 border-t border-white/10">
-        <div class="flex items-center gap-8">
-          <img src="/images/Orange-Logo.svg" alt="DataDocks" class="w-12 h-12" loading="lazy" decoding="async" />
-          <img src="/images/soc2-badge.png" alt="AICPA SOC2 Certified" class="h-16 w-auto" loading="lazy" decoding="async" />
-        </div>
-        <img src="/images/canada-badge.png" alt="Government of Canada" class="w-full max-w-[240px] h-auto" loading="lazy" decoding="async" />
-        <p class="text-sm opacity-50">© {new Date().getFullYear()} Northfire Inc.</p>
       </div>
     </div>
 
