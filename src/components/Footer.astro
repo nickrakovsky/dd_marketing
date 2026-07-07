@@ -108,8 +108,9 @@ const columns = {
         </ul>
       </div>
 
-      {/* Features — all 12 links; 2-up on desktop via CSS multi-column */}
-      <div>
+      {/* Features — all 12 links; 2-up on desktop via CSS multi-column.
+          Spans both rows at the 3-col breakpoint so Quick Links can tuck under How DataDocks Helps. */}
+      <div class="min-[480px]:row-span-2 md:row-span-1">
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.features1.title}</h3>
         <ul class="space-y-1.5 md:columns-2 md:gap-8 [&>li]:break-inside-avoid">
           {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
