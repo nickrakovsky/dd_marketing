@@ -36,11 +36,6 @@ export function getFriendlyDate(date: Date | string | number | undefined): strin
     return 'Last Month';
   }
   
-  // Same year, but older than last month
-  if (d.getFullYear() === now.getFullYear()) {
-    return d.toLocaleString('en-US', { month: 'long' });
-  } 
-  
-  // Older than this year
-  return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  // Older than last month — show full date with year
+  return d.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
