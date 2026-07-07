@@ -1704,8 +1704,18 @@ if (priorityImgMatch) {
       card.addEventListener('mouseleave', hideHoverCard);
     }
     
-    requestAnimationFrame(positionPersistentCards);
-    setTimeout(positionPersistentCards, 500);
+    // Defer initial card positioning until the browser is idle so it never
+    // blocks first paint / LCP. positionPersistentCards does synchronous
+    // layout reads+writes (offsetHeight, getBoundingClientRect); running it in
+    // a pre-paint requestAnimationFrame caused a forced-reflow task before FCP.
+    // These cards are desktop-only and purely decorative, so positioning them
+    // after LCP has no visible cost. The ResizeObserver on #content (below)
+    // catches any later layout settling, replacing the old second pass.
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => positionPersistentCards(), { timeout: 2000 });
+    } else {
+      setTimeout(positionPersistentCards, 500);
+    }
   }
 
   // Custom typings
