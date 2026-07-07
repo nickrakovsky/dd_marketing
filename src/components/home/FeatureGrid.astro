@@ -57,11 +57,10 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
             </p>
           </a>
 
-          {/* MOBILE (<md): Card is static, only "Learn More" is a link */}
-          <div 
+          {/* MOBILE (<md): Whole card is a link */}
+          <a
+            href={featureUrl}
             class="feature-card md:hidden p-3 rounded-2xl border border-transparent bg-[#FFF8E9] transition-all duration-300 flex flex-col focus:outline-none"
-            tabindex="0"
-            role="button"
           >
             <h3 class="feature-title font-bruta text-base sm:text-lg uppercase text-black transition-colors leading-tight mb-2">
               {feature.title}
@@ -82,15 +81,15 @@ const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-');
               </p>
             </div>
             
-            {/* Mobile Affordance: Only this part is a link */}
-            <a href={featureUrl} class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
+            {/* Mobile Affordance: Visual only — the whole card is the link */}
+            <span class="mobile-link flex items-center gap-1 mt-3 self-start outline-none">
               <span class="link-text font-recoleta text-[10px] sm:text-xs text-[#FE5000] font-bold transition-colors [text-shadow:0px_1px_2px_rgba(0,0,0,0.15)]">Learn More</span>
               <span class="sr-only"> about {feature.srTitle}</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FE5000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="sm:w-3 sm:h-3 drop-shadow-sm">
                 <path d="m9 18 6-6-6-6"/>
               </svg>
-            </a>
-          </div>
+            </span>
+          </a>
         </>
       )})}
     </div>
