@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import Beasties from 'beasties';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
@@ -109,6 +110,40 @@ export default defineConfig({
               }
             });
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
+          }
+
+          // Critical-CSS inlining for blog posts ONLY (dist/posts/*.html).
+          // The site ships a single shared stylesheet (cssCodeSplit stays false).
+          // On /posts/ pages that one file is render-blocking and delays LCP
+          // (~577ms). Beasties inlines the above-the-fold CSS into <head> and
+          // rewrites the <link> to load the SAME single file asynchronously, so
+          // first paint no longer waits on it. Scoped to /posts/ so every other
+          // page (home, features, etc.) is left byte-for-byte unchanged.
+          const distDir = fileURLToPath(dir);
+          const postsDistDir = path.join(distDir, 'posts');
+          if (fs.existsSync(postsDistDir)) {
+            const beasties = new Beasties({
+              path: distDir,          // resolve /_astro/*.css from the build root
+              publicPath: '/',
+              preload: 'swap',        // async-load the full sheet, apply on load
+              pruneSource: false,     // keep the shared external file intact for other pages
+              inlineFonts: false,     // fonts already handled in Layout.astro
+              logLevel: 'silent',
+            });
+            const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
+            let processed = 0;
+            for (const file of postFiles) {
+              const filePath = path.join(postsDistDir, file);
+              try {
+                const html = fs.readFileSync(filePath, 'utf-8');
+                const inlined = await beasties.process(html);
+                fs.writeFileSync(filePath, inlined);
+                processed++;
+              } catch (err) {
+                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+              }
+            }
+            console.log(`[critical-css] inlined critical CSS for ${processed}/${postFiles.length} blog posts`);
           }
         }
       }
