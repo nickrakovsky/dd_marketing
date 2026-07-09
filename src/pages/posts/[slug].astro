@@ -9,6 +9,7 @@ import SmartLink from '../../components/SmartLink.astro';
 import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
+import { ytThumb } from '../../lib/yt-thumb';
 // getFriendlyDate is unused
 // import { getFriendlyDate } from '../../utils/dateFormatter';
 
@@ -154,7 +155,7 @@ if (!(globalThis as any).mdxImageCounts) {
                      <lite-youtube 
                         videoid={videoId} 
                         playlabel={post.data.title} 
-                        style={`background-image: url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'); background-size: cover; background-position: center;`}
+                        style={`background-image: url('${ytThumb(videoId)}'); background-size: cover; background-position: center;`}
                         class="w-full h-full pointer-events-none" 
                       ></lite-youtube>
                    </div>

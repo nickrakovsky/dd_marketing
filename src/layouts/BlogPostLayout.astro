@@ -11,6 +11,7 @@ import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
 import LeadMagnetForm from '../components/LeadMagnetForm.astro';
 import SidebarShortVideo from '../components/SidebarShortVideo.astro';
+import { ytThumb } from '../lib/yt-thumb';
 
 interface Heading {
   depth: number;
@@ -355,7 +356,7 @@ if (priorityImgMatch) {
                     />
                   ) : isVideo && item.data.postType?.value?.youtubeId ? (
                     <img 
-                      src={`https://i.ytimg.com/vi/${item.data.postType.value.youtubeId}/hqdefault.jpg`} 
+                      src={ytThumb(item.data.postType.value.youtubeId)}
                       alt={item.data.title}
                       class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
@@ -715,7 +716,7 @@ if (priorityImgMatch) {
       if (currentIcon) {
         iconHtml = `
           <div class="w-9 h-9 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1.5 rounded-none shrink-0">
-            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="" class="w-full h-full object-contain" loading="lazy" />`}
+            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="${currentTitle} icon" class="w-full h-full object-contain" loading="lazy" />`}
           </div>`;
       }
       const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
@@ -744,7 +745,7 @@ if (priorityImgMatch) {
       if (currentIcon) {
         iconHtml = `
           <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-none shrink-0">
-            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="" class="w-full h-full object-contain" loading="lazy" />`}
+            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="${currentTitle} icon" class="w-full h-full object-contain" loading="lazy" />`}
           </div>`;
       }
       const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
