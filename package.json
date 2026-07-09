@@ -63,7 +63,7 @@
     "@types/marked": "^5.0.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^5.16.6",
+    "astro": "^6.4.6",
     "astro-mermaid": "^2.0.4",
     "beasties": "^0.4.1",
     "class-variance-authority": "^0.7.1",
