@@ -338,6 +338,8 @@ const jsonLd = {
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
             @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
             @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            
+            .beasties-font-preserve { font-family: 'Bruta', 'DD-Recoleta'; }
 
             @view-transition {
               navigation: auto;
@@ -346,6 +348,8 @@ const jsonLd = {
 
     </head>
     <body>
+        {/* Force Beasties to preserve brand fonts by referencing them in an inline style */}
+        <div class="beasties-font-preserve" style="display: none;" aria-hidden="true"></div>
         <slot />
         {/* GA4 is now implemented via Cloudflare Zaraz
         <script is:inline>
