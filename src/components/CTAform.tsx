@@ -11,7 +11,7 @@ interface CTAFormProps {
   placeholder?: string;
 }
 
-export default function CTAForm({ buttonText = "Get Free Demo", placeholder = "Enter your work email" }: CTAFormProps) {
+export default function CTAForm({ buttonText = "Book a Demo", placeholder = "Enter your work email" }: CTAFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [pagePath, setPagePath] = useState("");
 
