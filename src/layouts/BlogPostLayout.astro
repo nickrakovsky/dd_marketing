@@ -353,9 +353,11 @@ if (priorityImgMatch) {
                       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : isVideo && item.data.postType?.value?.youtubeId ? (
-                    <img 
+                    <img
                       src={ytThumb(item.data.postType.value.youtubeId)}
                       alt={item.data.title}
+                      loading="lazy"
+                      decoding="async"
                       class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
                   ) : (

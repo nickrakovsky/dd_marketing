@@ -315,8 +315,10 @@ const jsonLd = {
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
+        {/* assets.calendly.com serves the widget JS/CSS (idle-prefetched ~10s post-load).
+             The calendly.com apex is only hit inside the booking iframe after a click, so a
+             top-document preconnect to it went unused every pageview — removed. */}
         <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
-        <link rel="preconnect" href="https://calendly.com" crossorigin />
 
         <style is:inline set:html={`
             @font-face {
