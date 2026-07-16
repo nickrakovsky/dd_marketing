@@ -81,8 +81,10 @@ export const GET: APIRoute = async ({ params, url }) => {
       status: 200,
       headers: {
         'Content-Type': contentType,
-        // 24h in the browser; 7d at the edge with stale-while-revalidate.
-        'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800',
+        // 30d in the browser; 30d at the edge with stale-while-revalidate.
+        // Thumbnails are immutable per video id, so a long browser TTL is safe
+        // and clears PageSpeed's "efficient cache policy" audit.
+        'Cache-Control': 'public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800',
         'X-Content-Type-Options': 'nosniff',
       },
     });
