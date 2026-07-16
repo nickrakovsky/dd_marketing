@@ -130,20 +130,30 @@ export default defineConfig({
               inlineFonts: true,      // fonts already handled in Layout.astro
               logLevel: 'silent',
             });
+            // Beasties reads @font-face `src` only from url(...) and drops any face
+            // without one, so the metric-override fallback faces (src: local(...))
+            // in Layout.astro get stripped from every post. Those faces size-match
+            // Impact/Georgia to Bruta/Recoleta so text does NOT shift when the real
+            // webfont swaps in (font-display:swap). Without them the swap causes CLS,
+            // worst on body text (Recoleta isn't preloaded). Re-inject them AFTER
+            // Beasties so it never sees them; they must live in the critical inline
+            // CSS (not the async sheet) to be present at first paint.
+            const FALLBACK_FONT_FACES = `<style>@font-face{font-family:'Recoleta-Fallback';src:local('Georgia');size-adjust:98.7952%;ascent-override:101.2195%;descent-override:36.4252%;line-gap-override:0%}@font-face{font-family:'Bruta-Fallback';src:local('Impact');size-adjust:102.5000%;ascent-override:73.1707%;descent-override:24.3902%;line-gap-override:33.1707%}</style>`;
             const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
             let processed = 0;
             for (const file of postFiles) {
               const filePath = path.join(postsDistDir, file);
               try {
                 const html = fs.readFileSync(filePath, 'utf-8');
-                const inlined = await beasties.process(html);
+                let inlined = await beasties.process(html);
+                inlined = inlined.replace('</head>', `${FALLBACK_FONT_FACES}</head>`);
                 fs.writeFileSync(filePath, inlined);
                 processed++;
               } catch (err) {
                 console.warn(`[critical-css] skipped ${file}: ${err.message}`);
               }
             }
-            console.log(`[critical-css] inlined critical CSS for ${processed}/${postFiles.length} blog posts`);
+            console.log(`[critical-css] inlined critical CSS + fallback font faces for ${processed}/${postFiles.length} blog posts`);
           }
         }
       }
