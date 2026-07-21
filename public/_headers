@@ -1,34 +1,66 @@
+# Cloudflare Pages merges _headers rules CUMULATIVELY and joins duplicate
+# header names with a comma. A `Cache-Control` on `/*` therefore gets prepended
+# to the asset rules below, so browsers read `max-age=0, must-revalidate` FIRST
+# and ignore `immutable` — forcing content-hashed fonts/CSS/JS to revalidate on
+# every navigation (a blocking round-trip per asset that tanks real-user mobile
+# TTFB/LCP). Unsetting with `! Cache-Control` does NOT work here (verified on a
+# preview deploy). The only reliable fix: never set Cache-Control on `/*`, and
+# scope the HTML policy to explicit HTML paths so each URL is matched by exactly
+# ONE Cache-Control-setting rule.
+
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# --- HTML pages: edge-cache 1 day, browser revalidates (unchanged policy) ---
+# Root-level pages (build.format:'file' serves these at clean paths)
+/
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/about
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/datadocks-vs-opendock
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/integrations
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/mobile-app
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/posts
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/privacy-policy
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/support
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/yard-management
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+# Section directories
+/posts/*
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/videos/*
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/benefits/*
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/datadocks-features/*
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/integrations/*
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/micro-apps/*
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 
-# Cloudflare Pages applies _headers rules CUMULATIVELY: the `/*` Cache-Control
-# above gets merged in FRONT of these rules, so browsers read `max-age=0,
-# must-revalidate` first and IGNORE `immutable`. That forced content-hashed
-# fonts/CSS/JS (which never change) to revalidate on every navigation — a
-# blocking round-trip per asset that tanks real-user TTFB/LCP on mobile.
-# `! Cache-Control` unsets the inherited `/*` value so the intended policy
-# below is the ONLY one the browser sees.
+# --- Hashed / long-lived assets: now the ONLY Cache-Control rule they match ---
 /_astro/*
-  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /images/*
-  ! Cache-Control
   Cache-Control: public, max-age=2592000
 
 /css/*
-  ! Cache-Control
   Cache-Control: public, max-age=2592000
 
 /keystatic/*
-  ! Cache-Control
   Cache-Control: private, no-cache, no-store, must-revalidate
 
 /api/*
-  ! Cache-Control
   Cache-Control: private, no-cache, no-store, must-revalidate
