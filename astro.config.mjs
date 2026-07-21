@@ -130,30 +130,46 @@ export default defineConfig({
               inlineFonts: false,     // fonts already handled in Layout.astro
               logLevel: 'silent',
             });
-            // Beasties reads @font-face `src` only from url(...) and drops any face
-            // without one, so the metric-override fallback faces (src: local(...))
-            // in Layout.astro get stripped from every post. Those faces size-match
-            // Impact/Georgia to Bruta/Recoleta so text does NOT shift when the real
-            // webfont swaps in (font-display:swap). Without them the swap causes CLS,
-            // worst on body text (Recoleta isn't preloaded). Re-inject them AFTER
-            // Beasties so it never sees them; they must live in the critical inline
-            // CSS (not the async sheet) to be present at first paint.
-            const FALLBACK_FONT_FACES = `<style>@font-face{font-family:'Recoleta-Fallback';src:local('Georgia');size-adjust:98.7952%;ascent-override:101.2195%;descent-override:36.4252%;line-gap-override:0%}@font-face{font-family:'Bruta-Fallback';src:local('Impact');size-adjust:102.5000%;ascent-override:73.1707%;descent-override:24.3902%;line-gap-override:33.1707%}</style>`;
+            // Beasties strips @font-face rules from the inline critical CSS when
+            // inlineFonts:false. On posts those faces live ONLY in the inline
+            // Layout.astro <style> (there's no external copy), so Beasties deletes
+            // them outright: the real webfonts (Bruta/DD-Recoleta) vanish, the Bruta
+            // preload goes unused, and text falls back to Georgia/Impact. We fix this
+            // by capturing BOTH font-face sets from the original HTML (before Beasties
+            // sees them) and re-injecting them into <head> after processing:
+            //   1. Real webfonts — @font-face with url(...woff2). Extracted per-file so
+            //      the content-hashed /_astro paths always match this exact build (no
+            //      hardcoding that can drift when Astro rehashes).
+            //   2. Metric-override fallbacks — @font-face with src:local(...). These
+            //      size-match Impact/Georgia to Bruta/Recoleta so text does NOT shift
+            //      when the real webfont swaps in (font-display:swap); without them the
+            //      swap causes CLS, worst on body text (Recoleta isn't preloaded).
+            // Both must be in the critical inline CSS (not the async sheet) to apply at
+            // first paint.
+            const FALLBACK_FONT_FACES = `@font-face{font-family:'Recoleta-Fallback';src:local('Georgia');size-adjust:98.7952%;ascent-override:101.2195%;descent-override:36.4252%;line-gap-override:0%}@font-face{font-family:'Bruta-Fallback';src:local('Impact');size-adjust:102.5000%;ascent-override:73.1707%;descent-override:24.3902%;line-gap-override:33.1707%}`;
             const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
             let processed = 0;
+            let missingRealFaces = 0;
             for (const file of postFiles) {
               const filePath = path.join(postsDistDir, file);
               try {
                 const html = fs.readFileSync(filePath, 'utf-8');
+                // Capture the real webfont faces from the ORIGINAL html before Beasties
+                // strips them. Match only @font-face blocks containing url(...).
+                const realFaces = (html.match(/@font-face\s*\{[^}]*url\([^}]*\}/g) || []).join('');
+                if (!realFaces) missingRealFaces++;
                 let inlined = await beasties.process(html);
-                inlined = inlined.replace('</head>', `${FALLBACK_FONT_FACES}</head>`);
+                inlined = inlined.replace('</head>', `<style>${realFaces}${FALLBACK_FONT_FACES}</style></head>`);
                 fs.writeFileSync(filePath, inlined);
                 processed++;
               } catch (err) {
                 console.warn(`[critical-css] skipped ${file}: ${err.message}`);
               }
             }
-            console.log(`[critical-css] inlined critical CSS + fallback font faces for ${processed}/${postFiles.length} blog posts`);
+            console.log(`[critical-css] inlined critical CSS + font faces for ${processed}/${postFiles.length} blog posts`);
+            if (missingRealFaces > 0) {
+              console.warn(`[critical-css] WARNING: ${missingRealFaces} post(s) had no real @font-face url() to preserve — check Layout.astro font block`);
+            }
           }
         }
       }
