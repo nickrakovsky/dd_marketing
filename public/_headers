@@ -6,17 +6,29 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 
+# Cloudflare Pages applies _headers rules CUMULATIVELY: the `/*` Cache-Control
+# above gets merged in FRONT of these rules, so browsers read `max-age=0,
+# must-revalidate` first and IGNORE `immutable`. That forced content-hashed
+# fonts/CSS/JS (which never change) to revalidate on every navigation — a
+# blocking round-trip per asset that tanks real-user TTFB/LCP on mobile.
+# `! Cache-Control` unsets the inherited `/*` value so the intended policy
+# below is the ONLY one the browser sees.
 /_astro/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /images/*
+  ! Cache-Control
   Cache-Control: public, max-age=2592000
 
 /css/*
+  ! Cache-Control
   Cache-Control: public, max-age=2592000
 
 /keystatic/*
+  ! Cache-Control
   Cache-Control: private, no-cache, no-store, must-revalidate
 
 /api/*
+  ! Cache-Control
   Cache-Control: private, no-cache, no-store, must-revalidate
