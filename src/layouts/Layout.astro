@@ -52,11 +52,12 @@ const pathname = Astro.url.pathname === '/'
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
-// On blog/video pages Calendly is interaction-only (not above the fold), and the
-// widget warms its own connection on hover. Preconnecting eagerly there is flagged
-// by PageSpeed as an unused preconnect, so skip it on articles/videos while keeping
-// it on conversion-focused pages (home, features, etc.).
-const isContentPage = type === "article" || type === "video";
+// Content pages (blog posts pass type="article", video pages pass type="video")
+// are low booking-intent and perf/SEO-sensitive, so we skip the Calendly
+// preconnects there — the warm-on-hover handler covers the rare booking click.
+// Commercial pages (home, features, benefits, etc.) keep both preconnects so
+// the booking popup opens snappily.
+const isContentPage = type === 'article' || type === 'video';
 
 // 5. Schema Assembly
 const graph: any[] = [
@@ -321,6 +322,11 @@ const jsonLd = {
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
+        {/* assets.calendly.com serves the widget JS/CSS; calendly.com is the booking
+             iframe origin. Both are only needed where booking happens, so we preconnect
+             on high-intent commercial pages and skip it on content pages (posts/videos)
+             where warm-on-hover already covers the rare click. */}
+
         {!isContentPage && (
           <Fragment>
             <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
