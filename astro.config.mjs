@@ -127,7 +127,7 @@ export default defineConfig({
               publicPath: '/',
               preload: 'swap',        // async-load the full sheet, apply on load
               pruneSource: false,     // keep the shared external file intact for other pages
-              inlineFonts: true,      // fonts already handled in Layout.astro
+              inlineFonts: false,     // fonts already handled in Layout.astro
               logLevel: 'silent',
             });
             const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));

@@ -52,6 +52,12 @@ const pathname = Astro.url.pathname === '/'
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
+// On blog/video pages Calendly is interaction-only (not above the fold), and the
+// widget warms its own connection on hover. Preconnecting eagerly there is flagged
+// by PageSpeed as an unused preconnect, so skip it on articles/videos while keeping
+// it on conversion-focused pages (home, features, etc.).
+const isContentPage = type === "article" || type === "video";
+
 // 5. Schema Assembly
 const graph: any[] = [
   // 1. Organization (Identity)
@@ -315,8 +321,12 @@ const jsonLd = {
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
-        <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
-        <link rel="preconnect" href="https://calendly.com" crossorigin />
+        {!isContentPage && (
+          <Fragment>
+            <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
+            <link rel="preconnect" href="https://calendly.com" crossorigin />
+          </Fragment>
+        )}
 
         <style is:inline set:html={`
             @font-face {
