@@ -52,6 +52,13 @@ const pathname = Astro.url.pathname === '/'
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
+// Content pages (blog posts pass type="article", video pages pass type="video")
+// are low booking-intent and perf/SEO-sensitive, so we skip the Calendly
+// preconnects there — the warm-on-hover handler covers the rare booking click.
+// Commercial pages (home, features, benefits, etc.) keep both preconnects so
+// the booking popup opens snappily.
+const isContentPage = type === 'article' || type === 'video';
+
 // 5. Schema Assembly
 const graph: any[] = [
   // 1. Organization (Identity)
@@ -315,10 +322,16 @@ const jsonLd = {
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
-        {/* assets.calendly.com serves the widget JS/CSS (idle-prefetched ~10s post-load).
-             The calendly.com apex is only hit inside the booking iframe after a click, so a
-             top-document preconnect to it went unused every pageview — removed. */}
-        <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
+        {/* assets.calendly.com serves the widget JS/CSS; calendly.com is the booking
+             iframe origin. Both are only needed where booking happens, so we preconnect
+             on high-intent commercial pages and skip it on content pages (posts/videos)
+             where warm-on-hover already covers the rare click. */}
+        {!isContentPage && (
+          <Fragment>
+            <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
+            <link rel="preconnect" href="https://calendly.com" crossorigin />
+          </Fragment>
+        )}
 
         <style is:inline set:html={`
             @font-face {
