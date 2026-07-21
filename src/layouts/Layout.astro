@@ -326,6 +326,7 @@ const jsonLd = {
              iframe origin. Both are only needed where booking happens, so we preconnect
              on high-intent commercial pages and skip it on content pages (posts/videos)
              where warm-on-hover already covers the rare click. */}
+
         {!isContentPage && (
           <Fragment>
             <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
