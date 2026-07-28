@@ -549,7 +549,21 @@ if (priorityImgMatch) {
     // Create Mobile Sheet
     const sheet = document.createElement('div');
     sheet.id = 'smartlink-mobile-sheet';
-    sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
+    // `hidden` MUST stay first and MUST stay on the initial className.
+    // This element is created at runtime, so Beasties never sees it when it
+    // extracts critical CSS from the static HTML — which means `fixed`,
+    // `bottom-0`, `inset-x-0` and `translate-y-full` get pruned and only exist
+    // in the async stylesheet. Until that sheet lands, an un-hidden sheet has
+    // no positioning at all: it renders `position:static` in normal flow at the
+    // end of <body>, at full content height, pushing the page down — then snaps
+    // out of flow when the CSS arrives. That is a large layout shift, and it's
+    // invisible on a fast connection (the gap is ~0ms) but severe on real
+    // mobile. `hidden` (display:none) IS in the critical CSS, so it applies at
+    // first paint and the element has zero layout impact until it's opened.
+    // Both open paths below reassign className wholesale, so this doesn't
+    // interfere with showing the sheet. The scrim and desktop card are already
+    // safe for the same reason — both ship with `hidden`.
+    sheet.className = 'hidden fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
     sheet.setAttribute('role', 'dialog');
     sheet.setAttribute('aria-labelledby', 'sl-mobile-title');
     sheet.innerHTML = `
