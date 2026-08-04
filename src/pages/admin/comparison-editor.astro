@@ -1,0 +1,15 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ComparisonEditor from '../../components/solid/micro-apps/ComparisonEditor';
+
+// Use strict typing mode
+export const prerender = true;
+---
+
+<Layout title="Comparison Editor [Admin] | DataDocks">
+  <main class="w-full min-h-screen bg-white">
+    <div class="max-w-[1400px] mx-auto px-4 md:px-8 py-16">
+      <ComparisonEditor client:load />
+    </div>
+  </main>
+</Layout>
