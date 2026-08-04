@@ -1,5 +1,5 @@
 /** @jsxImportSource solid-js */
-import { createSignal, createMemo, For, Show, onMount, createEffect } from "solid-js";
+import { createSignal, createMemo, For, Show, createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
 import type { Component } from "solid-js";
 import { cn } from "@/components/solid/lib/utils";
@@ -335,7 +335,9 @@ const ComparisonEditor: Component = () => {
         }
       }
     }
-  } catch(e) {}
+  } catch (e) {
+    // Ignore JSON parse error from localStorage
+  }
   
   const [storeCompetitors, setStoreCompetitors] = createStore<Record<string, ComparisonCompetitor>>(savedComps);
   const [storeDataDocks, setStoreDataDocks] = createStore<Record<string, FeatureDetail>>(savedDD);
