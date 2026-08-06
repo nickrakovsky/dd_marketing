@@ -1,131 +1,76 @@
 ---
-title: "Yard Management"
-description: "Live yard map, drag-and-drop trailer moves, color-coded dwell timers, and dispatched move orders. Yard visibility and dock scheduling in one platform."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/vision.svg"
-videoUrl: "https://youtu.be/iSLzwQ3ZJFg"
+description: 'Track trailer locations on a digital yard map and send electronic jockey orders to keep yard and dock flow in sync.'
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/vision.svg
+videoUrl: 'https://youtu.be/iSLzwQ3ZJFg'
+faq:
+  - question: Do I need GPS tags or RFID to use yard management?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can drivers check themselves in without downloading an app?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How does the yard map handle facilities with multiple lots or overflow areas?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Can I see yard status from my phone?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How does yard management connect to dock scheduling?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'Start by mapping your yard in DataDocks; define your parking spots, staging lanes, and dock doors. This takes 30–60 minutes for a typical facility. Once the map is set, your team can start logging trailer positions using drag-and-drop. You don''t need hardware or GPS tags to begin; manual tracking on a digital yard map is already a massive upgrade from clipboard-based systems. As you grow, you can layer in driver self-check-in and automated yard moves.'
+  differentiation: 'Standalone YMS platforms are expensive, complex, and often require dedicated yard jockeys with handheld devices. DataDocks builds yard management directly into the dock scheduling workflow; so when a trailer arrives and checks in, it automatically appears on your yard map. No duplicate entry, no separate system. The drag-and-drop interface lets anyone move a trailer on the map in seconds. Driver self-check-in via mobile means drivers update their own position, reducing the need for yard personnel to physically track every move.'
+  businessImpact: 'The average facility loses 15–30 minutes per trailer in yard search time; someone physically walking or driving the yard to find where a trailer is parked. With 20+ trailers on-site, that''s hours per day. Digital yard visibility eliminates search time entirely. It also reduces detention: if you know exactly where every trailer is and how long it''s been sitting, you can prioritise moves and avoid letting detention clocks run. Facilities using DataDocks yard management report 20–40% reductions in average yard dwell time.'
+  vision: 'Yard management is the missing link between dock scheduling and supply chain visibility. Most facilities have decent visibility inside the warehouse (WMS) and decent visibility on the road (TMS), but the yard is a black hole. DataDocks closes that gap. With yard visibility, you can answer questions that were previously unanswerable: "How many trailers are waiting right now? How long has the oldest one been sitting? Which ones are ready for dock-in?" This data feeds labour planning, carrier negotiations, and facility design decisions.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef good fill:#e0eedb,stroke:#8DCA77,stroke-width:2px,color:#4a8136;
+        classDef spot fill:#d0ddf6,stroke:#4a69a4,stroke-width:2px,color:#011E26;
+
+        A[Gate Check-in] --> B[Assign Yard Spot]
+        B --> C{Dock Door Ready?}
+        C -->|Yes| D[Direct to Door]:::good
+        C -->|No| E[Request Spotter Move]:::action
+        E --> F[Spotter Confirms Move]:::spot
+        F --> G[Trailer at Door]:::good
+    caption: The Yard Move Lifecycle
+  table:
+    title: Yard Management Features
+    headers:
+       - Capability
+       - What It Does
+       - Who Benefits
+    rows:
+       - - Digital yard map
+         - Visual representation of all trailer positions
+         - 'Yard managers, coordinators'
+       - - Drag-and-drop moves
+         - Reassign trailers to spots or docks instantly
+         - 'Yard jockeys, supervisors'
+       - - Driver self-check-in
+         - Drivers report arrival and parking location via mobile
+         - 'Drivers, gate staff'
+       - - Trailer dwell tracking
+         - Automatic timer on every trailer from arrival to departure
+         - 'Ops managers, finance'
+       - - Yard move requests
+         - Request and track trailer moves between spots and docks
+         - 'Dock supervisors, yard team'
+  tableContext: A congested yard acts as a choke point for the entire warehouse. True yard visibility means knowing exactly what is sitting in every spot and orchestrating moves efficiently.
+  visionSegue: 'Full yard visibility is the prerequisite for an autonomous yard, where moves are orchestrated without human intervention.'
+  layoutConfig:
+    implementationColSpan: 8
+    implementationOrder: 1
+    dataVizColSpan: 4
+    dataVizRowSpan: 2
+    dataVizOrder: 2
+    differentiationColSpan: 8
+    differentiationOrder: 3
+    businessImpactColSpan: 12
+    businessImpactOrder: 4
+title: Yard Visibility & Jockey Orders
 ---
-
-<p>
-DataDocks provides a live, interactive map for your yard operations. Stop relying on radios and clipboards. Get complete visibility of trailer locations and empower your team to schedule moves and track dwell times alongside <a href="/datadocks-features/dock-dashboard">dock scheduling</a>. For a broader look at how yard management fits into warehouse operations, see our <a href="/yard-management">yard management system</a> overview.
-</p>
-
-<h3>
-Core Capabilities
-</h3>
-
-<ul>
-
-<li>
-<strong>Interactive Yard Map:</strong> Drag and drop trailers to different parking spots or dock doors.
-</li>
-
-<li>
-<strong>Color-Coded Dwell Timers:</strong> Spot aging inventory instantly with clear visual indicators.
-</li>
-
-<li>
-<strong>Digital Move Orders:</strong> Dispatch tasks directly to yard jockey mobile devices with priority queuing.
-</li>
-
-<li>
-<strong>Unified Scheduling:</strong> View yard operations and dock scheduling side by side.
-</li>
-
-</ul>
-
-<h3>
-What It Does on the Ground
-</h3>
-
-<div data-rt-embed-type='true'>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Challenge</th>
-<th>What DataDocks does</th>
-<th>Operational result</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>No visibility into what's sitting in the yard</td>
-<td>Interactive yard map with real-time trailer positions and color-coded dwell timers</td>
-<td>Coordinators stop walking the lot; managers get a single screen for the full picture</td>
-
-</tr>
-
-<tr>
-
-<td>Dock scheduling and yard ops run on separate systems</td>
-<td>Scheduling and yard management in one platform. One login, one data model</td>
-<td>No double entry, no drift between appointment status and physical trailer location</td>
-
-</tr>
-
-<tr>
-
-<td>Each facility has different dock layouts, rules, and workflows</td>
-<td>Per-site configuration: dock doors, yard zones, capacity rules, and custom fields</td>
-<td>Standardize reporting across sites without forcing identical processes on each one</td>
-
-</tr>
-
-<tr>
-
-<td>Yard jockeys work off radios and guesswork</td>
-<td>Digital move orders dispatched to mobile devices with priority queuing</td>
-<td>Fewer wasted moves, faster dock turns, audit trail for every trailer touch</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-<h3>
-Multi-Site and Cross-Facility
-</h3>
-
-<p>
-Each facility gets its own dock door layout, yard zones, capacity rules, and custom fields. Your corporate team gets standardized reporting across every site without forcing identical processes on the floor.
-</p>
-
-<h3>
-Connects to Your Existing Stack
-</h3>
-
-<p>
-DataDocks sits between your TMS and your WMS. REST API, webhooks, EDI-via-API bridge, and SSO (OAuth 2.0 / SAML) come out of the box. Production integrations with SAP S/4HANA, Oracle Fusion Cloud, NetSuite, and Microsoft Power BI. See the full list on the <a href="/integrations">integrations page</a>.
-</p>
-
-<h3>
-Deployment
-</h3>
-
-<ul>
-
-<li>
-<strong>Cloud-hosted SaaS:</strong> no on-prem infrastructure required.
-</li>
-
-<li>
-<strong>SOC 2 certified:</strong> Data encrypted in transit and at rest.
-</li>
-
-<li>
-<strong>Pilot-friendly:</strong> start with one facility, one shift, or even one dock door. Then expand.
-</li>
-
-</ul>

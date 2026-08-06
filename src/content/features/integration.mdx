@@ -1,19 +1,69 @@
 ---
-title: "Integration"
-description: "Use DataDocks as a standalone dock scheduling system or integrate it seamlessly with your WMS/TMS to eliminate double entry and streamline operations."
-pubDate: "2026-02-23T16:10:17.000Z"
-icon: "/images/features/63d76f8d30313d7992525cb5_automation.svg"
-videoUrl: "https://youtu.be/D_dkfxwZKBY"
+description: Use DataDocks as a standalone dock scheduling system or integrate it seamlessly with your WMS/TMS to eliminate double entry and streamline operations.
+pubDate: '2026-02-23T16:10:17.000Z'
+icon: /images/features/63d76f8d30313d7992525cb5_automation.svg
+videoUrl: 'https://youtu.be/D_dkfxwZKBY'
+faq:
+  - question: Can DataDocks work standalone without any integration?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How long does a typical WMS integration take?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Which WMS and TMS platforms have pre-built integrations?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: Is the API available on all pricing plans?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  - question: How do you handle data conflicts between systems?
+    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+keyMetric:
+  value: N/A
+  label: Metric placeholder
+bentoContent:
+  implementation: 'DataDocks works standalone from day one; no integration required to start scheduling. When you''re ready to connect your WMS or TMS, the integration uses a REST API with webhook support. Common integrations (SAP EWM, Blue Yonder, Oracle WMS, Manhattan, and major TMS platforms) have documented patterns. Your IT team or DataDocks'' integration support can typically get a basic bi-directional sync running in 1–2 weeks. Start with PO sync (appointments auto-populate from your WMS) and expand from there.'
+  differentiation: 'Many dock scheduling tools claim "integration" but deliver a one-way CSV export. DataDocks provides true bi-directional integration: appointment data flows into your WMS, and order/PO data flows back into DataDocks. Webhooks push real-time status updates (arrived, loading, departed) to your TMS or visibility platform without polling. For legacy systems, an optional X12/EDIFACT bridge handles EDI without custom middleware.'
+  businessImpact: 'Double entry is the most obvious cost: every appointment that has to be keyed into both DataDocks and your WMS wastes 2–3 minutes and introduces error risk. At 80 loads per day, that''s 3–4 hours of redundant data entry. But the bigger win is data consistency; when your WMS and dock schedule are in sync, receiving can pre-stage, labour can be planned against confirmed arrivals, and your TMS has real-time dock status for carrier communication.'
+  vision: 'Integration is what turns DataDocks from a scheduling tool into a logistics data hub. When dock events (arrival, dock-in, dock-out, departure) flow automatically to your WMS, TMS, and visibility platforms, you create a continuous data stream across your supply chain. This is the foundation for end-to-end visibility, automated workflows, and the kind of cross-system intelligence that supply chain centres of excellence are built on.'
+  dataViz:
+    type: mermaid
+    content: |-
+      flowchart TD
+        classDef default fill:#faf8f5,stroke:#9c806d,stroke-width:1px,color:#000000;
+        classDef action fill:#FE5000,stroke:#FE5000,stroke-width:2px,color:#FFF8EE,font-weight:bold;
+        classDef core fill:#ad9686,stroke:#ece6de,stroke-width:2px,color:#FFF8EE;
+
+        A[Carrier TMS] <-->|API/EDI| B((DataDocks)):::action
+        B <-->|API| C[Warehouse WMS]:::core
+        B <-->|Webhooks| D[ERP System]:::core
+    caption: DataDocks as the integration bridge
+  table:
+    title: Integration Capabilities
+    headers:
+       - Integration
+       - Direction
+       - What Syncs
+       - Benefit
+    rows:
+       - - WMS → DataDocks
+         - Inbound
+         - PO/ASN data auto-creates appointments
+         - Eliminates manual appointment creation
+       - - DataDocks → WMS
+         - Outbound
+         - Arrival/departure timestamps
+         - Receiving can pre-stage; labour planning
+       - - DataDocks → TMS
+         - Outbound
+         - Real-time dock status via webhook
+         - Carrier gets live ETA updates
+       - - ERP → DataDocks
+         - Inbound
+         - 'Order data, carrier assignments'
+         - Single source of truth
+       - - DataDocks → BI tools
+         - Outbound
+         - All operational data via API
+         - Custom dashboards and analytics
+  tableContext: 'DataDocks doesn''t operate in a vacuum. By integrating directly with your existing systems, it eliminates double data entry and keeps your entire tech stack perfectly synchronized.'
+  visionSegue: 'Seamless integrations form the central nervous system of a highly automated, touchless supply chain.'
+title: WMS & TMS Integrations
 ---
-
-<p id="">
-Experience the flexibility of DataDocks' integration features. Seamlessly connect our software with your existing Warehouse or Transportation Management Systems, or use it standalone for comprehensive dock scheduling and yard management.
-</p>
-
-<p>
-‍
-</p>
-
-<p id="">
-Let our team assist in eliminating double entry and improving your workflow. With DataDocks, optimize your dock operations and make us the crucial link in your logistics software chain.
-</p>
+\n

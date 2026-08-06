@@ -6,6 +6,7 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import LTLCalculator from '../../components/micro-apps/LTLCalculator';
 import SmartLink from '../../components/SmartLink.astro';
+import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 import MDXImage from '../../components/MDXImage.astro';
 
 export async function getStaticPaths() {
@@ -22,6 +23,7 @@ const { Content } = await app.render();
 const components = {
     LTLCalculator: LTLCalculator,
     SmartLink: SmartLink,
+    RelatedFeatureCallout: RelatedFeatureCallout,
     img: MDXImage,
 };
 

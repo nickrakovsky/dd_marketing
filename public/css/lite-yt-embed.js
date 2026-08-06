@@ -26,7 +26,8 @@ class LiteYTEmbed extends HTMLElement {
          * See https://github.com/paulirish/lite-youtube-embed/blob/master/youtube-thumbnail-urls.md
          */
         if (!this.style.backgroundImage) {
-          this.style.backgroundImage = `url("https://i.ytimg.com/vi/${this.videoId}/hqdefault.jpg")`;
+          // Same-origin proxy so the poster gets a 24h cache instead of YouTube's 2h. See src/pages/yt-thumb/[id].ts
+          this.style.backgroundImage = `url("/yt-thumb/${this.videoId}")`;
           this.upgradePosterImage();
         }
 
@@ -217,7 +218,7 @@ class LiteYTEmbed extends HTMLElement {
     upgradePosterImage() {
          // Defer to reduce network contention.
         setTimeout(() => {
-            const webpUrl = `https://i.ytimg.com/vi_webp/${this.videoId}/sddefault.webp`;
+            const webpUrl = `/yt-thumb/${this.videoId}?q=sdwebp`;
             const img = new Image();
             img.fetchPriority = 'low'; // low priority to reduce network contention
             img.referrerpolicy = 'origin'; // Not 100% sure it's needed, but https://github.com/ampproject/amphtml/pull/3940

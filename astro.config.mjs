@@ -7,10 +7,12 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
+import mermaid from 'astro-mermaid';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import Beasties from 'beasties';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
@@ -47,15 +49,23 @@ export default defineConfig({
     build: {
       cssCodeSplit: false,
     },
+    optimizeDeps: {
+      exclude: ['@kobalte/core', '@kobalte/core/accordion'],
+    },
+    ssr: {
+      noExternal: ['@kobalte/core'],
+    },
   },
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
+    '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
     '/posts/what-is-a-yard-management-system-yms': '/yard-management',
     '/posts/yard-management-vs-dock-scheduling-vs-yms': '/yard-management',
     '/posts/crucial-components-to-successful-yard-management': '/posts/yard-management-process-flow',
+    '/posts/how-shippers-and-receivers-are-eliminating-detention-and-demurrage-fees': '/posts/truck-detention-accessorial-fees',
   },
 
   integrations: [
@@ -101,6 +111,40 @@ export default defineConfig({
             });
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
+
+          // Critical-CSS inlining for blog posts ONLY (dist/posts/*.html).
+          // The site ships a single shared stylesheet (cssCodeSplit stays false).
+          // On /posts/ pages that one file is render-blocking and delays LCP
+          // (~577ms). Beasties inlines the above-the-fold CSS into <head> and
+          // rewrites the <link> to load the SAME single file asynchronously, so
+          // first paint no longer waits on it. Scoped to /posts/ so every other
+          // page (home, features, etc.) is left byte-for-byte unchanged.
+          const distDir = fileURLToPath(dir);
+          const postsDistDir = path.join(distDir, 'posts');
+          if (fs.existsSync(postsDistDir)) {
+            const beasties = new Beasties({
+              path: distDir,          // resolve /_astro/*.css from the build root
+              publicPath: '/',
+              preload: 'swap',        // async-load the full sheet, apply on load
+              pruneSource: false,     // keep the shared external file intact for other pages
+              inlineFonts: false,     // fonts already handled in Layout.astro
+              logLevel: 'silent',
+            });
+            const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
+            let processed = 0;
+            for (const file of postFiles) {
+              const filePath = path.join(postsDistDir, file);
+              try {
+                const html = fs.readFileSync(filePath, 'utf-8');
+                const inlined = await beasties.process(html);
+                fs.writeFileSync(filePath, inlined);
+                processed++;
+              } catch (err) {
+                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+              }
+            }
+            console.log(`[critical-css] inlined critical CSS for ${processed}/${postFiles.length} blog posts`);
+          }
         }
       }
     },
@@ -114,7 +158,7 @@ export default defineConfig({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
     }),
     solid({
-      include: ['**/solid/**'],
+      include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
       filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !page.endsWith('/404') && !page.endsWith('/404/'),
@@ -146,6 +190,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
       ],
-    }), mdx()],
+    }), mermaid(), mdx()],
 
 });

@@ -91,6 +91,12 @@ export default config({
                         itemLabel: (props) => props.fields.question.value || 'New FAQ Item',
                     }
                 ),
+                relatedFeature: fields.relationship({
+                    label: 'Related Feature',
+                    description: 'The feature page this blog post links to.',
+                    collection: 'features',
+                    validation: { isRequired: true }
+                }),
                 postType: fields.conditional(
                     fields.select({
                         label: 'Post Type',
@@ -346,6 +352,22 @@ export default config({
                     }
                 }),
             },
+        }),
+        features: collection({
+            label: 'Features',
+            slugField: 'title',
+            path: 'src/content/features/*',
+            format: { contentField: 'content' },
+            schema: {
+                title: fields.slug({ name: { label: 'Title' } }),
+                description: fields.text({ label: 'Short Description', multiline: true }),
+                pubDate: fields.text({ label: 'Publish Date' }),
+                icon: fields.text({ label: 'Icon path/URL' }),
+                videoUrl: fields.text({ label: 'Video URL' }),
+                content: fields.mdx({
+                    label: 'Feature Content',
+                })
+            }
         }),
         glossary: collection({
             label: 'Glossary',
