@@ -63,23 +63,6 @@ relatedFeatures: ['efficiency-reports']
 relatedBenefits: ['increase-capacity', 'digitize-operations']
 ---
 
-import BibliographyItem from '../../components/BibliographyItem.astro';
-
-
-export const Cite = ({ id }) => (
-  <a 
-    href={`#ref-${id}`} 
-    id={`cite-${id}`}
-    data-smartlink-trigger="true"
-    data-smartlink-type="academic"
-    data-smartlink-bibref={`#ref-${id}`}
-    className="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-[#fd4f00] hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium text-xs align-super"
-    aria-label={`Reference ${id}`}
-  >
-    [{id}]
-  </a>
-);
-
 ![Delivery van, forklift, and shopping cart representing the supply chain process on an orange background](../../assets/blog-images/retail-case-studies-1.jpeg)
 
 

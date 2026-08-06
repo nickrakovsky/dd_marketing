@@ -9,6 +9,9 @@ import SmartLink from '../../components/SmartLink.astro';
 import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
+import BibliographyItem from '../../components/BibliographyItem.astro';
+import Cite from '../../components/Cite.astro';
+import LeadMagnetForm from '../../components/LeadMagnetForm.astro';
 import { ytThumb } from '../../lib/yt-thumb';
 // getFriendlyDate is unused
 // import { getFriendlyDate } from '../../utils/dateFormatter';
@@ -129,7 +132,7 @@ if (!(globalThis as any).mdxImageCounts) {
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, table: MDXTable, img: MDXImage }} />
+                <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage }} />
               </section>
             </div>
           </div>
@@ -198,6 +201,6 @@ if (!(globalThis as any).mdxImageCounts) {
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, table: MDXTable, img: MDXImage }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage }} />
   </BlogPostLayout>
 )}
