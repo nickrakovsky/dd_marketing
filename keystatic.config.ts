@@ -32,8 +32,10 @@ export default config({
                     {
                         label: 'Featured Posts Carousel',
                         itemLabel: (props) => props.value || 'Select a post',
-                        // This forces the CEO to pick EXACTLY 3 posts. No more, no less.
-                        validation: { length: { min: 3, max: 3 } }
+                        // Max 3 to protect the carousel layout. No min — an empty list is
+                        // valid (nothing consumes this yet) and a min would make the
+                        // singleton unopenable in the CMS until 3 posts were picked.
+                        validation: { length: { max: 3 } }
                     }
                 ),
             },
@@ -92,10 +94,31 @@ export default config({
                     }
                 ),
                 relatedFeature: fields.relationship({
-                    label: 'Related Feature',
-                    description: 'The feature page this blog post links to.',
+                    label: 'Related Feature (Primary)',
+                    description: 'Legacy single feature link. Used as a fallback when Related Features is empty.',
                     collection: 'features',
                     validation: { isRequired: true }
+                }),
+                relatedFeatures: fields.array(
+                    fields.relationship({
+                        label: 'Feature',
+                        collection: 'features',
+                    }),
+                    {
+                        label: 'Related Features',
+                        description: 'Feature pages this post links to. Takes priority over the primary feature above.',
+                        itemLabel: (props) => props.value || 'Select a feature',
+                    }
+                ),
+                relatedBenefits: fields.multiselect({
+                    label: 'Related Benefits',
+                    description: 'Benefit pages surfaced in the post CTA block.',
+                    options: [
+                        { label: 'Increase Capacity', value: 'increase-capacity' },
+                        { label: 'Digitize Operations', value: 'digitize-operations' },
+                        { label: 'Delight Carriers', value: 'delight-carriers' },
+                        { label: 'See Everything', value: 'see-everything' },
+                    ],
                 }),
                 postType: fields.conditional(
                     fields.select({
@@ -364,6 +387,94 @@ export default config({
                 pubDate: fields.text({ label: 'Publish Date' }),
                 icon: fields.text({ label: 'Icon path/URL' }),
                 videoUrl: fields.text({ label: 'Video URL' }),
+                faq: fields.array(
+                    fields.object({
+                        question: fields.text({ label: 'Question' }),
+                        answer: fields.text({ label: 'Answer', multiline: true }),
+                    }),
+                    {
+                        label: 'FAQ Items',
+                        itemLabel: (props) => props.fields.question.value || 'New FAQ Item',
+                    }
+                ),
+                keyMetric: fields.object(
+                    {
+                        value: fields.text({ label: 'Value' }),
+                        label: fields.text({ label: 'Label' }),
+                    },
+                    { label: 'Key Metric' }
+                ),
+                testimonial: fields.object(
+                    {
+                        quote: fields.text({ label: 'Quote', multiline: true }),
+                        author: fields.text({ label: 'Author' }),
+                        role: fields.text({ label: 'Role' }),
+                        company: fields.text({ label: 'Company' }),
+                    },
+                    { label: 'Testimonial' }
+                ),
+                bentoContent: fields.object(
+                    {
+                        implementation: fields.text({ label: 'Implementation', multiline: true }),
+                        differentiation: fields.text({ label: 'Differentiation', multiline: true }),
+                        businessImpact: fields.text({ label: 'Business Impact', multiline: true }),
+                        vision: fields.text({ label: 'Vision', multiline: true }),
+                        tableContext: fields.text({ label: 'Table Context', multiline: true }),
+                        visionSegue: fields.text({ label: 'Vision Segue', multiline: true }),
+                        dataViz: fields.object(
+                            {
+                                type: fields.select({
+                                    label: 'Type',
+                                    options: [
+                                        { label: 'Mermaid', value: 'mermaid' },
+                                        { label: 'Image', value: 'image' },
+                                    ],
+                                    defaultValue: 'mermaid',
+                                }),
+                                content: fields.text({ label: 'Content', multiline: true }),
+                                caption: fields.text({ label: 'Caption' }),
+                            },
+                            { label: 'Data Visualisation' }
+                        ),
+                        table: fields.object(
+                            {
+                                title: fields.text({ label: 'Title' }),
+                                headers: fields.array(fields.text({ label: 'Header' }), {
+                                    label: 'Headers',
+                                    itemLabel: (props) => props.value || 'Header',
+                                }),
+                                rows: fields.array(
+                                    fields.array(fields.text({ label: 'Cell' }), {
+                                        label: 'Cells',
+                                        itemLabel: (props) => props.value || 'Cell',
+                                    }),
+                                    { label: 'Rows' }
+                                ),
+                            },
+                            { label: 'Comparison Table' }
+                        ),
+                        layoutConfig: fields.object(
+                            {
+                                dataVizColSpan: fields.number({ label: 'Data Viz Col Span' }),
+                                implementationColSpan: fields.number({ label: 'Implementation Col Span' }),
+                                differentiationColSpan: fields.number({ label: 'Differentiation Col Span' }),
+                                businessImpactColSpan: fields.number({ label: 'Business Impact Col Span' }),
+                                dataVizRowSpan: fields.number({ label: 'Data Viz Row Span' }),
+                                implementationRowSpan: fields.number({ label: 'Implementation Row Span' }),
+                                differentiationRowSpan: fields.number({ label: 'Differentiation Row Span' }),
+                                businessImpactRowSpan: fields.number({ label: 'Business Impact Row Span' }),
+                                dataVizOrder: fields.number({ label: 'Data Viz Order' }),
+                                implementationOrder: fields.number({ label: 'Implementation Order' }),
+                                differentiationOrder: fields.number({ label: 'Differentiation Order' }),
+                                businessImpactOrder: fields.number({ label: 'Business Impact Order' }),
+                                dataVizPadding: fields.text({ label: 'Data Viz Padding (Tailwind class)' }),
+                            },
+                            { label: 'Bento Layout Config' }
+                        ),
+                    },
+                    { label: 'Bento Content' }
+                ),
+                microApp: fields.text({ label: 'Micro App ID' }),
                 content: fields.mdx({
                     label: 'Feature Content',
                 })
