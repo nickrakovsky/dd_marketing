@@ -16,7 +16,7 @@ export const defaultContent: PageContent = {
     badgeText: "More Than 1,000,000 Appointments Booked Annually!",
     headline: "GET ACTIONABLE DATA ABOUT EVERYTHING THAT COMES THROUGH YOUR DOCKS",
     emailPlaceholder: "Enter your work email",
-    buttonText: "Get Free Demo",
+    buttonText: "Book a Demo",
     dashboardAlt: "Dashboard showing appointment analytics, dock statistics, and peak booking times",
     desktopImage: dashboardPreview,
   },
