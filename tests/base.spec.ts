@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 /**
@@ -26,7 +27,7 @@ function isIgnoredConsoleMessage(text: string): boolean {
  *
  * Returns getters for both lists; attach before the first navigation.
  */
-function trackPageErrors(page: import('@playwright/test').Page) {
+function trackPageErrors(page: Page) {
   const consoleErrors: string[] = [];
   const failedResponses: string[] = [];
 
