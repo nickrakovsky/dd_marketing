@@ -39,6 +39,24 @@ const MERMAID_CONFIG = {
   theme: 'default',
   fontFamily: 'Arial, Helvetica, sans-serif',
   flowchart: { useMaxWidth: true, htmlLabels: false, padding: 12 },
+  themeVariables: {
+    edgeLabelBackground: '#ffffff',
+  },
+  themeCSS: `
+    .edgeLabel rect, .edgeLabel rect.background, .labelBkg, .edgeLabel .background, .icon-shape .label rect, .image-shape .label rect {
+      fill: #faf8f5 !important;
+      opacity: 1 !important;
+      background-color: #faf8f5 !important;
+      stroke: none !important;
+      stroke-width: 0 !important;
+    }
+    .edgeLabel span, .edgeLabel text, .edgeLabel tspan {
+      fill: #000000 !important;
+      color: #000000 !important;
+      opacity: 1 !important;
+      font-weight: 500 !important;
+    }
+  `,
 };
 
 const checkOnly = process.argv.includes('--check');
