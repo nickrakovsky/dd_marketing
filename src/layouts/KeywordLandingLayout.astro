@@ -1,0 +1,76 @@
+---
+/*
+  Shell for the noindexed keyword landing pages. Renders the homepage section
+  stack verbatim (Clients through CTA are imported read-only) with a
+  props-driven hero. The homepage itself does not use this layout.
+*/
+import Layout from './Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import KeywordHero from '../components/landing/KeywordHero.astro';
+import Clients from '../components/home/Clients.astro';
+import Benefits from '../components/home/Benefits.astro';
+import FeatureGrid from '../components/home/FeatureGrid.astro';
+import WhatIsDockScheduling from '../components/home/WhatIsDockScheduling.astro';
+import Testimonials from '../components/home/Testimonials.tsx';
+import Resources from '../components/home/Resources.astro';
+import FAQ from '../components/FAQ';
+import CTA from '../components/home/CTA.astro';
+import Footer from '../components/Footer.astro';
+
+import { getOptimizedTestimonials, rawTestimonials } from '../data/testimonials';
+import { homepageFaqs } from '../data/homepage-faqs';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Headline lines for desktop (860px+). */
+  lines: string[];
+  /** Headline lines below 860px. Defaults to `lines`. */
+  mobileLines?: string[];
+  subheadline: string;
+}
+
+const { title, description, lines, mobileLines, subheadline } = Astro.props;
+
+const optimizedTestimonials = await getOptimizedTestimonials();
+---
+
+<Layout
+  title={title}
+  description={description}
+  noindex={true}
+  schemaData={{
+    reviews: rawTestimonials.map(t => ({ author: t.author, quote: t.quote })),
+    faq: homepageFaqs
+  }}
+>
+
+  <link slot="head" rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" imagesrcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" imagesizes="100vw" media="(min-width: 860px)" fetchpriority="high" />
+
+  <Navigation />
+
+  <main class="bg-[#FFF8E9] min-h-screen">
+
+    <KeywordHero lines={lines} mobileLines={mobileLines} subheadline={subheadline} />
+
+    <Clients />
+
+    <Benefits />
+
+    <FeatureGrid />
+
+    <WhatIsDockScheduling />
+
+    <Testimonials items={optimizedTestimonials} client:visible />
+
+    <Resources />
+
+    <FAQ client:visible content={{ faqs: homepageFaqs }} />
+
+    <CTA />
+
+  </main>
+
+  <Footer />
+
+</Layout>

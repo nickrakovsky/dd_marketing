@@ -1,0 +1,473 @@
+---
+/*
+  Props-driven copy of home/Hero.astro used by the noindexed keyword landing
+  pages. Structurally identical to the homepage hero; only the H1 lines and the
+  subheading copy vary. Kept separate so the homepage hero is never touched.
+
+  Headline sizing: the homepage hero hardcodes sizes tuned for "YOUR YARD".
+  These headlines are much longer and vary in length, so each line group gets a
+  width-fitting ceiling (--title-fit-*) computed from its longest line. The
+  rendered size is min(vertical-fit size, width-fit size), so the headline can
+  never overflow its container on any viewport.
+*/
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
+
+interface Props {
+  /** Headline lines for desktop (860px+), rendered uppercase. */
+  lines: string[];
+  /** Headline lines below 860px. Defaults to `lines`. */
+  mobileLines?: string[];
+  /** Subheading sentence. May contain HTML entities such as &nbsp;. */
+  subheadline: string;
+  /** Bold closing line under the subheading. */
+  kicker?: string;
+}
+
+const {
+  lines,
+  mobileLines = lines,
+  subheadline,
+  kicker = 'Start turning trucks around faster&nbsp;today.',
+} = Astro.props;
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
+
+// Approximate advance width per character for Bruta ExtraBold Compressed, as a
+// fraction of font-size. Deliberately generous: overestimating shrinks the text
+// slightly, underestimating would let it overflow.
+const CHAR_WIDTH_RATIO = 0.62;
+
+const longest = (ls: string[]) => Math.max(...ls.map((l) => l.length));
+
+// Desktop container is max-w-4xl (896px), minus the container's horizontal padding.
+const desktopFit = `calc(min(100vw - 2rem, 896px) / ${longest(lines)} / ${CHAR_WIDTH_RATIO})`;
+const mobileFit = `calc((100vw - 2rem) / ${longest(mobileLines)} / ${CHAR_WIDTH_RATIO})`;
+---
+
+<section
+  class="relative pt-16 md:pt-24 pb-12 overflow-hidden bg-[#FFF8E9] text-black hero-mobile-section"
+>
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col items-center max-w-5xl mx-auto text-center">
+      <div class="relative mb-10 hero-spacing-1 w-full max-w-4xl mx-auto">
+        <h1
+          class="font-bruta uppercase relative z-0 text-black"
+          style={`--title-fit-desktop: ${desktopFit}; --title-fit-mobile: ${mobileFit};`}
+        >
+          {/* MOBILE / TABLET STACKED VIEW (below 860px) */}
+          <span
+            class="block hero-desktop:hidden hero-mobile-title leading-[0.85] text-black w-full"
+          >
+            {mobileLines.map((line) => <span class="block">{line}</span>)}
+          </span>
+
+          {/* DESKTOP VIEW (860px+) */}
+          <span
+            class="hidden hero-desktop:block leading-[0.85] text-black"
+            style="font-size: min(6rem, var(--title-fit-desktop));"
+          >
+            {lines.map((line) => <span class="block">{line}</span>)}
+          </span>
+        </h1>
+      </div>
+
+      {/* 2. Subheading — responsive: ~4 lines narrow / ~3 lines mid / 2 lines desktop */}
+      <p
+        class="font-recoleta text-[clamp(1.1rem,3.2vw,1.5rem)] hero-mobile-body text-black mb-12 hero-spacing-2 max-w-[85vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[560px] mx-auto leading-relaxed px-2"
+      >
+        <span set:html={subheadline} />
+        <br class="hidden lg:block" />
+        <strong class="text-black block mt-6 md:mt-4" set:html={kicker} />
+      </p>
+
+      {/* 3. Form Area */}
+      <div class="w-full max-w-[95%] md:max-w-2xl mx-auto mb-12 px-0">
+        <form
+          id="hero-bento-form"
+          class="flex flex-col sm:flex-row items-stretch justify-center gap-0 bg-[#EFE2D2] sm:bg-transparent"
+        >
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
+            class="!h-12 sm:!h-14 w-full sm:w-[22rem] px-4 text-center sm:text-left sm:hover:pl-5 sm:focus:pl-5 transition-all duration-300 bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none"
+            required
+          />
+          <button
+            type="submit"
+            class="!h-12 sm:!h-14 w-full sm:w-auto px-8 bg-[#FE5000] hover:bg-black text-white font-normal transition-colors duration-500 whitespace-nowrap tracking-wide text-[1.2rem] flex items-center justify-center font-recoleta [text-shadow:0px_1px_2px_rgba(0,0,0,0.4)] hover:[text-shadow:none]"
+          >
+            Book a Demo
+          </button>
+        </form>
+      </div>
+    </div>
+
+    {/* 4. Desktop Hero Image */}
+    <div
+      class="hidden hero-desktop:block relative w-screen ml-[calc(50%-50vw)] mt-16 shadow-[0_12px_15px_-10px_rgba(0,0,0,0.1)] overflow-hidden"
+    >
+      <img
+        src={`${basePath}/images/DataDocks-Calendar-Screenshot.webp`}
+        srcset={`${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, ${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, ${basePath}/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, ${basePath}/images/DataDocks-Calendar-Screenshot.webp 2000w`}
+        sizes="100vw"
+        alt="DataDocks Calendar Interface"
+        width="2000"
+        height="717"
+        fetchpriority="high"
+        loading="eager"
+        class="w-full h-auto object-cover"
+      />
+    </div>
+  </div>
+</section>
+
+{/* Mobile hero image — rendered OUTSIDE the hero section so it is always
+    structurally below the fold on narrow phones. The text + CTA above are
+    the true LCP candidate on Lighthouse's 360px throttled device. */}
+<div class="block hero-desktop:hidden w-full" id="hero-mobile-wrapper">
+  <div
+    id="hero-mobile-frame"
+    class="relative w-full overflow-hidden touch-pan-y hero-image-container"
+  >
+    <picture>
+      <source
+        type="image/avif"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.avif 750w, ${basePath}/images/homepage-screenshot-mobile-1080.avif 1080w, ${basePath}/images/homepage-screenshot-mobile-1400.avif 1400w, ${basePath}/images/homepage-screenshot-mobile-1724.avif 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <source
+        type="image/webp"
+        srcset={`${basePath}/images/homepage-screenshot-mobile-750.webp 750w, ${basePath}/images/homepage-screenshot-mobile.webp 1724w`}
+        sizes="(max-width: 479px) 100vw, (max-width: 859px) 150vw, 100vw"
+      />
+      <img
+        id="hero-mobile-img"
+        src={`${basePath}/images/homepage-screenshot-mobile-750.webp`}
+        alt="DataDocks mobile dock scheduling interface"
+        width="1724"
+        height="655"
+        fetchpriority="low"
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover hero-pan-active"
+        style="object-position: 0% 50%;"
+      />
+    </picture>
+  </div>
+</div>
+
+{/*
+  Standard Astro scoping: these rules are emitted with a data-astro-cid
+  attribute selector and folded into the site-wide stylesheet (the project
+  builds with vite cssCodeSplit:false, so there is only one). That adds ~2.7KB
+  raw / ~800B gzipped to the file every page downloads. Scoping is worth it:
+  the class names here are generic (.hero-mobile-title, .hero-image-container)
+  and unscoped copies would be page-global.
+*/}
+<style>
+  /* Custom breakpoint: 860px for the hero desktop/mobile switch */
+  @media (min-width: 860px) {
+    .hero-desktop\:block {
+      display: block !important;
+    }
+    .hero-desktop\:hidden {
+      display: none !important;
+    }
+  }
+  @media (max-width: 859px) {
+    .hero-desktop\:block {
+      display: none !important;
+    }
+  }
+
+  /*
+    Mobile image container — sits below the hero section.
+    Tall enough (85vw) that the screenshot is well-framed, while the section's
+    min-height: 100svh keeps it below the fold.
+  */
+  .hero-image-container {
+    height: 85vw;
+    min-height: 250px;
+    max-height: 550px;
+    background: #f5ede0;
+    margin-top: 0;
+  }
+
+  @media (max-width: 859px) {
+    /*
+      STRUCTURAL GUARANTEE: the section is always at least as tall as the
+      viewport, so the mobile image (rendered outside the section) always
+      starts below the fold.
+    */
+    .hero-mobile-section {
+      min-height: 100svh;
+    }
+
+    /*
+      --title-max is the vertical-fit ceiling per device-height group (mirrors
+      the homepage hero's tuning). --title-fit-mobile is the width-fit ceiling
+      from the longest headline line. The smaller of the two always wins.
+    */
+    .hero-mobile-title {
+      font-size: min(var(--title-max), var(--title-fit-mobile)) !important;
+      --title-max: 4rem;
+    }
+    .hero-mobile-body {
+      font-size: clamp(1.2rem, 3.2vw, 1.4rem) !important;
+    }
+    .hero-spacing-1 {
+      margin-bottom: 6vh !important;
+    }
+    .hero-spacing-2 {
+      margin-bottom: 6vh !important;
+    }
+
+    /* Group 1: Very Small Screens (iPhone SE - 667px) */
+    @media (max-height: 680px) {
+      .hero-mobile-title {
+        --title-max: 3.3rem;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.2rem, 3.2vw, 1.25rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 5vh !important;
+      }
+      .hero-image-container {
+        margin-top: 1vh !important;
+      }
+    }
+
+    /* Group 2: Medium Screens (iPhone XR, iPhone 12 Pro/13 mini, Galaxy S8+) */
+    @media (min-height: 681px) and (max-height: 780px) {
+      .hero-mobile-section {
+        padding-top: 10vh !important;
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        --title-max: 3.8rem;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.25rem, 3.2vw, 1.35rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 0.5vh !important;
+      }
+    }
+
+    /* Group 3: Mid-Tall Screens (Moto G - 823px, iPhone 13 - 844px) */
+    @media (min-height: 781px) and (max-height: 850px) {
+      .hero-mobile-section {
+        padding-top: 13vh !important;
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        --title-max: 4.2rem;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.3rem, 3.2vw, 1.5rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 10vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 0.5vh !important;
+      }
+    }
+
+    /* Group 4: Ultra Tall Screens (iPhone 16 Pro/17, 14 Pro Max, Pixel 7) */
+    @media (min-height: 851px) {
+      .hero-mobile-section {
+        padding-top: 13vh !important;
+        padding-bottom: 2vh !important;
+      }
+      .hero-mobile-title {
+        --title-max: 4.5rem;
+      }
+      .hero-mobile-body {
+        font-size: clamp(1.4rem, 3.2vw, 1.6rem) !important;
+      }
+      .hero-spacing-1 {
+        margin-bottom: 9vh !important;
+      }
+      .hero-spacing-2 {
+        margin-bottom: 7vh !important;
+      }
+      .hero-image-container {
+        margin-top: 8vh !important;
+      }
+    }
+  }
+
+  .hero-pan-active {
+    will-change: object-position;
+  }
+</style>
+
+
+<script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
+  (function() {
+    function attachHeroForm() {
+      var form = document.getElementById('hero-bento-form');
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          if (typeof window.ddSetEmail === 'function') {
+            window.ddSetEmail(email);
+          }
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
+
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+              attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
+            }),
+            keepalive: true
+          }).catch(function() {});
+        }
+        if (typeof window.ddOpenCalendly === 'function') {
+          window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
+        } else {
+          window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
+        }
+        form.reset();
+      });
+    }
+
+    attachHeroForm();
+    document.addEventListener('astro:page-load', attachHeroForm);
+  })();
+</script>
+
+<script>
+  // Mobile image panning — deferred until after LCP paints (see home/Hero.astro)
+  const initPanning = () => {
+    const frame = document.getElementById("hero-mobile-frame");
+    const img = document.getElementById(
+      "hero-mobile-img",
+    ) as HTMLImageElement | null;
+
+    if (!frame || !img) return;
+
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let currentPct = 0;
+    const threshold = 7;
+
+    // ResizeObserver tracks frame width without forcing a reflow.
+    let cachedFrameWidth = 0;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        cachedFrameWidth = entry.contentRect.width;
+      }
+    });
+    ro.observe(frame);
+
+    const targetSpeed = 0.05;
+    let currentSpeed = 0;
+    let direction = 1;
+    let lastInteractionTime = 0;
+    const RESUME_DELAY = 500;
+    const ACCEL_DURATION = 1500;
+
+    const animate = () => {
+      const now = Date.now();
+      if (!isDragging && (now - lastInteractionTime > RESUME_DELAY)) {
+        const timeSinceResume = now - lastInteractionTime - RESUME_DELAY;
+        const momentum = Math.min(1, timeSinceResume / ACCEL_DURATION);
+        currentSpeed = targetSpeed * momentum;
+        currentPct += currentSpeed * direction;
+        if (currentPct >= 100) {
+          currentPct = 100;
+          direction = -1;
+        } else if (currentPct <= 0) {
+          currentPct = 0;
+          direction = 1;
+        }
+        img.style.objectPosition = `${currentPct}% 50%`;
+      } else {
+        currentSpeed = 0;
+      }
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+
+    frame.addEventListener("pointerdown", (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      frame.setPointerCapture(e.pointerId);
+      if (e.pointerType === 'mouse') {
+        isDragging = true;
+        lastInteractionTime = Date.now();
+      }
+    });
+
+    frame.addEventListener("pointermove", (e) => {
+      if (!isDragging) {
+        if (e.pointerType === 'mouse') return;
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        if (dx > threshold && dx > dy) {
+          isDragging = true;
+          startX = e.clientX;
+        }
+        return;
+      }
+      lastInteractionTime = Date.now();
+      const dx = e.clientX - startX;
+      // Guard against zero width during the first frames before ResizeObserver fires
+      const fw = cachedFrameWidth || frame.getBoundingClientRect().width;
+      const deltaPct = -(dx / fw) * 100;
+      const movePct = Math.max(0, Math.min(100, currentPct + deltaPct));
+      currentPct = movePct;
+      img.style.objectPosition = `${movePct}% 50%`;
+    });
+
+    frame.addEventListener("pointerup", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      lastInteractionTime = Date.now();
+    });
+
+    frame.addEventListener("pointercancel", () => {
+      isDragging = false;
+      lastInteractionTime = Date.now();
+    });
+  };
+
+  // Defer init until the browser is idle so this script never delays LCP.
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(initPanning, { timeout: 2000 });
+  } else {
+    requestAnimationFrame(() => setTimeout(initPanning, 0));
+  }
+</script>
