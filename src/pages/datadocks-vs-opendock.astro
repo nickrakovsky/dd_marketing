@@ -237,7 +237,12 @@ const sections = [
   <Footer />
 </Layout>
 
-<style>
+{/* is:inline keeps these ~6.6KB of page-specific styles OUT of the shared
+     CSS bundle that every page loads. This page is low-traffic, so it absorbs
+     the small inline cost while blog posts get a ~28% smaller render-blocking
+     bundle. Do NOT remove is:inline — without it these styles are bundled globally
+     (cssCodeSplit is intentionally false project-wide). */}
+<style is:inline>
   /* ══ HERO ═══════════════════════════════════════════════════════════════ */
   .vs-hero {
     display: block;
