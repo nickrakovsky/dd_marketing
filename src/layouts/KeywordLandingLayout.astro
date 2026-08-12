@@ -19,6 +19,10 @@ import Footer from '../components/Footer.astro';
 
 import { getOptimizedTestimonials, rawTestimonials } from '../data/testimonials';
 import { homepageFaqs } from '../data/homepage-faqs';
+// ?inline returns the PostCSS-processed (prefixed + minified) CSS as a string
+// instead of adding it to the sitewide bundle every page downloads. Emitted
+// into <head> below so the hero never paints unstyled. See the CSS file header.
+import heroCss from '../styles/landing/keyword-hero.css?inline';
 
 interface Props {
   title: string;
@@ -46,6 +50,8 @@ const optimizedTestimonials = await getOptimizedTestimonials();
 >
 
   <link slot="head" rel="preload" as="image" href="/images/DataDocks-Calendar-Screenshot.webp" imagesrcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" imagesizes="100vw" media="(min-width: 860px)" fetchpriority="high" />
+
+  <style slot="head" is:inline set:html={heroCss}></style>
 
   <Navigation />
 
