@@ -1,0 +1,565 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Clients from '../components/home/Clients.astro';
+import FAQ from '../components/FAQ';
+import Footer from '../components/Footer.astro';
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../lib/calendly-config.mjs';
+
+const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
+
+const multiSiteFaqs = [
+  {
+    question: "How does DataDocks standardize operations across diverse facilities?",
+    answer: "DataDocks uses a federated architecture. Corporate leadership sets global reporting metrics, carrier scorecards, and baseline appointment rules, while individual facility managers configure their specific dock bays, operating hours, and localized handling constraints without data leakage across buildings."
+  },
+  {
+    question: "How long does a multi-site rollout typically take?",
+    answer: "Because DataDocks is cloud-native and requires no onsite hardware, multi-facility rollouts are measured in weeks rather than quarters. Most enterprise networks deploy their initial pilot facilities within 14 days and scale across remaining sites in standardized waves."
+  },
+  {
+    question: "How do site coordinators and guard shack teams adapt to the software?",
+    answer: "DataDocks is intentionally designed with zero-bypass floor interfaces. Guard shacks, dock leads, and coordinators can learn the core check-in and milestone workflows in under 10 minutes, eliminating the friction and resistance common with complex ERP modules."
+  },
+  {
+    question: "How does DataDocks help enforce carrier SLAs and prevent detention disputes?",
+    answer: "Every appointment, gate check-in, dock placement, and departure is automatically timestamped. When carriers arrive late or miss windows, the system logs the variance in immutable audit trails and generates objective carrier scorecards for QBR leverage and instant dispute resolution."
+  },
+  {
+    question: "Does DataDocks integrate with our enterprise WMS, TMS, and ERP systems?",
+    answer: "Yes. DataDocks provides modern REST APIs and standard EDI (204/214) capabilities to synchronize purchase orders, arrival milestones, and departure timestamps directly with SAP S/4HANA, Oracle NetSuite, Manhattan Associates, Blue Yonder, and enterprise BI platforms."
+  },
+  {
+    question: "What financial return can our network expect?",
+    answer: "Multi-site logistics networks typically achieve full ROI within the first six months. The primary financial returns come from a 40–60% reduction in conceded detention fees, elimination of unbudgeted shift overtime, and recovering 10–15 administrative hours per coordinator every week."
+  }
+];
+
+const stats = [
+  { value: "40–60%", label: "Reduction in network detention fees within Q1" },
+  { value: "10–15%", label: "Throughput expansion without adding real estate" },
+  { value: "10–15", label: "Hours recovered per coordinator each week" },
+  { value: "100%", label: "Indisputable audit trail across all facilities" },
+];
+---
+
+<Layout
+  title="Multi-Site Dock Scheduling & Yard Management | DataDocks"
+  description="Hold carriers accountable and strengthen your supply chain. Standardize freight intake, eliminate unbudgeted overtime, and gain real-time operational visibility across all facilities."
+  schemaData={{
+    faq: multiSiteFaqs
+  }}
+>
+
+  <Navigation />
+
+  <main class="bg-[#FFF8E9] min-h-screen text-black overflow-hidden">
+
+    {/* =========================================================================
+        1. HERO SECTION (Apex Hook)
+        ========================================================================= */}
+    <section class="relative pt-16 md:pt-24 pb-16 md:pb-20 border-b border-[#EFE2D2]">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="text-center max-w-4xl mx-auto">
+          
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EFE2D2] text-[#736146] text-xs md:text-sm font-sans uppercase tracking-wider mb-8 font-semibold">
+            <span>Enterprise Multi-Site Operations</span>
+          </div>
+
+          <h1 class="font-bruta text-4xl sm:text-6xl md:text-7xl lg:text-8xl uppercase tracking-tight text-black leading-[0.9] mb-8">
+            HOLD CARRIERS ACCOUNTABLE. <span class="text-[#FE5000]">STRENGTHEN YOUR SUPPLY CHAIN.</span>
+          </h1>
+
+          <p class="font-recoleta text-lg sm:text-xl md:text-2xl text-gray-800 max-w-3xl mx-auto leading-relaxed mb-10">
+            When inbound freight arrives on your terms, your warehouses avoid dock gridlock, labor stays on budget, and downstream customer commitments are protected across every facility in your network.
+          </p>
+
+          {/* Executive CTA Form */}
+          <div class="w-full max-w-xl mx-auto mb-12">
+            <form
+              id="multisite-hero-form"
+              class="flex flex-col sm:flex-row items-stretch justify-center gap-0 bg-[#EFE2D2] sm:bg-transparent shadow-sm"
+            >
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your work email"
+                class="!h-14 w-full sm:w-80 px-5 text-center sm:text-left bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none"
+                required
+              />
+              <button
+                type="submit"
+                class="!h-14 px-8 bg-[#FE5000] hover:bg-black text-white transition-colors duration-300 whitespace-nowrap text-lg font-recoleta flex items-center justify-center font-normal tracking-wide"
+              >
+                Schedule an Assessment
+              </button>
+            </form>
+          </div>
+
+          {/* Key Executive Metrics Bar */}
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-[#EFE2D2]/80">
+            {stats.map((stat) => (
+              <div class="text-left p-4 bg-[#EFE2D2]/60 rounded-xl">
+                <div class="font-bruta text-3xl md:text-4xl text-[#FE5000] font-extrabold mb-1">{stat.value}</div>
+                <p class="font-recoleta text-xs md:text-sm text-gray-700 leading-snug">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* =========================================================================
+        2. CLIENT TRUST MARQUEE
+        ========================================================================= */}
+    <Clients />
+
+    {/* =========================================================================
+        3. THE CORE TENSION: WHERE MULTI-SITE LOGISTICS BLEEDS MARGIN
+        ========================================================================= */}
+    <section class="py-20 md:py-28 bg-[#FFF8E9]">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="max-w-3xl mb-16">
+          <div class="inline-block text-xs uppercase tracking-widest text-[#FE5000] font-bold mb-3 font-sans">
+            The Multi-Site Reality
+          </div>
+          <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black mb-6">
+            Unmanaged freight makes your entire distribution network fragile.
+          </h2>
+          <div class="w-16 h-1 bg-[#FF5507] mb-6"></div>
+          <p class="font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
+            In multi-site distribution, the loading dock is the critical gateway of your supply chain. When carriers treat arrival windows as optional and site teams rely on fragmented spreadsheets, three structural margin leaks compromise your network:
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          <div class="bg-[#EFE2D2] p-8 rounded-2xl border border-[#E4D4C0]/60 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-[#FE5000]/10 flex items-center justify-center text-[#FE5000] font-bruta text-xl font-bold">
+              01
+            </div>
+            <h3 class="font-bruta text-2xl uppercase text-black">Unbudgeted Labor Overtime</h3>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              When 15 trucks arrive unannounced at 8:00 AM, shift managers must overstaff and pay premium overtime to clear the backlog, followed by paying idle crews during afternoon lulls.
+            </p>
+          </div>
+
+          <div class="bg-[#EFE2D2] p-8 rounded-2xl border border-[#E4D4C0]/60 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-[#FE5000]/10 flex items-center justify-center text-[#FE5000] font-bruta text-xl font-bold">
+              02
+            </div>
+            <h3 class="font-bruta text-2xl uppercase text-black">Contested Accessorial Payouts</h3>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              Without objective, timestamped proof of gate arrival, staging, and door release, enterprise operations routinely concede unvalidated carrier detention claims to keep freight moving.
+            </p>
+          </div>
+
+          <div class="bg-[#EFE2D2] p-8 rounded-2xl border border-[#E4D4C0]/60 space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-[#FE5000]/10 flex items-center justify-center text-[#FE5000] font-bruta text-xl font-bold">
+              03
+            </div>
+            <h3 class="font-bruta text-2xl uppercase text-black">Downstream Fulfillment Delays</h3>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              Inbound receiving congestion clogs staging lanes and stalls cross-dock operations, causing outbound trailers to depart late and triggering severe retail OTIF compliance chargebacks.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* =========================================================================
+        4. PILLAR 1: CARRIER GOVERNANCE
+        ========================================================================= */}
+    <section class="py-20 md:py-24 bg-[#EFE2D2]">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-6 space-y-6">
+            <div class="text-xs uppercase tracking-widest text-[#FE5000] font-bold font-sans">
+              Vendor Governance & Accountability
+            </div>
+            <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black">
+              Stop carrier delays from dictating your network’s performance.
+            </h2>
+            <div class="w-16 h-1 bg-[#FF5507]"></div>
+            <p class="font-recoleta text-lg text-gray-800 leading-relaxed">
+              When carriers dictate when they show up, your facility managers are forced into constant reactive triage. DataDocks inverts the power dynamic at your gates by putting freight scheduling on structured, deterministic rails.
+            </p>
+            <ul class="space-y-3 font-recoleta text-base text-gray-700 pt-2">
+              <li class="flex items-start gap-3">
+                <span class="w-5 h-5 rounded-full bg-[#FE5000] text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">✓</span>
+                <span><strong>Mandatory PO & Data Gating:</strong> Carriers cannot book a slot without valid PO numbers, load specifications, and compliance documents.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-5 h-5 rounded-full bg-[#FE5000] text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">✓</span>
+                <span><strong>Automated Carrier Scorecards:</strong> Track On-Time Arrival (OTA), dwell time variance, and cancellation trends across every lane and building.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="w-5 h-5 rounded-full bg-[#FE5000] text-white flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold">✓</span>
+                <span><strong>Commercial Leverage for QBRs:</strong> Replace subjective disputes with indisputable performance data during carrier contract negotiations.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:col-span-6 bg-[#FFF8E9] p-8 md:p-10 rounded-2xl shadow-sm border border-[#E4D4C0]">
+            <div class="font-sans text-xs uppercase tracking-wider text-gray-500 font-bold mb-4">
+              Enterprise Carrier Scorecard Output
+            </div>
+            <div class="space-y-4 font-recoleta">
+              <div class="flex justify-between items-center pb-3 border-b border-[#EFE2D2]">
+                <span class="text-gray-800 font-medium">On-Time Arrival (OTA) Rate</span>
+                <span class="font-bruta text-xl text-black font-bold">94.2%</span>
+              </div>
+              <div class="flex justify-between items-center pb-3 border-b border-[#EFE2D2]">
+                <span class="text-gray-800 font-medium">Average Gate-to-Gate Dwell</span>
+                <span class="font-bruta text-xl text-black font-bold">48 Mins</span>
+              </div>
+              <div class="flex justify-between items-center pb-3 border-b border-[#EFE2D2]">
+                <span class="text-gray-800 font-medium">Unvalidated Detention Claims Blocked</span>
+                <span class="font-bruta text-xl text-[#FE5000] font-bold">$142,500</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-800 font-medium">Network Booking Compliance</span>
+                <span class="font-bruta text-xl text-black font-bold">99.1%</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-[#EFE2D2] text-xs font-sans text-gray-500">
+              * Based on normalized aggregate data across multi-facility customer deployments.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* =========================================================================
+        5. PILLAR 2: LABOR & FINANCIAL PREDICTABILITY
+        ========================================================================= */}
+    <section class="py-20 md:py-24 bg-[#FFF8E9]">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-6 order-2 lg:order-1 bg-[#EFE2D2] p-8 md:p-10 rounded-2xl border border-[#E4D4C0]">
+            <div class="space-y-6">
+              <div class="font-bruta text-xl uppercase text-black pb-2 border-b border-[#E4D4C0]">
+                Freight Arrival Flow Comparison
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-xs font-sans uppercase font-bold text-gray-600 mb-1">
+                  <span>Without Scheduling (Random Arrivals)</span>
+                  <span class="text-red-700">High Overtime / Idle Gaps</span>
+                </div>
+                <div class="h-6 w-full bg-white/70 rounded-full overflow-hidden flex">
+                  <div class="bg-red-500 h-full w-3/5" title="Morning Peak Surge"></div>
+                  <div class="bg-gray-300 h-full w-2/5" title="Afternoon Idle"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-sans uppercase font-bold text-gray-600 mb-1">
+                  <span>With DataDocks (Metered Flow)</span>
+                  <span class="text-green-700">Predictable Labor / Zero Overtime</span>
+                </div>
+                <div class="h-6 w-full bg-white/70 rounded-full overflow-hidden flex">
+                  <div class="bg-[#FE5000] h-full w-full" title="Continuous Leveled Flow"></div>
+                </div>
+              </div>
+
+              <p class="font-recoleta text-sm text-gray-700 leading-relaxed pt-2">
+                By enforcing hourly door limits and load-specific durations, incoming volume is spread evenly across shifts—matching labor budgets to actual scheduled work.
+              </p>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 order-1 lg:order-2 space-y-6">
+            <div class="text-xs uppercase tracking-widest text-[#FE5000] font-bold font-sans">
+              Labor Cost Optimization
+            </div>
+            <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black">
+              Stop letting uncoordinated freight dictate your warehouse labor costs.
+            </h2>
+            <div class="w-16 h-1 bg-[#FF5507]"></div>
+            <p class="font-recoleta text-lg text-gray-800 leading-relaxed">
+              Warehouse labor is your largest controllable line item. When truck arrivals are unpredictable, site supervisors are forced to over-index shift staffing or absorb heavy overtime costs at the end of the day.
+            </p>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              DataDocks meters arrival volume to match your facility's physical handling capacity. By smoothing the intake curve across the entire shift, your facilities process 10–15% more volume with existing headcount.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* =========================================================================
+        6. PILLAR 3: OPERATIONAL INTELLIGENCE & ZERO BLIND SPOTS
+        ========================================================================= */}
+    <section class="py-20 md:py-24 bg-[#EFE2D2]">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="max-w-3xl mb-16">
+          <div class="text-xs uppercase tracking-widest text-[#FE5000] font-bold font-sans mb-3">
+            Enterprise Intelligence & Governance
+          </div>
+          <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black mb-6">
+            Real-time visibility across your entire warehouse network. Zero blind spots.
+          </h2>
+          <div class="w-16 h-1 bg-[#FF5507] mb-6"></div>
+          <p class="font-recoleta text-lg md:text-xl text-gray-800 leading-relaxed">
+            Enterprise supply chain leaders cannot manage a multi-site network through subjective manager updates or lagging month-end reports. DataDocks closes the 4–8 hour black hole between your TMS and WMS.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          <div class="bg-[#FFF8E9] p-8 rounded-2xl shadow-sm border border-[#E4D4C0] space-y-4">
+            <h3 class="font-bruta text-2xl uppercase text-black">Single Pane of Truth</h3>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              View gate arrivals, active bay turnarounds, and yard dwell times across all 10–50 facilities side-by-side in one normalized dashboard.
+            </p>
+          </div>
+
+          <div class="bg-[#FFF8E9] p-8 rounded-2xl shadow-sm border border-[#E4D4C0] space-y-4">
+            <h3 class="font-bruta text-2xl uppercase text-black">Cross-Node Benchmarking</h3>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              Compare average dwell times and turnaround velocity across facilities to immediately pinpoint underperforming sites and replicate best-in-class operations.
+            </p>
+          </div>
+
+          <div class="bg-[#FFF8E9] p-8 rounded-2xl shadow-sm border border-[#E4D4C0] space-y-4">
+            <h3 class="font-bruta text-2xl uppercase text-black">Management by Exception</h3>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              Automated alerts surface emerging bottlenecks, chronic carrier delays, and capacity limits in real time—enabling proactive executive intervention.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* =========================================================================
+        7. PILLAR 4 & 5: STANDARDIZATION & CUSTOMER COMMITMENTS
+        ========================================================================= */}
+    <section class="py-20 md:py-28 bg-[#FFF8E9]">
+      <div class="container mx-auto px-4 max-w-6xl space-y-20">
+        
+        {/* Section 4 */}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div class="lg:col-span-6 space-y-6">
+            <div class="text-xs uppercase tracking-widest text-[#FE5000] font-bold font-sans">
+              Process Engineering & Consistency
+            </div>
+            <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black">
+              Run 20 distribution centers with the consistency and discipline of your best one.
+            </h2>
+            <div class="w-16 h-1 bg-[#FF5507]"></div>
+            <p class="font-recoleta text-lg text-gray-800 leading-relaxed">
+              When each warehouse operates under localized habits and disconnected spreadsheets, operational inconsistency compounds across the network.
+            </p>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              DataDocks establishes global intake templates and mandatory validation rules across all buildings, while granting local managers the flexibility to manage facility-specific dock configurations.
+            </p>
+          </div>
+
+          <div class="lg:col-span-6 bg-[#EFE2D2] p-8 md:p-10 rounded-2xl border border-[#E4D4C0] space-y-4">
+            <div class="font-bruta text-xl uppercase text-black">The Federated Multi-Site Standard</div>
+            <div class="space-y-3 font-recoleta text-base text-gray-700">
+              <div class="p-3.5 bg-white/60 rounded-xl">
+                <strong>Global Governance:</strong> Standardized carrier scorecards, mandatory PO validation, and centralized compliance reporting.
+              </div>
+              <div class="p-3.5 bg-white/60 rounded-xl">
+                <strong>Local Node Autonomy:</strong> Site-specific bay constraints, operating hours, and equipment configurations (ambient vs cold vs drop yard).
+              </div>
+              <div class="p-3.5 bg-white/60 rounded-xl">
+                <strong>Zero Cross-Site Noise:</strong> Site personnel only interact with their facility's schedule, eliminating data clutter and operational confusion.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 5 */}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-12 border-t border-[#EFE2D2]">
+          <div class="lg:col-span-6 bg-[#EFE2D2] p-8 md:p-10 rounded-2xl border border-[#E4D4C0] space-y-4 order-2 lg:order-1">
+            <div class="font-bruta text-xl uppercase text-black">Downstream Supply Chain Impact</div>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              In high-velocity fulfillment networks, inbound receiving speed is the leading indicator of outbound on-time dispatch. Keeping dock doors turning on schedule protects customer relationships and safeguards revenue.
+            </p>
+            <div class="grid grid-cols-2 gap-3 pt-2 font-sans text-xs uppercase font-bold text-gray-700">
+              <div class="p-3 bg-white/60 rounded-lg text-center">99% OTIF Fulfillment</div>
+              <div class="p-3 bg-white/60 rounded-lg text-center">Zero Retail Chargebacks</div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 space-y-6 order-1 lg:order-2">
+            <div class="text-xs uppercase tracking-widest text-[#FE5000] font-bold font-sans">
+              Supply Chain Velocity & OTIF
+            </div>
+            <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black">
+              Protect customer commitments by eliminating inbound receiving bottlenecks.
+            </h2>
+            <div class="w-16 h-1 bg-[#FF5507]"></div>
+            <p class="font-recoleta text-lg text-gray-800 leading-relaxed">
+              Inbound dock congestion is never isolated. When receiving backs up, cross-dock staging lanes freeze and outbound trailers miss their transit windows.
+            </p>
+            <p class="font-recoleta text-base text-gray-700 leading-relaxed">
+              By enforcing predictable intake velocity, DataDocks ensures inventory flows seamlessly through your facilities—protecting your On-Time In-Full (OTIF) commitments and eliminating retail compliance penalties.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {/* =========================================================================
+        8. MULTI-SITE CASE PROFILES
+        ========================================================================= */}
+    <section class="py-20 md:py-24 bg-[#EFE2D2]">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <div class="text-xs uppercase tracking-widest text-[#FE5000] font-bold font-sans mb-3">
+            Proven at Enterprise Scale
+          </div>
+          <h2 class="font-bruta text-3xl sm:text-4xl lg:text-5xl uppercase leading-[0.95] text-black">
+            Built for multi-facility logistics leaders.
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <div class="bg-[#FFF8E9] p-8 md:p-10 rounded-2xl shadow-sm border border-[#E4D4C0] space-y-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-bruta text-2xl uppercase text-black">ShipMonk</span>
+                <span class="px-3 py-1 bg-[#EFE2D2] rounded-full text-xs font-sans font-bold text-[#736146]">12 Facilities</span>
+              </div>
+              <div class="font-bruta text-4xl text-[#FE5000] font-extrabold mb-2">90% Calculations Eliminated</div>
+              <p class="font-recoleta text-base text-gray-700 leading-relaxed mb-4">
+                Managing inbound freight across 12 high-velocity fulfillment centers required continuous manual validation. DataDocks automated the scheduling logic and PO validation across all 12 facilities, cutting coordination emails by over 80% and eliminating booking errors.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-[#EFE2D2] font-recoleta text-sm text-gray-600 italic">
+              "DataDocks implemented an API bulk upload that restricts carriers to booking only against valid, real-time POs—transforming our multi-facility intake."
+            </div>
+          </div>
+
+          <div class="bg-[#FFF8E9] p-8 md:p-10 rounded-2xl shadow-sm border border-[#E4D4C0] space-y-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-bruta text-2xl uppercase text-black">Quality Distribution</span>
+                <span class="px-3 py-1 bg-[#EFE2D2] rounded-full text-xs font-sans font-bold text-[#736146]">5 Unified Locations</span>
+              </div>
+              <div class="font-bruta text-4xl text-[#FE5000] font-extrabold mb-2">Hundreds of Hours Saved</div>
+              <p class="font-recoleta text-base text-gray-700 leading-relaxed mb-4">
+                Managing multiple facilities with disconnected spreadsheets created data silos and inconsistent labor forecasting. DataDocks unified all five locations under one standardized platform, providing executive visibility and precise labor planning.
+              </p>
+            </div>
+            <div class="pt-4 border-t border-[#EFE2D2] font-recoleta text-sm text-gray-600 italic">
+              "The automation features that we're using will literally save our company hundreds of labor hours each year." — Isaac Morley, Director of Operations
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* =========================================================================
+        9. EXECUTIVE MULTI-SITE FAQ
+        ========================================================================= */}
+    <FAQ client:visible content={{ faqs: multiSiteFaqs }} />
+
+    {/* =========================================================================
+        10. EXECUTIVE CLOSING CTA
+        ========================================================================= */}
+    <section class="py-20 md:py-28 bg-[#FFF8E9] border-t border-[#EFE2D2]">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <h2 class="font-bruta text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight text-black leading-[0.95] mb-6">
+          Ready to standardize your multi-facility dock operations?
+        </h2>
+        <div class="w-16 h-1 bg-[#FF5507] mx-auto mb-8"></div>
+        <p class="font-recoleta text-lg sm:text-xl text-gray-800 max-w-2xl mx-auto leading-relaxed mb-10">
+          Schedule an executive walkthrough with our operations team. We'll review your facility network, calculate potential detention and labor savings, and demonstrate multi-site governance in action.
+        </p>
+
+        <div class="w-full max-w-xl mx-auto">
+          <form
+            id="multisite-bottom-form"
+            class="flex flex-col sm:flex-row items-stretch justify-center gap-0 bg-[#EFE2D2] sm:bg-transparent shadow-sm"
+          >
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your work email"
+              class="!h-14 w-full sm:w-80 px-5 text-center sm:text-left bg-[#EFE2D2] text-black placeholder:text-[#8D785C] text-lg border-none font-recoleta focus:ring-0 focus:outline-none"
+              required
+            />
+            <button
+              type="submit"
+              class="!h-14 px-8 bg-[#FE5000] hover:bg-black text-white transition-colors duration-300 whitespace-nowrap text-lg font-recoleta flex items-center justify-center font-normal tracking-wide"
+            >
+              Book an Assessment
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+
+</Layout>
+
+<script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
+  (function() {
+    function attachForm(formId) {
+      var form = document.getElementById(formId);
+      if (!form || form.dataset.bound) return;
+      form.dataset.bound = 'true';
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = emailInput ? emailInput.value : '';
+        if (email) {
+          if (typeof window.ddSetEmail === 'function') {
+            window.ddSetEmail(email);
+          }
+          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+            window.bento.identify(email);
+          }
+
+          fetch('/api/bento-track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              event: 'Demo Subscriber',
+              source: window.location.pathname,
+              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+              attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
+            }),
+            keepalive: true
+          }).catch(function() {});
+        }
+        if (typeof window.ddOpenCalendly === 'function') {
+          window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
+        } else {
+          window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
+        }
+        form.reset();
+      });
+    }
+
+    function initForms() {
+      attachForm('multisite-hero-form');
+      attachForm('multisite-bottom-form');
+    }
+
+    initForms();
+    document.addEventListener('astro:page-load', initForms);
+  })();
+</script>
