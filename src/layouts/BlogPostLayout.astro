@@ -11,6 +11,7 @@ import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
 import LeadMagnetForm from '../components/LeadMagnetForm.astro';
 import SidebarShortVideo from '../components/SidebarShortVideo.astro';
+import FAQ from '../components/FAQ.astro';
 import { ytThumb } from '../lib/yt-thumb';
 
 interface Heading {
@@ -205,6 +206,9 @@ if (priorityImgMatch) {
           
         </div>
       </div>
+
+      {/* Top Interactive Slot — renders at full header width, above prose article */}
+      <slot name="top-interactive" />
       
       <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
         
@@ -321,6 +325,16 @@ if (priorityImgMatch) {
         )}
       </aside>
     </div>
+
+    {/* Bottom Content Slot (Full Width) */}
+    <slot name="bottom-content" />
+
+    {/* Automatic FAQ Rendering (Full Width) if frontmatter.faq exists */}
+    {frontmatter.faq && frontmatter.faq.length > 0 && (
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-12">
+        <FAQ content={{ faqs: frontmatter.faq }} />
+      </div>
+    )}
 
     {relatedPosts.length > 0 && (
       <section class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 border-t border-[#E5D3B3] dark:border-gray-800 pt-16 mt-8">
