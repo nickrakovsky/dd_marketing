@@ -13,7 +13,10 @@ import RequirementsExplorer from '@/components/solid/micro-apps/RequirementsExpl
 // Data Imports
 import {
   comparisonFaqs,
-  buyingCommitteePersonas
+  buyingCommitteePersonas,
+  comparisonFeatureGroups,
+  datadocksFeatures,
+  comparisonCompetitors
 } from '@/data/pages/comparison';
 
 // Calendly Integration (removed unused variables)
@@ -52,9 +55,38 @@ const description = "Compare dock scheduling methods side by side — from sprea
             </p>
           </div>
 
+          {/* The Best Dock Scheduling Software For Most Operations */}
+          <div class="mb-10">
+            <h2 class="text-lg md:text-xl font-bold text-[#5f483a] leading-relaxed mb-4 font-recoleta">
+              The Best Dock Scheduling Software For Most Operations:
+            </h2>
+            <ul class="space-y-3 text-[15px] md:text-base text-[#5f483a] font-recoleta leading-relaxed">
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #fd4f00;">•</span>
+                <span><strong class="text-black font-semibold">DataDocks:</strong> Best for holding carriers accountable. The most advanced scheduling rules and capacity limits.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #84FB9E;">•</span>
+                <span><strong class="text-black font-semibold">Loading Calendar:</strong> Best for small facilities with no gate or yard operations.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #0763F9;">•</span>
+                <span><strong class="text-black font-semibold">Arrivy:</strong> Best for field service businesses that need to schedule off-site operations.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #164C56;">•</span>
+                <span><strong class="text-black font-semibold">C3 Reservations:</strong> Best for IT-led operations with traditional governance structures.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #99E41C;">•</span>
+                <span><strong class="text-black font-semibold">Goramp:</strong> Best for highly predictable operations where gate management is the bottleneck.</span>
+              </li>
+            </ul>
+          </div>
+
           {/* "Depends on" factors */}
           <p class="text-lg md:text-xl font-bold text-[#5f483a] leading-relaxed mb-5 font-recoleta">
-            The right tool for your operation depends on:
+            But the right tool for your facility really depends on:
           </p>
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
             {/* Volume */}
@@ -214,9 +246,42 @@ const description = "Compare dock scheduling methods side by side — from sprea
         <ComparisonTable client:visible />
 
         <noscript>
-          <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] text-center">
-            <h3 class="font-bruta text-xl uppercase mb-4 text-[#5f483a]">Comparison Table Requires JavaScript</h3>
-            <p class="text-gray-700">Please enable JavaScript to use the interactive comparison table.</p>
+          <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] space-y-6">
+            <h3 class="font-bruta text-2xl uppercase text-[#5f483a] text-center">Dock Scheduling Features Side-by-Side Comparison</h3>
+            <table class="w-full text-left text-sm text-[#5f483a] border-collapse border border-[#ece6de]">
+              <caption class="sr-only">Dock Scheduling Features Comparison Matrix</caption>
+              <thead>
+                <tr class="bg-[#faf8f5] border-b border-[#ece6de]">
+                  <th scope="col" class="p-3 font-bold border-r border-[#ece6de]">Feature</th>
+                  <th scope="col" class="p-3 font-bold border-r border-[#ece6de] text-[#fd4f00]">DataDocks</th>
+                  {comparisonCompetitors.slice(0, 3).map((comp) => (
+                    <th scope="col" class="p-3 font-bold border-r border-[#ece6de] last:border-0">{comp.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonFeatureGroups.map((group) => (
+                  <>
+                    <tr class="bg-[#ece6de]/40 border-b border-[#ece6de]">
+                      <td colspan={5} class="p-3 font-bold text-[#5f483a] font-recoleta">{group.label}</td>
+                    </tr>
+                    {group.features.map((feature) => {
+                      const dd = datadocksFeatures?.[feature.id]?.text || "Not available";
+                      return (
+                        <tr class="border-b border-[#ece6de] hover:bg-white">
+                          <td class="p-3 font-medium border-r border-[#ece6de]">{feature.label}</td>
+                          <td class="p-3 font-semibold border-r border-[#ece6de] text-[#fd4f00]">{dd}</td>
+                          {comparisonCompetitors.slice(0, 3).map((comp) => {
+                            const val = comp.features?.[feature.id]?.text || "Not available";
+                            return <td class="p-3 border-r border-[#ece6de] last:border-0">{val}</td>;
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </>
+                ))}
+              </tbody>
+            </table>
           </div>
         </noscript>
       </div>

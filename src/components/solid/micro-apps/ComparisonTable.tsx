@@ -96,7 +96,7 @@ const FeatureGroupSection: Component<{
   onToggle: () => void;
 }> = (props) => {
   return (
-    <div class="border border-[#ece6de] rounded-xl overflow-hidden transition-shadow duration-200 hover:shadow-sm">
+    <div role="rowgroup" class="border border-[#ece6de] rounded-xl overflow-hidden transition-shadow duration-200 hover:shadow-sm">
       {/* Group header */}
       <button
         type="button"
@@ -122,49 +122,50 @@ const FeatureGroupSection: Component<{
         </div>
       </button>
 
-      {/* Feature rows */}
-      <Show when={props.isExpanded()}>
-        <div class="divide-y divide-[#ece6de]">
-          <For each={props.group.features}>
-            {(feature: ComparisonFeature) => {
-              const ddDetail = () => datadocksFeatures?.[feature.id] || { level: "none", text: "Not available" };
-              const comp1Detail = () => props.competitor1?.features?.[feature.id] || { level: "none", text: "Not available" };
-              const comp2Detail = () => props.competitor2 ? (props.competitor2?.features?.[feature.id] || { level: "none", text: "Not available" }) : null;
+      {/* Feature rows - rendered in DOM for SSR/bots, hidden via CSS when collapsed */}
+      <div class={cn("divide-y divide-[#ece6de]", !props.isExpanded() && "hidden")}>
+        <For each={props.group.features}>
+          {(feature: ComparisonFeature) => {
+            const ddDetail = () => datadocksFeatures?.[feature.id] || { level: "none", text: "Not available" };
+            const comp1Detail = () => props.competitor1?.features?.[feature.id] || { level: "none", text: "Not available" };
+            const comp2Detail = () => props.competitor2 ? (props.competitor2?.features?.[feature.id] || { level: "none", text: "Not available" }) : null;
 
-              return (
-                <div class={cn(
+            return (
+              <div
+                role="row"
+                class={cn(
                   "group/row grid items-stretch gap-2 md:gap-4 px-5 py-2 hover:bg-[#faf8f5]/50 transition-colors duration-100",
                   props.competitor2 
                     ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]" 
                     : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
-                )}>
-                  {/* Feature name */}
-                  <div class="min-w-0 flex items-center gap-1.5">
-                    <span class="text-sm text-[#5f483a] font-sans leading-snug">{feature.label}</span>
-                  </div>
-
-                  {/* DataDocks value */}
-                  <div class="flex items-center justify-center">
-                    <SupportCell detail={ddDetail()} isDataDocks={true} />
-                  </div>
-
-                  {/* Competitor 1 value */}
-                  <div class="flex items-center justify-center">
-                    <SupportCell detail={comp1Detail()} />
-                  </div>
-
-                  {/* Competitor 2 value */}
-                  <Show when={props.competitor2}>
-                    <div class="flex items-center justify-center">
-                      <SupportCell detail={comp2Detail()} />
-                    </div>
-                  </Show>
+                )}
+              >
+                {/* Feature name */}
+                <div role="cell" class="min-w-0 flex items-center gap-1.5">
+                  <span class="text-sm text-[#5f483a] font-sans leading-snug">{feature.label}</span>
                 </div>
-              );
-            }}
-          </For>
-        </div>
-      </Show>
+
+                {/* DataDocks value */}
+                <div role="cell" class="flex items-center justify-center" aria-label={`DataDocks: ${ddDetail().text}`}>
+                  <SupportCell detail={ddDetail()} isDataDocks={true} />
+                </div>
+
+                {/* Competitor 1 value */}
+                <div role="cell" class="flex items-center justify-center" aria-label={`${props.competitor1.name}: ${comp1Detail().text}`}>
+                  <SupportCell detail={comp1Detail()} />
+                </div>
+
+                {/* Competitor 2 value */}
+                <Show when={props.competitor2}>
+                  <div role="cell" class="flex items-center justify-center" aria-label={`${props.competitor2?.name}: ${comp2Detail()?.text || ''}`}>
+                    <SupportCell detail={comp2Detail()} />
+                  </div>
+                </Show>
+              </div>
+            );
+          }}
+        </For>
+      </div>
     </div>
   );
 };
@@ -292,7 +293,7 @@ const ComparisonTable: Component = () => {
   };
 
   return (
-    <div class="space-y-6">
+    <div class="space-y-6" role="table" aria-label="Dock Scheduling Side-by-Side Features Comparison">
       
       {/* Title & Controls */}
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 text-center md:text-left">
@@ -319,17 +320,20 @@ const ComparisonTable: Component = () => {
       </div>
 
       {/* ── Column headers ── */}
-      <div class={cn(
-        "grid items-end gap-2 md:gap-4 px-5 pb-3 border-b border-[#ad9686] sticky top-0 bg-white/95 backdrop-blur-sm z-20 pt-4 -mt-4",
-        selectedCompetitor2() 
-          ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]" 
-          : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
-      )}>
+      <div
+        role="row"
+        class={cn(
+          "grid items-end gap-2 md:gap-4 px-5 pb-3 border-b border-[#ad9686] sticky top-0 bg-white/95 backdrop-blur-sm z-20 pt-4 -mt-4",
+          selectedCompetitor2() 
+            ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]" 
+            : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
+        )}
+      >
         {/* Empty space for the feature name column */}
-        <div></div>
+        <div role="columnheader" aria-label="Feature"></div>
         
         {/* DataDocks Fixed Pill */}
-        <div class="flex flex-col w-full h-full justify-end">
+        <div role="columnheader" class="flex flex-col w-full h-full justify-end">
           <div class="w-full flex items-center justify-start gap-2 rounded-xl border border-[#ece6de] bg-white px-4 py-2 cursor-default shadow-sm relative min-h-[58px]">
             <div class="flex-1 text-left min-w-0 font-sans">
               <span class="block text-[15px] font-bold text-[#fd4f00] leading-tight tracking-wide">DataDocks</span>
@@ -339,7 +343,7 @@ const ComparisonTable: Component = () => {
         </div>
         
         {/* Competitor 1 Selector */}
-        <div class="flex flex-col relative w-full h-full">
+        <div role="columnheader" class="flex flex-col relative w-full h-full">
           <CompetitorSelector
             competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor2()?.id)}
             selected={selectedCompetitor1()}
@@ -361,7 +365,7 @@ const ComparisonTable: Component = () => {
 
         {/* Competitor 2 Selector */}
         <Show when={selectedCompetitor2()}>
-          <div class="flex flex-col relative w-full h-full group">
+          <div role="columnheader" class="flex flex-col relative w-full h-full group">
             <CompetitorSelector
               competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor1().id)}
               selected={selectedCompetitor2()}
@@ -385,7 +389,7 @@ const ComparisonTable: Component = () => {
       </div>
 
       {/* ── Feature groups ── */}
-      <div class="space-y-3">
+      <div role="rowgroup" class="space-y-3">
         <For each={comparisonFeatureGroups}>
           {(group) => (
             <FeatureGroupSection
