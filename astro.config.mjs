@@ -7,11 +7,11 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
-import mermaid from 'astro-mermaid';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import Beasties from 'beasties';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
@@ -110,6 +110,106 @@ export default defineConfig({
             });
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
+
+          // Critical-CSS inlining for blog posts ONLY (dist/posts/*.html).
+          // The site ships a single shared stylesheet (cssCodeSplit stays false).
+          // On /posts/ pages that one file is render-blocking and delays LCP
+          // (~577ms). Beasties inlines the above-the-fold CSS into <head> and
+          // rewrites the <link> to load the SAME single file asynchronously, so
+          // first paint no longer waits on it. Scoped to /posts/ so every other
+          // page (home, features, etc.) is left byte-for-byte unchanged.
+          const distDir = fileURLToPath(dir);
+          const postsDistDir = path.join(distDir, 'posts');
+          if (fs.existsSync(postsDistDir)) {
+            const beasties = new Beasties({
+              path: distDir,          // resolve /_astro/*.css from the build root
+              publicPath: '/',
+              preload: 'swap',        // async-load the full sheet, apply on load
+              pruneSource: false,     // keep the shared external file intact for other pages
+              inlineFonts: false,     // fonts already handled in Layout.astro
+              logLevel: 'silent',
+            });
+            // Beasties strips @font-face rules from the inline critical CSS when
+            // inlineFonts:false. On posts those faces live ONLY in the inline
+            // Layout.astro <style> (there's no external copy), so Beasties deletes
+            // them outright: the real webfonts (Bruta/DD-Recoleta) vanish, the Bruta
+            // preload goes unused, and text falls back to Georgia/Impact. We fix this
+            // by capturing BOTH font-face sets from the original HTML (before Beasties
+            // sees them) and re-injecting them into <head> after processing:
+            //   1. Real webfonts — @font-face with url(...woff2). Extracted per-file so
+            //      the content-hashed /_astro paths always match this exact build (no
+            //      hardcoding that can drift when Astro rehashes).
+            //   2. Metric-override fallbacks — @font-face with src:local(...). These
+            //      size-match Impact/Georgia to Bruta/Recoleta so text does NOT shift
+            //      when the real webfont swaps in (font-display:swap); without them the
+            //      swap causes CLS, worst on body text (Recoleta isn't preloaded).
+            // Both must be in the critical inline CSS (not the async sheet) to apply at
+            // first paint.
+            const FALLBACK_FONT_FACES = `@font-face{font-family:'Recoleta-Fallback';src:local('Georgia');size-adjust:98.7952%;ascent-override:101.2195%;descent-override:36.4252%;line-gap-override:0%}@font-face{font-family:'Bruta-Fallback';src:local('Impact');size-adjust:102.5000%;ascent-override:73.1707%;descent-override:24.3902%;line-gap-override:33.1707%}`;
+            const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
+            let processed = 0;
+            let missingRealFaces = 0;
+            for (const file of postFiles) {
+              const filePath = path.join(postsDistDir, file);
+              try {
+                const html = fs.readFileSync(filePath, 'utf-8');
+                // Capture the real webfont faces from the ORIGINAL html before Beasties
+                // strips them. Match only @font-face blocks containing url(...).
+                const realFaces = (html.match(/@font-face\s*\{[^}]*url\([^}]*\}/g) || []).join('');
+                if (!realFaces) missingRealFaces++;
+                let inlined = await beasties.process(html);
+                inlined = inlined.replace('</head>', `<style>${realFaces}${FALLBACK_FONT_FACES}</style></head>`);
+                fs.writeFileSync(filePath, inlined);
+                processed++;
+              } catch (err) {
+                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+              }
+            }
+            console.log(`[critical-css] inlined critical CSS + font faces for ${processed}/${postFiles.length} blog posts`);
+            if (missingRealFaces > 0) {
+              console.warn(`[critical-css] WARNING: ${missingRealFaces} post(s) had no real @font-face url() to preserve — check Layout.astro font block`);
+            }
+          }
+
+          // Critical-CSS inlining for /datadocks-features/ pages.
+          // Same problem as /posts/: the single shared stylesheet is
+          // render-blocking (~150 ms of the 405 ms style.css fetch shows up as
+          // "Render-blocking requests" on these pages).
+          //
+          // This uses a SEPARATE Beasties instance from the posts one above,
+          // configured with `reduceInlineStyles: false`, for two reasons:
+          //   1. Feature pages inline pre-rendered diagram SVGs, and each SVG
+          //      carries its own <style> block. The default (true) would hoist
+          //      those into a merged <style> in <head>, detaching diagram CSS
+          //      from its SVG and risking mangled diagrams.
+          //   2. Leaving the Layout.astro inline <style> untouched means the real
+          //      @font-face rules survive, so the font re-injection workaround
+          //      the posts path needs does not apply here.
+          const featuresDistDir = path.join(distDir, 'datadocks-features');
+          if (fs.existsSync(featuresDistDir)) {
+            const featureBeasties = new Beasties({
+              path: distDir,
+              publicPath: '/',
+              preload: 'swap',
+              pruneSource: false,
+              inlineFonts: false,
+              reduceInlineStyles: false, // never touch inline <style> — see above
+              logLevel: 'silent',
+            });
+            const featureFiles = fs.readdirSync(featuresDistDir).filter(f => f.endsWith('.html'));
+            let featuresProcessed = 0;
+            for (const file of featureFiles) {
+              const filePath = path.join(featuresDistDir, file);
+              try {
+                const html = fs.readFileSync(filePath, 'utf-8');
+                fs.writeFileSync(filePath, await featureBeasties.process(html));
+                featuresProcessed++;
+              } catch (err) {
+                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+              }
+            }
+            console.log(`[critical-css] inlined critical CSS for ${featuresProcessed}/${featureFiles.length} feature pages`);
+          }
         }
       }
     },
@@ -126,7 +226,8 @@ export default defineConfig({
       include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
-      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !page.includes('/admin/') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // Keyword landing pages are noindexed, so keep them out of the sitemap too.
+      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
@@ -155,6 +256,14 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
       ],
-    }), mermaid(), mdx()],
+    }),
+    // NOTE: the `astro-mermaid` integration was removed deliberately. It used
+    // `injectScript('page', ...)`, which appends to the shared page entry chunk
+    // and therefore shipped a mermaid loader + a style-injection script to EVERY
+    // page on the site, not just the ones with diagrams. Feature-page diagrams
+    // are now pre-rendered to static SVG by `npm run diagrams`. If mermaid
+    // fences are ever needed in MDX, pre-render them the same way rather than
+    // re-adding a global integration.
+    mdx()],
 
 });

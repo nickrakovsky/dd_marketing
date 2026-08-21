@@ -16,7 +16,7 @@ describe('CTAForm', () => {
   it('renders correctly with default props', () => {
     render(<CTAForm />);
     expect(screen.getByPlaceholderText(/enter your work email/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /get free demo/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /book a demo/i })).toBeInTheDocument();
   });
 
   it('renders correctly with custom props', () => {
@@ -28,7 +28,7 @@ describe('CTAForm', () => {
   it('shows success state and opens link on submit', async () => {
     render(<CTAForm />);
     const emailInput = screen.getByPlaceholderText(/enter your work email/i);
-    const submitButton = screen.getByRole('button', { name: /get free demo/i });
+    const submitButton = screen.getByRole('button', { name: /book a demo/i });
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.click(submitButton);

@@ -11,6 +11,7 @@ import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
 import LeadMagnetForm from '../components/LeadMagnetForm.astro';
 import SidebarShortVideo from '../components/SidebarShortVideo.astro';
+import { ytThumb } from '../lib/yt-thumb';
 
 interface Heading {
   depth: number;
@@ -132,9 +133,7 @@ if (priorityImgMatch) {
         fetchpriority="high"
       />
     )}
-    {hasYouTube && (
-      <style is:inline>lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}</style>
-    )}
+    {/* lite-youtube CSS moved to global style block */}
   </Fragment>
   <div class="min-h-screen flex flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
@@ -354,9 +353,11 @@ if (priorityImgMatch) {
                       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : isVideo && item.data.postType?.value?.youtubeId ? (
-                    <img 
-                      src={`https://i.ytimg.com/vi/${item.data.postType.value.youtubeId}/hqdefault.jpg`} 
+                    <img
+                      src={ytThumb(item.data.postType.value.youtubeId)}
                       alt={item.data.title}
+                      loading="lazy"
+                      decoding="async"
                       class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                     />
                   ) : (
@@ -548,7 +549,21 @@ if (priorityImgMatch) {
     // Create Mobile Sheet
     const sheet = document.createElement('div');
     sheet.id = 'smartlink-mobile-sheet';
-    sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
+    // `hidden` MUST stay first and MUST stay on the initial className.
+    // This element is created at runtime, so Beasties never sees it when it
+    // extracts critical CSS from the static HTML — which means `fixed`,
+    // `bottom-0`, `inset-x-0` and `translate-y-full` get pruned and only exist
+    // in the async stylesheet. Until that sheet lands, an un-hidden sheet has
+    // no positioning at all: it renders `position:static` in normal flow at the
+    // end of <body>, at full content height, pushing the page down — then snaps
+    // out of flow when the CSS arrives. That is a large layout shift, and it's
+    // invisible on a fast connection (the gap is ~0ms) but severe on real
+    // mobile. `hidden` (display:none) IS in the critical CSS, so it applies at
+    // first paint and the element has zero layout impact until it's opened.
+    // Both open paths below reassign className wholesale, so this doesn't
+    // interfere with showing the sheet. The scrim and desktop card are already
+    // safe for the same reason — both ship with `hidden`.
+    sheet.className = 'hidden fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
     sheet.setAttribute('role', 'dialog');
     sheet.setAttribute('aria-labelledby', 'sl-mobile-title');
     sheet.innerHTML = `
@@ -715,7 +730,7 @@ if (priorityImgMatch) {
       if (currentIcon) {
         iconHtml = `
           <div class="w-9 h-9 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1.5 rounded-none shrink-0">
-            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="" class="w-full h-full object-contain" loading="lazy" />`}
+            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="${currentTitle} icon" class="w-full h-full object-contain" loading="lazy" />`}
           </div>`;
       }
       const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
@@ -744,7 +759,7 @@ if (priorityImgMatch) {
       if (currentIcon) {
         iconHtml = `
           <div class="w-7 h-7 bg-gray-50 border border-[#E5D3B3] flex items-center justify-center p-1 rounded-none shrink-0">
-            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="" class="w-full h-full object-contain" loading="lazy" />`}
+            ${currentIcon.startsWith('<svg') ? currentIcon : `<img src="${currentIcon}" alt="${currentTitle} icon" class="w-full h-full object-contain" loading="lazy" />`}
           </div>`;
       }
       const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
@@ -1036,7 +1051,7 @@ if (priorityImgMatch) {
         slSnip.className = 'w-full my-4 not-prose flex justify-center';
         slSnip.innerHTML = `
           <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-gray-700" style="padding-bottom: calc(100% / (9 / 16)); max-width: 260px; width: 260px;">
-            <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+            <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="lite-youtube-short absolute inset-0 w-full h-full" style="background-image: url('https://i.ytimg.com/vi/${youtubeId}/sddefault.jpg');"></lite-youtube>
           </div>
         `;
         slActions.innerHTML = '';
@@ -1109,7 +1124,7 @@ if (priorityImgMatch) {
              <div class="sidebar-card-title">${title}</div>
            </div>
            <div class="w-full bg-black relative rounded-none overflow-hidden" style="padding-bottom: calc(100% / (9 / 16));">
-             <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
+             <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="lite-youtube-short absolute inset-0 w-full h-full" style="background-image: url('https://i.ytimg.com/vi/${youtubeId}/sddefault.jpg');"></lite-youtube>
            </div>
          `;
          card.innerHTML = mediaHtml;
@@ -1758,6 +1773,8 @@ if (priorityImgMatch) {
 </script>
 
 <style is:global>
+  lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}
+  .lite-youtube-short::after { padding-bottom: calc(100% / (9 / 16)) !important; }
   .prose .table-wrapper {
     display: block !important;
     width: 100% !important;

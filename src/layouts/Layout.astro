@@ -52,6 +52,13 @@ const pathname = Astro.url.pathname === '/'
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
 
+// Content pages (blog posts pass type="article", video pages pass type="video")
+// are low booking-intent and perf/SEO-sensitive, so we skip the Calendly
+// preconnects there — the warm-on-hover handler covers the rare booking click.
+// Commercial pages (home, features, benefits, etc.) keep both preconnects so
+// the booking popup opens snappily.
+const isContentPage = type === 'article' || type === 'video';
+
 // 5. Schema Assembly
 const graph: any[] = [
   // 1. Organization (Identity)
@@ -315,8 +322,17 @@ const jsonLd = {
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         <link rel="dns-prefetch" href="https://fast.bentonow.com" />
-        <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
-        <link rel="preconnect" href="https://calendly.com" crossorigin />
+        {/* assets.calendly.com serves the widget JS/CSS; calendly.com is the booking
+             iframe origin. Both are only needed where booking happens, so we preconnect
+             on high-intent commercial pages and skip it on content pages (posts/videos)
+             where warm-on-hover already covers the rare click. */}
+
+        {!isContentPage && (
+          <Fragment>
+            <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
+            <link rel="preconnect" href="https://calendly.com" crossorigin />
+          </Fragment>
+        )}
 
         <style is:inline set:html={`
             @font-face {
@@ -338,6 +354,8 @@ const jsonLd = {
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
             @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
             @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            
+            .beasties-font-preserve { font-family: 'Bruta', 'DD-Recoleta'; }
 
             @view-transition {
               navigation: auto;
@@ -346,6 +364,8 @@ const jsonLd = {
 
     </head>
     <body>
+        {/* Force Beasties to preserve brand fonts by referencing them in an inline style */}
+        <div class="beasties-font-preserve" style="display: none;" aria-hidden="true"></div>
         <slot />
         {/* GA4 is now implemented via Cloudflare Zaraz
         <script is:inline>
