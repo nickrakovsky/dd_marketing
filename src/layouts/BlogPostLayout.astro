@@ -240,7 +240,10 @@ if (priorityImgMatch) {
 
         {/* Main Content Area */}
         <div class="w-full min-w-0 max-w-2xl xl:max-w-3xl lg:mx-0 flex-grow relative">
-          {/* Static TOC for Mobile */}
+          {/* Top Intro Slot (e.g. At A Glance summary & Note) rendered before mobile TOC */}
+          <slot name="intro" />
+
+          {/* Static TOC for Mobile — renders BELOW intro slot on mobile viewports */}
           {h2Headings.length > 0 && (
             <div class="lg:hidden relative z-40 mb-12">
               <details class="group bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300 mobile-toc-details">

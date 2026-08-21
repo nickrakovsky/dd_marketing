@@ -204,6 +204,26 @@ if (!(globalThis as any).mdxImageCounts) {
     {entry.slug === 'best-yard-management-options' && (
       <YardTypeNoscript slot="top-interactive" />
     )}
+    {entry.slug === 'best-yard-management-options' && (
+      <div slot="intro" class="mb-8 not-prose">
+        <h3 class="text-xl sm:text-2xl font-bold font-recoleta text-neutral-950 dark:text-white mb-4">
+          The 8 Best Yard Management Systems At a Glance
+        </h3>
+        <ul class="space-y-2 mb-6 text-sm sm:text-base text-neutral-800 dark:text-neutral-200 list-disc pl-5 font-sans leading-relaxed">
+          <li><strong>DataDocks:</strong> Best for yards that deal primarily with truck freight.</li>
+          <li><strong>Hexagon Smart Yard:</strong> Best for heavy engineering yards managing large-scale staging and assembly.</li>
+          <li><strong>Navis N4 TOS:</strong> Best for highly automated container terminals.</li>
+          <li><strong>Kaleris:</strong> Best for hybrid facilities that deal with a combination of trailers, industrial processing and container stacking or intermodal operations.</li>
+          <li><strong>YardView:</strong> Best for small asset 3PLs and manufacturers that need trailer management but not dock scheduling.</li>
+          <li><strong>C3 Yard:</strong> Best for IT-led operations with dense trailer lots where governance and security are the top priorities.</li>
+          <li><strong>GoRamp:</strong> Best for smaller warehouses and retailers where truck traffic is already highly predictable.</li>
+          <li><strong>Opendock:</strong> Best for facilities whose inbound and outbound traffic is primarily handled by large asset carriers or via freight brokers.</li>
+        </ul>
+        <div class="p-4 rounded-xl bg-[#F8EDD9]/70 dark:bg-neutral-800/80 border border-[#E5D3B3] dark:border-neutral-700 text-neutral-900 dark:text-neutral-200 text-sm leading-relaxed">
+          <strong>Note:</strong> The remainder of this article assumes that your yard deals with freight and logistics operations.
+        </div>
+      </div>
+    )}
     <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, table: MDXTable, img: MDXImage, FAQ }} />
   </BlogPostLayout>
 )}

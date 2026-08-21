@@ -1,7 +1,7 @@
 /** @jsxImportSource solid-js */
 import { For, Switch, Match, Show, createSignal, onCleanup, createMemo } from "solid-js";
 import { createYardTypeEngine } from "./YardTypeEngine";
-import type { SubCategory } from "./YardTypeEngine";
+import type { SubCategory, SystemMatch } from "./YardTypeEngine";
 import type { JSX } from "solid-js";
 import { bentoCall } from "@/lib/bento";
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
@@ -46,11 +46,11 @@ const SUBCATEGORY_TINTS: Record<string, {
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "rail-intermodal-cargo": {
-    overlayHex: "#7c3aed",
+    overlayHex: "#d97706",
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "equipment-chassis-depot": {
-    overlayHex: "#d97706",
+    overlayHex: "#4f46e5",
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "customs-bonded-holding": {
@@ -60,100 +60,76 @@ const SUBCATEGORY_TINTS: Record<string, {
 
   /* Category 2.0: Finished Vehicles, Public Transit or Commercial Fleets */
   "passenger-transit": {
-    overlayHex: "#0284c7",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "finished-vehicles-salvage": {
-    overlayHex: "#d97706",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "commercial-equipment": {
-    overlayHex: "#7c3aed",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "freight-trucking-terminals": {
-    overlayHex: "#0d9488",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "passenger-transit-depots": {
     overlayHex: "#2563eb",
     opacityClass: "group-hover:opacity-[0.25]"
   },
-  "fvl-compounds": {
-    overlayHex: "#9333ea",
+  "finished-vehicles-salvage": {
+    overlayHex: "#7c3aed",
     opacityClass: "group-hover:opacity-[0.25]"
   },
-  "utility-service-fleet": {
-    overlayHex: "#ca8a04",
+  "commercial-equipment": {
+    overlayHex: "#0891b2",
     opacityClass: "group-hover:opacity-[0.25]"
   },
 
   /* Category 3.0: Industrial Stockpiles, Staging or Material Laydown */
   "construction-civil": {
-    overlayHex: "#e11d48",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "energy-power-utility": {
-    overlayHex: "#0284c7",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "piping-tubular-steel": {
     overlayHex: "#d97706",
     opacityClass: "group-hover:opacity-[0.25]"
   },
+  "energy-power-utility": {
+    overlayHex: "#eab308",
+    opacityClass: "group-hover:opacity-[0.25]"
+  },
+  "piping-tubular-steel": {
+    overlayHex: "#ea580c",
+    opacityClass: "group-hover:opacity-[0.25]"
+  },
   "heavy-mfg-aerospace": {
-    overlayHex: "#7c3aed",
+    overlayHex: "#4f46e5",
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "aggregate-mineral-quarry": {
-    overlayHex: "#059669",
+    overlayHex: "#78716c",
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "bulk-packaging": {
-    overlayHex: "#ea580c",
+    overlayHex: "#ca8a04",
     opacityClass: "group-hover:opacity-[0.25]"
   },
 
   /* Category 4.0: Environmental Assets, Forestry or Agricultural Land */
   "forestry-timber": {
-    overlayHex: "#15803d",
+    overlayHex: "#16a34a",
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "agricultural-livestock": {
-    overlayHex: "#b45309",
+    overlayHex: "#65a30d",
     opacityClass: "group-hover:opacity-[0.25]"
   },
   "civil-soil-remediation": {
     overlayHex: "#0d9488",
     opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "livestock-stockyards": {
-    overlayHex: "#c2410c",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "timber-log-yards": {
-    overlayHex: "#15803d",
-    opacityClass: "group-hover:opacity-[0.25]"
-  },
-  "agri-processing-depots": {
-    overlayHex: "#b45309",
-    opacityClass: "group-hover:opacity-[0.25]"
   }
 };
 
-/* ── Harmonized Motion Curves & Keyframes ── */
+/* ── Inline CSS Animations ── */
 
 const STYLES = `
+  @keyframes ytCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 16px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
   @keyframes ytSubCardEnter {
-    0%   { opacity: 0; transform: translate3d(0, 12px, 0) scale(0.985); }
-    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+    0%   { opacity: 0; transform: translate3d(0, 12px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
   }
   @keyframes ytCardExit {
     0%   { opacity: 1; transform: translate3d(0, 0, 0); }
     100% { opacity: 0; transform: translate3d(0, -8px, 0); }
   }
   @keyframes ytHeaderEnter {
-    0%   { opacity: 0; transform: translate3d(0, -6px, 0); }
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
     100% { opacity: 1; transform: translate3d(0, 0, 0); }
   }
   @keyframes ytHeaderExit {
@@ -191,8 +167,10 @@ function computeHeaderThumbWidth(aspectStr: string | null): string {
   const parts = aspectStr.split("/").map((p) => parseFloat(p.trim()));
   if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[1] === 0) return "0px";
   const ratio = parts[0] / parts[1];
-  const heightPx = 76; // Scaled height matching header text column (h-[4.75rem])
-  const calculatedWidth = Math.round(heightPx * ratio);
+  const heightPx = 76; // Exact match for h-[4.75rem] (76px)
+  // Clamp ratio between 0.6 and 1.8 to prevent wide panoramic banners from blowing out mobile/narrow headers
+  const clampedRatio = Math.max(0.6, Math.min(ratio, 1.8));
+  const calculatedWidth = Math.round(heightPx * clampedRatio);
   return `${calculatedWidth}px`;
 }
 
@@ -248,15 +226,15 @@ function NextStepsCard(props: {
     <div
       class={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 ${
         props.isDataDocks
-          ? "bg-gradient-to-br from-[#FFF8E9] via-[#F8EDD9]/60 to-[#FFF8E9] border-[#fd4f00]/30 shadow-xs"
-          : "bg-neutral-900 text-white border-neutral-800 shadow-md"
+          ? "bg-gradient-to-br from-[#FFF8E9] via-[#F8EDD9]/60 to-[#FFF8E9] dark:from-neutral-900 dark:via-neutral-900/90 dark:to-neutral-900 border-[#fd4f00]/30 dark:border-[#fd4f00]/40 shadow-xs"
+          : "bg-neutral-900 dark:bg-neutral-900 text-white border-neutral-800 dark:border-neutral-700 shadow-md"
       }`}
     >
       <div class="flex items-center justify-between gap-2 mb-2.5">
         <span
           class={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full border ${
             props.isDataDocks
-              ? "bg-[#fd4f00]/10 text-[#fd4f00] border-[#fd4f00]/20"
+              ? "bg-[#fd4f00]/10 text-[#fd4f00] dark:text-[#ff7635] border-[#fd4f00]/20 dark:border-[#fd4f00]/30"
               : "bg-neutral-800 text-neutral-300 border-neutral-700"
           }`}
         >
@@ -266,7 +244,7 @@ function NextStepsCard(props: {
 
       <h4
         class={`text-base sm:text-lg font-bold leading-tight mb-1.5 ${
-          props.isDataDocks ? "text-neutral-900" : "text-white"
+          props.isDataDocks ? "text-neutral-950 dark:text-white" : "text-white"
         }`}
       >
         {props.isDataDocks
@@ -276,7 +254,7 @@ function NextStepsCard(props: {
 
       <p
         class={`text-xs sm:text-sm leading-relaxed mb-4 ${
-          props.isDataDocks ? "text-neutral-700" : "text-neutral-300"
+          props.isDataDocks ? "text-neutral-700 dark:text-neutral-300" : "text-neutral-300"
         }`}
       >
         {props.isDataDocks
@@ -290,8 +268,8 @@ function NextStepsCard(props: {
           <Show
             when={!isSubmitted()}
             fallback={
-              <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-                <svg class="size-4 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
+                <svg class="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
                 <span>Opening calendar...</span>
@@ -305,7 +283,7 @@ function NextStepsCard(props: {
                 value={email()}
                 onInput={(e) => setEmail(e.currentTarget.value)}
                 required
-                class="flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white text-neutral-900 border-neutral-300 focus:ring-[#fd4f00]"
+                class="flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-700 focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
               />
               <button
                 type="submit"
@@ -320,6 +298,95 @@ function NextStepsCard(props: {
           </Show>
         </div>
       </Show>
+    </div>
+  );
+}
+
+/** System Detail Card & Next Steps CTA (Screen 3) */
+function SystemDetailPanel(props: {
+  item: SystemMatch;
+  sub: SubCategory;
+  isDataDocks: boolean;
+}) {
+  return (
+    <div class="space-y-4">
+      {/* System Details Card */}
+      <div
+        class={`p-5 sm:p-6 rounded-2xl space-y-4 border transition-all duration-200 ${
+          props.isDataDocks
+            ? "bg-[#F8EDD9]/40 dark:bg-neutral-900 border-[#E5D3B3] dark:border-[#fd4f00]/40 shadow-xs"
+            : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 shadow-xs"
+        }`}
+      >
+        {/* Panel Header */}
+        <div class="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
+          <div>
+            <span class="text-[10px] font-bold tracking-widest text-[#9c806d] dark:text-[#d4a276] uppercase">
+              System Details
+            </span>
+            <h3
+              class={`text-base sm:text-lg font-bold leading-tight mt-0.5 ${
+                props.isDataDocks ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-950 dark:text-white"
+              }`}
+            >
+              {props.item.name}
+            </h3>
+          </div>
+          <span
+            class={`shrink-0 text-xs font-bold font-mono px-2.5 py-1 rounded-full border ${
+              props.isDataDocks
+                ? "bg-[#fd4f00] text-white border-[#fd4f00]"
+                : "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 border-neutral-900 dark:border-neutral-100"
+            }`}
+          >
+            {props.item.score}% Match
+          </span>
+        </div>
+
+        {/* Who Is It For */}
+        {props.item.whoIsItFor && (
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-1">
+              Who is it for?
+            </span>
+            <p class="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+              {props.item.whoIsItFor}
+            </p>
+          </div>
+        )}
+
+        {/* Architecture & Capabilities (Side-by-Side 2-Column Grid) */}
+        <div class="grid sm:grid-cols-2 gap-4 pt-3 border-t border-neutral-200/70 dark:border-neutral-800 text-xs">
+          <div>
+            <span class="font-bold text-[#9c806d] dark:text-[#d4a276] uppercase tracking-wider block mb-1">
+              Software Architecture
+            </span>
+            <p class="font-bold text-neutral-950 dark:text-white leading-snug">
+              {props.item.architecture ?? props.sub.ymsFit}
+            </p>
+          </div>
+          <div>
+            <span class="font-bold text-[#9c806d] dark:text-[#d4a276] uppercase tracking-wider block mb-1">
+              Key Capabilities
+            </span>
+            <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
+              {props.item.capabilities ?? props.sub.keyCapability}
+            </p>
+          </div>
+        </div>
+
+        <p class="text-[11px] text-neutral-500 dark:text-neutral-400 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 italic">
+          Note: Scores indicate category functional fit index, not a product review or quality rating.
+        </p>
+      </div>
+
+      {/* Next Steps CTA Card */}
+      <NextStepsCard
+        selectedSystemName={props.item.name}
+        isDataDocks={props.isDataDocks}
+        subCategoryTitle={props.sub.title}
+        integrationEcosystem={props.sub.integrationEcosystem}
+      />
     </div>
   );
 }
@@ -564,7 +631,7 @@ function TextListItem(props: {
       style={delayStyle()}
       data-home-card={isHomeCard() ? "true" : undefined}
       aria-label={`Select ${props.sub.title}`}
-      class={`w-full text-left py-3.5 border-b border-[#ece6de] flex items-center justify-between group hover:bg-neutral-50/80 active:bg-neutral-100 transition-[background-color] duration-200 ease-out disabled:pointer-events-none ${
+      class={`w-full text-left py-3.5 border-b border-[#ece6de] dark:border-neutral-800 flex items-center justify-between group hover:bg-neutral-50/80 dark:hover:bg-neutral-900/80 active:bg-neutral-100 dark:active:bg-neutral-800 transition-[background-color] duration-200 ease-out disabled:pointer-events-none ${
         isFlippingCard()
           ? "!opacity-0 !animation-none invisible"
           : props.isExitingCards
@@ -575,14 +642,14 @@ function TextListItem(props: {
       }`}
     >
       <div class="min-w-0 pr-4">
-        <span class="text-xs sm:text-sm font-bold text-neutral-900 group-hover:text-[#fd4f00] transition-colors block">
+        <span class="text-xs sm:text-sm font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] transition-colors block">
           {props.sub.title}
         </span>
-        <span class="text-xs text-neutral-600 mt-0.5 leading-snug block">
+        <span class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 leading-snug block">
           {props.sub.description}
         </span>
       </div>
-      <Chevron class="text-neutral-300 group-hover:text-[#fd4f00] group-hover:translate-x-1.5" />
+      <Chevron class="text-neutral-300 dark:text-neutral-600 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] group-hover:translate-x-1.5" />
     </button>
   );
 }
@@ -1115,13 +1182,7 @@ export default function YardTypeSelector() {
     // Measure target header thumbnail box layout destination
     const headerBoxRect = targetThumbBox.getBoundingClientRect();
     const aspectStr = headerThumbAspect();
-    let targetWidthPx = 140; // Default fallback width
-    if (aspectStr) {
-      const parts = aspectStr.split("/").map((p) => parseFloat(p.trim()));
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1]) && parts[1] > 0) {
-        targetWidthPx = Math.round(76 * (parts[0] / parts[1]));
-      }
-    }
+    const targetWidthPx = parseFloat(computeHeaderThumbWidth(aspectStr)) || 140;
 
     const last = {
       left: headerBoxRect.left,
@@ -1223,7 +1284,7 @@ export default function YardTypeSelector() {
   const currentThumbWidth = createMemo(() => computeHeaderThumbWidth(headerThumbAspect()));
 
   return (
-    <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-8 font-sans text-neutral-900 min-h-[64rem] sm:min-h-[54rem] flex flex-col justify-start">
+    <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-8 font-sans text-neutral-900 dark:text-neutral-100 sm:min-h-[54rem] flex flex-col justify-start">
       {/* Screen Reader Live Region */}
       <div aria-live="polite" aria-atomic="true" class="sr-only">
         {screenAnnouncement()}
@@ -1232,7 +1293,7 @@ export default function YardTypeSelector() {
       <style>{STYLES}</style>
 
       {/* ── UNIFIED PERSISTENT HEADER FRAME (Always Present, Width Reflow) ── */}
-      <div class="mb-4 pb-3 border-b border-neutral-200/70 flex items-center min-h-[4.5rem] relative">
+      <div class="mb-4 pb-3 border-b border-neutral-200/70 dark:border-neutral-800 flex items-center min-h-[4.5rem] relative">
         {/* Always-Present Thumbnail Container with CSS Width Transition */}
         <div
           data-yt-header-thumb-box
@@ -1243,7 +1304,7 @@ export default function YardTypeSelector() {
             "margin-right": headerThumbAspect() ? "1rem" : "0px",
             "border-width": headerThumbAspect() ? "1px" : "0px"
           }}
-          class="shrink-0 h-[4.75rem] rounded-xl overflow-hidden border-neutral-200/90 shadow-xs bg-neutral-100 relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-neutral-800 shadow-xs bg-neutral-100 dark:bg-neutral-900 relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
           {headerThumbSrc() && (
             <img
@@ -1262,20 +1323,21 @@ export default function YardTypeSelector() {
           {/* Outgoing Text Container */}
           {oldHeaderState() && (
             <div class="absolute inset-x-0 top-0 pointer-events-none yt-header-exit">
-              <div class="flex items-center gap-2 mb-1 h-6">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
                 {oldHeaderState()!.showBack && (
-                  <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 uppercase bg-neutral-200/70">
-                    {oldHeaderState()!.backLabel}
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 shrink-0">
+                    <span class="sm:hidden">BACK</span>
+                    <span class="hidden sm:inline">{oldHeaderState()!.backLabel}</span>
                   </span>
                 )}
-                <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] uppercase bg-[#F8EDD9] px-2 py-0.5 rounded border border-[#E5D3B3] truncate max-w-[200px] sm:max-w-none">
+                <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                   {oldHeaderState()!.badge}
                 </span>
               </div>
-              <h2 class="text-base sm:text-lg font-bold text-black leading-snug">
+              <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
                 {oldHeaderState()!.title}
               </h2>
-              <p class="text-xs text-neutral-600 mt-0.5">
+              <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
                 {oldHeaderState()!.subtitle}
               </p>
             </div>
@@ -1283,7 +1345,7 @@ export default function YardTypeSelector() {
 
           {/* Incoming Text Container */}
           <div class={`w-full ${isHeaderEntering() ? "yt-header-enter" : ""}`}>
-            <div class="flex items-center gap-2 mb-1 h-6">
+            <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
               {showBackButton() && (
                 <button
                   type="button"
@@ -1296,23 +1358,24 @@ export default function YardTypeSelector() {
                   }}
                   disabled={isNavigating()}
                   aria-label="Go back"
-                  class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 uppercase bg-neutral-200/70 hover:bg-neutral-300/80 hover:text-black active:scale-95 transition-[transform,background-color,color] duration-200 group disabled:pointer-events-none"
+                  class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 hover:bg-neutral-300/80 dark:hover:bg-neutral-700 hover:text-black dark:hover:text-white active:scale-95 transition-[transform,background-color,color] duration-200 group disabled:pointer-events-none shrink-0"
                 >
-                  <svg class="size-3 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <svg class="size-3 group-hover:-translate-x-0.5 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                   </svg>
-                  {backButtonLabel()}
+                  <span class="sm:hidden">BACK</span>
+                  <span class="hidden sm:inline">{backButtonLabel()}</span>
                 </button>
               )}
-              <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] uppercase bg-[#F8EDD9] px-2 py-0.5 rounded border border-[#E5D3B3] truncate max-w-[200px] sm:max-w-none">
+              <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                 {headerBadge()}
               </span>
             </div>
 
-            <h2 class="text-base sm:text-lg font-bold text-black leading-snug">
+            <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
               {headerTitle()}
             </h2>
-            <p class="text-xs text-neutral-600 mt-0.5">
+            <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
               {headerSubtitle()}
             </p>
           </div>
@@ -1367,40 +1430,17 @@ export default function YardTypeSelector() {
                 <>
                   {/* Sub-category Grid */}
                   {is3Col ? (
-                    /* 3-column vertical cards (Heavy Industrial / 6-grid) */
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                      <For each={cat.subCategories}>
-                        {(sub, index) => (
-                          <SubCard
-                            id={sub.id}
-                            src={sub.imageSrc}
-                            alt={sub.imageAlt}
-                            title={sub.title}
-                            aspectRatio={cat.subCategories.length === 3 ? "320 / 511" : "319 / 257"}
-                            index={index()}
-                            isBackwardNav={isBackward()}
-                            homeIndex={targetHomeIndex()}
-                            disabled={isNavigating()}
-                            isExitingCards={isExitingCards()}
-                            flipSourceIndex={flipSourceIndex()}
-                            isHomeLandingComplete={isHomeLandingComplete()}
-                            onClick={(e) => handleSubCategoryClick(sub.id, e)}
-                          />
-                        )}
-                      </For>
-                    </div>
-                  ) : is5Row ? (
-                    /* 2 top cards + 3 panoramic rows (Freight & Cargo) */
-                    <div class="flex flex-col gap-2.5">
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <For each={cat.subCategories.slice(0, 2)}>
+                    cat.subCategories.length === 3 ? (
+                      /* 3 portrait cards — always 3 columns (compact on mobile, full on desktop) */
+                      <div class="grid grid-cols-3 gap-2 sm:gap-2.5">
+                        <For each={cat.subCategories}>
                           {(sub, index) => (
                             <SubCard
                               id={sub.id}
                               src={sub.imageSrc}
                               alt={sub.imageAlt}
                               title={sub.title}
-                              aspectRatio="508 / 224"
+                              aspectRatio="320 / 511"
                               index={index()}
                               isBackwardNav={isBackward()}
                               homeIndex={targetHomeIndex()}
@@ -1413,17 +1453,18 @@ export default function YardTypeSelector() {
                           )}
                         </For>
                       </div>
-                      <For each={cat.subCategories.slice(2)}>
-                        {(sub, index) => {
-                          const realIdx = index() + 2;
-                          return (
+                    ) : (
+                      /* 6 cards — 2-col on mobile, 3-col on desktop */
+                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
+                        <For each={cat.subCategories}>
+                          {(sub, index) => (
                             <SubCard
                               id={sub.id}
                               src={sub.imageSrc}
                               alt={sub.imageAlt}
                               title={sub.title}
-                              imgClass="object-cover aspect-[1024/250] sm:aspect-[1024/110]"
-                              index={realIdx}
+                              aspectRatio="319 / 257"
+                              index={index()}
                               isBackwardNav={isBackward()}
                               homeIndex={targetHomeIndex()}
                               disabled={isNavigating()}
@@ -1432,13 +1473,91 @@ export default function YardTypeSelector() {
                               isHomeLandingComplete={isHomeLandingComplete()}
                               onClick={(e) => handleSubCategoryClick(sub.id, e)}
                             />
-                          );
-                        }}
-                      </For>
+                          )}
+                        </For>
+                      </div>
+                    )
+                  ) : is5Row ? (
+                    /* 5 subcategories (Freight & Cargo) — dual DOM for mobile vs desktop */
+                    <div>
+                      {/* Mobile: flat 2-col grid (hidden on sm+) */}
+                      <div class="grid grid-cols-2 gap-2 sm:hidden">
+                        <For each={cat.subCategories}>
+                          {(sub, index) => {
+                            const isLast = index() === cat.subCategories.length - 1;
+                            return (
+                              <div class={isLast ? "col-span-2" : ""}>
+                                <SubCard
+                                  id={sub.id}
+                                  src={sub.imageSrc}
+                                  alt={sub.imageAlt}
+                                  title={sub.title}
+                                  aspectRatio={isLast ? "508 / 180" : "508 / 300"}
+                                  index={index()}
+                                  isBackwardNav={isBackward()}
+                                  homeIndex={targetHomeIndex()}
+                                  disabled={isNavigating()}
+                                  isExitingCards={isExitingCards()}
+                                  flipSourceIndex={flipSourceIndex()}
+                                  isHomeLandingComplete={isHomeLandingComplete()}
+                                  onClick={(e) => handleSubCategoryClick(sub.id, e)}
+                                />
+                              </div>
+                            );
+                          }}
+                        </For>
+                      </div>
+
+                      {/* Desktop: 2 top cards + 3 panoramic rows (hidden on mobile) */}
+                      <div class="hidden sm:flex sm:flex-col sm:gap-2.5">
+                        <div class="grid grid-cols-2 gap-2.5">
+                          <For each={cat.subCategories.slice(0, 2)}>
+                            {(sub, index) => (
+                              <SubCard
+                                id={sub.id}
+                                src={sub.imageSrc}
+                                alt={sub.imageAlt}
+                                title={sub.title}
+                                aspectRatio="508 / 224"
+                                index={index()}
+                                isBackwardNav={isBackward()}
+                                homeIndex={targetHomeIndex()}
+                                disabled={isNavigating()}
+                                isExitingCards={isExitingCards()}
+                                flipSourceIndex={flipSourceIndex()}
+                                isHomeLandingComplete={isHomeLandingComplete()}
+                                onClick={(e) => handleSubCategoryClick(sub.id, e)}
+                              />
+                            )}
+                          </For>
+                        </div>
+                        <For each={cat.subCategories.slice(2)}>
+                          {(sub, index) => {
+                            const realIdx = index() + 2;
+                            return (
+                              <SubCard
+                                id={sub.id}
+                                src={sub.imageSrc}
+                                alt={sub.imageAlt}
+                                title={sub.title}
+                                imgClass="object-cover aspect-[1024/110]"
+                                index={realIdx}
+                                isBackwardNav={isBackward()}
+                                homeIndex={targetHomeIndex()}
+                                disabled={isNavigating()}
+                                isExitingCards={isExitingCards()}
+                                flipSourceIndex={flipSourceIndex()}
+                                isHomeLandingComplete={isHomeLandingComplete()}
+                                onClick={(e) => handleSubCategoryClick(sub.id, e)}
+                              />
+                            );
+                          }}
+                        </For>
+                      </div>
                     </div>
                   ) : (
                     /* Text list fallback */
-                    <div class="border-t border-[#ece6de]">
+                    <div class="border-t border-[#ece6de] dark:border-neutral-800">
                       <For each={cat.subCategories}>
                         {(sub, index) => (
                           <TextListItem
@@ -1474,15 +1593,15 @@ export default function YardTypeSelector() {
                 <div class={isExitingCards() ? "yt-card-exit" : ""}>
                   <div class="pt-1">
                     {sub.matches && sub.matches.length > 0 ? (
-                      /* ── 2-COLUMN MASTER-DETAIL LAYOUT ── */
-                      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
+                      /* ── 2-COLUMN MASTER-DETAIL LAYOUT (DESKTOP) / ACCORDION INLINE (MOBILE) ── */
+                      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 pt-2">
                         {/* ── LEFT COLUMN: Bar Chart System Selector ── */}
                         <div class="lg:col-span-5 space-y-3">
                           <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d]" id="yt-match-list-label">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
                               Category Match List
                             </span>
-                            <span class="text-[10px] font-medium text-neutral-600">
+                            <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
                               Click system to view details
                             </span>
                           </div>
@@ -1495,143 +1614,90 @@ export default function YardTypeSelector() {
                                 const isDataDocksSelected = () => isSelected() && isDataDocks;
 
                                 return (
-                                  <button
-                                    type="button"
-                                    role="option"
-                                    aria-selected={isSelected()}
-                                    onClick={() => setSelectedSystemIndex(idx())}
-                                    ref={(el: HTMLElement) => { if (idx() === 0) focusTargetRef = el; }}
-                                    class={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
-                                      isSelected()
-                                        ? isDataDocks
-                                          ? "bg-[#F8EDD9] border-[#fd4f00] shadow-md scale-[1.01]"
-                                          : "bg-white border-neutral-900 shadow-md scale-[1.01]"
-                                        : "bg-neutral-50/90 border-neutral-200/80 hover:border-neutral-400"
-                                    }`}
-                                    aria-label={`${item.name}: ${item.score}% operational category match`}
-                                    data-score-type="category-fit-percentage"
-                                  >
-                                    <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 mb-2">
-                                      <span class="flex items-center gap-1.5 truncate pr-2">
-                                        <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00]" : "text-neutral-900"}>
-                                          {item.name}
+                                  <div>
+                                    <button
+                                      type="button"
+                                      role="option"
+                                      aria-selected={isSelected()}
+                                      onClick={() => setSelectedSystemIndex(idx())}
+                                      ref={(el: HTMLElement) => { if (idx() === 0) focusTargetRef = el; }}
+                                      class={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
+                                        isSelected()
+                                          ? isDataDocks
+                                            ? "bg-[#F8EDD9] dark:bg-[#fd4f00]/15 border-[#fd4f00] shadow-md scale-[1.01]"
+                                            : "bg-white dark:bg-neutral-800 border-neutral-900 dark:border-neutral-300 shadow-md scale-[1.01]"
+                                          : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
+                                      }`}
+                                      aria-label={`${item.name}: ${item.score}% operational category match`}
+                                      data-score-type="category-fit-percentage"
+                                    >
+                                      <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                                        <span class="flex items-center gap-1.5 truncate pr-2">
+                                          <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-900 dark:text-neutral-100"}>
+                                            {item.name}
+                                          </span>
                                         </span>
-                                      </span>
-                                      <span class="flex items-center gap-1 shrink-0">
-                                        <span class={`font-mono text-xs font-bold ${isDataDocksSelected() ? "text-[#fd4f00]" : "text-neutral-700"}`}>
-                                          {item.score}% Match
+                                        <span class="flex items-center gap-1 shrink-0">
+                                          <span class={`font-mono text-xs font-bold ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-700 dark:text-neutral-300"}`}>
+                                            {item.score}% Match
+                                          </span>
+                                          <svg class={`size-3.5 transition-colors ${
+                                            isSelected()
+                                              ? isDataDocks
+                                                ? "text-[#fd4f00] dark:text-[#ff7635]"
+                                                : "text-neutral-900 dark:text-neutral-100"
+                                              : "text-neutral-400 dark:text-neutral-600"
+                                          }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                          </svg>
                                         </span>
-                                        <svg class={`size-3.5 transition-colors ${
-                                          isSelected()
-                                            ? isDataDocks
-                                              ? "text-[#fd4f00]"
-                                              : "text-neutral-900"
-                                            : "text-neutral-400"
-                                        }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                        </svg>
-                                      </span>
-                                    </div>
+                                      </div>
 
-                                    <div class="h-2 w-full bg-neutral-200/70 rounded-full overflow-hidden">
-                                      <div
-                                        class={`h-full rounded-full transition-all duration-500 ease-out ${
-                                          isDataDocksSelected()
-                                            ? "bg-[#fd4f00]"
-                                            : item.score >= 80
-                                            ? "bg-neutral-800"
-                                            : item.score >= 50
-                                            ? "bg-neutral-600"
-                                            : "bg-neutral-400"
-                                        }`}
-                                        style={{ width: `${item.score}%` }}
-                                      />
-                                    </div>
-                                  </button>
+                                      <div class="h-2 w-full bg-neutral-200/70 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                        <div
+                                          class={`h-full rounded-full transition-all duration-500 ease-out ${
+                                            isDataDocksSelected()
+                                              ? "bg-[#fd4f00]"
+                                              : item.score >= 80
+                                              ? "bg-neutral-800 dark:bg-neutral-200"
+                                              : item.score >= 50
+                                              ? "bg-neutral-600 dark:bg-neutral-400"
+                                              : "bg-neutral-400 dark:bg-neutral-600"
+                                          }`}
+                                          style={{ width: `${item.score}%` }}
+                                        />
+                                      </div>
+                                    </button>
+
+                                    {/* Mobile: Accordion detail directly under selected system */}
+                                    <Show when={isSelected()}>
+                                      <div class="lg:hidden mt-3 mb-2">
+                                        <SystemDetailPanel
+                                          item={item}
+                                          sub={sub}
+                                          isDataDocks={isDataDocks}
+                                        />
+                                      </div>
+                                    </Show>
+                                  </div>
                                 );
                               }}
                             </For>
                           </div>
                         </div>
 
-                        {/* ── RIGHT COLUMN: Selected System Detail Panel ── */}
-                        <div class="lg:col-span-7 space-y-4">
+                        {/* ── RIGHT COLUMN (DESKTOP ONLY): Selected System Detail Panel ── */}
+                        <div class="hidden lg:block lg:col-span-7">
                           {(() => {
                             const matches = sub.matches ?? [];
                             const activeItem = () => matches[selectedSystemIndex()] ?? matches[0];
                             const isDataDocks = () => activeItem()?.name === "DataDocks";
                             return (
-                              <>
-                                {/* System Details Card */}
-                                <div class={`p-5 sm:p-6 rounded-2xl space-y-4 border transition-all duration-200 ${
-                                  isDataDocks()
-                                    ? "bg-[#F8EDD9]/40 border-[#E5D3B3] shadow-xs"
-                                    : "bg-neutral-50/90 border-neutral-200/80 shadow-xs"
-                                }`}>
-                                  {/* Panel Header */}
-                                  <div class="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80">
-                                    <div>
-                                      <span class="text-[10px] font-bold tracking-widest text-[#9c806d] uppercase">
-                                        System Details
-                                      </span>
-                                      <h3 class={`text-base sm:text-lg font-bold leading-tight mt-0.5 ${isDataDocks() ? "text-[#fd4f00]" : "text-neutral-900"}`}>
-                                        {activeItem().name}
-                                      </h3>
-                                    </div>
-                                    <span class={`shrink-0 text-xs font-bold font-mono px-2.5 py-1 rounded-full border ${
-                                      isDataDocks()
-                                        ? "bg-[#fd4f00] text-white border-[#fd4f00]"
-                                        : "bg-neutral-900 text-white border-neutral-900"
-                                    }`}>
-                                      {activeItem().score}% Match
-                                    </span>
-                                  </div>
-
-                                  {/* Who Is It For */}
-                                  {activeItem().whoIsItFor && (
-                                    <div>
-                                      <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] block mb-1">
-                                        Who is it for?
-                                      </span>
-                                      <p class="text-sm text-neutral-800 leading-relaxed font-medium">
-                                        {activeItem().whoIsItFor}
-                                      </p>
-                                    </div>
-                                  )}
-
-                                  {/* Architecture & Capabilities (Side-by-Side 2-Column Grid) */}
-                                  <div class="grid sm:grid-cols-2 gap-4 pt-3 border-t border-neutral-200/70 text-xs">
-                                    <div>
-                                      <span class="font-bold text-[#9c806d] uppercase tracking-wider block mb-1">
-                                        Software Architecture
-                                      </span>
-                                      <p class="font-bold text-neutral-900 leading-snug">
-                                        {activeItem().architecture ?? sub.ymsFit}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <span class="font-bold text-[#9c806d] uppercase tracking-wider block mb-1">
-                                        Key Capabilities
-                                      </span>
-                                      <p class="text-neutral-700 leading-relaxed">
-                                        {activeItem().capabilities ?? sub.keyCapability}
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  <p class="text-[11px] text-neutral-500 pt-2 border-t border-neutral-200/60 italic">
-                                    Note: Scores indicate category functional fit index, not a product review or quality rating.
-                                  </p>
-                                </div>
-
-                                {/* Next Steps CTA Card */}
-                                <NextStepsCard
-                                  selectedSystemName={activeItem().name}
-                                  isDataDocks={isDataDocks()}
-                                  subCategoryTitle={sub.title}
-                                  integrationEcosystem={sub.integrationEcosystem}
-                                />
-                              </>
+                              <SystemDetailPanel
+                                item={activeItem()}
+                                sub={sub}
+                                isDataDocks={isDataDocks()}
+                              />
                             );
                           })()}
                         </div>
@@ -1640,16 +1706,16 @@ export default function YardTypeSelector() {
                       /* ── STANDARD SUMMARY FOR OTHER CATEGORIES ── */
                       <div class="grid sm:grid-cols-2 gap-4 pt-4">
                         <div>
-                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d]">
+                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]">
                             Recommended Architecture
                           </span>
-                          <p class="text-sm font-bold text-neutral-900 mt-1">{sub.ymsFit}</p>
+                          <p class="text-sm font-bold text-neutral-950 dark:text-white mt-1">{sub.ymsFit}</p>
                         </div>
                         <div>
-                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d]">
+                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]">
                             Key Capability
                           </span>
-                          <p class="text-sm text-neutral-800 mt-1 leading-relaxed">
+                          <p class="text-sm text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed">
                             {sub.keyCapability}
                           </p>
                         </div>
@@ -1657,12 +1723,12 @@ export default function YardTypeSelector() {
                     )}
                   </div>
 
-                  <div class="pt-4 mt-4 border-t border-[#ece6de] flex items-center justify-between">
+                  <div class="pt-4 mt-4 border-t border-[#ece6de] dark:border-neutral-800 flex items-center justify-between">
                     <button
                       type="button"
                       onClick={handleBackToCategories}
                       disabled={isNavigating()}
-                      class="text-xs font-semibold text-neutral-500 hover:text-black transition-colors disabled:pointer-events-none"
+                      class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors disabled:pointer-events-none"
                     >
                       Start over
                     </button>
