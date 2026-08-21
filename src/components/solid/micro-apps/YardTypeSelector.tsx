@@ -704,7 +704,9 @@ export default function YardTypeSelector() {
 
   const cleanupActiveAnimation = () => {
     if (activeAnim) {
-      try { activeAnim.cancel(); } catch (_) {}
+      try { activeAnim.cancel(); } catch {
+        /* ignore */
+      }
       activeAnim = null;
     }
     if (activeTargetEl) {
