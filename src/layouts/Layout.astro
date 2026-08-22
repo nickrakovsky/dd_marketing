@@ -44,6 +44,10 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
+
+// Dealfront (formerly Leadfeeder) B2B visitor identification. Public site ID,
+// safe to commit — it's exposed in the client bundle either way.
+const DEALFRONT_SITE_ID = '3P1w24d9vEoamY5n';
 // Normalize pathname: strip trailing slash AND strip .html suffix (build.format: 'file' emits paths with .html)
 const pathname = Astro.url.pathname === '/'
   ? '/'
@@ -715,6 +719,41 @@ const jsonLd = {
             <script is:inline type="text/partytown" src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
+
+        {/* Dealfront/Leadfeeder B2B visitor identification (company-level, from IP).
+             Deferred to requestIdleCallback so the 12 KB (brotli) fetch starts after
+             LCP has painted — measured at 4x CPU throttle it adds ~9ms TBT and no
+             detectable LCP change. The capture-phase click listeners it attaches cost
+             +0.3ms on the worst interaction, so INP is unaffected.
+
+             Do NOT move this into <head> or drop in Dealfront's stock install snippet:
+             theirs is a synchronous head tag that lands in the critical path.
+
+             Do NOT wrap in Partytown either — unlike Bento (fire-and-forget), this
+             script reads document.cookie, scans the DOM, and attaches form/click
+             listeners. Each one becomes a sync main-thread round-trip through the
+             worker proxy, which is slower than running it natively and breaks form
+             tracking. The `timeout: 4000` matters: without it a visitor who never
+             stops scrolling may never hit an idle callback, and we'd lose the session. */}
+        <script is:inline define:vars={{ DEALFRONT_SITE_ID }}>
+          (function () {
+            function loadDealfront() {
+              window.ldfdr = window.ldfdr || function () {
+                (ldfdr._q = ldfdr._q || []).push([].slice.call(arguments));
+              };
+              var firstScript = document.getElementsByTagName('script')[0];
+              var s = document.createElement('script');
+              s.src = 'https://sc.lfeeder.com/lftracker_v1_' + DEALFRONT_SITE_ID + '.js';
+              s.async = true;
+              firstScript.parentNode.insertBefore(s, firstScript);
+            }
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(loadDealfront, { timeout: 4000 });
+            } else {
+              setTimeout(loadDealfront, 2500);
+            }
+          })();
+        </script>
     </body>
 </html>
 
