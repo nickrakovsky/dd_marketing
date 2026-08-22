@@ -738,8 +738,10 @@ const jsonLd = {
         <script is:inline define:vars={{ DEALFRONT_SITE_ID }}>
           (function () {
             function loadDealfront() {
+              // Dealfront's stock snippet leans on `ldfdr` as an implicit global
+              // here; we qualify it with `window.` so it passes no-undef.
               window.ldfdr = window.ldfdr || function () {
-                (ldfdr._q = ldfdr._q || []).push([].slice.call(arguments));
+                (window.ldfdr._q = window.ldfdr._q || []).push([].slice.call(arguments));
               };
               var firstScript = document.getElementsByTagName('script')[0];
               var s = document.createElement('script');
