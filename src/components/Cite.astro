@@ -1,0 +1,19 @@
+---
+// Inline superscript citation marker that links down to its BibliographyItem.
+// Previously defined ad hoc as `export const Cite = ...` inside a single MDX
+// post, which Keystatic's editor cannot parse (mdxjsEsm nodes are unsupported).
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<a
+  href={`#ref-${id}`}
+  id={`cite-${id}`}
+  data-smartlink-trigger="true"
+  data-smartlink-type="academic"
+  data-smartlink-bibref={`#ref-${id}`}
+  class="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-[#fd4f00] hover:!text-[#fd4f00] dark:hover:!text-[#ff7635] transition-colors cursor-pointer font-medium text-xs align-super"
+  aria-label={`Reference ${id}`}
+>[{id}]</a>
