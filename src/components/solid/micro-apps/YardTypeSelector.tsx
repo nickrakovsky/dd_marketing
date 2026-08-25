@@ -113,46 +113,6 @@ const SUBCATEGORY_TINTS: Record<string, {
   }
 };
 
-/* ── Inline CSS Animations ── */
-
-const STYLES = `
-  @keyframes ytCardEnter {
-    0%   { opacity: 0; transform: translate3d(0, 16px, 0); }
-    100% { opacity: 1; transform: translate3d(0, 0, 0); }
-  }
-  @keyframes ytSubCardEnter {
-    0%   { opacity: 0; transform: translate3d(0, 12px, 0); }
-    100% { opacity: 1; transform: translate3d(0, 0, 0); }
-  }
-  @keyframes ytCardExit {
-    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
-    100% { opacity: 0; transform: translate3d(0, -8px, 0); }
-  }
-  @keyframes ytHeaderEnter {
-    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
-    100% { opacity: 1; transform: translate3d(0, 0, 0); }
-  }
-  @keyframes ytHeaderExit {
-    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
-    100% { opacity: 0; transform: translate3d(0, -6px, 0); }
-  }
-  .yt-subcard-enter, .yt-card-enter {
-    animation: ytSubCardEnter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .yt-card-exit {
-    animation-name: ytCardExit;
-    animation-duration: 160ms;
-    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-    animation-fill-mode: forwards;
-  }
-  .yt-header-enter {
-    animation: ytHeaderEnter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .yt-header-exit {
-    animation: ytHeaderExit 220ms cubic-bezier(0.25, 1, 0.5, 1) both;
-  }
-`;
-
 /** Helper to determine exact aspect ratio string for a sub-category card */
 function getSubCardAspectRatio(is3Col: boolean, isTop2: boolean, count?: number): string {
   if (count === 3) return "320 / 511";
@@ -344,7 +304,8 @@ function SystemDetailPanel(props: {
         </div>
 
         {/* Who Is It For */}
-        {props.item.whoIsItFor && (
+        {/* Who Is It For */}
+        <Show when={props.item.whoIsItFor}>
           <div>
             <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-1">
               Who is it for?
@@ -353,7 +314,7 @@ function SystemDetailPanel(props: {
               {props.item.whoIsItFor}
             </p>
           </div>
-        )}
+        </Show>
 
         {/* Architecture & Capabilities (Side-by-Side 2-Column Grid) */}
         <div class="grid sm:grid-cols-2 gap-4 pt-3 border-t border-neutral-200/70 dark:border-neutral-800 text-xs">
@@ -408,11 +369,13 @@ function Chevron(props: { class?: string }) {
   );
 }
 
-/** Primary Category Card (Page 1) */
+/* ── Card Components ── */
+
+/** Category Card (Page 1) */
 function CategoryCard(props: {
   id: string;
   src: string;
-  alt: string;
+  alt?: string;
   title: string;
   aspectRatio: string;
   onClick: (e: MouseEvent) => void;
@@ -421,8 +384,8 @@ function CategoryCard(props: {
   isBackwardNav?: boolean;
   homeIndex?: number;
   isExitingCards?: boolean;
-  isHomeLandingComplete?: boolean;
   flipSourceIndex?: number | null;
+  isHomeLandingComplete?: boolean;
 }) {
   const theme = () => PRIMARY_TINTS[props.id];
   const isHomeCard = () => props.isBackwardNav && props.index === (props.homeIndex ?? 0);
@@ -480,12 +443,12 @@ function CategoryCard(props: {
         decoding="async"
       />
       
-      {theme() && (
+      <Show when={theme()}>
         <div
           class={`absolute inset-0 transition-opacity duration-300 opacity-0 pointer-events-none z-10 ${theme()!.opacityClass}`}
           style={{ "background-color": theme()!.overlayHex }}
         />
-      )}
+      </Show>
 
       <div class="absolute inset-x-0 bottom-0 px-4 pt-14 pb-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end justify-between pointer-events-none z-20">
         <span class="text-xs sm:text-sm font-bold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.9)] leading-snug">
@@ -511,8 +474,8 @@ function SubCard(props: {
   isBackwardNav?: boolean;
   homeIndex?: number;
   isExitingCards?: boolean;
-  isHomeLandingComplete?: boolean;
   flipSourceIndex?: number | null;
+  isHomeLandingComplete?: boolean;
 }) {
   const theme = () => SUBCATEGORY_TINTS[props.id];
   const isHomeCard = () => props.isBackwardNav && props.index === (props.homeIndex ?? 0);
@@ -570,12 +533,12 @@ function SubCard(props: {
         decoding="async"
       />
 
-      {theme() && (
+      <Show when={theme()}>
         <div
           class={`absolute inset-0 transition-opacity duration-300 opacity-0 pointer-events-none z-10 ${theme()!.opacityClass}`}
           style={{ "background-color": theme()!.overlayHex }}
         />
-      )}
+      </Show>
 
       <div class="absolute inset-x-0 bottom-0 px-4 pt-14 pb-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end justify-between pointer-events-none z-20">
         <span class="text-xs sm:text-sm font-bold text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.9)] leading-snug">
@@ -1292,8 +1255,6 @@ export default function YardTypeSelector() {
         {screenAnnouncement()}
       </div>
 
-      <style>{STYLES}</style>
-
       {/* ── UNIFIED PERSISTENT HEADER FRAME (Always Present, Width Reflow) ── */}
       <div class="mb-4 pb-3 border-b border-neutral-200/70 dark:border-neutral-800 flex items-center min-h-[4.5rem] relative">
         {/* Always-Present Thumbnail Container with CSS Width Transition */}
@@ -1308,7 +1269,7 @@ export default function YardTypeSelector() {
           }}
           class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-neutral-800 shadow-xs bg-neutral-100 dark:bg-neutral-900 relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
-          {headerThumbSrc() && (
+          <Show when={headerThumbSrc()}>
             <img
               data-yt-header-thumb
               src={headerThumbSrc()!}
@@ -1317,38 +1278,40 @@ export default function YardTypeSelector() {
               height="276"
               class="w-full h-full object-cover block rounded-xl"
             />
-          )}
+          </Show>
         </div>
 
         {/* Dual-Container Text Column (Overlapped Cross-Fade) */}
         <div class="flex-grow min-w-0 relative min-h-[3.25rem] flex items-center">
           {/* Outgoing Text Container */}
-          {oldHeaderState() && (
-            <div class="absolute inset-x-0 top-0 pointer-events-none yt-header-exit">
-              <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
-                {oldHeaderState()!.showBack && (
-                  <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 shrink-0">
-                    <span class="sm:hidden">BACK</span>
-                    <span class="hidden sm:inline">{oldHeaderState()!.backLabel}</span>
+          <Show when={oldHeaderState()}>
+            {(old) => (
+              <div class="absolute inset-x-0 top-0 pointer-events-none yt-header-exit">
+                <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
+                  <Show when={old().showBack}>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 shrink-0">
+                      <span class="sm:hidden">BACK</span>
+                      <span class="hidden sm:inline">{old().backLabel}</span>
+                    </span>
+                  </Show>
+                  <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
+                    {old().badge}
                   </span>
-                )}
-                <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
-                  {oldHeaderState()!.badge}
-                </span>
+                </div>
+                <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
+                  {old().title}
+                </h2>
+                <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
+                  {old().subtitle}
+                </p>
               </div>
-              <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
-                {oldHeaderState()!.title}
-              </h2>
-              <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
-                {oldHeaderState()!.subtitle}
-              </p>
-            </div>
-          )}
+            )}
+          </Show>
 
           {/* Incoming Text Container */}
           <div class={`w-full ${isHeaderEntering() ? "yt-header-enter" : ""}`}>
             <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
-              {showBackButton() && (
+              <Show when={showBackButton()}>
                 <button
                   type="button"
                   onClick={() => {
@@ -1368,7 +1331,7 @@ export default function YardTypeSelector() {
                   <span class="sm:hidden">BACK</span>
                   <span class="hidden sm:inline">{backButtonLabel()}</span>
                 </button>
-              )}
+              </Show>
               <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                 {headerBadge()}
               </span>

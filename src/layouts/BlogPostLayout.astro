@@ -1951,4 +1951,40 @@ if (priorityImgMatch) {
     }
   }
 
+  /* YardTypeSelector keyframe animations */
+  @keyframes ytCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 16px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytSubCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 12px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytCardExit {
+    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, -8px, 0); }
+  }
+  @keyframes ytHeaderEnter {
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytHeaderExit {
+    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, -6px, 0); }
+  }
+  .yt-subcard-enter, .yt-card-enter {
+    animation: ytSubCardEnter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-card-exit {
+    animation-name: ytCardExit;
+    animation-duration: 160ms;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    animation-fill-mode: forwards;
+  }
+  .yt-header-enter {
+    animation: ytHeaderEnter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-header-exit {
+    animation: ytHeaderExit 220ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
 </style>
