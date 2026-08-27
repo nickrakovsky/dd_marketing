@@ -297,17 +297,17 @@ const description = "Compare dock scheduling methods side by side — from sprea
             <span class="text-xs font-bold uppercase tracking-wider text-[#5f483a] font-sans">Design Comparison Mode:</span>
           </div>
           <div class="flex flex-wrap gap-1.5" id="design-switcher-buttons">
-            <button type="button" data-target="opt-1" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#fd4f00] text-white shadow-sm transition-all cursor-pointer">1. Unified Masthead Card</button>
-            <button type="button" data-target="opt-2" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">2. Open Magazine Monolith</button>
-            <button type="button" data-target="opt-3" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">3. Vertical Brand Rail</button>
-            <button type="button" data-target="opt-4" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">4. 2-Step Horizontal Split</button>
-            <button type="button" data-target="opt-5" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">5. Tool Canopy Shelf</button>
+            <button type="button" data-target="opt-1" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#fd4f00] text-white shadow-sm transition-all cursor-pointer">1. Full-Width Masthead Card</button>
+            <button type="button" data-target="opt-2" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">2. Pre-Header Monolith</button>
+            <button type="button" data-target="opt-3" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">3. Below-H2 Orange Rail</button>
+            <button type="button" data-target="opt-4" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">4. Two-Tier Editorial</button>
+            <button type="button" data-target="opt-5" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">5. Clean Canopy Shelf</button>
           </div>
         </div>
 
-        {/* ── Option 1: Unified Masthead Card (H2 + Copy together in #faf8f5 card) ── */}
+        {/* ── Option 1: Full-Width Masthead Card (Hugging Grid) ── */}
         <div id="opt-1" class="design-variant">
-          <div class="bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-8 md:p-10 mb-10 shadow-sm max-w-5xl">
+          <div class="w-full bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-8 md:p-10 mb-6 shadow-sm">
             <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none">
               REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
             </h2>
@@ -315,36 +315,35 @@ const description = "Compare dock scheduling methods side by side — from sprea
             <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug">
               No two operations are identical. Find the 3 dock scheduling demos worth your time.
             </p>
-            <p class="font-sans text-sm md:text-base text-[#5f483a] mt-2">
+            <p class="font-sans text-sm md:text-base text-[#5f483a] mt-1.5">
               No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
             </p>
           </div>
         </div>
 
-        {/* ── Option 2: Open Magazine Monolith (Pure Typography, Zero Box/Rules) ── */}
+        {/* ── Option 2: Pre-Header Monolith (Kicker Above H2 + Elevated Action Line) ── */}
         <div id="opt-2" class="design-variant hidden">
-          <div class="mb-10 max-w-5xl">
-            <h2 class="font-bruta text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-black leading-none mb-4">
+          <div class="mb-8 max-w-5xl">
+            <p class="font-recoleta italic text-lg md:text-xl text-[#5f483a] tracking-wide mb-2">
+              No two operations are identical.
+            </p>
+            <h2 class="font-bruta text-5xl md:text-6xl lg:text-7xl uppercase tracking-tight text-black leading-none mb-5">
               REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
             </h2>
-            <p class="font-recoleta text-2xl md:text-3xl text-black font-normal tracking-tight leading-snug mb-3">
-              No two operations are identical. Find the 3 dock scheduling demos worth your time.
-            </p>
-            <p class="font-recoleta text-base md:text-lg text-[#5f483a] italic leading-relaxed">
-              No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
+            <p class="font-recoleta text-xl md:text-2xl text-black font-medium leading-relaxed max-w-4xl">
+              No need to answer everything. Just focus on what matters at your facility to find the <strong class="text-black font-bold">three dock scheduling demos worth your time</strong>.
             </p>
           </div>
         </div>
 
-        {/* ── Option 3: Vertical Brand Rail (Bold Orange Spine) ── */}
+        {/* ── Option 3: Below-H2 Orange Rail (Bigger H2) ── */}
         <div id="opt-3" class="design-variant hidden">
-          <div class="flex items-stretch gap-6 max-w-5xl mb-10">
-            <div class="w-1.5 bg-[#fd4f00] rounded-full shrink-0"></div>
-            <div>
-              <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-black leading-none mb-3">
-                REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
-              </h2>
-              <p class="font-recoleta text-xl md:text-2xl text-black font-semibold leading-snug mb-2">
+          <div class="mb-8 max-w-5xl">
+            <h2 class="font-bruta text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-black leading-none mb-6">
+              REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
+            </h2>
+            <div class="border-l-4 border-l-[#fd4f00] pl-6 max-w-4xl space-y-2">
+              <p class="font-recoleta text-xl md:text-2xl text-black font-semibold leading-snug">
                 No two operations are identical. Find the 3 dock scheduling demos worth your time.
               </p>
               <p class="font-sans text-sm md:text-base text-[#5f483a] leading-relaxed">
@@ -354,40 +353,33 @@ const description = "Compare dock scheduling methods side by side — from sprea
           </div>
         </div>
 
-        {/* ── Option 4: 2-Step Horizontal Split ── */}
+        {/* ── Option 4: Two-Tier Editorial Feature Block ── */}
         <div id="opt-4" class="design-variant hidden">
-          <div class="mb-10 max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pb-8 border-b border-[#ad9686]/30">
-            <div class="lg:col-span-5">
-              <h2 class="font-bruta text-4xl md:text-5xl uppercase text-black leading-none">
-                REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
-              </h2>
-            </div>
-            <div class="lg:col-span-7 space-y-3">
-              <p class="font-recoleta text-lg md:text-xl text-black font-semibold leading-snug">
-                No two operations are identical. Find the 3 dock scheduling demos worth your time.
-              </p>
-              <p class="font-sans text-sm md:text-base text-[#5f483a] pt-3 border-t border-[#ad9686]/30 leading-normal">
-                No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
-              </p>
-            </div>
+          <div class="mb-8 max-w-5xl space-y-3">
+            <h2 class="font-bruta text-4xl md:text-5xl uppercase tracking-tight text-black leading-none">
+              REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
+            </h2>
+            <p class="font-recoleta text-2xl md:text-3xl text-black font-semibold leading-tight max-w-4xl">
+              Find the 3 dock scheduling demos worth your time.
+            </p>
+            <p class="font-sans text-base text-[#5f483a] max-w-3xl leading-relaxed">
+              No two operations are identical. You don't need to answer every question — just focus on what defines your facility to get a tailored recommendation.
+            </p>
           </div>
         </div>
 
-        {/* ── Option 5: Tool Canopy Shelf (Bottom-Bordered Crown) ── */}
+        {/* ── Option 5: Clean Canopy Shelf (No Bullet, Stacked Rhythm) ── */}
         <div id="opt-5" class="design-variant hidden">
-          <div class="mb-10 max-w-5xl pb-6 border-b-2 border-[#ad9686]/30">
-            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none mb-3">
+          <div class="mb-6 max-w-5xl pb-6 border-b-2 border-[#ad9686]/30 space-y-3">
+            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none">
               REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
             </h2>
-            <div class="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-4">
-              <p class="font-recoleta text-lg md:text-xl font-semibold text-black">
-                No two operations are identical. Find the 3 dock scheduling demos worth your time.
-              </p>
-              <span class="hidden md:inline text-[#ad9686]">•</span>
-              <p class="font-sans text-sm md:text-base text-[#5f483a]">
-                No need to answer everything — focus on what matters at your facility.
-              </p>
-            </div>
+            <p class="font-recoleta text-xl md:text-2xl font-semibold text-black leading-snug">
+              No two operations are identical. Find the 3 dock scheduling demos worth your time.
+            </p>
+            <p class="font-sans text-sm md:text-base text-[#5f483a] leading-normal">
+              No need to answer everything — just focus on what matters at your facility and get a tailored recommendation.
+            </p>
           </div>
         </div>
 
