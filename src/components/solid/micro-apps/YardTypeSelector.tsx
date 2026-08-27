@@ -336,6 +336,18 @@ function SystemDetailPanel(props: {
           </div>
         </div>
 
+        {/* Recommended 2-System Architecture Callout */}
+        <Show when={props.item.why}>
+          <div class="p-3 rounded-lg bg-[#F8EDD9]/60 dark:bg-[#fd4f00]/10 border border-[#E5D3B3] dark:border-[#fd4f00]/30 text-xs">
+            <span class="font-bold text-[#fd4f00] dark:text-[#ff7635] uppercase tracking-wider block mb-1">
+              Recommended 2-System Architecture
+            </span>
+            <p class="text-neutral-800 dark:text-neutral-200 leading-relaxed">
+              {props.item.why}
+            </p>
+          </div>
+        </Show>
+
         <p class="text-[11px] text-neutral-500 dark:text-neutral-400 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 italic">
           Note: Scores indicate category functional fit index, not a product review or quality rating.
         </p>
@@ -1575,7 +1587,7 @@ export default function YardTypeSelector() {
                     whoIsItFor: existingDD?.whoIsItFor || "Facilities combining on-site yard operations with an active building where semi-trucks load or unload freight.",
                     architecture: `DataDocks Dock Scheduling + ${topSpecialized} Integration`,
                     capabilities: `Automates carrier appointment booking, driver gate check-in, and dock door flow for freight moving into or out of the building, integrating directly with ${topSpecialized} for on-site yard and lot tracking.`,
-                    why: "Promoted to #1 because your site handles semi-truck freight moving into or out of a physical facility/building, requiring appointment-based dock scheduling alongside yard management."
+                    why: `Because your site moves freight into or out of a physical building, pair DataDocks (for carrier dock appointments, driver gate check-in, and door throughput) with ${topSpecialized} (for specialized on-site lot and asset tracking).`
                   };
                   return [promotedDD, ...otherMatches];
                 }
@@ -1589,13 +1601,13 @@ export default function YardTypeSelector() {
                       <div>
                         {/* ── FACILITY LOGISTICS QUALIFIER (Shown when DataDocks is not default #1) ── */}
                         <Show when={!isDataDocksAlreadyTop}>
-                          <div class="mb-4 p-3.5 sm:p-4 rounded-xl bg-[#F8EDD9]/40 dark:bg-neutral-900/60 border border-[#E5D3B3] dark:border-neutral-800 transition-all">
-                            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                          <div class="mb-4 p-3 sm:p-3.5 rounded-xl bg-[#F8EDD9]/30 dark:bg-neutral-900/60 border border-[#E5D3B3] dark:border-neutral-800 transition-colors">
+                            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
                               <div class="min-w-0">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-0.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block">
                                   Facility Logistics Check
                                 </span>
-                                <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-neutral-100 leading-snug">
+                                <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-neutral-100 leading-snug mt-0.5">
                                   Does your yard also connect to a facility where semi-trucks get loaded or unloaded?
                                 </p>
                               </div>
@@ -1606,7 +1618,7 @@ export default function YardTypeSelector() {
                                     setFacilityAdjoinsBuilding(true);
                                     setSelectedSystemIndex(0);
                                   }}
-                                  class={`px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
+                                  class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
                                     facilityAdjoinsBuilding() === true
                                       ? "bg-[#fd4f00] text-white shadow-sm font-bold scale-[1.01]"
                                       : "bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-[#fd4f00] dark:hover:border-[#fd4f00]"
@@ -1620,7 +1632,7 @@ export default function YardTypeSelector() {
                                     setFacilityAdjoinsBuilding(false);
                                     setSelectedSystemIndex(0);
                                   }}
-                                  class={`px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
+                                  class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
                                     facilityAdjoinsBuilding() === false
                                       ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-sm font-bold scale-[1.01]"
                                       : "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-500"
@@ -1630,17 +1642,6 @@ export default function YardTypeSelector() {
                                 </button>
                               </div>
                             </div>
-
-                            <Show when={facilityAdjoinsBuilding() === true}>
-                              <div class="mt-3 pt-3 border-t border-[#E5D3B3]/80 dark:border-neutral-800 flex items-start gap-2.5 text-xs text-neutral-800 dark:text-neutral-200">
-                                <span class="inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
-                                  ✓
-                                </span>
-                                <p class="leading-relaxed">
-                                  <strong>Recommended 2-System Setup:</strong> Use <strong>DataDocks</strong> to automate carrier appointment scheduling, gate check-in, and dock door flow for freight entering or exiting the building, integrated with specialized yard software for on-site lot and asset tracking.
-                                </p>
-                              </div>
-                            </Show>
                           </div>
                         </Show>
 
