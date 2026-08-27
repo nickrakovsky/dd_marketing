@@ -748,13 +748,6 @@ const RequirementsExplorer: Component = () => {
   return (
     <div class="flex flex-col gap-6">
       
-      {/* ── Orienting Copy ── */}
-      <div>
-        <p class="text-base md:text-lg text-[#5f483a] font-recoleta leading-relaxed">
-          Tell us about your operation. You don't need to answer everything, just focus on what's relevant to your day-to-day.
-        </p>
-      </div>
-
       {/* ── Control Deck (Viewport-tailored layouts) ── */}
 
       {/* 1. Mobile 1-Column Layout (< md): Collapsible cards starting collapsed */}
@@ -816,9 +809,9 @@ const RequirementsExplorer: Component = () => {
           </button>
           <p class="mt-3 text-sm text-[#9c806d] font-sans max-w-md">
             {completionScore() >= THRESHOLD
-              ? "Your results will keep improving as you add more detail."
+              ? "The more detail you add, the more accurate your match will be"
               : completionScore() > 0
-              ? "Add a little more operational context to generate your results"
+              ? "Add a little more operational context above to generate your results"
               : "Share what's relevant to your operation above to find your match"}
           </p>
         </div>
@@ -871,8 +864,8 @@ const RequirementsExplorer: Component = () => {
               </For>
             </div>
 
-            <p class="mt-8 text-center text-sm md:text-base text-[#9c806d] font-sans max-w-xl mx-auto">
-              These results update as you go. The more you tell us about your operation, the better the match.
+            <p class="mt-8 text-center text-sm md:text-base text-[#9c806d] font-sans max-w-4xl mx-auto">
+              These results update as you go. The more you tell us about your operation, the more accurate the match.
             </p>
 
             <div 
