@@ -748,6 +748,13 @@ const RequirementsExplorer: Component = () => {
   return (
     <div class="flex flex-col gap-6">
       
+      {/* ── Orienting Copy ── */}
+      <div>
+        <p class="text-base md:text-lg text-[#5f483a] font-recoleta leading-relaxed">
+          Tell us about your operation. You don't need to answer everything, just focus on what's relevant to your day-to-day.
+        </p>
+      </div>
+
       {/* ── Control Deck (Viewport-tailored layouts) ── */}
 
       {/* 1. Mobile 1-Column Layout (< md): Collapsible cards starting collapsed */}
@@ -795,7 +802,7 @@ const RequirementsExplorer: Component = () => {
 
       {/* ── Generate Button (hidden once results are shown) ── */}
       <Show when={!showOutput()}>
-        <div class="mt-4 text-center">
+        <div class="mt-4 flex flex-col items-center text-center">
           <button
             class="px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-md select-none"
             classList={{
@@ -805,8 +812,15 @@ const RequirementsExplorer: Component = () => {
             disabled={completionScore() < THRESHOLD}
             onClick={handleReveal}
           >
-            {completionScore() >= THRESHOLD ? "View Recommended Tools" : "Answer more questions to see results"}
+            View Recommended Tools
           </button>
+          <p class="mt-3 text-sm text-[#9c806d] font-sans max-w-md">
+            {completionScore() >= THRESHOLD
+              ? "Your results will keep improving as you add more detail."
+              : completionScore() > 0
+              ? "Add a little more operational context to generate your results"
+              : "Share what's relevant to your operation above to find your match"}
+          </p>
         </div>
       </Show>
 
@@ -857,8 +871,12 @@ const RequirementsExplorer: Component = () => {
               </For>
             </div>
 
+            <p class="mt-8 text-center text-sm md:text-base text-[#9c806d] font-sans max-w-xl mx-auto">
+              These results update as you go. The more you tell us about your operation, the better the match.
+            </p>
+
             <div 
-              class="mt-10 mx-auto max-w-lg mb-4"
+              class="mt-8 mx-auto max-w-lg mb-4"
               onMouseEnter={() => setHoverDD(true)}
               onMouseLeave={() => setHoverDD(false)}
             >
