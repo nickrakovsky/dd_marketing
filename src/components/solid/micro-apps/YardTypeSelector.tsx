@@ -648,6 +648,9 @@ export default function YardTypeSelector() {
   // Selected system index for Screen 3 Master-Detail view
   const [selectedSystemIndex, setSelectedSystemIndex] = createSignal<number>(0);
 
+  // Facility building/dock qualifier toggle on Screen 3
+  const [facilityAdjoinsBuilding, setFacilityAdjoinsBuilding] = createSignal<boolean | null>(null);
+
   // Always-Present Header Thumbnail Signals
   const [headerThumbSrc, setHeaderThumbSrc] = createSignal<string | null>(null);
   const [headerThumbAlt, setHeaderThumbAlt] = createSignal<string>("");
@@ -861,6 +864,7 @@ export default function YardTypeSelector() {
     const subIdx = cat ? cat.subCategories.findIndex((s) => s.id === subId) : 0;
     if (sub && cat) {
       setSelectedSystemIndex(0);
+      setFacilityAdjoinsBuilding(null);
       const hasSomeImages = cat.subCategories.some((s) => !!s.imageSrc);
       const is3Col = hasSomeImages && (cat.subCategories.length === 3 || cat.subCategories.length === 6);
       const isTop2 = subIdx < 2;
@@ -899,6 +903,8 @@ export default function YardTypeSelector() {
     nextThumbAspect: string | null
   ) => {
     if (isNavigating()) return;
+    setFacilityAdjoinsBuilding(null);
+    setSelectedSystemIndex(0);
 
     const isGoingToHome = nextThumbSrc === null;
 
@@ -1554,117 +1560,198 @@ export default function YardTypeSelector() {
               const sub = engine.selectedSubCategory();
               if (!cat || !sub) return null;
 
+              const rawMatches = sub.matches ?? [];
+              const isDataDocksAlreadyTop = rawMatches.length > 0 && rawMatches[0].name === "DataDocks";
+
+              const matches = () => {
+                if (facilityAdjoinsBuilding() === true && !isDataDocksAlreadyTop) {
+                  const existingDD = rawMatches.find((m) => m.name === "DataDocks");
+                  const otherMatches = rawMatches.filter((m) => m.name !== "DataDocks");
+                  const topSpecialized = otherMatches[0]?.name || "Specialized Yard Software";
+
+                  const promotedDD: SystemMatch = {
+                    name: "DataDocks",
+                    score: 98,
+                    whoIsItFor: existingDD?.whoIsItFor || "Facilities combining on-site yard operations with an active building where semi-trucks load or unload freight.",
+                    architecture: `DataDocks Dock Scheduling + ${topSpecialized} Integration`,
+                    capabilities: `Automates carrier appointment booking, driver gate check-in, and dock door flow for freight moving into or out of the building, integrating directly with ${topSpecialized} for on-site yard and lot tracking.`,
+                    why: "Promoted to #1 because your site handles semi-truck freight moving into or out of a physical facility/building, requiring appointment-based dock scheduling alongside yard management."
+                  };
+                  return [promotedDD, ...otherMatches];
+                }
+                return rawMatches;
+              };
+
               return (
                 <div class={isExitingCards() ? "yt-card-exit" : ""}>
                   <div class="pt-1">
-                    {sub.matches && sub.matches.length > 0 ? (
-                      /* ── 2-COLUMN MASTER-DETAIL LAYOUT (DESKTOP) / ACCORDION INLINE (MOBILE) ── */
-                      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 pt-2">
-                        {/* ── LEFT COLUMN: Bar Chart System Selector ── */}
-                        <div class="lg:col-span-5 space-y-3">
-                          <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
-                              Category Match List
-                            </span>
-                            <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
-                              Click system to view details
-                            </span>
+                    {rawMatches.length > 0 ? (
+                      <div>
+                        {/* ── FACILITY LOGISTICS QUALIFIER (Shown when DataDocks is not default #1) ── */}
+                        <Show when={!isDataDocksAlreadyTop}>
+                          <div class="mb-4 p-3.5 sm:p-4 rounded-xl bg-[#F8EDD9]/40 dark:bg-neutral-900/60 border border-[#E5D3B3] dark:border-neutral-800 transition-all">
+                            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                              <div class="min-w-0">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-0.5">
+                                  Facility Logistics Check
+                                </span>
+                                <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-neutral-100 leading-snug">
+                                  Does your yard also connect to a facility where semi-trucks get loaded or unloaded?
+                                </p>
+                              </div>
+                              <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setFacilityAdjoinsBuilding(true);
+                                    setSelectedSystemIndex(0);
+                                  }}
+                                  class={`px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
+                                    facilityAdjoinsBuilding() === true
+                                      ? "bg-[#fd4f00] text-white shadow-sm font-bold scale-[1.01]"
+                                      : "bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-[#fd4f00] dark:hover:border-[#fd4f00]"
+                                  }`}
+                                >
+                                  Yes, freight moves into or out of the building
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setFacilityAdjoinsBuilding(false);
+                                    setSelectedSystemIndex(0);
+                                  }}
+                                  class={`px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
+                                    facilityAdjoinsBuilding() === false
+                                      ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-sm font-bold scale-[1.01]"
+                                      : "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-500"
+                                  }`}
+                                >
+                                  No, yard moves only
+                                </button>
+                              </div>
+                            </div>
+
+                            <Show when={facilityAdjoinsBuilding() === true}>
+                              <div class="mt-3 pt-3 border-t border-[#E5D3B3]/80 dark:border-neutral-800 flex items-start gap-2.5 text-xs text-neutral-800 dark:text-neutral-200">
+                                <span class="inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
+                                  ✓
+                                </span>
+                                <p class="leading-relaxed">
+                                  <strong>Recommended 2-System Setup:</strong> Use <strong>DataDocks</strong> to automate carrier appointment scheduling, gate check-in, and dock door flow for freight entering or exiting the building, integrated with specialized yard software for on-site lot and asset tracking.
+                                </p>
+                              </div>
+                            </Show>
+                          </div>
+                        </Show>
+
+                        {/* ── 2-COLUMN MASTER-DETAIL LAYOUT (DESKTOP) / ACCORDION INLINE (MOBILE) ── */}
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 pt-1">
+                          {/* ── LEFT COLUMN: Bar Chart System Selector ── */}
+                          <div class="lg:col-span-5 space-y-3">
+                            <div class="flex items-center justify-between">
+                              <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
+                                Category Match List
+                              </span>
+                              <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
+                                Click system to view details
+                              </span>
+                            </div>
+
+                            <div class="space-y-2" data-match-type="use-case-relevance" role="listbox" aria-labelledby="yt-match-list-label">
+                              <For each={matches()}>
+                                {(item, idx) => {
+                                  const isSelected = () => selectedSystemIndex() === idx();
+                                  const isDataDocks = item.name === "DataDocks";
+                                  const isDataDocksSelected = () => isSelected() && isDataDocks;
+
+                                  return (
+                                    <div>
+                                      <button
+                                        type="button"
+                                        role="option"
+                                        aria-selected={isSelected()}
+                                        onClick={() => setSelectedSystemIndex(idx())}
+                                        ref={(el: HTMLElement) => { if (idx() === 0) focusTargetRef = el; }}
+                                        class={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
+                                          isSelected()
+                                            ? isDataDocks
+                                              ? "bg-[#F8EDD9] dark:bg-[#fd4f00]/15 border-[#fd4f00] shadow-md scale-[1.01]"
+                                              : "bg-white dark:bg-neutral-800 border-neutral-900 dark:border-neutral-300 shadow-md scale-[1.01]"
+                                            : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
+                                        }`}
+                                        aria-label={`${item.name}: ${item.score}% operational category match`}
+                                        data-score-type="category-fit-percentage"
+                                      >
+                                        <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                                          <span class="flex items-center gap-1.5 truncate pr-2">
+                                            <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-900 dark:text-neutral-100"}>
+                                              {item.name}
+                                            </span>
+                                          </span>
+                                          <span class="flex items-center gap-1 shrink-0">
+                                            <span class={`font-mono text-xs font-bold ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-700 dark:text-neutral-300"}`}>
+                                              {item.score}% Match
+                                            </span>
+                                            <svg class={`size-3.5 transition-colors ${
+                                              isSelected()
+                                                ? isDataDocks
+                                                  ? "text-[#fd4f00] dark:text-[#ff7635]"
+                                                  : "text-neutral-900 dark:text-neutral-100"
+                                                : "text-neutral-400 dark:text-neutral-600"
+                                            }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                            </svg>
+                                          </span>
+                                        </div>
+
+                                        <div class="h-2 w-full bg-neutral-200/70 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                          <div
+                                            class={`h-full rounded-full transition-all duration-500 ease-out ${
+                                              isDataDocksSelected()
+                                                ? "bg-[#fd4f00]"
+                                                : item.score >= 80
+                                                ? "bg-neutral-800 dark:bg-neutral-200"
+                                                : item.score >= 50
+                                                ? "bg-neutral-600 dark:bg-neutral-400"
+                                                : "bg-neutral-400 dark:bg-neutral-600"
+                                            }`}
+                                            style={{ width: `${item.score}%` }}
+                                          />
+                                        </div>
+                                      </button>
+
+                                      {/* Mobile: Accordion detail directly under selected system */}
+                                      <Show when={isSelected()}>
+                                        <div class="lg:hidden mt-3 mb-2">
+                                          <SystemDetailPanel
+                                            item={item}
+                                            sub={sub}
+                                            isDataDocks={isDataDocks}
+                                          />
+                                        </div>
+                                      </Show>
+                                    </div>
+                                  );
+                                }}
+                              </For>
+                            </div>
                           </div>
 
-                          <div class="space-y-2" data-match-type="use-case-relevance" role="listbox" aria-labelledby="yt-match-list-label">
-                            <For each={sub.matches ?? []}>
-                              {(item, idx) => {
-                                const isSelected = () => selectedSystemIndex() === idx();
-                                const isDataDocks = item.name === "DataDocks";
-                                const isDataDocksSelected = () => isSelected() && isDataDocks;
-
-                                return (
-                                  <div>
-                                    <button
-                                      type="button"
-                                      role="option"
-                                      aria-selected={isSelected()}
-                                      onClick={() => setSelectedSystemIndex(idx())}
-                                      ref={(el: HTMLElement) => { if (idx() === 0) focusTargetRef = el; }}
-                                      class={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
-                                        isSelected()
-                                          ? isDataDocks
-                                            ? "bg-[#F8EDD9] dark:bg-[#fd4f00]/15 border-[#fd4f00] shadow-md scale-[1.01]"
-                                            : "bg-white dark:bg-neutral-800 border-neutral-900 dark:border-neutral-300 shadow-md scale-[1.01]"
-                                          : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
-                                      }`}
-                                      aria-label={`${item.name}: ${item.score}% operational category match`}
-                                      data-score-type="category-fit-percentage"
-                                    >
-                                      <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-                                        <span class="flex items-center gap-1.5 truncate pr-2">
-                                          <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-900 dark:text-neutral-100"}>
-                                            {item.name}
-                                          </span>
-                                        </span>
-                                        <span class="flex items-center gap-1 shrink-0">
-                                          <span class={`font-mono text-xs font-bold ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-700 dark:text-neutral-300"}`}>
-                                            {item.score}% Match
-                                          </span>
-                                          <svg class={`size-3.5 transition-colors ${
-                                            isSelected()
-                                              ? isDataDocks
-                                                ? "text-[#fd4f00] dark:text-[#ff7635]"
-                                                : "text-neutral-900 dark:text-neutral-100"
-                                              : "text-neutral-400 dark:text-neutral-600"
-                                          }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                          </svg>
-                                        </span>
-                                      </div>
-
-                                      <div class="h-2 w-full bg-neutral-200/70 dark:bg-neutral-800 rounded-full overflow-hidden">
-                                        <div
-                                          class={`h-full rounded-full transition-all duration-500 ease-out ${
-                                            isDataDocksSelected()
-                                              ? "bg-[#fd4f00]"
-                                              : item.score >= 80
-                                              ? "bg-neutral-800 dark:bg-neutral-200"
-                                              : item.score >= 50
-                                              ? "bg-neutral-600 dark:bg-neutral-400"
-                                              : "bg-neutral-400 dark:bg-neutral-600"
-                                          }`}
-                                          style={{ width: `${item.score}%` }}
-                                        />
-                                      </div>
-                                    </button>
-
-                                    {/* Mobile: Accordion detail directly under selected system */}
-                                    <Show when={isSelected()}>
-                                      <div class="lg:hidden mt-3 mb-2">
-                                        <SystemDetailPanel
-                                          item={item}
-                                          sub={sub}
-                                          isDataDocks={isDataDocks}
-                                        />
-                                      </div>
-                                    </Show>
-                                  </div>
-                                );
-                              }}
-                            </For>
+                          {/* ── RIGHT COLUMN (DESKTOP ONLY): Selected System Detail Panel ── */}
+                          <div class="hidden lg:block lg:col-span-7">
+                            {(() => {
+                              const currentList = matches();
+                              const activeItem = () => currentList[selectedSystemIndex()] ?? currentList[0];
+                              const isDataDocks = () => activeItem()?.name === "DataDocks";
+                              return (
+                                <SystemDetailPanel
+                                  item={activeItem()}
+                                  sub={sub}
+                                  isDataDocks={isDataDocks()}
+                                />
+                              );
+                            })()}
                           </div>
-                        </div>
-
-                        {/* ── RIGHT COLUMN (DESKTOP ONLY): Selected System Detail Panel ── */}
-                        <div class="hidden lg:block lg:col-span-7">
-                          {(() => {
-                            const matches = sub.matches ?? [];
-                            const activeItem = () => matches[selectedSystemIndex()] ?? matches[0];
-                            const isDataDocks = () => activeItem()?.name === "DataDocks";
-                            return (
-                              <SystemDetailPanel
-                                item={activeItem()}
-                                sub={sub}
-                                isDataDocks={isDataDocks()}
-                              />
-                            );
-                          })()}
                         </div>
                       </div>
                     ) : (
