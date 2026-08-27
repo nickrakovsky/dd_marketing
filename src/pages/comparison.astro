@@ -297,26 +297,27 @@ const description = "Compare dock scheduling methods side by side — from sprea
             <span class="text-xs font-bold uppercase tracking-wider text-[#5f483a] font-sans">Design Comparison Mode:</span>
           </div>
           <div class="flex flex-wrap gap-1.5" id="design-switcher-buttons">
-            <button type="button" data-target="opt-1" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#fd4f00] text-white shadow-sm transition-all cursor-pointer">1. Card Banner + Utility Pill</button>
-            <button type="button" data-target="opt-2" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">2. No-Pill Title + Rearranged Copy</button>
-            <button type="button" data-target="opt-3" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">3. Compact Sand Banner</button>
-            <button type="button" data-target="opt-4" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">4. Oversized Serif Headline</button>
-            <button type="button" data-target="opt-5" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">5. Simple Preheader + Shelf</button>
+            <button type="button" data-target="opt-1" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#fd4f00] text-white shadow-sm transition-all cursor-pointer">1. Card + Top-Right Pill</button>
+            <button type="button" data-target="opt-2" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">2. Flush-Aligned Monolith</button>
+            <button type="button" data-target="opt-3" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">3. Low-Pad Sand Banner</button>
+            <button type="button" data-target="opt-4" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">4. Refined Editorial Lockup</button>
+            <button type="button" data-target="opt-5" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">5. Pill + Canopy Shelf</button>
           </div>
         </div>
 
-        {/* ── Option 1: Card Banner + Utility Pill ── */}
+        {/* ── Option 1: Card Banner + Top-Right 2026 Shadcn Pill (Low Padding) ── */}
         <div id="opt-1" class="design-variant">
-          <div class="w-full bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-6 md:p-8 mb-5 shadow-sm">
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold font-sans uppercase tracking-wider text-[#5f483a] bg-white border border-[#ece6de] px-3 py-1 rounded-full shadow-xs mb-3">
-              <span class="h-1.5 w-1.5 rounded-full bg-[#fd4f00]"></span>
-              Requirements Explorer
-            </span>
-            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none mb-3">
-              NO TWO OPERATIONS <span class="text-[#FE5000]">ARE THE SAME</span>
-            </h2>
-            <div class="h-px bg-[#ece6de] my-4"></div>
-            <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug mb-1">
+          <div class="w-full bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-4 sm:p-5 md:p-6 mb-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <h2 class="font-bruta text-2xl sm:text-3xl md:text-4xl uppercase text-black leading-tight">
+                NO TWO OPERATIONS <span class="text-[#FE5000]">ARE THE SAME</span>
+              </h2>
+              <span class="inline-flex items-center text-[11px] font-medium font-sans tracking-wide text-[#5f483a] bg-white border border-[#dfd6c8] px-2.5 py-0.5 rounded-full shadow-2xs shrink-0 self-start">
+                Requirements Explorer
+              </span>
+            </div>
+            <div class="h-px bg-[#ece6de] my-3"></div>
+            <p class="font-recoleta text-base md:text-lg font-semibold text-black leading-snug mb-0.5">
               Find the 3 dock scheduling demos worth your time.
             </p>
             <p class="font-sans text-xs md:text-sm text-[#5f483a]">
@@ -325,10 +326,10 @@ const description = "Compare dock scheduling methods side by side — from sprea
           </div>
         </div>
 
-        {/* ── Option 2: No-Pill Title + Rearranged Copy ── */}
+        {/* ── Option 2: Flush Left-Aligned Monolith ── */}
         <div id="opt-2" class="design-variant hidden">
           <div class="mb-6 max-w-5xl">
-            <span class="text-xs font-bold font-sans uppercase tracking-widest text-[#fd4f00] mb-2 block">
+            <span class="text-xs font-bold font-sans uppercase tracking-wider text-[#fd4f00] mb-2 block">
               Requirements Explorer
             </span>
             <h2 class="font-bruta text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-black leading-none mb-3">
@@ -340,40 +341,43 @@ const description = "Compare dock scheduling methods side by side — from sprea
           </div>
         </div>
 
-        {/* ── Option 3: Compact Sand Banner ── */}
+        {/* ── Option 3: Low-Pad Sand Banner (No Pill) ── */}
         <div id="opt-3" class="design-variant hidden">
-          <div class="w-full bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-6 md:p-7 mb-5 shadow-sm">
-            <span class="inline-flex items-center text-[11px] font-bold font-sans uppercase tracking-wider text-[#fd4f00] bg-[#fd4f00]/10 border border-[#fd4f00]/20 px-2.5 py-0.5 rounded-md mb-2">
+          <div class="w-full bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-4 sm:p-5 mb-5 shadow-sm">
+            <span class="text-[11px] font-bold font-sans uppercase tracking-widest text-[#9c806d] block mb-1">
               Requirements Explorer
             </span>
-            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none mb-2">
+            <h2 class="font-bruta text-2xl sm:text-3xl md:text-4xl uppercase text-black leading-none mb-2">
               NO TWO OPERATIONS <span class="text-[#FE5000]">ARE THE SAME</span>
             </h2>
-            <p class="font-recoleta text-base md:text-lg text-[#5f483a] leading-relaxed">
+            <p class="font-recoleta text-sm sm:text-base text-[#5f483a] leading-relaxed">
               Find the 3 dock scheduling demos worth your time. Select what matters at your facility. <strong class="text-black font-semibold">Don't worry about answering every question.</strong>
             </p>
           </div>
         </div>
 
-        {/* ── Option 4: Oversized Serif Headline Experiment ── */}
+        {/* ── Option 4: Refined Editorial Lockup ── */}
         <div id="opt-4" class="design-variant hidden">
           <div class="mb-6 max-w-5xl">
-            <p class="font-bruta text-sm md:text-base uppercase tracking-wider text-[#fd4f00] mb-2">
-              REQUIREMENTS EXPLORER: FIND THE 3 DEMOS WORTH YOUR TIME
-            </p>
-            <h2 class="font-recoleta text-4xl md:text-5xl lg:text-6xl font-bold text-black tracking-tight leading-tight mb-3">
-              No two operations are identical.
+            <span class="font-bruta text-xs uppercase tracking-widest text-[#fd4f00] mb-2 block">
+              REQUIREMENTS EXPLORER
+            </span>
+            <h2 class="font-recoleta text-3xl sm:text-4xl md:text-5xl font-bold text-black tracking-tight leading-tight mb-2">
+              Find the three dock scheduling demos worth your time.
             </h2>
-            <p class="font-sans text-base md:text-lg text-[#5f483a] leading-relaxed max-w-4xl">
+            <p class="font-recoleta italic text-lg sm:text-xl text-[#5f483a] leading-snug mb-2">
+              No two operations are identical.
+            </p>
+            <p class="font-sans text-sm md:text-base text-[#5f483a] leading-relaxed max-w-4xl">
               Don't worry about answering every question. Just focus on what matters at your facility and get a tailored recommendation.
             </p>
           </div>
         </div>
 
-        {/* ── Option 5: Simple Preheader + Shelf ── */}
+        {/* ── Option 5: Pill + Canopy Shelf ── */}
         <div id="opt-5" class="design-variant hidden">
           <div class="mb-6 max-w-5xl">
-            <span class="text-xs font-bold font-sans uppercase tracking-widest text-[#9c806d] mb-2 block">
+            <span class="inline-flex items-center text-[11px] font-medium font-sans uppercase tracking-wider text-[#5f483a] bg-white border border-[#dfd6c8] px-2.5 py-0.5 rounded-full shadow-2xs mb-2">
               Requirements Explorer
             </span>
             <h2 class="font-bruta text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-black leading-none mb-3">
