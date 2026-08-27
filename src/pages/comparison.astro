@@ -297,25 +297,21 @@ const description = "Compare dock scheduling methods side by side — from sprea
             <span class="text-xs font-bold uppercase tracking-wider text-[#5f483a] font-sans">Design Comparison Mode:</span>
           </div>
           <div class="flex flex-wrap gap-1.5" id="design-switcher-buttons">
-            <button type="button" data-target="opt-1" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#fd4f00] text-white shadow-sm transition-all cursor-pointer">1. Launchpad Card</button>
-            <button type="button" data-target="opt-2" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">2. 2-Column Split</button>
-            <button type="button" data-target="opt-3" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">3. Accent Banner</button>
-            <button type="button" data-target="opt-4" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">4. Micro-Rule</button>
-            <button type="button" data-target="opt-5" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">5. Integrated Lead</button>
+            <button type="button" data-target="opt-1" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#fd4f00] text-white shadow-sm transition-all cursor-pointer">1. Warm Sand Card</button>
+            <button type="button" data-target="opt-2" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">2. Pure White Card</button>
+            <button type="button" data-target="opt-3" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">3. Open Micro-Rule</button>
+            <button type="button" data-target="opt-4" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">4. Inset Panel</button>
+            <button type="button" data-target="opt-5" class="design-btn px-3 py-1.5 rounded-lg text-xs font-semibold font-sans bg-[#faf8f5] text-[#5f483a] border border-[#ece6de] hover:bg-white transition-all cursor-pointer">5. Top-Stripe Card</button>
           </div>
         </div>
 
-        {/* ── Option 1: Framed Launchpad Card ── */}
+        {/* ── Option 1: Warm Sand Card (#faf8f5) with Micro-Rule ── */}
         <div id="opt-1" class="design-variant">
-          <div class="bg-white rounded-2xl border border-[#ece6de] p-6 md:p-8 mb-10 shadow-sm">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 mb-4 border-b border-[#ece6de]">
-              <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none">
-                REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
-              </h2>
-              <span class="inline-flex items-center gap-1.5 text-xs font-bold font-sans uppercase tracking-widest text-[#fd4f00] bg-[#fd4f00]/10 px-3 py-1.5 rounded-full w-fit">
-                Interactive Matching
-              </span>
-            </div>
+          <div class="bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-6 md:p-8 mb-10 shadow-sm">
+            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none">
+              REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
+            </h2>
+            <div class="w-12 h-1 bg-[#fd4f00] rounded-full my-4"></div>
             <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug">
               No two operations are identical. Find the 3 dock scheduling demos worth your time.
             </p>
@@ -325,52 +321,29 @@ const description = "Compare dock scheduling methods side by side — from sprea
           </div>
         </div>
 
-        {/* ── Option 2: 2-Column Split ── */}
+        {/* ── Option 2: Pure White Card with Micro-Rule ── */}
         <div id="opt-2" class="design-variant hidden">
-          <div class="mb-10 pb-6 border-b border-[#ad9686]/30 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div>
-              <h2 class="font-bruta text-4xl md:text-5xl lg:text-6xl uppercase text-black leading-none">
-                REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
-              </h2>
-              <p class="font-recoleta text-xl text-black font-semibold mt-2">
-                No two operations are identical.
-              </p>
-            </div>
-            <div class="max-w-md lg:text-right">
-              <p class="font-recoleta text-base md:text-lg text-black font-medium leading-snug">
-                Find the 3 dock scheduling demos worth your time.
-              </p>
-              <p class="font-sans text-xs sm:text-sm text-[#5f483a] mt-1">
-                No need to answer everything. Just focus on what matters at your facility.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Option 3: High-Contrast Accent Banner ── */}
-        <div id="opt-3" class="design-variant hidden">
-          <div class="mb-10">
-            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-black mb-4">
+          <div class="bg-white rounded-2xl border border-[#ece6de] p-6 md:p-8 mb-10 shadow-sm">
+            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none">
               REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
             </h2>
-            <div class="border-l-4 border-l-[#fd4f00] bg-white/70 rounded-r-xl border-y border-r border-[#ece6de] p-5 md:p-6 max-w-4xl shadow-sm space-y-1.5">
-              <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug">
-                No two operations are identical. Find the 3 dock scheduling demos worth your time.
-              </p>
-              <p class="font-sans text-sm md:text-base text-[#5f483a] leading-relaxed">
-                No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
-              </p>
-            </div>
+            <div class="w-12 h-1 bg-[#fd4f00] rounded-full my-4"></div>
+            <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug">
+              No two operations are identical. Find the 3 dock scheduling demos worth your time.
+            </p>
+            <p class="font-sans text-sm md:text-base text-[#5f483a] mt-1.5">
+              No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
+            </p>
           </div>
         </div>
 
-        {/* ── Option 4: Calibrated Vertical Cadence (Micro-Rule) ── */}
-        <div id="opt-4" class="design-variant hidden">
+        {/* ── Option 3: Open Micro-Rule Editorial Anchor (No Card Box) ── */}
+        <div id="opt-3" class="design-variant hidden">
           <div class="mb-10 max-w-4xl">
             <h2 class="font-bruta text-4xl md:text-5xl uppercase tracking-tight text-black leading-none">
               REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
             </h2>
-            <div class="w-12 h-1 bg-[#fd4f00] my-4 rounded-full"></div>
+            <div class="w-16 h-1 bg-[#fd4f00] rounded-full my-4"></div>
             <p class="font-recoleta text-xl md:text-2xl text-black font-semibold leading-snug">
               No two operations are identical. Find the 3 dock scheduling demos worth your time.
             </p>
@@ -380,14 +353,33 @@ const description = "Compare dock scheduling methods side by side — from sprea
           </div>
         </div>
 
-        {/* ── Option 5: Integrated Lead Flow ── */}
-        <div id="opt-5" class="design-variant hidden">
-          <div class="border-l-[3px] border-l-[#ad9686] pl-6 max-w-4xl mb-10">
-            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-black mb-3">
+        {/* ── Option 4: Inset Contrast Panel (#f4efe8) with Micro-Rule ── */}
+        <div id="opt-4" class="design-variant hidden">
+          <div class="bg-[#f4efe8] rounded-2xl border border-[#dfd6c8] p-6 md:p-8 mb-10 shadow-sm">
+            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none">
               REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
             </h2>
-            <p class="font-recoleta text-lg md:text-xl text-[#5f483a] leading-relaxed">
-              <strong class="text-black font-semibold">No two operations are identical.</strong> Find the 3 dock scheduling demos worth your time — no need to answer everything, just focus on what matters at your facility and get a tailored recommendation.
+            <div class="w-12 h-1 bg-[#fd4f00] rounded-full my-4"></div>
+            <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug">
+              No two operations are identical. Find the 3 dock scheduling demos worth your time.
+            </p>
+            <p class="font-sans text-sm md:text-base text-[#5f483a] mt-1.5">
+              No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Option 5: Top-Stripe Accent Card ── */}
+        <div id="opt-5" class="design-variant hidden">
+          <div class="bg-white rounded-2xl border border-[#ece6de] border-t-4 border-t-[#fd4f00] p-6 md:p-8 mb-10 shadow-sm">
+            <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-black leading-none mb-3">
+              REQUIREMENTS <span class="text-[#FE5000]">EXPLORER</span>
+            </h2>
+            <p class="font-recoleta text-lg md:text-xl font-semibold text-black leading-snug">
+              No two operations are identical. Find the 3 dock scheduling demos worth your time.
+            </p>
+            <p class="font-sans text-sm md:text-base text-[#5f483a] mt-1.5">
+              No need to answer everything. Just focus on what matters at your facility and get a tailored recommendation.
             </p>
           </div>
         </div>
