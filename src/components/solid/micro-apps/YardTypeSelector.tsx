@@ -336,18 +336,6 @@ function SystemDetailPanel(props: {
           </div>
         </div>
 
-        {/* Recommended 2-System Architecture Callout */}
-        <Show when={props.item.why}>
-          <div class="p-3 rounded-lg bg-[#F8EDD9]/60 dark:bg-[#fd4f00]/10 border border-[#E5D3B3] dark:border-[#fd4f00]/30 text-xs">
-            <span class="font-bold text-[#fd4f00] dark:text-[#ff7635] uppercase tracking-wider block mb-1">
-              Recommended 2-System Architecture
-            </span>
-            <p class="text-neutral-800 dark:text-neutral-200 leading-relaxed">
-              {props.item.why}
-            </p>
-          </div>
-        </Show>
-
         <p class="text-[11px] text-neutral-500 dark:text-neutral-400 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 italic">
           Note: Scores indicate category functional fit index, not a product review or quality rating.
         </p>
@@ -1587,7 +1575,7 @@ export default function YardTypeSelector() {
                     whoIsItFor: existingDD?.whoIsItFor || "Facilities combining on-site yard operations with an active building where semi-trucks load or unload freight.",
                     architecture: `DataDocks Dock Scheduling + ${topSpecialized} Integration`,
                     capabilities: `Automates carrier appointment booking, driver gate check-in, and dock door flow for freight moving into or out of the building, integrating directly with ${topSpecialized} for on-site yard and lot tracking.`,
-                    why: `Because your site moves freight into or out of a physical building, pair DataDocks (for carrier dock appointments, driver gate check-in, and door throughput) with ${topSpecialized} (for specialized on-site lot and asset tracking).`
+                    why: "Promoted to #1 because your site handles semi-truck freight moving into or out of a physical facility/building, requiring appointment-based dock scheduling alongside yard management."
                   };
                   return [promotedDD, ...otherMatches];
                 }
@@ -1598,27 +1586,27 @@ export default function YardTypeSelector() {
                 <div class={isExitingCards() ? "yt-card-exit" : ""}>
                   <div class="pt-1">
                     {rawMatches.length > 0 ? (
-                      <div>
-                        {/* ── FACILITY LOGISTICS QUALIFIER (Shown when DataDocks is not default #1) ── */}
-                        <Show when={!isDataDocksAlreadyTop}>
-                          <div class="mb-4 p-3 sm:p-3.5 rounded-xl bg-[#F8EDD9]/30 dark:bg-neutral-900/60 border border-[#E5D3B3] dark:border-neutral-800 transition-colors">
-                            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
-                              <div class="min-w-0">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block">
-                                  Facility Logistics Check
-                                </span>
-                                <p class="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-neutral-100 leading-snug mt-0.5">
-                                  Does your yard also connect to a facility where semi-trucks get loaded or unloaded?
-                                </p>
-                              </div>
-                              <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 shrink-0">
+                      /* ── 2-COLUMN MASTER-DETAIL LAYOUT (DESKTOP) / ACCORDION INLINE (MOBILE) ── */
+                      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 pt-1">
+                        {/* ── LEFT COLUMN: Qualifier + Bar Chart System Selector ── */}
+                        <div class="lg:col-span-5 space-y-3">
+                          {/* ── FACILITY LOGISTICS QUALIFIER (Shown when DataDocks is not default #1) ── */}
+                          <Show when={!isDataDocksAlreadyTop}>
+                            <div class="p-3.5 rounded-xl bg-[#F8EDD9]/40 dark:bg-neutral-900/60 border border-[#E5D3B3] dark:border-neutral-800 transition-all">
+                              <span class="text-[10px] font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-1">
+                                Facility Logistics Check
+                              </span>
+                              <p class="text-xs font-semibold text-neutral-900 dark:text-neutral-100 leading-snug mb-2.5">
+                                Does your yard also connect to a facility where semi-trucks get loaded or unloaded?
+                              </p>
+                              <div class="flex flex-col gap-1.5">
                                 <button
                                   type="button"
                                   onClick={() => {
                                     setFacilityAdjoinsBuilding(true);
                                     setSelectedSystemIndex(0);
                                   }}
-                                  class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
+                                  class={`w-full px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left ${
                                     facilityAdjoinsBuilding() === true
                                       ? "bg-[#fd4f00] text-white shadow-sm font-bold scale-[1.01]"
                                       : "bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-neutral-700 hover:border-[#fd4f00] dark:hover:border-[#fd4f00]"
@@ -1632,7 +1620,7 @@ export default function YardTypeSelector() {
                                     setFacilityAdjoinsBuilding(false);
                                     setSelectedSystemIndex(0);
                                   }}
-                                  class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left sm:text-center ${
+                                  class={`w-full px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-left ${
                                     facilityAdjoinsBuilding() === false
                                       ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-sm font-bold scale-[1.01]"
                                       : "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-500"
@@ -1641,22 +1629,28 @@ export default function YardTypeSelector() {
                                   No, yard moves only
                                 </button>
                               </div>
-                            </div>
-                          </div>
-                        </Show>
 
-                        {/* ── 2-COLUMN MASTER-DETAIL LAYOUT (DESKTOP) / ACCORDION INLINE (MOBILE) ── */}
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 pt-1">
-                          {/* ── LEFT COLUMN: Bar Chart System Selector ── */}
-                          <div class="lg:col-span-5 space-y-3">
-                            <div class="flex items-center justify-between">
-                              <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
-                                Category Match List
-                              </span>
-                              <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
-                                Click system to view details
-                              </span>
+                              <Show when={facilityAdjoinsBuilding() === true}>
+                                <div class="mt-3 pt-3 border-t border-[#E5D3B3]/80 dark:border-neutral-800 flex items-start gap-2 text-xs text-neutral-800 dark:text-neutral-200">
+                                  <span class="inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
+                                    ✓
+                                  </span>
+                                  <p class="leading-relaxed">
+                                    <strong>Recommended 2-System Setup:</strong> Use <strong>DataDocks</strong> for carrier appointment scheduling and dock door flow for freight entering or exiting the building, integrated with specialized yard software for on-site lot and asset tracking.
+                                  </p>
+                                </div>
+                              </Show>
                             </div>
+                          </Show>
+
+                          <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
+                              Category Match List
+                            </span>
+                            <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
+                              Click system to view details
+                            </span>
+                          </div>
 
                             <div class="space-y-2" data-match-type="use-case-relevance" role="listbox" aria-labelledby="yt-match-list-label">
                               <For each={matches()}>
@@ -1754,7 +1748,6 @@ export default function YardTypeSelector() {
                             })()}
                           </div>
                         </div>
-                      </div>
                     ) : (
                       /* ── STANDARD SUMMARY FOR OTHER CATEGORIES ── */
                       <div class="grid sm:grid-cols-2 gap-4 pt-4">
