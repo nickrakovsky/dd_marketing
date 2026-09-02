@@ -35,6 +35,19 @@
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /yard-management
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+# Keyword landing pages (noindexed and out of the sitemap, but still real URLs
+# we drive paid/direct traffic to — without an s-maxage they miss the edge cache
+# and every visit pays a full origin round-trip).
+/dock-scheduling-software
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/yard-management-software
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/dock-management-software
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/warehouse-management-software
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+/outgrowing-opendock
+  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 # Section directories
 /posts/*
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800

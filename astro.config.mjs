@@ -111,104 +111,89 @@ export default defineConfig({
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
 
-          // Critical-CSS inlining for blog posts ONLY (dist/posts/*.html).
-          // The site ships a single shared stylesheet (cssCodeSplit stays false).
-          // On /posts/ pages that one file is render-blocking and delays LCP
-          // (~577ms). Beasties inlines the above-the-fold CSS into <head> and
-          // rewrites the <link> to load the SAME single file asynchronously, so
-          // first paint no longer waits on it. Scoped to /posts/ so every other
-          // page (home, features, etc.) is left byte-for-byte unchanged.
+          // ---------------------------------------------------------------
+          // Critical-CSS inlining for EVERY prerendered page.
+          //
+          // The site ships ONE shared stylesheet (cssCodeSplit stays false):
+          // ~163KB raw / ~20KB brotli. As a plain <link rel="stylesheet"> it is
+          // render-blocking, so first paint cannot happen until it has been
+          // requested, downloaded and parsed. On a real mobile connection that
+          // is a whole extra round-trip after the HTML — measured at 1.6Mbps /
+          // 150ms RTT / 6x CPU, a blog post went 660ms -> 1824ms FCP with the
+          // blocking link instead of inlined critical CSS.
+          //
+          // This used to be scoped to /posts/ and /datadocks-features/ only,
+          // which left the home page, /posts hub, /benefits/*, /integrations/*,
+          // /videos/*, the keyword landing pages and every root-level page
+          // blocking on that stylesheet — the slowest URLs on the site by a
+          // wide margin. Beasties now runs over all of dist: it inlines the
+          // above-the-fold CSS into <head> and rewrites the <link> to load the
+          // SAME shared file asynchronously, so first paint never waits on it.
+          //
+          // `reduceInlineStyles: false` is required, not cosmetic:
+          //   1. Layout.astro emits the real @font-face rules (Bruta,
+          //      DD-Recoleta) and the metric-override fallback faces in an
+          //      inline <style>. There is no external copy. With the default
+          //      (true) Beasties treats that block as prunable and — because
+          //      inlineFonts is false — deletes the faces outright, so the
+          //      webfonts vanish, the Bruta preload goes unused, and text falls
+          //      back to Georgia/Impact. Leaving inline styles alone keeps them.
+          //   2. Feature pages inline pre-rendered diagram SVGs that each carry
+          //      their own <style>. Hoisting those into a merged <head> block
+          //      detaches diagram CSS from its SVG and mangles the diagrams.
           const distDir = fileURLToPath(dir);
-          const postsDistDir = path.join(distDir, 'posts');
-          if (fs.existsSync(postsDistDir)) {
-            const beasties = new Beasties({
-              path: distDir,          // resolve /_astro/*.css from the build root
-              publicPath: '/',
-              preload: 'swap',        // async-load the full sheet, apply on load
-              pruneSource: false,     // keep the shared external file intact for other pages
-              inlineFonts: false,     // fonts already handled in Layout.astro
-              logLevel: 'silent',
-            });
-            // Beasties strips @font-face rules from the inline critical CSS when
-            // inlineFonts:false. On posts those faces live ONLY in the inline
-            // Layout.astro <style> (there's no external copy), so Beasties deletes
-            // them outright: the real webfonts (Bruta/DD-Recoleta) vanish, the Bruta
-            // preload goes unused, and text falls back to Georgia/Impact. We fix this
-            // by capturing BOTH font-face sets from the original HTML (before Beasties
-            // sees them) and re-injecting them into <head> after processing:
-            //   1. Real webfonts — @font-face with url(...woff2). Extracted per-file so
-            //      the content-hashed /_astro paths always match this exact build (no
-            //      hardcoding that can drift when Astro rehashes).
-            //   2. Metric-override fallbacks — @font-face with src:local(...). These
-            //      size-match Impact/Georgia to Bruta/Recoleta so text does NOT shift
-            //      when the real webfont swaps in (font-display:swap); without them the
-            //      swap causes CLS, worst on body text (Recoleta isn't preloaded).
-            // Both must be in the critical inline CSS (not the async sheet) to apply at
-            // first paint.
-            const FALLBACK_FONT_FACES = `@font-face{font-family:'Recoleta-Fallback';src:local('Georgia');size-adjust:98.7952%;ascent-override:101.2195%;descent-override:36.4252%;line-gap-override:0%}@font-face{font-family:'Bruta-Fallback';src:local('Impact');size-adjust:102.5000%;ascent-override:73.1707%;descent-override:24.3902%;line-gap-override:33.1707%}`;
-            const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
-            let processed = 0;
-            let missingRealFaces = 0;
-            for (const file of postFiles) {
-              const filePath = path.join(postsDistDir, file);
-              try {
-                const html = fs.readFileSync(filePath, 'utf-8');
-                // Capture the real webfont faces from the ORIGINAL html before Beasties
-                // strips them. Match only @font-face blocks containing url(...).
-                const realFaces = (html.match(/@font-face\s*\{[^}]*url\([^}]*\}/g) || []).join('');
-                if (!realFaces) missingRealFaces++;
-                let inlined = await beasties.process(html);
-                inlined = inlined.replace('</head>', `<style>${realFaces}${FALLBACK_FONT_FACES}</style></head>`);
-                fs.writeFileSync(filePath, inlined);
-                processed++;
-              } catch (err) {
-                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+          const beasties = new Beasties({
+            path: distDir,          // resolve /_astro/*.css from the build root
+            publicPath: '/',
+            preload: 'swap',        // async-load the full sheet, apply on load
+            pruneSource: false,     // keep the shared external file intact
+            inlineFonts: false,     // fonts are handled in Layout.astro
+            reduceInlineStyles: false, // never touch inline <style> — see above
+            logLevel: 'silent',
+          });
+
+          const collectHtml = (dirPath) => {
+            const out = [];
+            for (const entry of fs.readdirSync(dirPath, { withFileTypes: true })) {
+              const full = path.join(dirPath, entry.name);
+              if (entry.isDirectory()) {
+                out.push(...collectHtml(full));
+              } else if (entry.name.endsWith('.html')) {
+                out.push(full);
               }
             }
-            console.log(`[critical-css] inlined critical CSS + font faces for ${processed}/${postFiles.length} blog posts`);
-            if (missingRealFaces > 0) {
-              console.warn(`[critical-css] WARNING: ${missingRealFaces} post(s) had no real @font-face url() to preserve — check Layout.astro font block`);
+            return out;
+          };
+
+          const htmlFiles = collectHtml(distDir);
+          let processed = 0;
+          let alreadyAsync = 0;
+          let missingRealFaces = 0;
+          for (const filePath of htmlFiles) {
+            const rel = path.relative(distDir, filePath);
+            try {
+              const html = fs.readFileSync(filePath, 'utf-8');
+              // Nothing render-blocking left to fix (e.g. a page with no
+              // stylesheet link at all) — leave it byte-for-byte unchanged.
+              if (!/<link[^>]+rel="stylesheet"[^>]+href="\/_astro\//.test(html)) {
+                alreadyAsync++;
+                continue;
+              }
+              const inlined = await beasties.process(html);
+              // Guard the font regression described above: the real webfont
+              // faces must survive into the output. If they ever stop doing so,
+              // fail loudly at build time instead of silently shipping
+              // Georgia/Impact to every visitor.
+              if (!/@font-face[^}]*url\(/.test(inlined)) missingRealFaces++;
+              fs.writeFileSync(filePath, inlined);
+              processed++;
+            } catch (err) {
+              console.warn(`[critical-css] skipped ${rel}: ${err.message}`);
             }
           }
-
-          // Critical-CSS inlining for /datadocks-features/ pages.
-          // Same problem as /posts/: the single shared stylesheet is
-          // render-blocking (~150 ms of the 405 ms style.css fetch shows up as
-          // "Render-blocking requests" on these pages).
-          //
-          // This uses a SEPARATE Beasties instance from the posts one above,
-          // configured with `reduceInlineStyles: false`, for two reasons:
-          //   1. Feature pages inline pre-rendered diagram SVGs, and each SVG
-          //      carries its own <style> block. The default (true) would hoist
-          //      those into a merged <style> in <head>, detaching diagram CSS
-          //      from its SVG and risking mangled diagrams.
-          //   2. Leaving the Layout.astro inline <style> untouched means the real
-          //      @font-face rules survive, so the font re-injection workaround
-          //      the posts path needs does not apply here.
-          const featuresDistDir = path.join(distDir, 'datadocks-features');
-          if (fs.existsSync(featuresDistDir)) {
-            const featureBeasties = new Beasties({
-              path: distDir,
-              publicPath: '/',
-              preload: 'swap',
-              pruneSource: false,
-              inlineFonts: false,
-              reduceInlineStyles: false, // never touch inline <style> — see above
-              logLevel: 'silent',
-            });
-            const featureFiles = fs.readdirSync(featuresDistDir).filter(f => f.endsWith('.html'));
-            let featuresProcessed = 0;
-            for (const file of featureFiles) {
-              const filePath = path.join(featuresDistDir, file);
-              try {
-                const html = fs.readFileSync(filePath, 'utf-8');
-                fs.writeFileSync(filePath, await featureBeasties.process(html));
-                featuresProcessed++;
-              } catch (err) {
-                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
-              }
-            }
-            console.log(`[critical-css] inlined critical CSS for ${featuresProcessed}/${featureFiles.length} feature pages`);
+          console.log(`[critical-css] inlined critical CSS for ${processed}/${htmlFiles.length} pages (${alreadyAsync} had no blocking stylesheet)`);
+          if (missingRealFaces > 0) {
+            console.warn(`[critical-css] WARNING: ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
           }
         }
       }

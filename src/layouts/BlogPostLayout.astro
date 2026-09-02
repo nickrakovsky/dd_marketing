@@ -158,7 +158,24 @@ if (priorityImgMatch) {
 
             </div>
             
-            <div class="flex flex-wrap items-center gap-x-6 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
+            {/*
+              `lg:gap-x-4` exists to buy this row a few pixels of slack, and is
+              load-bearing. The four blocks below measure 448 + 202 + 118 + 88 =
+              856px (the first is pinned to its `max-w-md` cap by any bio long
+              enough to fill it). At a 1024px viewport the container is exactly
+              928px, and three `gap-x-6` gaps are exactly 72px — so the row fits
+              in precisely zero spare pixels. Text rendered in the Georgia
+              fallback is a hair wider than DD-Recoleta, which pushed the last
+              block onto a fourth line until the webfont swapped in and pulled it
+              back up: a 0.095 CLS at 1024px (iPad landscape and small laptops),
+              right on the edge of failing. Dropping to 1rem gaps at lg+ leaves
+              24px of headroom, so the wrap point no longer depends on which font
+              is active. The settled layout is unchanged — same 144px row height,
+              same child widths — only the spacing between blocks tightens by 8px
+              on desktop. If you widen anything in this row, re-check CLS at
+              exactly 1024px.
+            */}
+            <div class="flex flex-wrap items-center gap-x-6 lg:gap-x-4 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
               <div class="flex flex-col">
                 <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{author.name}</div>
                 <div class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{author.role}</div>
@@ -206,7 +223,29 @@ if (priorityImgMatch) {
         </div>
       </div>
       
-      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
+      {/*
+        `lg:grid` with explicit tracks replaces what used to be `lg:flex`.
+
+        This row has three children in DOM order: the TOC aside, the content
+        column, then #blog-right-sidebar (which lives AFTER the article, ~40KB
+        of HTML later). Under flex, the content column is `flex-grow` capped by
+        `xl:max-w-3xl`, so while the browser is still streaming the article the
+        sidebar does not exist yet and the column grows to its 768px cap. When
+        the sidebar finally parses it claims its 16rem, and the column reflows
+        768px -> 608px — every paragraph in the article re-wraps and moves. That
+        was a 0.05 desktop CLS on long posts, the single largest shift left on
+        the site.
+
+        Grid fixes it because track sizes come from the CONTAINER, not from the
+        children: all three columns are sized at the first layout whether or not
+        the third child has been parsed, so the content column is 608px from the
+        very first paint and never moves. The rendered result is identical to
+        the old settled state — the `max-w-2xl xl:max-w-3xl` on the column is
+        now inert (the track is always narrower) and is kept only as a guard.
+        Track widths must stay in sync with the asides' own `w-48 xl:w-56` and
+        `w-60 xl:w-64`, and with the `lg:gap-8 xl:gap-12` here.
+      */}
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:grid lg:grid-cols-[12rem_minmax(0,1fr)_15rem] xl:grid-cols-[14rem_minmax(0,1fr)_16rem] lg:items-start lg:gap-8 xl:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
         <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-56 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4" aria-label="Table of Contents">
