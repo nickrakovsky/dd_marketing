@@ -227,18 +227,22 @@ const CheckboxListGroup: Component<{
 );
 
 const SelectGroup: Component<{
-  label: string;
+  label?: string;
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string; disabled?: boolean }[];
   otherValue?: string;
   onOtherChange?: (v: string) => void;
+  ariaLabel?: string;
   class?: string;
 }> = (props) => (
   <div class={props.class}>
-    <p class="mb-2 text-sm font-medium text-[#5f483a] font-sans">{props.label}</p>
+    <Show when={props.label}>
+      <p class="mb-2 text-sm font-medium text-[#5f483a] font-sans">{props.label}</p>
+    </Show>
     <div class="flex flex-col gap-2">
       <select
+        aria-label={props.ariaLabel || props.label || "Select option"}
         value={props.value}
         onChange={(e) => props.onChange(e.currentTarget.value)}
         class="w-full rounded-lg border border-[#ece6de] bg-white px-3 py-2 text-sm text-[#5f483a] font-recoleta focus:border-[#fd4f00] focus:outline-none focus:ring-1 focus:ring-[#fd4f00] hover:border-[#9c806d] cursor-pointer"
@@ -720,6 +724,7 @@ const RequirementsExplorer: Component = () => {
       />
       <SelectGroup 
         label=""
+        ariaLabel="Select dedicated dock scheduling software"
         value={requirementsState().dedicatedProduct}
         onChange={(v) => updateRequirementsState("dedicatedProduct", v)}
         otherValue={requirementsState().dedicatedProductOther}
@@ -732,7 +737,7 @@ const RequirementsExplorer: Component = () => {
           { value: "c3", label: "C3 Solutions" },
           { value: "conduit", label: "Conduit" },
           { value: "datadocks", label: "DataDocks" },
-          { value: "goramp", label: "GoRamp" },
+          { value: "goramp", label: "Goramp" },
           { value: "loadingcalendar", label: "LoadingCalendar" },
           { value: "prodocks", label: "ProDocks" },
           { value: "opendock", label: "Opendock" },
@@ -822,9 +827,9 @@ const RequirementsExplorer: Component = () => {
         <div id="recommendation-output" class="rounded-2xl border-2 border-[#fd4f00] bg-white p-6 md:p-10 shadow-lg relative overflow-hidden mt-6">
           <div class="relative z-10">
             <div class="mb-8 text-center">
-              <h2 class="font-sans font-bold text-xl md:text-2xl text-black max-w-5xl mx-auto transition-all duration-300">
+              <h3 class="font-sans font-bold text-xl md:text-2xl text-black max-w-5xl mx-auto transition-all duration-300">
                 {recommendedOutcome().heading}
-              </h2>
+              </h3>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -907,6 +912,7 @@ const RequirementsExplorer: Component = () => {
                 <input
                   type="email"
                   name="email"
+                  aria-label="Work email address"
                   placeholder="Enter your work email"
                   required
                   class="flex-1 h-12 md:h-16 px-4 md:px-6 font-recoleta font-normal text-sm md:text-xl bg-[#faf8f5] text-[#5f483a] outline-none placeholder:text-gray-400 border border-[#ece6de] border-r-0 focus:ring-0 focus:border-[#fd4f00] transition-colors duration-300"
@@ -921,7 +927,7 @@ const RequirementsExplorer: Component = () => {
                   }}
                 >
                   Book a Demo
-                  <svg class="h-4 w-4 md:h-5 md:w-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  <svg aria-hidden="true" class="h-4 w-4 md:h-5 md:w-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </button>
               </form>
             </div>

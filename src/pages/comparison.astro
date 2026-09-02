@@ -67,7 +67,7 @@ const description = "Compare dock scheduling methods side by side — from sprea
               </li>
               <li class="flex items-start">
                 <span class="font-bold mr-2 shrink-0" style="color: #84FB9E;">•</span>
-                <span><strong class="text-black font-semibold">Loading Calendar:</strong> Best for small facilities with no gate or yard operations.</span>
+                <span><strong class="text-black font-semibold">LoadingCalendar:</strong> Best for small facilities with no gate or yard operations.</span>
               </li>
               <li class="flex items-start">
                 <span class="font-bold mr-2 shrink-0" style="color: #0763F9;">•</span>
@@ -209,7 +209,7 @@ const description = "Compare dock scheduling methods side by side — from sprea
                   </span>
                   <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
                     <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
-                    GoRamp
+                    Goramp
                   </span>
                   <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
                     <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
@@ -247,7 +247,9 @@ const description = "Compare dock scheduling methods side by side — from sprea
 
         <noscript>
           <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] space-y-6">
-            <h3 class="font-bruta text-2xl uppercase text-[#5f483a] text-center">Dock Scheduling Features Side-by-Side Comparison</h3>
+            <h2 class="font-bruta text-2xl sm:text-3xl md:text-4xl uppercase text-black text-center mb-4">
+              COMPARE DOCK SCHEDULING FEATURES, <span class="text-[#fd4f00]">SIDE-BY-SIDE</span>
+            </h2>
             <table class="w-full text-left text-sm text-[#5f483a] border-collapse border border-[#ece6de]">
               <caption class="sr-only">Dock Scheduling Features Comparison Matrix</caption>
               <thead>
@@ -309,8 +311,9 @@ const description = "Compare dock scheduling methods side by side — from sprea
 
         <noscript>
            <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] text-center">
-             <h3 class="font-bruta text-xl uppercase mb-4 text-[#5f483a]">Interactive Explorer Requires JavaScript</h3>
-             <p class="text-gray-700">Please enable JavaScript to use the interactive requirements explorer, or scroll down to read the detailed comparisons of each tool category.</p>
+             <h3 class="font-bruta text-xl uppercase mb-3 text-[#5f483a]">Interactive Explorer Requires JavaScript</h3>
+             <p class="text-gray-700 max-w-2xl mx-auto mb-4">The Requirements Explorer requires JavaScript to interactively match tools to your facility. To compare feature specifications directly without JavaScript, see the side-by-side comparison table above.</p>
+             <a href="#comparison-table" class="inline-block px-5 py-2.5 bg-[#fd4f00] text-white font-sans text-sm font-semibold rounded-lg hover:bg-black transition-colors">View Feature Comparison Table</a>
            </div>
         </noscript>
       </div>
@@ -393,7 +396,7 @@ const description = "Compare dock scheduling methods side by side — from sprea
                 <summary class="flex items-center justify-between font-recoleta font-semibold text-black text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors">
                   <span>{faq.question}</span>
                   <span class="ml-6 flex-shrink-0">
-                     <svg class="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                     <svg aria-hidden="true" class="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
                 </summary>
                 <div class="mt-4 prose prose-orange max-w-none text-gray-700" set:html={faq.answer} />
@@ -408,7 +411,7 @@ const description = "Compare dock scheduling methods side by side — from sprea
                 <summary class="flex items-center justify-between font-recoleta font-semibold text-black text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors">
                   <span>{faq.question}</span>
                   <span class="ml-6 flex-shrink-0">
-                     <svg class="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                     <svg aria-hidden="true" class="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
                 </summary>
                 <div class="mt-4 prose prose-orange max-w-none text-gray-700" set:html={faq.answer} />

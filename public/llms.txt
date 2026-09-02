@@ -27,6 +27,7 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 
 ### Product
 - [Dock Scheduling Software](https://datadocks.com): Product overview and demo request
+- [Dock Scheduling Tools Comparison](https://datadocks.com/comparison): Interactive buyers' guide and feature matrix comparing dock scheduling and yard management platforms
 - [DataDocks vs OpenDock](https://datadocks.com/datadocks-vs-opendock): Feature comparison for dock scheduling platforms
 - [DataDocks Integrations](https://datadocks.com/integrations): ERP, WMS, and TMS integrations (SAP, NetSuite, Oracle, Power BI)
 - [DataDocks Support FAQs](https://datadocks.com/support): Answers to common questions about DataDocks

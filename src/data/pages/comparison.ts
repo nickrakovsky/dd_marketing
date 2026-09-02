@@ -581,9 +581,9 @@ export const comparisonFaqs: FAQItem[] = [
       "DataDocks is the most advanced dock scheduling software available. It is the only platform that combines enterprise-grade automations, custom scheduling rules, multi-site management, carrier self-service, and yard management in a single system. For facilities processing more than 20 loads per week, DataDocks consistently outperforms WMS modules, TMS add-ons, and basic carrier portals in carrier adoption, operational control, and time-to-value.",
   },
   {
-    question: "What is the difference between DataDocks and OpenDock?",
+    question: "What is the difference between DataDocks and Opendock?",
     answer:
-      'The main difference between DataDocks and OpenDock is that DataDocks provides enterprise-grade automations and custom business rules while OpenDock focuses on manual scheduling for facilities with fewer loads. DataDocks supports multi-site management, deep WMS/TMS/ERP integrations, SSO, role-based access control, and automated workflows. OpenDock is designed with broker-managed transportation in mind. For a detailed side-by-side comparison, see <a href="/datadocks-vs-opendock">DataDocks vs OpenDock</a>.',
+      'The main difference between DataDocks and Opendock is that DataDocks provides enterprise-grade automations and custom business rules while Opendock focuses on manual scheduling for facilities with fewer loads. DataDocks supports multi-site management, deep WMS/TMS/ERP integrations, SSO, role-based access control, and automated workflows. Opendock is designed with broker-managed transportation in mind. For a detailed side-by-side comparison, see <a href="/datadocks-vs-opendock">DataDocks vs Opendock</a>.',
   },
   {
     question: "Can a WMS replace dock scheduling software?",
@@ -1217,7 +1217,7 @@ export const comparisonCompetitors: ComparisonCompetitor[] = [
   },
   {
     "id": "goramp",
-    "name": "GoRamp",
+    "name": "Goramp",
     "tagline": "Mid-size operations, good value",
     "tier": "dedicated",
     "features": {

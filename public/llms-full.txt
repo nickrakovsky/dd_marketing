@@ -157,6 +157,8 @@ Facilities implementing DataDocks typically see:
 
 **vs. OpenDock**: See detailed comparison at https://datadocks.com/datadocks-vs-opendock
 
+**Dock Scheduling Tools Comparison (Buyers' Guide)**: Complete side-by-side feature comparison and interactive requirements engine at https://datadocks.com/comparison
+
 ---
 
 ## Frequently Asked Questions

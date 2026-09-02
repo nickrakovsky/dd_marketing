@@ -355,6 +355,7 @@ const ComparisonTable: Component = () => {
               onClick={addThirdColumn}
               class="absolute left-full top-1/2 -translate-y-1/2 ml-4 h-6 w-6 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:text-[#fd4f00] hover:border-[#fd4f00]/50 transition-colors tooltip-trigger shadow-sm shrink-0"
               title="Add another competitor"
+              aria-label="Add another competitor"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -378,6 +379,7 @@ const ComparisonTable: Component = () => {
                   onClick={() => setSelectedCompetitor2(null)}
                   class="h-5 w-5 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:bg-[#ece6de] hover:text-[#5f483a] transition-colors shadow-sm"
                   title="Remove column"
+                  aria-label="Remove column"
                >
                   <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />

@@ -225,17 +225,17 @@ export const recommendedOutcome = createMemo<{
       const erpName = s.erp === 'other' ? (s.erpOther.trim() || 'ERP') : formatVendor(s.erp);
       demos.push({ name: `Your Existing ERP`, description: `Ask your ${erpName} account manager about their preferred integration partners.` });
     } else {
-      demos.push({ name: "Conduit", description: "Mid-weight dock scheduling system with strong multi-site management workflows" });
+      demos.push({ name: "Conduit", description: "Mid-weight dock scheduling system with strong multi-site management workflows." });
     }
   } 
   else if (type === 2) {
     ddDesc = "The most flexible and customizable dock scheduling platform. Built by and for operations teams.";
-    demos.push({ name: "GoRamp", description: "Mid weight dock scheduling system, strong on gate management and recurring appointments" });
-    demos.push({ name: "C3", description: "Database-oriented system with strict governance rules. Great for heavy industry and IT-led operations" });
+    demos.push({ name: "Goramp", description: "Mid-weight dock scheduling system, strong on gate management and recurring appointments." });
+    demos.push({ name: "C3", description: "Database-oriented system with strict governance rules. Great for heavy industry and IT-led operations." });
   } 
   else if (type === 3) {
-    ddDesc = "Dock Scheduling built by and for operations teams. Integrates seamlessly with your WMS";
-    demos.push({ name: "GoRamp", description: "Standalone, mid-weight dock scheduling with an intuitive interface and API integrations." });
+    ddDesc = "Dock scheduling built by and for operations teams. Integrates seamlessly with your WMS.";
+    demos.push({ name: "Goramp", description: "Standalone, mid-weight dock scheduling with an intuitive interface and API integrations." });
     
     if (s.wms === "extensiv") {
       demos.push({ name: "Your Existing WMS", description: "Talk to your Extensiv account manager about their custom-built DataDocks integration!" });
@@ -247,7 +247,7 @@ export const recommendedOutcome = createMemo<{
     }
   } 
   else if (type === 4) {
-    ddDesc = "Dock Scheduling built by and for logistics teams. Integrates seamlessly with your TMS.";
+    ddDesc = "Dock scheduling built by and for logistics teams. Integrates seamlessly with your TMS.";
     demos.push({ name: "project44 / FourKites", description: "Freight Visibility Platforms with basic dock-scheduling built-in." });
     
     if (s.tms !== "none") {
@@ -258,7 +258,7 @@ export const recommendedOutcome = createMemo<{
     }
   } 
   else if (type === 5) {
-    ddDesc = "Dock Scheduling tool that starts simple and scales as you grow.";
+    ddDesc = "Dock scheduling tool that starts simple and scales as you grow.";
     demos.push({ name: "LoadingCalendar", description: "Lightweight and affordable calendar tool for small ops." });
     demos.push({ name: "Arrivy", description: "Scheduling system for field service businesses and last mile deliveries." });
   }
@@ -381,13 +381,15 @@ function formatVendor(key: string): string {
     'netsuite': 'NetSuite',
     'c3': 'C3 Solutions',
     'opendock': 'Opendock',
-    'goramp': 'GoRamp',
-    'project44': 'Project44',
+    'goramp': 'Goramp',
+    'project44': 'project44',
     'conduit': 'Conduit',
     'loadingcalendar': 'LoadingCalendar',
     'prodocks': 'ProDocks',
     'timify': 'TIMIFY',
     'arrivy': 'Arrivy',
+    'trucksonthemap': 'TrucksOnTheMap',
+    'yardview': 'YardView',
     'transporeon': 'Transporeon',
     'alpega': 'Alpega'
   };
