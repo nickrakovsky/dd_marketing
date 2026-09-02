@@ -133,16 +133,19 @@ jobs:
 
       - name: Link Crawl (Linkinator)
         # Linkinator crawls the live preview, following all links recursively.
-        # --timeout 120000 gives slow external links up to 120s before failing.
+        # --timeout 30000 gives slow external links up to 30s before failing.
         # --retry retries transient failures (status [0]) — handles flaky
         # external links and redirect edge cases like trailing-slash 308s.
-        # --skip handles known external domains that may rate-limit CI crawls.
+        # --status-code treats 403 (bot-block) and 429 (rate-limit) as warnings,
+        # ensuring real 404s/500s still fail the build while external anti-bot walls pass.
         run: |
           npx linkinator "${PREVIEW_URL}" \
             --recurse \
             --retry \
             --timeout 30000 \
+            --status-code "403:warn" \
+            --status-code "429:warn" \
             --skip "datadocks\.com" \
             --skip "scale\.mit\.edu" \
             --skip "canada\.ca" \
-            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com|cascoequip\.com|waldenu\.edu|pymnts\.com|ascm\.org|essay\.utwente\.nl|australasiantransportresearchforum\.org\.au|insightsoftware\.com)"
+            --skip "^https?://([^/]+\.)?(forbes\.com|linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com|cascoequip\.com|waldenu\.edu|pymnts\.com|ascm\.org|essay\.utwente\.nl|australasiantransportresearchforum\.org\.au|insightsoftware\.com)"
