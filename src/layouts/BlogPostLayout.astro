@@ -1987,4 +1987,19 @@ if (priorityImgMatch) {
   .yt-header-exit {
     animation: ytHeaderExit 220ms cubic-bezier(0.25, 1, 0.5, 1) both;
   }
+  @keyframes ytFadeSlideIn {
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytScorePop {
+    0%   { transform: scale(0.96); opacity: 0.8; }
+    50%  { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .yt-fade-slide-in {
+    animation: ytFadeSlideIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-score-pop {
+    animation: ytScorePop 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 </style>

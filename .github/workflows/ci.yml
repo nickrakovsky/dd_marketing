@@ -132,17 +132,13 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Link Crawl (Linkinator)
-        # Linkinator crawls the live preview, following all links recursively.
-        # --timeout 120000 gives slow external links up to 120s before failing.
-        # --retry retries transient failures (status [0]) — handles flaky
-        # external links and redirect edge cases like trailing-slash 308s.
-        # --skip handles known external domains that may rate-limit CI crawls.
+        # Linkinator crawls the live preview, verifying all internal pages, routes,
+        # and assets recursively for broken links (404s).
+        # External URLs are skipped to prevent CI flakes caused by third-party bot protection,
+        # rate limits, or external server downtime.
         run: |
           npx linkinator "${PREVIEW_URL}" \
             --recurse \
             --retry \
             --timeout 30000 \
-            --skip "datadocks\.com" \
-            --skip "scale\.mit\.edu" \
-            --skip "canada\.ca" \
-            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com|cascoequip\.com|waldenu\.edu)"
+            --skip "^https?://(?!(?:[a-zA-Z0-9-]+\.)*pages\.dev|(?:[a-zA-Z0-9-]+\.)*datadocks\.com|localhost)"
