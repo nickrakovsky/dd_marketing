@@ -7,7 +7,6 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import partytown from '@astrojs/partytown';
-import mermaid from 'astro-mermaid';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -171,6 +170,46 @@ export default defineConfig({
               console.warn(`[critical-css] WARNING: ${missingRealFaces} post(s) had no real @font-face url() to preserve — check Layout.astro font block`);
             }
           }
+
+          // Critical-CSS inlining for /datadocks-features/ pages.
+          // Same problem as /posts/: the single shared stylesheet is
+          // render-blocking (~150 ms of the 405 ms style.css fetch shows up as
+          // "Render-blocking requests" on these pages).
+          //
+          // This uses a SEPARATE Beasties instance from the posts one above,
+          // configured with `reduceInlineStyles: false`, for two reasons:
+          //   1. Feature pages inline pre-rendered diagram SVGs, and each SVG
+          //      carries its own <style> block. The default (true) would hoist
+          //      those into a merged <style> in <head>, detaching diagram CSS
+          //      from its SVG and risking mangled diagrams.
+          //   2. Leaving the Layout.astro inline <style> untouched means the real
+          //      @font-face rules survive, so the font re-injection workaround
+          //      the posts path needs does not apply here.
+          const featuresDistDir = path.join(distDir, 'datadocks-features');
+          if (fs.existsSync(featuresDistDir)) {
+            const featureBeasties = new Beasties({
+              path: distDir,
+              publicPath: '/',
+              preload: 'swap',
+              pruneSource: false,
+              inlineFonts: false,
+              reduceInlineStyles: false, // never touch inline <style> — see above
+              logLevel: 'silent',
+            });
+            const featureFiles = fs.readdirSync(featuresDistDir).filter(f => f.endsWith('.html'));
+            let featuresProcessed = 0;
+            for (const file of featureFiles) {
+              const filePath = path.join(featuresDistDir, file);
+              try {
+                const html = fs.readFileSync(filePath, 'utf-8');
+                fs.writeFileSync(filePath, await featureBeasties.process(html));
+                featuresProcessed++;
+              } catch (err) {
+                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+              }
+            }
+            console.log(`[critical-css] inlined critical CSS for ${featuresProcessed}/${featureFiles.length} feature pages`);
+          }
         }
       }
     },
@@ -187,7 +226,8 @@ export default defineConfig({
       include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
-      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // Keyword landing pages are noindexed, so keep them out of the sitemap too.
+      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
@@ -216,6 +256,14 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
       ],
-    }), mermaid(), mdx()],
+    }),
+    // NOTE: the `astro-mermaid` integration was removed deliberately. It used
+    // `injectScript('page', ...)`, which appends to the shared page entry chunk
+    // and therefore shipped a mermaid loader + a style-injection script to EVERY
+    // page on the site, not just the ones with diagrams. Feature-page diagrams
+    // are now pre-rendered to static SVG by `npm run diagrams`. If mermaid
+    // fences are ever needed in MDX, pre-render them the same way rather than
+    // re-adding a global integration.
+    mdx()],
 
 });

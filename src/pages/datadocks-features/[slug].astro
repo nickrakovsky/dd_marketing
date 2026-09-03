@@ -11,6 +11,7 @@ import CTA from '../../components/home/CTA.astro';
 // import { FAQAccordion } from '../../components/solid/FAQAccordion';
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
 import FeatureRelatedPosts from '../../components/FeatureRelatedPosts.astro';
+import { ytThumb } from '../../lib/yt-thumb';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
@@ -42,20 +43,85 @@ if (!feature) {
 
 const bento = feature.data.bentoContent;
 
-// Helper to safely render mermaid code blocks
+// Mermaid diagrams are PRE-RENDERED to static SVG at build time by
+// `npm run diagrams` (scripts/render-feature-diagrams.mjs) and inlined here.
+// Rendering them client-side used to pull mermaid.js onto every feature page:
+// 143 KB gzipped over a 5-request dependency chain plus ~360 ms of main-thread
+// CPU, all to draw a flowchart that is fixed in frontmatter. Inline SVG is 0 KB
+// of JS and paints with the HTML.
+const diagramSvgs = import.meta.glob<string>('../../assets/feature-diagrams/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+const diagramSvg =
+  bento?.dataViz?.type === 'mermaid'
+    ? diagramSvgs[`../../assets/feature-diagrams/${feature.slug}.svg`]
+    : undefined;
+
+// A mermaid diagram with no pre-rendered SVG means someone edited frontmatter
+// without re-running `npm run diagrams`. Fail the build rather than ship an
+// empty tile.
+if (bento?.dataViz?.type === 'mermaid' && !diagramSvg) {
+  throw new Error(
+    `[features] Missing pre-rendered diagram for "${feature.slug}". ` +
+      `Run \`npm run diagrams\` and commit src/assets/feature-diagrams/${feature.slug}.svg`
+  );
+}
+
+// Diagram legibility floor.
+//
+// The SVGs are `width="100%"` + `viewBox`, so they scale to whatever the bento
+// tile gives them — and the tile can be very narrow. At the `md` breakpoint the
+// 12-col grid squeezes a 4-col dataViz tile to ~158px, which scaled every
+// diagram's labels down to 5-7px; the 17:1 `documentation` flowchart got to
+// ~2px on a phone. (This is not new — the old client-side mermaid render scaled
+// identically — but it's worth fixing while the diagrams are being touched.)
+//
+// Label text is uniformly 16px in the SVG's own user units, so on-screen size is
+// `16 * renderedWidth / viewBoxWidth`. Inverting that gives the width at which
+// labels clear a legible floor. Setting it as a plain `min-width` needs no media
+// query: where the tile is already wider, `width: 100%` is the larger value and
+// the floor does nothing. Where it's narrower, the container's existing
+// `overflow-x-auto` scrolls the diagram instead of crushing it.
+const MERMAID_LABEL_FONT_PX = 16; // mermaid's base font-size, set in the render config
+const MIN_LEGIBLE_LABEL_PX = 11;
+const viewBoxWidth = Number(diagramSvg?.match(/viewBox="0 0 ([\d.]+)/)?.[1]) || 0;
+const diagramMinWidth = viewBoxWidth
+  ? Math.round((viewBoxWidth * MIN_LEGIBLE_LABEL_PX) / MERMAID_LABEL_FONT_PX)
+  : 0;
+
 const renderDataViz = (dataViz: any) => {
   if (!dataViz) return '';
-  if (dataViz.type === 'mermaid') {
-    return `<pre class="mermaid">\n${dataViz.content}\n</pre>`;
-  }
-  return `<img src="${dataViz.content}" alt="Data Visualization" class="w-full h-auto object-contain" />`;
+  if (dataViz.type === 'mermaid') return diagramSvg ?? '';
+  return `<img src="${dataViz.content}" alt="Data Visualization" class="w-full h-auto object-contain" loading="lazy" decoding="async" />`;
 };
+
+// The hero video is a lite-youtube facade, not a raw <iframe>. The raw embed was
+// the single most expensive thing on these pages: 810 KB of YouTube JS and
+// ~1,100 ms of main-thread CPU on a Moto G, loaded before anyone clicked play.
+// The facade renders a poster image (via our same-origin /yt-thumb proxy, which
+// gives it a 30-day cache) and only injects the real iframe on click.
+const youtubeId = feature.data.videoUrl?.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{11})/)?.[1];
 ---
 
 <Layout
   title={`${feature.data.title} | DataDocks`}
   description={feature.data.description}
 >
+  {/* lite-youtube assets, only on pages that actually have a video. The CSS is
+      loaded non-blocking via the media="print" swap trick; the JS is deferred
+      because the facade's poster is pure CSS background-image and needs no JS to
+      paint — only the click-to-play upgrade does. */}
+  {youtubeId && (
+    <Fragment slot="head">
+      <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+      <script is:inline src="/css/lite-yt-embed.js" defer></script>
+      <link rel="preload" as="image" href={ytThumb(youtubeId)} fetchpriority="high" />
+    </Fragment>
+  )}
+
   <Navigation />
   
   <main class="bg-[#FFF8EE] min-h-screen pt-32 pb-6 lg:pb-8">
@@ -110,15 +176,15 @@ const renderDataViz = (dataViz: any) => {
         
         {/* Hero Visual Area */}
         <div class="w-full lg:w-5/12 bg-[#faf8f5] flex items-center justify-center p-8 lg:p-0 relative overflow-hidden">
-          {feature.data.videoUrl ? (
+          {youtubeId ? (
             <div class="w-full h-full min-h-[300px] lg:min-h-full relative overflow-hidden">
-              <iframe 
-                src={feature.data.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')} 
-                title={feature.data.title}
-                class="absolute inset-0 w-full h-full border-0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen
-              ></iframe>
+              <lite-youtube
+                videoid={youtubeId}
+                playlabel={`Play: ${feature.data.title}`}
+                params="rel=0"
+                style={`background-image: url('${ytThumb(youtubeId)}'); background-size: cover; background-position: center;`}
+                class="absolute inset-0 !max-w-none w-full h-full"
+              ></lite-youtube>
             </div>
           ) : feature.data.icon ? (
             <div class="p-12 flex flex-col items-center justify-center h-full">
@@ -147,7 +213,11 @@ const renderDataViz = (dataViz: any) => {
           {/* Tile 2: Data Visualization (Dynamic cols) */}
           {bento.dataViz && (
             <div class={`bg-[#faf8f5] border border-[#9c806d] ${bento.layoutConfig?.dataVizPadding || 'p-8'} flex flex-col items-center justify-center relative rounded-[8px] text-center group shadow-sm hover:shadow-md hover:border-[#FE5000] transition-all duration-300 ${bento.layoutConfig?.dataVizColSpan ? 'md:col-span-' + bento.layoutConfig.dataVizColSpan : 'md:col-span-4'} ${bento.layoutConfig?.dataVizRowSpan ? 'md:row-span-' + bento.layoutConfig.dataVizRowSpan : ''} ${bento.layoutConfig?.dataVizOrder ? 'md:order-' + bento.layoutConfig.dataVizOrder : ''}`}>
-              <div class="w-full overflow-x-auto text-[#5f483a] dataviz-container" set:html={renderDataViz(bento.dataViz)} />
+              <div
+                class="w-full overflow-x-auto pb-2 text-[#5f483a] dataviz-container"
+                style={diagramMinWidth ? `--dataviz-min-width: ${diagramMinWidth}px` : undefined}
+                set:html={renderDataViz(bento.dataViz)}
+              />
               {bento.dataViz.caption && (
                 <p class="text-sm font-bold text-[#FE5000] mt-6 uppercase tracking-wide border-t border-[#ece6de] w-full pt-4">{bento.dataViz.caption}</p>
               )}
@@ -316,47 +386,17 @@ const renderDataViz = (dataViz: any) => {
       })();
     </script>
 
-    {/* Client Script to initialize Mermaid if dataViz is mermaid */}
-    <script is:inline>
-      document.addEventListener('astro:page-load', () => {
-        const mermaidContainers = document.querySelectorAll('.mermaid');
-
-        function styleMermaidSvgs() {
-          const svgs = document.querySelectorAll('.dataviz-container svg');
-          svgs.forEach(svg => {
-            svg.style.setProperty('max-width', '100%', 'important');
-            svg.style.setProperty('height', 'auto', 'important');
-          });
-        }
-
-        if (mermaidContainers.length > 0 && typeof window.mermaid === 'undefined') {
-          const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js';
-          script.onload = () => {
-            window.mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
-            window.mermaid.init(undefined, mermaidContainers);
-            styleMermaidSvgs();
-          };
-          document.head.appendChild(script);
-        } else if (mermaidContainers.length > 0 && typeof window.mermaid !== 'undefined') {
-          window.mermaid.init(undefined, mermaidContainers);
-          styleMermaidSvgs();
-        }
-      });
-    </script>
-
   </main>
 
   <style is:inline>
-    .dataviz-container pre.mermaid {
-      margin: 0 !important;
-      padding: 0 !important;
-      background: transparent !important;
-      min-height: auto !important;
-    }
+    /* Pre-rendered diagram SVGs carry width="100%" + viewBox, so height follows
+       from the intrinsic aspect ratio — no layout shift, no JS.
+       --dataviz-min-width is the per-diagram legibility floor computed in the
+       frontmatter; below it the container scrolls instead of shrinking the text.
+       Falls back to 0 for non-mermaid (raster) dataViz, where it's a no-op. */
     .dataviz-container svg {
-      max-width: 100% !important;
-      height: auto !important;
+      height: auto;
+      min-width: var(--dataviz-min-width, 0px);
     }
   </style>
 
