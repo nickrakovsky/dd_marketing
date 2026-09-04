@@ -109,8 +109,26 @@ jobs:
           echo "::error::Timed out waiting for Cloudflare Pages deployment after $((MAX_ATTEMPTS * 10))s"
           exit 1
 
+      # Chromium is ~130 MB and was re-downloaded on every run. Cache it keyed on
+      # the lockfile, so the download only happens when a dependency bump changes
+      # the Playwright version.
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      # On a cache miss, install the browser plus its OS libraries. On a hit we
+      # still need `install-deps`: the apt packages Chromium links against live
+      # outside ~/.cache/ms-playwright and are not restored by the cache.
       - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system dependencies (cached browser)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: E2E & Accessibility Tests (Playwright)
         run: npx playwright test
@@ -132,20 +150,35 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Link Crawl (Linkinator)
-        # Linkinator crawls the live preview, following all links recursively.
-        # --timeout 30000 gives slow external links up to 30s before failing.
-        # --retry retries transient failures (status [0]) — handles flaky
-        # external links and redirect edge cases like trailing-slash 308s.
-        # --status-code treats 403 (bot-block) and 429 (rate-limit) as warnings,
-        # ensuring real 404s/500s still fail the build while external anti-bot walls pass.
+        # Linkinator crawls the live preview, verifying all internal pages, routes,
+        # and assets recursively for broken links (404s).
+        # External URLs are skipped to prevent CI flakes caused by third-party bot protection,
+        # rate limits, or external server downtime.
         run: |
           npx linkinator "${PREVIEW_URL}" \
             --recurse \
             --retry \
+            --retry-errors \
+            --concurrency 25 \
             --timeout 30000 \
-            --status-code "403:warn" \
-            --status-code "429:warn" \
-            --skip "datadocks\.com" \
-            --skip "scale\.mit\.edu" \
-            --skip "canada\.ca" \
-            --skip "^https?://([^/]+\.)?(forbes\.com|linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com|cascoequip\.com|waldenu\.edu|pymnts\.com|ascm\.org|essay\.utwente\.nl|australasiantransportresearchforum\.org\.au|insightsoftware\.com)"
+            --skip "^https?://(?!(?:[a-zA-Z0-9-]+\.)*pages\.dev|(?:[a-zA-Z0-9-]+\.)*datadocks\.com|localhost)" \
+            --format json > linkinator-results.json || {
+              echo "::error title=Linkinator Detected Broken Links::Linkinator found broken links in preview deployment"
+              node -e "
+                const fs = require('fs');
+                if (fs.existsSync('linkinator-results.json')) {
+                  const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
+                  const broken = data.links.filter(l => l.state === 'BROKEN');
+                  console.log('Total broken links found: ' + broken.length);
+                  for (const b of broken) {
+                    console.log('::error file=' + (b.parent || 'root') + '::' + b.status + ' ' + b.url);
+                  }
+                }
+              "
+              exit 1
+            }
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
+            console.log('✓ Linkinator passed: ' + data.links.length + ' links scanned with 0 broken links.');
+          "

@@ -11,6 +11,7 @@ import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
 import LeadMagnetForm from '../components/LeadMagnetForm.astro';
 import SidebarShortVideo from '../components/SidebarShortVideo.astro';
+import FAQ from '../components/FAQ.astro';
 import { ytThumb } from '../lib/yt-thumb';
 
 interface Heading {
@@ -205,6 +206,9 @@ if (priorityImgMatch) {
           
         </div>
       </div>
+
+      {/* Top Interactive Slot — renders at full header width, above prose article */}
+      <slot name="top-interactive" />
       
       <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
         
@@ -236,7 +240,10 @@ if (priorityImgMatch) {
 
         {/* Main Content Area */}
         <div class="w-full min-w-0 max-w-2xl xl:max-w-3xl lg:mx-0 flex-grow relative">
-          {/* Static TOC for Mobile */}
+          {/* Top Intro Slot (e.g. At A Glance summary & Note) rendered before mobile TOC */}
+          <slot name="intro" />
+
+          {/* Static TOC for Mobile — renders BELOW intro slot on mobile viewports */}
           {h2Headings.length > 0 && (
             <div class="lg:hidden relative z-40 mb-12">
               <details class="group bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300 mobile-toc-details">
@@ -321,6 +328,16 @@ if (priorityImgMatch) {
         )}
       </aside>
     </div>
+
+    {/* Bottom Content Slot (Full Width) */}
+    <slot name="bottom-content" />
+
+    {/* Automatic FAQ Rendering (Full Width) if frontmatter.faq exists */}
+    {frontmatter.faq && frontmatter.faq.length > 0 && (
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-12">
+        <FAQ content={{ faqs: frontmatter.faq }} />
+      </div>
+    )}
 
     {relatedPosts.length > 0 && (
       <section class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 border-t border-[#E5D3B3] dark:border-gray-800 pt-16 mt-8">
@@ -1934,4 +1951,55 @@ if (priorityImgMatch) {
     }
   }
 
+  /* YardTypeSelector keyframe animations */
+  @keyframes ytCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 16px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytSubCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 12px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytCardExit {
+    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, -8px, 0); }
+  }
+  @keyframes ytHeaderEnter {
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytHeaderExit {
+    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, -6px, 0); }
+  }
+  .yt-subcard-enter, .yt-card-enter {
+    animation: ytSubCardEnter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-card-exit {
+    animation-name: ytCardExit;
+    animation-duration: 160ms;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    animation-fill-mode: forwards;
+  }
+  .yt-header-enter {
+    animation: ytHeaderEnter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-header-exit {
+    animation: ytHeaderExit 220ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+  @keyframes ytFadeSlideIn {
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytScorePop {
+    0%   { transform: scale(0.96); opacity: 0.8; }
+    50%  { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .yt-fade-slide-in {
+    animation: ytFadeSlideIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-score-pop {
+    animation: ytScorePop 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 </style>

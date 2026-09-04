@@ -98,7 +98,7 @@ if (type === 'glossary' && id) {
   if (entry) {
     title = title || entry.data.termName;
     snippet = snippet || entry.data.contextSnippet;
-    href = href || (entry.data.targetPost ? `/posts/${entry.data.targetPost.id}` : '#');
+    href = entry.data.targetPost ? `/posts/${entry.data.targetPost.id.replace(/\/$/, '')}` : (href || '#');
   }
 } else if (type === 'post' && id) {
   const entry = await getEntryCaseInsensitive('posts', id);

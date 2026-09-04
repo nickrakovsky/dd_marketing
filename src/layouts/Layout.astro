@@ -48,6 +48,9 @@ const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 // Dealfront (formerly Leadfeeder) B2B visitor identification. Public site ID,
 // safe to commit — it's exposed in the client bundle either way.
 const DEALFRONT_SITE_ID = '3P1w24d9vEoamY5n';
+// Only these hostnames load the tracker. www.datadocks.com 301s to the apex, but
+// it's listed so a visit that lands there before redirecting is still counted.
+const DEALFRONT_ALLOWED_HOSTS = ['datadocks.com', 'www.datadocks.com'];
 // Normalize pathname: strip trailing slash AND strip .html suffix (build.format: 'file' emits paths with .html)
 const pathname = Astro.url.pathname === '/'
   ? '/'
@@ -721,10 +724,18 @@ const jsonLd = {
         )}
 
         {/* Dealfront/Leadfeeder B2B visitor identification (company-level, from IP).
-             Deferred to requestIdleCallback so the 12 KB (brotli) fetch starts after
-             LCP has painted — measured at 4x CPU throttle it adds ~9ms TBT and no
-             detectable LCP change. The capture-phase click listeners it attaches cost
+             Deferred to requestIdleCallback. 12 KB brotli, async. Measured with 5
+             interleaved Lighthouse pairs (tracker blocked vs allowed) on throttled
+             mobile: median LCP delta -6ms, TBT 0ms both arms, score 99 both arms —
+             i.e. within noise. The capture-phase click listeners it attaches cost
              +0.3ms on the worst interaction, so INP is unaffected.
+
+             Note idle can occasionally fire before LCP paints, so the fetch is not
+             guaranteed to land after it. Scroll- and interaction-gated variants were
+             tested and are worse on both counts: they overlap the LCP window MORE
+             (scrolling pushes LCP later while firing the trigger) and they miss any
+             visitor who never scrolls or taps, which is exactly the bounce traffic
+             this tool exists to identify.
 
              Do NOT move this into <head> or drop in Dealfront's stock install snippet:
              theirs is a synchronous head tag that lands in the critical path.
@@ -735,8 +746,18 @@ const jsonLd = {
              worker proxy, which is slower than running it natively and breaks form
              tracking. The `timeout: 4000` matters: without it a visitor who never
              stops scrolling may never hit an idle callback, and we'd lose the session. */}
-        <script is:inline define:vars={{ DEALFRONT_SITE_ID }}>
+        <script is:inline define:vars={{ DEALFRONT_SITE_ID, DEALFRONT_ALLOWED_HOSTS }}>
           (function () {
+            // Production-only. Every Cloudflare Pages build gets a permanent
+            // branch alias AND a per-commit alias (e.g. d2862e0f.dd-marketing.pages.dev),
+            // so an allowlist is checked rather than a *.pages.dev denylist —
+            // that also keeps the dd-marketing.pages.dev production alias out,
+            // since visits there would pollute the same Dealfront account.
+            // Checked at runtime, not build time: the same artifact is promoted
+            // from preview to production, and a missing env var would silently
+            // disable tracking everywhere.
+            if (DEALFRONT_ALLOWED_HOSTS.indexOf(window.location.hostname) === -1) return;
+
             function loadDealfront() {
               // Dealfront's stock snippet leans on `ldfdr` as an implicit global
               // here; we qualify it with `window.` so it passes no-undef.
