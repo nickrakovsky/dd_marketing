@@ -29,6 +29,7 @@ Allow: /
 
 # Default
 User-agent: *
+Disallow: /admin/
 Allow: /
 
 Sitemap: https://datadocks.com/sitemap-index.xml

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // Loader2 is unused
@@ -13,13 +13,7 @@ interface CTAFormProps {
 
 export default function CTAForm({ buttonText = "Book a Demo", placeholder = "Enter your work email" }: CTAFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [pagePath, setPagePath] = useState("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setPagePath(window.location.pathname);
-    }
-  }, []);
+  const [pagePath] = useState(() => typeof window !== "undefined" ? window.location.pathname : "");
 
   const calendlyUrl = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 

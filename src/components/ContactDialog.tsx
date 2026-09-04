@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,13 +18,7 @@ export function ContactDialog() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [pagePath, setPagePath] = useState("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setPagePath(window.location.pathname);
-    }
-  }, []);
+  const [pagePath] = useState(() => typeof window !== "undefined" ? window.location.pathname : "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

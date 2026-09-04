@@ -1,0 +1,431 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import CTA from '../components/home/CTA.astro';
+
+// Component Imports
+import ComparisonTable from '@/components/solid/micro-apps/ComparisonTable';
+import RequirementsExplorer from '@/components/solid/micro-apps/RequirementsExplorer';
+
+// Data Imports
+import {
+  comparisonFaqs,
+  buyingCommitteePersonas,
+  comparisonFeatureGroups,
+  datadocksFeatures,
+  comparisonCompetitors
+} from '@/data/pages/comparison';
+
+// Calendly Integration (removed unused variables)
+
+const title = "Dock Scheduling Tools Comparison: Interactive Buyers' Guide | DataDocks";
+const description = "Compare dock scheduling methods side by side — from spreadsheets to enterprise automation. Interactive requirements explorer and expert guidance for operations teams.";
+
+---
+
+<Layout
+  title={title}
+  description={description}
+  schemaData={{ faq: comparisonFaqs }}
+>
+  <Navigation />
+
+  <main class="bg-[#FFF8E9] min-h-screen overflow-x-hidden font-recoleta text-gray-800">
+
+    {/* ═══ 1. HERO + TL;DR ════════════════════════════════════════════════ */}
+    <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative">
+      <div class="max-w-5xl mx-auto relative z-10">
+        <h1 class="font-bruta text-5xl md:text-6xl lg:text-7xl uppercase text-[#fd4f00] leading-[1.05] mb-6 text-center">
+          Dock Scheduling<br/>Tools Comparison
+        </h1>
+        <p class="text-xl md:text-2xl text-center text-[#5f483a] mb-12 font-medium">
+          An interactive buyers' guide for operations teams evaluating dock scheduling software.
+        </p>
+
+        {/* Summary Block */}
+        <div class="bg-white rounded-2xl shadow-sm border border-[#ece6de] p-8 md:p-10 mb-16">
+
+          {/* Opening definition — left accent bar for visual weight */}
+          <div class="border-l-[3px] border-l-[#ad9686] pl-6 mb-8">
+            <p class="text-base md:text-lg text-[#5f483a] leading-relaxed font-recoleta">
+              Dock scheduling means assigning specific time slots and dock doors for trucks to load or unload at a facility. The tools range from purely manual — spreadsheets, whiteboards, emails and phone calls — to fully automated platforms with carrier self-booking portals, rule-based capacity enforcement, conflict auto-resolution, document validation and live status updates.
+            </p>
+          </div>
+
+          {/* The Best Dock Scheduling Software For Most Operations */}
+          <div class="mb-10">
+            <h2 class="text-lg md:text-xl font-bold text-[#5f483a] leading-relaxed mb-4 font-recoleta">
+              The Best Dock Scheduling Software For Most Operations:
+            </h2>
+            <ul class="space-y-3 text-[15px] md:text-base text-[#5f483a] font-recoleta leading-relaxed">
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #fd4f00;">•</span>
+                <span><strong class="text-black font-semibold">DataDocks:</strong> Best for holding carriers accountable. The most advanced scheduling rules and capacity limits.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #84FB9E;">•</span>
+                <span><strong class="text-black font-semibold">LoadingCalendar:</strong> Best for small facilities with no gate or yard operations.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #0763F9;">•</span>
+                <span><strong class="text-black font-semibold">Arrivy:</strong> Best for field service businesses that need to schedule off-site operations.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #164C56;">•</span>
+                <span><strong class="text-black font-semibold">C3 Reservations:</strong> Best for IT-led operations with traditional governance structures.</span>
+              </li>
+              <li class="flex items-start">
+                <span class="font-bold mr-2 shrink-0" style="color: #99E41C;">•</span>
+                <span><strong class="text-black font-semibold">Goramp:</strong> Best for highly predictable operations where gate management is the bottleneck.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* "Depends on" factors */}
+          <p class="text-lg md:text-xl font-bold text-[#5f483a] leading-relaxed mb-5 font-recoleta">
+            But the right tool for your facility really depends on:
+          </p>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
+            {/* Volume */}
+            <div class="rounded-xl bg-[#faf8f5] border border-[#ece6de] px-4 py-4 text-center transition-all duration-200 hover:border-[#ad9686] hover:shadow-sm">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white mb-2" aria-hidden="true">
+                <svg class="h-[18px] w-[18px] text-[#5f483a]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+              </span>
+              <span class="block text-sm font-semibold text-[#5f483a] leading-tight">Volume</span>
+              <span class="block text-[13px] text-[#9c806d] mt-1 leading-snug">Three dock doors or 100?</span>
+            </div>
+            {/* Handling */}
+            <div class="rounded-xl bg-[#faf8f5] border border-[#ece6de] px-4 py-4 text-center transition-all duration-200 hover:border-[#ad9686] hover:shadow-sm">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white mb-2" aria-hidden="true">
+                <svg class="h-[18px] w-[18px] text-[#5f483a]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
+              </span>
+              <span class="block text-sm font-semibold text-[#5f483a] leading-tight">Handling</span>
+              <span class="block text-[13px] text-[#9c806d] mt-1 leading-snug">Temp controls? Pallet weighing?</span>
+            </div>
+            {/* Carrier mix */}
+            <div class="rounded-xl bg-[#faf8f5] border border-[#ece6de] px-4 py-4 text-center transition-all duration-200 hover:border-[#ad9686] hover:shadow-sm">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white mb-2" aria-hidden="true">
+                <svg class="h-[18px] w-[18px] text-[#5f483a]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
+              </span>
+              <span class="block text-sm font-semibold text-[#5f483a] leading-tight">Carrier mix</span>
+              <span class="block text-[13px] text-[#9c806d] mt-1 leading-snug">Own fleet, spot market, contracts?</span>
+            </div>
+            {/* Facility */}
+            <div class="rounded-xl bg-[#faf8f5] border border-[#ece6de] px-4 py-4 text-center transition-all duration-200 hover:border-[#ad9686] hover:shadow-sm">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white mb-2" aria-hidden="true">
+                <svg class="h-[18px] w-[18px] text-[#5f483a]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5M3.75 21V6.75A2.25 2.25 0 016 4.5h3a2.25 2.25 0 012.25 2.25V21M17.25 21V10.5A2.25 2.25 0 0115 8.25h-1.5a.75.75 0 00-.75.75V21m6.75 0V14.25A2.25 2.25 0 0017.25 12h-.75a.75.75 0 00-.75.75V21"/></svg>
+              </span>
+              <span class="block text-sm font-semibold text-[#5f483a] leading-tight">Physical constraints</span>
+              <span class="block text-[13px] text-[#9c806d] mt-1 leading-snug">Facility layout, dock doors, drop and hook?</span>
+            </div>
+            {/* Tech stack */}
+            <div class="rounded-xl bg-[#faf8f5] border border-[#ece6de] px-4 py-4 text-center col-span-2 md:col-span-1 transition-all duration-200 hover:border-[#ad9686] hover:shadow-sm">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white mb-2" aria-hidden="true">
+                <svg class="h-[18px] w-[18px] text-[#5f483a]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0l4.179 2.25L12 17.25 2.25 12l4.179-2.25m11.142 0l-5.571 3-5.571-3m11.142 4.5L21.75 16.5 12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/></svg>
+              </span>
+              <span class="block text-sm font-semibold text-[#5f483a] leading-tight">Digital maturity</span>
+              <span class="block text-[13px] text-[#9c806d] mt-1 leading-snug">Existing WMS, TMS or ERP?</span>
+            </div>
+          </div>
+
+          {/* Three tool types */}
+          <p class="text-lg md:text-xl font-bold text-[#5f483a] leading-relaxed mb-5 font-recoleta">
+            To generalize the market, there are three types of dock scheduling tools that go beyond what you can do with a spreadsheet:
+          </p>
+          <div class="space-y-3 mb-10">
+            {/* Type 1 */}
+            <div class="group flex items-start gap-4 rounded-xl border border-[#ece6de] bg-[#faf8f5] p-5 border-l-4 border-l-[#ece6de] transition-all duration-200 hover:border-l-[#ad9686] hover:shadow-sm">
+              <span class="shrink-0 mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#ece6de] text-[#5f483a] text-xs font-bold font-sans transition-colors duration-200 group-hover:bg-[#ad9686] group-hover:text-white">1</span>
+              <div>
+                <p class="text-[15px] md:text-base text-[#5f483a] leading-relaxed">
+                  <strong class="text-black">Lightweight and adjacent tools</strong> — simple calendars, non-logistics appointment platforms, legacy small-shipper systems, and niche software for field service, container terminals or fleet management that has added a dock scheduling module.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    LoadingCalendar
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Conduit
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    YardView
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Arrivy
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Type 2 */}
+            <div class="group flex items-start gap-4 rounded-xl border border-[#ece6de] bg-[#faf8f5] p-5 border-l-4 border-l-[#ece6de] transition-all duration-200 hover:border-l-[#ad9686] hover:shadow-sm">
+              <span class="shrink-0 mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#ece6de] text-[#5f483a] text-xs font-bold font-sans transition-colors duration-200 group-hover:bg-[#ad9686] group-hover:text-white">2</span>
+              <div>
+                <p class="text-[15px] md:text-base text-[#5f483a] leading-relaxed">
+                  <strong class="text-black">Dock scheduling modules inside a larger suite</strong> — scheduling features bundled within a WMS, TMS, RTTVP or ERP, where dock operations are secondary to the parent platform's core focus.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Blue Yonder
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Manhattan
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Alpega
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Transporeon
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Type 3 */}
+            <div class="group flex items-start gap-4 rounded-xl border border-[#ece6de] bg-[#faf8f5] p-5 border-l-4 border-l-[#ece6de] transition-all duration-200 hover:border-l-[#5f483a] hover:shadow-sm">
+              <span class="shrink-0 mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#ece6de] text-[#5f483a] text-xs font-bold font-sans transition-colors duration-200 group-hover:bg-[#5f483a] group-hover:text-white">3</span>
+              <div>
+                <p class="text-[15px] md:text-base text-[#5f483a] leading-relaxed">
+                  <strong class="text-black">Dedicated dock scheduling and yard management systems</strong> — purpose-built platforms where loading dock operations are the whole point, not an add-on.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#fd4f00] hover:text-white cursor-default">
+                    <span class="relative mr-1.5 flex h-1.5 w-1.5">
+                      <span class="absolute inline-flex h-full w-full rounded-full bg-[#ad9686]/40 opacity-75 transition-all duration-300 group-hover:animate-ping group-hover:bg-[#fd4f00] group-hover/pill:!bg-white"></span>
+                      <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover:bg-[#fd4f00] group-hover/pill:!bg-white"></span>
+                    </span>
+                    DataDocks
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Goramp
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    Opendock
+                  </span>
+                  <span class="group/pill inline-flex items-center rounded-full bg-[#ece6de] px-2.5 py-0.5 text-xs font-sans text-[#5f483a] transition-colors duration-200 hover:bg-[#ad9686] hover:text-white cursor-default">
+                    <span class="inline-flex rounded-full h-1.5 w-1.5 mr-1.5 bg-[#ad9686]/60 transition-colors duration-300 group-hover/pill:bg-white"></span>
+                    C3 Solutions
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Common misconception callout */}
+          <div class="rounded-xl bg-[#ffdba5]/25 border border-[#ffdba5] px-5 py-4 flex items-start gap-3">
+            <span class="shrink-0 mt-0.5 text-xl" aria-hidden="true">⚠️</span>
+            <p class="text-[15px] md:text-base text-[#5f483a] leading-relaxed">
+              <strong class="text-black">A common misconception</strong> is that the dock scheduling modules of the more premium WMS and TMS software are as full-featured as dedicated dock scheduling and yard management software. <strong class="text-black">This is not the case</strong>, as you can see from the comparison below.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* ═══ 1b. COMPARISON TABLE (Interactive 1v1) ═══════════════════════ */}
+    <section class="py-20 bg-white border-y border-[#ece6de]" id="comparison-table" style="content-visibility: auto; contain-intrinsic-size: auto 800px;">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+          {/* H2 moved into ComparisonTable component */}
+        </div>
+
+        <ComparisonTable client:visible />
+
+        <noscript>
+          <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] space-y-6">
+            <h2 class="font-bruta text-2xl sm:text-3xl md:text-4xl uppercase text-black text-center mb-4">
+              COMPARE DOCK SCHEDULING FEATURES, <span class="text-[#fd4f00]">SIDE-BY-SIDE</span>
+            </h2>
+            <table class="w-full text-left text-sm text-[#5f483a] border-collapse border border-[#ece6de]">
+              <caption class="sr-only">Dock Scheduling Features Comparison Matrix</caption>
+              <thead>
+                <tr class="bg-[#faf8f5] border-b border-[#ece6de]">
+                  <th scope="col" class="p-3 font-bold border-r border-[#ece6de]">Feature</th>
+                  <th scope="col" class="p-3 font-bold border-r border-[#ece6de] text-[#fd4f00]">DataDocks</th>
+                  {comparisonCompetitors.slice(0, 3).map((comp) => (
+                    <th scope="col" class="p-3 font-bold border-r border-[#ece6de] last:border-0">{comp.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonFeatureGroups.map((group) => (
+                  <>
+                    <tr class="bg-[#ece6de]/40 border-b border-[#ece6de]">
+                      <td colspan={5} class="p-3 font-bold text-[#5f483a] font-recoleta">{group.label}</td>
+                    </tr>
+                    {group.features.map((feature) => {
+                      const dd = datadocksFeatures?.[feature.id]?.text || "Not available";
+                      return (
+                        <tr class="border-b border-[#ece6de] hover:bg-white">
+                          <td class="p-3 font-medium border-r border-[#ece6de]">{feature.label}</td>
+                          <td class="p-3 font-semibold border-r border-[#ece6de] text-[#fd4f00]">{dd}</td>
+                          {comparisonCompetitors.slice(0, 3).map((comp) => {
+                            const val = comp.features?.[feature.id]?.text || "Not available";
+                            return <td class="p-3 border-r border-[#ece6de] last:border-0">{val}</td>;
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </noscript>
+      </div>
+    </section>
+
+    {/* ═══ 2. REQUIREMENTS EXPLORER (Interactive Tool) ═══════════════════ */}
+    <section class="py-20 bg-[#ece6de] border-y border-[#ece6de]" id="requirements-tool" style="content-visibility: auto; contain-intrinsic-size: auto 1200px;">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ── Requirements Explorer Header (Sand Banner) ── */}
+        <div class="w-full bg-[#faf8f5] rounded-2xl border border-[#ece6de] p-5 sm:p-6 mb-5 shadow-sm">
+          <span class="font-sans text-xs font-bold uppercase tracking-widest text-[#9c806d] block mb-2">
+            Requirements Explorer
+          </span>
+          <h2 class="font-bruta text-3xl sm:text-4xl md:text-5xl uppercase text-black leading-none mb-3">
+            FIND THE THREE DEMOS <span class="text-[#FE5000]">WORTH YOUR TIME</span>
+          </h2>
+          <p class="font-recoleta text-base sm:text-lg md:text-xl text-[#5f483a] leading-relaxed">
+            <strong class="text-black font-semibold">Don't worry about answering every question.</strong><br class="hidden sm:inline" />
+            Just select what matters at your facility. No two operations are the same.
+          </p>
+        </div>
+
+        {/* SolidJS Micro-App */}
+        <RequirementsExplorer client:visible />
+
+        <noscript>
+           <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] text-center">
+             <h3 class="font-bruta text-xl uppercase mb-3 text-[#5f483a]">Interactive Explorer Requires JavaScript</h3>
+             <p class="text-gray-700 max-w-2xl mx-auto mb-4">The Requirements Explorer requires JavaScript to interactively match tools to your facility. To compare feature specifications directly without JavaScript, see the side-by-side comparison table above.</p>
+             <a href="#comparison-table" class="inline-block px-5 py-2.5 bg-[#fd4f00] text-white font-sans text-sm font-semibold rounded-lg hover:bg-black transition-colors">View Feature Comparison Table</a>
+           </div>
+        </noscript>
+      </div>
+    </section>
+
+
+
+    {/* ═══ 5. BUYING COMMITTEE ═══════════════════════════════════════════ */}
+    <section class="py-24 bg-black text-white border-y border-[#333]" style="content-visibility: auto; contain-intrinsic-size: auto 600px;">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 max-w-5xl mx-auto">
+          <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-white mb-4">
+            Getting Your <span class="text-[#FE5000]">Stakeholders On Board</span>
+          </h2>
+          <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            Dock scheduling touches operations, IT, finance, and transportation. Here's how to align with each department about what matters to them.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
+           {buyingCommitteePersonas.map((persona) => (
+             <div class="border border-white/10 rounded-2xl p-5 sm:p-6 bg-[#161616] flex flex-col hover:border-white/20 transition-colors">
+               <div class="h-12 sm:h-14 flex items-center justify-center text-center mb-5 pb-3 border-b border-white/10 -mx-3 px-1">
+                 <h3 class={`font-bruta uppercase text-white tracking-wide leading-none whitespace-nowrap ${
+                   persona.role.length > 15 
+                     ? 'text-lg sm:text-xl lg:text-lg xl:text-xl' 
+                     : 'text-xl sm:text-2xl'
+                 }`}>{persona.role}</h3>
+               </div>
+               
+               <div class="mb-6 flex-1">
+                 <h4 class="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">Top Priorities</h4>
+                 <ul class="space-y-2.5">
+                   {persona.priorities.map(p => (
+                     <li class="text-sm text-gray-300 flex items-start leading-snug">
+                       <span class="text-[#FE5000] mr-2 shrink-0">•</span>
+                       <span>{p}</span>
+                     </li>
+                   ))}
+                 </ul>
+               </div>
+               
+               <div class="mb-6 flex-1">
+                 <h4 class="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">What to Look For</h4>
+                 <ul class="space-y-2.5">
+                   {persona.lookFor.map(lf => (
+                     <li class="text-sm text-gray-300 flex items-start leading-snug">
+                       <span class="text-emerald-400 mr-2 shrink-0 font-bold">✓</span>
+                       <span>{lf}</span>
+                     </li>
+                   ))}
+                 </ul>
+               </div>
+               
+               <div class="mt-auto bg-black/50 p-4 rounded-xl border border-white/10 relative overflow-hidden">
+                 <div class="absolute top-0 left-0 w-1 h-full bg-[#FE5000]"></div>
+                 <h4 class="text-xs font-bold uppercase tracking-wider text-[#FE5000] mb-2">The DataDocks Difference</h4>
+                 <p class="text-sm text-gray-300 leading-relaxed">{persona.datadocksDiff}</p>
+               </div>
+             </div>
+           ))}
+        </div>
+      </div>
+    </section>
+
+
+
+    {/* ═══ 6. FAQ ════════════════════════════════════════════════════════ */}
+    <section class="py-24 bg-[#FFF8E9] border-t border-[#ece6de]" style="content-visibility: auto; contain-intrinsic-size: auto 800px;">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-bruta text-3xl md:text-4xl uppercase text-center text-black mb-12">
+          Frequently Asked Questions
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-6 items-start">
+          {/* Column 1 */}
+          <div class="space-y-4">
+            {comparisonFaqs.slice(0, Math.ceil(comparisonFaqs.length / 2)).map((faq) => (
+              <details class="group rounded-xl border border-[#ece6de] bg-white px-6 py-5 shadow-sm overflow-hidden">
+                <summary class="flex items-center justify-between font-recoleta font-semibold text-black text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors">
+                  <span>{faq.question}</span>
+                  <span class="ml-6 flex-shrink-0">
+                     <svg aria-hidden="true" class="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </summary>
+                <div class="mt-4 prose prose-orange max-w-none text-gray-700" set:html={faq.answer} />
+              </details>
+            ))}
+          </div>
+
+          {/* Column 2 */}
+          <div class="space-y-4">
+            {comparisonFaqs.slice(Math.ceil(comparisonFaqs.length / 2)).map((faq) => (
+              <details class="group rounded-xl border border-[#ece6de] bg-white px-6 py-5 shadow-sm overflow-hidden">
+                <summary class="flex items-center justify-between font-recoleta font-semibold text-black text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors">
+                  <span>{faq.question}</span>
+                  <span class="ml-6 flex-shrink-0">
+                     <svg aria-hidden="true" class="h-5 w-5 transition-transform duration-200 group-open:rotate-180 text-gray-400 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </summary>
+                <div class="mt-4 prose prose-orange max-w-none text-gray-700" set:html={faq.answer} />
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ═══ 9. CTA ════════════════════════════════════════════════════════ */}
+    <CTA />
+
+  </main>
+
+  <Footer />
+</Layout>

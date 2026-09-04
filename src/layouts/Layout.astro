@@ -201,7 +201,7 @@ if (breadcrumbItems.length > 0) {
         let name = path.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
         if (index === arr.length - 1) {
           // Use short labels for known collection/section pages, full title for leaf pages
-          const shortLabels: Record<string, string> = { 'posts': 'Blog', 'benefits': 'Benefits', 'integrations': 'Integrations', 'about': 'About' };
+          const shortLabels: Record<string, string> = { 'posts': 'Blog', 'benefits': 'Benefits', 'integrations': 'Integrations', 'about': 'About', 'comparison': 'Dock Scheduling Comparison' };
           name = shortLabels[path] || title;
         }
         return {
