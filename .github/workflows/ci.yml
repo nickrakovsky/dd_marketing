@@ -150,17 +150,35 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Link Crawl (Linkinator)
-        # Linkinator crawls the live preview, following all links recursively.
-        # --timeout 120000 gives slow external links up to 120s before failing.
-        # --retry retries transient failures (status [0]) — handles flaky
-        # external links and redirect edge cases like trailing-slash 308s.
-        # --skip handles known external domains that may rate-limit CI crawls.
+        # Linkinator crawls the live preview, verifying all internal pages, routes,
+        # and assets recursively for broken links (404s).
+        # External URLs are skipped to prevent CI flakes caused by third-party bot protection,
+        # rate limits, or external server downtime.
         run: |
           npx linkinator "${PREVIEW_URL}" \
             --recurse \
             --retry \
+            --retry-errors \
+            --concurrency 25 \
             --timeout 30000 \
-            --skip "datadocks\.com" \
-            --skip "scale\.mit\.edu" \
-            --skip "canada\.ca" \
-            --skip "^https?://([^/]+\.)?(linkedin\.com|twitter\.com|x\.com|youtube\.com|instagram\.com|facebook\.com|calendly\.com|capterra\.com|g2\.com|reddit\.com|nytimes\.com|bloomberg\.com|reuters\.com|investopedia\.com|netsuite\.com|sec\.gov|zebra\.com|mckinsey\.com|doi\.org|fe\.up\.pt|acehardware\.com|aholddelhaize\.com|footlocker-inc\.com|nedap-retail\.com|arcweb\.com|mdpi\.com|pharmtech\.com|thehardwareconnection\.com|cascoequip\.com|waldenu\.edu|pymnts\.com|ascm\.org|essay\.utwente\.nl)"
+            --skip "^https?://(?!(?:[a-zA-Z0-9-]+\.)*pages\.dev|(?:[a-zA-Z0-9-]+\.)*datadocks\.com|localhost)" \
+            --format json > linkinator-results.json || {
+              echo "::error title=Linkinator Detected Broken Links::Linkinator found broken links in preview deployment"
+              node -e "
+                const fs = require('fs');
+                if (fs.existsSync('linkinator-results.json')) {
+                  const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
+                  const broken = data.links.filter(l => l.state === 'BROKEN');
+                  console.log('Total broken links found: ' + broken.length);
+                  for (const b of broken) {
+                    console.log('::error file=' + (b.parent || 'root') + '::' + b.status + ' ' + b.url);
+                  }
+                }
+              "
+              exit 1
+            }
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
+            console.log('✓ Linkinator passed: ' + data.links.length + ' links scanned with 0 broken links.');
+          "

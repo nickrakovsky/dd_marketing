@@ -1,0 +1,107 @@
+---
+import { marked } from 'marked';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  content?: {
+    faqs: FAQItem[];
+    frequentlyAskedQuestionsText?: string;
+  };
+  faqs?: FAQItem[];
+  headerAlign?: "center" | "left";
+  noHeader?: boolean;
+  noBackground?: boolean;
+}
+
+const {
+  content,
+  faqs: directFaqs,
+  headerAlign = "center",
+  noHeader = false,
+  noBackground = false,
+} = Astro.props;
+
+const faqList = content?.faqs || directFaqs || [];
+const midPoint = Math.ceil(faqList.length / 2);
+const leftColumnFaqs = faqList.slice(0, midPoint);
+const rightColumnFaqs = faqList.slice(midPoint);
+
+const formatAnswer = (raw: string) => {
+  if (!raw) return '';
+  return marked.parseInline(raw);
+};
+---
+
+<section class:list={["not-prose w-full my-16", { "py-12 px-6 sm:px-8 lg:px-10 bg-[#F8EDD9]/50 rounded-2xl border border-[#E5D3B3] shadow-sm": !noBackground }]}>
+  <div class="w-full max-w-5xl mx-auto">
+    {!noHeader && (
+      <div class:list={["mb-10", headerAlign === "left" ? "text-left" : "text-center"]}>
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-black font-bruta uppercase leading-[0.95] tracking-wide text-neutral-950 dark:text-white">
+          Frequently <span class="text-[#fd4f00]">Asked Questions</span>
+        </h2>
+      </div>
+    )}
+
+    {faqList.length > 0 && (
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-start">
+        {/* Left Column */}
+        <div class="w-full flex flex-col gap-4">
+          {leftColumnFaqs.map((faq) => (
+            <details class="faq-details group rounded-xl border border-[#E5D3B3] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm overflow-hidden transition-all duration-200 hover:border-[#fd4f00]/50 hover:shadow-md">
+              <summary class="flex items-center justify-between gap-4 py-4 px-5 font-recoleta font-semibold text-neutral-900 dark:text-neutral-100 text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors select-none">
+                <span class="text-left leading-snug">{faq.question}</span>
+                <span class="p-1.5 rounded-full bg-[#F8EDD9]/80 dark:bg-neutral-800 group-hover:bg-[#FBC3AD]/50 shrink-0 transition-colors">
+                  <svg class="h-4 w-4 transition-transform duration-200 group-open:rotate-180 text-neutral-700 dark:text-neutral-300 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
+              </summary>
+              <div 
+                class="px-5 pb-5 pt-2 text-neutral-700 dark:text-neutral-300 text-base font-sans leading-relaxed border-t border-[#E5D3B3]/40 dark:border-neutral-800/80 [&_a]:text-[#fd4f00] [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#e04500]" 
+                set:html={formatAnswer(faq.answer)}
+              />
+            </details>
+          ))}
+        </div>
+
+        {/* Right Column */}
+        <div class="w-full flex flex-col gap-4">
+          {rightColumnFaqs.map((faq) => (
+            <details class="faq-details group rounded-xl border border-[#E5D3B3] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm overflow-hidden transition-all duration-200 hover:border-[#fd4f00]/50 hover:shadow-md">
+              <summary class="flex items-center justify-between gap-4 py-4 px-5 font-recoleta font-semibold text-neutral-900 dark:text-neutral-100 text-lg cursor-pointer hover:text-[#fd4f00] list-none [&::-webkit-details-marker]:hidden transition-colors select-none">
+                <span class="text-left leading-snug">{faq.question}</span>
+                <span class="p-1.5 rounded-full bg-[#F8EDD9]/80 dark:bg-neutral-800 group-hover:bg-[#FBC3AD]/50 shrink-0 transition-colors">
+                  <svg class="h-4 w-4 transition-transform duration-200 group-open:rotate-180 text-neutral-700 dark:text-neutral-300 group-hover:text-[#fd4f00]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
+              </summary>
+              <div 
+                class="px-5 pb-5 pt-2 text-neutral-700 dark:text-neutral-300 text-base font-sans leading-relaxed border-t border-[#E5D3B3]/40 dark:border-neutral-800/80 [&_a]:text-[#fd4f00] [&_a]:font-semibold [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#e04500]" 
+                set:html={formatAnswer(faq.answer)}
+              />
+            </details>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="mt-10 text-center">
+      <p class="text-sm font-sans text-neutral-600 dark:text-neutral-400">
+        Still have questions?{" "}
+        <a
+          href="https://calendly.com/nick-rakovsky/datadocks-demo?month=2023-05"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-semibold text-[#fd4f00] hover:underline"
+        >
+          Get in touch with our team
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
