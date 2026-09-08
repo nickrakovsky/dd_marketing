@@ -182,9 +182,12 @@ export default defineConfig({
               const inlined = await beasties.process(html);
               // Guard the font regression described above: the real webfont
               // faces must survive into the output. If they ever stop doing so,
-              // fail loudly at build time instead of silently shipping
-              // Georgia/Impact to every visitor.
-              if (!/@font-face[^}]*url\(/.test(inlined)) missingRealFaces++;
+              // fail the build instead of silently shipping Georgia/Impact to
+              // every visitor.
+              if (!/@font-face[^}]*url\(/.test(inlined)) {
+                missingRealFaces++;
+                console.warn(`[critical-css] ${rel} lost its real @font-face url()`);
+              }
               fs.writeFileSync(filePath, inlined);
               processed++;
             } catch (err) {
@@ -193,7 +196,7 @@ export default defineConfig({
           }
           console.log(`[critical-css] inlined critical CSS for ${processed}/${htmlFiles.length} pages (${alreadyAsync} had no blocking stylesheet)`);
           if (missingRealFaces > 0) {
-            console.warn(`[critical-css] WARNING: ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
+            throw new Error(`[critical-css] ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
           }
         }
       }
