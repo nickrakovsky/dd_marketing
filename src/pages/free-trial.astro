@@ -1,0 +1,1047 @@
+---
+import digiHeader from "@/assets/solutionsscreenshots/digitization/dashboardheader.webp";
+import digi1 from "@/assets/solutionsscreenshots/digitization/appointmentscreated.webp";
+import digi2 from "@/assets/solutionsscreenshots/digitization/arrivedontime.webp";
+import digi3 from "@/assets/solutionsscreenshots/digitization/combinedontime.webp";
+import digi4 from "@/assets/solutionsscreenshots/digitization/completedontime.webp";
+import digi5 from "@/assets/solutionsscreenshots/digitization/earlyappointments.webp";
+import digi6 from "@/assets/solutionsscreenshots/digitization/lateappointments.webp";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dock Scheduling Software | DataDocks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+
+      :root {
+        --orange: #E8490F;
+        --orange-h: #C93D0A;
+        --orange-l: #FF6535;
+        --black: #0E0E0E;
+        --gray: #5A5A5A;
+        --lgray: #9A9A9A;
+        --border: #E6E2DC;
+        --cream: #F8F5F0;
+        --white: #FFFFFF;
+        --hero-bg: #111111;
+      }
+
+      body {
+        background: var(--white);
+        color: var(--black);
+        font-family: 'Outfit', sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      nav {
+        position: sticky; top: 0; z-index: 200;
+        background: var(--hero-bg);
+        border-bottom: 1px solid rgba(255,255,255,.07);
+        padding: 0 56px;
+        display: flex; align-items: center; justify-content: space-between;
+        height: 62px;
+      }
+      .nav-logo img { height: 28px; display: block; }
+      nav ul { list-style: none; display: flex; align-items: center; gap: 28px; }
+      nav ul a { color: rgba(255,255,255,.48); text-decoration: none; font-size: .85rem; font-weight: 500; transition: color .15s; }
+      nav ul a:hover { color: rgba(255,255,255,.88); }
+      .nav-cta {
+        background: var(--orange) !important; color: #fff !important;
+        padding: 8px 20px; border-radius: 6px;
+        font-weight: 600 !important; font-size: .84rem !important;
+        transition: background .15s !important;
+      }
+      .nav-cta:hover { background: var(--orange-h) !important; color: #fff !important; }
+
+      .hero {
+        background: var(--hero-bg);
+        position: relative; overflow: hidden;
+        padding: 64px 24px 72px;
+        display: flex; flex-direction: column; align-items: center;
+      }
+      .hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        background-image: radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
+        background-size: 32px 32px;
+        pointer-events: none;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: -160px; left: 50%; transform: translateX(-50%);
+        width: 800px; height: 560px;
+        background: radial-gradient(ellipse, rgba(232,73,15,.15) 0%, transparent 68%);
+        pointer-events: none;
+      }
+
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(232,73,15,.1); border: 1px solid rgba(232,73,15,.28);
+        border-radius: 999px; padding: 6px 16px;
+        font-size: .72rem; font-weight: 600; color: #FF8055;
+        letter-spacing: .5px; text-transform: uppercase;
+        margin-bottom: 26px; position: relative; z-index: 1;
+        animation: fadeUp .5s ease both;
+      }
+      .badge-dot { width: 6px; height: 6px; background: #FF8055; border-radius: 50%; animation: blink 2.2s ease infinite; }
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+      .hero-headline {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900;
+        font-size: clamp(2.8rem, 5.5vw, 5rem);
+        line-height: .9;
+        text-transform: uppercase;
+        text-align: center;
+        color: #fff;
+        letter-spacing: -.5px;
+        max-width: 820px;
+        margin-bottom: 14px;
+        position: relative; z-index: 1;
+        animation: fadeUp .55s .1s ease both;
+      }
+      .hero-headline em { font-style: normal; color: var(--orange-l); }
+
+      .hero-sub {
+        font-size: .97rem; color: rgba(255,255,255,.42);
+        text-align: center; max-width: 460px;
+        margin-bottom: 44px; line-height: 1.75;
+        position: relative; z-index: 1;
+        animation: fadeUp .55s .18s ease both;
+      }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .form-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 40px 40px 32px;
+        width: 100%; max-width: 540px;
+        box-shadow: 0 48px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.05);
+        position: relative; z-index: 2;
+        animation: fadeUp .6s .25s ease both;
+      }
+
+      .form-top {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 12px; margin-bottom: 26px;
+      }
+      .form-top-left h2 {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900; font-size: 1.9rem;
+        text-transform: uppercase; letter-spacing: -.2px;
+        line-height: 1; margin-bottom: 5px; color: var(--black);
+        max-width: none;
+      }
+      .form-top-left p { font-size: .8rem; color: var(--lgray); line-height: 1.5; }
+      .form-rating {
+        flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+      }
+      .form-rating .stars { color: var(--orange); font-size: .78rem; letter-spacing: 2px; }
+      .form-rating span { font-size: .68rem; color: var(--lgray); white-space: nowrap; }
+
+      .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .fg .full { grid-column: 1/-1; }
+      label {
+        display: flex; flex-direction: column; gap: 5px;
+        font-size: .67rem; font-weight: 700; color: #3a3a3a;
+        letter-spacing: .6px; text-transform: uppercase;
+      }
+      input, select {
+        background: var(--cream); border: 1.5px solid var(--border);
+        border-radius: 9px; color: var(--black);
+        padding: 11px 14px; font-size: .9rem;
+        font-family: 'Outfit', sans-serif; outline: none;
+        transition: border-color .15s, background .15s; width: 100%;
+        -webkit-appearance: none; appearance: none;
+      }
+      input::placeholder { color: #c2bbb3; font-weight: 300; }
+      input:focus, select:focus { border-color: var(--orange); background: var(--white); }
+      select {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px;
+      }
+
+      .submit-btn {
+        width: 100%; padding: 14px;
+        background: var(--orange); color: var(--white);
+        border: none; border-radius: 10px;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: .6px;
+        cursor: pointer; transition: background .15s, transform .1s; margin-top: 4px;
+      }
+      .submit-btn:hover { background: var(--orange-h); transform: translateY(-1px); }
+      .submit-btn:active { transform: translateY(0); }
+
+      .privacy { text-align: center; font-size: .68rem; color: var(--lgray); margin-top: 11px; line-height: 1.6; }
+
+      .form-trust {
+        display: flex; align-items: center; justify-content: center; gap: 18px;
+        margin-top: 18px; padding-top: 16px;
+        border-top: 1px solid var(--border); flex-wrap: wrap;
+      }
+      .trust-chip {
+        display: flex; align-items: center; gap: 5px;
+        font-size: .67rem; font-weight: 600; color: var(--lgray);
+      }
+      .trust-chip svg { width: 12px; height: 12px; color: var(--orange); flex-shrink: 0; }
+
+      .success-msg { display: none; flex-direction: column; align-items: center; text-align: center; padding: 28px 16px; gap: 12px; }
+      .suc-icon { width: 56px; height: 56px; background: #FEF0E8; border: 2px solid var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+      .success-msg h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.7rem; font-weight: 900; text-transform: uppercase; color: var(--black); }
+      .success-msg p { font-size: .86rem; color: var(--gray); max-width: 240px; }
+
+      .ratings-wrap {
+        background: var(--white); border-bottom: 1px solid var(--border);
+        padding: 16px 0; display: flex; justify-content: center;
+      }
+      .ratings-inner { width: 50%; overflow: hidden; position: relative; }
+      .ratings-inner::before, .ratings-inner::after {
+        content: ''; position: absolute; top: 0; bottom: 0; width: 64px; z-index: 2; pointer-events: none;
+      }
+      .ratings-inner::before { left: 0; background: linear-gradient(to right, var(--white), transparent); }
+      .ratings-inner::after { right: 0; background: linear-gradient(to left, var(--white), transparent); }
+      .ratings-track { display: flex; align-items: center; gap: 10px; width: max-content; }
+
+      .rpill {
+        display: flex; align-items: center; gap: 10px;
+        border-radius: 10px; padding: 9px 15px;
+        white-space: nowrap; flex-shrink: 0;
+        text-decoration: none; font-family: 'Outfit', sans-serif;
+        height: 50px;
+      }
+      .rpill-g2 { background: #E8420F; color: #fff; }
+      .rpill-g2 .pill-logo { height: 26px; width: auto; }
+      .rpill-g2 .pill-stars { color: #FFD700; font-size: .68rem; letter-spacing: 2px; line-height: 1; }
+      .rpill-g2 .pill-val { font-weight: 600; font-size: .78rem; line-height: 1.2; }
+      .rpill-plain { background: #fff; border: 1.5px solid var(--border); color: var(--black); }
+      .pill-icon-circle { width: 28px; height: 28px; border-radius: 50%; background: #FEF0E8; border: 1.5px solid #f4c9a8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .pill-icon-circle svg { width: 14px; height: 14px; }
+      .rpill-plain .pill-num { font-weight: 700; font-size: 1rem; line-height: 1; }
+      .rpill-plain .pill-label { font-size: .57rem; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: #aaa; margin-top: 1px; }
+      .rpill-capterra { background: #1f2b5e; color: #fff; gap: 0; padding: 0; overflow: hidden; }
+      .rpill-capterra .cap-left { display: flex; align-items: center; gap: 7px; padding: 9px 13px; }
+      .rpill-capterra .pill-logo { height: 20px; width: auto; }
+      .rpill-capterra .cap-label { font-size: .8rem; font-weight: 600; color: #fff; }
+      .rpill-capterra .pill-divider { width: 1px; height: 100%; background: rgba(255,255,255,.18); }
+      .rpill-capterra .cap-right { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 9px 14px; }
+      .rpill-capterra .pill-num { font-weight: 700; font-size: 1rem; line-height: 1; color: #fff; }
+      .rpill-capterra .pill-stars { color: #FFD700; font-size: .6rem; letter-spacing: 1.5px; }
+      .rpill-compliance { background: #1e4fc2; color: #fff; gap: 11px; }
+      .comp-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: .52rem; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; line-height: 1.25; text-align: center; color: #fff; }
+      .comp-item svg { width: 13px; height: 13px; margin-bottom: 1px; }
+      .comp-divider { width: 1px; height: 24px; background: rgba(255,255,255,.2); flex-shrink: 0; }
+      @keyframes ratings-scroll { from{transform:translateX(0)} to{transform:translateX(var(--ratings-shift))} }
+
+      .trusted {
+        background: var(--cream); border-bottom: 1px solid var(--border);
+        padding: 18px 56px;
+        display: flex; align-items: center; justify-content: center; gap: 36px; flex-wrap: wrap;
+      }
+      .trusted-label { font-size: .65rem; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--lgray); white-space: nowrap; }
+      .trusted-logos { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+      .trusted-logos span { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: .9rem; color: #c8c2ba; letter-spacing: .4px; text-transform: uppercase; }
+
+      .section { padding: 80px 80px; }
+      .eyebrow { font-size: .67rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+      h2 {
+        font-family: 'Barlow Condensed', sans-serif; font-weight: 900;
+        font-size: clamp(2rem, 3.8vw, 3.2rem); line-height: .94;
+        text-transform: uppercase; letter-spacing: -.2px;
+        max-width: 680px; margin-bottom: 14px;
+      }
+      .sub { color: var(--gray); font-size: .94rem; max-width: 520px; line-height: 1.76; margin-bottom: 44px; }
+
+      .benefits { background: var(--white); }
+      .ben-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+      .ben-card {
+        background: var(--cream); border: 1px solid var(--border);
+        border-radius: 14px; padding: 30px 26px;
+        transition: box-shadow .2s, transform .2s;
+      }
+      .ben-card:hover { box-shadow: 0 10px 32px rgba(0,0,0,.07); transform: translateY(-2px); }
+      .ben-icon { width: 38px; height: 38px; border-radius: 10px; background: #FEF0E8; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 14px; }
+      .ben-card h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 8px; line-height: 1.1; }
+      .ben-card p { font-size: .84rem; color: var(--gray); line-height: 1.7; }
+
+      .analytics { background: var(--cream); }
+      .analytics-top { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; margin-bottom: 36px; }
+      .check-list { display: flex; flex-direction: column; gap: 11px; padding-top: 4px; }
+      .check-item { display: flex; gap: 10px; align-items: flex-start; font-size: .87rem; color: var(--gray); line-height: 1.55; }
+      .check-item-icon { width: 20px; height: 20px; border-radius: 50%; background: #FEF0E8; border: 1.5px solid #f4c9a8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+      .check-item-icon svg { width: 10px; height: 10px; }
+      .chart-viewer { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 8px 36px rgba(0,0,0,.08); background: #fff; }
+      .chart-header-bar { width: 100%; display: block; border-bottom: 1px solid var(--border); }
+      .chart-grid { display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(2,1fr); }
+      .chart-tile {
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: transparent;
+        padding: 0;
+        border-top: none;
+        border-left: none;
+      }
+      .chart-tile:nth-child(3n) { border-right: none; }
+      .chart-tile:nth-child(n+4) { border-bottom: none; }
+      .chart-tile img { width: 100%; display: block; transition: transform .25s; }
+      .chart-tile:hover img { transform: scale(1.04); }
+      .chart-tile::after { content: ''; position: absolute; inset: 0; background: rgba(232,73,15,0); transition: background .2s; pointer-events: none; }
+      .chart-tile:hover::after { background: rgba(232,73,15,.06); }
+      .chart-expand-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); background: rgba(255,255,255,.92); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: transform .2s; pointer-events: none; z-index: 2; }
+      .chart-tile:hover .chart-expand-hint { transform: translate(-50%,-50%) scale(1); }
+      .chart-expanded { display: none; position: relative; }
+      .chart-expanded.visible { display: block; }
+      .chart-expanded img { width: 100%; display: block; }
+      .chart-close { position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,.6); color: #fff; border: none; border-radius: 6px; font-size: .73rem; font-weight: 700; padding: 5px 12px; cursor: pointer; letter-spacing: .5px; text-transform: uppercase; transition: background .15s; z-index: 5; font-family: 'Outfit', sans-serif; }
+      .chart-close:hover { background: var(--orange); }
+      .chart-expanded-label { position: absolute; bottom:0; left:0; right:0; background: linear-gradient(to top, rgba(0,0,0,.5), transparent); color:#fff; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.8px; padding:20px 16px 10px; pointer-events:none; }
+
+      .integrations { background: var(--white); padding: 60px 0; }
+      .integ-label { font-size: .67rem; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--lgray); text-align: center; margin-bottom: 24px; }
+      .integ-outer { display: flex; justify-content: center; }
+      .integ-marquee { width: 50%; overflow: hidden; position: relative; }
+      .integ-marquee::before, .integ-marquee::after { content:''; position:absolute; top:0; bottom:0; width:80px; z-index:2; pointer-events:none; }
+      .integ-marquee::before { left:0; background:linear-gradient(to right, var(--white), transparent); }
+      .integ-marquee::after  { right:0; background:linear-gradient(to left, var(--white), transparent); }
+      .integ-track { display: flex; align-items: center; width: max-content; gap: 4px; }
+      .integ-card { display:flex; flex-direction:column; align-items:center; gap:9px; text-align:center; text-decoration:none; color:var(--black); padding:14px 20px; flex-shrink:0; border-radius: 10px; transition: background .15s; }
+      .integ-card:hover { background: var(--cream); }
+      .integ-card img { height: 42px; width: auto; display: block; object-fit: contain; }
+      .integ-card span { font-size: .72rem; font-weight: 600; color: var(--gray); line-height: 1.4; max-width: 100px; }
+      @keyframes integ-scroll { from{transform:translateX(0)} to{transform:translateX(var(--integ-shift))} }
+      .integ-note { font-size: .83rem; color: var(--lgray); margin-top: 18px; text-align: center; }
+      .integ-note a { color: var(--orange); text-decoration: none; font-weight: 500; }
+      .integ-note a:hover { text-decoration: underline; }
+
+      .testimonials { background: var(--cream); }
+      .testi-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 36px; flex-wrap: wrap; gap: 16px; }
+      .testi-header h2 { margin-bottom: 0; }
+      .testi-stats { display: flex; gap: 32px; }
+      .testi-stat { text-align: right; }
+      .testi-stat strong { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; line-height: 1; color: var(--orange); }
+      .testi-stat span { font-size: .72rem; color: var(--lgray); font-weight: 500; }
+      .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+      .tcard {
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: 14px; padding: 24px 22px;
+        display: flex; flex-direction: column; gap: 12px;
+        transition: box-shadow .2s, transform .2s;
+      }
+      .tcard:hover { box-shadow: 0 6px 20px rgba(0,0,0,.06); transform: translateY(-1px); }
+      .tcard-stars { color: var(--orange); font-size: .76rem; letter-spacing: 2px; }
+      .tcard-quote { font-size: .86rem; color: var(--gray); line-height: 1.72; font-style: italic; flex: 1; }
+      .tcard-author { display: flex; align-items: center; gap: 10px; padding-top: 4px; border-top: 1px solid var(--border); }
+      .tcard-avatar { width: 34px; height: 34px; border-radius: 50%; background: #FEF0E8; border: 1.5px solid #f4c9a8; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: .82rem; color: var(--orange); flex-shrink: 0; }
+      .tcard-name { font-size: .79rem; font-weight: 600; color: var(--black); }
+      .tcard-co { font-size: .69rem; color: var(--lgray); }
+
+      .bottom-cta {
+        background: var(--hero-bg); padding: 80px 56px; text-align: center; position: relative; overflow: hidden;
+      }
+      .bottom-cta::before {
+        content: '';
+        position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+        width: 600px; height: 400px;
+        background: radial-gradient(ellipse, rgba(232,73,15,.18) 0%, transparent 68%);
+        pointer-events: none;
+      }
+      .bottom-cta::after {
+        content: '';
+        position: absolute; inset: 0;
+        background-image: radial-gradient(circle, rgba(255,255,255,.05) 1px, transparent 1px);
+        background-size: 32px 32px;
+        pointer-events: none;
+      }
+      .bottom-cta h2 { color: var(--white); margin: 0 auto 12px; position: relative; z-index: 1; }
+      .bottom-cta p { color: rgba(255,255,255,.38); font-size: .94rem; max-width: 380px; margin: 0 auto 30px; line-height: 1.72; position: relative; z-index: 1; }
+      .big-orange { display:inline-block; background:var(--orange); color:var(--white); padding:14px 38px; border-radius:9px; font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:1.15rem; text-transform:uppercase; letter-spacing:.6px; text-decoration:none; transition:background .15s,transform .1s; position: relative; z-index: 1; }
+      .big-orange:hover { background:var(--orange-h); transform:translateY(-1px); }
+
+      footer { background: #0a0a0a; padding: 28px 56px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+      footer img { height: 24px; display: block; }
+      footer .footer-copy { font-size: .74rem; color: rgba(255,255,255,.22); }
+      .footer-links { display: flex; gap: 18px; }
+      .footer-links a { font-size: .74rem; color: rgba(255,255,255,.28); text-decoration: none; transition: color .15s; }
+      .footer-links a:hover { color: rgba(255,255,255,.65); }
+
+      @media (max-width: 860px) {
+        nav { padding: 0 20px; }
+        nav ul { display: none; }
+        .hero { padding: 48px 20px 56px; }
+        .form-card { padding: 28px 22px 22px; }
+        .section { padding: 52px 24px; }
+        .ben-grid { grid-template-columns: 1fr; }
+        .testi-grid { grid-template-columns: 1fr; }
+        .analytics-top { grid-template-columns: 1fr; }
+        .integ-marquee, .ratings-inner { width: 90%; }
+        .trusted { padding: 16px 20px; gap: 16px; }
+        .testi-header { flex-direction: column; align-items: flex-start; }
+        .testi-stats { justify-content: flex-start; }
+        .testi-stat { text-align: left; }
+        footer { padding: 22px 20px; flex-direction: column; align-items: flex-start; gap: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-logo">
+        <a href="https://www.datadocks.com">
+          <img
+            src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg"
+            alt="DataDocks"
+          />
+        </a>
+      </div>
+      <ul>
+        <li><a href="#benefits">How It Helps</a></li>
+        <li><a href="#analytics">Reports</a></li>
+        <li><a href="#integrations">Integrations</a></li>
+        <li><a href="https://booking.datadocks.com/sessions/new">Login</a></li>
+        <li><a href="#lead" class="nav-cta">Sign Up for Free Trial</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero" id="lead">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Over 1,000,000 Appointments Booked Annually
+      </div>
+
+      <h1 class="hero-headline">
+        Stop Managing Docks<br />
+        With <em>Spreadsheets.</em>
+      </h1>
+      <p class="hero-sub">
+        DataDocks replaces manual scheduling, phone calls, and guesswork with
+        smart dock management your whole team — and your carriers — will
+        actually use.
+      </p>
+
+      <div class="form-card">
+        <div class="form-top">
+          <div class="form-top-left">
+            <h2>Sign Up for a Free Trial</h2>
+            <p>Interested? Get full access. No credit card required.</p>
+          </div>
+          <div class="form-rating">
+            <div class="stars">★★★★★</div>
+            <span>4.9/5 on G2 &amp; Capterra</span>
+          </div>
+        </div>
+
+        <form id="lead-form">
+          <div class="fg">
+            <label>
+              First Name
+              <input type="text" name="first_name" placeholder="Jane" required />
+            </label>
+            <label>
+              Last Name
+              <input type="text" name="last_name" placeholder="Smith" />
+            </label>
+            <label class="full">
+              Company Name
+              <input
+                type="text"
+                name="company"
+                placeholder="Acme Warehousing Co."
+                required
+              />
+            </label>
+            <label class="full">
+              Work Email
+              <input
+                type="email"
+                name="email"
+                placeholder="you@company.com"
+                required
+                autocomplete="email"
+              />
+            </label>
+            <label>
+              Phone Number
+              <input type="tel" name="phone" placeholder="+1 (555) 000-0000" />
+            </label>
+            <label>
+              Number of Locations
+              <select name="locations">
+                <option value="" disabled selected>Select…</option>
+                <option>1</option>
+                <option>2–4</option>
+                <option>5–9</option>
+                <option>10–24</option>
+                <option>25+</option>
+              </select>
+            </label>
+            <label class="full">
+              Monthly Appointments (approx.)
+              <select name="appointments">
+                <option value="" disabled selected>Select…</option>
+                <option>Under 500</option>
+                <option>500–2,000</option>
+                <option>2,000–10,000</option>
+                <option>10,000–50,000</option>
+                <option>50,000+</option>
+              </select>
+            </label>
+            <div class="full">
+              <button type="submit" class="submit-btn">
+                Sign Up for Free Trial →
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="success-msg" id="success">
+          <div class="suc-icon">✓</div>
+          <h3>You're Signed Up!</h3>
+          <p>We'll be in touch shortly to get your free trial set up.</p>
+        </div>
+
+        <p class="privacy">No spam. Your information is kept strictly private.</p>
+
+        <div class="form-trust">
+          <div class="trust-chip">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M8 2l4 2.3v3c0 2.3-1.7 4.3-4 5-2.3-.7-4-2.7-4-5v-3L8 2z"></path>
+            </svg>
+            SOC 2 Type II
+          </div>
+          <div class="trust-chip">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            >
+              <circle cx="8" cy="8" r="6"></circle>
+              <line x1="1.3" y1="8" x2="14.7" y2="8"></line>
+              <path d="M8 2a10 10 0 0 1 0 12M8 2a10 10 0 0 0 0 12"></path>
+            </svg>
+            GDPR Compliant
+          </div>
+          <div class="trust-chip">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            >
+              <rect x="2" y="7" width="12" height="7" rx="1.5"></rect>
+              <path d="M5 7V5a3 3 0 0 1 6 0v2"></path>
+            </svg>
+            ISO 27001
+          </div>
+          <div class="trust-chip">
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="8" cy="8" r="6"></circle>
+              <polyline points="5.5 8 7.3 10 10.5 6"></polyline>
+            </svg>
+            99.99% Uptime
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ratings-wrap">
+      <div class="ratings-inner">
+        <div class="ratings-track" id="ratingsTrack">
+          <a href="https://www.g2.com/products/datadocks/reviews" class="rpill rpill-g2" target="_blank">
+            <img class="pill-logo" src="https://datadocks.com/dd_marketing/_astro/g2-logo.C5SWVazW_v4hop.webp" alt="G2" />
+            <div><div class="pill-stars">★★★★★</div><div class="pill-val">4.9/5 on G2</div></div>
+          </a>
+          <div class="rpill rpill-plain">
+            <div class="pill-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8490F" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15 15"></polyline>
+              </svg>
+            </div>
+            <div><div class="pill-num">99.99%</div><div class="pill-label">Uptime</div></div>
+          </div>
+          <a href="https://www.capterra.com/p/179266/DataDocks/" class="rpill rpill-capterra" target="_blank">
+            <div class="cap-left">
+              <img class="pill-logo" src="https://datadocks.com/dd_marketing/_astro/capterra-logo.BooBto_A_Z2jLfxF.webp" alt="Capterra" />
+              <span class="cap-label">Capterra</span>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="cap-right"><div class="pill-num">4.9</div><div class="pill-stars">★★★★★</div></div>
+          </a>
+          <div class="rpill rpill-plain">
+            <div class="pill-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8490F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="8 12 11 15 16 9"></polyline>
+              </svg>
+            </div>
+            <div><div class="pill-num">24/7</div><div class="pill-label">Support</div></div>
+          </div>
+          <div class="rpill rpill-compliance">
+            <div class="comp-item">ISO<br />27001</div>
+            <div class="comp-divider"></div>
+            <div class="comp-item">GDPR</div>
+            <div class="comp-divider"></div>
+            <div class="comp-item">SOC 2<br />TYPE II</div>
+          </div>
+
+          <a href="https://www.g2.com/products/datadocks/reviews" class="rpill rpill-g2" target="_blank">
+            <img class="pill-logo" src="https://datadocks.com/dd_marketing/_astro/g2-logo.C5SWVazW_v4hop.webp" alt="G2" />
+            <div><div class="pill-stars">★★★★★</div><div class="pill-val">4.9/5 on G2</div></div>
+          </a>
+          <div class="rpill rpill-plain">
+            <div class="pill-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8490F" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15 15"></polyline>
+              </svg>
+            </div>
+            <div><div class="pill-num">99.99%</div><div class="pill-label">Uptime</div></div>
+          </div>
+          <a href="https://www.capterra.com/p/179266/DataDocks/" class="rpill rpill-capterra" target="_blank">
+            <div class="cap-left">
+              <img class="pill-logo" src="https://datadocks.com/dd_marketing/_astro/capterra-logo.BooBto_A_Z2jLfxF.webp" alt="Capterra" />
+              <span class="cap-label">Capterra</span>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="cap-right"><div class="pill-num">4.9</div><div class="pill-stars">★★★★★</div></div>
+          </a>
+          <div class="rpill rpill-plain">
+            <div class="pill-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8490F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="8 12 11 15 16 9"></polyline>
+              </svg>
+            </div>
+            <div><div class="pill-num">24/7</div><div class="pill-label">Support</div></div>
+          </div>
+          <div class="rpill rpill-compliance">
+            <div class="comp-item">ISO<br />27001</div>
+            <div class="comp-divider"></div>
+            <div class="comp-item">GDPR</div>
+            <div class="comp-divider"></div>
+            <div class="comp-item">SOC 2<br />TYPE II</div>
+          </div>
+
+          <a href="https://www.g2.com/products/datadocks/reviews" class="rpill rpill-g2" target="_blank">
+            <img class="pill-logo" src="https://datadocks.com/dd_marketing/_astro/g2-logo.C5SWVazW_v4hop.webp" alt="G2" />
+            <div><div class="pill-stars">★★★★★</div><div class="pill-val">4.9/5 on G2</div></div>
+          </a>
+          <div class="rpill rpill-plain">
+            <div class="pill-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8490F" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15 15"></polyline>
+              </svg>
+            </div>
+            <div><div class="pill-num">99.99%</div><div class="pill-label">Uptime</div></div>
+          </div>
+          <a href="https://www.capterra.com/p/179266/DataDocks/" class="rpill rpill-capterra" target="_blank">
+            <div class="cap-left">
+              <img class="pill-logo" src="https://datadocks.com/dd_marketing/_astro/capterra-logo.BooBto_A_Z2jLfxF.webp" alt="Capterra" />
+              <span class="cap-label">Capterra</span>
+            </div>
+            <div class="pill-divider"></div>
+            <div class="cap-right"><div class="pill-num">4.9</div><div class="pill-stars">★★★★★</div></div>
+          </a>
+          <div class="rpill rpill-plain">
+            <div class="pill-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#E8490F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="8 12 11 15 16 9"></polyline>
+              </svg>
+            </div>
+            <div><div class="pill-num">24/7</div><div class="pill-label">Support</div></div>
+          </div>
+          <div class="rpill rpill-compliance">
+            <div class="comp-item">ISO<br />27001</div>
+            <div class="comp-divider"></div>
+            <div class="comp-item">GDPR</div>
+            <div class="comp-divider"></div>
+            <div class="comp-item">SOC 2<br />TYPE II</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trusted">
+      <span class="trusted-label">Trusted by</span>
+      <div class="trusted-logos">
+        <span>LG Energy Solution</span>
+        <span>HelloFresh</span>
+        <span>Stitch Fix</span>
+        <span>AJC Logistics</span>
+        <span>GSK</span>
+        <span>Atlantic Autocold</span>
+        <span>Golden West Food Group</span>
+      </div>
+    </div>
+
+    <section class="section benefits" id="benefits">
+      <div class="eyebrow">How DataDocks Helps</div>
+      <h2>Everything You Need to Run a Smarter Dock</h2>
+      <p class="sub">
+        Eliminate bottlenecks, reduce wait times, and give every stakeholder full
+        visibility into what's happening at every door.
+      </p>
+      <div class="ben-grid">
+        <div class="ben-card">
+          <div class="ben-icon">🔍</div>
+          <h3>Spot Bottlenecks Instantly</h3>
+          <p>
+            See exactly what's in your loading dock and yard at a glance.
+            Estimate loading time for each truck with real data — no more
+            guessing.
+          </p>
+        </div>
+        <div class="ben-card">
+          <div class="ben-icon">🚛</div>
+          <h3>Incentivize Carrier Punctuality</h3>
+          <p>
+            Show carriers — with data — how sticking to your schedule gets their
+            trucks in and out faster. Better data means better relationships.
+          </p>
+        </div>
+        <div class="ben-card">
+          <div class="ben-icon">📅</div>
+          <h3>Spread Appointments Throughout the Day</h3>
+          <p>
+            Predict how much manpower you'll need and optimize operations over
+            time. Stop the morning rush before it happens.
+          </p>
+        </div>
+        <div class="ben-card">
+          <div class="ben-icon">📊</div>
+          <h3>Say Goodbye to Spreadsheets</h3>
+          <p>
+            Replace manual logs and shared calendars with a centralized, digital
+            scheduling system your whole team and carriers can use.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section analytics" id="analytics">
+      <div class="analytics-top">
+        <div>
+          <div class="eyebrow">Analytics &amp; Reporting</div>
+          <h2>Actionable Data on Everything Through Your Docks</h2>
+          <p class="sub" style="margin-bottom:0;">
+            Track performance metrics like dwell time and appointment adherence
+            to identify bottlenecks and drive real operational improvements.
+          </p>
+        </div>
+
+        <div class="check-list">
+          <div class="check-item">Track on-time arrivals, turnaround times, and carrier performance</div>
+          <div class="check-item">Pull reports on early, late, and completed appointments</div>
+          <div class="check-item">Export to CSV or push to WMS/TMS/ERP</div>
+          <div class="check-item">Replace spreadsheets with clean data</div>
+        </div>
+      </div>
+
+      <div class="chart-viewer" id="chartViewer">
+        <img class="chart-header-bar" src={digiHeader.src} alt="DataDocks Dashboard Filters" />
+
+        <div class="chart-grid" id="chartGrid">
+          <button type="button" class="chart-tile" data-img={digi1.src} data-label="Appointments Created" aria-label="Expand Appointments Created">
+            <img src={digi1.src} alt="Appointments Created" />
+            <div class="chart-expand-hint">⊕</div>
+          </button>
+
+          <button type="button" class="chart-tile" data-img={digi2.src} data-label="Arrived On Time" aria-label="Expand Arrived On Time">
+            <img src={digi2.src} alt="Arrived On Time" />
+            <div class="chart-expand-hint">⊕</div>
+          </button>
+
+          <button type="button" class="chart-tile" data-img={digi3.src} data-label="Combined On Time" aria-label="Expand Combined On Time">
+            <img src={digi3.src} alt="Combined On Time" />
+            <div class="chart-expand-hint">⊕</div>
+          </button>
+
+          <button type="button" class="chart-tile" data-img={digi4.src} data-label="Completed On Time" aria-label="Expand Completed On Time">
+            <img src={digi4.src} alt="Completed On Time" />
+            <div class="chart-expand-hint">⊕</div>
+          </button>
+
+          <button type="button" class="chart-tile" data-img={digi5.src} data-label="Early Appointments" aria-label="Expand Early Appointments">
+            <img src={digi5.src} alt="Early Appointments" />
+            <div class="chart-expand-hint">⊕</div>
+          </button>
+
+          <button type="button" class="chart-tile" data-img={digi6.src} data-label="Late Appointments" aria-label="Expand Late Appointments">
+            <img src={digi6.src} alt="Late Appointments" />
+            <div class="chart-expand-hint">⊕</div>
+          </button>
+        </div>
+
+        <div class="chart-expanded" id="chartExpanded">
+          <button type="button" class="chart-close" id="chartClose">✕ Back to All</button>
+          <img id="chartExpandedImg" src="" alt="" />
+          <div class="chart-expanded-label" id="chartExpandedLabel"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="integrations" id="integrations">
+      <p class="integ-label">Yes! We integrate with:</p>
+      <div class="integ-outer">
+        <div class="integ-marquee">
+          <div class="integ-track" id="integTrack">
+            <a href="https://datadocks.com/integrations/microsoft-sso-entra" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251f71d7dc3f818bc5989_Microsoft%20SSO%20(Entra).svg" alt="Microsoft Entra SSO" /><span>Microsoft Entra (SSO)</span></a>
+            <a href="https://datadocks.com/integrations/sap-business-bydesign" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251d78f4d48a0d249d5be_SAP%20Business%20ByDesign.svg" alt="SAP Business ByDesign" /><span>SAP Business ByDesign®</span></a>
+            <a href="https://datadocks.com/integrations/oracle-fusion-cloud" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251ac3ee15660333a7f75_Oracle%20Fusion%20Cloud.svg" alt="Oracle Fusion Cloud" /><span>Oracle® Fusion Cloud</span></a>
+            <a href="https://datadocks.com/integrations/netsuite-erp" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669250dc386ea53b2340b3f9_Netsuite%20ERP.svg" alt="Netsuite ERP" /><span>Netsuite ERP</span></a>
+            <a href="https://datadocks.com/integrations/sap-s-4hana" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669250b8809f558b0ab88125_SAP%20S%3A4HANA.svg" alt="SAP S/4HANA" /><span>SAP S/4HANA®</span></a>
+            <a href="https://datadocks.com/integrations/microsoft-power-bi" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6692506e5cf5dc1cce5caa25_Microsoft%20Power%20BI.svg" alt="Microsoft Power BI" /><span>Microsoft Power BI</span></a>
+
+            <a href="https://datadocks.com/integrations/microsoft-sso-entra" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251f71d7dc3f818bc5989_Microsoft%20SSO%20(Entra).svg" alt="Microsoft Entra SSO" /><span>Microsoft Entra (SSO)</span></a>
+            <a href="https://datadocks.com/integrations/sap-business-bydesign" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251d78f4d48a0d249d5be_SAP%20Business%20ByDesign.svg" alt="SAP Business ByDesign" /><span>SAP Business ByDesign®</span></a>
+            <a href="https://datadocks.com/integrations/oracle-fusion-cloud" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669251ac3ee15660333a7f75_Oracle%20Fusion%20Cloud.svg" alt="Oracle Fusion Cloud" /><span>Oracle® Fusion Cloud</span></a>
+            <a href="https://datadocks.com/integrations/netsuite-erp" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669250dc386ea53b2340b3f9_Netsuite%20ERP.svg" alt="Netsuite ERP" /><span>Netsuite ERP</span></a>
+            <a href="https://datadocks.com/integrations/sap-s-4hana" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/669250b8809f558b0ab88125_SAP%20S%3A4HANA.svg" alt="SAP S/4HANA" /><span>SAP S/4HANA®</span></a>
+            <a href="https://datadocks.com/integrations/microsoft-power-bi" class="integ-card" target="_blank"><img src="https://cdn.prod.website-files.com/63d769389c1d37bdff4f1c82/6692506e5cf5dc1cce5caa25_Microsoft%20Power%20BI.svg" alt="Microsoft Power BI" /><span>Microsoft Power BI</span></a>
+          </div>
+        </div>
+      </div>
+      <p class="integ-note">
+        Don't see your platform?
+        <a href="https://datadocks.com/integrations" target="_blank">We likely support it already.</a>
+        If not, we'll build it.
+      </p>
+    </section>
+
+    <section class="section testimonials">
+      <div class="testi-header">
+        <div>
+          <div class="eyebrow">Customer Stories</div>
+          <h2>Trusted by Operations<br />Teams Worldwide</h2>
+        </div>
+        <div class="testi-stats">
+          <div class="testi-stat">
+            <strong>4.9/5</strong>
+            <span>G2 &amp; Capterra rating</span>
+          </div>
+          <div class="testi-stat">
+            <strong>500+</strong>
+            <span>Warehouses worldwide</span>
+          </div>
+          <div class="testi-stat">
+            <strong>1M+</strong>
+            <span>Appointments booked</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi-grid">
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"The automation features will literally save our company hundreds of labor hours each year."</p>
+          <div class="tcard-author"><div class="tcard-avatar">SE</div><div><div class="tcard-name">Salah El-Jamil</div><div class="tcard-co">AJC Logistics</div></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"DataDocks gave us full visibility across all our dock doors. We went from reactive to proactive in weeks."</p>
+          <div class="tcard-author"><div class="tcard-avatar">LW</div><div><div class="tcard-name">Lina Wong</div><div class="tcard-co">Stitch Fix</div></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"A little over a year in and I couldn't imagine going back to spreadsheets to manage our shipping schedule."</p>
+          <div class="tcard-author"><div class="tcard-avatar">AE</div><div><div class="tcard-name">Andres Enderica</div><div class="tcard-co">Atlantic Autocold</div></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"Carrier self-booking cut our inbound calls by over 80%. Our team finally has time for actual operations."</p>
+          <div class="tcard-author"><div class="tcard-avatar">AC</div><div><div class="tcard-name">Alisha Cooper</div><div class="tcard-co">HelloFresh</div></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"The reports alone are worth it. We can now show leadership exactly where our delays are coming from."</p>
+          <div class="tcard-author"><div class="tcard-avatar">CT</div><div><div class="tcard-name">Carla Thorel</div><div class="tcard-co">ClearTech</div></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"Setup was fast. Within a week our whole team was using it and carriers were booking their own appointments."</p>
+          <div class="tcard-author"><div class="tcard-avatar">IS</div><div><div class="tcard-name">Ian Sullivan</div><div class="tcard-co">Golden West Food Group</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="bottom-cta">
+      <h2>Ready to Take Control<br />of Your Docks?</h2>
+      <p>Join 500+ operations teams running smoother, faster, and with less chaos.</p>
+      <a href="#lead" class="big-orange">Sign Up for a Free Trial →</a>
+    </div>
+
+    <footer>
+      <a href="https://www.datadocks.com">
+        <img
+          src="https://cdn.prod.website-files.com/63d256598b9a13621548953f/63d7af350a07cb3b3c79fbc8_Orange%20Logo.svg"
+          alt="DataDocks"
+        />
+      </a>
+      <div class="footer-copy">© 2026 DataDocks Inc. All rights reserved.</div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+
+    <script is:inline>
+      (() => {
+        const initLeadForm = () => {
+          const leadForm = document.getElementById('lead-form');
+          if (!leadForm) return;
+
+          leadForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = Object.fromEntries(new FormData(this));
+            const payload = new FormData();
+
+            payload.append('email', data.email);
+            payload.append('fields_first_name', data.first_name);
+            payload.append('fields_last_name', data.last_name);
+            payload.append('fields_company', data.company);
+
+            if (data.phone) payload.append('fields_phone', data.phone);
+            if (data.locations) payload.append('fields_numberOfLocations', data.locations);
+            if (data.appointments) payload.append('fields_monthlyAppointments', data.appointments);
+
+            payload.append('tags', 'FreeTrial');
+
+            try {
+              await fetch(
+                'https://track.bentonow.com/forms/b4cb9a34a989bcc643714151df7b7154/%24subscribe?hardened=true',
+                {
+                  method: 'POST',
+                  body: payload,
+                }
+              );
+            } catch (err) {
+              console.log('Bento submission error:', err);
+            }
+
+            this.style.display = 'none';
+            const success = document.getElementById('success');
+            if (success) success.style.display = 'flex';
+          });
+        };
+
+        const initAnalyticsGallery = () => {
+          const chartGrid = document.getElementById('chartGrid');
+          const chartExpanded = document.getElementById('chartExpanded');
+          const chartExpandedImg = document.getElementById('chartExpandedImg');
+          const chartExpandedLabel = document.getElementById('chartExpandedLabel');
+          const chartClose = document.getElementById('chartClose');
+
+          if (!chartGrid || !chartExpanded || !chartExpandedImg || !chartExpandedLabel || !chartClose) {
+            return;
+          }
+
+          chartGrid.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const tile = target.closest('.chart-tile');
+            if (!(tile instanceof HTMLElement)) return;
+
+            const img = tile.dataset.img || '';
+            const label = tile.dataset.label || '';
+
+            chartExpandedImg.setAttribute('src', img);
+            chartExpandedImg.setAttribute('alt', label);
+            chartExpandedLabel.textContent = label;
+
+            chartGrid.style.display = 'none';
+            chartExpanded.classList.add('visible');
+          });
+
+          chartClose.addEventListener('click', () => {
+            chartExpanded.classList.remove('visible');
+            chartGrid.style.display = 'grid';
+          });
+        };
+
+        const initMarquee = ({ trackId, sets, duration, cssVar, animName }) => {
+          const track = document.getElementById(trackId);
+          if (!track) return;
+
+          const items = track.children;
+          const perSet = Math.round(items.length / sets);
+          let w = 0;
+
+          for (let i = 0; i < perSet; i++) {
+            w += items[i].getBoundingClientRect().width;
+            const gap = parseFloat(getComputedStyle(track).gap) || 0;
+            if (i < perSet - 1) w += gap;
+          }
+
+          track.style.setProperty(cssVar, `-${w}px`);
+          track.style.animation = `${animName} ${duration}s linear infinite`;
+        };
+
+        const init = () => {
+          initLeadForm();
+          initAnalyticsGallery();
+          initMarquee({
+            trackId: 'ratingsTrack',
+            sets: 3,
+            duration: 32,
+            cssVar: '--ratings-shift',
+            animName: 'ratings-scroll',
+          });
+          initMarquee({
+            trackId: 'integTrack',
+            sets: 2,
+            duration: 20,
+            cssVar: '--integ-shift',
+            animName: 'integ-scroll',
+          });
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init, { once: true });
+        } else {
+          init();
+        }
+      })();
+    </script>
+  </body>
+</html>
