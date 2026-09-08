@@ -417,10 +417,35 @@ const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`
       } else {
         currentSpeed = 0;
       }
-      requestAnimationFrame(animate);
+      if (running) rafId = requestAnimationFrame(animate);
     };
 
-    requestAnimationFrame(animate);
+
+    // ── Run the loop only while the element is on screen ──────────────
+    // This loop used to call requestAnimationFrame unconditionally, so it ran
+    // forever: Lighthouse recorded ~15s of "Rendering" and ~1070 rAF callbacks
+    // per 8s on this page alone. objectPosition changes force a repaint (not
+    // just a composite), so an off-screen hero was still burning paint work and
+    // battery for the whole visit. An IntersectionObserver starts and stops it,
+    // and prefers-reduced-motion skips it entirely.
+    let rafId = 0;
+    let running = false;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const start = () => {
+      if (running || reduceMotion.matches) return;
+      running = true;
+      rafId = requestAnimationFrame(animate);
+    };
+    const stop = () => {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) entry.isIntersecting ? start() : stop();
+    }, { rootMargin: '100px' });
+    io.observe(frame);
+    reduceMotion.addEventListener('change', () => (reduceMotion.matches ? stop() : start()));
 
     frame.addEventListener("pointerdown", (e) => {
       startX = e.clientX;
