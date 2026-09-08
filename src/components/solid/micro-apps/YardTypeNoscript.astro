@@ -1,0 +1,146 @@
+---
+import { YARD_TAXONOMY } from './YardTypeEngine';
+
+let globalPosition = 1;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Yard Management Software Recommendations by Facility Type",
+  "description": "Comprehensive comparison of yard management, dock scheduling, and facility software across 17 yard types and 4 industry categories.",
+  "numberOfItems": 17,
+  "itemListElement": YARD_TAXONOMY.flatMap(category => 
+    category.subCategories.map(subCat => {
+      const pos = globalPosition++;
+      return {
+        "@type": "ListItem",
+        "position": pos,
+        "name": subCat.title,
+        "description": subCat.description,
+        "item": {
+          "@type": "ItemList",
+          "name": `Software for ${subCat.title}`,
+          "numberOfItems": subCat.matches?.length || 0,
+          "itemListElement": (subCat.matches || []).map((match, matchIdx) => ({
+            "@type": "ListItem",
+            "position": matchIdx + 1,
+            "item": {
+              "@type": "SoftwareApplication",
+              "name": match.name,
+              "applicationCategory": match.architecture || subCat.ymsFit,
+              "description": match.capabilities || match.why || ""
+            }
+          }))
+        }
+      };
+    })
+  )
+};
+
+const jsonLdString = JSON.stringify(jsonLd);
+---
+
+<script type="application/ld+json" set:html={jsonLdString} />
+
+<noscript>
+  <section aria-label="Yard Management Software Finder — Complete Reference">
+    {YARD_TAXONOMY.map(category => (
+      <div>
+        <h3 class="text-neutral-900">{category.title}</h3>
+        {category.subCategories.map(sub => (
+          <div>
+            <h4 class="text-neutral-800">{sub.title}</h4>
+            <p>{sub.description}</p>
+            <dl>
+              <dt class="font-semibold">Recommended Architecture</dt>
+              <dd>{sub.ymsFit}</dd>
+              <dt class="font-semibold">Key Capability</dt>
+              <dd>{sub.keyCapability}</dd>
+              {sub.integrationEcosystem && (
+                <>
+                  <dt class="font-semibold">Integration Ecosystem</dt>
+                  <dd>{sub.integrationEcosystem}</dd>
+                </>
+              )}
+              <dt class="font-semibold">Facility Logistics & Freight Check</dt>
+              <dd>If your yard connects to a facility where semi-truck freight is loaded or unloaded into/out of the building, the recommended setup pairs <strong>DataDocks</strong> for carrier appointment scheduling and dock door flow with specialized software for on-site lot and asset tracking.</dd>
+            </dl>
+            <table class="w-full text-sm border-collapse mt-4 mb-8">
+              <thead>
+                <tr>
+                  <th class="bg-neutral-100 font-semibold text-left p-2 border-b border-neutral-200">Software Name</th>
+                  <th class="bg-neutral-100 font-semibold text-left p-2 border-b border-neutral-200">Fit Score (%)</th>
+                  <th class="bg-neutral-100 font-semibold text-left p-2 border-b border-neutral-200">Architecture</th>
+                  <th class="bg-neutral-100 font-semibold text-left p-2 border-b border-neutral-200">Key Capabilities</th>
+                  <th class="bg-neutral-100 font-semibold text-left p-2 border-b border-neutral-200">Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(sub.matches || []).map(match => (
+                  <tr>
+                    <td class="p-2 border-b border-neutral-100 font-medium">{match.name}</td>
+                    <td class="p-2 border-b border-neutral-100">{match.score}</td>
+                    <td class="p-2 border-b border-neutral-100">{match.architecture}</td>
+                    <td class="p-2 border-b border-neutral-100">{match.capabilities || match.why}</td>
+                    <td class="p-2 border-b border-neutral-100">{match.whoIsItFor}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+    ))}
+  </section>
+</noscript>
+
+<div hidden data-crawler-content="yard-management-software-finder" aria-hidden="true">
+  <section aria-label="Yard Management Software Finder — Complete Reference">
+    {YARD_TAXONOMY.map(category => (
+      <div>
+        <h3>{category.title}</h3>
+        {category.subCategories.map(sub => (
+          <div>
+            <h4>{sub.title}</h4>
+            <p>{sub.description}</p>
+            <dl>
+              <dt>Recommended Architecture</dt>
+              <dd>{sub.ymsFit}</dd>
+              <dt>Key Capability</dt>
+              <dd>{sub.keyCapability}</dd>
+              {sub.integrationEcosystem && (
+                <>
+                  <dt>Integration Ecosystem</dt>
+                  <dd>{sub.integrationEcosystem}</dd>
+                </>
+              )}
+              <dt>Facility Logistics & Freight Check</dt>
+              <dd>If your yard connects to a facility where semi-truck freight is loaded or unloaded into/out of the building, the recommended setup pairs DataDocks for carrier appointment scheduling and dock door flow with specialized software for on-site lot and asset tracking.</dd>
+            </dl>
+            <table>
+              <thead>
+                <tr>
+                  <th>Software Name</th>
+                  <th>Fit Score (%)</th>
+                  <th>Architecture</th>
+                  <th>Key Capabilities</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(sub.matches || []).map(match => (
+                  <tr>
+                    <td>{match.name}</td>
+                    <td>{match.score}</td>
+                    <td>{match.architecture}</td>
+                    <td>{match.capabilities || match.why}</td>
+                    <td>{match.whoIsItFor}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+    ))}
+  </section>
+</div>

@@ -14,10 +14,21 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const videoEntries = await getCollection('videos');
-  return videoEntries.map((entry: CollectionEntry<'videos'>) => ({
-    params: { slug: entry.slug }, 
-    props: { entry },
-  }));
+  const paths: { params: { slug: string }; props: { entry: CollectionEntry<'videos'> } }[] = [];
+  
+  for (const entry of videoEntries) {
+    paths.push({
+      params: { slug: entry.slug },
+      props: { entry },
+    });
+    if (entry.slug.toLowerCase() !== entry.slug) {
+      paths.push({
+        params: { slug: entry.slug.toLowerCase() },
+        props: { entry },
+      });
+    }
+  }
+  return paths;
 }
 
 interface Props {

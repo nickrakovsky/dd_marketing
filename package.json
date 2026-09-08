@@ -17,7 +17,7 @@
     "typecheck": "astro check",
     "check:calendly": "node scripts/check-calendly-url.mjs",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro",
-    "crawl": "linkinator http://localhost:4321 --recurse",
+    "crawl": "linkinator http://localhost:4321 --recurse --skip \"^https?://(?!(?:[a-zA-Z0-9-]+\\.)*pages\\.dev|(?:[a-zA-Z0-9-]+\\.)*datadocks\\.com|localhost)\"",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "perf": "lhci autorun"
