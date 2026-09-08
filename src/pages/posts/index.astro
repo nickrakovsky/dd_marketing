@@ -462,6 +462,18 @@ const description =
                                 card IS visible, it still fetches them (LCP here is the
                                 H1, not these images, so there is no LCP cost).
                               */}
+                              {/*
+                                `widths` + `sizes` are required on these two
+                                Images. Without them Astro emits the source at
+                                full resolution — measured live at 3072x1536 /
+                                135 KB for a card that renders at most 624 CSS
+                                px (624 at 640-768px viewport, 452 at 1024, 580
+                                at 1280+). That is ~5x too many pixels at DPR1
+                                and ~2.6x at DPR2, per featured card, and there
+                                is one featured card per category. The ladder
+                                below tops out at 1248 = 624 x 2, which is the
+                                widest any display can actually use.
+                              */}
                               <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
                                 {post.data.postType?.value &&
                                 "youtubeId" in post.data.postType.value &&
@@ -478,6 +490,8 @@ const description =
                                     src={post.data.cardImage}
                                     alt={post.data.title}
                                     class="w-full h-full object-cover"
+                                    widths={[460, 624, 904, 1160, 1248]}
+                                    sizes="(min-width: 1280px) 580px, (min-width: 1024px) 452px, (min-width: 640px) 624px, 100vw"
                                     loading="lazy"
                                     decoding="async"
                                   />
@@ -486,6 +500,8 @@ const description =
                                     src={fallbackImg}
                                     alt={post.data.title}
                                     class="w-full h-full object-cover"
+                                    widths={[460, 624, 904, 1160, 1248]}
+                                    sizes="(min-width: 1280px) 580px, (min-width: 1024px) 452px, (min-width: 640px) 624px, 100vw"
                                     loading="lazy"
                                     decoding="async"
                                   />
