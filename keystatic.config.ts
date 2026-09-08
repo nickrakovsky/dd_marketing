@@ -1,8 +1,110 @@
 /// <reference types="vite/client" />
 import { config, fields, collection, singleton } from '@keystatic/core';
-import { block, inline } from '@keystatic/core/content-components';
+import { block, inline, mark, wrapper } from '@keystatic/core/content-components';
 
 const isProd = import.meta.env.PROD;
+
+// Body images must point at the same directory/publicPath the MDX files already
+// use, otherwise the editor cannot resolve `![alt](../../assets/blog-images/x.webp)`
+// to a real asset and rewrites it as escaped literal text (`!\[alt]\(...)`) on save.
+const mdxImageOptions = {
+    directory: 'src/assets/blog-images/',
+    publicPath: '../../assets/blog-images/',
+};
+
+// Every component that appears in an MDX body MUST be declared here. Keystatic's
+// editor parses the body against this map and throws "Missing component
+// definition for X" on anything undeclared, which makes the entry unopenable in
+// the CMS. Keep in sync with the `components={{ ... }}` maps in
+// src/pages/posts/[slug].astro, src/pages/videos/[slug].astro and
+// src/pages/micro-apps/[slug].astro.
+//
+// The editor also cannot parse ESM `import`/`export` statements inside MDX
+// bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
+// Astro render maps rather than imported in the MDX itself.
+const mdxComponents = {
+    LeadMagnetForm: block({
+        label: 'Lead Magnet Form',
+        schema: {
+            headline: fields.text({ label: 'Headline' }),
+            eventName: fields.text({ label: 'Event Name' }),
+            redirectUrl: fields.text({ label: 'Redirect URL' }),
+            buttonText: fields.text({ label: 'Button Text' }),
+        }
+    }),
+    FAQ: block({
+        label: 'FAQ Block',
+        schema: {
+            faqs: fields.array(
+                fields.object({
+                    question: fields.text({ label: 'Question' }),
+                    answer: fields.text({ label: 'Answer', multiline: true }),
+                }),
+                {
+                    label: 'Items',
+                    itemLabel: props => props.fields.question.value || 'New Item',
+                }
+            )
+        }
+    }),
+    SmartLink: inline({
+        label: 'Glossary SmartLink',
+        schema: {
+            id: fields.relationship({
+                label: 'Glossary Term',
+                collection: 'glossary',
+                validation: { isRequired: true }
+            }),
+            anchorText: fields.text({ label: 'Anchor Text' }),
+        }
+    }),
+    RelatedFeatureCallout: block({
+        label: 'Related Feature Callout',
+        schema: {
+            id: fields.text({ label: 'Feature ID' }),
+        }
+    }),
+    // Superscript citation marker, e.g. <Cite id="3" />.
+    Cite: inline({
+        label: 'Citation Marker',
+        schema: {
+            id: fields.text({ label: 'Reference Number' }),
+        }
+    }),
+    // A bibliography entry. Declared as a `mark` rather than `wrapper`/`block`
+    // because these are authored on a single line with inline children, which
+    // MDX parses as an inline (mdxJsxTextElement) node — the block-level forms
+    // reject that with "has unexpected children".
+    BibliographyItem: mark({
+        label: 'Bibliography Item',
+        schema: {
+            id: fields.text({ label: 'Reference Number' }),
+        },
+        tag: 'span',
+    }),
+    // Raw HTML elements used directly in MDX bodies still need declaring,
+    // otherwise the editor treats them as unknown components.
+    'lite-youtube': block({
+        label: 'YouTube Embed (lite)',
+        schema: {
+            videoid: fields.text({ label: 'Video ID' }),
+            playlabel: fields.text({ label: 'Play Label' }),
+        }
+    }),
+    ol: wrapper({
+        label: 'Ordered List (raw HTML)',
+        schema: {
+            className: fields.text({ label: 'CSS classes' }),
+        }
+    }),
+    div: wrapper({
+        label: 'Div (raw HTML)',
+        schema: {
+            style: fields.text({ label: 'Inline style' }),
+            className: fields.text({ label: 'CSS classes' }),
+        }
+    }),
+};
 
 export default config({
     storage: isProd
@@ -134,43 +236,8 @@ export default config({
                         article: fields.object({
                             content: fields.mdx({
                                 label: 'Post Content',
-                                components: {
-                                    LeadMagnetForm: block({
-                                        label: 'Lead Magnet Form',
-                                        schema: {
-                                            headline: fields.text({ label: 'Headline' }),
-                                            eventName: fields.text({ label: 'Event Name' }),
-                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
-                                            buttonText: fields.text({ label: 'Button Text' }),
-                                        }
-                                    }),
-                                    FAQ: block({
-                                        label: 'FAQ Block',
-                                        schema: {
-                                            faqs: fields.array(
-                                                fields.object({
-                                                    question: fields.text({ label: 'Question' }),
-                                                    answer: fields.text({ label: 'Answer', multiline: true }),
-                                                }),
-                                                {
-                                                    label: 'Items',
-                                                    itemLabel: props => props.fields.question.value || 'New Item',
-                                                }
-                                            )
-                                        }
-                                    }),
-                                    SmartLink: inline({
-                                        label: 'Glossary SmartLink',
-                                        schema: {
-                                            id: fields.relationship({
-                                                label: 'Glossary Term',
-                                                collection: 'glossary',
-                                                validation: { isRequired: true }
-                                            }),
-                                            anchorText: fields.text({ label: 'Anchor Text' }),
-                                        }
-                                    })
-                                }
+                                components: mdxComponents,
+                                options: { image: mdxImageOptions },
                             })
                         }),
                         video: fields.object({
@@ -178,28 +245,8 @@ export default config({
                             duration: fields.text({ label: 'Video Duration (ISO 8601)' }),
                             content: fields.mdx({ 
                                 label: 'Video Description',
-                                components: {
-                                    LeadMagnetForm: block({
-                                        label: 'Lead Magnet Form',
-                                        schema: {
-                                            headline: fields.text({ label: 'Headline' }),
-                                            eventName: fields.text({ label: 'Event Name' }),
-                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
-                                            buttonText: fields.text({ label: 'Button Text' }),
-                                        }
-                                    }),
-                                    SmartLink: inline({
-                                        label: 'Glossary SmartLink',
-                                        schema: {
-                                            id: fields.relationship({
-                                                label: 'Glossary Term',
-                                                collection: 'glossary',
-                                                validation: { isRequired: true }
-                                            }),
-                                            anchorText: fields.text({ label: 'Anchor Text' }),
-                                        }
-                                    })
-                                }
+                                components: mdxComponents,
+                                options: { image: mdxImageOptions },
                             })
                         }),
                         short: fields.object({
@@ -207,28 +254,8 @@ export default config({
                             duration: fields.text({ label: 'Video Duration (ISO 8601)' }),
                             content: fields.mdx({ 
                                 label: 'Short Description',
-                                components: {
-                                    LeadMagnetForm: block({
-                                        label: 'Lead Magnet Form',
-                                        schema: {
-                                            headline: fields.text({ label: 'Headline' }),
-                                            eventName: fields.text({ label: 'Event Name' }),
-                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
-                                            buttonText: fields.text({ label: 'Button Text' }),
-                                        }
-                                    }),
-                                    SmartLink: inline({
-                                        label: 'Glossary SmartLink',
-                                        schema: {
-                                            id: fields.relationship({
-                                                label: 'Glossary Term',
-                                                collection: 'glossary',
-                                                validation: { isRequired: true }
-                                            }),
-                                            anchorText: fields.text({ label: 'Anchor Text' }),
-                                        }
-                                    })
-                                }
+                                components: mdxComponents,
+                                options: { image: mdxImageOptions },
                             })
                         })
                     }
@@ -277,28 +304,8 @@ export default config({
                             duration: fields.text({ label: 'Video Duration (ISO 8601)' }),
                             content: fields.mdx({ 
                                 label: 'Video Description',
-                                components: {
-                                    LeadMagnetForm: block({
-                                        label: 'Lead Magnet Form',
-                                        schema: {
-                                            headline: fields.text({ label: 'Headline' }),
-                                            eventName: fields.text({ label: 'Event Name' }),
-                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
-                                            buttonText: fields.text({ label: 'Button Text' }),
-                                        }
-                                    }),
-                                    SmartLink: inline({
-                                        label: 'Glossary SmartLink',
-                                        schema: {
-                                            id: fields.relationship({
-                                                label: 'Glossary Term',
-                                                collection: 'glossary',
-                                                validation: { isRequired: true }
-                                            }),
-                                            anchorText: fields.text({ label: 'Anchor Text' }),
-                                        }
-                                    })
-                                }
+                                components: mdxComponents,
+                                options: { image: mdxImageOptions },
                             })
                         }),
                         short: fields.object({
@@ -306,28 +313,8 @@ export default config({
                             duration: fields.text({ label: 'Video Duration (ISO 8601)' }),
                             content: fields.mdx({ 
                                 label: 'Short Description',
-                                components: {
-                                    LeadMagnetForm: block({
-                                        label: 'Lead Magnet Form',
-                                        schema: {
-                                            headline: fields.text({ label: 'Headline' }),
-                                            eventName: fields.text({ label: 'Event Name' }),
-                                            redirectUrl: fields.text({ label: 'Redirect URL' }),
-                                            buttonText: fields.text({ label: 'Button Text' }),
-                                        }
-                                    }),
-                                    SmartLink: inline({
-                                        label: 'Glossary SmartLink',
-                                        schema: {
-                                            id: fields.relationship({
-                                                label: 'Glossary Term',
-                                                collection: 'glossary',
-                                                validation: { isRequired: true }
-                                            }),
-                                            anchorText: fields.text({ label: 'Anchor Text' }),
-                                        }
-                                    })
-                                }
+                                components: mdxComponents,
+                                options: { image: mdxImageOptions },
                             })
                         })
                     }
@@ -351,28 +338,8 @@ export default config({
                 cardAlt: fields.text({ label: 'Card Image Alt' }),
                 content: fields.mdx({
                     label: 'App Content',
-                    components: {
-                        LeadMagnetForm: block({
-                            label: 'Lead Magnet Form',
-                            schema: {
-                                headline: fields.text({ label: 'Headline' }),
-                                eventName: fields.text({ label: 'Event Name' }),
-                                redirectUrl: fields.text({ label: 'Redirect URL' }),
-                                buttonText: fields.text({ label: 'Button Text' }),
-                            }
-                        }),
-                        SmartLink: inline({
-                            label: 'Glossary SmartLink',
-                            schema: {
-                                id: fields.relationship({
-                                    label: 'Glossary Term',
-                                    collection: 'glossary',
-                                    validation: { isRequired: true }
-                                }),
-                                anchorText: fields.text({ label: 'Anchor Text' }),
-                            }
-                        })
-                    }
+                    components: mdxComponents,
+                    options: { image: mdxImageOptions },
                 }),
             },
         }),
@@ -477,6 +444,8 @@ export default config({
                 microApp: fields.text({ label: 'Micro App ID' }),
                 content: fields.mdx({
                     label: 'Feature Content',
+                    components: mdxComponents,
+                    options: { image: mdxImageOptions },
                 })
             }
         }),
