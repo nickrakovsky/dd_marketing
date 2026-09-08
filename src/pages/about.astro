@@ -5,6 +5,7 @@ import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { CALENDLY_BOOKING_URL } from '../lib/calendly-config.mjs';
+import { evolutionTimeline } from '@/data/pages/comparison';
 
 ---
 
@@ -44,6 +45,36 @@ import { CALENDLY_BOOKING_URL } from '../lib/calendly-config.mjs';
               DataDocks was founded in 2013 when our co-founders saw how much time and money warehouses were losing to manual dock scheduling. What started as a simple appointment booking tool has grown into a full dock scheduling and yard management platform trusted by facilities across North America and beyond.
             </p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Evolution Timeline */}
+    <section class="py-24 bg-white border-y border-[#ece6de]">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase text-center text-black mb-16">
+          The Evolution of <br class="hidden sm:block" /><span class="text-[#FE5000]">Dock Scheduling</span>
+        </h2>
+
+        <div class="relative border-l-2 border-[#FE5000]/30 ml-4 md:ml-1/2 space-y-12">
+          {evolutionTimeline.map((stage, index) => (
+            <div class="relative pl-8 md:pl-0 js-reveal">
+              {/* Timeline dot */}
+              <div class="absolute left-[-9px] md:left-1/2 md:-ml-[9px] top-1 w-4 h-4 rounded-full bg-[#FE5000] border-4 border-white"></div>
+              
+              <div class={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12 md:ml-auto'}`}>
+                <span class="inline-block px-3 py-1 bg-[#ece6de] text-[#5f483a] text-sm font-bold uppercase tracking-wider rounded-full mb-3">
+                  {stage.era}
+                </span>
+                <h3 class="font-bruta text-2xl text-black uppercase mb-3 leading-tight">{stage.title}</h3>
+                <p class="text-gray-700 mb-4">{stage.description}</p>
+                <div class="bg-[#ffd7d7]/30 border border-[#cb4949]/20 rounded-lg p-4 inline-block text-left w-full">
+                  <span class="block text-xs font-bold uppercase text-[#cb4949] tracking-wider mb-1">The Breaking Point</span>
+                  <p class="text-sm text-[#5f483a] leading-snug">{stage.limitation}</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -121,3 +152,25 @@ import { CALENDLY_BOOKING_URL } from '../lib/calendly-config.mjs';
 
   <Footer />
 </Layout>
+
+<script>
+  // Simple intersection observer for scroll reveals
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.js-reveal').forEach(el => {
+    observer.observe(el);
+  });
+</script>
