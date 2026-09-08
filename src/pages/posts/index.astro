@@ -451,6 +451,17 @@ const description =
                         >
                           {isFeatured ? (
                             <>
+                              {/*
+                                These covers MUST stay loading="lazy". The featured
+                                card is `hidden sm:flex` (see spanClass above), so on
+                                mobile it is display:none — but loading="eager" made
+                                the browser fetch the images anyway. With one featured
+                                card per category that was ~400KB downloaded and never
+                                displayed on every phone visit. `lazy` lets the browser
+                                skip hidden images entirely, and on desktop, where the
+                                card IS visible, it still fetches them (LCP here is the
+                                H1, not these images, so there is no LCP cost).
+                              */}
                               <div class="w-full aspect-video bg-[#F8EDD9] relative overflow-hidden shrink-0">
                                 {post.data.postType?.value &&
                                 "youtubeId" in post.data.postType.value &&
@@ -459,22 +470,24 @@ const description =
                                     src={ytThumb(post.data.postType.value.youtubeId, 'maxres')}
                                     alt={post.data.title}
                                     class="w-full h-full object-cover"
-                                    loading="eager"
-                                    fetchpriority="high"
+                                    loading="lazy"
+                                    decoding="async"
                                   />
                                 ) : post.data.cardImage ? (
                                   <Image
                                     src={post.data.cardImage}
                                     alt={post.data.title}
                                     class="w-full h-full object-cover"
-                                    loading="eager"
+                                    loading="lazy"
+                                    decoding="async"
                                   />
                                 ) : fallbackImg ? (
                                   <Image
                                     src={fallbackImg}
                                     alt={post.data.title}
                                     class="w-full h-full object-cover"
-                                    loading="eager"
+                                    loading="lazy"
+                                    decoding="async"
                                   />
                                 ) : (
                                   <div
