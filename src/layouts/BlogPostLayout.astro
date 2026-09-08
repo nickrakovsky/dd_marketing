@@ -399,6 +399,16 @@ if (priorityImgMatch) {
             return (
               <a href={href} class="group flex flex-col bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[#E5D3B3] dark:border-gray-700 hover:-translate-y-1">
                 {/* Image / Thumbnail */}
+                {/*
+                  The Image below needs `widths` + `sizes`: without them Astro
+                  emits a single 600w file, and these cards render ~378 CSS px on
+                  a phone and ~371 on desktop — 662 and 742 real pixels once DPR
+                  is applied, so every related-post thumbnail on every post was
+                  ~20% soft on any retina screen. The grid is 1-col below md and
+                  3-col above, hence the two-branch `sizes`. Astro never upscales
+                  past a source's own resolution, so cards with smaller art just
+                  get fewer rungs.
+                */}
                 <div class="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-900">
                   {item.data.cardImage ? (
                     <Image 
@@ -406,6 +416,8 @@ if (priorityImgMatch) {
                       alt={item.data.cardAlt || item.data.title}
                       width={600}
                       height={375}
+                      widths={[380, 600, 760, 1000]}
+                      sizes="(min-width: 768px) 380px, 92vw"
                       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : isVideo && item.data.postType?.value?.youtubeId ? (
