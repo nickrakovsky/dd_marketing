@@ -206,8 +206,6 @@ if (!(globalThis as any).mdxImageCounts) {
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
-
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage }} />
     {entry.slug === 'best-yard-management-options' && (
       <YardTypeSelector slot="top-interactive" client:visible />
     )}
@@ -234,6 +232,6 @@ if (!(globalThis as any).mdxImageCounts) {
         </div>
       </div>
     )}
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, table: MDXTable, img: MDXImage, FAQ }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ }} />
   </BlogPostLayout>
 )}
