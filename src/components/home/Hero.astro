@@ -442,7 +442,9 @@ const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`
       rafId = 0;
     };
     const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) entry.isIntersecting ? start() : stop();
+      for (const entry of entries) {
+        if (entry.isIntersecting) start(); else stop();
+      }
     }, { rootMargin: '100px' });
     io.observe(frame);
     reduceMotion.addEventListener('change', () => (reduceMotion.matches ? stop() : start()));

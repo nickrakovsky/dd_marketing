@@ -289,7 +289,9 @@ const mobileFit = `calc((100vw - 2rem) / ${longest(mobileLines)} / ${CHAR_WIDTH_
       rafId = 0;
     };
     const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) entry.isIntersecting ? start() : stop();
+      for (const entry of entries) {
+        if (entry.isIntersecting) start(); else stop();
+      }
     }, { rootMargin: '100px' });
     io.observe(frame);
     reduceMotion.addEventListener('change', () => (reduceMotion.matches ? stop() : start()));
