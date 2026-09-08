@@ -6,6 +6,22 @@ import type { JSX } from "solid-js";
 import { bentoCall } from "@/lib/bento";
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
 
+/* ── Responsive sources for the primary category cards ── */
+
+// Only the four `yard-quadrant-*` files have a width ladder generated beside
+// them (400/600/800/1016, built from the .jpg sources in public/images/temp).
+// Every other image in the engine is already at its display size, so this
+// returns undefined for them and the plain `src` is used untouched — passing
+// a srcset that points at files which do not exist would silently break the
+// image, so the prefix check is deliberate, not defensive noise.
+const QUADRANT_WIDTHS = [400, 600, 800, 1016];
+
+function quadrantSrcSet(src: string): string | undefined {
+  if (!src.includes("/yard-quadrant-") || !src.endsWith(".webp")) return undefined;
+  const base = src.slice(0, -".webp".length);
+  return QUADRANT_WIDTHS.map((w) => `${base}-${w}.webp ${w}w`).join(", ");
+}
+
 /* ── Primary Category Color Tint Overlays (Page 1) ── */
 
 const PRIMARY_TINTS: Record<string, {
@@ -432,14 +448,41 @@ function CategoryCard(props: {
           : "yt-card-enter"
       }`}
     >
+      {/*
+        These four cards were the single worst thing on
+        /posts/best-yard-management-options: 462 KB of eager images.
+
+        Two separate problems, both fixed here.
+
+        1. ONE OVERSIZED FILE. There was no srcset, so every device got the
+           full 1016w original. The card renders at ~380 CSS px on a phone
+           and ~587 CSS px in the desktop 2-col grid — with DPR that is
+           ~665px and ~1174px of real pixels, so phones were downloading
+           roughly 2.3x more pixels than they could display. `quadrantSrcSet`
+           builds the 400/600/800/1016 ladder generated from the .jpg
+           sources; `sizes` mirrors the actual grid maths below so the
+           browser can pick before layout.
+
+        2. EAGER ON ALL FOUR. The grid is `grid-cols-1 sm:grid-cols-2`, so on
+           a phone only the first card is above the fold — yet all four were
+           `loading="eager"` and competed with the preloaded Bruta webfont for
+           a throttled connection. The H1 is the LCP element on this page, so
+           starving its font is exactly what pushed LCP out. Only index 0
+           stays eager; the rest load as they scroll in.
+
+        Do not put this back to a bare `src` + `eager` without re-checking
+        mobile LCP on a throttled connection.
+      */}
       <img
         src={props.src}
+        srcset={quadrantSrcSet(props.src)}
+        sizes="(min-width: 1280px) 587px, (min-width: 640px) 45vw, 92vw"
         alt={props.alt ?? props.title}
         width="508"
         height="276"
         class="w-full block rounded-xl scale-100"
         style={{ "aspect-ratio": props.aspectRatio }}
-        loading="eager"
+        loading={props.index === 0 ? "eager" : "lazy"}
         decoding="async"
       />
       
@@ -826,7 +869,7 @@ export default function YardTypeSelector() {
     const imgEl = targetBtn.querySelector("img");
     if (imgEl) {
       originRect = targetBtn.getBoundingClientRect();
-      originSrc = imgEl.src;
+      originSrc = imgEl.currentSrc || imgEl.src;
     }
 
     const cat = engine.allCategories.find((c) => c.id === catId);
@@ -856,7 +899,7 @@ export default function YardTypeSelector() {
     const imgEl = targetBtn.querySelector("img");
     if (imgEl) {
       originRect = targetBtn.getBoundingClientRect();
-      originSrc = imgEl.src;
+      originSrc = imgEl.currentSrc || imgEl.src;
     }
 
     const cat = engine.selectedCategory();
