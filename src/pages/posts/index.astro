@@ -601,7 +601,17 @@ const description =
             carousels.forEach((carousel) => {
               // Make sure to measure after layout
               const scrollPos = carousel.offsetWidth * 0.6; // ~60% scroll for "Page 2" preview
-              carousel.scrollTo({ left: scrollPos, behavior: "auto" });
+              // `behavior: "instant"` (not "auto") is required: the carousel has
+              // Tailwind's `scroll-smooth` class, so `scroll-behavior: smooth` is
+              // set in CSS. `scrollTo({behavior: "auto"})` defers to that CSS
+              // property, turning this into a real animated scroll that fires on
+              // every page load. An animated scroll running during initial paint
+              // stops Chrome from ever reporting a Largest Contentful Paint
+              // candidate for the page (verified: reproduces even in a real,
+              // headed Chrome window, confirmed via CDP with no page JS running
+              // at all). "instant" bypasses the CSS scroll-behavior and jumps
+              // straight to position, which does not trigger the LCP regression.
+              carousel.scrollTo({ left: scrollPos, behavior: "instant" });
             });
 
             // 2. Observer for ANY carousel entering viewport
