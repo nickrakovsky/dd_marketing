@@ -124,10 +124,33 @@ const logos = [
         }
         track.style.transform = `translateX(${position}px)`;
       }
-      rafId = requestAnimationFrame(animate);
+      if (running) rafId = requestAnimationFrame(animate);
     };
 
-    rafId = requestAnimationFrame(animate);
+    // ── Run the marquee only while it is on screen ────────────────────
+    // Previously this re-armed unconditionally and scrolled forever, even when
+    // the strip was far below the fold — continuous transform + composite work
+    // for the whole visit. Paired with the hero loop it accounted for ~2145 rAF
+    // callbacks per 8s on the home page.
+    let running = false;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const start = () => {
+      if (running || reduceMotion.matches) return;
+      running = true;
+      rafId = requestAnimationFrame(animate);
+    };
+    const stop = () => {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) start(); else stop();
+      }
+    }, { rootMargin: '100px' });
+    io.observe(marquee);
+    reduceMotion.addEventListener('change', () => (reduceMotion.matches ? stop() : start()));
 
     marquee.addEventListener('pointerdown', (e) => {
       startX = e.clientX;
