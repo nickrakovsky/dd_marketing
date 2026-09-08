@@ -14,12 +14,31 @@ import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-conf
 // returns undefined for them and the plain `src` is used untouched — passing
 // a srcset that points at files which do not exist would silently break the
 // image, so the prefix check is deliberate, not defensive noise.
-const QUADRANT_WIDTHS = [400, 600, 800, 1016];
+// Width ladders generated beside the originals in public/images/temp, keyed by
+// filename stem. Each ladder stops at its source's real resolution — the
+// freight strips only exist as 508w/1024w art, so nothing here upscales.
+// A file with no entry gets no srcset and keeps its plain `src`: emitting a
+// srcset that points at files which do not exist would break the image
+// silently, so the lookup is deliberate rather than defensive noise.
+const SRCSET_LADDERS: Record<string, number[]> = {
+  "yard-quadrant-warehouse-docks":        [400, 600, 800, 1016],
+  "yard-quadrant-rail-transit":           [400, 600, 800, 1016],
+  "yard-quadrant-materials-aggregates":   [400, 600, 800, 1016],
+  "yard-quadrant-agriculture-processing": [400, 600, 800, 1016],
+  "freight-1-1-warehouse-dc":             [350, 508],
+  "freight-1-2-maritime-seaport":         [350, 509],
+  "freight-1-3-rail-intermodal":          [400, 700, 1024],
+  "freight-1-4-equipment-chassis":        [400, 700, 1024],
+  "freight-1-5-customs-bonded":           [400, 700, 1024],
+};
 
-function quadrantSrcSet(src: string): string | undefined {
-  if (!src.includes("/yard-quadrant-") || !src.endsWith(".webp")) return undefined;
+function laddered(src: string | null | undefined): string | undefined {
+  if (!src || !src.endsWith(".webp")) return undefined;
   const base = src.slice(0, -".webp".length);
-  return QUADRANT_WIDTHS.map((w) => `${base}-${w}.webp ${w}w`).join(", ");
+  const stem = base.slice(base.lastIndexOf("/") + 1);
+  const widths = SRCSET_LADDERS[stem];
+  if (!widths) return undefined;
+  return widths.map((w) => `${base}-${w}.webp ${w}w`).join(", ");
 }
 
 /* ── Primary Category Color Tint Overlays (Page 1) ── */
@@ -475,7 +494,7 @@ function CategoryCard(props: {
       */}
       <img
         src={props.src}
-        srcset={quadrantSrcSet(props.src)}
+        srcset={laddered(props.src)}
         sizes="(min-width: 1280px) 587px, (min-width: 640px) 45vw, 92vw"
         alt={props.alt ?? props.title}
         width="508"
@@ -565,8 +584,19 @@ function SubCard(props: {
           : "yt-subcard-enter"
       }`}
     >
+      {/*
+        This card renders at wildly different widths depending on which screen
+        and `imgClass` it lands in — measured 135px, 186px, 380px, 587px and a
+        full-bleed 1184px. With a single fixed file that meant the same asset
+        was 3.1x oversized on a phone and still too soft on a retina desktop.
+        The ladder lets the browser resolve that per instance. `sizes` leans on
+        the widest (full-bleed strip) case at desktop, since these are lazy
+        drill-down images where sharpness matters more than a few KB.
+      */}
       <img
         src={props.src}
+        srcset={laddered(props.src)}
+        sizes="(min-width: 1280px) 1184px, (min-width: 640px) 50vw, 92vw"
         alt={props.alt ?? props.title}
         width="508"
         height="276"
@@ -1319,9 +1349,16 @@ export default function YardTypeSelector() {
           class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-neutral-800 shadow-xs bg-neutral-100 dark:bg-neutral-900 relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
           <Show when={headerThumbSrc()}>
+            {/*
+              The persistent header thumbnail is capped at `max-w-[175px]` and
+              ~76px tall, so it was pulling the 600w base file (43 KB) for a
+              135x74 slot. The ladder lets it take the 400w rung instead.
+            */}
             <img
               data-yt-header-thumb
               src={headerThumbSrc()!}
+              srcset={laddered(headerThumbSrc())}
+              sizes="175px"
               alt={headerThumbAlt()}
               width="508"
               height="276"
