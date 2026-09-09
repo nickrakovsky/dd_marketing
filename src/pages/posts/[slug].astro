@@ -206,17 +206,17 @@ if (!(globalThis as any).mdxImageCounts) {
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
+    {/*
+      `client:idle` rather than `client:visible` below. The selector renders
+      inside the initial viewport on a phone (its first card lands ~745px into
+      an 823px screen), so client:visible fired immediately and put its 33 KiB
+      bundle on the critical request chain — Lighthouse measured that chain
+      ending at YardTypeSelector.js, 1,394ms, with the page's LCP element (the
+      H1) sitting above it. The island is server-rendered, so the cards paint
+      and read the same either way; only interactivity waits, and
+      requestIdleCallback fires long before a reader scrolls down to click.
+    */}
     {entry.slug === 'best-yard-management-options' && (
-      {/*
-        `client:idle` rather than `client:visible`. The selector renders inside
-        the initial viewport on a phone (its first card lands ~745px into an
-        823px screen), so client:visible fired immediately and put its 33 KiB
-        bundle on the critical request chain — Lighthouse measured the chain
-        ending at YardTypeSelector.js, 1,394ms, with the page's LCP element (the
-        H1) sitting above it. The island is server-rendered, so the cards are
-        painted and readable either way; only interactivity waits, and
-        requestIdleCallback fires well before a reader scrolls down to click.
-      */}
       <YardTypeSelector slot="top-interactive" client:idle />
     )}
     {entry.slug === 'best-yard-management-options' && (
