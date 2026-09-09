@@ -1,0 +1,1170 @@
+---
+export const prerender = true;
+
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import CTA from "../../components/home/CTA.astro";
+import { getModularHubData } from "../../lib/wireframe-data";
+import { ytThumb } from "../../lib/yt-thumb";
+import { Image } from "astro:assets";
+import PhoneFrame from "../../components/PhoneFrame.astro";
+import mobileScreenshot from "../../assets/solutionsscreenshots/visibility/appscreenshot-screen.webp";
+import desktopScreenshot from "../../assets/solutionsscreenshots/DataDocks-Calendar-Clean.webp";
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "../../lib/calendly-config.mjs";
+
+const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
+
+const {
+  evergreen1,
+  evergreen2,
+  evergreen3,
+  evergreen4,
+  evergreen5,
+  evergreen6,
+  evergreen7,
+  evergreen8,
+  evergreen9,
+  foundationalGuides,
+  latest5Posts,
+  founderShorts,
+  deepDiveVideos,
+  olderResources
+} = await getModularHubData();
+
+const title = "Resource Hub: Guides, Checklists & Insights for Operations Teams | DataDocks";
+const description = "Comprehensive operational playbooks, dock scheduling guides, warehouse checklists, and founder video deep dives.";
+---
+
+<Layout title={title} description={description}>
+  <link
+    rel="stylesheet"
+    href="/css/lite-yt-embed.css"
+    media="print"
+    onload="this.media='all'"
+  />
+  <script is:inline src="/css/lite-yt-embed.js" defer></script>
+
+  <style is:global>
+    /* Custom responsive styling for lite-youtube in shorts and video sections */
+    .modular-short-embed lite-youtube {
+      aspect-ratio: 9 / 14;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 0;
+      background-position: center center;
+      background-size: cover;
+    }
+    .modular-short-embed lite-youtube::after {
+      padding-bottom: calc(100% * (14 / 9));
+    }
+    .modular-short-embed lite-youtube::before {
+      display: none;
+    }
+
+    /* Smooth fade-in for YouTube iframe to eliminate flash */
+    .modular-short-embed lite-youtube > iframe {
+      animation: shortYtFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes shortYtFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Hide caption overlay and custom play button once lite-youtube has been activated */
+    .modular-short-embed:has(.lyt-activated) .short-caption,
+    .modular-short-embed:has(.lyt-activated) .short-play-icon {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* Before activation: Keep lite-youtube button as an active invisible trigger over the entire card */
+    .modular-short-embed lite-youtube:not(.lyt-activated) > .lty-playbtn {
+      opacity: 0 !important;
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      border: 0 !important;
+      cursor: pointer !important;
+      z-index: 25 !important;
+    }
+
+    /* Once activated: Remove lty-playbtn so all pointer events reach the iframe directly */
+    .modular-short-embed lite-youtube.lyt-activated > .lty-playbtn {
+      display: none !important;
+      pointer-events: none !important;
+      z-index: -1 !important;
+    }
+
+    /* Native Fullscreen styling for shorts container */
+    .modular-short-embed:fullscreen,
+    .modular-short-embed:-webkit-full-screen {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #0a0a0a !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .modular-short-embed:fullscreen lite-youtube,
+    .modular-short-embed:-webkit-full-screen lite-youtube {
+      height: 100vh !important;
+      width: auto !important;
+      aspect-ratio: 9 / 16 !important;
+      max-width: calc(100vh * (9 / 16)) !important;
+    }
+    .modular-short-embed:fullscreen .short-fullscreen-btn,
+    .modular-short-embed:-webkit-full-screen .short-fullscreen-btn {
+      opacity: 1 !important;
+      top: 1.5rem !important;
+      right: 1.5rem !important;
+      width: 2.75rem !important;
+      height: 2.75rem !important;
+      background: rgba(0, 0, 0, 0.75) !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+    .modular-short-embed:fullscreen .short-fullscreen-btn svg,
+    .modular-short-embed:-webkit-full-screen .short-fullscreen-btn svg {
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+    }
+
+    .modular-video-embed lite-youtube {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 1rem;
+    }
+  </style>
+
+  {/* 1. MAIN NAVIGATION */}
+  <Navigation />
+
+  <main class="min-h-screen bg-[#FFF8EE] text-gray-900 font-sans pb-0">
+    
+    {/* 2. HERO H1 (CENTRED, BRAND EDITORIAL STYLE MATCHING LIVE HUB) */}
+    <header class="pt-16 pb-12 text-center max-w-5xl mx-auto px-4">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[76px] font-bruta uppercase leading-[0.88] tracking-tight">
+        <span class="text-[#FE5000]">RESOURCE HUB:</span><br />
+        <span class="text-black">Guides, Checklists & Insights<br class="hidden sm:inline" /> for Operations Teams</span>
+      </h1>
+    </header>
+
+    {/* 3. 3 MINIMALIST SHORT, WIDE CARDS (NASA REF 9: ALIGNED LEFT, 75% WIDTH, TOP DIVIDERS & CIRCULAR ARROW) */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      <div class="w-full lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Card 1: Yard Management Systems */}
+        <div class="border-t border-black/20 pt-4 pb-3">
+          <span class="text-[13px] text-gray-500 font-sans block mb-2 leading-snug select-none">
+            {evergreen1.kicker}
+          </span>
+          <a href={evergreen1.url} class="group flex items-start justify-between gap-4">
+            <h3 class="font-sans font-bold text-base md:text-[17px] text-gray-900 group-hover:text-[#FE5000] transition-colors leading-snug">
+              {evergreen1.title}
+            </h3>
+            <span class="w-5 h-5 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+              →
+            </span>
+          </a>
+        </div>
+
+        {/* Card 2: Dock Scheduling */}
+        <div class="border-t border-black/20 pt-4 pb-3">
+          <span class="text-[13px] text-gray-500 font-sans block mb-2 leading-snug select-none">
+            {evergreen2.kicker}
+          </span>
+          <a href={evergreen2.url} class="group flex items-start justify-between gap-4">
+            <h3 class="font-sans font-bold text-base md:text-[17px] text-gray-900 group-hover:text-[#FE5000] transition-colors leading-snug">
+              {evergreen2.title}
+            </h3>
+            <span class="w-5 h-5 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+              →
+            </span>
+          </a>
+        </div>
+
+        {/* Card 3: Warehouse Audit Checklist */}
+        <div class="border-t border-black/20 pt-4 pb-3">
+          <span class="text-[13px] text-gray-500 font-sans block mb-2 leading-snug select-none">
+            {evergreen3.kicker}
+          </span>
+          <a href={evergreen3.url} class="group flex items-start justify-between gap-4">
+            <h3 class="font-sans font-bold text-base md:text-[17px] text-gray-900 group-hover:text-[#FE5000] transition-colors leading-snug">
+              {evergreen3.title}
+            </h3>
+            <span class="w-5 h-5 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+              →
+            </span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    {/* 4. SPLIT SECTION: SQUARER LATEST INSIGHTS (EQUAL HEIGHT, 0 GAPS, SQUARE HOVER FILL) VS EVERGREEN 4 */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+        {/* Left Column (5/12 width): Squarer Latest Insights block */}
+        <div class="lg:col-span-5 flex flex-col h-full">
+          <div class="pb-3 border-b-2 border-black">
+            <h2 class="font-sans font-bold text-lg md:text-xl text-black">
+              Latest Insights
+            </h2>
+          </div>
+
+          {/* 5 invisible cards of strictly equal height, 0 gap, square hover fill */}
+          <div class="flex-1 flex flex-col divide-y divide-black/15">
+            {latest5Posts.map((post, idx) => (
+              <a
+                href={post.url}
+                class="flex-1 flex items-center px-4 py-3.5 rounded-none group transition-colors duration-150 hover:bg-black/[0.05]"
+              >
+                <div class="flex items-baseline gap-3.5 w-full">
+                  <span class="font-mono text-sm font-bold text-[#FE5000] shrink-0 w-5">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[11px] font-mono text-gray-400 block mb-0.5">
+                      {post.displayDate}
+                    </span>
+                    <h3 class="font-sans font-bold text-sm md:text-[15px] text-gray-900 leading-snug group-hover:text-[#FE5000] transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Column (7/12 width): Most Popular Post (Evergreen 4), smooth hover & matched height */}
+        <a
+          href={evergreen4.url}
+          class="lg:col-span-7 flex flex-col group rounded-xl h-full"
+        >
+          {evergreen4.cardImage && (
+            <div class="w-full h-56 md:h-64 rounded-xl overflow-hidden bg-gray-100 relative shrink-0 block">
+              <Image
+                src={evergreen4.cardImage}
+                alt={evergreen4.cardAlt || evergreen4.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                loading="lazy"
+              />
+            </div>
+          )}
+
+          <div class="pt-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-gray-400 mb-1.5 transition-colors duration-200 group-hover:text-gray-600">
+                {evergreen4.displayDate}
+              </div>
+
+              <h2 class="font-bruta text-2xl md:text-3xl uppercase leading-tight text-black group-hover:text-[#FE5000] transition-colors mb-3">
+                {evergreen4.title}
+              </h2>
+
+              <p class="text-sm md:text-base text-gray-700 font-recoleta leading-relaxed line-clamp-4 transition-colors duration-200 group-hover:text-black">
+                {evergreen4.description}
+              </p>
+            </div>
+
+            <div class="pt-3 text-xs font-mono text-gray-500 transition-colors duration-200 group-hover:text-gray-900">
+              By {evergreen4.author} • {evergreen4.readTime}
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    {/* 5. FULL-WIDTH BANNER: "60-SECOND TAKES FROM NICK" */}
+    <section class="w-full bg-[#111111] text-white py-16 md:py-20">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="font-bruta text-xl sm:text-2xl md:text-3xl lg:text-[34px] xl:text-[38px] uppercase tracking-tight text-white leading-tight">
+            Watch: 60-Second Takes from Nick Rakovsky, DataDocks Founder
+          </h2>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              id="shorts-prev"
+              class="w-10 h-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+              aria-label="Previous Short"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button
+              type="button"
+              id="shorts-next"
+              class="w-10 h-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors"
+              aria-label="Next Short"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Carousel of short-form videos: Slot 1 has original thumbnail + short title; Slots 2+ have darkened thumbnail + longer-form title */}
+        <div
+          id="shorts-carousel"
+          class="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory scroll-smooth"
+        >
+          {founderShorts.map((short) => (
+            <div class="w-56 md:w-64 shrink-0 snap-start flex flex-col group cursor-pointer">
+              <div class="w-full aspect-[9/14] relative bg-black rounded-xl overflow-hidden modular-short-embed transition-transform duration-500 group-hover:scale-[1.03]">
+                {short.youtubeId && (
+                  <lite-youtube
+                    videoid={short.youtubeId}
+                    playlabel={short.rawTitle || short.title}
+                    params={`controls=0&rel=0&modestbranding=1&iv_load_policy=3&loop=1&playlist=${short.youtubeId}&enablejsapi=1`}
+                    style={`background-image: url('${ytThumb(short.youtubeId, 'sdwebp')}'), url('https://i.ytimg.com/vi/${short.youtubeId}/hqdefault.jpg'); background-position: center center; background-size: cover;`}
+                    class="w-full h-full"
+                  />
+                )}
+
+                {/* Darkness Filter Overlay (active when not playing, disappears when playing) */}
+                <div class="short-dark-filter absolute inset-0 bg-black/45 group-hover:bg-black/35 transition-colors duration-300 pointer-events-none z-10"></div>
+
+                {/* Video Title anchored at top displaying complete title */}
+                <div class="short-caption absolute inset-x-0 top-0 p-4 md:p-5 bg-gradient-to-b from-black/85 via-black/35 to-transparent pointer-events-none z-20 transition-opacity duration-300">
+                  <h3 class="font-sans font-bold text-sm md:text-[15px] text-white leading-snug drop-shadow">
+                    {short.rawTitle || short.title}
+                  </h3>
+                </div>
+
+                {/* Perfectly Centered Play Button Indicator on EVERY card (z-30) */}
+                <div class="short-play-icon absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-black/55 backdrop-blur-sm border-2 border-white/90 flex items-center justify-center text-white shadow-xl pointer-events-none z-30 group-hover:scale-110 group-hover:bg-[#FE5000] group-hover:border-[#FE5000] transition-all duration-200">
+                  <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5.5v13l10-6.5z" />
+                  </svg>
+                </div>
+
+                {/* Fullscreen Option (Native Fullscreen API) positioned at bottom-right */}
+                <button
+                  type="button"
+                  class="short-fullscreen-btn absolute bottom-3 right-3 w-8 h-8 rounded-full bg-black/60 hover:bg-[#FE5000] text-white flex items-center justify-center backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-200 z-30 shadow-md cursor-pointer"
+                  aria-label="Toggle full screen"
+                  title="Full screen"
+                >
+                  <svg class="w-4 h-4 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path class="fs-expand-icon" d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                    <path class="fs-compress-icon" style="display: none;" d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* 6. HUGE 'WHY' CTA FULL-WIDTH BANNER (NORMALIZED MARKETING HOOKS, SCALED SCREENSHOTS & CLEAN MOBILE CHASSIS) */}
+    <section class="w-full bg-[#EFE2D2] py-16 md:py-24 mb-20">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+          
+          {/* Left Column: Normalized Operational Arguments and Expanded Demo capture */}
+          <div class="lg:col-span-6">
+            <h2 class="font-bruta text-3xl sm:text-4xl md:text-5xl lg:text-[54px] uppercase tracking-tight text-black leading-[0.95] mb-10">
+              Why 10,000 Operations Trust DataDocks
+            </h2>
+
+            {/* 3 Oversized Icon-Illustrations NEXT TO 3 Normalized Arguments */}
+            <div class="space-y-8 mb-10">
+              
+              {/* Argument 1: Tactical and practical (Isometric Jigsaw Puzzle Piece) */}
+              <div class="flex items-start gap-5 group">
+                <div class="shrink-0 pt-0.5">
+                  <svg class="w-14 h-14 text-black shrink-0 transition-transform group-hover:scale-105 duration-300" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 25V33L28 42V34L12 25Z" fill="#C5B4A3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 42L44 33V25L28 34V42Z" fill="#B2A08F" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 8 L34 11.5 C35 10 36.5 9 38.5 9 C41 9 42.5 11 42 13 C41.5 15 39.5 15.5 38 15 L44 18.5 L38.5 22 C37.5 20.5 35.5 20 33.5 20.5 C31.5 21 30.5 23 31.5 24.5 C32.5 26 34.5 26 36 25 L28 30 L22 26.5 C20.5 27.5 18.5 27.5 17.5 26 C16.5 24.5 17.5 22.5 19.5 22 C21.5 21.5 23 23 24 24.5 L12 18.5 L18 15 C16.5 14.5 14.5 14 14 12 C13.5 10 15 8 17.5 8 C19.5 8 21 9 22 10.5 L28 8Z" fill="#FFF8EE" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <circle cx="28" cy="19" r="2.5" fill="#FE5000"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-recoleta font-bold text-xl md:text-2xl text-black leading-snug">
+                    Tactical and practical
+                  </h3>
+                  <p class="font-sans text-sm md:text-base text-gray-700 leading-relaxed mt-1">
+                    Mandatory POs and pre-verified appointment rules ensure fast driver check-ins and stop gate hold-ups before they start.
+                  </p>
+                </div>
+              </div>
+
+              {/* Argument 2: In depth (Isometric Lightbulb) */}
+              <div class="flex items-start gap-5 group">
+                <div class="shrink-0 pt-0.5">
+                  <svg class="w-14 h-14 text-black shrink-0 transition-transform group-hover:scale-105 duration-300" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M28 4V8" stroke="#FE5000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M14 10L17 13" stroke="#FE5000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M42 10L39 13" stroke="#FE5000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M28 8C20 8 15 13.5 15 20C15 24 17.5 27.5 20 30.5V36C20 37 20.8 38 21.8 38H34.2C35.2 38 36 37 36 36V30.5C38.5 27.5 41 24 41 20C41 13.5 36 8 28 8Z" fill="#FFF8EE" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M21 41C21 42 21.8 43 23 43H33C34.2 43 35 42 35 41V38H21V41Z" fill="#D6C7B8" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M24 46C24 47 25 48 26.5 48H29.5C31 48 32 47 32 46V43H24V46Z" fill="#222222" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="21" y1="38" x2="35" y2="38" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="22" y1="41" x2="34" y2="41" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M25 28V20L28 16L31 20V28" stroke="#FE5000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="28" cy="16" r="1.5" fill="#FE5000"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-recoleta font-bold text-xl md:text-2xl text-black leading-snug">
+                    Smart appointment lengths
+                  </h3>
+                  <p class="font-sans text-sm md:text-base text-gray-700 leading-relaxed mt-1">
+                    Duration-based scheduling sets slot lengths by actual load type, smoothing daily dock flow and cutting driver detention.
+                  </p>
+                </div>
+              </div>
+
+              {/* Argument 3: Zero carrier friction (Isometric Shipping Parcel) */}
+              <div class="flex items-start gap-5 group">
+                <div class="shrink-0 pt-0.5">
+                  <svg class="w-14 h-14 text-black shrink-0 transition-transform group-hover:scale-105 duration-300" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 21V36L28 46V31L10 21Z" fill="#E2D6C7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 31V46L46 36V21L28 31Z" fill="#C5B4A3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 10L46 20L28 30L10 20L28 10Z" fill="#FFF8EE" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M10 20L46 20" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/>
+                    <path d="M23 12.8L33 17.2L33 32.8L23 28.4Z" fill="#FE5000" fill-opacity="0.2" stroke="#FE5000" stroke-width="1.5" stroke-linejoin="round"/>
+                    <rect x="15" y="27" width="8" height="6" rx="1" transform="skewY(25)" fill="#FFFFFF" stroke="currentColor" stroke-width="1"/>
+                    <line x1="17" y1="28.5" x2="21" y2="28.5" transform="skewY(25)" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="17" y1="30.5" x2="21" y2="30.5" transform="skewY(25)" stroke="currentColor" stroke-width="0.8"/>
+                    <path d="M36 33L36 29M34 31L36 29L38 31" transform="skewY(-25)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-recoleta font-bold text-xl md:text-2xl text-black leading-snug">
+                    Zero carrier friction
+                  </h3>
+                  <p class="font-sans text-sm md:text-base text-gray-700 leading-relaxed mt-1">
+                    Carriers book directly through self-service links that respect your facility rules, eliminating endless email back-and-forth.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Book a Demo Email Capture (Full-width form spanning the text column above) */}
+            <form
+              id="demo-banner-form"
+              class="flex flex-col sm:flex-row items-stretch w-full max-w-xl lg:max-w-[560px] pt-2 gap-0"
+            >
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                style="outline: none !important; box-shadow: none !important; -webkit-appearance: none;"
+                class="h-12 sm:h-14 flex-1 min-w-0 w-full px-5 bg-white text-black placeholder:text-gray-500 text-base border border-black/20 font-recoleta focus:ring-0 focus:outline-none focus:border-black rounded-none transition-all duration-300 sm:hover:pl-6 sm:focus:pl-6"
+                required
+              />
+              <button
+                type="submit"
+                class="h-12 sm:h-14 px-8 sm:px-10 bg-black hover:bg-[#FE5000] text-white font-bold transition-colors duration-300 uppercase tracking-wide text-sm sm:text-base font-recoleta whitespace-nowrap rounded-none shrink-0"
+              >
+                Book a Demo
+              </button>
+            </form>
+          </div>
+
+          {/* Right Column: Real Software Product Showcase (Desktop Master Calendar + Floating Mobile Chassis) */}
+          <div class="lg:col-span-6 relative mt-10 lg:mt-0">
+            {/* Desktop Browser Window Mockup with Real Master Calendar Screenshot */}
+            <div class="rounded-2xl overflow-hidden shadow-2xl border border-black/15 bg-white relative group/browser">
+              {/* Browser Header Bar */}
+              <div class="bg-[#E5D7C5] border-b border-black/10 px-4 py-2.5 flex items-center justify-between">
+                <div class="flex gap-2 items-center py-0.5">
+                  {/* Red and Yellow are static muted controls */}
+                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
+                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
+                  {/* Only Green button is interactive: lights up green when hovering anywhere on the frame, scales when hovered directly */}
+                  <button
+                    type="button"
+                    id="mac-fullscreen-btn"
+                    class="group/green p-1.5 -m-1.5 flex items-center justify-center cursor-pointer transition-transform hover:scale-125"
+                    title="View full screen (Esc to exit)"
+                    aria-label="View desktop screenshot full screen"
+                  >
+                    <span class="w-3 h-3 rounded-full bg-black/20 border border-black/10 group-hover/browser:bg-[#27C93F] group-hover/browser:border-[#1AAB29] transition-all duration-200 flex items-center justify-center shadow-sm">
+                      <svg class="w-1.5 h-1.5 text-black/80 opacity-0 group-hover/browser:opacity-100 transition-opacity duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+                <div class="bg-white/90 rounded-md px-3 py-0.5 text-[11px] font-mono text-gray-500 max-w-[220px] truncate select-none">
+                  app.datadocks.com/schedule
+                </div>
+                <div class="flex items-center">
+                  <button
+                    type="button"
+                    id="header-zoom-btn"
+                    class="text-[11px] font-mono text-gray-600 hover:text-[#FE5000] flex items-center gap-1 cursor-pointer transition-colors"
+                    title="View full screen"
+                  >
+                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                    </svg>
+                    <span>Full screen</span>
+                  </button>
+                </div>
+              </div>
+              
+              {/* Static Desktop Screenshot (non-clickable, no bounce-zoom on mouseover) */}
+              <div class="relative overflow-hidden bg-white select-none">
+                <Image
+                  src={desktopScreenshot}
+                  alt="DataDocks Live Dock Scheduling Master Calendar"
+                  class="w-full h-auto object-cover object-top select-none pointer-events-none"
+                  loading="lazy"
+                  draggable="false"
+                />
+              </div>
+            </div>
+
+            {/* Floating Smartphone Screen using official PhoneFrame hardware component with real mobile app screenshot */}
+            <div class="absolute -bottom-8 -right-3 sm:-right-5 w-[33%] max-w-[185px] hidden sm:block z-20">
+              <PhoneFrame
+                src={mobileScreenshot}
+                alt="DataDocks Mobile Dock Operations App"
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    {/* 7 & 8. CONNECTED EVERGREEN SECTION: BIG POST 5 (RATIONALIZED CLICKABILITY) + 3 TRICOLOR CARDS */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      {/* Big Evergreen Post 5: 100% unified clickability and hover response */}
+      <a
+        href={evergreen5.url}
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mb-8 group rounded-xl"
+      >
+        <div class="aspect-[16/10] w-full rounded-xl bg-gray-100 overflow-hidden relative min-h-[200px]">
+          {evergreen5.cardImage && (
+            <Image
+              src={evergreen5.cardImage}
+              alt={evergreen5.cardAlt || evergreen5.title}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+          )}
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="font-bruta text-2xl md:text-4xl uppercase leading-tight text-black group-hover:text-[#FE5000] transition-colors">
+            {evergreen5.title}
+          </h2>
+
+          <div class="text-xs font-mono text-gray-500 flex items-center gap-3 transition-colors duration-200 group-hover:text-gray-900">
+            <span>By {evergreen5.author}</span>
+            <span>•</span>
+            <span>{evergreen5.displayDate}</span>
+            <span>•</span>
+            <span>{evergreen5.readTime}</span>
+          </div>
+
+          <p class="text-sm md:text-base text-gray-700 font-recoleta leading-relaxed line-clamp-3 transition-colors duration-200 group-hover:text-black">
+            {evergreen5.description}
+          </p>
+        </div>
+      </a>
+
+      {/* 3 Solid Fill Cards: Smooth scale zoom on hover without color shifts (Card 1 Orange, Card 2 Black, Card 3 Warm Sand) */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Card 1: Official Orange Fill */}
+        <a
+          href={evergreen6.url}
+          class="p-6 md:p-7 rounded-2xl bg-[#FE5000] text-white flex flex-col justify-between hover:scale-[1.03] hover:shadow-xl transition-all duration-300 ease-out group"
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="font-bruta uppercase text-xl md:text-2xl leading-tight text-white">
+                {evergreen6.title}
+              </h3>
+              <span class="text-lg transition-transform duration-300 group-hover:translate-x-2 shrink-0 text-white">
+                →
+              </span>
+            </div>
+            <p class="text-xs md:text-sm font-recoleta text-white/90 leading-relaxed">
+              {evergreen6.description}
+            </p>
+          </div>
+        </a>
+
+        {/* Card 2: Solid Black Fill */}
+        <a
+          href={evergreen7.url}
+          class="p-6 md:p-7 rounded-2xl bg-[#000000] text-white flex flex-col justify-between hover:scale-[1.03] hover:shadow-xl transition-all duration-300 ease-out group"
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="font-bruta uppercase text-xl md:text-2xl leading-tight text-white">
+                {evergreen7.title}
+              </h3>
+              <span class="text-lg transition-transform duration-300 group-hover:translate-x-2 shrink-0 text-white">
+                →
+              </span>
+            </div>
+            <p class="text-xs md:text-sm font-recoleta text-white/90 leading-relaxed">
+              {evergreen7.description}
+            </p>
+          </div>
+        </a>
+
+        {/* Card 3: Warm Sand Neutral Fill */}
+        <a
+          href={evergreen8.url}
+          class="p-6 md:p-7 rounded-2xl bg-[#EFE2D2] text-black border border-black/15 hover:border-black/30 flex flex-col justify-between hover:scale-[1.03] hover:shadow-xl transition-all duration-300 ease-out group"
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="font-bruta uppercase text-xl md:text-2xl leading-tight text-black">
+                {evergreen8.title}
+              </h3>
+              <span class="text-lg transition-transform duration-300 group-hover:translate-x-2 shrink-0 text-black">
+                →
+              </span>
+            </div>
+            <p class="text-xs md:text-sm font-recoleta text-gray-700 leading-relaxed">
+              {evergreen8.description}
+            </p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    {/* 9. SPACIOUS, BREATHABLE 'LATEST VIDEO DEEP DIVES FROM NICK' (2 MOST RECENT LONGFORM) */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      <div class="pb-3 border-b-2 border-black mb-8">
+        <h2 class="font-bruta text-2xl md:text-3xl uppercase tracking-tight text-black">
+          Latest Video Deep Dives from Nick
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {deepDiveVideos.map((video) => (
+          <article class="group deep-dive-card cursor-pointer" data-video-id={video.youtubeId}>
+            <div class="aspect-video w-full rounded-xl overflow-hidden bg-black modular-video-embed">
+              {video.youtubeId && (
+                <lite-youtube
+                  videoid={video.youtubeId}
+                  playlabel={video.title}
+                  params="autoplay=1"
+                  style={`background-image: url('${ytThumb(video.youtubeId, 'sdwebp')}'), url('https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg'); background-position: center center; background-size: cover;`}
+                  class="w-full h-full"
+                />
+              )}
+            </div>
+
+            <div class="pt-4">
+              <div class="text-xs font-mono text-gray-400 mb-1.5">
+                {video.displayDate} • {video.author}
+              </div>
+
+              <h3 class="font-sans font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#FE5000] transition-colors mb-2 leading-snug">
+                {video.title}
+              </h3>
+
+              <p class="text-sm md:text-[15px] text-gray-700 font-recoleta leading-relaxed">
+                {video.description}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* 10. FULL-WIDTH BACKGROUND IMAGE WITH TRANSPARENT BLACK FILTER (NASA REF 2: SEAMLESS TOUCHING SECTION 11) */}
+    <a
+      href={evergreen9.url}
+      class="relative w-full overflow-hidden bg-black min-h-[520px] md:min-h-[620px] flex items-end group block"
+    >
+      {evergreen9.cardImage && (
+        <Image
+          src={evergreen9.cardImage}
+          alt={evergreen9.cardAlt || evergreen9.title}
+          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75"
+          loading="lazy"
+        />
+      )}
+      
+      {/* Single clean vignette overlay */}
+      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10"></div>
+
+      <div class="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-20">
+        <div class="max-w-2xl space-y-4">
+          <h2 class="font-bruta text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-tight text-white group-hover:text-[#FE5000] transition-colors">
+            {evergreen9.title}
+          </h2>
+
+          <p class="text-sm md:text-base text-gray-200 font-recoleta leading-relaxed line-clamp-4">
+            {evergreen9.description}
+          </p>
+
+          <div class="pt-2 flex items-center gap-3">
+            <span class="inline-flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-white group-hover:text-[#FE5000] transition-colors">
+              <span>Read Playbook</span>
+              <span class="w-6 h-6 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                →
+              </span>
+            </span>
+            <span class="text-xs font-mono text-gray-400 ml-4">
+              By {evergreen9.author} • {evergreen9.displayDate}
+            </span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    {/* 11. 4 SLIGHTLY-TALLER-THAN-SQUARE CARDS ON WHITE BG (NASA REF 1) */}
+    <section class="w-full bg-white py-16 md:py-20 mb-16">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="mb-8">
+          <h2 class="font-bruta uppercase text-2xl sm:text-3xl md:text-4xl tracking-tight text-black">
+            Foundational Guides
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {foundationalGuides.map((item) => (
+            <a
+              href={item.url}
+              class="group block aspect-[4/5] relative rounded-xl overflow-hidden bg-black p-6 flex flex-col justify-end hover:shadow-xl transition-all duration-300"
+            >
+              {item.cardImage && (
+                <Image
+                  src={item.cardImage}
+                  alt={item.cardAlt || item.title}
+                  class="absolute inset-0 w-full h-full object-cover opacity-55 group-hover:scale-105 transition-transform duration-500 ease-out"
+                  loading="lazy"
+                />
+              )}
+
+              {/* Black filter gradient overlay */}
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+
+              {/* Bottom Title & Arrow */}
+              <div class="relative z-10 flex items-end justify-between gap-3">
+                <h3 class="font-sans font-bold text-base md:text-[17px] text-white group-hover:text-[#FE5000] transition-colors line-clamp-3 leading-snug">
+                  {item.title}
+                </h3>
+                <span class="w-6 h-6 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs shrink-0 group-hover:scale-110 group-hover:translate-x-0.5 transition-transform">
+                  →
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* 12. OLDER RESOURCES SECTION (ARCHIVE GRID WITH 3 EDITORIAL VARIANTS) */}
+    <section id="archive-grid" class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      <div class="pb-4 border-b-2 border-black mb-8">
+        <h2 class="font-bruta uppercase text-2xl sm:text-3xl md:text-4xl tracking-tight text-black">
+          Older Resources
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {olderResources.map((item, idx) => {
+          const isVideo = item.postType === 'video' || !!item.youtubeId;
+          const isImageOverlay = !isVideo && !!item.cardImage && (idx % 2 === 1);
+
+          if (isVideo) {
+            {/* Variant C: Video card with 16:9 YouTube aspect ratio, duration badge, play icon, and overlaid text */}
+            return (
+              <a
+                href={item.url}
+                class="relative rounded-xl overflow-hidden aspect-video bg-black flex flex-col justify-between p-4 sm:p-5 group hover:shadow-xl transition-all duration-300"
+              >
+                {item.youtubeId ? (
+                  <img
+                    src={ytThumb(item.youtubeId, 'sdwebp')}
+                    alt={item.title}
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-65"
+                    loading="lazy"
+                  />
+                ) : item.cardImage ? (
+                  <Image
+                    src={item.cardImage}
+                    alt={item.cardAlt || item.title}
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-65"
+                    loading="lazy"
+                  />
+                ) : null}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/20"></div>
+
+                <div class="relative z-10 flex items-center justify-between">
+                  <div class="w-8 h-8 rounded-full bg-black/60 backdrop-blur border border-white/40 flex items-center justify-center text-white group-hover:bg-[#FE5000] group-hover:border-[#FE5000] transition-all shadow-md">
+                    <svg class="w-3.5 h-3.5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                  <span class="bg-black/70 backdrop-blur text-white text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/20">
+                    {item.readTime}
+                  </span>
+                </div>
+
+                <div class="relative z-10">
+                  <h3 class="font-sans font-bold text-sm sm:text-base text-white group-hover:text-[#FE5000] transition-colors line-clamp-2 leading-snug">
+                    {item.title}
+                  </h3>
+                  <span class="text-[10px] sm:text-[11px] font-mono text-gray-400 block mt-0.5">
+                    By {item.author}
+                  </span>
+                </div>
+              </a>
+            );
+          }
+
+          if (isImageOverlay) {
+            {/* Variant B: Article with image, 16:9 YouTube aspect ratio, text overlaid on bottom gradient */}
+            return (
+              <a
+                href={item.url}
+                class="relative rounded-xl overflow-hidden aspect-video bg-black flex flex-col justify-between p-4 sm:p-5 group hover:shadow-xl transition-all duration-300"
+              >
+                <Image
+                  src={item.cardImage}
+                  alt={item.cardAlt || item.title}
+                  class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-65"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent"></div>
+                <div class="relative z-10 flex items-center justify-end">
+                  <span class="bg-black/70 backdrop-blur text-white text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/20">
+                    {item.readTime}
+                  </span>
+                </div>
+                <div class="relative z-10">
+                  <div class="text-[10px] sm:text-[11px] font-mono text-gray-300 mb-0.5 flex items-center gap-2">
+                    <span>{item.displayDate}</span>
+                  </div>
+                  <h3 class="font-sans font-bold text-sm sm:text-base text-white group-hover:text-[#FE5000] transition-colors line-clamp-2 leading-snug mb-0.5">
+                    {item.title}
+                  </h3>
+                  <span class="text-[10px] sm:text-[11px] font-mono text-gray-300">By {item.author}</span>
+                </div>
+              </a>
+            );
+          }
+
+          {/* Variant A: Text-only dense editorial card in 16:9 YouTube aspect ratio */}
+          return (
+            <a
+              href={item.url}
+              class="bg-white rounded-xl border border-black/10 p-4 sm:p-5 flex flex-col aspect-video hover:border-black/30 hover:shadow-xl transition-all duration-300 group"
+            >
+              <div class="min-w-0">
+                <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-gray-400 mb-1.5">
+                  <span>{item.displayDate}</span>
+                  <span>{item.readTime}</span>
+                </div>
+                <h3 class="font-sans font-bold text-sm sm:text-base text-gray-900 group-hover:text-[#FE5000] transition-colors leading-snug mb-1.5 line-clamp-2">
+                  {item.title}
+                </h3>
+                <p class="text-[13px] sm:text-sm text-gray-600 font-recoleta leading-snug line-clamp-3">
+                  {item.description}
+                </p>
+              </div>
+              <div class="pt-2.5 mt-auto border-t border-black/10 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-gray-500">
+                <span>By {item.author}</span>
+                <span class="text-[#FE5000] font-bold group-hover:translate-x-1 transition-transform inline-flex items-center text-sm">
+                  →
+                </span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    {/* Fullscreen Modal Lightbox for Prime Desktop Calendar Screenshot */}
+    <div
+      id="desktop-screenshot-modal"
+      class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-8 opacity-0 pointer-events-none transition-opacity duration-300 modal-backdrop-click hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="DataDocks Desktop Schedule Fullscreen View"
+    >
+      <button
+        type="button"
+        id="close-desktop-screenshot"
+        class="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-[#FE5000] text-white flex items-center justify-center transition-all duration-200 border border-white/20 shadow-xl cursor-pointer group"
+        aria-label="Return to page"
+        title="Close (Esc)"
+      >
+        <svg class="w-5 h-5 transition-transform group-hover:rotate-90 duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div class="absolute top-5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/70 border border-white/20 text-xs font-mono text-gray-300 pointer-events-none hidden md:flex items-center gap-2 shadow-xl z-10">
+        <span>Press</span>
+        <kbd class="bg-white/20 px-1.5 py-0.5 rounded text-white font-bold text-[11px]">ESC</kbd>
+        <span>or click anywhere outside to return</span>
+      </div>
+
+      <div class="relative max-w-7xl w-full max-h-[90vh] flex items-center justify-center">
+        <img
+          src="/images/DataDocks-Calendar-Clean.webp"
+          alt="DataDocks Live Dock Scheduling Master Calendar - Full Resolution"
+          class="max-w-full max-h-[88vh] w-auto h-auto object-contain rounded-xl shadow-2xl border border-white/15 select-none bg-white"
+          loading="lazy"
+          draggable="false"
+        />
+      </div>
+    </div>
+
+    {/* 13. SITEWIDE CALL TO ACTION BANNER */}
+    <CTA />
+
+  </main>
+
+  <Footer />
+
+  <script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
+    (function () {
+      // Shorts Carousel Navigation
+      const carousel = document.getElementById("shorts-carousel");
+      const prevBtn = document.getElementById("shorts-prev");
+      const nextBtn = document.getElementById("shorts-next");
+
+      if (carousel && prevBtn && nextBtn) {
+        const getScrollAmount = () => carousel.clientWidth * 0.75;
+        prevBtn.addEventListener("click", () => {
+          carousel.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+        });
+        nextBtn.addEventListener("click", () => {
+          carousel.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+        });
+      }
+
+      function attachInteractiveElements() {
+        // Hide short caption overlay and play icon when user clicks play, and pause other active shorts
+        document.querySelectorAll('.modular-short-embed').forEach((container) => {
+          const yt = container.querySelector('lite-youtube');
+          if (yt && !yt.dataset.playBound) {
+            yt.dataset.playBound = 'true';
+            yt.addEventListener('click', () => {
+              const caption = container.querySelector('.short-caption');
+              const icon = container.querySelector('.short-play-icon');
+              const darkFilter = container.querySelector('.short-dark-filter');
+              if (caption) caption.style.display = 'none';
+              if (icon) icon.style.display = 'none';
+              if (darkFilter) darkFilter.style.display = 'none';
+
+              // Pause any other currently playing shorts
+              document.querySelectorAll('.modular-short-embed lite-youtube iframe').forEach((iframe) => {
+                if (iframe.parentElement !== yt) {
+                  try {
+                    iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                  } catch (e) {}
+                }
+              });
+            });
+          }
+        });
+
+        // Fullscreen toggle for shorts (Native Fullscreen API)
+        document.querySelectorAll('.short-fullscreen-btn').forEach(function (btn) {
+          if (!btn.dataset.bound) {
+            btn.dataset.bound = 'true';
+            btn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              e.preventDefault();
+              var container = btn.closest('.modular-short-embed');
+              if (!container) return;
+
+              var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+              if (isFs) {
+                if (document.exitFullscreen) {
+                  document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                  document.webkitExitFullscreen();
+                }
+              } else {
+                var yt = container.querySelector('lite-youtube');
+                if (yt && !yt.classList.contains('lyt-activated')) {
+                  yt.click();
+                }
+                if (container.requestFullscreen) {
+                  container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                  container.webkitRequestFullscreen();
+                }
+              }
+            });
+          }
+        });
+
+        // Double-click on card toggles fullscreen
+        document.querySelectorAll('.modular-short-embed').forEach(function (container) {
+          if (!container.dataset.dblBound) {
+            container.dataset.dblBound = 'true';
+            container.addEventListener('dblclick', function (e) {
+              if (e.target.closest('button')) return;
+              var fsBtn = container.querySelector('.short-fullscreen-btn');
+              if (fsBtn) fsBtn.click();
+            });
+          }
+        });
+
+        // Trigger deep-dive video playback when clicking anywhere on the card
+        document.querySelectorAll('.deep-dive-card').forEach((card) => {
+          if (!card.dataset.clickBound) {
+            card.dataset.clickBound = 'true';
+            card.addEventListener('click', (e) => {
+              const yt = card.querySelector('lite-youtube');
+              if (!yt || yt.contains(e.target)) return;
+              const playBtn = yt.querySelector('.lty-playbtn');
+              if (playBtn) {
+                playBtn.click();
+              } else {
+                yt.click();
+              }
+            });
+          }
+        });
+
+        // Desktop master calendar screenshot full-screen modal
+        attachDesktopScreenshotModal();
+      }
+
+      function attachDesktopScreenshotModal() {
+        var modal = document.getElementById('desktop-screenshot-modal');
+        if (!modal) return;
+
+        function openModal(e) {
+          if (e && e.preventDefault) e.preventDefault();
+          modal.classList.remove('hidden');
+          // Force layout reflow before triggering opacity transition
+          void modal.offsetWidth;
+          modal.classList.remove('opacity-0', 'pointer-events-none');
+          modal.classList.add('opacity-100', 'pointer-events-auto');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(e) {
+          if (e && e.preventDefault) e.preventDefault();
+          modal.classList.add('opacity-0', 'pointer-events-none');
+          modal.classList.remove('opacity-100', 'pointer-events-auto');
+          document.body.style.overflow = '';
+          setTimeout(function () {
+            if (modal.classList.contains('pointer-events-none')) {
+              modal.classList.add('hidden');
+            }
+          }, 300);
+        }
+
+        if (!modal.dataset.bound) {
+          modal.dataset.bound = 'true';
+
+          // Robust click delegation: handles mac-fullscreen-btn, header-zoom-btn, desktop-mockup-screen, close-btn, and backdrop
+          document.addEventListener('click', function (e) {
+            var target = e.target;
+            if (!target) return;
+
+            // Trigger modal open (only from green window button or header zoom button)
+            if (target.closest('#mac-fullscreen-btn, #header-zoom-btn')) {
+              openModal(e);
+              return;
+            }
+
+            // Close modal when active
+            if (!modal.classList.contains('pointer-events-none')) {
+              if (target.closest('#close-desktop-screenshot') || (modal.contains(target) && !target.closest('img'))) {
+                closeModal(e);
+              }
+            }
+          });
+
+          // Pressing Escape closes modal
+          document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !modal.classList.contains('pointer-events-none')) {
+              closeModal(e);
+            }
+          });
+        }
+      }
+
+      function handleFsChange() {
+        var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        document.querySelectorAll('.short-fullscreen-btn').forEach(function (btn) {
+          var expand = btn.querySelector('.fs-expand-icon');
+          var compress = btn.querySelector('.fs-compress-icon');
+          if (expand && compress) {
+            expand.style.display = isFs ? 'none' : 'block';
+            compress.style.display = isFs ? 'block' : 'none';
+          }
+          btn.setAttribute('title', isFs ? 'Exit full screen' : 'Full screen');
+          btn.setAttribute('aria-label', isFs ? 'Exit full screen' : 'Full screen');
+        });
+      }
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.addEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+      document.addEventListener('webkitfullscreenchange', handleFsChange);
+
+      attachInteractiveElements();
+      document.addEventListener('astro:page-load', attachInteractiveElements);
+
+      // Book a Demo Form Handling
+      function attachDemoForm() {
+        const form = document.getElementById('demo-banner-form');
+        if (!form || form.dataset.bound) return;
+        form.dataset.bound = 'true';
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const emailInput = form.querySelector('input[name="email"]');
+          const email = emailInput ? emailInput.value : '';
+          if (email) {
+            if (typeof window.ddSetEmail === 'function') {
+              window.ddSetEmail(email);
+            }
+            if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
+              window.bento.identify(email);
+            }
+
+            fetch('/api/bento-track', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: email,
+                event: 'Demo Subscriber',
+                source: window.location.pathname,
+                landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
+                attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
+              }),
+              keepalive: true
+            }).catch(function () {});
+          }
+          if (typeof window.ddOpenCalendly === 'function') {
+            window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
+          } else {
+            window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
+          }
+          form.reset();
+        });
+      }
+
+      attachDemoForm();
+      document.addEventListener('astro:page-load', attachDemoForm);
+    })();
+  </script>
+</Layout>

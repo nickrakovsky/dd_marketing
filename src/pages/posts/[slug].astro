@@ -12,12 +12,15 @@ import MDXImage from '../../components/MDXImage.astro';
 import FAQ from '../../components/FAQ.astro';
 import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
+import { ytThumb } from '../../lib/yt-thumb';
+import { isPublished } from '../../lib/content-status';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts');
-  return postEntries.map((entry: CollectionEntry<'posts'>) => ({
+  const publishedEntries = postEntries.filter(entry => isPublished(entry.data.pubDate));
+  return publishedEntries.map((entry: CollectionEntry<'posts'>) => ({
     params: { slug: entry.slug }, 
     props: { entry },
   }));
@@ -30,8 +33,8 @@ interface Props {
 const { slug } = Astro.params;
 const entry: CollectionEntry<'posts'> = (Astro.props as Props).entry || await getEntry('posts', slug as string);
 
-if (!entry) {
-  // Fallback for types or edge cases
+if (!entry || !isPublished(entry.data.pubDate)) {
+  // Fallback for types, missing entries, or future scheduled posts in production
   return Astro.redirect('/404');
 }
 const { Content, headings } = await entry.render();

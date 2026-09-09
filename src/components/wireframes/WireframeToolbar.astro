@@ -1,0 +1,49 @@
+---
+interface Props {
+  currentVariant: 'split-stream' | 'editorial-bento' | 'tabbed-hub' | 'sidebar-engine' | 'modular-editorial' | 'overview';
+}
+
+const { currentVariant } = Astro.props;
+
+const variants = [
+  { id: 'modular-editorial', label: '★ New Modular Layout', href: '/wireframes/modular-editorial' },
+  { id: 'editorial-bento', label: '2. Evergreen-Led (60/40)', href: '/wireframes/editorial-bento' },
+  { id: 'split-stream', label: '1. Equal Split (50/50)', href: '/wireframes/split-stream' },
+  { id: 'tabbed-hub', label: '3. Featured Pair + Split', href: '/wireframes/tabbed-hub' },
+  { id: 'sidebar-engine', label: '4. Dual Column Explorer', href: '/wireframes/sidebar-engine' },
+];
+---
+
+<div class="bg-black text-white py-2 px-4 sticky top-0 z-[100] border-b border-white/10 text-xs">
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-[#fd4f00]">Layout Options:</span>
+      <span class="text-white/60 hidden md:inline">Side-by-side wireframes with full card real estate</span>
+    </div>
+
+    <div class="flex items-center gap-1.5 overflow-x-auto">
+      <a
+        href="/wireframes"
+        class={`px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
+          currentVariant === 'overview'
+            ? 'bg-white text-black font-semibold'
+            : 'text-white/70 hover:text-white hover:bg-white/10'
+        }`}
+      >
+        Overview
+      </a>
+      {variants.map((v) => (
+        <a
+          href={v.href}
+          class={`px-2.5 py-1 rounded transition-colors whitespace-nowrap ${
+            currentVariant === v.id
+              ? 'bg-[#fd4f00] text-white font-semibold'
+              : 'text-white/70 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          {v.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</div>

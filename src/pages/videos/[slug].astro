@@ -9,14 +9,16 @@ import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro'
 import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
 import { ytThumb } from '../../lib/yt-thumb';
+import { isPublished } from '../../lib/content-status';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const videoEntries = await getCollection('videos');
+  const publishedEntries = videoEntries.filter(entry => isPublished(entry.data.pubDate));
   const paths: { params: { slug: string }; props: { entry: CollectionEntry<'videos'> } }[] = [];
   
-  for (const entry of videoEntries) {
+  for (const entry of publishedEntries) {
     paths.push({
       params: { slug: entry.slug },
       props: { entry },
@@ -38,7 +40,7 @@ interface Props {
 const { slug } = Astro.params;
 const entry: CollectionEntry<'videos'> = (Astro.props as Props).entry || await getEntry('videos', slug as string);
 
-if (!entry) {
+if (!entry || !isPublished(entry.data.pubDate)) {
   return Astro.redirect('/404');
 }
 const { Content } = await entry.render();

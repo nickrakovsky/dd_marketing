@@ -90,6 +90,13 @@ export const GET: APIRoute = async ({ params, url }) => {
     });
   }
 
-  // No variant in the chain returned 200 (invalid/removed video).
-  return new Response('Not found', { status: 404 });
+  // Fallback: If upstream fetches could not complete (e.g. local dev, sandbox, or network hiccup),
+  // redirect browser directly to YouTube's public thumbnail so images never break or blackscreen.
+  return new Response(null, {
+    status: 307,
+    headers: {
+      Location: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
 };

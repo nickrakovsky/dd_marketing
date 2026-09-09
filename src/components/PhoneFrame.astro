@@ -5,35 +5,40 @@ import phoneFrame from "@/assets/phoneframe.webp";
 interface Props {
   src: ImageMetadata;
   alt: string;
+  class?: string;
 }
 
-const { src, alt } = Astro.props;
+const { src, alt, class: className } = Astro.props;
 ---
 
-<div class="relative mx-auto w-full sm:max-w-[330px] aspect-[330/700] select-none drop-shadow-2xl">
+<div class={`relative mx-auto w-full aspect-[330/700] select-none ${className || "drop-shadow-2xl"}`}>
   
+  {/* Phone Hardware Bezel Overlay */}
   <div class="absolute inset-0 z-20 pointer-events-none">
     <img 
       src={phoneFrame.src} 
       alt="" 
       aria-hidden="true"
-      class="w-full h-full object-contain" 
+      class="w-full h-full object-contain pointer-events-none select-none" 
+      draggable="false"
     />
   </div>
 
+  {/* Screen Display Area - positioned slightly under the opaque bezel so the hardware bezel naturally masks the screen corners */}
   <div 
-    class="absolute z-10 bg-black overflow-hidden"
+    class="absolute z-10 bg-white overflow-hidden rounded-[8px]"
     style="
-      top: 2%; 
-      left: 3.5%; 
-      width: 93%; 
-      height: 96%;
+      top: 1.6%; 
+      left: 3.8%; 
+      width: 92.4%; 
+      height: 95.8%;
     "
   >
     <img 
       src={src.src} 
       alt={alt} 
-      class="w-full h-full object-cover"
+      class="w-full h-full object-cover object-top select-none pointer-events-none"
+      draggable="false"
     />
   </div>
 </div>

@@ -1,0 +1,235 @@
+---
+export const prerender = true;
+
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import CTA from "../../components/home/CTA.astro";
+import WireframeToolbar from "../../components/wireframes/WireframeToolbar.astro";
+import { getWireframeData } from "../../lib/wireframe-data";
+import { Image } from "astro:assets";
+
+const { evergreenPosts, discoverPosts, topics } = await getWireframeData();
+
+const today = new Date().toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+
+const title = "Resource Hub — Dual Column Explorer | DataDocks";
+const description = "Wide horizontal card treatments comparing core playbooks against recent dispatches.";
+---
+
+<Layout title={title} description={description}>
+  <WireframeToolbar currentVariant="sidebar-engine" />
+  <Navigation />
+
+  <main class="min-h-screen bg-[#FFF8E9] text-gray-900 font-sans pb-20">
+    {/* HERO HEADER */}
+    <header class="pt-14 pb-10 border-b border-black/10">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="text-xs font-mono text-gray-600 uppercase tracking-wider mb-2">
+          {today}
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bruta uppercase tracking-tight text-black leading-none">
+          Operations <span class="text-[#fd4f00]">Knowledge Base</span>
+        </h1>
+        <p class="mt-3 text-base md:text-lg text-gray-700 max-w-2xl font-recoleta">
+          Explore foundational dock scheduling guides alongside our newest operational articles.
+        </p>
+
+        {/* TOPIC FILTERS */}
+        <div class="mt-8 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {topics.map((topic, i) => (
+            <button
+              type="button"
+              data-filter={topic}
+              class={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all shrink-0 border ${
+                i === 0
+                  ? "bg-black text-white border-black font-semibold"
+                  : "bg-white text-gray-700 border-black/15 hover:border-black/40 hover:bg-gray-50"
+              }`}
+            >
+              {topic}
+            </button>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    {/* 50/50 SIDE-BY-SIDE WITH HORIZONTAL CARDS */}
+    <div class="max-w-7xl mx-auto px-4 md:px-8 mt-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
+        
+        {/* LEFT COLUMN: CORE PLAYBOOKS */}
+        <section class="space-y-6">
+          <div class="flex items-center justify-between pb-3 border-b-2 border-black">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#fd4f00]"></span>
+              <h2 class="font-bruta text-2xl md:text-3xl uppercase tracking-tight text-black">
+                Core Playbooks
+              </h2>
+            </div>
+            <span class="text-xs font-mono text-gray-500">
+              10 Verified Guides
+            </span>
+          </div>
+
+          <div class="space-y-4" id="explorer-evergreen-feed">
+            {evergreenPosts.map((post) => (
+              <article
+                class="group bg-white rounded-xl border border-black/10 p-4 md:p-5 hover:border-[#fd4f00] hover:shadow-md transition-all relative flex flex-col sm:flex-row gap-4 items-start"
+                data-topic={post.topic}
+              >
+                <div class="w-full sm:w-36 h-28 rounded-lg bg-gray-100 overflow-hidden shrink-0 relative">
+                  {post.data.cardImage ? (
+                    <Image
+                      src={post.data.cardImage}
+                      alt={post.data.cardAlt || post.data.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="w-full h-full bg-[#FAF8F5] flex items-center justify-center p-2 text-center">
+                      <span class="text-[10px] font-mono text-gray-500">{post.topic}</span>
+                    </div>
+                  )}
+                  <span class="absolute top-1.5 left-1.5 bg-black text-white text-[10px] font-mono font-bold px-1.5 py-0.2 rounded">
+                    #{post.rank}
+                  </span>
+                </div>
+
+                <div class="flex-1 min-w-0 flex flex-col justify-between h-full">
+                  <div>
+                    <div class="flex items-center gap-2 text-xs font-mono text-gray-500 mb-1.5">
+                      <span class="text-[#fd4f00] font-bold">{post.topic}</span>
+                      <span>•</span>
+                      <span>{post.displayDate}</span>
+                    </div>
+
+                    <h3 class="font-bruta text-base md:text-lg uppercase leading-snug text-black group-hover:text-[#fd4f00] transition-colors line-clamp-2">
+                      <a href={`/posts/${post.slug}`} class="after:absolute after:inset-0">
+                        {post.data.title}
+                      </a>
+                    </h3>
+
+                    <p class="mt-1 text-xs text-gray-600 font-recoleta line-clamp-2">
+                      {post.data.description || "Essential guide for warehouse leaders."}
+                    </p>
+                  </div>
+
+                  <div class="mt-3 pt-2 border-t border-black/5 flex items-center justify-between text-xs font-mono text-gray-500">
+                    <span>{post.data.readTime || "4 min"}</span>
+                    <span class="font-bold text-black group-hover:text-[#fd4f00]">Read Guide →</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* RIGHT COLUMN: LATEST ARTICLES */}
+        <section class="space-y-6">
+          <div class="flex items-center justify-between pb-3 border-b-2 border-black">
+            <h2 class="font-bruta text-2xl md:text-3xl uppercase tracking-tight text-black">
+              Latest Articles
+            </h2>
+            <span class="text-xs font-mono text-gray-500">
+              Newest First
+            </span>
+          </div>
+
+          <div class="space-y-4" id="explorer-discover-feed">
+            {discoverPosts.map((post) => (
+              <article
+                class="group bg-white rounded-xl border border-black/10 p-4 md:p-5 hover:border-[#fd4f00] hover:shadow-md transition-all relative flex flex-col sm:flex-row gap-4 items-start"
+                data-topic={post.topic}
+              >
+                <div class="w-full sm:w-36 h-28 rounded-lg bg-gray-100 overflow-hidden shrink-0 relative">
+                  {post.data.cardImage ? (
+                    <Image
+                      src={post.data.cardImage}
+                      alt={post.data.cardAlt || post.data.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="w-full h-full bg-[#FAF8F5] flex items-center justify-center p-2 text-center">
+                      <span class="text-[10px] font-mono text-gray-500">{post.topic}</span>
+                    </div>
+                  )}
+                  <span class="absolute top-1.5 left-1.5 bg-[#fd4f00] text-white text-[10px] font-mono font-bold px-1.5 py-0.2 rounded uppercase">
+                    New
+                  </span>
+                </div>
+
+                <div class="flex-1 min-w-0 flex flex-col justify-between h-full">
+                  <div>
+                    <div class="flex items-center gap-2 text-xs font-mono text-gray-500 mb-1.5">
+                      <span class="text-[#fd4f00] font-bold">{post.topic}</span>
+                      <span>•</span>
+                      <span>{post.displayDate}</span>
+                    </div>
+
+                    <h3 class="font-bruta text-base md:text-lg uppercase leading-snug text-black group-hover:text-[#fd4f00] transition-colors line-clamp-2">
+                      <a href={`/posts/${post.slug}`} class="after:absolute after:inset-0">
+                        {post.data.title}
+                      </a>
+                    </h3>
+
+                    <p class="mt-1 text-xs text-gray-600 font-recoleta line-clamp-2">
+                      {post.data.description || "Read practical warehouse insights and carrier scheduling playbooks."}
+                    </p>
+                  </div>
+
+                  <div class="mt-3 pt-2 border-t border-black/5 flex items-center justify-between text-xs font-mono text-gray-500">
+                    <span>{post.data.readTime || "4 min"}</span>
+                    <span class="font-bold text-black group-hover:text-[#fd4f00]">Read Article →</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <CTA />
+  <Footer />
+
+  <script is:inline>
+    (function () {
+      const buttons = document.querySelectorAll("[data-filter]");
+      const egCards = document.querySelectorAll("#explorer-evergreen-feed article");
+      const dcCards = document.querySelectorAll("#explorer-discover-feed article");
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const selected = btn.getAttribute("data-filter");
+
+          buttons.forEach((b) => {
+            if (b === btn) {
+              b.className = "px-3.5 py-1.5 rounded-full text-xs font-mono transition-all shrink-0 border bg-black text-white border-black font-semibold";
+            } else {
+              b.className = "px-3.5 py-1.5 rounded-full text-xs font-mono transition-all shrink-0 border bg-white text-gray-700 border-black/15 hover:border-black/40 hover:bg-gray-50";
+            }
+          });
+
+          egCards.forEach((c) => {
+            const topic = c.getAttribute("data-topic");
+            c.style.display = (selected === "All Topics" || topic === selected) ? "flex" : "none";
+          });
+
+          dcCards.forEach((c) => {
+            const topic = c.getAttribute("data-topic");
+            c.style.display = (selected === "All Topics" || topic === selected) ? "flex" : "none";
+          });
+        });
+      });
+    })();
+  </script>
+</Layout>

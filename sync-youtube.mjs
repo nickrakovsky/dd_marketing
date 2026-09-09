@@ -51,56 +51,115 @@ async function syncYouTube() {
         const channelData = await channelRes.json();
         const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
-        // 2. Fetch the latest 15 videos from that playlist
-        const playlistRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${uploadsPlaylistId}&part=snippet&maxResults=15&key=${apiKey}`);
+        // 2. Fetch the latest 50 videos from that playlist
+        const playlistRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${uploadsPlaylistId}&part=snippet&maxResults=50&key=${apiKey}`);
         const playlistData = await playlistRes.json();
+
+        if (!playlistData.items || playlistData.items.length === 0) {
+            console.log("No videos found in playlist.");
+            return;
+        }
+
+        // Collect video IDs to fetch durations and contentDetails in batch
+        const videoIds = playlistData.items.map(item => item.snippet.resourceId.videoId);
+        const detailsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoIds.join(',')}&part=contentDetails,snippet&key=${apiKey}`);
+        const detailsData = await detailsRes.json();
+        const detailsMap = new Map();
+        if (detailsData.items) {
+            for (const v of detailsData.items) {
+                detailsMap.set(v.id, v);
+            }
+        }
 
         let addedCount = 0;
 
+        // Ensure target directory exists
+        const targetDir = './src/content/videos';
+        await fs.mkdir(targetDir, { recursive: true });
+
         // 3. Process each video
         for (const item of playlistData.items) {
-            const snippet = item.snippet;
-            const videoId = snippet.resourceId.videoId;
-            const title = snippet.title.replace(/"/g, '\\"'); // Escape quotes for frontmatter
-            const date = snippet.publishedAt.split('T')[0]; // Extract YYYY-MM-DD
+            const videoId = item.snippet.resourceId.videoId;
+            const detail = detailsMap.get(videoId);
+            const snippet = detail ? detail.snippet : item.snippet;
+            const duration = (detail && detail.contentDetails && detail.contentDetails.duration) || 'PT1M0S';
 
-            // Clean up the description (grab the first line or two)
-            const description = snippet.description.split('\n')[0].replace(/"/g, '\\"').substring(0, 120);
+            const rawTitle = snippet.title || '';
+            const title = rawTitle.replace(/'/g, "''").trim();
+            const dateStr = snippet.publishedAt ? new Date(snippet.publishedAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            }) + ' 12:00 PM' : 'Jan 1, 2026 12:00 PM';
 
-            // 4. The "Shorts" Trap: Ping the shorts URL to see if it redirects
-            let contentType = "video";
-            const shortsCheck = await fetch(`https://www.youtube.com/shorts/${videoId}`, { redirect: 'manual' });
-            if (shortsCheck.status === 200) {
-                contentType = "short";
+            // Clean up description for frontmatter
+            const rawDesc = snippet.description || '';
+            const firstLine = rawDesc.split('\n').filter(Boolean)[0] || rawTitle;
+            const description = firstLine.replace(/'/g, "''").slice(0, 160).trim();
+
+            // Determine if short: duration under 95 seconds or shorts URL ping
+            let isShort = false;
+            const durMatch = duration.match(/PT(?:(\d+)M)?(?:(\d+)S)?/i);
+            if (durMatch) {
+                const m = parseInt(durMatch[1] || '0', 10);
+                const s = parseInt(durMatch[2] || '0', 10);
+                const totalSec = m * 60 + s;
+                if (totalSec > 0 && totalSec <= 90) {
+                    isShort = true;
+                }
             }
+
+            if (!isShort) {
+                try {
+                    const shortsCheck = await fetch(`https://www.youtube.com/shorts/${videoId}`, { redirect: 'manual' });
+                    if (shortsCheck.status === 200) {
+                        isShort = true;
+                    }
+                } catch {}
+            }
+
+            const contentType = isShort ? 'short' : 'video';
 
             // 5. Create the MDX File Content
             const mdxContent = `---
-title: "${title}"
-description: "${description}..."
-pubDate: ${date}
-author: "DataDocks"
-contentType: "${contentType}"
-youtubeId: "${videoId}"
+title: '${title}'
+description: >-
+  ${description}...
+pubDate: '${dateStr}'
+author: DataDocks
+postType:
+  discriminant: ${contentType}
+  value:
+    youtubeId: ${videoId}
+    duration: '${duration}'
 ---
+
+## ${rawTitle.replace(/#\w+/g, '').trim()}
+
+${rawDesc.trim() || 'Key insights and operational recommendations from Nick Rakovsky on warehouse operations, dock scheduling, and yard management.'}
+
+### Key Takeaways
+
+- **Operational Focus:** Real-time visibility and structured dock scheduling eliminate carrier congestion and turn dock bottlenecks into predictable flows.
+- **Carrier Communication:** Digital driver check-in and automated notifications keep facility teams aligned and prepared ahead of truck arrivals.
+- **Facility Throughput:** Consistent appointment scheduling prevents detention fees and maximizes dock utilization.
 `;
 
-            // 6. Save to the database
-            // Create a clean filename from the video ID
+            // 6. Save to src/content/videos/
             const fileName = `yt-${videoId}.mdx`;
-            const filePath = path.join('./src/content/posts', fileName);
+            const filePath = path.join(targetDir, fileName);
 
             // Check if file already exists to avoid overwriting edits
             try {
                 await fs.access(filePath);
             } catch {
                 await fs.writeFile(filePath, mdxContent, 'utf8');
-                console.log(`✅ Added ${contentType}: ${title}`);
+                console.log(`✅ Added ${contentType}: ${rawTitle}`);
                 addedCount++;
             }
         }
 
-        console.log(`🎉 Sync Complete! Added ${addedCount} new videos to the database.`);
+        console.log(`🎉 Sync Complete! Added ${addedCount} new videos to src/content/videos.`);
 
     } catch (error) {
         console.error("❌ Failed to sync YouTube data:", error);

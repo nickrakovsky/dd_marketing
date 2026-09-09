@@ -1,0 +1,72 @@
+name: Scheduled Blog Publish
+
+on:
+  schedule:
+    # 15:30 UTC = 8:30 AM PDT (Daylight Saving Time, UTC-7)
+    # 16:30 UTC = 8:30 AM PST (Standard Time, UTC-8)
+    # Runs Monday through Friday
+    - cron: '30 15,16 * * 1-5'
+  workflow_dispatch:
+
+concurrency:
+  group: "scheduled-publish"
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Check Time & Trigger Cloudflare Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Pacific Time (8:30 AM PT with DST)
+        id: check-time
+        run: |
+          node -e "
+            const isManual = '${{ github.event_name }}' === 'workflow_dispatch';
+            if (isManual) {
+              console.log('Manual trigger: bypassing time check.');
+              process.exit(0);
+            }
+            const ptHour = new Intl.DateTimeFormat('en-US', {
+              timeZone: 'America/Los_Angeles',
+              hour: 'numeric',
+              hour12: false
+            }).format(new Date());
+            
+            const ptTime = new Intl.DateTimeFormat('en-US', {
+              timeZone: 'America/Los_Angeles',
+              dateStyle: 'medium',
+              timeStyle: 'medium'
+            }).format(new Date());
+
+            console.log('Current time in America/Los_Angeles:', ptTime);
+
+            if (ptHour === '08' || ptHour === '8') {
+              console.log('Matched 8:30 AM Pacific window. Proceeding with publish trigger.');
+              process.exit(0);
+            } else {
+              console.log('Not in 8:00 AM Pacific hour. Skipping this DST check run.');
+              process.exit(100);
+            }
+          "
+        continue-on-error: true
+
+      - name: Trigger Cloudflare Pages Deploy Hook
+        if: steps.check-time.outcome == 'success'
+        env:
+          HOOK_URL: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK_URL" ]; then
+            echo "::error::Secret CF_PAGES_DEPLOY_HOOK is not set! Please add it in GitHub Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          echo "Sending POST request to Cloudflare Pages deploy hook..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$HOOK_URL")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Successfully triggered Cloudflare Pages build! (HTTP $HTTP_CODE)"
+          else
+            echo "::error::Deploy hook returned HTTP $HTTP_CODE: $BODY"
+            exit 1
+          fi
