@@ -65,7 +65,7 @@
     "@types/marked": "^5.0.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^5.16.6",
+    "astro": "^7.2.8",
     "beasties": "^0.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
