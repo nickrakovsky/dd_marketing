@@ -1,4 +1,8 @@
 ---
+import measurements from '../../data/customer-logo-metrics.json';
+interface Props { variant?: 'default' | 'home-revamp'; }
+const { variant = 'default' } = Astro.props;
+const airy = variant === 'home-revamp';
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 /**
@@ -32,140 +36,95 @@ const logos = [
   { src: "Toyota_Logo.svg",   alt: "Toyota Logo",     cls: "w-[90px] h-[65px] object-contain",  pos: "50% 51%", w: 90, h: 65 },
   { src: "columbia-wide.svg", alt: "Columbia Logo",   cls: "w-[260px] h-[39px] object-contain", pos: "46% 52%", w: 260, h: 39 },
 ];
+const displayLogos = logos.map(logo => {
+  const ink = measurements.find(item => item.src === logo.src);
+  if (!airy || !ink) return { ...logo, inkStyle: undefined };
+  const scale = Math.sqrt(950 / ink.inkArea);
+  const px = (value: number) => `${value.toFixed(3)}px`;
+  return { ...logo, inkStyle: [
+    `--ink-width:${px(ink.width * scale)}`, `--ink-height:${px(ink.height * scale)}`,
+    `--image-width:${px(ink.canvasWidth * scale)}`, `--image-height:${px(ink.canvasHeight * scale)}`,
+    `--image-left:${px(-ink.left * scale)}`, `--image-top:${px(-ink.top * scale)}`,
+    `--optical-y:${px((ink.height / 2 - ink.centroidY) * scale)}`,
+  ].join(';') };
+});
 ---
 
 
-<section class="py-16 bg-[#FFF8E9] overflow-hidden">
+<section class:list={['clients-section py-16 bg-[#FFF8E9] overflow-hidden', { 'clients-airy': airy }]} aria-label="DataDocks customers">
   
   {/* Heading stays in container */}
   <div class="container mx-auto text-center">
-    <h2 class="font-recoleta text-xl md:text-2xl text-[#736146] mb-12 max-w-3xl mx-auto px-4">
+    <h2 class="clients-heading font-recoleta text-xl md:text-2xl text-[#736146] mb-12 max-w-3xl mx-auto px-4">
       Trusted by the world's most relentless supply chains
     </h2>
   </div>
 
   {/* Full-width marquee */}
-  <div id="clients-marquee" class="relative w-full flex overflow-hidden mb-12 opacity-80 cursor-grab active:cursor-grabbing" style="touch-action: pan-y;">
+  <div id="clients-marquee" class="relative w-full flex overflow-hidden mb-12 opacity-80 cursor-grab active:cursor-grabbing" style="touch-action: pan-y;" tabindex="0" role="group" aria-label="Customer logos. Drag or use the left and right arrow keys to browse.">
     <div id="clients-track" class="flex w-max items-center">
       {/* 5x logos for plenty of content in both directions */}
-      {[...logos, ...logos, ...logos, ...logos, ...logos].map((logo) => (
-        <div class="flex-shrink-0 px-8 md:px-12 flex items-center justify-center">
+      {[0, 1, 2, 3, 4].flatMap(copy => displayLogos.map(logo => ({ ...logo, copy }))).map((logo) => (
+        <div class="client-slot flex-shrink-0 px-8 md:px-12 flex items-center justify-center" aria-hidden={logo.copy !== 2 ? 'true' : undefined}>
+          <span class:list={{ 'client-ink': Boolean(logo.inkStyle) }} style={logo.inkStyle}>
           <img
             src={`${basePath}/images/${logo.src}`}
-            alt={logo.alt}
+            alt={logo.copy === 2 ? logo.alt : ''}
             draggable="false"
             loading="lazy"
+            decoding="async"
+            fetchpriority="low"
             width={logo.w}
             height={logo.h}
             class={logo.cls}
             style={`object-position: ${logo.pos};`}
           />
+          </span>
         </div>
       ))}
     </div>
   </div>
 
   {/* Trust statement stays in container */}
-  <div class="container mx-auto text-center">
+  {!airy && <div class="container mx-auto text-center">
     <h2 class="font-recoleta text-xl md:text-2xl text-[#736146] max-w-3xl mx-auto px-4">
       Backed by SOC 2 compliance, we deliver the <strong class="font-bold text-black">most secure</strong> dock scheduling platform in the industry
     </h2>
-  </div>
+  </div>}
     
 </section>
 
+<style>
+  .clients-airy { background: #FFF8EE; border-block: 1px solid #EFE2D2; padding-block: 30px; }
+  .clients-airy .clients-heading { margin-bottom: 24px; color: #000; font-size: 22px; line-height: 1.5; }
+  .clients-airy #clients-marquee { margin-bottom: 0; opacity: 1; }
+  .clients-airy .client-slot { padding-inline: 46px; height: 72px; }
+  .client-ink { position: relative; display: block; width: var(--ink-width); height: var(--ink-height); overflow: hidden; transform: translateY(var(--optical-y)); }
+  .client-ink img { position: absolute; width: var(--image-width); height: var(--image-height); max-width: none; left: var(--image-left); top: var(--image-top); }
+  #clients-marquee:focus-visible { outline: 2px solid #000; outline-offset: -2px; }
+  @media(max-width:600px) { .clients-airy .clients-heading { font-size: 19px; max-width: 32ch; } .clients-airy .client-slot { padding-inline: 36px; } }
+</style>
+
 <script>
-  // JS-driven marquee: constant smooth scroll, drag to scrub, resumes from current position
   const marquee = document.getElementById('clients-marquee');
   const track = document.getElementById('clients-track');
-
   if (marquee && track) {
-    const speed = 0.5; // pixels per frame (~30px/sec at 60fps)
-    let position = 0;
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let dragStartPos = 0;
-    const threshold = 7;
-    let rafId: number;
-    let initialized = false;
-
-    // Use ResizeObserver to read the track width passively.
-    // entry.contentRect.width is provided by the browser after layout completes
-    // and does NOT trigger a forced reflow — unlike track.scrollWidth which
-    // forces synchronous layout when read outside a layout boundary.
-    let setW = 0;
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const newSetW = entry.contentRect.width / 5;
-        if (newSetW === setW) return;
-        setW = newSetW;
-        if (!initialized && setW > 0) {
-          // First measurement: position two sets to the left so there's content
-          // in both directions before the user interacts.
-          position = -(setW * 2);
-          track.style.transform = `translateX(${position}px)`;
-          initialized = true;
-        }
-      }
+    let pending: Promise<void> | undefined;
+    let dispose: (() => void) | undefined;
+    let removed = false;
+    const load = () => pending ??= import('../../lib/client-marquee').then(({ initClientMarquee }) => {
+      if (!removed) dispose = initClientMarquee(marquee, track);
+    }).catch(() => { pending = undefined; });
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) void load();
     });
-    ro.observe(track);
-
-    const animate = () => {
-      if (!isDragging && setW > 0) {
-        position -= speed;
-        // Wrap around: when we've scrolled past 3 sets, jump back by 1 set
-        if (position < -(setW * 4)) {
-          position += setW;
-        }
-        // If dragged right past the start, wrap forward
-        if (position > -setW) {
-          position -= setW;
-        }
-        track.style.transform = `translateX(${position}px)`;
-      }
-      rafId = requestAnimationFrame(animate);
-    };
-
-    rafId = requestAnimationFrame(animate);
-
-    marquee.addEventListener('pointerdown', (e) => {
-      startX = e.clientX;
-      startY = e.clientY;
-      dragStartPos = position;
-      marquee.setPointerCapture(e.pointerId);
-
-      // Desktop: immediate drag and prevent text selection
-      if (e.pointerType === 'mouse') {
-        isDragging = true;
-        e.preventDefault();
-      }
-    });
-
-    marquee.addEventListener('pointermove', (e) => {
-      if (isDragging) {
-        const dx = e.clientX - startX;
-        position = dragStartPos + dx;
-        track.style.transform = `translateX(${position}px)`;
-      } else if (e.pointerType !== 'mouse') {
-        const dx = Math.abs(e.clientX - startX);
-        const dy = Math.abs(e.clientY - startY);
-        if (dx > threshold && dx > dy) {
-          isDragging = true;
-          // IMPORTANT: re-sync start points to avoid jump from animation progress
-          dragStartPos = position;
-          startX = e.clientX;
-        }
-      }
-    });
-
-    marquee.addEventListener('pointerup', () => {
-      isDragging = false;
-      // Animation loop continues automatically from current position
-    });
-
-    marquee.addEventListener('pointercancel', () => {
-      isDragging = false;
-    });
+    observer.observe(marquee);
+    marquee.addEventListener('pointerdown', load, { once: true });
+    marquee.addEventListener('focusin', load, { once: true });
+    document.addEventListener('astro:before-swap', () => {
+      removed = true;
+      observer.disconnect();
+      dispose?.();
+    }, { once: true });
   }
 </script>

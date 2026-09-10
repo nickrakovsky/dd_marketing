@@ -1,10 +1,13 @@
 ---
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
 
+interface Props { captureFirst?: boolean; tabletInline?: boolean; }
+const { captureFirst = false, tabletInline = false } = Astro.props;
+
 const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 ---
 
-<section class="py-10 md:py-[3.25rem] bg-[#FF5507]">
+<section class="py-10 md:py-[3.25rem] bg-[#FF5507]" data-tablet-inline={tabletInline || undefined}>
   <div class="container mx-auto px-6 md:px-8">
     <div class="w-full text-center h-full flex flex-col justify-center items-center">
       
@@ -13,14 +16,15 @@ const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`
         Horizontal centralization handled via inline-block text-center wrapper on mobile/tablet, 
         and text-left left-flow exclusively on widescreen elements!
       */}
-      <div class="inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
+      <div class="cta-heading-group inline-block text-center min-[1020px]:text-left max-w-full w-full min-[1020px]:w-auto">
         <h2 class="font-bruta text-[clamp(1.6rem,4vw,3.1rem)] uppercase leading-tight text-[#FFF8E9]">
-          <span class="inline min-[1020px]:block">Find out for yourself what DataDocks can do</span>
-          <span class="inline min-[1020px]:hidden"> </span>
-          <span class="inline min-[1020px]:inline-flex min-[1020px]:items-center">
+          <span class="cta-first-line inline min-[1020px]:block">Find out for yourself what DataDocks can do</span>
+          <span class="cta-line-space inline min-[1020px]:hidden"> </span>
+          <span class="cta-second-line inline min-[1020px]:inline-flex min-[1020px]:items-center">
             <span class="min-[1020px]:translate-y-[0.108em]">for your operations</span>
             <form
               id="cta-bento-form"
+              data-demo-capture={captureFirst || undefined}
               class="inline-flex flex-col sm:flex-row items-stretch sm:items-center justify-center w-full min-[1020px]:w-auto min-[1020px]:ml-5 mt-6 min-[1020px]:mt-0 gap-0"
             >
           <input
@@ -46,11 +50,26 @@ const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`
   </div>
 </section>
 
+<style>
+  /* Opt-in for the prototype; keep the existing site's banner unchanged. */
+  @media (min-width: 768px) {
+    [data-tablet-inline] .cta-heading-group { width: min(100%, 1020px); text-align: left; container-type: inline-size; }
+    [data-tablet-inline] h2 { font-size: clamp(26px, 4.9cqw, 50px); }
+    [data-tablet-inline] .cta-first-line { display: block; }
+    [data-tablet-inline] .cta-line-space { display: none; }
+    [data-tablet-inline] .cta-second-line { display: flex; width: 100%; align-items: center; gap: 20px; margin-top: 12px; }
+    [data-tablet-inline] .cta-second-line > span { flex-shrink: 0; transform: translateY(.06em); }
+    [data-tablet-inline] form { flex: 1; min-width: 0; width: auto; height: 1.15em; margin: 0; }
+    [data-tablet-inline] input { flex: 1; width: 0; min-width: 0; height: 100%; padding-inline: 16px; font-size: 16px; }
+    [data-tablet-inline] button { height: 100%; padding-inline: 20px; font-size: 14px; }
+  }
+</style>
+
 <script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
   (function() {
     function attachCtaForm() {
       var form = document.getElementById('cta-bento-form');
-      if (!form || form.dataset.bound) return;
+      if (!form || form.dataset.bound || form.hasAttribute('data-demo-capture')) return;
       form.dataset.bound = 'true';
       form.addEventListener('submit', function(e) {
         e.preventDefault();

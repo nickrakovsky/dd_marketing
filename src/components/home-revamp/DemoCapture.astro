@@ -1,0 +1,127 @@
+---
+import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
+---
+<dialog id="demo-capture-dialog" aria-labelledby="demo-capture-title" data-booking-url={CALENDLY_BOOKING_URL} data-booking-params={CALENDLY_BRAND_PARAMS}>
+  <button class="dialog-close" type="button" aria-label="Close email form" data-close-demo>×</button>
+  <h2 id="demo-capture-title">LET’S LOOK AT YOUR OPERATION.</h2>
+  <p>Enter your email, then choose a time for your demo.</p>
+  <form data-demo-capture>
+    <label for="demo-dialog-email">Email address</label>
+    <div class="dialog-fields">
+      <input id="demo-dialog-email" type="email" name="email" autocomplete="email" placeholder="Enter your email" required />
+      <button type="submit">Book a demo</button>
+    </div>
+    <p class="capture-status" data-capture-status role="status" aria-live="polite"></p>
+  </form>
+</dialog>
+
+<script>
+  import { captureDemoLead } from '../../lib/home-demo-capture';
+
+  const dialog = document.querySelector<HTMLDialogElement>('#demo-capture-dialog');
+  if (dialog) {
+    const marketing = window as typeof window & {
+      ddGetEmail?: () => string;
+      ddSetEmail?: (email: string) => void;
+      ddGetAttribution?: () => { first: Record<string, unknown>; last: Record<string, unknown> };
+      getBentoVisitorUuid?: () => string | null;
+      ddOpenCalendly?: (params: string) => void;
+      bento?: { identify?: (email: string) => void };
+    };
+    let trigger: HTMLElement | null = null;
+    const close = () => { dialog.close(); trigger?.focus(); };
+    dialog.querySelector('[data-close-demo]')?.addEventListener('click', close);
+    dialog.addEventListener('click', event => {
+      if (event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
+    });
+
+    // Every link remains an ordinary anchor to the visible form without JS,
+    // including when opened in another tab. No link bypasses email capture.
+    document.addEventListener('click', event => {
+      if (!(event.target instanceof Element)) return;
+      const link = event.target.closest<HTMLAnchorElement>('a[href="#book-demo"]');
+      if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      if (typeof dialog.showModal !== 'function') return;
+      event.preventDefault();
+      trigger = link;
+      const input = dialog.querySelector<HTMLInputElement>('input[name="email"]');
+      if (input && !input.value) input.value = marketing.ddGetEmail?.() || '';
+      dialog.showModal();
+      input?.focus();
+    });
+
+    document.querySelectorAll<HTMLFormElement>('form[data-demo-capture]').forEach((form, index) => {
+      const input = form.querySelector<HTMLInputElement>('input[name="email"]');
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (!input || !button) return;
+      input.setAttribute('aria-label', 'Email address');
+      input.autocomplete = 'email';
+      // The shared bottom banner keeps its original markup and appearance.
+      let status = form.querySelector<HTMLElement>('[data-capture-status]');
+      if (!status) {
+        status = document.createElement('p');
+        status.className = 'capture-status capture-status-banner';
+        status.setAttribute('role', 'status');
+        status.setAttribute('aria-live', 'polite');
+        form.after(status);
+      }
+      status.id = `demo-capture-status-${index}`;
+      input.setAttribute('aria-describedby', status.id);
+      const statusNode = status;
+      const originalLabel = button.textContent;
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (button.disabled || !form.reportValidity()) return;
+        button.disabled = true;
+        form.setAttribute('aria-busy', 'true');
+        button.textContent = 'One moment…';
+        statusNode.textContent = '';
+        let landingPage = window.location.href;
+        try { landingPage = sessionStorage.getItem('dd_landing_page') || landingPage; } catch { /* Storage is optional. */ }
+        try {
+          const email = await captureDemoLead(input.value, {
+            source: window.location.pathname,
+            landingPage,
+            visitorUuid: marketing.getBentoVisitorUuid?.(),
+            attribution: marketing.ddGetAttribution?.(),
+          });
+          // Analytics availability must not block a successfully saved lead.
+          try { marketing.ddSetEmail?.(email); marketing.bento?.identify?.(email); } catch { /* The server has saved this lead. */ }
+          if (dialog.open) dialog.close();
+          const params = new URLSearchParams(dialog.dataset.bookingParams);
+          params.set('email', email);
+          if (marketing.ddOpenCalendly) marketing.ddOpenCalendly(params.toString());
+          else window.location.assign(`${dialog.dataset.bookingUrl}?${params}`);
+        } catch {
+          statusNode.textContent = 'We couldn’t save your email. Please try again.';
+          input.focus();
+        } finally {
+          button.disabled = false;
+          button.textContent = originalLabel;
+          form.removeAttribute('aria-busy');
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  dialog { width: min(540px, calc(100% - 40px)); max-height: calc(100dvh - 40px); padding: 42px 32px 30px; border: 1px solid #000; background: #FFF8EE; color: #000; }
+  dialog::backdrop { background: #0009; }
+  h2 { font-family: Bruta, Impact, sans-serif; font-size: 46px; line-height: 1; margin: 0 0 18px; }
+  p, label { font-family: 'DD-Recoleta', Georgia, serif; font-size: 17px; line-height: 1.6; }
+  label { display: block; margin: 22px 0 8px; }
+  .dialog-fields { display: flex; }
+  input { width: 100%; min-width: 0; height: 52px; background: #EFE2D2; color: #000; border: 1px solid #000; padding: 12px; font: 17px 'DD-Recoleta', Georgia, serif; }
+  button[type=submit] { flex-shrink: 0; background: #000; color: #fff; padding: 12px 18px; font: 17px 'DD-Recoleta', Georgia, serif; }
+  .dialog-close { position: absolute; right: 12px; top: 10px; width: 32px; height: 32px; font: 28px Inter, sans-serif; }
+  :global(.capture-status) { font: 14px/1.5 Inter, sans-serif; text-transform: none; letter-spacing: normal; }
+  :global(.capture-status:empty) { display: none; }
+  :global(.capture-status:not(:empty)) { margin-top: 10px; }
+  :global(.capture-status-banner) { color: #fff; }
+  button:disabled { opacity: .75; cursor: wait; }
+  button:focus-visible, input:focus-visible { outline: 2px solid #000; outline-offset: 3px; }
+  @media(max-width:460px) { dialog { padding: 40px 24px 24px; } .dialog-fields { flex-direction: column; } }
+</style>

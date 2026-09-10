@@ -74,6 +74,10 @@ export default defineConfig({
         'astro:config:setup': ({ injectRoute, command }) => {
           if (command === 'dev') {
             injectRoute({
+              pattern: '/index/home-revamp',
+              entrypoint: './src/offline-pages/home-revamp.astro'
+            });
+            injectRoute({
               pattern: '/sales-one-pager',
               entrypoint: './src/offline-pages/sales-one-pager.astro'
             });
