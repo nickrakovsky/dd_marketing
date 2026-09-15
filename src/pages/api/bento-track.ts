@@ -23,12 +23,24 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   // ---------- 1. Parse request body ----------
+  type Touch = {
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+    gclid?: string;
+    referrer?: string;
+    landing?: string;
+  };
   let body: {
     email?: string;
     event?: string;
     source?: string;
     landingPage?: string;
     visitorUuid?: string;
+    firstTouch?: Touch;
+    lastTouch?: Touch;
   };
   try {
     body = await request.json();
@@ -39,7 +51,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
-  const { email, event, source, landingPage, visitorUuid } = body;
+  const { email, event, source, landingPage, visitorUuid, firstTouch, lastTouch } = body;
   if (!email || !event) {
     return new Response(
       JSON.stringify({ ok: false, error: 'Missing email or event' }),
@@ -66,6 +78,30 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // Per Bento Tanuki & Docs:
   // - 'landing_page_url' is a reserved person attribute and should be top-level.
   // - 'visitor_id' is the root key used to stitch events to the anonymous session.
+  // Strip empty/undefined values so we never overwrite a populated
+  // attribute with a blank one on a subsequent event.
+  const compact = (obj: Record<string, unknown>) => {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (v !== undefined && v !== null && v !== '') out[k] = v;
+    }
+    return out;
+  };
+  const fields = compact({
+    source: source || "/",
+    utm_source: firstTouch?.utm_source,
+    utm_medium: firstTouch?.utm_medium,
+    utm_campaign: firstTouch?.utm_campaign,
+    utm_term: firstTouch?.utm_term,
+    utm_content: firstTouch?.utm_content,
+    gclid: firstTouch?.gclid,
+    referrer: firstTouch?.referrer,
+    first_landing: firstTouch?.landing,
+    last_utm_source: lastTouch?.utm_source,
+    last_utm_medium: lastTouch?.utm_medium,
+    last_utm_campaign: lastTouch?.utm_campaign,
+  });
+
   const bentoPayload = {
     events: [
       {
@@ -73,11 +109,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         email: email,
         // Top-level person attributes for built-in mapping and identity stitching
         landing_page_url: landingPage,
-        visitor_id: visitorUuid, 
-        fields: {
-          // Custom tracking fields stay in the fields object
-          source: source || "/",
-        },
+        visitor_id: visitorUuid,
+        fields,
       },
     ],
   };

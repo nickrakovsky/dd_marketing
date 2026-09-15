@@ -17,6 +17,14 @@ interface Props {
     schemaData?: {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
+        collectionItems?: { name: string; url: string }[];
+        newsArticle?: {
+            headline: string;
+            datePublished: Date;
+            dateModified?: Date;
+            section: string;
+            citations: string[];
+        };
     };
     articleData?: {
         author: string;
@@ -97,7 +105,7 @@ const graph: any[] = [
   {
     "@type": pathname === '/' ? "WebPage"
            : pathname === '/about' ? "AboutPage"
-           : pathname === '/posts' ? "CollectionPage"
+           : pathname === '/posts' || pathname === '/news' ? "CollectionPage"
            : "ItemPage",
     "@id": canonicalURL.toString(),
     "url": canonicalURL.toString(),
@@ -187,7 +195,7 @@ if (breadcrumbItems.length > 0) {
         let name = path.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
         if (index === arr.length - 1) {
           // Use short labels for known collection/section pages, full title for leaf pages
-          const shortLabels: Record<string, string> = { 'posts': 'Blog', 'benefits': 'Benefits', 'integrations': 'Integrations', 'about': 'About' };
+          const shortLabels: Record<string, string> = { 'posts': 'Blog', 'news': 'News & updates', 'benefits': 'Benefits', 'integrations': 'Integrations', 'about': 'About' };
           name = shortLabels[path] || title;
         }
         return {
@@ -198,6 +206,38 @@ if (breadcrumbItems.length > 0) {
         };
       })
     ]
+  });
+}
+
+if (schemaData?.collectionItems) {
+  graph.push({
+    "@type": "ItemList",
+    "@id": `${canonicalURL.toString()}#items`,
+    "mainEntityOfPage": { "@id": canonicalURL.toString() },
+    "itemListElement": schemaData.collectionItems.map((item, index) => ({
+      "@type": "ListItem", "position": index + 1,
+      "name": item.name, "url": new URL(item.url, Astro.site).toString(),
+    })),
+  });
+}
+
+if (schemaData?.newsArticle) {
+  const article = schemaData.newsArticle;
+  graph.push({
+    "@type": "NewsArticle",
+    "@id": `${canonicalURL.toString()}#article`,
+    "mainEntityOfPage": { "@id": canonicalURL.toString() },
+    "headline": article.headline,
+    "description": description,
+    "image": socialImageURL.toString(),
+    "datePublished": article.datePublished.toISOString(),
+    "dateModified": (article.dateModified || article.datePublished).toISOString(),
+    "author": { "@id": "https://datadocks.com/#organization" },
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "articleSection": article.section,
+    "citation": article.citations,
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
   });
 }
 

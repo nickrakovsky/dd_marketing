@@ -1,0 +1,214 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import NewsArtwork from '../../components/news/NewsArtwork.astro';
+import DemoCapture from '../../components/home-revamp/DemoCapture.astro';
+import { getNewsItems } from '../../lib/news';
+import '../../styles/news.css';
+
+const items = await getNewsItems();
+const highlights = items.filter((item) => item.featured && item.kind === 'award').slice(0, 3);
+const kindOrder = ['award', 'press', 'interview', 'company', 'product-update'];
+const kinds = Array.from(new Map(items.map((item) => [item.kind, item.kindLabel])).entries())
+  .sort(([a], [b]) => kindOrder.indexOf(a) - kindOrder.indexOf(b));
+const years = Array.from(new Set(items.map((item) => item.year)))
+  .sort((a, b) => a === 'undated' ? 1 : b === 'undated' ? -1 : Number(b) - Number(a));
+const artworkVariants = ['orange', 'paper', 'ink'] as const;
+---
+
+<Layout
+  title="DataDocks News & Updates | Awards, Press & Company News"
+  description="The latest from DataDocks: industry awards, press coverage, interviews, and company updates from our dock scheduling and yard management team."
+  schemaData={{ collectionItems: items.map((item) => ({ name: item.title, url: item.href })) }}
+>
+  <a class="news-skip-link" href="#main-content">Skip to news and updates</a>
+  <Navigation demoHref="#book-demo" />
+  <main class="news-page" id="main-content">
+    <div class="news-shell">
+      <header class="news-hero">
+        <div class="news-hero__heading">
+          <p class="news-eyebrow"><span class="news-dot" aria-hidden="true"></span>Inside DataDocks</p>
+          <h1>News <span class="news-hero__amp">&</span><br />updates<span class="news-hero__period">.</span></h1>
+        </div>
+        <div class="news-hero__intro">
+          <p>Industry recognition, conversations, and the latest from the team behind DataDocks.</p>
+          <a href="#all-news" class="news-text-link">Explore all updates <span aria-hidden="true">↓</span></a>
+        </div>
+      </header>
+
+      {highlights.length > 0 && (
+        <section class="news-highlights" aria-labelledby="recognition-title">
+          <div class="news-section-heading">
+            <h2 id="recognition-title">In the spotlight</h2>
+            <p>Selected industry recognition</p>
+          </div>
+          <div class="news-highlights__grid">
+            {highlights.map((item, index) => (
+              <article class="news-highlight">
+                <a href={item.href} class="news-highlight__link" rel={item.external ? 'noopener noreferrer' : undefined} aria-label={item.external ? `${item.title} — read on ${item.sourceName}` : undefined}>
+                  <div class="news-highlight__art">
+                    <NewsArtwork
+                      sourceName={item.sourceName}
+                      program={item.program}
+                      year={item.year}
+                      awardCategory={item.awardCategory}
+                      variant={artworkVariants[index]}
+                    />
+                  </div>
+                  <div class="news-highlight__copy">
+                    <div class="news-meta"><span>{item.kindLabel}</span><span aria-hidden="true">/</span><time datetime={item.datetime}>{item.dateLabel}</time></div>
+                    <h3>{item.title}</h3>
+                    <p>{item.summary}</p>
+                    <span class="news-highlight__cta">{item.external ? `Read on ${item.sourceName}` : 'Read the update'}<span aria-hidden="true">{item.external ? '↗' : '→'}</span></span>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section class="news-archive" id="all-news" aria-labelledby="all-news-title" data-news-archive>
+        <div class="news-section-heading news-section-heading--archive">
+          <h2 id="all-news-title">All news & updates</h2>
+          <p class="news-results-count" role="status" aria-live="polite" aria-atomic="true" data-news-count>{items.length} {items.length === 1 ? 'update' : 'updates'}</p>
+        </div>
+
+        <form class="news-filters" data-news-filters hidden aria-label="Filter news and updates">
+          <fieldset class="news-filter-kinds">
+            <legend class="news-sr-only">Filter by update type</legend>
+            <button type="button" class="news-filter-pill" data-news-kind="all" aria-pressed="true">All updates</button>
+            {kinds.map(([kind, label]) => (
+              <button type="button" class="news-filter-pill" data-news-kind={kind} aria-pressed="false">{label}</button>
+            ))}
+          </fieldset>
+          <div class="news-filter-year">
+            <label for="news-year">Year</label>
+            <select id="news-year" name="year" data-news-year>
+              <option value="all">All years</option>
+              {years.map((year) => <option value={year}>{year === 'undated' ? 'Date not listed' : year}</option>)}
+            </select>
+          </div>
+          <button type="button" class="news-filter-reset" data-news-reset hidden>Clear filters <span aria-hidden="true">×</span></button>
+        </form>
+
+        <div class="news-list">
+          {items.map((item) => (
+            <article class="news-row" data-news-item data-kind={item.kind} data-year={item.year}>
+              <div class="news-row__date"><time datetime={item.datetime}>{item.dateLabel}</time></div>
+              <div class="news-row__body">
+                <div class="news-row__metadata"><span class="news-kind-label">{item.kindLabel}</span><span class="news-row__source">{item.sourceName}</span></div>
+                <h3><a href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-label={item.external ? `${item.title} — read on ${item.sourceName}` : undefined}>{item.title}<span class="news-row__arrow" aria-hidden="true">{item.external ? '↗' : '→'}</span></a></h3>
+                <p>{item.summary}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div class="news-empty" data-news-empty hidden>
+          <h3>No updates match these filters.</h3>
+          <p>Try another type or year, or return to all updates.</p>
+          <button type="button" class="news-text-link" data-news-reset>Show all updates <span aria-hidden="true">↗</span></button>
+        </div>
+        <p class="news-archive-note">Dates refer to original coverage or announcements. Project years are noted.</p>
+      </section>
+    </div>
+
+    <section class="news-more" aria-labelledby="news-more-title">
+      <div class="news-shell news-more__layout">
+        <div class="news-more__intro">
+          <p class="news-eyebrow">Keep exploring</p>
+          <h2 id="news-more-title">There’s more<br />to the story.</h2>
+        </div>
+        <div class="news-more__links">
+          <a class="news-more-link" href="/posts"><div><h3>Resources</h3><p>Practical guides and insights for operations teams.</p></div><span aria-hidden="true">→</span></a>
+          <a class="news-more-link" href="/about"><div><h3>About DataDocks</h3><p>The company behind the platform.</p></div><span aria-hidden="true">→</span></a>
+          <a class="news-more-link" href="mailto:info@datadocks.com"><div><h3>Press inquiries</h3><p>Get in touch at info@datadocks.com.</p></div><span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <DemoCapture standalone />
+  <Footer />
+</Layout>
+
+<script>
+  function initNewsFilters() {
+    const archive = document.querySelector<HTMLElement>('[data-news-archive]');
+    if (!archive || archive.dataset.initialized === 'true') return;
+    const form = archive.querySelector<HTMLFormElement>('[data-news-filters]');
+    const yearSelect = archive.querySelector<HTMLSelectElement>('[data-news-year]');
+    const count = archive.querySelector<HTMLElement>('[data-news-count]');
+    const empty = archive.querySelector<HTMLElement>('[data-news-empty]');
+    if (!form || !yearSelect || !count || !empty) return;
+
+    archive.dataset.initialized = 'true';
+    const rows = Array.from(archive.querySelectorAll<HTMLElement>('[data-news-item]'));
+    const buttons = Array.from(archive.querySelectorAll<HTMLButtonElement>('[data-news-kind]'));
+    const resets = Array.from(archive.querySelectorAll<HTMLButtonElement>('[data-news-reset]'));
+    const knownKinds = new Set(buttons.map((button) => button.dataset.newsKind));
+    const knownYears = new Set(Array.from(yearSelect.options).map((option) => option.value));
+    let kind = 'all';
+
+    function readAddress() {
+      const params = new URL(window.location.href).searchParams;
+      const requestedKind = params.get('kind') || 'all';
+      const requestedYear = params.get('year') || 'all';
+      kind = knownKinds.has(requestedKind) ? requestedKind : 'all';
+      yearSelect!.value = knownYears.has(requestedYear) ? requestedYear : 'all';
+    }
+
+    function applyFilters(updateAddress = false) {
+      const year = yearSelect!.value;
+      let visible = 0;
+      rows.forEach((row) => {
+        const match = (kind === 'all' || row.dataset.kind === kind) && (year === 'all' || row.dataset.year === year);
+        row.hidden = !match;
+        if (match) visible += 1;
+      });
+      buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.newsKind === kind)));
+      const filtered = kind !== 'all' || year !== 'all';
+      count!.textContent = filtered ? `${visible} of ${rows.length} updates` : `${visible} ${visible === 1 ? 'update' : 'updates'}`;
+      empty!.hidden = visible !== 0;
+      const toolbarReset = form!.querySelector<HTMLButtonElement>('[data-news-reset]');
+      if (toolbarReset) toolbarReset.hidden = !filtered;
+
+      if (updateAddress) {
+        const url = new URL(window.location.href);
+        if (kind === 'all') url.searchParams.delete('kind');
+        else url.searchParams.set('kind', kind);
+        if (year === 'all') url.searchParams.delete('year');
+        else url.searchParams.set('year', year);
+        window.history.replaceState(window.history.state, '', url);
+      }
+    }
+
+    form.addEventListener('submit', (event) => event.preventDefault());
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      kind = button.dataset.newsKind || 'all';
+      applyFilters(true);
+    }));
+    yearSelect.addEventListener('change', () => applyFilters(true));
+    resets.forEach((button) => button.addEventListener('click', () => {
+      kind = 'all';
+      yearSelect.value = 'all';
+      applyFilters(true);
+      buttons[0]?.focus();
+    }));
+    const onPopState = () => {
+      if (!archive.isConnected) return;
+      readAddress();
+      applyFilters();
+    };
+    window.addEventListener('popstate', onPopState);
+    document.addEventListener('astro:before-swap', () => window.removeEventListener('popstate', onPopState), { once: true });
+    readAddress();
+    applyFilters();
+    form.hidden = false;
+  }
+
+  initNewsFilters();
+  document.addEventListener('astro:page-load', initNewsFilters);
+</script>
