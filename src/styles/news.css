@@ -26,16 +26,22 @@
 .news-section-heading h2 { margin: 0; font: 600 23px/1.2 DD-Recoleta, Recoleta-Fallback, Georgia, serif; letter-spacing: -.025em; }
 .news-section-heading > p { margin: 0; color: var(--news-muted); font-size: 14px; line-height: 1.5; }
 .news-highlights__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 25px; }
-.news-highlight { min-width: 0; }
-.news-highlight__link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
-.news-highlight__art { min-height: 330px; }
+.news-highlight { display: flex; flex-direction: column; min-width: 0; }
+.news-highlight__art { display: block; min-height: 330px; transition: filter .18s ease; }
 .news-highlight__copy { display: flex; flex-direction: column; flex: 1; padding: 22px 0 0; }
 .news-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; margin-bottom: 14px; color: var(--news-muted); font-size: 14px; font-weight: 400; line-height: 1.5; }
 .news-meta > span:first-child { color: var(--news-ink); font-weight: 600; }
 .news-highlight__copy > p { margin: 0 0 20px; color: var(--news-muted); font: 400 16px/1.65 Inter, system-ui, sans-serif; }
 .news-highlight h3 { margin: 0 0 12px; font: 600 clamp(21px, 1.8vw, 25px)/1.27 DD-Recoleta, Recoleta-Fallback, Georgia, serif; letter-spacing: -.035em; text-wrap: pretty; }
-.news-highlight__cta { display: inline-flex; align-items: center; gap: 10px; margin-top: auto; min-height: 44px; font: 600 15px/1.4 Inter, system-ui, sans-serif; }
-.news-highlight__link:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.news-highlight__cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 10px; margin-top: auto; min-height: 44px; font: 600 15px/1.4 Inter, system-ui, sans-serif; }
+.news-card-title, .news-card-action { color: inherit; text-decoration: none; }
+.news-card-title { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 4px; transition: text-decoration-color .18s ease; }
+.news-card-action { transition: color .18s ease; }
+.news-card-action .link-icon { transition: transform .18s ease; }
+[data-linked-card]:has(a:hover, a:focus-visible) .news-card-title { text-decoration-color: currentColor; }
+[data-linked-card]:has(a:hover, a:focus-visible) .news-card-action { color: #a53600; }
+[data-linked-card]:has(a:hover, a:focus-visible) .news-card-action .link-icon { transform: translateX(2px); }
+[data-linked-card]:has(a:hover, a:focus-visible) .news-highlight__art { filter: brightness(.96); }
 .news-archive { padding-block: 82px 76px; scroll-margin-top: 24px; }
 .news-section-heading--archive { padding-bottom: 24px; }
 .news-results-count { font-variant-numeric: tabular-nums; }
@@ -56,7 +62,6 @@
 .news-kind-label { font-weight: 600; }
 .news-row__source { color: var(--news-muted); }
 .news-row h3 { margin: 0 0 10px; max-width: 880px; font: 600 clamp(21px, 2vw, 28px)/1.27 DD-Recoleta, Recoleta-Fallback, Georgia, serif; letter-spacing: -.035em; text-wrap: pretty; }
-.news-row__body:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .news-row__action { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; min-height: 32px; font: 600 15px/1.4 Inter, system-ui, sans-serif; }
 .news-row__body > p { max-width: 815px; margin: 0; font: 400 16px/1.65 Inter, system-ui, sans-serif; color: var(--news-muted); }
 .news-empty { border-block: 1px solid var(--news-line); padding: 50px 0; }

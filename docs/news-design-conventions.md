@@ -31,6 +31,13 @@ Always pair external icons with a visible destination label, such as **Read on C
 <a href="mailto:info@datadocks.com">Email our team <LinkIcon kind="email" /></a>
 ```
 
+## Card interactions
+
+- Artwork, headlines and action labels are separate native links to the same destination. Body copy, categories, sources and dates remain normal, selectable text.
+- Hovering or keyboard-focusing any one link gives the linked parts a shared, mild response: a fine headline underline, a slightly darker artwork, and an accented action label with a small chevron movement.
+- Trigger the shared state with `:has(a:hover, a:focus-visible)`, not by hovering the whole card. Body-text hover and selection must not activate the links.
+- Keep a visible focus outline on the focused link, meaningful accessible names for artwork/action links, and reduced-motion support. Do not use click handlers or invisible link overlays on the card wrapper.
+
 ## Color and decoration
 
 - Use white text on official orange, with black on the light paper backgrounds.
