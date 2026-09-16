@@ -182,7 +182,42 @@ const glossaryCollection = defineCollection({
     })
 });
 
+const newsCollection = defineCollection({
+    type: 'content',
+    schema: z.object({
+        title: z.string(),
+        summary: z.string(),
+        kind: z.enum(['award', 'press', 'interview', 'company', 'product-update']),
+        format: z.enum(['article', 'video', 'audio']).default('article'),
+        destination: z.enum(['internal', 'external']),
+        status: z.enum(['published', 'draft']).default('draft'),
+        // Source/event dates may be exact, year-only, or unknown. Never infer a day.
+        eventDate: z.preprocess(value => value === '' || value == null ? undefined : value,
+            z.string().regex(/^\d{4}(-\d{2}-\d{2})?$/).refine(value => {
+                if (value.length === 4) return true;
+                const parsed = new Date(`${value}T12:00:00Z`);
+                return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
+            }, 'Use a real calendar date').optional()),
+        dateContext: z.string().default('Published'),
+        publishedAt: z.coerce.date(),
+        updatedAt: z.preprocess(value => value === '' || value == null ? undefined : value, z.coerce.date().optional()),
+        sourceName: z.string().default('DataDocks'),
+        sourceUrl: z.preprocess(value => value === '' || value == null ? undefined : value, z.string().url().optional()),
+        actionLabel: z.string().optional(),
+        sources: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
+        featured: z.boolean().default(false),
+        program: z.string().optional(),
+        awardCategory: z.string().optional(),
+        relatedLinks: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
+    }).superRefine((data, context) => {
+        if (data.destination === 'external' && !data.sourceUrl) {
+            context.addIssue({ code: z.ZodIssueCode.custom, path: ['sourceUrl'], message: 'External stories need a source URL.' });
+        }
+    })
+});
+
 export const collections = {
+    'news': newsCollection,
     'posts': postsCollection,
     'videos': videosCollection,
     'features': featuresCollection,
@@ -190,4 +225,4 @@ export const collections = {
     'settings': settingsCollection,
     'micro-app': microAppCollection,
     'glossary': glossaryCollection,
-};
+};

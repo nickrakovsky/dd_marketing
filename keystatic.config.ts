@@ -146,6 +146,49 @@ export default config({
 
     // 2. COLLECTIONS (Repeating items like Blog Posts)
     collections: {
+        news: collection({
+            label: 'News & updates',
+            slugField: 'title',
+            path: 'src/content/news/*',
+            format: { contentField: 'content' },
+            schema: {
+                title: fields.slug({ name: { label: 'Title' } }),
+                summary: fields.text({ label: 'Summary', multiline: true, validation: { isRequired: true } }),
+                kind: fields.select({ label: 'Story type', options: [
+                    { label: 'Award', value: 'award' },
+                    { label: 'Press mention', value: 'press' },
+                    { label: 'Interview', value: 'interview' },
+                    { label: 'Company news', value: 'company' },
+                    { label: 'Product update', value: 'product-update' },
+                ], defaultValue: 'company' }),
+                format: fields.select({ label: 'Format', options: [
+                    { label: 'Article', value: 'article' },
+                    { label: 'Video', value: 'video' },
+                    { label: 'Audio', value: 'audio' },
+                ], defaultValue: 'article' }),
+                destination: fields.select({ label: 'Card links to', options: [
+                    { label: 'A DataDocks story page', value: 'internal' },
+                    { label: 'The original source', value: 'external' },
+                ], defaultValue: 'external' }),
+                status: fields.select({ label: 'Status', options: [
+                    { label: 'Draft', value: 'draft' },
+                    { label: 'Published', value: 'published' },
+                ], defaultValue: 'draft' }),
+                eventDate: fields.text({ label: 'Original publication or event date', description: 'YYYY-MM-DD, or YYYY if only the year is known. Leave blank when unknown.' }),
+                dateContext: fields.text({ label: 'Date label', defaultValue: 'Published' }),
+                publishedAt: fields.date({ label: 'DataDocks page publication date', validation: { isRequired: true } }),
+                updatedAt: fields.date({ label: 'DataDocks page updated date' }),
+                sourceName: fields.text({ label: 'Publication, organization or partner', defaultValue: 'DataDocks', validation: { isRequired: true } }),
+                sourceUrl: fields.url({ label: 'Primary source URL', description: 'Required for external cards. Original DataDocks updates do not need an external source.' }),
+                actionLabel: fields.text({ label: 'Card link label', description: 'Optional. Describe the destination when the default reading label does not fit, such as a partner’s design project.' }),
+                sources: fields.array(fields.object({ label: fields.text({ label: 'Source name' }), url: fields.url({ label: 'URL' }) }), { label: 'Additional sources', itemLabel: props => props.fields.label.value }),
+                featured: fields.checkbox({ label: 'Feature in award highlights', defaultValue: false }),
+                program: fields.text({ label: 'Award program name' }),
+                awardCategory: fields.text({ label: 'Award category' }),
+                relatedLinks: fields.array(fields.object({ label: fields.text({ label: 'Link label' }), url: fields.text({ label: 'Internal URL' }) }), { label: 'Related resources', itemLabel: props => props.fields.label.value }),
+                content: fields.mdx({ label: 'Original story (for DataDocks pages)', options: { formatting: true, links: true, lists: true, headings: [2, 3] } }),
+            },
+        }),
         posts: collection({
             label: 'Blog Posts',
             slugField: 'title',
