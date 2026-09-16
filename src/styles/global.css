@@ -37,7 +37,7 @@
     
     --ring: 19 100% 51%; 
 
-    --radius: 0.75rem;
+    --radius: 0;
 
     /* UPDATED: Hero Gradient = Orange -> Light Beige (#FFF8E9) */
     /* Keeps the top 25% solid orange, then fades to the page background color */
@@ -107,5 +107,19 @@
   /* Fix for Hero Grid Pattern */
   .bg-grid-white\/10 {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='white' stroke-opacity='0.1'%3e%3cpath d='M0 .5H31.5V32'/%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
+}
+@layer components {
+  .sidebar-card {
+    @apply bg-white dark:bg-gray-800 border border-[#E5D3B3] dark:border-gray-700 rounded-xl shadow-md p-4 transition-all duration-300 relative;
+  }
+  .sidebar-card-title {
+    @apply font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight;
+  }
+  .sidebar-card-snippet {
+    @apply font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug;
+  }
+  .sidebar-card-link {
+    @apply inline-flex items-center gap-1 font-sans text-xs font-semibold text-[#fd4f00] dark:text-[#ff7635] hover:underline w-fit;
   }
 }

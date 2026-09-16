@@ -46,13 +46,25 @@ export const MobileCarousel = ({ images }: MobileCarouselProps) => {
         {/* 1. THE ANCHOR (Invisible)
             This stays in the layout flow (relative) to prop open the container height.
             It matches the current image exactly.
+
+            `width`/`height` are REQUIRED here, not optional hints. This element is
+            the only thing giving the container a height, and with `w-full h-auto`
+            that height comes from the image's aspect ratio. Without the
+            attributes the browser has no ratio until the bytes land, so the
+            container starts at 0 tall and snaps open on load — a 0.058 mobile
+            layout shift that also dragged the LCP element down the page
+            (measured on /benefits/digitize-operations at Slow-4G/6x CPU).
+            The values come straight from `ImageData`, which every gallery
+            already populates from the Astro-optimized asset.
         */}
-        <img 
+        <img
           src={images[current].src}
           alt="Anchor"
+          width={images[current].width}
+          height={images[current].height}
           className="w-full h-auto opacity-0 pointer-events-none relative z-0"
           aria-hidden="true"
-          loading="eager"       
+          loading="eager"
         />
 
         {/* 2. THE ANIMATION LAYER (Absolute)

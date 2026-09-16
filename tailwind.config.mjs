@@ -7,6 +7,12 @@ export default {
   content: [
     "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"
   ],
+  safelist: [
+    'md:col-span-3', 'md:col-span-4', 'md:col-span-5', 'md:col-span-6', 'md:col-span-7',
+    'md:col-span-8', 'md:col-span-9', 'md:col-span-12',
+    'md:order-1', 'md:order-2', 'md:order-3', 'md:order-4', 'md:order-last',
+    'md:row-span-2', 'md:row-span-3'
+  ],
   prefix: "",
   theme: {
     container: {
@@ -99,11 +105,16 @@ export default {
           "0%": { objectPosition: "0% 50%" },   // Start aligned Left
           "100%": { objectPosition: "100% 50%" }, // Move to align Right
         },
+        "shine": {
+          "from": { backgroundPosition: "200% center" },
+          "to": { backgroundPosition: "-200% center" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pan-x": "pan-x 10s linear infinite alternate",
+        "shine": "shine 6s linear infinite",
       },
     },
   },

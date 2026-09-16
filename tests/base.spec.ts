@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 /**
@@ -18,20 +19,52 @@ function isIgnoredConsoleMessage(text: string): boolean {
   return IGNORED_CONSOLE_PATTERNS.some((pattern) => pattern.test(text));
 }
 
+/**
+ * Chromium's console text for a failed subresource is just "Failed to load
+ * resource: the server responded with a status of 404 ()" — it names no URL, so
+ * a CI failure gives you nothing to act on. Record the failing responses
+ * separately and report them alongside the console errors.
+ *
+ * Returns getters for both lists; attach before the first navigation.
+ */
+function trackPageErrors(page: Page) {
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
+
+  page.on('console', (msg) => {
+    if (msg.type() === 'error' && !isIgnoredConsoleMessage(msg.text())) {
+      consoleErrors.push(msg.text());
+    }
+  });
+  page.on('response', (res) => {
+    if (res.status() >= 400) failedResponses.push(`${res.status()} ${res.request().method()} ${res.url()}`);
+  });
+  page.on('requestfailed', (req) => {
+    failedResponses.push(`NET ${req.method()} ${req.url()} — ${req.failure()?.errorText ?? 'unknown'}`);
+  });
+
+  return {
+    /** Assertion message that names the actual failing URLs. */
+    describe: () =>
+      [
+        `Unexpected console errors:\n${consoleErrors.join('\n')}`,
+        failedResponses.length
+          ? `\nFailed network responses:\n${failedResponses.join('\n')}`
+          : '\n(no failed network responses recorded — error came from page script, not a subresource)',
+      ].join('\n'),
+    consoleErrors,
+  };
+}
+
 test.describe('Homepage Health', () => {
   test('no unexpected console errors', async ({ page }) => {
-    const errors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error' && !isIgnoredConsoleMessage(msg.text())) {
-        errors.push(msg.text());
-      }
-    });
+    const tracked = trackPageErrors(page);
 
     await page.goto('/');
     // Wait for React islands to hydrate (client:visible triggers on viewport)
     await page.waitForTimeout(2000);
 
-    expect(errors, `Unexpected console errors:\n${errors.join('\n')}`).toHaveLength(0);
+    expect(tracked.consoleErrors, tracked.describe()).toHaveLength(0);
   });
 
   test('has correct title and meta description', async ({ page }) => {
@@ -66,17 +99,12 @@ test.describe('Blog Post Health', () => {
   const TEST_POST = '/posts/what-is-dock-scheduling';
 
   test('no unexpected console errors on a blog post', async ({ page }) => {
-    const errors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error' && !isIgnoredConsoleMessage(msg.text())) {
-        errors.push(msg.text());
-      }
-    });
+    const tracked = trackPageErrors(page);
 
     await page.goto(TEST_POST);
     await page.waitForTimeout(2000);
 
-    expect(errors, `Unexpected console errors:\n${errors.join('\n')}`).toHaveLength(0);
+    expect(tracked.consoleErrors, tracked.describe()).toHaveLength(0);
   });
 
   test('has correct structured data for blog post', async ({ page }) => {

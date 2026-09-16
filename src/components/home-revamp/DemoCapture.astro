@@ -75,7 +75,8 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
       openDialog(link);
     });
 
-    document.querySelectorAll<HTMLFormElement>('form[data-demo-capture]').forEach((form, index) => {
+    const captureForms = document.querySelectorAll<HTMLFormElement>('form[data-demo-capture]');
+    captureForms.forEach((form, index) => {
       const input = form.querySelector<HTMLInputElement>('input[name="email"]');
       const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
       if (!input || !button) return;

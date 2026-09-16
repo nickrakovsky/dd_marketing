@@ -17,7 +17,7 @@ export const yardappContent: PageContent = {
     ...defaultContent.hero,
     headline: "SEE WHAT’S AT YOUR DOCKS, ON THE WAY, OR IN YOUR YARD, AND MANAGE IT ALL FROM THE APP",
     emailPlaceholder: "Enter your work email",
-    buttonText: "Get Free Demo",
+    buttonText: "Book a Demo",
     dashboardAlt: "Visibility Dashboard",
   },
   visibilityGallery: {
