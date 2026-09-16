@@ -1,9 +1,9 @@
 ---
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
-interface Props { standalone?: boolean }
-const { standalone = false } = Astro.props;
+interface Props { standalone?: boolean; microcopyFont?: 'inter' | 'recoleta' }
+const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
 ---
-<div id={standalone ? 'book-demo' : undefined}>
+<div id={standalone ? 'book-demo' : undefined} data-microcopy-font={microcopyFont}>
 <dialog id="demo-capture-dialog" aria-labelledby="demo-capture-title" data-standalone={standalone || undefined} data-booking-url={CALENDLY_BOOKING_URL} data-booking-params={CALENDLY_BRAND_PARAMS}>
   <button class="dialog-close" type="button" aria-label="Close email form" data-close-demo>×</button>
   <h2 id="demo-capture-title">LET’S LOOK AT YOUR OPERATION.</h2>
@@ -57,7 +57,7 @@ const { standalone = false } = Astro.props;
       input?.focus();
     };
 
-    // News pages offer the same prompt without the homepage's inline form.
+    // Standalone pages also open the prompt for a shared booking anchor.
     const openFromHash = () => {
       if (dialog.hasAttribute('data-standalone') && window.location.hash === '#book-demo') openDialog();
     };
@@ -81,8 +81,9 @@ const { standalone = false } = Astro.props;
       if (!input || !button) return;
       input.setAttribute('aria-label', 'Email address');
       input.autocomplete = 'email';
-      // The shared bottom banner keeps its original markup and appearance.
-      let status = form.querySelector<HTMLElement>('[data-capture-status]');
+      // Banners can place status text below their heading and form group.
+      let status = form.querySelector<HTMLElement>('[data-capture-status]')
+        || (form.dataset.captureStatusId ? document.getElementById(form.dataset.captureStatusId) : null);
       if (!status) {
         status = document.createElement('p');
         status.className = 'capture-status capture-status-banner';
@@ -139,6 +140,11 @@ const { standalone = false } = Astro.props;
   .dialog-fields { display: flex; }
   input { width: 100%; min-width: 0; height: 52px; background: #EFE2D2; color: #000; border: 1px solid #000; padding: 12px; font: 17px 'DD-Recoleta', Georgia, serif; }
   button[type=submit] { flex-shrink: 0; background: #000; color: #fff; padding: 12px 18px; font: 17px 'DD-Recoleta', Georgia, serif; }
+  [data-microcopy-font="inter"] p,
+  [data-microcopy-font="inter"] label,
+  [data-microcopy-font="inter"] input,
+  [data-microcopy-font="inter"] button[type=submit] { font-family: Inter, Arial, sans-serif; }
+  [data-microcopy-font="inter"] :global(.capture-status) { font-size: 16px; }
   .dialog-close { position: absolute; right: 12px; top: 10px; width: 32px; height: 32px; font: 28px Inter, sans-serif; }
   :global(.capture-status) { font: 14px/1.5 Inter, sans-serif; text-transform: none; letter-spacing: normal; }
   :global(.capture-status:empty) { display: none; }

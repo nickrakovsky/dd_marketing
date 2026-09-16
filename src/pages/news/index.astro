@@ -6,6 +6,8 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import NewsArtwork from '../../components/news/NewsArtwork.astro';
 import DemoCapture from '../../components/home-revamp/DemoCapture.astro';
+import CTA from '../../components/home/CTA.astro';
+import LinkIcon from '../../components/LinkIcon.astro';
 import { getNewsItems } from '../../lib/news';
 import '../../styles/news.css';
 
@@ -30,20 +32,18 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
     <div class="news-shell">
       <header class="news-hero">
         <div class="news-hero__heading">
-          <p class="news-eyebrow"><span class="news-dot" aria-hidden="true"></span>Inside DataDocks</p>
-          <h1>News <span class="news-hero__amp">&</span><br />updates<span class="news-hero__period">.</span></h1>
+          <h1>News <span class="news-hero__amp">&</span><br />updates</h1>
         </div>
         <div class="news-hero__intro">
           <p>Industry recognition, conversations, and the latest from the team behind DataDocks.</p>
-          <a href="#all-news" class="news-text-link">Explore all updates <span aria-hidden="true">↓</span></a>
+          <a href="#all-news" class="news-text-link">Explore all updates <LinkIcon kind="down" /></a>
         </div>
       </header>
 
       {highlights.length > 0 && (
         <section class="news-highlights" aria-labelledby="recognition-title">
           <div class="news-section-heading">
-            <h2 id="recognition-title">In the spotlight</h2>
-            <p>Selected industry recognition</p>
+            <h2 id="recognition-title">Awards & recognition</h2>
           </div>
           <div class="news-highlights__grid">
             {highlights.map((item, index) => (
@@ -59,10 +59,10 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
                     />
                   </div>
                   <div class="news-highlight__copy">
-                    <div class="news-meta"><span>{item.kindLabel}</span><span aria-hidden="true">/</span><time datetime={item.datetime}>{item.dateLabel}</time></div>
+                    <div class="news-meta"><span>{item.kindLabel}</span><time datetime={item.datetime}>{item.dateLabel}</time></div>
                     <h3>{item.title}</h3>
                     <p>{item.summary}</p>
-                    <span class="news-highlight__cta">{item.external ? `Read on ${item.sourceName}` : 'Read the update'}<span aria-hidden="true">{item.external ? '↗' : '→'}</span></span>
+                    <span class="news-highlight__cta">{item.external ? `Read on ${item.sourceName}` : 'Read the update'}<LinkIcon kind={item.external ? 'external' : 'internal'} /></span>
                   </div>
                 </a>
               </article>
@@ -99,18 +99,19 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
           {items.map((item) => (
             <article class="news-row" data-news-item data-kind={item.kind} data-year={item.year}>
               <div class="news-row__date"><time datetime={item.datetime}>{item.dateLabel}</time></div>
-              <div class="news-row__body">
+              <a class="news-row__body" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-labelledby={`news-title-${item.slug}`} aria-describedby={`news-action-${item.slug}`}>
                 <div class="news-row__metadata"><span class="news-kind-label">{item.kindLabel}</span><span class="news-row__source">{item.sourceName}</span></div>
-                <h3><a href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-label={item.external ? `${item.title} — read on ${item.sourceName}` : undefined}>{item.title}<span class="news-row__arrow" aria-hidden="true">{item.external ? '↗' : '→'}</span></a></h3>
+                <h3 id={`news-title-${item.slug}`}>{item.title}</h3>
                 <p>{item.summary}</p>
-              </div>
+                <span class="news-row__action" id={`news-action-${item.slug}`}>{item.external ? `Read on ${item.sourceName}` : 'Read the story'}<LinkIcon kind={item.external ? 'external' : 'internal'} /></span>
+              </a>
             </article>
           ))}
         </div>
         <div class="news-empty" data-news-empty hidden>
           <h3>No updates match these filters.</h3>
           <p>Try another type or year, or return to all updates.</p>
-          <button type="button" class="news-text-link" data-news-reset>Show all updates <span aria-hidden="true">↗</span></button>
+          <button type="button" class="news-text-link" data-news-reset>Show all updates <LinkIcon /></button>
         </div>
         <p class="news-archive-note">Dates refer to original coverage or announcements. Project years are noted.</p>
       </section>
@@ -119,18 +120,18 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
     <section class="news-more" aria-labelledby="news-more-title">
       <div class="news-shell news-more__layout">
         <div class="news-more__intro">
-          <p class="news-eyebrow">Keep exploring</p>
-          <h2 id="news-more-title">There’s more<br />to the story.</h2>
+          <h2 id="news-more-title">Get to know<br />DataDocks</h2>
         </div>
         <div class="news-more__links">
-          <a class="news-more-link" href="/posts"><div><h3>Resources</h3><p>Practical guides and insights for operations teams.</p></div><span aria-hidden="true">→</span></a>
-          <a class="news-more-link" href="/about"><div><h3>About DataDocks</h3><p>The company behind the platform.</p></div><span aria-hidden="true">→</span></a>
-          <a class="news-more-link" href="mailto:info@datadocks.com"><div><h3>Press inquiries</h3><p>Get in touch at info@datadocks.com.</p></div><span aria-hidden="true">↗</span></a>
+          <a class="news-more-link" href="/posts"><div><h3>Resources</h3><p>Practical guides and insights for operations teams.</p></div><LinkIcon /></a>
+          <a class="news-more-link" href="/about"><div><h3>About DataDocks</h3><p>The company behind the platform.</p></div><LinkIcon /></a>
+          <a class="news-more-link" href="mailto:info@datadocks.com"><div><h3>Press inquiries</h3><p>Email info@datadocks.com.</p></div><LinkIcon kind="email" /></a>
         </div>
       </div>
     </section>
   </main>
-  <DemoCapture standalone />
+  <CTA captureFirst tabletInline microcopyFont="inter" />
+  <DemoCapture standalone microcopyFont="inter" />
   <Footer />
 </Layout>
 

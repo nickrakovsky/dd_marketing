@@ -7,17 +7,13 @@ interface Props {
   variant?: 'orange' | 'paper' | 'ink';
 }
 
-const { sourceName, program = 'Industry recognition', year, awardCategory, variant = 'orange' } = Astro.props;
+const { program = Astro.props.sourceName, year, awardCategory, variant = 'orange' } = Astro.props;
 const displayProgram = year !== 'undated' && program.endsWith(` ${year}`)
   ? program.slice(0, -(year.length + 1))
   : program;
 ---
 
 <div class:list={['news-artwork', `news-artwork--${variant}`]} aria-hidden="true">
-  <div class="news-artwork__top">
-    <span>{sourceName}</span>
-    <span class="news-artwork__mark"><i></i><i></i><i></i></span>
-  </div>
   <div class="news-artwork__program">{displayProgram}</div>
   <div class="news-artwork__bottom">
     <span class="news-artwork__category">{awardCategory || 'DataDocks'}</span>
@@ -37,7 +33,6 @@ const displayProgram = year !== 'undated' && program.endsWith(` ${year}`)
     height: 100%;
     padding: 25px 27px 20px;
     overflow: hidden;
-    isolation: isolate;
     container-type: inline-size;
     background: var(--art-ground);
     color: var(--art-ink);
@@ -46,35 +41,14 @@ const displayProgram = year !== 'undated' && program.endsWith(` ${year}`)
   .news-artwork--paper { --art-ground: #efe2d2; --art-ink: #000; }
   .news-artwork--ink { --art-ground: #000; --art-ink: #fff8e9; }
 
-  .news-artwork::before {
-    position: absolute;
-    z-index: -1;
-    right: -62px;
-    bottom: -160px;
-    width: 340px;
-    height: 340px;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    opacity: .14;
-    box-shadow: 0 0 0 20px var(--art-ground), 0 0 0 21px currentColor,
-      0 0 0 41px var(--art-ground), 0 0 0 42px currentColor,
-      0 0 0 62px var(--art-ground), 0 0 0 63px currentColor;
-    content: '';
-  }
-
-  .news-artwork--paper::before { right: -185px; bottom: -77px; border-radius: 0; transform: rotate(-30deg); }
-  .news-artwork--ink::before { right: -145px; bottom: -170px; }
-
-  .news-artwork__top, .news-artwork__bottom { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-  .news-artwork__top { font: 600 12px/1.25 Inter, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
-  .news-artwork__mark { display: flex; align-items: flex-end; gap: 4px; height: 22px; flex-shrink: 0; }
-  .news-artwork__mark i { width: 7px; height: 13px; background: currentColor; }
-  .news-artwork__mark i:nth-child(2) { height: 18px; }
-  .news-artwork__mark i:nth-child(3) { height: 22px; }
-  .news-artwork__program { max-width: 100%; padding: 25px 0 27px; font: 800 clamp(1.55rem, 14cqw, 3.2rem)/.95 Bruta, Bruta-Fallback, Impact, sans-serif; text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
-  .news-artwork__bottom { align-items: flex-end; border-top: 1px solid color-mix(in srgb, currentColor 45%, transparent); padding-top: 16px; }
-  .news-artwork__category { max-width: 72%; font: 400 13px/1.45 DD-Recoleta, Recoleta-Fallback, Georgia, serif; }
+  .news-artwork__program { max-width: 100%; padding: 12px 0 32px; font: 800 clamp(1.55rem, 14cqw, 3.2rem)/.95 Bruta, Bruta-Fallback, Impact, sans-serif; text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
+  .news-artwork__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-top: 1px solid color-mix(in srgb, currentColor 45%, transparent); padding-top: 16px; }
+  .news-artwork__category { font: 400 14px/1.5 Inter, system-ui, sans-serif; }
   .news-artwork__year { flex-shrink: 0; font: 800 clamp(2.7rem, 22cqw, 3.75rem)/.85 Bruta, Bruta-Fallback, Impact, sans-serif; letter-spacing: -.02em; }
+  @container (max-width: 250px) {
+    .news-artwork__bottom { flex-direction: column; align-items: stretch; gap: 14px; }
+    .news-artwork__year { align-self: flex-end; }
+  }
   @media (max-width: 767px) {
     .news-artwork { min-height: 300px; padding: 23px; }
   }

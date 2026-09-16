@@ -47,7 +47,11 @@ The separate Resources branch has not been edited. Its future Latest from DataDo
 
 News navigation and story demo links use the email-first prompt from `codex/homepage-redesign`. The shared capture helper waits for a confirmed save through `/api/bento-track` before opening Calendly, with the email prefilled and attribution retained. The component and helper keep their homepage-branch paths to support a later merge. Standalone news pages also support direct `#book-demo` links and an email contact fallback without JavaScript.
 
-Orange artwork and CTAs use white text. Reading copy and CTA labels use Recoleta, display headings use Bruta, and compact metadata uses Inter; paper colors match the homepage design. Verified desktop and mobile prompts, mobile menu closure, and tablet award artwork. The six existing email-capture tests, Astro checks, and production build pass.
+Orange artwork and CTAs use white text. Following the September 16 design review, summaries, labels, dates, controls and other supporting text use Inter. Recoleta is reserved for subheadings, introductory emphasis and longform reading; display headings use Bruta. Metadata is at least 14px, in sentence case, with spacing instead of slash separators.
+
+The award artwork relies on typography and color, without repeated graph marks or decorative line patterns. A reusable chevron icon family distinguishes internal navigation, external destinations and email. External entries include visible destination labels such as “Read on CNBC.” The closing heading is “Get to know DataDocks,” followed by the shared email-first demo banner on both the hub and story pages. See [news design conventions](news-design-conventions.md) for reusable rules.
+
+Verified desktop and mobile prompts, mobile menu closure, tablet award artwork and the restored banner across screen sizes. The six existing email-capture tests, Astro checks, and production build pass.
 
 ## Research
 
