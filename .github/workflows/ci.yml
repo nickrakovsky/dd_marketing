@@ -152,6 +152,8 @@ jobs:
       - name: Link Crawl (Linkinator)
         # Linkinator crawls the live preview, verifying all internal pages, routes,
         # and assets recursively for broken links (404s).
+        # Resolve production marketing URLs (including canonical links) against
+        # this preview so new routes are checked before they exist on main.
         # External URLs are skipped to prevent CI flakes caused by third-party bot protection,
         # rate limits, or external server downtime.
         run: |
@@ -161,6 +163,8 @@ jobs:
             --retry-errors \
             --concurrency 25 \
             --timeout 30000 \
+            --url-rewrite-search '^https?://(www\.)?datadocks\.com(?=[/?#]|$)' \
+            --url-rewrite-replace "${PREVIEW_URL}" \
             --skip "^https?://(?!(?:[a-zA-Z0-9-]+\.)*pages\.dev|(?:[a-zA-Z0-9-]+\.)*datadocks\.com|localhost)" \
             --format json > linkinator-results.json || {
               echo "::error title=Linkinator Detected Broken Links::Linkinator found broken links in preview deployment"
