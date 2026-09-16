@@ -23,7 +23,9 @@ Use `src/components/LinkIcon.astro`. All variants share a 24px viewBox, 2px roun
 
 The chevrons match the navigation's existing rounded stroke geometry. The external icon adds an open boundary around the same visual language so that its meaning differs from internal navigation. Avoid arrow shafts, Unicode arrows, and decorative circular icon containers.
 
-Always pair external icons with a visible destination label, such as **Read on CNBC** or **Visit Komi Studio**. An icon alone must not carry that distinction. Use the envelope for email links instead of treating email as another website. Icons are decorative (`aria-hidden` and `focusable="false"`); meaningful visible link text supplies the accessible name. External links may stay in the same tab. If a link opens a new tab, disclose that separately.
+Always pair external icons with a visible destination label, such as **Read on CNBC** or **View Komi’s DataDocks design project**. An icon alone must not carry that distinction. Use the envelope for email links instead of treating email as another website. Icons are decorative (`aria-hidden` and `focusable="false"`); meaningful visible link text supplies the accessible name. External links may stay in the same tab. If a link opens a new tab, disclose that separately.
+
+Headlines should identify unfamiliar roles and formats: name Komi as the design agency and The New Warehouse as a podcast. Link labels should describe the destination accurately. Use the optional content field `actionLabel` when the default reading label does not fit, and render it through `newsActionLabel` from `src/lib/news.ts` so the hub and related cards stay consistent.
 
 ```astro
 <a href="/news/example">Read the update <LinkIcon /></a>
@@ -37,6 +39,12 @@ Always pair external icons with a visible destination label, such as **Read on C
 - Hovering or keyboard-focusing any one link gives the linked parts a shared, mild response: a fine headline underline, a slightly darker artwork, and an accented action label with a small chevron movement.
 - Trigger the shared state with `:has(a:hover, a:focus-visible)`, not by hovering the whole card. Body-text hover and selection must not activate the links.
 - Keep a visible focus outline on the focused link, meaningful accessible names for artwork/action links, and reduced-motion support. Do not use click handlers or invisible link overlays on the card wrapper.
+
+## Card alignment
+
+- Cards displayed together share content-sized grid rows for the artwork heading, artwork footer, metadata, headline, summary, and action. Carry those rows through the nested wrappers with CSS subgrid.
+- Keep divider lines and category text aligned at the top of the shared artwork footer, and years aligned at its bottom. Let the longest content determine the space needed; do not use per-card offsets or fixed text heights.
+- On mobile, let each stacked card size itself independently. Preserve selectable body text and separate link areas when changing layout.
 
 ## Color and decoration
 

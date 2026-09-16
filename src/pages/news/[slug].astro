@@ -5,7 +5,7 @@ import type { CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import { getNewsEntries, newsDateLabel, toNewsItem } from '../../lib/news';
+import { getNewsEntries, newsActionLabel, newsDateLabel, toNewsItem } from '../../lib/news';
 import DemoCapture from '../../components/home-revamp/DemoCapture.astro';
 import CTA from '../../components/home/CTA.astro';
 import LinkIcon from '../../components/LinkIcon.astro';
@@ -88,7 +88,7 @@ const related = (await getNewsEntries())
       <div class="related-grid">{related.map(other => <a href={other.href} class="related-card" target={other.external ? '_blank' : undefined} rel={other.external ? 'noopener noreferrer' : undefined}>
         <span class="related-meta"><span>{other.kindLabel}</span><span>{other.year}</span></span>
         <h3>{other.title}</h3>
-        <span class="related-source">{other.external ? `Read on ${other.sourceName}` : 'Read the story'} <LinkIcon kind={other.external ? 'external' : 'internal'} />{other.external && <span class="sr-only"> (opens in a new tab)</span>}</span>
+        <span class="related-source">{newsActionLabel(other)} <LinkIcon kind={other.external ? 'external' : 'internal'} />{other.external && <span class="sr-only"> (opens in a new tab)</span>}</span>
       </a>)}</div>
     </section>
   </main>

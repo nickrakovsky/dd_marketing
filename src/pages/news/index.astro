@@ -8,7 +8,7 @@ import NewsArtwork from '../../components/news/NewsArtwork.astro';
 import DemoCapture from '../../components/home-revamp/DemoCapture.astro';
 import CTA from '../../components/home/CTA.astro';
 import LinkIcon from '../../components/LinkIcon.astro';
-import { getNewsItems } from '../../lib/news';
+import { getNewsItems, newsActionLabel } from '../../lib/news';
 import '../../styles/news.css';
 
 const items = await getNewsItems();
@@ -48,7 +48,7 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
           <div class="news-highlights__grid">
             {highlights.map((item, index) => (
               <article class="news-highlight" data-linked-card>
-                <a href={item.href} class="news-highlight__art" rel={item.external ? 'noopener noreferrer' : undefined} aria-label={item.external ? `${item.title} — read on ${item.sourceName}` : item.title}>
+                <a href={item.href} class="news-highlight__art" rel={item.external ? 'noopener noreferrer' : undefined} aria-label={item.external ? `${newsActionLabel(item)}: ${item.title}` : item.title}>
                     <NewsArtwork
                       sourceName={item.sourceName}
                       program={item.program}
@@ -61,7 +61,7 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
                     <div class="news-meta"><span>{item.kindLabel}</span><time datetime={item.datetime}>{item.dateLabel}</time></div>
                     <h3><a class="news-card-title" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined}>{item.title}</a></h3>
                     <p>{item.summary}</p>
-                    <a class="news-highlight__cta news-card-action" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-label={`${item.external ? `Read on ${item.sourceName}` : 'Read the update'}: ${item.title}`}>{item.external ? `Read on ${item.sourceName}` : 'Read the update'}<LinkIcon kind={item.external ? 'external' : 'internal'} /></a>
+                    <a class="news-highlight__cta news-card-action" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-label={`${newsActionLabel(item, 'Read the update')}: ${item.title}`}>{newsActionLabel(item, 'Read the update')}<LinkIcon kind={item.external ? 'external' : 'internal'} /></a>
                 </div>
               </article>
             ))}
@@ -101,7 +101,7 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
                 <div class="news-row__metadata"><span class="news-kind-label">{item.kindLabel}</span><span class="news-row__source">{item.sourceName}</span></div>
                 <h3><a class="news-card-title" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined}>{item.title}</a></h3>
                 <p>{item.summary}</p>
-                <a class="news-row__action news-card-action" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-label={`${item.external ? `Read on ${item.sourceName}` : 'Read the story'}: ${item.title}`}>{item.external ? `Read on ${item.sourceName}` : 'Read the story'}<LinkIcon kind={item.external ? 'external' : 'internal'} /></a>
+                <a class="news-row__action news-card-action" href={item.href} rel={item.external ? 'noopener noreferrer' : undefined} aria-label={`${newsActionLabel(item)}: ${item.title}`}>{newsActionLabel(item)}<LinkIcon kind={item.external ? 'external' : 'internal'} /></a>
               </div>
             </article>
           ))}

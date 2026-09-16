@@ -156,6 +156,7 @@ const newsCollection = defineCollection({
         updatedAt: z.preprocess(value => value === '' || value == null ? undefined : value, z.coerce.date().optional()),
         sourceName: z.string().default('DataDocks'),
         sourceUrl: z.preprocess(value => value === '' || value == null ? undefined : value, z.string().url().optional()),
+        actionLabel: z.string().optional(),
         sources: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
         featured: z.boolean().default(false),
         program: z.string().optional(),

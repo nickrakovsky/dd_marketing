@@ -23,9 +23,14 @@ export interface NewsItem {
   sourceUrl: string;
   href: string;
   external: boolean;
+  actionLabel?: string;
   featured: boolean;
   program?: string;
   awardCategory?: string;
+}
+
+export function newsActionLabel(item: NewsItem, fallback = 'Read the story'): string {
+  return item.actionLabel || (item.external ? `Read on ${item.sourceName}` : fallback);
 }
 
 export function newsDateLabel(date?: string): string {
@@ -61,6 +66,7 @@ export function toNewsItem(entry: CollectionEntry<'news'>): NewsItem {
     sourceUrl: data.sourceUrl || href,
     href,
     external: data.destination === 'external',
+    actionLabel: data.actionLabel?.trim() || undefined,
     featured: data.featured,
     program: data.program,
     awardCategory: data.awardCategory,

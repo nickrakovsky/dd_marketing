@@ -26,14 +26,12 @@ const displayProgram = year !== 'undated' && program.endsWith(` ${year}`)
     --art-ground: #fe5000;
     --art-ink: #fff;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-rows: 1fr auto;
     min-height: 330px;
     height: 100%;
     padding: 25px 27px 20px;
     overflow: hidden;
-    container-type: inline-size;
     background: var(--art-ground);
     color: var(--art-ink);
   }
@@ -41,15 +39,20 @@ const displayProgram = year !== 'undated' && program.endsWith(` ${year}`)
   .news-artwork--paper { --art-ground: #efe2d2; --art-ink: #000; }
   .news-artwork--ink { --art-ground: #000; --art-ink: #fff8e9; }
 
-  .news-artwork__program { max-width: 100%; padding: 12px 0 32px; font: 800 clamp(1.55rem, 14cqw, 3.2rem)/.95 Bruta, Bruta-Fallback, Impact, sans-serif; text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
-  .news-artwork__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-top: 1px solid color-mix(in srgb, currentColor 45%, transparent); padding-top: 16px; }
+  .news-artwork__program { align-self: start; max-width: 100%; padding: 12px 0 32px; font: 800 clamp(1.55rem, 3.4vw, 3.2rem)/.95 Bruta, Bruta-Fallback, Impact, sans-serif; text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
+  .news-artwork__bottom { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; border-top: 1px solid color-mix(in srgb, currentColor 45%, transparent); padding-top: 16px; }
   .news-artwork__category { font: 400 14px/1.5 Inter, system-ui, sans-serif; }
-  .news-artwork__year { flex-shrink: 0; font: 800 clamp(2.7rem, 22cqw, 3.75rem)/.85 Bruta, Bruta-Fallback, Impact, sans-serif; letter-spacing: -.02em; }
-  @container (max-width: 250px) {
+  .news-artwork__year { align-self: flex-end; flex-shrink: 0; font: 800 clamp(2.7rem, 5.3vw, 3.75rem)/.85 Bruta, Bruta-Fallback, Impact, sans-serif; letter-spacing: -.02em; }
+  @media (max-width: 1100px) {
     .news-artwork__bottom { flex-direction: column; align-items: stretch; gap: 14px; }
-    .news-artwork__year { align-self: flex-end; }
+    .news-artwork__year { margin-top: auto; }
+  }
+  @media (min-width: 768px) {
+    .news-artwork { grid-row: span 2; grid-template-rows: subgrid; height: auto; }
   }
   @media (max-width: 767px) {
     .news-artwork { min-height: 300px; padding: 23px; }
+    .news-artwork__program { font-size: clamp(1.55rem, 11vw, 3.2rem); }
+    .news-artwork__year { font-size: clamp(2.7rem, 17vw, 3.75rem); }
   }
 </style>
