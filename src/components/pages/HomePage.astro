@@ -9,6 +9,7 @@ import CustomerQuotes from '../../components/home-revamp/CustomerQuotes.astro';
 import AuthorAvatar from '../../components/home-revamp/AuthorAvatar.astro';
 import DailyBlogPreviewBanner from '../../components/preview/DailyBlogPreviewBanner.astro';
 import { isPublished } from '../../lib/content-status';
+import { getFeaturedEvergreenPost } from '../../lib/evergreen-content';
 import interFont from '../../assets/fonts/Inter-Latin-Variable.woff2';
 const calendar = { src: '/images/DataDocks-Calendar-Screenshot.webp', width: 2000, height: 717 };
 import { ytThumb } from '../../lib/yt-thumb';
@@ -54,7 +55,7 @@ const [allPosts, allVideos] = await Promise.all([getCollection('posts'), getColl
 const publishedPosts = allPosts
   .filter(post => isPublished(post.data.pubDate, asOf) && post.data.priority !== 'Hidden')
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
-const featuredPost = publishedPosts.find(post => post.data.cardImage && post.data.postType.discriminant === 'article');
+const featuredPost = getFeaturedEvergreenPost(allPosts, asOf);
 const allResources: Array<CollectionEntry<'posts'> | CollectionEntry<'videos'>> = [...publishedPosts, ...allVideos];
 const reading = allResources
   .filter(post => post !== featuredPost && isPublished(post.data.pubDate, asOf))

@@ -111,6 +111,14 @@ test.describe('development publication previews', () => {
     const latest = await paths(page.locator('.latest-insight'));
     const archive = await paths(page.locator('resource-archive [data-resource-card]'));
     expect(latest).toEqual(newestFirst.slice(0, 5).map(slot => `/posts/${slot.slug}`));
+    for (const [index, slot] of newestFirst.slice(0, 5).entries()) {
+      const card = page.locator('.latest-insight').nth(index);
+      await expect(card.locator('.latest-insight-author')).toHaveText(slot.author);
+      await expect(card.locator('.author-avatar')).toHaveCount(1);
+      await expect(card.locator('time')).toHaveAttribute('datetime', slot.pubDate);
+      await expect(card.locator('.latest-insight-topic')).not.toBeEmpty();
+      await expect(card.locator('.latest-insight-type')).toHaveText('Article');
+    }
     expect(archive.slice(0, 10)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
     for (const slot of slots) {
       expect([...latest, ...archive].filter(path => path === `/posts/${slot.slug}`), slot.title).toHaveLength(1);
@@ -122,11 +130,11 @@ test.describe('development publication previews', () => {
     expect(response.status()).toBe(200);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
     await expect(page.getByRole('complementary', { name: 'Publication preview' })).toBeVisible();
-    const homePaths = await paths(page.locator(homeCards));
     const newestFirst = [...slots].sort((a, b) => Date.parse(b.pubDate) - Date.parse(a.pubDate));
-    for (const slot of newestFirst.slice(0, 6)) {
-      expect(homePaths, slot.title).toContain(`/posts/${slot.slug}`);
-    }
+    expect(await paths(page.locator('.feed-link'))).toEqual(newestFirst.slice(0, 5).map(slot => `/posts/${slot.slug}`));
+    const [featuredPath] = await paths(page.locator('.featured-post'));
+    expect(featuredPath).toBeTruthy();
+    expect(slots.map(slot => `/posts/${slot.slug}`)).not.toContain(featuredPath);
     const authors = await page.locator('.feed-author').allTextContents();
     expect(authors).toContain('Nick Rakovsky');
     expect(authors).toContain('DataDocks Team');
@@ -136,6 +144,7 @@ test.describe('development publication previews', () => {
     await expectCurrentHub(page);
     await expectCurrentHub(page, `/posts?asOf=${encodeURIComponent(schedule.previewAsOf)}`);
     await page.goto('/');
+    expect(await paths(page.locator('.featured-post'))).toEqual([featuredPath]);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
     await expect(page.locator('.all-resources')).toHaveAttribute('href', '/posts');
     const ordinaryPaths = await paths(page.locator(homeCards));

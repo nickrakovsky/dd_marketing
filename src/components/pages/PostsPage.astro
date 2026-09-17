@@ -5,6 +5,8 @@ import Footer from "../../components/Footer.astro";
 import CTA from "../../components/home/CTA.astro";
 import DemoCapture from "../../components/home-revamp/DemoCapture.astro";
 import DailyBlogPreviewBanner from "../../components/preview/DailyBlogPreviewBanner.astro";
+import AuthorAvatar from "../../components/home-revamp/AuthorAvatar.astro";
+import { Truck, ChartNoAxesCombined, Warehouse, Network, Lightbulb } from "lucide-react";
 import { getModularHubData } from "../../lib/wireframe-data";
 import { ytThumb } from "../../lib/yt-thumb";
 import { Image } from "astro:assets";
@@ -37,6 +39,13 @@ const {
   deepDiveVideos,
   olderResources
 } = await getModularHubData(previewAsOf);
+
+const feedTopicIcons: Record<string, typeof Warehouse> = {
+  'Facility Operations': Warehouse,
+  'Carrier Management': Truck,
+  'Supply Chain Strategy': ChartNoAxesCombined,
+  'Systems Integration': Network,
+};
 
 const title = "Resource Hub: Guides, Checklists & Insights for Operations Teams | DataDocks";
 const description = "Comprehensive operational playbooks, dock scheduling guides, warehouse checklists, and founder video deep dives.";
@@ -99,8 +108,10 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
 
           {/* 5 invisible cards of strictly equal height, 0 gap, square hover fill */}
           <div class="flex-1 flex flex-col divide-y divide-black/15">
-            {latest5Posts.map((post, idx) => (
-              <a
+            {latest5Posts.map((post, idx) => {
+              const author = post.author === 'DataDocks' ? 'DataDocks Team' : post.author;
+              const TopicIcon = feedTopicIcons[post.topic || ''] || Lightbulb;
+              return <a
                 href={post.url}
                 class="latest-insight flex-1 flex items-center px-4 py-3.5 rounded-none group transition-colors duration-150 hover:bg-black/[0.05]"
               >
@@ -109,16 +120,25 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
                     {String(idx + 1).padStart(2, '0')}
                   </span>
                   <div class="latest-insight-body min-w-0 flex-1">
-                    <span class="text-[11px] font-mono text-gray-400 block mb-0.5">
-                      {post.displayDate}
-                    </span>
+                    <div class="latest-insight-byline">
+                      <AuthorAvatar name={author} />
+                      <span class="latest-insight-attribution">
+                        <span class="latest-insight-author">{author}</span>
+                        <span aria-hidden="true">·</span>
+                        <time datetime={new Date(post.pubDateValue).toISOString()}>{post.displayDate}</time>
+                      </span>
+                    </div>
                     <h3 class="latest-insight-title font-sans font-bold text-sm md:text-[15px] text-gray-900 leading-snug group-hover:text-[#FE5000] transition-colors line-clamp-2">
                       {post.title}
                     </h3>
+                    <span class="latest-insight-details">
+                      {post.topic && <><span class="latest-insight-topic"><TopicIcon size={14} strokeWidth={1.5} aria-hidden="true" /><span>{post.topic}</span></span><span aria-hidden="true">·</span></>}
+                      <span class="latest-insight-type">Article</span>
+                    </span>
                   </div>
                 </div>
-              </a>
-            ))}
+              </a>;
+            })}
           </div>
         </div>
 
@@ -636,8 +656,17 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
     .schedule-image-viewport[data-dragging] { cursor: grabbing; }
     .schedule-view-hint { padding: 0.75rem 1rem; font-size: 0.8125rem; line-height: 1.4; }
     .schedule-dialog :focus-visible { outline: 2px solid #a93500; outline-offset: -3px; }
+    .latest-insight-byline { display: flex; align-items: center; gap: .5rem; min-width: 0; margin-bottom: .5rem; color: #605b53; font-size: 12px; line-height: 1.5; }
+    .latest-insight-attribution { display: flex; align-items: baseline; flex-wrap: wrap; gap: .125rem .4375rem; min-width: 0; }
+    .latest-insight-byline time { white-space: nowrap; }
+    .latest-insight-details { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .5rem; margin-top: .5rem; color: #605b53; font-size: 12px; line-height: 1.5; }
+    .latest-insight-topic { display: inline-flex; align-items: center; gap: .35rem; min-width: 0; }
+    .latest-insight-topic :global(svg) { flex-shrink: 0; }
+
     @media (max-width: 639px) {
-      .latest-insight { padding: 1rem 0; }
+      .latest-insight { padding: 1rem 0; --author-avatar-size: 28px; }
+      .latest-insight-byline { margin-bottom: 0; font-size: 13px; }
+      .latest-insight-details { grid-column: 1 / -1; font-size: 13px; }
       .latest-insight-layout { display: grid; grid-template-columns: 2ch minmax(0, 1fr); gap: 0.25rem 0.75rem; }
       .latest-insight-body { display: contents; }
       .latest-insight-number { width: auto; }

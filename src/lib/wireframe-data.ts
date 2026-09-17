@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import fs from 'node:fs';
 import path from 'node:path';
 import { isPublished } from './content-status';
+import { EVERGREEN_RESOURCE_SLUGS } from './evergreen-content';
 
 export interface GuideItem {
   slug: string;
@@ -459,25 +460,9 @@ export async function getModularHubData(asOf: Date = new Date()) {
     findPost('what-is-a-supply-chain-center-of-excellence')
   ];
 
-  const evergreenSlugs = new Set([
-    'best-yard-management-options',
-    'comparison',
-    'warehouse-audit-checklist',
-    'yard-management-process-flow',
-    'warehouse-management-career',
-    'datadocks-vs-opendock',
-    'carrier-portal',
-    'notifications',
-    'truck-detention-accessorial-fees',
-    'retail-case-studies',
-    'what-is-dock-scheduling',
-    'warehouse-receiving-process',
-    'what-is-a-supply-chain-center-of-excellence'
-  ]);
-
   // Non-evergreen posts
   const nonEvergreenPosts = allPosts
-    .filter(p => !evergreenSlugs.has(p.slug))
+    .filter(p => !EVERGREEN_RESOURCE_SLUGS.has(p.slug))
     .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
 
   // 5 most recent posts for split section left side

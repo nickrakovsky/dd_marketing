@@ -64,6 +64,8 @@ Views after all 15 have been published:
 - [Future homepage](http://127.0.0.1:4337/preview/daily-blog/home)
 - [Future resource hub](http://127.0.0.1:4337/preview/daily-blog/posts)
 
+The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
+
 Both previews reuse the canonical page components with a scoped cutoff of `2026-10-08T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
@@ -85,9 +87,9 @@ Publication filtering now uses actual timestamps in development as well as produ
 - Content audit: all 15 source hashes, titles, authors, images and destination files verified; five per group; exact A/B/C rotation; weekdays only; series order preserved.
 - `npm run check`: passed, no errors or warnings (42 existing hints).
 - `npm run lint`: passed, no errors (98 existing warnings).
-- `npm test`: 25 tests passed, including nine publication-cutoff tests.
+- `npm test`: 29 tests passed, including nine publication-cutoff tests and four evergreen-selection tests.
 - Production build: passed. All 164 generated public HTML files were inspected. The first due post is built, listed on both canonical pages, and included in the sitemap. The future 14 have no public article HTML, titles, links, inline listing data, or sitemap entries. Retired and preview routes are absent.
-- Five rollout browser checks passed: canonical designs and indexing, removed routes, future article exclusion, all 15 in the future hub, latest six on the future homepage, and isolation of future previews.
+- Five rollout browser checks passed: canonical designs and indexing, removed routes, future article exclusion, all 15 in the future hub, latest five plus the separately selected evergreen highlight on the future homepage, isolation of future previews, and author/avatar/date/topic/type metadata on all five Latest Insights cards.
 - Seventeen email-capture and hub-interaction regressions passed, including homepage hero/bottom forms, capture-before-booking, failure handling, duplicate submission prevention and booking prefill. External capture/booking calls were stubbed.
 
 For future browser-test runs, `PLAYWRIGHT_FUTURE_PREVIEWS=1` enables the two development-only overview checks in `tests/blog-rollout.spec.mjs`. Leave it unset against a production build, where those routes intentionally do not exist.
