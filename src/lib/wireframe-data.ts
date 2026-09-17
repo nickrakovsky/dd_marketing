@@ -314,11 +314,11 @@ function cleanVideoTitle(rawTitle: string): string {
     .trim();
 }
 
-export async function getModularHubData() {
-  const allPosts = (await getCollection('posts')).filter(p => isPublished(p.data.pubDate));
+export async function getModularHubData(asOf: Date = new Date()) {
+  const allPosts = (await getCollection('posts')).filter(p => isPublished(p.data.pubDate, asOf));
   let allVideos: CollectionEntry<'videos'>[] = [];
   try {
-    allVideos = (await getCollection('videos')).filter(v => isPublished(v.data.pubDate));
+    allVideos = (await getCollection('videos')).filter(v => isPublished(v.data.pubDate, asOf));
   } catch (e) {
     allVideos = [];
   }

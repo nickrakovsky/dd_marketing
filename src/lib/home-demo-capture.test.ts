@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { captureDemoLead } from './home-demo-capture';
 
 const context = {
-  source: '/index/home-revamp',
+  source: '/',
   landingPage: 'https://datadocks.com/posts/example',
   attribution: { first: { utm_source: 'search' }, last: { utm_source: 'email' } },
 };

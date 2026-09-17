@@ -49,6 +49,7 @@ async function prepare(page, baseURL) {
 async function checkForm(page, state, form, email) {
   const input=form.locator('input[name="email"]'),button=form.locator('button[type="submit"]');
   await expect(form).toHaveAttribute('data-demo-capture');
+  await expect(input).toHaveAttribute('aria-describedby', /demo-capture-status-/);
   await input.fill(email);
   for(const mode of ['httpFailure','bodyFailure']) {
     state.setMode(mode);
@@ -78,7 +79,7 @@ async function checkForm(page, state, form, email) {
   await state.expectNoFallback();
 }
 
-for(const path of ['/news','/wireframes/modular-editorial']) {
+for(const path of ['/news','/posts']) {
   test(`${path}: mobile navigation closes and dialog dismissal restores hamburger focus`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
     await page.setViewportSize({width:390,height:844});
@@ -128,7 +129,7 @@ for(const path of ['/news','/wireframes/modular-editorial']) {
     expect(await state.calls()).toEqual([]);
   });
 
-  for(const formId of ['dialog','cta-bento-form',...(path.includes('modular-editorial')?['demo-banner-form']:[])]) {
+  for(const formId of ['dialog','cta-bento-form',...(path === '/posts'?['demo-banner-form']:[])]) {
     test(`${path}: ${formId} waits for confirmed save and books once with email`,async ({page,baseURL}) => {
       const state=await prepare(page,baseURL);
       await page.setViewportSize({width:1280,height:900});
@@ -138,4 +139,22 @@ for(const path of ['/news','/wireframes/modular-editorial']) {
       await checkForm(page,state,form,`${formId}@example.com`);
     });
   }
+}
+
+for (const formId of ['book-demo', 'cta-bento-form']) {
+  test(`/: ${formId} captures email before booking and keeps homepage attribution`, async ({ page, baseURL }) => {
+    const state = await prepare(page, baseURL);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const form = page.locator(`form#${formId}`);
+    const email = `home-${formId}@example.com`;
+    await checkForm(page, state, form, email);
+    expect(state.captures[2]).toMatchObject({
+      email,
+      source: '/',
+      landingPage: new URL('/', baseURL).href,
+    });
+    await expect(page).toHaveURL(new URL('/', baseURL).href);
+    await expect(page.locator('#demo-capture-dialog')).not.toHaveAttribute('data-standalone');
+  });
 }

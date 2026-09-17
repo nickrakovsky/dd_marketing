@@ -1,11 +1,10 @@
 ---
-export const prerender = true;
-
 import Layout from "../../layouts/Layout.astro";
 import Navigation from "../../components/Navigation.astro";
 import Footer from "../../components/Footer.astro";
 import CTA from "../../components/home/CTA.astro";
 import DemoCapture from "../../components/home-revamp/DemoCapture.astro";
+import DailyBlogPreviewBanner from "../../components/preview/DailyBlogPreviewBanner.astro";
 import { getModularHubData } from "../../lib/wireframe-data";
 import { ytThumb } from "../../lib/yt-thumb";
 import { Image } from "astro:assets";
@@ -14,6 +13,13 @@ import ResourceArchive from "../../components/wireframes/ResourceArchive.astro";
 import HubShorts from "../../components/wireframes/HubShorts.astro";
 import mobileScreenshot from "../../assets/solutionsscreenshots/visibility/appscreenshot-screen.webp";
 import desktopScreenshot from "../../assets/solutionsscreenshots/DataDocks-Calendar-Clean.webp";
+
+interface Props {
+  previewAsOf?: Date;
+}
+
+// A date override is available only to the explicit development preview wrapper.
+const previewAsOf = import.meta.env.DEV ? Astro.props.previewAsOf : undefined;
 
 const {
   evergreen1,
@@ -30,13 +36,13 @@ const {
   founderShorts,
   deepDiveVideos,
   olderResources
-} = await getModularHubData();
+} = await getModularHubData(previewAsOf);
 
 const title = "Resource Hub: Guides, Checklists & Insights for Operations Teams | DataDocks";
 const description = "Comprehensive operational playbooks, dock scheduling guides, warehouse checklists, and founder video deep dives.";
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} noindex={Boolean(previewAsOf)}>
   <link
     rel="stylesheet"
     href="/css/lite-yt-embed.css"
@@ -56,6 +62,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
 
   {/* 1. MAIN NAVIGATION */}
   <Navigation demoHref="#book-demo" />
+  {previewAsOf && <DailyBlogPreviewBanner current="posts" />}
 
   <main class="min-h-screen bg-[#FFF8EE] text-gray-900 font-sans pb-0">
 

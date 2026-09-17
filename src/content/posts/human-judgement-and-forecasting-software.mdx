@@ -1,0 +1,73 @@
+---
+title: "When does human judgement beat forecasting software?"
+description: "How to evaluate a forecast override: preserve the baseline, examine the new information, and measure both forecast accuracy and business results."
+author: "DataDocks Team"
+category: "Supply Chain Strategy"
+pubDate: "2026-09-24T06:30:00-08:00"
+cardImage: "../../assets/blog-images/supply-chain-kpis-you-need-to-track-cover.png"
+cardAlt: "Illustration of a manager reviewing charts and operational data at a computer."
+readTime: "5 min read"
+showToc: false
+postType:
+  discriminant: article
+  value: {}
+---
+
+Suppose a retailer’s forecasting system predicts that one store will sell 240 bottles of laundry detergent during a week-long promotion. It has accounted for the sales history, the discount and the promotion calendar. The store manager raises the forecast to 300 because an additional display near the entrance has been confirmed. That display is missing from the forecast’s inputs.
+
+The store sells 280 bottles, keeps the product available throughout the promotion and finishes with stock remaining.
+
+Was the manager right to intervene? The full shelves and leftover stock do not settle it. We need to examine the forecast adjustment and the stock decision it influenced.
+
+Start by establishing what the manager means by 300. “I expect to sell 300 because of the extra display” changes the estimate of demand. “I expect to sell around 240, but want more stock available because running out would be costly” changes the protection against uncertainty. Both can be reasonable positions, but they need different tests.
+
+In *Forecasting: Principles and Practice*, Rob Hyndman and George Athanasopoulos explicitly distinguish forecasting from supply planning: an upward adjustment intended to protect against expensive shortages belongs in the supply decision. Keeping that distinction visible allows the business to discuss how much protection it wants without disguising it as higher expected demand. [Forecasting principles](https://otexts.com/fpp3/judgmental-principles.html).
+
+Neither number automatically becomes the purchase order, either. Stock already available, incoming deliveries, case quantities and delivery timing all affect what needs ordering.
+
+DataDocks CEO Nick Rakovsky’s approach is to make the reasoning and review part of the initial conversation:
+
+“Tell me why you think the tool isn’t working and what you’ve seen that it hasn’t. Then let’s set a baseline, decide how we’ll measure the result and agree when we’re coming back to review it.”
+
+For the detergent promotion, the additional display gives us something specific to examine. Check that it is confirmed and absent from the forecast. Then ask what supports the proposed increase. A similar display during an earlier promotion might help, although differences in price, position and duration could matter. Even if the extra display increases demand, that does not establish that it should rise by 60 bottles.
+
+That is a stronger basis for discussion than adding 10% because the last stockout was painful. It also avoids counting the same information twice: if the software already includes the display, a further uplift needs a different justification.
+
+Research gives us reason to examine these interventions individually. Robert Fildes, Paul Goodwin and Shari De Baets reanalysed approximately 147,000 forecasts from six studies and found substantial variation in the value of judgemental adjustments. Upward changes were more likely to worsen performance than downward ones. That finding warrants scrutiny of optimistic adjustments; it does not establish that a particular upward revision is wrong. [Forecast value added in demand planning](https://doi.org/10.1016/j.ijforecast.2024.07.006).
+
+To review an adjustment properly, preserve the software’s original forecast alongside the revised one. Record the product, store, forecast period, reason and decision date. Keep the actual original, rather than rerunning the model later with information that was unavailable at the time. Where the manager has newer information, acknowledge that the comparison includes the value of that later information.
+
+In our example, with availability maintained, the comparison is straightforward:
+
+| Prediction | Forecast | Actual sales | Absolute error |
+| --- | ---: | ---: | ---: |
+| Software forecast | 240 | 280 | 40 |
+| Manager’s revision | 300 | 280 | 20 |
+
+The manager’s revision was closer by 20 bottles under this measure, despite predicting too much. Leftover stock does not erase that improvement. Equally, one closer forecast does not establish that the manager’s adjustments generally help.
+
+Compare the two versions on the same cases. Comparing overridden promotions with untouched routine weeks can mislead: people may intervene precisely because a promotion is unusually difficult to predict.
+
+There is another complication. Suppose instead that the store sells 240 bottles and the shelf is empty for the final two days. Against recorded sales, the software forecast now looks perfect. Yet customers could not buy the product during part of the promotion. We do not know how much demand went unserved.
+
+Research on this problem describes how stockouts conceal demand and can bias subsequent judgements downwards. The practical implication is to record availability gaps alongside sales before deciding which forecast was better. [Research on censored demand](https://doi.org/10.1111/poms.12823).
+
+Keep those cases visible. Dropping every promotion with a stockout would remove some of the decisions we most need to understand. Estimates of lost demand may help, but their assumptions and uncertainty should remain clear. The manager’s higher forecast is not itself evidence of how many sales were lost.
+
+Then examine the business result. Detergent remaining after a promotion may sell at the normal price the following week. It still occupies space and ties up money. Depending on the product and circumstances, extra stock may also create handling, transfer or markdown costs. Those consequences belong alongside availability and margin in the review.
+
+A field experiment at a spare-parts retail chain illustrates why the distinction matters. Saravanan Kesavan, Tarun Kushwaha and Dayton Steele found that allowing merchants to adjust forecast inputs improved profitability on average, while emphasising that forecast performance and profit performance need not move together. It is evidence for evaluating both, rather than assuming the most accurate forecast necessarily produces the best commercial result. [The retail field experiment](https://pubsonline.informs.org/doi/10.1287/mnsc.2024.06321).
+
+Our two saved forecasts cannot reveal exactly what would have happened under a different stock policy. Establishing that requires a credible trial or comparison, with its assumptions made explicit.
+
+Nick also wants experienced managers involved when their judgement turns out to be wrong:
+
+“Even if this is your best manager, they might say they need more stock and turn out not to. You still need to ask why. What did they see? What was behind that judgement? Bringing them into the review gives everyone more insight into what’s going on.”
+
+Across several relevant promotions, look for which reasons for adjustment hold up. A manager may have useful insight into local displays while consistently overestimating the effect of a discount. Review the specific contribution before turning a broad reputation into permanent authority to override.
+
+The software’s performance needs reviewing too. A study published in April 2026 by Finnegan McKinley and colleagues combined laboratory experiments with demand-planning data from a multinational retailer. Users adjusted forecasts in directions consistent with correcting recurring algorithm bias, and made smaller adjustments as performance improved. The study concerns adjustment behaviour, rather than proving forecast or profit gains. It shows why the particular system people are responding to matters. [The 2026 demand-planning study](https://onlinelibrary.wiley.com/doi/10.1002/joom.70045).
+
+For our detergent example, repeated evidence that additional displays affect sales could justify incorporating display details into the forecast. Once that change is tested, the manual uplift needs reassessment. A useful correction can become double-counting when the software starts accounting for the same information.
+
+Before the next promotion, preserve the original forecast, record the specific reason for changing it and book the review. Use that review to decide whether to retain the exception, revise its size, improve the forecast’s inputs or address inventory protection separately. The manager’s experience then contributes to a decision the business can examine and improve.

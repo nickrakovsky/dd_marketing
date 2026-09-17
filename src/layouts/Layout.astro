@@ -284,7 +284,9 @@ if (type === 'article' && articleData) {
     "image": socialImageURL.toString(),
     "datePublished": articleData.pubDate.toISOString(),
     "dateModified": (articleData.updatedDate || articleData.pubDate).toISOString(),
-    "author": {
+    "author": authorData.type === "Organization" ? {
+      "@id": "https://datadocks.com/#organization"
+    } : {
       "@type": "Person",
       "@id": `https://datadocks.com/about#${authorData.slug}`,
       "name": authorData.name,

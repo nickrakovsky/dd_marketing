@@ -1,22 +1,33 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
-import Navigation from '../components/Navigation.astro';
-import CTA from '../components/home/CTA.astro';
-import DemoCapture from '../components/home-revamp/DemoCapture.astro';
-import Clients from '../components/home/Clients.astro';
-import CustomerQuotes from '../components/home-revamp/CustomerQuotes.astro';
-import AuthorAvatar from '../components/home-revamp/AuthorAvatar.astro';
-import interFont from '../assets/fonts/Inter-Latin-Variable.woff2';
+import Layout from '../../layouts/Layout.astro';
+import Footer from '../../components/Footer.astro';
+import Navigation from '../../components/Navigation.astro';
+import CTA from '../../components/home/CTA.astro';
+import DemoCapture from '../../components/home-revamp/DemoCapture.astro';
+import Clients from '../../components/home/Clients.astro';
+import CustomerQuotes from '../../components/home-revamp/CustomerQuotes.astro';
+import AuthorAvatar from '../../components/home-revamp/AuthorAvatar.astro';
+import DailyBlogPreviewBanner from '../../components/preview/DailyBlogPreviewBanner.astro';
+import { isPublished } from '../../lib/content-status';
+import interFont from '../../assets/fonts/Inter-Latin-Variable.woff2';
 const calendar = { src: '/images/DataDocks-Calendar-Screenshot.webp', width: 2000, height: 717 };
-import { ytThumb } from '../lib/yt-thumb';
+import { ytThumb } from '../../lib/yt-thumb';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import { rawTestimonials } from '../data/testimonials';
+import { rawTestimonials } from '../../data/testimonials';
 import { CalendarCheck2, Truck, ChartNoAxesCombined, Warehouse, Network, Lightbulb } from 'lucide-react';
 
-// This page is injected only during development; the existing homepage is unchanged.
+interface Props {
+  previewAsOf?: Date;
+}
+
+// Only the explicit development preview wrapper supplies this prop.
+// Normal page URLs and query parameters always use the real publication date.
+const previewAsOf = import.meta.env.DEV ? Astro.props.previewAsOf : undefined;
+const asOf = previewAsOf ?? new Date();
+
+// Shared by the canonical homepage and its development-only publication preview.
 const comparisonUrl = 'https://datadocks.com/comparison';
 const videoId = 'VpQigBObIlI';
 const stages = [
@@ -41,12 +52,12 @@ const stages = [
 ];
 const [allPosts, allVideos] = await Promise.all([getCollection('posts'), getCollection('videos')]);
 const publishedPosts = allPosts
-  .filter(post => post.data.pubDate.getTime() <= Date.now() && post.data.priority !== 'Hidden')
+  .filter(post => isPublished(post.data.pubDate, asOf) && post.data.priority !== 'Hidden')
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 const featuredPost = publishedPosts.find(post => post.data.cardImage && post.data.postType.discriminant === 'article');
 const allResources: Array<CollectionEntry<'posts'> | CollectionEntry<'videos'>> = [...publishedPosts, ...allVideos];
 const reading = allResources
-  .filter(post => post !== featuredPost && post.data.pubDate.getTime() <= Date.now())
+  .filter(post => post !== featuredPost && isPublished(post.data.pubDate, asOf))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
   .slice(0, 5);
 const postDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
@@ -74,7 +85,7 @@ const faqs = [
 ];
 ---
 
-<Layout title="Dock Scheduling & Yard Management for Your Working Day | DataDocks" description="Plan arrivals, keep your dock and yard moving, and give your team one shared view. Dock scheduling and yard management built around your operation." noindex={true} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }}>
+<Layout title="Dock Scheduling & Yard Management for Your Working Day | DataDocks" description="Plan arrivals, keep your dock and yard moving, and give your team one shared view. Dock scheduling and yard management built around your operation." noindex={Boolean(previewAsOf)} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }}>
   <Fragment slot="head">
     <style is:inline set:html={`
       @font-face { font-family: 'Inter'; src: url('${interFont}') format('woff2'); font-style: normal; font-weight: 100 900; font-display: swap; }
@@ -85,6 +96,7 @@ const faqs = [
 
   <a class="skip-link" href="#main-content">Skip to content</a>
   <Navigation demoHref="#book-demo" featuresHref="#features" />
+  {previewAsOf && <DailyBlogPreviewBanner current="home" />}
   <div class="revamp">
 
     <main id="main-content">
@@ -152,7 +164,7 @@ const faqs = [
             <div class="benefit-links">{benefits.map(benefit => <a href={benefit.href}><img src={`/images/${benefit.image}`} alt={benefit.alt} width="500" height="311" loading="lazy" decoding="async" /><span>{benefit.title}</span></a>)}</div>
           </div>
           <div class="reading-list">
-            <div class="reading-header"><h3 class="reading-title">Latest resources, guides and updates</h3><a class="text-link all-resources" href="/posts">See all resources <svg class="direction-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg></a></div>
+            <div class="reading-header"><h3 class="reading-title">Latest resources, guides and updates</h3><a class="text-link all-resources" href={previewAsOf ? "/preview/daily-blog/posts" : "/posts"}>See all resources <svg class="direction-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg></a></div>
             <div class="editorial-grid">
               <ol class="post-feed" aria-label="Recent resources from DataDocks">{reading.map(post => {
                 const type = post.data.postType.discriminant;

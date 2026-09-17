@@ -19,14 +19,14 @@ import { ytThumb } from '../../lib/yt-thumb';
 import FAQ from '../../components/FAQ.astro';
 import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
-import { isPublished } from '../../lib/content-status';
+import { filterPublished, isPublished } from '../../lib/content-status';
 
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const postEntries = await getCollection('posts');
-  const publishedEntries = postEntries.filter(entry => isPublished(entry.data.pubDate));
+  const publishedEntries = filterPublished(postEntries);
   return publishedEntries.map((entry: CollectionEntry<'posts'>) => ({
     params: { slug: entry.slug }, 
     props: { entry },
@@ -41,7 +41,7 @@ const { slug } = Astro.params;
 const entry: CollectionEntry<'posts'> = (Astro.props as Props).entry || await getEntry('posts', slug as string);
 
 if (!entry || !isPublished(entry.data.pubDate)) {
-  // Fallback for types, missing entries, or future scheduled posts in production
+  // Fallback for types, missing entries, or future scheduled posts
   return Astro.redirect('/404');
 }
 const { Content, headings } = await entry.render();
@@ -57,7 +57,7 @@ const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('en-US', {
 
 const posts = await getCollection('posts');
 const videos = await getCollection('videos');
-const allPosts = [...posts, ...videos];
+const allPosts = filterPublished([...posts, ...videos]);
 
 const categoryPosts = allPosts
   .filter((p: any) => p.slug !== entry.slug && p.data.category === entry.data.category)

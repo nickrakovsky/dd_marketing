@@ -1,0 +1,25 @@
+---
+interface Props {
+  current: 'home' | 'posts';
+}
+
+const { current } = Astro.props;
+---
+
+<aside class="daily-blog-preview" aria-label="Publication preview">
+  <p><strong>After the daily blog rollout</strong><span>Preview includes posts scheduled through October 7, 2026.</span></p>
+  <nav aria-label="Preview pages">
+    <a href="/preview/daily-blog/home" aria-current={current === 'home' ? 'page' : undefined}>Homepage</a>
+    <a href="/preview/daily-blog/posts" aria-current={current === 'posts' ? 'page' : undefined}>Resource hub</a>
+    <a href={current === 'home' ? '/' : '/posts'}>Current view</a>
+  </nav>
+</aside>
+
+<style>
+  .daily-blog-preview { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.5rem; padding: .75rem max(1rem, calc((100% - 1280px) / 2)); border-block: 1px solid #d9cbb9; background: #efe2d2; color: #4a3c2e; font: 13px/1.5 system-ui, sans-serif; }
+  .daily-blog-preview p { display: flex; flex-wrap: wrap; gap: .15rem .5rem; margin: 0; }
+  .daily-blog-preview nav { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+  .daily-blog-preview a { display: inline-flex; align-items: center; min-height: 36px; text-decoration: underline; text-underline-offset: 3px; }
+  .daily-blog-preview a[aria-current="page"] { font-weight: 700; }
+  .daily-blog-preview a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+</style>

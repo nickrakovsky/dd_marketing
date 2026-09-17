@@ -28,7 +28,7 @@ test.afterEach(async ({ page }) => {
   expect(pageErrors.get(page), 'No page JavaScript errors').toEqual([]);
 });
 
-const hubPath = '/wireframes/modular-editorial';
+const hubPath = '/posts';
 
 test('mobile desktop schedule supports detail, full-week view, keyboard scrolling, and focus restoration', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
