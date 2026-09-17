@@ -13,11 +13,11 @@ const testimonials = [...rawTestimonials.slice(6, 7), ...rawTestimonials.slice(0
         const name = item.author.slice(0, comma);
         const company = item.author.slice(comma + 1).trim();
         return <figure class:list={['quote-slide', { active: index === 0 }]} aria-hidden={index !== 0 ? 'true' : undefined} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${testimonials.length}`}>
-          <blockquote>{item.quote}</blockquote>
+          <blockquote data-quote-text>{item.quote}</blockquote>
           <figcaption>
             <div class="customer-identity">
               {item.image && <Image class="portrait" src={item.image} alt="" width={48} height={48} loading="lazy" />}
-              <div><strong>{name}</strong><span>{company}</span></div>
+              <div><strong data-quote-text>{name}</strong><span data-quote-text>{company}</span></div>
             </div>
             {item.logo && <div class:list={['company-logo-frame', { 'logo-padded': item.logo === rawTestimonials[6].logo }]}><Image class="company-logo" src={item.logo} alt={company} width={240} loading="lazy" /></div>}
           </figcaption>
@@ -26,7 +26,7 @@ const testimonials = [...rawTestimonials.slice(6, 7), ...rawTestimonials.slice(0
     </div>
     <div class="quote-controls" aria-label="Browse customer experiences">
       <button type="button" data-quote-previous aria-controls="customer-quotes" aria-label="Previous testimonial"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg></button>
-      <button type="button" data-quote-next aria-controls="customer-quotes" aria-label="Next testimonial"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg></button>
+      <button type="button" data-quote-next aria-controls="customer-quotes" aria-label="Next testimonial"><span class="quote-countdown" aria-hidden="true"><span class="countdown-half countdown-right"><span class="countdown-sweep"></span></span><span class="countdown-half countdown-left"><span class="countdown-sweep"></span></span></span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg></button>
     </div>
   </div>
 </section>
@@ -51,7 +51,15 @@ const testimonials = [...rawTestimonials.slice(6, 7), ...rawTestimonials.slice(0
   .quote-controls { display: none; position: absolute; right: 0; bottom: 8px; gap: 12px; }
   [data-enhanced] .quote-controls { display: flex; }
   /* Same circular arrow treatment as the homepage testimonial component. */
-  .quote-controls button { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; background: transparent; border: 1px solid #000; border-radius: 50%; color: #000; cursor: pointer; transition: background .2s, color .2s; }
+  .quote-controls button { position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; background: transparent; border: 2px solid #dcd4c8; border-radius: 50%; color: #000; cursor: pointer; transition: background .2s, color .2s; }
+  .quote-countdown { position: absolute; inset: -2px; width: 44px; height: 44px; pointer-events: none; opacity: 0; }
+  .countdown-half, .countdown-sweep { position: absolute; inset: 0; }
+  .countdown-right { clip-path: inset(0 0 0 50%); }
+  .countdown-left { clip-path: inset(0 50% 0 0); }
+  .countdown-sweep { border: 2px solid #FE5000; border-radius: 50%; will-change: transform; }
+  .countdown-right .countdown-sweep { clip-path: inset(0 50% 0 0); }
+  .countdown-left .countdown-sweep { clip-path: inset(0 0 0 50%); }
+  [data-autoplay] .quote-countdown { opacity: 1; }
   .quote-controls button:hover { background: #000; color: #FFF8EE; }
   .quote-controls button:focus-visible { outline: 2px solid #000; outline-offset: 4px; }
   @media(max-width:1100px) { blockquote { font-size: 21px; } }
@@ -66,35 +74,81 @@ const testimonials = [...rawTestimonials.slice(6, 7), ...rawTestimonials.slice(0
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     let active = 0;
     let visible = false;
-    let hovering = false;
-    let manual = false;
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let mouse: { x: number; y: number } | undefined;
+    let countdown: Animation | undefined;
+    const rightSweep = carousel.querySelector<HTMLElement>('.countdown-right .countdown-sweep')!;
+    const leftSweep = carousel.querySelector<HTMLElement>('.countdown-left .countdown-sweep')!;
+    let sweeps: Animation[] = [];
+    const cancelCountdown = () => { sweeps.forEach(animation => animation.cancel()); sweeps = []; countdown = undefined; };
     const stack = carousel.querySelector<HTMLElement>('.quote-stack')!;
+    const containsMouse = (rect: DOMRect) => mouse && mouse.x >= rect.left && mouse.x <= rect.right && mouse.y >= rect.top && mouse.y <= rect.bottom;
+    const hoveringContent = () => {
+      if (!mouse) return false;
+      // Text ranges follow each rendered line, excluding the empty remainder of a block.
+      const range = document.createRange();
+      const overText = [...slides[active].querySelectorAll('[data-quote-text]')].some(element => {
+        range.selectNodeContents(element);
+        return [...range.getClientRects()].some(containsMouse);
+      });
+      const logo = slides[active].querySelector<HTMLElement>('.company-logo');
+      const frame = logo?.parentElement;
+      return overText || Boolean(logo && frame && containsMouse(logo.getBoundingClientRect()) && containsMouse(frame.getBoundingClientRect()));
+    };
+    const selectedContent = () => {
+      const selection = document.getSelection();
+      if (!selection || selection.isCollapsed) return false;
+      for (let i = 0; i < selection.rangeCount; i++) {
+        if (selection.getRangeAt(i).intersectsNode(slides[active])) return true;
+      }
+      return false;
+    };
     const show = (index: number) => {
       active = (index + slides.length) % slides.length;
       slides.forEach((slide, i) => { slide.classList.toggle('active', i === active); slide.setAttribute('aria-hidden', String(i !== active)); });
     };
     const sync = () => {
-      clearTimeout(timer);
-      if (manual || hovering || !visible || document.hidden || reduced.matches || carousel.matches(':focus-within')) return;
-      // Allow reading at 180 words/minute, plus time to settle into the quote.
-      const words = slides[active].querySelector('blockquote')!.textContent!.trim().split(/\s+/).length;
-      const duration = Math.max(16000, words / 3 * 1000 + 6000);
-      timer = setTimeout(() => { show(active + 1); sync(); }, duration);
+      carousel.toggleAttribute('data-autoplay', !reduced.matches);
+      if (reduced.matches) { cancelCountdown(); return; }
+      if (!countdown) {
+        // Animate transforms on two clipped semicircles; the same clock advances the quote.
+        const words = slides[active].querySelector('blockquote')!.textContent!.trim().split(/\s+/).length;
+        const duration = Math.min(11000, Math.max(8000, words / 4 * 1000 + 1000));
+        const current = rightSweep.animate([{ transform: 'rotate(0deg)', offset: 0 }, { transform: 'rotate(180deg)', offset: .5 }, { transform: 'rotate(180deg)', offset: 1 }], { duration, fill: 'forwards', easing: 'linear' });
+        const second = leftSweep.animate([{ transform: 'rotate(0deg)', offset: 0 }, { transform: 'rotate(0deg)', offset: .5 }, { transform: 'rotate(180deg)', offset: 1 }], { duration, fill: 'forwards', easing: 'linear' });
+        sweeps = [current, second];
+        countdown = current;
+        sweeps.forEach(animation => animation.pause());
+        current.finished.then(() => {
+          if (countdown !== current) return;
+          cancelCountdown();
+          stack.setAttribute('aria-live', 'off');
+          show(active + 1); sync();
+        }).catch(() => { /* Manual navigation and reduced motion cancel the current clock. */ });
+      }
+      if (!visible || document.hidden || hoveringContent() || selectedContent() || carousel.querySelector('.quote-controls button:focus-visible')) sweeps.forEach(animation => animation.pause());
+      else sweeps.forEach(animation => animation.play());
     };
-    const takeControl = () => {
-      manual = true;
+    const navigate = (direction: number) => {
+      cancelCountdown();
       stack.setAttribute('aria-live', 'polite');
+      show(active + direction);
       sync();
     };
-    carousel.querySelector('[data-quote-previous]')?.addEventListener('click', () => { takeControl(); show(active - 1); });
-    carousel.querySelector('[data-quote-next]')?.addEventListener('click', () => { takeControl(); show(active + 1); });
-    // A touch, text selection or keyboard interaction hands control to the reader
-    // for the rest of this visit. Merely hovering pauses and resets reading time.
-    carousel.addEventListener('pointerdown', takeControl);
-    carousel.addEventListener('focusin', takeControl);
-    carousel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovering = true; sync(); } });
-    carousel.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') { hovering = false; sync(); } });
+    carousel.querySelector('[data-quote-previous]')?.addEventListener('click', () => navigate(-1));
+    carousel.querySelector('[data-quote-next]')?.addEventListener('click', () => navigate(1));
+    // Pauses retain elapsed time. Empty space, portraits and mouse-focused controls do not pause.
+    carousel.addEventListener('pointermove', event => {
+      if (event.pointerType === 'mouse') { mouse = { x: event.clientX, y: event.clientY }; sync(); }
+    });
+    carousel.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') { mouse = undefined; sync(); } });
+    carousel.addEventListener('focusin', () => queueMicrotask(sync));
+    carousel.addEventListener('focusout', () => queueMicrotask(sync));
+    carousel.addEventListener('keydown', () => queueMicrotask(sync));
+    carousel.addEventListener('pointerdown', () => requestAnimationFrame(sync));
+    document.addEventListener('selectionchange', sync);
+    // Recheck a stationary mouse after scrolling or a responsive layout change.
+    window.addEventListener('scroll', () => { if (mouse) sync(); }, { passive: true });
+    window.addEventListener('resize', sync);
     new IntersectionObserver(entries => { visible = entries[0].intersectionRatio >= .35; sync(); }, { threshold: [0, .35] }).observe(carousel);
     document.addEventListener('visibilitychange', sync);
     reduced.addEventListener('change', sync);

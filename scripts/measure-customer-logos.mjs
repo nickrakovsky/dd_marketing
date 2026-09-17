@@ -19,7 +19,7 @@ for (const [name, src] of sources) {
     .resize({ width: 1400, height: 1400, fit: 'inside' })
     .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   let left = info.width, top = info.height, right = 0, bottom = 0;
-  let inkArea = 0, verticalMoment = 0;
+  let inkArea = 0, horizontalMoment = 0, verticalMoment = 0;
   for (let y = 0; y < info.height; y++) {
     for (let x = 0; x < info.width; x++) {
       const pixel = (y * info.width + x) * 4;
@@ -30,6 +30,7 @@ for (const [name, src] of sources) {
       left = Math.min(left, x); top = Math.min(top, y);
       right = Math.max(right, x); bottom = Math.max(bottom, y);
       inkArea += alpha;
+      horizontalMoment += x * alpha;
       verticalMoment += y * alpha;
     }
   }
@@ -40,6 +41,7 @@ for (const [name, src] of sources) {
     canvasWidth: info.width, canvasHeight: info.height,
     left, top, width: right - left + 1, height: bottom - top + 1,
     inkArea: Number(inkArea.toFixed(4)),
+    centroidX: Number((horizontalMoment / inkArea - left).toFixed(4)),
     centroidY: Number((verticalMoment / inkArea - top).toFixed(4)),
   });
 }

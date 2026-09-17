@@ -10,6 +10,7 @@
     "width": 1398,
     "height": 455,
     "inkArea": 347198.8863,
+    "centroidX": 617.6582,
     "centroidY": 229.579
   },
   {
@@ -23,6 +24,7 @@
     "width": 1393,
     "height": 169,
     "inkArea": 62926.0745,
+    "centroidX": 688.1739,
     "centroidY": 79.2652
   },
   {
@@ -36,6 +38,7 @@
     "width": 1400,
     "height": 254,
     "inkArea": 126671.5216,
+    "centroidX": 673.2554,
     "centroidY": 124.702
   },
   {
@@ -49,6 +52,7 @@
     "width": 1398,
     "height": 214,
     "inkArea": 160563.302,
+    "centroidX": 699.8102,
     "centroidY": 106.6164
   },
   {
@@ -62,6 +66,7 @@
     "width": 1400,
     "height": 1011,
     "inkArea": 411771.8,
+    "centroidX": 703.8147,
     "centroidY": 519.6748
   },
   {
@@ -75,6 +80,7 @@
     "width": 1394,
     "height": 614,
     "inkArea": 385917.5451,
+    "centroidX": 576.5399,
     "centroidY": 311.0195
   },
   {
@@ -88,6 +94,7 @@
     "width": 1394,
     "height": 420,
     "inkArea": 277184.9451,
+    "centroidX": 656.7586,
     "centroidY": 214.9397
   },
   {
@@ -101,6 +108,7 @@
     "width": 1400,
     "height": 1400,
     "inkArea": 949209.1647,
+    "centroidX": 698.8674,
     "centroidY": 698.0122
   },
   {
@@ -114,6 +122,7 @@
     "width": 1400,
     "height": 209,
     "inkArea": 40424.6706,
+    "centroidX": 643.8117,
     "centroidY": 109.449
   }
 ]

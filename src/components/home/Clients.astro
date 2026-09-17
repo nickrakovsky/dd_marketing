@@ -39,7 +39,8 @@ const logos = [
 const displayLogos = logos.map(logo => {
   const ink = measurements.find(item => item.src === logo.src);
   if (!airy || !ink) return { ...logo, inkStyle: undefined };
-  const scale = Math.sqrt(950 / ink.inkArea);
+  // Equal visible artwork area; transparent SVG padding does not set spacing.
+  const scale = Math.sqrt(1250 / ink.inkArea);
   const px = (value: number) => `${value.toFixed(3)}px`;
   return { ...logo, inkStyle: [
     `--ink-width:${px(ink.width * scale)}`, `--ink-height:${px(ink.height * scale)}`,
@@ -56,7 +57,7 @@ const displayLogos = logos.map(logo => {
   {/* Heading stays in container */}
   <div class="container mx-auto text-center">
     <h2 class="clients-heading font-recoleta text-xl md:text-2xl text-[#736146] mb-12 max-w-3xl mx-auto px-4">
-      Trusted by the world's most relentless supply chains
+      {airy ? <><span class="clients-lead">Trusted by the world’s</span>{' '}<span class="clients-emphasis">most relentless supply chains:</span></> : <>Trusted by the world's most relentless supply chains</>}
     </h2>
   </div>
 
@@ -95,14 +96,18 @@ const displayLogos = logos.map(logo => {
 </section>
 
 <style>
-  .clients-airy { background: #FFF8EE; border-block: 1px solid #EFE2D2; padding-block: 30px; }
-  .clients-airy .clients-heading { margin-bottom: 24px; color: #000; font-size: 22px; line-height: 1.5; }
+  .clients-airy { background: #FFF8EE; border-block: 1px solid #EFE2D2; padding-block: 28px; }
+  .clients-airy .clients-heading { margin-bottom: 12px; color: #8b4a2c; font: 600 13px/1.6 Inter, sans-serif; letter-spacing: .09em; text-transform: uppercase; text-wrap: balance; }
+  .clients-lead, .clients-emphasis { color: inherit; font: inherit; }
   .clients-airy #clients-marquee { margin-bottom: 0; opacity: 1; }
-  .clients-airy .client-slot { padding-inline: 46px; height: 72px; }
+  .clients-airy .client-slot { width: auto; padding-inline: 40px; height: 88px; justify-content: center; }
   .client-ink { position: relative; display: block; width: var(--ink-width); height: var(--ink-height); overflow: hidden; transform: translateY(var(--optical-y)); }
   .client-ink img { position: absolute; width: var(--image-width); height: var(--image-height); max-width: none; left: var(--image-left); top: var(--image-top); }
   #clients-marquee:focus-visible { outline: 2px solid #000; outline-offset: -2px; }
-  @media(max-width:600px) { .clients-airy .clients-heading { font-size: 19px; max-width: 32ch; } .clients-airy .client-slot { padding-inline: 36px; } }
+  @media(max-width:600px) {
+    .clients-airy .clients-heading { font-size: 12px; padding-inline: 24px; }
+    .clients-airy .client-slot { padding-inline: 28px; }
+  }
 </style>
 
 <script>
