@@ -1,0 +1,181 @@
+---
+export const prerender = true;
+
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import WireframeToolbar from "../../components/wireframes/WireframeToolbar.astro";
+import { getWireframeData } from "../../lib/wireframe-data";
+
+const { evergreenPosts, discoverPosts } = await getWireframeData();
+
+const wireframes = [
+  {
+    id: "split-stream",
+    num: "01",
+    title: "Equal Split (50/50 Dual Column)",
+    tagline: "Equal Visual Weight with Full Cards",
+    href: "/wireframes/split-stream",
+    accent: "border-[#fd4f00]",
+    badgeBg: "bg-[#fd4f00] text-white",
+    description:
+      "Core Playbooks (10 Evergreen guides) on the left and Latest Articles (Discover feed) on the right in two balanced 50/50 columns. Both sides receive full card treatment with 16:9 imagery, descriptions, and clean date metadata.",
+    strengths: [
+      "Gives Evergreen guides equal prominence to the latest releases",
+      "Full card real estate (images + 3-line descriptions) on both columns",
+      "Clean single-scroll experience that collapses to a single vertical column on mobile",
+      "Interactive topic filter instantly updates both columns"
+    ]
+  },
+  {
+    id: "editorial-bento",
+    num: "02",
+    title: "Evergreen-Led (60/40 Grid + Stream)",
+    tagline: "Maximum Real Estate for Core Playbooks",
+    href: "/wireframes/editorial-bento",
+    accent: "border-black",
+    badgeBg: "bg-black text-white",
+    description:
+      "Allocates 60% of desktop width to the 10 Core Playbooks displayed as a rich 2-column card grid, while Latest Articles run alongside in a clean 40% vertical feed.",
+    strengths: [
+      "Prioritizes high-authority evergreen content over raw chronological dispatches",
+      "2-column card grid inside the evergreen section for fast scannability",
+      "Clean vertical list for recent articles without stealing focus from pillars",
+      "Topic filter updates both sides dynamically"
+    ]
+  },
+  {
+    id: "tabbed-hub",
+    num: "03",
+    title: "Featured Pair + Side-by-Side Split",
+    tagline: "Dual Flagship Hero Cards Over Dual Feeds",
+    href: "/wireframes/tabbed-hub",
+    accent: "border-[#fd4f00]",
+    badgeBg: "bg-[#fd4f00] text-white",
+    description:
+      "Showcases the #1 Evergreen Playbook and #1 Latest Release side-by-side in a prominent 2-card hero section, followed by balanced side-by-side columns for the remaining articles.",
+    strengths: [
+      "Instantly highlights both the most important playbook and the newest release",
+      "Provides generous visual impact above the fold",
+      "Clean 50/50 dual column below for deeper reading",
+      "Clear separation of evergreen vs chronological updates"
+    ]
+  },
+  {
+    id: "sidebar-engine",
+    num: "04",
+    title: "Dual Column Explorer (Horizontal Cards)",
+    tagline: "Image-Left Wide Cards in 50/50 Split",
+    href: "/wireframes/sidebar-engine",
+    accent: "border-black",
+    badgeBg: "bg-black text-white",
+    description:
+      "Two 50/50 columns using horizontal media-left cards. Allows rapid vertical scanning of both Core Playbooks and Latest Articles while maintaining high card density.",
+    strengths: [
+      "High information density with compact horizontal card layout",
+      "Fast comparison between foundational guides and recent updates",
+      "Consistent card height and scanning rhythm across both columns",
+      "Full topic filtering across both streams"
+    ]
+  }
+];
+
+const title = "Resource Hub Wireframe Options | DataDocks";
+const description = "Explore 4 side-by-side layout variations for the DataDocks blog hub.";
+---
+
+<Layout title={title} description={description}>
+  <WireframeToolbar currentVariant="overview" />
+  <Navigation />
+
+  <main class="min-h-screen bg-[#FFF8E9] text-gray-900 font-sans pb-24">
+    {/* HERO */}
+    <header class="pt-16 pb-12 px-4 md:px-8 max-w-7xl mx-auto border-b border-black/10">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl sm:text-6xl font-bruta uppercase tracking-tight text-black leading-[0.9]">
+          Blog Hub <span class="text-[#fd4f00]">Wireframe Options</span>
+        </h1>
+        <p class="mt-4 text-base md:text-lg text-gray-700 font-recoleta leading-relaxed">
+          4 clean, side-by-side layout variations balancing 10 Core Playbooks with our chronological feed of latest articles.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-black/10 text-xs font-mono">
+        <div class="bg-white p-3.5 rounded-xl border border-black/10">
+          <span class="text-gray-500 block mb-1">HERO DATE</span>
+          <span class="font-bold text-black text-sm">Dynamic Today's Date</span>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-black/10">
+          <span class="text-gray-500 block mb-1">TOPIC FILTERS</span>
+          <span class="font-bold text-black text-sm">7 Filter Pillars</span>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-black/10">
+          <span class="text-gray-500 block mb-1">CORE PLAYBOOKS</span>
+          <span class="font-bold text-[#fd4f00] text-sm">{evergreenPosts.length} Evergreen Guides</span>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-black/10">
+          <span class="text-gray-500 block mb-1">LATEST ARTICLES</span>
+          <span class="font-bold text-black text-sm">{discoverPosts.length} Recent Posts</span>
+        </div>
+      </div>
+    </header>
+
+    {/* WIREFRAME CARDS GRID */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mt-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {wireframes.map((wf) => (
+          <div class={`bg-white rounded-2xl border-2 ${wf.accent} p-6 md:p-8 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all`}>
+            <div>
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <span class={`text-xs font-mono font-bold px-2.5 py-1 rounded ${wf.badgeBg}`}>
+                  Option {wf.num}
+                </span>
+                <span class="text-xs font-mono text-gray-500 uppercase">
+                  Side-by-Side
+                </span>
+              </div>
+
+              <h2 class="font-bruta text-2xl md:text-3xl uppercase tracking-tight text-black">
+                {wf.title}
+              </h2>
+              <p class="text-xs font-mono text-[#fd4f00] font-bold mt-1">
+                {wf.tagline}
+              </p>
+
+              <p class="mt-4 text-sm text-gray-700 font-recoleta leading-relaxed">
+                {wf.description}
+              </p>
+
+              <div class="mt-5">
+                <span class="text-xs font-mono uppercase tracking-wider text-gray-500 block mb-2 font-bold">
+                  Layout Highlights:
+                </span>
+                <ul class="space-y-1.5 text-xs font-sans text-gray-700">
+                  {wf.strengths.map((s) => (
+                    <li class="flex items-start gap-2">
+                      <span class="text-[#fd4f00] font-bold">✓</span>
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-black/10 flex items-center justify-between">
+              <span class="text-xs font-mono text-gray-500">Live preview</span>
+              <a
+                href={wf.href}
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-[#fd4f00] text-white rounded-xl text-xs md:text-sm font-mono font-bold transition-colors shadow-sm"
+              >
+                <span>View Wireframe {wf.num}</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

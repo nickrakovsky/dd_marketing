@@ -1,0 +1,259 @@
+---
+import { Image } from 'astro:assets';
+import { ytThumb } from '../../lib/yt-thumb';
+import type { LiveFeedItem } from '../../lib/wireframe-data';
+
+interface Props { items: LiveFeedItem[]; }
+const { items } = Astro.props;
+const topics = [...new Set(items.map(item => item.topic || 'Other topics'))].sort();
+const typeLabels = { article: 'Articles', video: 'Videos', short: 'Shorts' };
+const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
+  .filter(type => items.some(item => item.postType === type));
+---
+
+<resource-archive id="archive-grid" class="block max-w-7xl mx-auto px-4 md:px-8 mb-16">
+  <section aria-labelledby="archive-heading">
+    <div class="pb-4 border-b-2 border-black mb-6">
+      <h2 id="archive-heading" class="font-bruta uppercase text-2xl sm:text-3xl md:text-4xl tracking-tight text-black">
+        Older Resources
+      </h2>
+    </div>
+
+    <div data-archive-controls hidden>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <label class="block font-sans text-sm font-semibold text-black">
+          Content type
+          <select name="content-type" aria-controls="archive-results">
+            <option value="all">All content types</option>
+            {types.map(type => <option value={type}>{typeLabels[type]}</option>)}
+          </select>
+        </label>
+        <label class="block font-sans text-sm font-semibold text-black">
+          Topic
+          <select name="topic" aria-controls="archive-results">
+            <option value="all">All topics</option>
+            {topics.map(topic => <option value={topic}>{topic}</option>)}
+          </select>
+        </label>
+        <label class="block font-sans text-sm font-semibold text-black sm:col-span-2 lg:col-span-1">
+          Sort by
+          <select name="sort" aria-controls="archive-results">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="flex items-center justify-between gap-4 py-5 font-sans text-sm">
+        <p data-result-count role="status" aria-live="polite" aria-atomic="true">{items.length} resources</p>
+        <button type="button" data-clear-filters disabled class="font-semibold underline underline-offset-4 hover:text-[#FE5000] disabled:opacity-40 disabled:cursor-default min-h-11 px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black">
+          Reset filters
+        </button>
+      </div>
+    </div>
+
+    <div id="archive-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {items.map((item, idx) => {
+          const cardAttributes = {
+            'data-resource-card': '',
+            'data-type': item.postType,
+            'data-topic': item.topic || 'Other topics',
+            'data-date': item.pubDateValue,
+            'data-title': item.title,
+          };
+          const isVideo = item.postType === 'video' || !!item.youtubeId;
+          const isImageOverlay = !isVideo && !!item.cardImage && (idx % 2 === 1);
+
+          if (isVideo) {
+            {/* Variant C: Video card with 16:9 YouTube aspect ratio, duration badge, play icon, and overlaid text */}
+            return (
+              <a
+                href={item.url}
+                {...cardAttributes}
+                class="relative rounded-xl overflow-hidden aspect-video bg-black flex flex-col justify-between p-4 sm:p-5 group hover:shadow-xl transition-all duration-300"
+              >
+                {item.youtubeId ? (
+                  <img
+                    src={ytThumb(item.youtubeId, 'sdwebp')}
+                    alt={item.title}
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-65"
+                    loading="lazy"
+                  />
+                ) : item.cardImage ? (
+                  <Image
+                    src={item.cardImage}
+                    alt={item.cardAlt || item.title}
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-65"
+                    loading="lazy"
+                  />
+                ) : null}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/20"></div>
+
+                <div class="relative z-10 flex items-center justify-between">
+                  <div class="w-8 h-8 rounded-full bg-black/60 backdrop-blur border border-white/40 flex items-center justify-center text-white group-hover:bg-[#FE5000] group-hover:border-[#FE5000] transition-all shadow-md">
+                    <svg class="w-3.5 h-3.5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                  <span class="bg-black/70 backdrop-blur text-white text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/20">
+                    {item.readTime}
+                  </span>
+                </div>
+
+                <div class="relative z-10">
+                  <h3 class="font-sans font-bold text-sm sm:text-base text-white group-hover:text-[#FE5000] transition-colors line-clamp-2 leading-snug">
+                    {item.title}
+                  </h3>
+                  <span class="text-[10px] sm:text-[11px] font-mono text-gray-400 block mt-0.5">
+                    By {item.author}
+                  </span>
+                </div>
+              </a>
+            );
+          }
+
+          if (isImageOverlay) {
+            {/* Variant B: Article with image, 16:9 YouTube aspect ratio, text overlaid on bottom gradient */}
+            return (
+              <a
+                href={item.url}
+                {...cardAttributes}
+                class="relative rounded-xl overflow-hidden aspect-video bg-black flex flex-col justify-between p-4 sm:p-5 group hover:shadow-xl transition-all duration-300"
+              >
+                <Image
+                  src={item.cardImage}
+                  alt={item.cardAlt || item.title}
+                  class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-65"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent"></div>
+                <div class="relative z-10 flex items-center justify-end">
+                  <span class="bg-black/70 backdrop-blur text-white text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/20">
+                    {item.readTime}
+                  </span>
+                </div>
+                <div class="relative z-10">
+                  <div class="text-[10px] sm:text-[11px] font-mono text-gray-300 mb-0.5 flex items-center gap-2">
+                    <span>{item.displayDate}</span>
+                  </div>
+                  <h3 class="font-sans font-bold text-sm sm:text-base text-white group-hover:text-[#FE5000] transition-colors line-clamp-2 leading-snug mb-0.5">
+                    {item.title}
+                  </h3>
+                  <span class="text-[10px] sm:text-[11px] font-mono text-gray-300">By {item.author}</span>
+                </div>
+              </a>
+            );
+          }
+
+          {/* Variant A: Text-only dense editorial card in 16:9 YouTube aspect ratio */}
+          return (
+            <a
+              href={item.url}
+                {...cardAttributes}
+              class="bg-white rounded-xl border border-black/10 p-4 sm:p-5 flex flex-col aspect-video hover:border-black/30 hover:shadow-xl transition-all duration-300 group"
+            >
+              <div class="min-w-0">
+                <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-gray-400 mb-1.5">
+                  <span>{item.displayDate}</span>
+                  <span>{item.readTime}</span>
+                </div>
+                <h3 class="font-sans font-bold text-sm sm:text-base text-gray-900 group-hover:text-[#FE5000] transition-colors leading-snug mb-1.5 line-clamp-2">
+                  {item.title}
+                </h3>
+                <p class="text-[13px] sm:text-sm text-gray-600 font-recoleta leading-snug line-clamp-3">
+                  {item.description}
+                </p>
+              </div>
+              <div class="pt-2.5 mt-auto border-t border-black/10 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-gray-500">
+                <span>By {item.author}</span>
+                <span class="text-[#FE5000] font-bold group-hover:translate-x-1 transition-transform inline-flex items-center text-sm">
+                  →
+                </span>
+              </div>
+            </a>
+          );
+        })}
+    </div>
+    <div data-empty-state hidden class="border border-black/15 rounded-xl bg-white py-12 px-6 text-center font-sans">
+      <h3 class="text-xl font-bold text-black">No resources match these filters</h3>
+      <p class="text-base text-gray-600 mt-2">Try a different topic or content type.</p>
+      <button type="button" data-clear-filters class="mt-5 min-h-11 px-6 py-3 bg-black text-white font-semibold hover:bg-[#FE5000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black">
+        Reset filters
+      </button>
+    </div>
+  </section>
+</resource-archive>
+
+<style>
+  [hidden] { display: none !important; }
+  select {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem 2rem 0.75rem 1rem;
+    border: 1px solid rgb(0 0 0 / 25%);
+    border-radius: 0.5rem;
+    background-color: white;
+    color: black;
+    font-size: 1rem;
+    font-weight: 400;
+    cursor: pointer;
+  }
+  select:focus-visible { outline: 2px solid black; outline-offset: 3px; }
+</style>
+
+<script>
+  class ResourceArchive extends HTMLElement {
+    connectedCallback() {
+      if (this.dataset.initialized) return;
+      const controls = this.querySelector<HTMLElement>('[data-archive-controls]');
+      const type = this.querySelector<HTMLSelectElement>('[name="content-type"]');
+      const topic = this.querySelector<HTMLSelectElement>('[name="topic"]');
+      const sort = this.querySelector<HTMLSelectElement>('[name="sort"]');
+      const grid = this.querySelector<HTMLElement>('#archive-results');
+      const count = this.querySelector<HTMLElement>('[data-result-count]');
+      const empty = this.querySelector<HTMLElement>('[data-empty-state]');
+      if (!controls || !type || !topic || !sort || !grid || !count || !empty) return;
+      this.dataset.initialized = 'true';
+      const cards = Array.from(grid.querySelectorAll<HTMLAnchorElement>('[data-resource-card]'));
+      const resetButtons = this.querySelectorAll<HTMLButtonElement>('[data-clear-filters]');
+      const collator = new Intl.Collator('en', { sensitivity: 'base', numeric: true });
+
+      const update = () => {
+        const sorted = [...cards].sort((a, b) => {
+          if (sort.value === 'title') return collator.compare(a.dataset.title || '', b.dataset.title || '');
+          const difference = Number(b.dataset.date) - Number(a.dataset.date);
+          return sort.value === 'oldest' ? -difference : difference;
+        });
+        let visible = 0;
+        for (const card of sorted) {
+          card.hidden = !(type.value === 'all' || card.dataset.type === type.value)
+            || !(topic.value === 'all' || card.dataset.topic === topic.value);
+          if (!card.hidden) visible++;
+        }
+        grid.append(...sorted);
+        const filtersActive = type.value !== 'all' || topic.value !== 'all';
+        count.textContent = filtersActive
+          ? `${visible} of ${cards.length} resources`
+          : `${cards.length} resources`;
+        empty.hidden = visible > 0;
+        grid.hidden = visible === 0;
+        resetButtons.forEach(button => { button.disabled = !filtersActive && sort.value === 'newest'; });
+      };
+
+      [type, topic, sort].forEach(control => control.addEventListener('change', update));
+      resetButtons.forEach(button => button.addEventListener('click', () => {
+        const wasInEmptyState = empty.contains(button);
+        type.value = 'all';
+        topic.value = 'all';
+        sort.value = 'newest';
+        update();
+        if (wasInEmptyState) type.focus();
+      }));
+      update();
+      controls.hidden = false;
+    }
+  }
+  if (!customElements.get('resource-archive')) customElements.define('resource-archive', ResourceArchive);
+</script>

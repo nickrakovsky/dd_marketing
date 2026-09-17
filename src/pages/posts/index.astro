@@ -10,6 +10,7 @@ import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import { getFriendlyDate } from "../../utils/dateFormatter";
 import { ytThumb } from "../../lib/yt-thumb";
+import { isPublished } from "../../lib/content-status";
 
 const categoryIcons: Record<string, string> = {
   "Facility Operations": `<path d="M3 21h18M3 7v14M21 7v14M3 7l9-4 9 4M7 21v-7h10v7M9 10v2M15 10v2" />`,
@@ -23,10 +24,10 @@ const categoryIcons: Record<string, string> = {
 const priorityWeight: Record<string, number> = { high: 3, medium: 2, low: 1 };
 const getPriority = (p?: string) => priorityWeight[p?.toLowerCase() || ""] || 0;
 
-// Fetch and sort posts chronologically
+// Fetch and sort posts chronologically (respecting future pubDate in production)
 const posts = await getCollection("posts");
 const videos = await getCollection("videos");
-const allPosts = [...posts, ...videos] as any[];
+const allPosts = [...posts, ...videos].filter(item => isPublished(item.data.pubDate)) as any[];
 
 const sortedPosts = allPosts.sort((a, b) => {
   const pA = getPriority(a.data.priority);

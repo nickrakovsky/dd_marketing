@@ -17,13 +17,20 @@ import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
 const postsDir = path.resolve('./src/content/posts');
 const postDateMap = new Map();
+const now = new Date();
+const isProd = process.env.NODE_ENV === 'production';
 if (fs.existsSync(postsDir)) {
   for (const file of fs.readdirSync(postsDir)) {
     if (!file.endsWith('.mdx') && !file.endsWith('.md')) continue;
     const content = fs.readFileSync(path.join(postsDir, file), 'utf-8');
     const { data } = matter(content);
+    const pubDate = data.pubDate ? new Date(data.pubDate) : null;
+    // Exclude future scheduled posts from sitemap in production builds
+    if (isProd && pubDate && !isNaN(pubDate.getTime()) && pubDate > now) {
+      continue;
+    }
     const slug = file.replace(/\.mdx?$/, '');
-    const date = data.updatedDate ? new Date(data.updatedDate) : data.pubDate ? new Date(data.pubDate) : null;
+    const date = data.updatedDate ? new Date(data.updatedDate) : pubDate;
     if (date && !isNaN(date.getTime())) {
       postDateMap.set(`https://datadocks.com/posts/${slug.toLowerCase()}`, date);
     }
