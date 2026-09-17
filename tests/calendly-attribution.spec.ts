@@ -11,7 +11,7 @@ import { join } from 'node:path';
  *      on Calendly's uptime. Asserts that every page surface — desktop nav,
  *      mobile nav, hero email form, footer email form, blog post link,
  *      integrations CTA, about page CTA — calls `Calendly.initPopupWidget`
- *      with our booking URL when clicked.
+ *      with our booking URL after email capture where required.
  *
  *      This catches *our* regressions: a broken click handler, a typo in the
  *      booking URL, a layout change that strips the link, the Layout.astro
@@ -74,6 +74,17 @@ async function getOpenCount(page: Page): Promise<number> {
   return page.evaluate(() => window.__openCount ?? 0);
 }
 
+// Homepage navigation opens capture first; booking must wait for submission.
+async function submitNavigationCapture(page: Page) {
+  const dialog = page.locator('#demo-capture-dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator('input[name="email"]')).toBeFocused();
+  expect(await getCalendlyCalls(page)).toHaveLength(0);
+  await dialog.locator('input[name="email"]').fill('nav-capture@example.com');
+  await dialog.locator('button[type="submit"]').click();
+  await expect(dialog).toBeHidden();
+}
+
 const VIEWPORTS = {
   desktop: { width: 1280, height: 900 },
   mobile: { width: 390, height: 844 },
@@ -82,13 +93,17 @@ const VIEWPORTS = {
 test.describe('Calendly entry points (mocked)', () => {
   test.beforeEach(async ({ page }) => {
     await stubCalendly(page);
+    await page.route('**/api/bento-track', route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' })
+    );
   });
 
-  test('desktop nav "Schedule a Demo" button opens the popup', async ({ page }) => {
+  test('desktop nav captures email before opening the booking popup', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto('/');
 
-    await page.locator(`nav a[href*="${BOOKING_URL_FRAGMENT}"]`).first().click();
+    await page.locator('nav').getByRole('link', { name: 'Schedule a Demo', exact: true }).click();
+    await submitNavigationCapture(page);
 
     await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
     const calls = await getCalendlyCalls(page);
@@ -96,17 +111,19 @@ test.describe('Calendly entry points (mocked)', () => {
     expect(await getOpenCount(page)).toBe(0);
   });
 
-  test('mobile nav "Schedule a Demo" button opens the popup', async ({ page }) => {
+  test('mobile nav closes the menu and captures email before booking', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.mobile);
     await page.goto('/');
 
     // Open the hamburger menu
     await page.locator('[data-mobile-toggle]').click();
 
-    // The mobile menu has its own Calendly link (Navigation.astro:151)
+    // The mobile menu closes before the email-capture dialog opens.
     const mobileMenu = page.locator('[data-mobile-menu]');
     await expect(mobileMenu).toBeVisible();
-    await mobileMenu.locator(`a[href*="${BOOKING_URL_FRAGMENT}"]`).click();
+    await mobileMenu.getByRole('link', { name: 'Schedule a Demo', exact: true }).click();
+    await expect(mobileMenu).toBeHidden();
+    await submitNavigationCapture(page);
 
     await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
     expect(await getOpenCount(page)).toBe(0);
@@ -120,7 +137,7 @@ test.describe('Calendly entry points (mocked)', () => {
     );
     await page.goto('/');
 
-    const heroForm = page.locator('#hero-bento-form');
+    const heroForm = page.locator('form#book-demo');
     await expect(heroForm).toBeVisible();
     await heroForm.locator('input[name="email"]').fill('test-hero@datadocks.com');
     await heroForm.locator('button[type="submit"]').click();
@@ -137,7 +154,7 @@ test.describe('Calendly entry points (mocked)', () => {
     );
     await page.goto('/');
 
-    const heroForm = page.locator('#hero-bento-form');
+    const heroForm = page.locator('form#book-demo');
     await expect(heroForm).toBeVisible();
     await heroForm.locator('input[name="email"]').fill('test-hero-mobile@datadocks.com');
     await heroForm.locator('button[type="submit"]').click();
@@ -218,7 +235,8 @@ test.describe('Calendly entry points (mocked)', () => {
     await page.setViewportSize(VIEWPORTS.desktop);
     await page.goto('/?utm_source=google&utm_medium=cpc&utm_campaign=q4_demo');
 
-    await page.locator(`nav a[href*="${BOOKING_URL_FRAGMENT}"]`).first().click();
+    await page.locator('nav').getByRole('link', { name: 'Schedule a Demo', exact: true }).click();
+    await submitNavigationCapture(page);
 
     await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
     const calls = await getCalendlyCalls(page);
@@ -235,7 +253,8 @@ test.describe('Calendly entry points (mocked)', () => {
     // Direct return visit
     await page.goto('/');
 
-    await page.locator(`nav a[href*="${BOOKING_URL_FRAGMENT}"]`).first().click();
+    await page.locator('nav').getByRole('link', { name: 'Schedule a Demo', exact: true }).click();
+    await submitNavigationCapture(page);
 
     await expect.poll(() => getCalendlyCalls(page)).toHaveLength(1);
     const calls = await getCalendlyCalls(page);
@@ -253,7 +272,7 @@ test.describe('Calendly entry points (mocked)', () => {
     );
     await page.goto('/');
 
-    const heroForm = page.locator('#hero-bento-form');
+    const heroForm = page.locator('form#book-demo');
     await heroForm.locator('input[name="email"]').fill('lead@datadocks.com');
     await heroForm.locator('button[type="submit"]').click();
 
