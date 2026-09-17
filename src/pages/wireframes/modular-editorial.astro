@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navigation from "../../components/Navigation.astro";
 import Footer from "../../components/Footer.astro";
 import CTA from "../../components/home/CTA.astro";
+import DemoCapture from "../../components/home-revamp/DemoCapture.astro";
 import { getModularHubData } from "../../lib/wireframe-data";
 import { ytThumb } from "../../lib/yt-thumb";
 import { Image } from "astro:assets";
@@ -13,9 +14,6 @@ import ResourceArchive from "../../components/wireframes/ResourceArchive.astro";
 import HubShorts from "../../components/wireframes/HubShorts.astro";
 import mobileScreenshot from "../../assets/solutionsscreenshots/visibility/appscreenshot-screen.webp";
 import desktopScreenshot from "../../assets/solutionsscreenshots/DataDocks-Calendar-Clean.webp";
-import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "../../lib/calendly-config.mjs";
-
-const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 
 const {
   evergreen1,
@@ -57,7 +55,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
   </style>
 
   {/* 1. MAIN NAVIGATION */}
-  <Navigation />
+  <Navigation demoHref="#book-demo" />
 
   <main class="min-h-screen bg-[#FFF8EE] text-gray-900 font-sans pb-0">
 
@@ -315,6 +313,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
             {/* Book a Demo Email Capture (Full-width form spanning the text column above) */}
             <form
               id="demo-banner-form"
+              data-demo-capture
               class="why-cta"
             >
               <input
@@ -332,6 +331,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
               >
                 Book a Demo
               </button>
+              <p class="capture-status why-capture-status" data-capture-status role="status" aria-live="polite"></p>
             </form>
 
         </div>
@@ -588,10 +588,11 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
     </div>
 
     {/* 13. SITEWIDE CALL TO ACTION BANNER */}
-    <CTA />
+    <CTA captureFirst />
 
   </main>
 
+  <DemoCapture standalone />
   <Footer />
 
 
@@ -624,6 +625,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
     .why-cta { grid-area: cta; display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 35rem; }
     .why-cta input, .why-cta button { min-height: 3.25rem; height: 3.25rem; }
     .why-cta input { appearance: none; font-size: 1rem; }
+    .why-capture-status { grid-column: 1 / -1; color: #000; }
     .why-cta :focus-visible { position: relative; outline: 2px solid #a93500; outline-offset: 3px; z-index: 1; }
     .showcase-browser-bar { min-width: 0; }
     #header-zoom-btn { flex-shrink: 0; min-width: 2rem; min-height: 2rem; justify-content: center; }
@@ -696,7 +698,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
     }
   </style>
 
-  <script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
+  <script is:inline>
     (function () {
       function attachInteractiveElements() {
         // Trigger deep-dive video playback when clicking anywhere on the card
@@ -780,48 +782,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
       attachInteractiveElements();
       document.addEventListener('astro:page-load', attachInteractiveElements);
 
-      // Book a Demo Form Handling
-      function attachDemoForm() {
-        const form = document.getElementById('demo-banner-form');
-        if (!form || form.dataset.bound) return;
-        form.dataset.bound = 'true';
-        form.addEventListener('submit', function (e) {
-          e.preventDefault();
-          const emailInput = form.querySelector('input[name="email"]');
-          const email = emailInput ? emailInput.value : '';
-          if (email) {
-            if (typeof window.ddSetEmail === 'function') {
-              window.ddSetEmail(email);
-            }
-            if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
-              window.bento.identify(email);
-            }
 
-            fetch('/api/bento-track', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: email,
-                event: 'Demo Subscriber',
-                source: window.location.pathname,
-                landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-                visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
-                attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
-              }),
-              keepalive: true
-            }).catch(function () {});
-          }
-          if (typeof window.ddOpenCalendly === 'function') {
-            window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
-          } else {
-            window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
-          }
-          form.reset();
-        });
-      }
-
-      attachDemoForm();
-      document.addEventListener('astro:page-load', attachDemoForm);
     })();
   </script>
 </Layout>
