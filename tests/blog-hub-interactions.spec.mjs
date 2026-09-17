@@ -69,7 +69,7 @@ test('mobile desktop schedule supports detail, full-week view, keyboard scrollin
 test('desktop schedule opens in full-week view and can be enlarged', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(hubPath);
-  const trigger = page.locator('#header-zoom-btn');
+  const trigger = page.locator('#mac-fullscreen-btn');
   await trigger.click();
   const dialog = page.locator('dialog#desktop-screenshot-modal');
   const zoom = dialog.locator('[data-schedule-zoom]');
@@ -88,7 +88,7 @@ test('schedule dismissal restores visible trigger after viewport changes', async
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto(hubPath);
   const mobileTrigger = page.locator('[data-open-desktop-schedule]');
-  const desktopTrigger = page.locator('#header-zoom-btn');
+  const desktopTrigger = page.locator('#mac-fullscreen-btn');
   const dialog = page.locator('dialog#desktop-screenshot-modal');
   await mobileTrigger.click();
   await page.setViewportSize({ width: 1440, height: 900 });
