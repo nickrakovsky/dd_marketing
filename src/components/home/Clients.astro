@@ -62,6 +62,7 @@ const displayLogos = logos.map(logo => {
   </div>
 
   {/* Full-width marquee */}
+  {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- The draggable carousel also needs keyboard focus for arrow-key browsing. */}
   <div id="clients-marquee" class="relative w-full flex overflow-hidden mb-12 opacity-80 cursor-grab active:cursor-grabbing" style="touch-action: pan-y;" tabindex="0" role="group" aria-label="Customer logos. Drag or use the left and right arrow keys to browse.">
     <div id="clients-track" class="flex w-max items-center">
       {/* 5x logos for plenty of content in both directions */}

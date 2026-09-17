@@ -547,7 +547,7 @@ export async function getModularHubData() {
         cleanDesc = 'Dock congestion usually looks like a capacity shortage when the real problem is how arrival slots are scheduled across the doors you already have. Nick shares four practical adjustments to balance truck flow, eliminate yard gridlock, and move more freight without adding shifts.';
       } else {
         cleanDesc = cleanDesc
-          .replace(/^[💡⏱️📈🚚📢\s]+/, '')
+          .replace(/^(?:💡|⏱️?|📈|🚚|📢|\s)+/u, '')
           .replace(/https?:\/\/\S+/g, '')
           .replace(/\.{2,}$/, '.')
           .trim();

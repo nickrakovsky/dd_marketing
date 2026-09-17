@@ -173,7 +173,7 @@ const faqs = [
                   </a>
                 </article>
               </li>})}</ol>
-              {featuredPost && <a class="featured-post" href={`/posts/${featuredPost.slug}`}>
+              {featuredPost && <a class="featured-post" href={"/posts/" + featuredPost.slug}>
                 <div class="reading-image">{featuredPost.data.cardImage && <Image src={featuredPost.data.cardImage} alt={featuredPost.data.cardAlt || featuredPost.data.title} widths={[480, 720, 1080]} sizes="(max-width: 640px) calc(100vw - 40px), 600px" width={720} loading="lazy" />}</div>
                 <div class="featured-copy">
                   <h4>{featuredPost.data.title}</h4>
@@ -206,8 +206,9 @@ const faqs = [
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="m15 15 6 6M7 10h6" /><path data-zoom-plus d="M10 7v6" /></svg>
           <span>Zoom in</span>
         </button>
-        <button type="button" class="screenshot-close" aria-label="Close screenshot" autofocus><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" /></svg></button>
+        <button type="button" class="screenshot-close" aria-label="Close screenshot"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" /></svg></button>
       </header>
+      {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- Keyboard focus enables arrow-key scrolling of the enlarged schedule. */}
       <div class="screenshot-scroll" id="screenshot-viewport" role="region" aria-label="DataDocks schedule image" tabindex="0">
         <div class="screenshot-stage"><div class="screenshot-crop"><img data-full-screenshot data-src={calendar.src} width={calendar.width} height={calendar.height} draggable="false" alt="DataDocks weekly schedule, Monday through Sunday, showing truck appointments, capacity and loading statuses." /></div></div>
       </div>
@@ -222,7 +223,7 @@ const faqs = [
   };
   const watchStory = document.querySelector<HTMLAnchorElement>('[data-play-customer-story]');
   const story = document.querySelector<HTMLElement>('#customer-story');
-  const embed = story?.querySelector<CustomerStoryPlayer>('lite-youtube');
+  const embed = story?.querySelector('lite-youtube') as CustomerStoryPlayer | null | undefined;
   if (watchStory && story && embed) {
     watchStory.addEventListener('click', event => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -234,7 +235,8 @@ const faqs = [
         player.playVideo();
       }).catch(() => {
         // Keep the embedded player's own controls available if playback is blocked.
-        embed.querySelector<HTMLElement>('.lty-playbtn')?.focus({ preventScroll: true });
+        const playButton = embed.querySelector<HTMLElement>('.lty-playbtn');
+        playButton?.focus({ preventScroll: true });
       });
     });
   }
@@ -257,15 +259,18 @@ const faqs = [
     const setView = (details: boolean) => {
       enlarged = details;
       zoom.toggleAttribute('data-enlarged', details);
-      toggle.querySelector('span')!.textContent = details ? 'Fit to window' : 'Zoom in';
-      toggle.querySelector<SVGElement>('[data-zoom-plus]')!.style.display = details ? 'none' : '';
+      const label = toggle.querySelector('span');
+      const plus = toggle.querySelector<SVGElement>('[data-zoom-plus]');
+      if (label) label.textContent = details ? 'Fit to window' : 'Zoom in';
+      if (plus) plus.style.display = details ? 'none' : '';
       hint.textContent = details ? 'Drag, swipe or use the arrow keys to explore.' : 'The full week. Zoom in to read appointment details.';
       sizeImage();
       viewport.scrollTo({ left: 0, top: 0, behavior: 'instant' });
     };
     const resize = new ResizeObserver(() => { if (zoom.open) sizeImage(); });
     resize.observe(viewport);
-    document.querySelectorAll<HTMLAnchorElement>('[data-screenshot-zoom]').forEach(link => {
+    const zoomLinks = document.querySelectorAll<HTMLAnchorElement>('[data-screenshot-zoom]');
+    zoomLinks.forEach(link => {
       link.addEventListener('click', event => {
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || typeof zoom.showModal !== 'function') return;
         event.preventDefault();
@@ -276,6 +281,8 @@ const faqs = [
         previousOverflow = document.documentElement.style.overflow;
         document.documentElement.style.overflow = 'hidden';
         zoom.showModal();
+        const closeButton = zoom.querySelector<HTMLButtonElement>('.screenshot-close');
+        closeButton?.focus({ preventScroll: true });
         setView(false);
       });
     });

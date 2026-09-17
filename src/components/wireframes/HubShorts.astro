@@ -30,6 +30,7 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
         <span data-short-count aria-live="polite" aria-atomic="true">1 / {items.length}</span>
         <span id="hub-shorts-help">Swipe up for the next take</span>
       </div>
+      {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- The scrollable region needs keyboard focus for arrow-key video browsing. */}
       <div id="hub-shorts-track" class="hub-shorts-track" tabindex="0" role="region" aria-label="Short videos" aria-describedby="hub-shorts-help">
         {items.map((item, index) => (
           <article class="hub-shorts-slide" data-short-title={item.rawTitle || item.title} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${items.length}: ${item.rawTitle || item.title}`}>
@@ -156,7 +157,7 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       const track = this.querySelector<HTMLElement>(".hub-shorts-track");
       if (!track) return;
       const slides = [...this.querySelectorAll<HTMLElement>(".hub-shorts-slide")];
-      const embeds = slides.map((slide) => slide.querySelector<ShortEmbed>("lite-youtube")!);
+      const embeds = slides.map((slide) => slide.querySelector("lite-youtube") as ShortEmbed);
       const previous = [...this.querySelectorAll<HTMLButtonElement>("[data-short-prev]")];
       const next = [...this.querySelectorAll<HTMLButtonElement>("[data-short-next]")];
       const mobile = matchMedia("(max-width: 639px)");
@@ -164,8 +165,8 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       const doc = document as FullscreenDocument;
       const abort = new AbortController();
       const options = { signal: abort.signal };
-      const players = new Map<ShortEmbed, ShortPlayer>();
-      const pending = new Set<ShortEmbed>();
+      const players: Map<ShortEmbed, ShortPlayer> = new Map();
+      const pending: Set<ShortEmbed> = new Set();
       let active = 0;
       let frame = 0;
       let disposed = false;
@@ -252,8 +253,8 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       this.querySelector("[data-leave-shorts]")?.addEventListener("click", () => pauseOthers(), options);
       const fullscreenButtons = [...this.querySelectorAll<HTMLButtonElement>("[data-short-fullscreen]")];
       fullscreenButtons.forEach((button) => {
-        const media = button.closest<FullscreenMedia>(".hub-shorts-media")!;
-        const embed = media.querySelector<ShortEmbed>("lite-youtube")!;
+        const media = button.closest(".hub-shorts-media") as FullscreenMedia;
+        const embed = media.querySelector("lite-youtube") as ShortEmbed;
         const nativeFullscreen = !!(media.requestFullscreen || media.webkitRequestFullscreen);
         if (!nativeFullscreen) { button.setAttribute("aria-label", "Watch on YouTube"); button.title = "Watch on YouTube"; }
         button.addEventListener("click", async (event) => {
