@@ -1,0 +1,35 @@
+---
+import { Image } from 'astro:assets';
+import nickPortrait from '../../assets/authors/nick-rakovsky.avif';
+import joePortrait from '../../assets/authors/joe-fitzpatrick.jpg';
+import noelPortrait from '../../assets/authors/noel-moffatt.png';
+
+interface Props { name: string; }
+const { name } = Astro.props;
+const team = name === 'DataDocks' || name === 'DataDocks Team';
+const monograms: Record<string, string> = {
+  'Hunter Branch': 'HB',
+  'Chris La Porte': 'CLP',
+  'Jessica Edgson': 'JE',
+  'Tim Branch': 'TB',
+};
+const initials = monograms[name] || name.split(/\s+/).map(part => part[0]).slice(0, 2).join('');
+const portrait = name === 'Nick Rakovsky' ? nickPortrait : name === 'Joe Fitzpatrick' ? joePortrait : name === 'Noel Moffatt' ? noelPortrait : undefined;
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<span class:list={['author-avatar', { 'nick-portrait': name === 'Nick Rakovsky', 'noel-portrait': name === 'Noel Moffatt', 'has-portrait': Boolean(portrait), 'team-avatar': team, 'long-monogram': initials.length > 2 }]} aria-hidden="true">
+  {portrait ? <Image src={portrait} alt="" width={144} loading="lazy" /> : team ? <img src={`${basePath}/brand-assets/logo-symbol-orange.svg`} alt="" width="18" height="18" loading="lazy" /> : initials}
+</span>
+
+<style>
+  .author-avatar { display: inline-grid; place-items: center; flex-shrink: 0; width: var(--author-avatar-size, 24px); height: var(--author-avatar-size, 24px); overflow: hidden; border-radius: 50%; border: 1px solid #dbc7b7; background: #fff8ee; color: #8b4a2c; font: 600 calc(var(--author-avatar-size, 24px) * .416667)/1 Inter, system-ui, sans-serif; letter-spacing: .015em; }
+  .long-monogram { font-size: calc(var(--author-avatar-size, 24px) * .333333); }
+  .has-portrait { display: block; border: 0; background: #dfd2c1; }
+  .has-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  /* Keep the established face framing for Nick's original full portrait. */
+  .nick-portrait img { width: 156.95%; max-width: none; height: auto; transform: translateX(-16.2%); }
+  /* Focus Noel's square head-and-torso portrait on his face and shoulders. */
+  .noel-portrait img { width: 200%; max-width: none; height: auto; transform: translate(-22.5%, -1.25%); }
+  .team-avatar img { display: block; width: 71%; height: 71%; object-fit: contain; }
+</style>
