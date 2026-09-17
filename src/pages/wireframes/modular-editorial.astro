@@ -95,17 +95,17 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
             {latest5Posts.map((post, idx) => (
               <a
                 href={post.url}
-                class="flex-1 flex items-center px-4 py-3.5 rounded-none group transition-colors duration-150 hover:bg-black/[0.05]"
+                class="latest-insight flex-1 flex items-center px-4 py-3.5 rounded-none group transition-colors duration-150 hover:bg-black/[0.05]"
               >
-                <div class="flex items-baseline gap-3.5 w-full">
-                  <span class="font-mono text-sm font-bold text-[#FE5000] shrink-0 w-5">
+                <div class="latest-insight-layout flex items-baseline gap-3.5 w-full">
+                  <span class="latest-insight-number font-mono text-sm font-bold text-[#FE5000] shrink-0 w-5">
                     {String(idx + 1).padStart(2, '0')}
                   </span>
-                  <div class="min-w-0 flex-1">
+                  <div class="latest-insight-body min-w-0 flex-1">
                     <span class="text-[11px] font-mono text-gray-400 block mb-0.5">
                       {post.displayDate}
                     </span>
-                    <h3 class="font-sans font-bold text-sm md:text-[15px] text-gray-900 leading-snug group-hover:text-[#FE5000] transition-colors line-clamp-2">
+                    <h3 class="latest-insight-title font-sans font-bold text-sm md:text-[15px] text-gray-900 leading-snug group-hover:text-[#FE5000] transition-colors line-clamp-2">
                       {post.title}
                     </h3>
                   </div>
@@ -164,71 +164,6 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
             <h2 class="why-heading font-bruta text-3xl sm:text-4xl md:text-5xl lg:text-[54px] uppercase tracking-tight text-black leading-[0.95]">
               Why 10,000 Operations Trust DataDocks
             </h2>
-
-          {/* Right Column: Real Software Product Showcase (Desktop Master Calendar + Floating Mobile Chassis) */}
-          <div class="why-showcase relative">
-            {/* Desktop Browser Window Mockup with Real Master Calendar Screenshot */}
-            <div class="rounded-2xl overflow-hidden shadow-2xl border border-black/15 bg-white relative group/browser">
-              {/* Browser Header Bar */}
-              <div class="showcase-browser-bar bg-[#E5D7C5] border-b border-black/10 px-3 py-2.5 flex items-center justify-between gap-2">
-                <div class="flex gap-2 items-center py-0.5">
-                  {/* Red and Yellow are static muted controls */}
-                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
-                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
-                  {/* Only Green button is interactive: lights up green when hovering anywhere on the frame, scales when hovered directly */}
-                  <button
-                    type="button"
-                    id="mac-fullscreen-btn"
-                    class="group/green p-1.5 -m-1.5 flex items-center justify-center cursor-pointer transition-transform hover:scale-125"
-                    title="View full screen (Esc to exit)"
-                    aria-label="View desktop screenshot full screen"
-                  >
-                    <span class="w-3 h-3 rounded-full bg-black/20 border border-black/10 group-hover/browser:bg-[#27C93F] group-hover/browser:border-[#1AAB29] transition-all duration-200 flex items-center justify-center shadow-sm">
-                      <svg class="w-1.5 h-1.5 text-black/80 opacity-0 group-hover/browser:opacity-100 transition-opacity duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                      </svg>
-                    </span>
-                  </button>
-                </div>
-                <div class="showcase-address bg-white/90 rounded-md px-2 py-0.5 text-[11px] font-mono text-gray-500 min-w-0 max-w-[220px] truncate select-none">
-                  app.datadocks.com/schedule
-                </div>
-                <div class="flex items-center">
-                  <button
-                    type="button"
-                    id="header-zoom-btn"
-                    aria-label="View desktop screenshot full screen"
-                    class="text-[11px] font-mono text-gray-600 hover:text-[#FE5000] flex items-center gap-1 cursor-pointer transition-colors"
-                    title="View full screen"
-                  >
-                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                    </svg>
-                    <span class="showcase-zoom-label">Full screen</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Static Desktop Screenshot (non-clickable, no bounce-zoom on mouseover) */}
-              <div class="relative overflow-hidden bg-white select-none">
-                <Image
-                  src={desktopScreenshot}
-                  alt="DataDocks Live Dock Scheduling Master Calendar"
-                  class="w-full h-auto object-cover object-top select-none pointer-events-none"
-                  loading="lazy"
-                  draggable="false"
-                />
-              </div>
-            </div>
-
-            {/* Floating Smartphone Screen using official PhoneFrame hardware component with real mobile app screenshot */}
-            <div class="showcase-phone absolute -bottom-8 -right-3 sm:-right-5 w-[33%] max-w-[185px] hidden sm:block z-20">
-              <PhoneFrame
-                src={mobileScreenshot}
-                alt="DataDocks Mobile Dock Operations App"
-              />
-            </div>
-          </div>
 
           <div class="why-copy">
             {/* 3 Oversized Icon-Illustrations NEXT TO 3 Normalized Arguments */}
@@ -310,6 +245,78 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
 
           </div>
 
+          {/* Right Column: Real Software Product Showcase (Desktop Master Calendar + Floating Mobile Chassis) */}
+          <div class="why-showcase relative">
+            {/* Desktop Browser Window Mockup with Real Master Calendar Screenshot */}
+            <div class="showcase-desktop rounded-2xl overflow-hidden shadow-2xl border border-black/15 bg-white relative group/browser">
+              {/* Browser Header Bar */}
+              <div class="showcase-browser-bar bg-[#E5D7C5] border-b border-black/10 px-3 py-2.5 flex items-center justify-between gap-2">
+                <div class="flex gap-2 items-center py-0.5 shrink-0">
+                  {/* Red and Yellow are static muted controls */}
+                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
+                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
+                  {/* Only Green button is interactive: lights up green when hovering anywhere on the frame, scales when hovered directly */}
+                  <button
+                    type="button"
+                    id="mac-fullscreen-btn"
+                    class="group/green p-1.5 -m-1.5 flex items-center justify-center cursor-pointer transition-transform hover:scale-125"
+                    title="View full screen (Esc to exit)"
+                    aria-label="View desktop screenshot full screen"
+                  >
+                    <span class="w-3 h-3 rounded-full bg-black/20 border border-black/10 group-hover/browser:bg-[#27C93F] group-hover/browser:border-[#1AAB29] transition-all duration-200 flex items-center justify-center shadow-sm">
+                      <svg class="w-1.5 h-1.5 text-black/80 opacity-0 group-hover/browser:opacity-100 transition-opacity duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+                <div class="showcase-address bg-white/90 rounded-md px-2 py-0.5 text-[11px] font-mono text-gray-500 min-w-0 max-w-[220px] truncate select-none">
+                  app.datadocks.com/schedule
+                </div>
+                <div class="flex items-center">
+                  <button
+                    type="button"
+                    id="header-zoom-btn"
+                    aria-label="View desktop screenshot full screen"
+                    class="text-[11px] font-mono text-gray-600 hover:text-[#FE5000] flex items-center gap-1 cursor-pointer transition-colors"
+                    title="View full screen"
+                  >
+                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                    </svg>
+                    <span class="showcase-zoom-label">Full screen</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Static Desktop Screenshot (non-clickable, no bounce-zoom on mouseover) */}
+              <div class="relative overflow-hidden bg-white select-none">
+                <Image
+                  src={desktopScreenshot}
+                  alt="DataDocks Live Dock Scheduling Master Calendar"
+                  class="w-full h-auto object-cover object-top select-none pointer-events-none"
+                  loading="lazy"
+                  draggable="false"
+                />
+              </div>
+            </div>
+
+            {/* Floating Smartphone Screen using official PhoneFrame hardware component with real mobile app screenshot */}
+            <div class="showcase-phone">
+              <PhoneFrame
+                src={mobileScreenshot}
+                alt="DataDocks Mobile Dock Operations App"
+              />
+            </div>
+            <div class="showcase-mobile-details">
+              <p class="showcase-phone-caption">Your dock, wherever you are.</p>
+              <a href="/images/DataDocks-Calendar-Clean.webp" data-open-desktop-schedule aria-haspopup="dialog" class="showcase-desktop-link">
+                Explore the desktop schedule
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
+              </a>
+            </div>
+          </div>
+
             {/* Book a Demo Email Capture (Full-width form spanning the text column above) */}
             <form
               id="demo-banner-form"
@@ -361,12 +368,14 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
             {evergreen5.title}
           </h2>
 
-          <div class="text-xs font-mono text-gray-500 flex items-center gap-3 transition-colors duration-200 group-hover:text-gray-900">
-            <span>By {evergreen5.author}</span>
-            <span>•</span>
-            <span>{evergreen5.displayDate}</span>
-            <span>•</span>
-            <span>{evergreen5.readTime}</span>
+          <div class="article-meta text-xs font-mono text-gray-500 flex items-center gap-3 transition-colors duration-200 group-hover:text-gray-900">
+            <span class="article-meta-author">By {evergreen5.author}</span>
+            <span class="article-meta-author-separator" aria-hidden="true">•</span>
+            <span class="article-meta-details">
+              <span>{evergreen5.displayDate}</span>
+              <span aria-hidden="true">•</span>
+              <span>{evergreen5.readTime}</span>
+            </span>
           </div>
 
           <p class="text-sm md:text-base text-gray-700 font-recoleta leading-relaxed line-clamp-3 transition-colors duration-200 group-hover:text-black">
@@ -509,15 +518,17 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
             {evergreen9.description}
           </p>
 
-          <div class="pt-2 flex items-center gap-3">
-            <span class="inline-flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-white group-hover:text-[#FE5000] transition-colors">
+          <div class="playbook-footer pt-2 flex items-center gap-3">
+            <span class="playbook-link inline-flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-white group-hover:text-[#FE5000] transition-colors">
               <span>Read Playbook</span>
-              <span class="w-6 h-6 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+              <span class="playbook-arrow w-6 h-6 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs group-hover:scale-110 transition-transform" aria-hidden="true">
                 →
               </span>
             </span>
-            <span class="text-xs font-mono text-gray-400 ml-4">
-              By {evergreen9.author} • {evergreen9.displayDate}
+            <span class="playbook-meta text-xs font-mono text-gray-400 ml-4">
+              <span>By {evergreen9.author}</span>
+              <span class="playbook-meta-separator" aria-hidden="true">•</span>
+              <span>{evergreen9.displayDate}</span>
             </span>
           </div>
         </div>
@@ -549,43 +560,23 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
 
     <ResourceArchive items={olderResources} />
 
-    {/* Fullscreen Modal Lightbox for Prime Desktop Calendar Screenshot */}
-    <div
-      id="desktop-screenshot-modal"
-      class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-8 opacity-0 pointer-events-none transition-opacity duration-300 modal-backdrop-click hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label="DataDocks Desktop Schedule Fullscreen View"
-    >
-      <button
-        type="button"
-        id="close-desktop-screenshot"
-        class="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-[#FE5000] text-white flex items-center justify-center transition-all duration-200 border border-white/20 shadow-xl cursor-pointer group"
-        aria-label="Return to page"
-        title="Close (Esc)"
-      >
-        <svg class="w-5 h-5 transition-transform group-hover:rotate-90 duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-
-      <div class="absolute top-5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/70 border border-white/20 text-xs font-mono text-gray-300 pointer-events-none hidden md:flex items-center gap-2 shadow-xl z-10">
-        <span>Press</span>
-        <kbd class="bg-white/20 px-1.5 py-0.5 rounded text-white font-bold text-[11px]">ESC</kbd>
-        <span>or click anywhere outside to return</span>
+    <dialog id="desktop-screenshot-modal" class="schedule-dialog" aria-labelledby="schedule-dialog-title" aria-describedby="schedule-view-hint">
+      <header class="schedule-dialog-header">
+        <h2 id="schedule-dialog-title">Desktop schedule</h2>
+        <button type="button" id="close-desktop-screenshot" aria-label="Close desktop schedule">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" /></svg>
+        </button>
+      </header>
+      <div class="schedule-dialog-tools">
+        <button type="button" data-schedule-zoom aria-controls="schedule-image-viewport">Zoom to read</button>
+        <a href="/images/DataDocks-Calendar-Clean.webp" target="_blank" rel="noopener noreferrer">Open original image <span aria-hidden="true">↗</span></a>
       </div>
-
-      <div class="relative max-w-7xl w-full max-h-[90vh] flex items-center justify-center">
-        <img
-          src="/images/DataDocks-Calendar-Clean.webp"
-          alt="DataDocks Live Dock Scheduling Master Calendar - Full Resolution"
-          class="max-w-full max-h-[88vh] w-auto h-auto object-contain rounded-xl shadow-2xl border border-white/15 select-none bg-white"
-          loading="lazy"
-          draggable="false"
-        />
+      {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- Keyboard focus lets visitors scroll the enlarged schedule with arrow keys. */}
+      <div id="schedule-image-viewport" class="schedule-image-viewport" data-schedule-viewport tabindex="0" role="region" aria-label="Schedule image. Use arrow keys to explore when zoomed.">
+        <img src="/images/DataDocks-Calendar-Clean.webp" alt="DataDocks desktop schedule with dock appointments across the week" width={desktopScreenshot.width} height={desktopScreenshot.height} loading="lazy" draggable="false" />
       </div>
-    </div>
+      <p id="schedule-view-hint" class="schedule-view-hint" aria-live="polite">Zoom in to read appointment details.</p>
+    </dialog>
 
     {/* 13. SITEWIDE CALL TO ACTION BANNER */}
     <CTA captureFirst />
@@ -616,19 +607,63 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
 
     .why-layout {
       display: grid;
-      grid-template-areas: "heading" "showcase" "copy" "cta";
+      grid-template-areas: "heading" "copy" "showcase" "cta";
       gap: 1.75rem;
     }
     .why-heading { grid-area: heading; }
     .why-copy { grid-area: copy; min-width: 0; }
-    .why-showcase { grid-area: showcase; min-width: 0; }
+    .why-showcase { grid-area: showcase; min-width: 0; padding-block: 0.5rem; }
+    .showcase-desktop { display: none; }
+    .showcase-phone { position: relative; width: min(76%, 18rem); margin-inline: auto; }
+    .showcase-mobile-details { margin-top: 1.5rem; text-align: center; }
+    .showcase-phone-caption { font: 1.125rem/1.4 'DD-Recoleta', Georgia, serif; }
+    .showcase-desktop-link { display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem; min-height: 44px; margin-top: 0.5rem; padding-block: 0.5rem; border-bottom: 1px solid currentColor; color: #39342d; font-size: 0.875rem; }
+    .showcase-desktop-link svg { flex-shrink: 0; }
+    .showcase-desktop-link:focus-visible { outline: 2px solid black; outline-offset: 4px; }
+    .article-meta-details { display: inline-flex; align-items: center; gap: 0.75rem; }
+    .playbook-link, .playbook-arrow { flex-shrink: 0; }
+    .playbook-link { white-space: nowrap; }
+    .playbook-arrow { aspect-ratio: 1; }
+    .playbook-meta { display: inline-flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+    .playbook-meta > span { white-space: nowrap; }
+
+    .schedule-dialog { width: min(1200px, calc(100% - 24px)); height: min(820px, calc(100dvh - 24px)); max-width: none; max-height: none; margin: auto; padding: 0; border: 1px solid #000; background: #fff8ee; color: #000; overflow: hidden; }
+    .schedule-dialog[open] { display: flex; flex-direction: column; }
+    .schedule-dialog::backdrop { background: rgb(0 0 0 / 75%); }
+    .schedule-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 1rem; }
+    .schedule-dialog-header h2 { font: 1.75rem/1 Bruta, Impact, sans-serif; text-transform: uppercase; }
+    .schedule-dialog-header button { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; }
+    .schedule-dialog-tools { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 0.75rem; padding: 0 1rem 0.75rem; font-size: 0.8125rem; }
+    .schedule-dialog-tools button { min-height: 44px; padding: 0.625rem 0.75rem; border: 1px solid #000; }
+    .schedule-dialog-tools a { display: inline-flex; align-items: center; min-height: 44px; gap: 0.25rem; text-decoration: underline; text-underline-offset: 3px; }
+    .schedule-image-viewport { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: #e7e0d6; border-block: 1px solid #d3cabe; }
+    .schedule-image-viewport img { display: block; max-width: none; height: auto; margin: auto; user-select: none; }
+    .schedule-image-viewport[data-zoomed] { cursor: grab; }
+    .schedule-image-viewport[data-dragging] { cursor: grabbing; }
+    .schedule-view-hint { padding: 0.75rem 1rem; font-size: 0.8125rem; line-height: 1.4; }
+    .schedule-dialog :focus-visible { outline: 2px solid #a93500; outline-offset: -3px; }
+    @media (max-width: 639px) {
+      .latest-insight { padding: 1rem 0; }
+      .latest-insight-layout { display: grid; grid-template-columns: 2ch minmax(0, 1fr); gap: 0.25rem 0.75rem; }
+      .latest-insight-body { display: contents; }
+      .latest-insight-number { width: auto; }
+      .latest-insight-title { grid-column: 1 / -1; display: block; overflow: visible; -webkit-line-clamp: unset; font-size: 1rem; line-height: 1.4; }
+      .article-meta { align-items: flex-start; flex-direction: column; gap: 0.25rem; line-height: 1.5; }
+      .article-meta-author-separator { display: none; }
+      .article-meta-details { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+      .article-meta-details > span { white-space: nowrap; }
+      .playbook-footer { align-items: flex-start; flex-direction: column; gap: 1rem; }
+      .playbook-meta { margin-left: 0; }
+      .playbook-meta .playbook-meta-separator { display: none; }
+      .playbook-meta > span { display: block; flex-basis: 100%; }
+    }
     .why-cta { grid-area: cta; display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 35rem; }
     .why-cta input, .why-cta button { min-height: 3.25rem; height: 3.25rem; }
     .why-cta input { appearance: none; font-size: 1rem; }
     .why-capture-status { grid-column: 1 / -1; color: #000; }
     .why-cta :focus-visible { position: relative; outline: 2px solid #a93500; outline-offset: 3px; z-index: 1; }
     .showcase-browser-bar { min-width: 0; }
-    #header-zoom-btn { flex-shrink: 0; min-width: 2rem; min-height: 2rem; justify-content: center; }
+    #header-zoom-btn { flex-shrink: 0; min-width: 2rem; min-height: 2rem; justify-content: center; white-space: nowrap; }
     .showcase-zoom-label { display: none; }
 
     .product-link { min-width: 0; border-radius: 0.75rem; }
@@ -679,7 +714,12 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
         column-gap: 3.5rem;
         row-gap: 2rem;
       }
-      .why-showcase { align-self: center; margin: 0; }
+      .why-showcase { align-self: center; margin: 0; padding: 0; }
+      .showcase-desktop { display: block; }
+      /* Keep browser controls clear of the overlapping phone. */
+      .showcase-browser-bar { padding-right: calc(min(33%, 185px) - 0.5rem); }
+      .showcase-phone { position: absolute; bottom: -2rem; right: -1.25rem; width: 33%; max-width: 185px; margin: 0; z-index: 20; }
+      .showcase-mobile-details { display: none; }
       .why-cta { grid-template-columns: minmax(0, 1fr) auto; }
       .product-link { border-radius: 1rem; }
       .product-link h3 { font-size: 1.5rem; }
@@ -723,60 +763,75 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
       }
 
       function attachDesktopScreenshotModal() {
-        var modal = document.getElementById('desktop-screenshot-modal');
-        if (!modal) return;
+        const modal = document.getElementById('desktop-screenshot-modal');
+        if (!modal || modal.dataset.bound || typeof modal.showModal !== 'function') return;
+        modal.dataset.bound = 'true';
+        const viewport = modal.querySelector('[data-schedule-viewport]');
+        const image = viewport.querySelector('img');
+        const toggle = modal.querySelector('[data-schedule-zoom]');
+        const closeButton = modal.querySelector('#close-desktop-screenshot');
+        const hint = modal.querySelector('#schedule-view-hint');
+        let trigger = null;
+        let zoomed = false;
+        let previousOverflow = '';
+        let drag = null;
 
-        function openModal(e) {
-          if (e && e.preventDefault) e.preventDefault();
-          modal.classList.remove('hidden');
-          // Force layout reflow before triggering opacity transition
-          void modal.offsetWidth;
-          modal.classList.remove('opacity-0', 'pointer-events-none');
-          modal.classList.add('opacity-100', 'pointer-events-auto');
-          document.body.style.overflow = 'hidden';
+        function setZoom(value) {
+          zoomed = value;
+          image.style.width = zoomed ? Math.max(1600, viewport.clientWidth) + 'px' : '100%';
+          viewport.toggleAttribute('data-zoomed', zoomed);
+          toggle.textContent = zoomed ? 'Show full week' : 'Zoom to read';
+          hint.textContent = zoomed ? 'Swipe, drag or use arrow keys to explore the schedule.' : 'The full week. Zoom in to read appointment details.';
+          viewport.scrollTo({ left: 0, top: 0 });
         }
-
-        function closeModal(e) {
-          if (e && e.preventDefault) e.preventDefault();
-          modal.classList.add('opacity-0', 'pointer-events-none');
-          modal.classList.remove('opacity-100', 'pointer-events-auto');
-          document.body.style.overflow = '';
-          setTimeout(function () {
-            if (modal.classList.contains('pointer-events-none')) {
-              modal.classList.add('hidden');
-            }
-          }, 300);
+        function openModal(link) {
+          if (modal.open) return;
+          trigger = link;
+          previousOverflow = document.documentElement.style.overflow;
+          document.documentElement.style.overflow = 'hidden';
+          modal.showModal();
+          setZoom(window.matchMedia('(max-width: 639px)').matches);
+          closeButton.focus({ preventScroll: true });
         }
-
-        if (!modal.dataset.bound) {
-          modal.dataset.bound = 'true';
-
-          // Robust click delegation: handles mac-fullscreen-btn, header-zoom-btn, desktop-mockup-screen, close-btn, and backdrop
-          document.addEventListener('click', function (e) {
-            var target = e.target;
-            if (!target) return;
-
-            // Trigger modal open (only from green window button or header zoom button)
-            if (target.closest('#mac-fullscreen-btn, #header-zoom-btn')) {
-              openModal(e);
-              return;
-            }
-
-            // Close modal when active
-            if (!modal.classList.contains('pointer-events-none')) {
-              if (target.closest('#close-desktop-screenshot') || (modal.contains(target) && !target.closest('img'))) {
-                closeModal(e);
-              }
-            }
-          });
-
-          // Pressing Escape closes modal
-          document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && !modal.classList.contains('pointer-events-none')) {
-              closeModal(e);
-            }
-          });
-        }
+        function closeModal() { modal.close(); }
+        closeButton.addEventListener('click', closeModal);
+        modal.addEventListener('cancel', event => { event.preventDefault(); closeModal(); });
+        modal.addEventListener('close', () => {
+          document.documentElement.style.overflow = previousOverflow;
+          const focusTarget = trigger?.getClientRects().length ? trigger
+            : Array.from(document.querySelectorAll('[data-open-desktop-schedule], #header-zoom-btn')).find(link => link.getClientRects().length);
+          focusTarget?.focus({ preventScroll: true });
+          drag = null;
+          viewport.removeAttribute('data-dragging');
+        });
+        modal.addEventListener('click', event => {
+          if (event.target !== modal) return;
+          const box = modal.getBoundingClientRect();
+          if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) closeModal();
+        });
+        toggle.addEventListener('click', () => setZoom(!zoomed));
+        viewport.addEventListener('pointerdown', event => {
+          if (!zoomed || event.pointerType !== 'mouse' || event.button !== 0) return;
+          drag = { id: event.pointerId, x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+          viewport.setPointerCapture(event.pointerId);
+          viewport.setAttribute('data-dragging', '');
+        });
+        viewport.addEventListener('pointermove', event => {
+          if (!drag || drag.id !== event.pointerId) return;
+          viewport.scrollLeft = drag.left + drag.x - event.clientX;
+          viewport.scrollTop = drag.top + drag.y - event.clientY;
+        });
+        const stopDrag = () => { drag = null; viewport.removeAttribute('data-dragging'); };
+        viewport.addEventListener('pointerup', stopDrag);
+        viewport.addEventListener('pointercancel', stopDrag);
+        viewport.addEventListener('lostpointercapture', stopDrag);
+        document.addEventListener('click', event => {
+          if (!(event.target instanceof Element)) return;
+          const link = event.target.closest('[data-open-desktop-schedule], #mac-fullscreen-btn, #header-zoom-btn');
+          if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+          event.preventDefault();
+          openModal(link);
+        });
       }
 
       attachInteractiveElements();

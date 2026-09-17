@@ -19,8 +19,24 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
       </h2>
     </div>
 
-    <div data-archive-controls hidden>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div data-archive-controls class="archive-controls" hidden>
+      <button
+        type="button"
+        data-toggle-filters
+        aria-expanded="false"
+        aria-controls="archive-filter-panel"
+        class="archive-toggle font-sans text-sm font-semibold"
+      >
+        <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" class="h-4 w-4 shrink-0">
+          <path d="M3 5h14M3 10h14M3 15h14M7 3v4m6 1v4m-6 1v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+        <span>Filter &amp; sort</span>
+        <span data-active-options hidden class="archive-active-count"></span>
+        <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" class="archive-toggle-chevron h-3 w-3 shrink-0">
+          <path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <div id="archive-filter-panel" class="archive-filter-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <label class="block font-sans text-sm font-semibold text-black">
           Content type
           <select name="content-type" aria-controls="archive-results">
@@ -43,10 +59,13 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
             <option value="title">Title A–Z</option>
           </select>
         </label>
+        <button type="button" data-clear-filters disabled class="archive-mobile-reset font-sans text-sm font-semibold underline underline-offset-4 hover:text-[#FE5000] disabled:opacity-40 disabled:cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black">
+          Reset filters
+        </button>
       </div>
-      <div class="flex items-center justify-between gap-4 py-5 font-sans text-sm">
+      <div class="archive-summary flex items-center justify-between gap-4 py-5 font-sans text-sm">
         <p data-result-count role="status" aria-live="polite" aria-atomic="true">{items.length} resources</p>
-        <button type="button" data-clear-filters disabled class="font-semibold underline underline-offset-4 hover:text-[#FE5000] disabled:opacity-40 disabled:cursor-default min-h-11 px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black">
+        <button type="button" data-clear-filters disabled class="archive-desktop-reset font-semibold underline underline-offset-4 hover:text-[#FE5000] disabled:opacity-40 disabled:cursor-default min-h-11 px-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black">
           Reset filters
         </button>
       </div>
@@ -186,6 +205,7 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
 
 <style>
   [hidden] { display: none !important; }
+  .archive-toggle, .archive-mobile-reset { display: none; }
   select {
     display: block;
     width: 100%;
@@ -201,10 +221,86 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
     cursor: pointer;
   }
   select:focus-visible { outline: 2px solid black; outline-offset: 3px; }
+
+  @media (max-width: 639px) {
+    .archive-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .archive-toggle {
+      display: inline-flex;
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+      align-items: center;
+      gap: 0.375rem;
+      min-height: 2.75rem;
+      padding: 0.25rem 0;
+      color: black;
+      white-space: nowrap;
+    }
+    .archive-toggle:focus-visible { outline: 2px solid black; outline-offset: 4px; }
+    .archive-toggle[aria-expanded="true"] .archive-toggle-chevron { transform: rotate(180deg); }
+    .archive-active-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.125rem;
+      height: 1.125rem;
+      padding-inline: 0.25rem;
+      border-radius: 9999px;
+      background: black;
+      color: white;
+      font-size: 0.625rem;
+      line-height: 1;
+    }
+    .archive-summary {
+      grid-column: 2;
+      grid-row: 1;
+      padding: 0;
+      font-size: 0.75rem;
+      color: rgb(75 85 99);
+      text-align: right;
+    }
+    .archive-desktop-reset { display: none; }
+    .archive-filter-panel {
+      grid-column: 1 / -1;
+      gap: 0.625rem;
+      padding: 0.75rem;
+      border: 1px solid rgb(0 0 0 / 15%);
+      border-radius: 0.75rem;
+      background: rgb(255 255 255 / 60%);
+    }
+    .archive-filter-panel label {
+      display: grid;
+      grid-template-columns: 4.5rem minmax(0, 1fr);
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+    }
+    select {
+      min-width: 0;
+      min-height: 2.75rem;
+      margin-top: 0;
+      padding: 0.5rem 1.5rem 0.5rem 0.625rem;
+    }
+    .archive-mobile-reset {
+      display: block;
+      justify-self: end;
+      min-height: 2.75rem;
+      padding-inline: 0.25rem;
+    }
+    .archive-mobile-reset:disabled { display: none; }
+  }
 </style>
 
 <script>
   class ResourceArchive extends HTMLElement {
+    private disconnectControls?: () => void;
+
     connectedCallback() {
       if (this.dataset.initialized) return;
       const controls = this.querySelector<HTMLElement>('[data-archive-controls]');
@@ -214,8 +310,55 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
       const grid = this.querySelector<HTMLElement>('#archive-results');
       const count = this.querySelector<HTMLElement>('[data-result-count]');
       const empty = this.querySelector<HTMLElement>('[data-empty-state]');
-      if (!controls || !type || !topic || !sort || !grid || !count || !empty) return;
+      const toggle = this.querySelector<HTMLButtonElement>('[data-toggle-filters]');
+      const panel = this.querySelector<HTMLElement>('#archive-filter-panel');
+      const activeOptions = this.querySelector<HTMLElement>('[data-active-options]');
+      if (!controls || !type || !topic || !sort || !grid || !count || !empty || !toggle || !panel || !activeOptions) return;
       this.dataset.initialized = 'true';
+      const listeners = new AbortController();
+      const { signal } = listeners;
+      this.disconnectControls = () => {
+        listeners.abort();
+        delete this.dataset.initialized;
+      };
+      const phoneViewport = window.matchMedia('(max-width: 639px)');
+      let expanded = false;
+      let focusedControl: HTMLElement | null = null;
+      controls.addEventListener('focusin', event => {
+        focusedControl = event.target instanceof HTMLElement ? event.target : null;
+      }, { signal });
+      controls.addEventListener('focusout', event => {
+        if (event.relatedTarget instanceof Node && controls.contains(event.relatedTarget)) return;
+        // A breakpoint can hide a focused control before matchMedia fires.
+        // Keep only that hidden reference; intentional focus changes clear it.
+        if (event.relatedTarget === null && event.target instanceof HTMLElement && !event.target.getClientRects().length) return;
+        focusedControl = null;
+      }, { signal });
+      const updateDisclosure = () => {
+        const showPanel = !phoneViewport.matches || expanded;
+        const focused = controls.contains(document.activeElement) ? document.activeElement : focusedControl;
+        const resetWillHide = focused instanceof HTMLButtonElement && focused.classList.contains(
+          phoneViewport.matches ? 'archive-desktop-reset' : 'archive-mobile-reset'
+        );
+        const focusWillHide = (!showPanel && panel.contains(focused))
+          || (!phoneViewport.matches && focused === toggle)
+          || resetWillHide;
+        panel.hidden = !showPanel;
+        toggle.setAttribute('aria-expanded', String(showPanel));
+        if (focusWillHide) (showPanel ? type : toggle).focus();
+      };
+      toggle.addEventListener('click', () => {
+        expanded = !expanded;
+        updateDisclosure();
+      }, { signal });
+      panel.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && phoneViewport.matches && expanded) {
+          expanded = false;
+          updateDisclosure();
+          toggle.focus();
+        }
+      }, { signal });
+      phoneViewport.addEventListener('change', updateDisclosure, { signal });
       const cards = Array.from(grid.querySelectorAll<HTMLAnchorElement>('[data-resource-card]'));
       const resetButtons = this.querySelectorAll<HTMLButtonElement>('[data-clear-filters]');
       const collator = new Intl.Collator('en', { sensitivity: 'base', numeric: true });
@@ -234,6 +377,12 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
         }
         grid.append(...sorted);
         const filtersActive = type.value !== 'all' || topic.value !== 'all';
+        const activeCount = Number(type.value !== 'all') + Number(topic.value !== 'all') + Number(sort.value !== 'newest');
+        activeOptions.hidden = activeCount === 0;
+        activeOptions.textContent = String(activeCount);
+        toggle.setAttribute('aria-label', activeCount
+          ? `Filter and sort, ${activeCount} ${activeCount === 1 ? 'option' : 'options'} active`
+          : 'Filter and sort');
         count.textContent = filtersActive
           ? `${visible} of ${cards.length} resources`
           : `${cards.length} resources`;
@@ -242,17 +391,23 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
         resetButtons.forEach(button => { button.disabled = !filtersActive && sort.value === 'newest'; });
       };
 
-      [type, topic, sort].forEach(control => control.addEventListener('change', update));
+      [type, topic, sort].forEach(control => control.addEventListener('change', update, { signal }));
       resetButtons.forEach(button => button.addEventListener('click', () => {
         const wasInEmptyState = empty.contains(button);
         type.value = 'all';
         topic.value = 'all';
         sort.value = 'newest';
         update();
-        if (wasInEmptyState) type.focus();
-      }));
+        if (wasInEmptyState) (panel.hidden ? toggle : type).focus();
+        else if (phoneViewport.matches && button.classList.contains('archive-mobile-reset')) type.focus();
+      }, { signal }));
       update();
+      updateDisclosure();
       controls.hidden = false;
+    }
+
+    disconnectedCallback() {
+      this.disconnectControls?.();
     }
   }
   if (!customElements.get('resource-archive')) customElements.define('resource-archive', ResourceArchive);

@@ -59,6 +59,9 @@ const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`
 </section>
 
 <style>
+  @media (max-width: 639px) {
+    .cta-heading-group h2 { font-size: clamp(34px, 9.2vw, 48px); line-height: 1.04; text-wrap: balance; }
+  }
   /* Shared homepage layout, enabled only by pages that opt in. */
   @media (min-width: 768px) {
     [data-tablet-inline] .cta-heading-group { width: min(100%, 1020px); text-align: left; container-type: inline-size; }
