@@ -34,6 +34,7 @@ export interface LiveFeedItem {
   youtubeId?: string;
   duration?: string;
   pubDateValue: number;
+  topic?: string;
 }
 
 export const BASE_EVERGREEN_SLUGS: string[] = [
@@ -491,6 +492,7 @@ export async function getModularHubData() {
     cardImage: post.data.cardImage,
     cardAlt: post.data.cardAlt || post.data.title,
     readTime: post.data.readTime || getEstimatedReadTime(post.body),
+    topic: post.data.category?.trim() || 'Other topics',
     postType: 'article' as const,
     pubDateValue: new Date(post.data.pubDate).valueOf()
   }));
@@ -563,6 +565,7 @@ export async function getModularHubData() {
         cardImage: v.data.cardImage,
         cardAlt: v.data.cardAlt || v.data.title,
         readTime: formatVideoDuration(dur, false),
+        topic: v.data.category?.trim() || 'Other topics',
         postType: 'video' as const,
         youtubeId: yId,
         duration: dur,
@@ -584,6 +587,7 @@ export async function getModularHubData() {
     cardImage: post.data.cardImage,
     cardAlt: post.data.cardAlt || post.data.title,
     readTime: post.data.readTime || getEstimatedReadTime(post.body),
+    topic: post.data.category?.trim() || 'Other topics',
     postType: 'article' as const,
     pubDateValue: new Date(post.data.pubDate).valueOf()
   }));
