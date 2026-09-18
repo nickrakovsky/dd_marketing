@@ -8,10 +8,11 @@
  * with a 24-hour browser cache (and a longer edge cache via s-maxage).
  *
  * Usage (see src/lib/yt-thumb.ts):
- *   /yt-thumb/<videoId>            -> WebP sddefault (default), JPEG fallback
- *   /yt-thumb/<videoId>?q=sdwebp   -> vi_webp/sddefault.webp -> sddefault.jpg -> hqdefault.jpg
- *   /yt-thumb/<videoId>?q=maxres   -> maxresdefault.jpg -> sddefault.jpg -> hqdefault.jpg
- *   /yt-thumb/<videoId>?q=sd|mq|hq -> the matching JPEG (hq always exists)
+ *   /yt-thumb/<videoId>              -> WebP sddefault (default), JPEG fallback
+ *   /yt-thumb/<videoId>?q=sdwebp     -> vi_webp/sddefault.webp -> sddefault.jpg -> hqdefault.jpg
+ *   /yt-thumb/<videoId>?q=maxreswebp -> vi_webp/maxresdefault.webp -> maxresdefault.jpg -> sddefault.jpg -> hqdefault.jpg
+ *   /yt-thumb/<videoId>?q=maxres     -> maxresdefault.jpg -> sddefault.jpg -> hqdefault.jpg
+ *   /yt-thumb/<videoId>?q=sd|mq|hq   -> the matching JPEG (hq always exists)
  *
  * YouTube does NOT generate every variant for every video: maxresdefault and
  * the vi_webp WebP variants are frequently missing on older uploads and 404.
@@ -32,6 +33,7 @@ const VARIANTS: Record<string, string> = {
   'sd.jpg': 'https://i.ytimg.com/vi/{id}/sddefault.jpg',
   'maxres.jpg': 'https://i.ytimg.com/vi/{id}/maxresdefault.jpg',
   'sd.webp': 'https://i.ytimg.com/vi_webp/{id}/sddefault.webp',
+  'maxres.webp': 'https://i.ytimg.com/vi_webp/{id}/maxresdefault.webp',
 };
 
 // Ordered fallback chains per requested quality. First 200 wins; hqdefault.jpg
@@ -41,6 +43,10 @@ const CHAINS: Record<string, string[]> = {
   mq: ['mq.jpg', 'hq.jpg'],
   sd: ['sd.jpg', 'hq.jpg'],
   maxres: ['maxres.jpg', 'sd.jpg', 'hq.jpg'],
+  // Same 1280x720 16:9 frame as `maxres`, but WebP first — typically ~70% fewer
+  // bytes for an identical image (measured 171 KB JPEG -> 52 KB WebP). Falls
+  // back through the exact `maxres` chain, so framing never changes.
+  maxreswebp: ['maxres.webp', 'maxres.jpg', 'sd.jpg', 'hq.jpg'],
   sdwebp: ['sd.webp', 'sd.jpg', 'hq.jpg'],
 };
 
