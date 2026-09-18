@@ -1,0 +1,157 @@
+---
+import { Image } from 'astro:assets';
+import { rawTestimonials } from '../../data/testimonials';
+// Start with the restored banner's quote, then include every other customer.
+const testimonials = [...rawTestimonials.slice(6, 7), ...rawTestimonials.slice(0, 6), ...rawTestimonials.slice(7)];
+---
+<section class="customer-quote" aria-label="Customer experiences" aria-roledescription="carousel" data-quotes>
+  <span class="quote-mark" aria-hidden="true">“</span>
+  <div class="quote-body">
+    <div class="quote-stack" id="customer-quotes" aria-live="off" aria-atomic="true">
+      {testimonials.map((item, index) => {
+        const comma = item.author.indexOf(',');
+        const name = item.author.slice(0, comma);
+        const company = item.author.slice(comma + 1).trim();
+        return <figure class:list={['quote-slide', { active: index === 0 }]} aria-hidden={index !== 0 ? 'true' : undefined} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${testimonials.length}`}>
+          <blockquote data-quote-text>{item.quote}</blockquote>
+          <figcaption>
+            <div class="customer-identity">
+              {item.image && <Image class="portrait" src={item.image} alt="" width={48} height={48} loading="lazy" />}
+              <div><strong data-quote-text>{name}</strong><span data-quote-text>{company}</span></div>
+            </div>
+            {item.logo && <div class:list={['company-logo-frame', { 'logo-padded': item.logo === rawTestimonials[6].logo }]}><Image class="company-logo" src={item.logo} alt={company} width={240} loading="lazy" /></div>}
+          </figcaption>
+        </figure>;
+      })}
+    </div>
+    <div class="quote-controls" aria-label="Browse customer experiences">
+      <button type="button" data-quote-previous aria-controls="customer-quotes" aria-label="Previous testimonial"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg></button>
+      <button type="button" data-quote-next aria-controls="customer-quotes" aria-label="Next testimonial"><span class="quote-countdown" aria-hidden="true"><span class="countdown-half countdown-right"><span class="countdown-sweep"></span></span><span class="countdown-half countdown-left"><span class="countdown-sweep"></span></span></span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg></button>
+    </div>
+  </div>
+</section>
+<style>
+  .customer-quote { padding: 38px 0 36px; display: flex; align-items: flex-start; gap: 23px; border-top: 1px solid #dcd4c8; }
+  .quote-mark { font-family: 'DD-Recoleta', Georgia, serif; font-size: 70px; color: #FE5000; line-height: 1; }
+  .quote-body { position: relative; width: 100%; min-width: 0; }
+  .quote-stack { display: grid; }
+  /* Every quote contributes to intrinsic height: rotating cannot move the page. */
+  .quote-slide { grid-area: 1/1; display: grid; grid-template-rows: 1fr auto; gap: 24px; align-items: start; margin: 0; visibility: hidden; opacity: 0; transition: opacity .55s; }
+  .quote-slide.active { visibility: visible; opacity: 1; }
+  blockquote { font: 23px/1.5 'DD-Recoleta', Georgia, serif; margin: 0; max-width: 1020px; }
+  .customer-identity { display: flex; align-items: center; gap: 12px; }
+  .customer-identity strong { display: block; color: #000; font: 600 17px/1.4 'DD-Recoleta', Georgia, serif; }
+  .customer-identity span { display: block; margin-top: 4px; font: 14px/1.5 Inter, sans-serif; color: #605b53; }
+  .portrait { width: 48px; height: 48px; object-fit: cover; border-radius: 50%; flex-shrink: 0; }
+  figcaption { display: flex; align-items: center; flex-wrap: wrap; gap: 24px 32px; min-height: 60px; padding-right: 118px; }
+  .company-logo-frame { display: flex; align-items: center; width: 140px; height: 60px; overflow: hidden; flex-shrink: 0; }
+  .company-logo { display: block; width: auto; height: auto; max-width: 140px; max-height: 60px; flex-shrink: 0; filter: brightness(0); }
+  /* Honeyville's 150px square contains a 150 x 57px wordmark at y=47. */
+  .logo-padded .company-logo { width: 140px; max-height: none; }
+  .quote-controls { display: none; position: absolute; right: 0; bottom: 8px; gap: 12px; }
+  [data-enhanced] .quote-controls { display: flex; }
+  /* Same circular arrow treatment as the homepage testimonial component. */
+  .quote-controls button { position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; background: transparent; border: 2px solid #dcd4c8; border-radius: 50%; color: #000; cursor: pointer; transition: background .2s, color .2s; }
+  .quote-countdown { position: absolute; inset: -2px; width: 44px; height: 44px; pointer-events: none; opacity: 0; }
+  .countdown-half, .countdown-sweep { position: absolute; inset: 0; }
+  .countdown-right { clip-path: inset(0 0 0 50%); }
+  .countdown-left { clip-path: inset(0 50% 0 0); }
+  .countdown-sweep { border: 2px solid #FE5000; border-radius: 50%; will-change: transform; }
+  .countdown-right .countdown-sweep { clip-path: inset(0 50% 0 0); }
+  .countdown-left .countdown-sweep { clip-path: inset(0 0 0 50%); }
+  [data-autoplay] .quote-countdown { opacity: 1; }
+  .quote-controls button:hover { background: #000; color: #FFF8EE; }
+  .quote-controls button:focus-visible { outline: 2px solid #000; outline-offset: 4px; }
+  @media(max-width:1100px) { blockquote { font-size: 21px; } }
+  @media(max-width:960px) { .customer-quote { padding-block: 30px; gap: 15px; } .quote-slide { gap: 20px; } figcaption { gap: 24px; } }
+  @media(max-width:600px) { blockquote { font-size: 20px; } .customer-identity strong { font-size: 16px; } figcaption { padding-right: 0; } .quote-controls { position: static; justify-content: flex-end; margin-top: 16px; } }
+  @media(prefers-reduced-motion:reduce) { .quote-slide { transition: none; } }
+</style>
+<script>
+  const carousel = document.querySelector<HTMLElement>('[data-quotes]');
+  if (carousel) {
+    const slides = [...carousel.querySelectorAll<HTMLElement>('.quote-slide')];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let active = 0;
+    let visible = false;
+    let mouse: { x: number; y: number } | undefined;
+    let countdown: Animation | undefined;
+    const rightSweep = carousel.querySelector<HTMLElement>('.countdown-right .countdown-sweep')!;
+    const leftSweep = carousel.querySelector<HTMLElement>('.countdown-left .countdown-sweep')!;
+    let sweeps: Animation[] = [];
+    const cancelCountdown = () => { sweeps.forEach(animation => animation.cancel()); sweeps = []; countdown = undefined; };
+    const stack = carousel.querySelector<HTMLElement>('.quote-stack')!;
+    const containsMouse = (rect: DOMRect) => mouse && mouse.x >= rect.left && mouse.x <= rect.right && mouse.y >= rect.top && mouse.y <= rect.bottom;
+    const hoveringContent = () => {
+      if (!mouse) return false;
+      // Text ranges follow each rendered line, excluding the empty remainder of a block.
+      const range = document.createRange();
+      const overText = [...slides[active].querySelectorAll('[data-quote-text]')].some(element => {
+        range.selectNodeContents(element);
+        return [...range.getClientRects()].some(containsMouse);
+      });
+      const logo = slides[active].querySelector<HTMLElement>('.company-logo');
+      const frame = logo?.parentElement;
+      return overText || Boolean(logo && frame && containsMouse(logo.getBoundingClientRect()) && containsMouse(frame.getBoundingClientRect()));
+    };
+    const selectedContent = () => {
+      const selection = document.getSelection();
+      if (!selection || selection.isCollapsed) return false;
+      for (let i = 0; i < selection.rangeCount; i++) {
+        if (selection.getRangeAt(i).intersectsNode(slides[active])) return true;
+      }
+      return false;
+    };
+    const show = (index: number) => {
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => { slide.classList.toggle('active', i === active); slide.setAttribute('aria-hidden', String(i !== active)); });
+    };
+    const sync = () => {
+      carousel.toggleAttribute('data-autoplay', !reduced.matches);
+      if (reduced.matches) { cancelCountdown(); return; }
+      if (!countdown) {
+        // Animate transforms on two clipped semicircles; the same clock advances the quote.
+        const words = slides[active].querySelector('blockquote')!.textContent!.trim().split(/\s+/).length;
+        const duration = Math.min(11000, Math.max(8000, words / 4 * 1000 + 1000));
+        const current = rightSweep.animate([{ transform: 'rotate(0deg)', offset: 0 }, { transform: 'rotate(180deg)', offset: .5 }, { transform: 'rotate(180deg)', offset: 1 }], { duration, fill: 'forwards', easing: 'linear' });
+        const second = leftSweep.animate([{ transform: 'rotate(0deg)', offset: 0 }, { transform: 'rotate(0deg)', offset: .5 }, { transform: 'rotate(180deg)', offset: 1 }], { duration, fill: 'forwards', easing: 'linear' });
+        sweeps = [current, second];
+        countdown = current;
+        sweeps.forEach(animation => animation.pause());
+        current.finished.then(() => {
+          if (countdown !== current) return;
+          cancelCountdown();
+          stack.setAttribute('aria-live', 'off');
+          show(active + 1); sync();
+        }).catch(() => { /* Manual navigation and reduced motion cancel the current clock. */ });
+      }
+      if (!visible || document.hidden || hoveringContent() || selectedContent() || carousel.querySelector('.quote-controls button:focus-visible')) sweeps.forEach(animation => animation.pause());
+      else sweeps.forEach(animation => animation.play());
+    };
+    const navigate = (direction: number) => {
+      cancelCountdown();
+      stack.setAttribute('aria-live', 'polite');
+      show(active + direction);
+      sync();
+    };
+    carousel.querySelector('[data-quote-previous]')?.addEventListener('click', () => navigate(-1));
+    carousel.querySelector('[data-quote-next]')?.addEventListener('click', () => navigate(1));
+    // Pauses retain elapsed time. Empty space, portraits and mouse-focused controls do not pause.
+    carousel.addEventListener('pointermove', event => {
+      if (event.pointerType === 'mouse') { mouse = { x: event.clientX, y: event.clientY }; sync(); }
+    });
+    carousel.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') { mouse = undefined; sync(); } });
+    carousel.addEventListener('focusin', () => queueMicrotask(sync));
+    carousel.addEventListener('focusout', () => queueMicrotask(sync));
+    carousel.addEventListener('keydown', () => queueMicrotask(sync));
+    carousel.addEventListener('pointerdown', () => requestAnimationFrame(sync));
+    document.addEventListener('selectionchange', sync);
+    // Recheck a stationary mouse after scrolling or a responsive layout change.
+    window.addEventListener('scroll', () => { if (mouse) sync(); }, { passive: true });
+    window.addEventListener('resize', sync);
+    new IntersectionObserver(entries => { visible = entries[0].intersectionRatio >= .35; sync(); }, { threshold: [0, .35] }).observe(carousel);
+    document.addEventListener('visibilitychange', sync);
+    reduced.addEventListener('change', sync);
+    carousel.setAttribute('data-enhanced', '');
+  }
+</script>

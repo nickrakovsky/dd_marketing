@@ -1,0 +1,313 @@
+---
+import type { LiveFeedItem } from "../../lib/wireframe-data";
+import { ytThumb } from "../../lib/yt-thumb";
+
+interface Props {
+  items: LiveFeedItem[];
+}
+const items = Astro.props.items.filter((item) => item.youtubeId);
+---
+
+{items.length > 0 && (
+  <section class="hub-shorts w-full bg-[#111111] text-white py-16 md:py-20" aria-labelledby="hub-shorts-heading">
+    <hub-shorts class="block max-w-7xl mx-auto px-4 md:px-8">
+      <div class="hub-shorts-heading-row flex items-center justify-between gap-5 mb-8">
+        <h2 id="hub-shorts-heading" class="font-bruta text-xl sm:text-2xl md:text-3xl lg:text-[34px] xl:text-[38px] uppercase tracking-tight text-white leading-tight">
+          <span class="hub-shorts-desktop-title">Watch: 60-Second Takes from Nick Rakovsky, DataDocks Founder</span>
+          <span class="hub-shorts-mobile-title">60-second takes</span>
+        </h2>
+        <div class="hub-shorts-desktop-nav flex items-center gap-2 shrink-0">
+          <button type="button" class="hub-shorts-nav" data-short-prev aria-label="Previous videos" aria-controls="hub-shorts-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <button type="button" class="hub-shorts-nav" data-short-next aria-label="Next videos" aria-controls="hub-shorts-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+          </button>
+        </div>
+      </div>
+      <p class="hub-shorts-mobile-intro">With Nick Rakovsky, DataDocks founder</p>
+      <div class="hub-shorts-mobile-meta">
+        <span data-short-count aria-live="polite" aria-atomic="true">1 / {items.length}</span>
+        <span id="hub-shorts-help">Swipe up for the next take</span>
+      </div>
+      {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- The scrollable region needs keyboard focus for arrow-key video browsing. */}
+      <div id="hub-shorts-track" class="hub-shorts-track" tabindex="0" role="region" aria-label="Short videos" aria-describedby="hub-shorts-help">
+        {items.map((item, index) => (
+          <article class="hub-shorts-slide" data-short-title={item.rawTitle || item.title} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${items.length}: ${item.rawTitle || item.title}`}>
+            <div class="hub-shorts-media">
+              <lite-youtube
+                js-api
+                videoid={item.youtubeId}
+                playlabel={`Play: ${item.rawTitle || item.title}`}
+                params={`controls=1&rel=0&iv_load_policy=3&loop=1&playlist=${item.youtubeId}&enablejsapi=1`}
+                style={`background-image: url('${ytThumb(item.youtubeId!, 'sdwebp')}'), url('https://i.ytimg.com/vi/${item.youtubeId}/hqdefault.jpg');`}
+              />
+              <div class="hub-shorts-shade" aria-hidden="true"></div>
+              <div class="hub-shorts-caption">
+                <h3>{item.rawTitle || item.title}</h3>
+              </div>
+              <span class="hub-shorts-play" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l10-6.5z" /></svg>
+              </span>
+              <button type="button" class="hub-shorts-fullscreen" data-short-fullscreen aria-label="Full screen" title="Full screen">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" /></svg>
+              </button>
+            </div>
+            {/* This strip remains swipeable after playback moves into a cross-origin iframe. */}
+            <div class="hub-shorts-swipe-lane" aria-hidden="true"><span></span></div>
+          </article>
+        ))}
+      </div>
+      <h3 class="hub-shorts-mobile-caption" data-short-active-title>{items[0].rawTitle || items[0].title}</h3>
+      <div class="hub-shorts-mobile-controls">
+        <a href="#why-datadocks" data-leave-shorts>Back to resources ↓</a>
+        <div class="flex gap-2">
+          <button type="button" class="hub-shorts-nav" data-short-prev aria-label="Previous video" aria-controls="hub-shorts-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 15 6-6 6 6" /></svg>
+          </button>
+          <button type="button" class="hub-shorts-nav" data-short-next aria-label="Next video" aria-controls="hub-shorts-track">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </div>
+      </div>
+    </hub-shorts>
+  </section>
+)}
+
+<style>
+  .hub-shorts-mobile-title, .hub-shorts-mobile-intro, .hub-shorts-mobile-meta,
+  .hub-shorts-mobile-caption, .hub-shorts-mobile-controls, .hub-shorts-swipe-lane { display: none; }
+  .hub-shorts-track { position: relative; display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 1rem; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .hub-shorts-track::-webkit-scrollbar { display: none; }
+  .hub-shorts-slide { position: relative; width: 14rem; flex-shrink: 0; scroll-snap-align: start; }
+  .hub-shorts-media { position: relative; width: 100%; aspect-ratio: 9 / 14; overflow: hidden; border-radius: .75rem; background: #000; }
+  .hub-shorts-media :global(lite-youtube) { width: 100%; max-width: none; height: 100%; aspect-ratio: 9 / 14; background-position: center; background-size: cover; }
+  .hub-shorts-media :global(lite-youtube::after), .hub-shorts-media :global(lite-youtube::before) { display: none; }
+  .hub-shorts-media :global(lite-youtube > iframe) { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hub-shorts-media :global(lite-youtube:not(.lyt-activated) > .lty-playbtn) { opacity: 0; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 25; }
+  .hub-shorts-media :global(lite-youtube.lyt-activated > .lty-playbtn) { display: none; }
+  .hub-shorts-shade { position: absolute; inset: 0; background: rgb(0 0 0 / .45); pointer-events: none; z-index: 10; }
+  .hub-shorts-caption { position: absolute; inset: 0 0 auto; padding: 1rem; background: linear-gradient(rgb(0 0 0 / .85), rgb(0 0 0 / .35), transparent); pointer-events: none; z-index: 20; }
+  .hub-shorts-caption h3 { color: #fff; font-size: .875rem; font-weight: 700; line-height: 1.4; }
+  .hub-shorts-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border: 2px solid rgb(255 255 255 / .9); border-radius: 50%; color: #fff; background: rgb(0 0 0 / .55); backdrop-filter: blur(4px); pointer-events: none; z-index: 30; }
+  .hub-shorts-play svg { width: 1.75rem; height: 1.75rem; }
+  .hub-shorts-media:has(:global(.lyt-activated)) .hub-shorts-shade,
+  .hub-shorts-media:has(:global(.lyt-activated)) .hub-shorts-caption,
+  .hub-shorts-media:has(:global(.lyt-activated)) .hub-shorts-play { display: none; }
+  .hub-shorts-nav, .hub-shorts-fullscreen { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; flex-shrink: 0; border: 1px solid rgb(255 255 255 / .25); border-radius: 50%; color: #fff; background: rgb(255 255 255 / .1); transition: background-color .2s; cursor: pointer; }
+  .hub-shorts-nav svg, .hub-shorts-fullscreen svg { width: 1rem; height: 1rem; }
+  .hub-shorts-nav:disabled { opacity: .35; cursor: default; }
+  .hub-shorts-nav:not(:disabled):hover, .hub-shorts-fullscreen:hover { background: #fe5000; }
+  .hub-shorts-fullscreen { position: absolute; right: .75rem; bottom: 3.25rem; width: 2.5rem; height: 2.5rem; background: rgb(0 0 0 / .7); z-index: 30; }
+  .hub-shorts-track:focus-visible, .hub-shorts-nav:focus-visible, .hub-shorts-fullscreen:focus-visible,
+  .hub-shorts-mobile-controls a:focus-visible { outline: 3px solid #fe5000; outline-offset: 4px; }
+  .hub-shorts-media:has(:global(.lty-playbtn:focus-visible)) { outline: 3px solid #fe5000; outline-offset: -3px; }
+  .hub-shorts-media:fullscreen { display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh; border-radius: 0; }
+  .hub-shorts-media:fullscreen :global(lite-youtube) { height: 100%; width: min(100vw, calc(100vh * 9 / 16)); aspect-ratio: 9 / 16; }
+  .hub-shorts-media:fullscreen .hub-shorts-fullscreen { top: 1rem; right: 1rem; bottom: auto; }
+  .hub-shorts-media:-webkit-full-screen { display: flex; align-items: center; justify-content: center; width: 100vw; height: 100vh; border-radius: 0; }
+  .hub-shorts-media:-webkit-full-screen :global(lite-youtube) { height: 100%; width: min(100vw, calc(100vh * 9 / 16)); aspect-ratio: 9 / 16; }
+  .hub-shorts-media:-webkit-full-screen .hub-shorts-fullscreen { top: 1rem; right: 1rem; bottom: auto; }
+  @media (min-width: 768px) {
+    .hub-shorts-slide { width: 16rem; }
+    .hub-shorts-caption { padding: 1.25rem; }
+    .hub-shorts-caption h3 { font-size: .9375rem; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .hub-shorts-fullscreen { opacity: 0; }
+    .hub-shorts-media:hover .hub-shorts-fullscreen, .hub-shorts-media:focus-within .hub-shorts-fullscreen,
+    .hub-shorts-media:fullscreen .hub-shorts-fullscreen { opacity: 1; }
+  }
+  @media (max-width: 639px) {
+    .hub-shorts { padding-block: 2rem; }
+    .hub-shorts-heading-row { margin-bottom: .25rem; }
+    .hub-shorts-heading-row h2 { font-size: 1.75rem; }
+    .hub-shorts-desktop-title, .hub-shorts-desktop-nav, .hub-shorts-caption { display: none; }
+    .hub-shorts-mobile-title, .hub-shorts-mobile-intro, .hub-shorts-mobile-caption { display: block; }
+    .hub-shorts-mobile-intro { color: #b8b8b8; font-size: .8125rem; margin-bottom: 1.25rem; }
+    .hub-shorts-mobile-meta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .625rem; color: #b8b8b8; font-size: .75rem; }
+    .hub-shorts-mobile-meta [data-short-count] { color: #fff; font-family: monospace; }
+    .hub-shorts-track { --short-video-height: min(58svh, 34rem); display: block; width: min(100%, calc(var(--short-video-height) * 9 / 16 + 1.75rem)); height: var(--short-video-height); margin-inline: auto; padding: 0; overflow-x: hidden; overflow-y: auto; scroll-snap-type: y mandatory; }
+    .hub-shorts-slide { display: grid; grid-template-columns: minmax(0, 1fr) 1.75rem; width: 100%; height: 100%; scroll-snap-stop: always; }
+    .hub-shorts-media, .hub-shorts-media :global(lite-youtube) { height: 100%; aspect-ratio: 9 / 16; }
+    .hub-shorts-shade { background: rgb(0 0 0 / .12); }
+    .hub-shorts-swipe-lane { display: grid; place-items: center; touch-action: pan-y; }
+    .hub-shorts-swipe-lane span { display: block; height: 2.5rem; width: .25rem; background: #686868; border-radius: 1rem; }
+    .hub-shorts-mobile-caption { margin-top: 1rem; font-size: .9375rem; line-height: 1.45; font-weight: 600; color: #fff; }
+    .hub-shorts-mobile-controls { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: 1rem; }
+    .hub-shorts-mobile-controls a { display: inline-flex; align-items: center; min-height: 2.75rem; color: #ddd; font-size: .8125rem; text-decoration: underline; text-underline-offset: .2em; }
+    .hub-shorts-fullscreen { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hub-shorts-nav, .hub-shorts-fullscreen { transition: none; } }
+</style>
+
+<script>
+  interface ShortPlayer {
+    pauseVideo: () => void;
+    addEventListener: (event: string, listener: (event: { data: number }) => void) => void;
+  }
+  type ShortEmbed = HTMLElement & { playerPromise?: Promise<ShortPlayer> };
+  type FullscreenMedia = HTMLElement & { webkitRequestFullscreen?: () => void };
+  type FullscreenDocument = Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => void };
+
+  class HubShorts extends HTMLElement {
+    private dispose?: () => void;
+    connectedCallback() {
+      if (this.dispose) return;
+      const track = this.querySelector<HTMLElement>(".hub-shorts-track");
+      if (!track) return;
+      const slides = [...this.querySelectorAll<HTMLElement>(".hub-shorts-slide")];
+      const embeds = slides.map((slide) => slide.querySelector("lite-youtube") as ShortEmbed);
+      const previous = [...this.querySelectorAll<HTMLButtonElement>("[data-short-prev]")];
+      const next = [...this.querySelectorAll<HTMLButtonElement>("[data-short-next]")];
+      const mobile = matchMedia("(max-width: 639px)");
+      const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+      const doc = document as FullscreenDocument;
+      const abort = new AbortController();
+      const options = { signal: abort.signal };
+      const players: Map<ShortEmbed, ShortPlayer> = new Map();
+      const pending: Set<ShortEmbed> = new Set();
+      let active = 0;
+      let frame = 0;
+      let disposed = false;
+      const fullscreenElement = () => doc.fullscreenElement || doc.webkitFullscreenElement;
+      const isVisible = (embed: ShortEmbed) => {
+        if (fullscreenElement()?.contains(embed)) return true;
+        const bounds = embed.getBoundingClientRect();
+        const viewport = track.getBoundingClientRect();
+        const width = Math.max(0, Math.min(bounds.right, viewport.right, innerWidth) - Math.max(bounds.left, viewport.left, 0));
+        const height = Math.max(0, Math.min(bounds.bottom, viewport.bottom, innerHeight) - Math.max(bounds.top, viewport.top, 0));
+        return width * height > bounds.width * bounds.height * .5;
+      };
+      const pause = (embed: ShortEmbed) => {
+        players.get(embed)?.pauseVideo();
+        const iframe = embed.querySelector("iframe");
+        iframe?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+      };
+      const pauseOthers = (current?: ShortEmbed) => embeds.forEach((embed) => { if (embed !== current) pause(embed); });
+      const bindPlayers = () => embeds.forEach((embed) => {
+        if (!embed.playerPromise || pending.has(embed)) return;
+        pending.add(embed);
+        embed.playerPromise.then((player) => {
+          if (disposed) { player.pauseVideo(); return; }
+          players.set(embed, player);
+          player.addEventListener("onStateChange", ({ data }) => {
+            if (disposed || data !== 1) return;
+            if (document.hidden || !isVisible(embed)) { pause(embed); return; }
+            pauseOthers(embed);
+          });
+          if (document.hidden || !isVisible(embed)) pause(embed);
+          else pauseOthers(embed);
+        }).catch(() => { pending.delete(embed); });
+      });
+      const update = () => {
+        if (mobile.matches) {
+          const old = active;
+          active = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollTop / track.clientHeight)));
+          if (old !== active) pauseOthers(embeds[active]);
+          previous.forEach((button) => { button.disabled = active === 0; });
+          next.forEach((button) => { button.disabled = active === slides.length - 1; });
+        } else {
+          previous.forEach((button) => { button.disabled = track.scrollLeft <= 2; });
+          next.forEach((button) => { button.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2; });
+        }
+        const count = this.querySelector("[data-short-count]");
+        const caption = this.querySelector("[data-short-active-title]");
+        if (count) count.textContent = `${active + 1} / ${slides.length}`;
+        if (caption) caption.textContent = slides[active].dataset.shortTitle || "";
+      };
+      const move = (direction: number) => {
+        const behavior = reducedMotion.matches ? "instant" : "smooth";
+        if (mobile.matches) {
+          const target = Math.max(0, Math.min(slides.length - 1, active + direction));
+          pauseOthers();
+          track.scrollTo({ top: target * track.clientHeight, behavior });
+        } else track.scrollBy({ left: direction * track.clientWidth * .75, behavior });
+      };
+      previous.forEach((button) => button.addEventListener("click", () => move(-1), options));
+      next.forEach((button) => button.addEventListener("click", () => move(1), options));
+      track.addEventListener("scroll", () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(update);
+      }, { ...options, passive: true });
+      track.addEventListener("keydown", (event) => {
+        if (event.target !== track) return;
+        const backwards = mobile.matches ? "ArrowUp" : "ArrowLeft";
+        const forwards = mobile.matches ? "ArrowDown" : "ArrowRight";
+        if (event.key === backwards || event.key === forwards) {
+          event.preventDefault();
+          move(event.key === backwards ? -1 : 1);
+        }
+      }, options);
+      embeds.forEach((embed) => embed.addEventListener("click", () => pauseOthers(embed), options));
+      const observer = new MutationObserver(bindPlayers);
+      embeds.forEach((embed) => observer.observe(embed, { childList: true, subtree: true }));
+      const visibility = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const embed = entry.target as ShortEmbed;
+          if (entry.intersectionRatio < .5 && !fullscreenElement()?.contains(embed)) pause(embed);
+        });
+      }, { threshold: [0, .5, 1] });
+      embeds.forEach((embed) => visibility.observe(embed));
+      document.addEventListener("visibilitychange", () => { if (document.hidden) pauseOthers(); }, options);
+      this.querySelector("[data-leave-shorts]")?.addEventListener("click", () => pauseOthers(), options);
+      const fullscreenButtons = [...this.querySelectorAll<HTMLButtonElement>("[data-short-fullscreen]")];
+      fullscreenButtons.forEach((button) => {
+        const media = button.closest(".hub-shorts-media") as FullscreenMedia;
+        const embed = media.querySelector("lite-youtube") as ShortEmbed;
+        const nativeFullscreen = !!(media.requestFullscreen || media.webkitRequestFullscreen);
+        if (!nativeFullscreen) { button.setAttribute("aria-label", "Watch on YouTube"); button.title = "Watch on YouTube"; }
+        button.addEventListener("click", async (event) => {
+          event.stopPropagation();
+          if (!nativeFullscreen) {
+            pauseOthers();
+            window.open(`https://www.youtube.com/shorts/${embed.getAttribute("videoid")}`, "_blank", "noopener,noreferrer");
+            return;
+          }
+          try {
+            if (fullscreenElement()) {
+              if (doc.exitFullscreen) await doc.exitFullscreen();
+              else doc.webkitExitFullscreen?.();
+            } else {
+              if (media.requestFullscreen) await media.requestFullscreen();
+              else media.webkitRequestFullscreen?.();
+            }
+          } catch { /* The embedded player's own full-screen control remains available. */ }
+        }, options);
+        media.addEventListener("dblclick", (event) => {
+          if (!(event.target as Element).closest("button")) button.click();
+        }, options);
+      });
+      const fullscreenChanged = () => {
+        fullscreenButtons.forEach((button) => {
+          const media = button.closest(".hub-shorts-media");
+          const label = fullscreenElement() === media ? "Exit full screen" : "Full screen";
+          if (button.title !== "Watch on YouTube") { button.title = label; button.setAttribute("aria-label", label); }
+        });
+      };
+      document.addEventListener("fullscreenchange", fullscreenChanged, options);
+      document.addEventListener("webkitfullscreenchange", fullscreenChanged, options);
+      const resetLayout = () => {
+        pauseOthers();
+        track.scrollTo({ top: mobile.matches ? active * track.clientHeight : 0, left: 0, behavior: "instant" });
+        update();
+      };
+      mobile.addEventListener("change", resetLayout, options);
+      const resize = new ResizeObserver(resetLayout);
+      resize.observe(track);
+      bindPlayers();
+      update();
+      this.dispose = () => {
+        disposed = true;
+        pauseOthers();
+        abort.abort();
+        observer.disconnect();
+        visibility.disconnect();
+        resize.disconnect();
+        cancelAnimationFrame(frame);
+      };
+    }
+    disconnectedCallback() { this.dispose?.(); this.dispose = undefined; }
+  }
+  if (!customElements.get("hub-shorts")) customElements.define("hub-shorts", HubShorts);
+</script>

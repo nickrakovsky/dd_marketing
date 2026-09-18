@@ -39,7 +39,14 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
       bento?: { identify?: (email: string) => void };
     };
     let trigger: HTMLElement | null = null;
-    const close = () => { dialog.close(); trigger?.focus(); };
+    const close = () => {
+      dialog.close();
+      // Mobile navigation closes before this dialog opens, hiding its trigger.
+      const focusTarget = trigger?.getClientRects().length
+        ? trigger
+        : trigger?.closest('[data-nav]')?.querySelector<HTMLElement>('[data-mobile-toggle]');
+      focusTarget?.focus({ preventScroll: true });
+    };
     dialog.querySelector('[data-close-demo]')?.addEventListener('click', close);
     dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
     dialog.addEventListener('click', event => {

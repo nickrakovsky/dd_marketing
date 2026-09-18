@@ -1,6 +1,6 @@
 ---
 // src/components/SmartLink.astro
-import { getEntry } from 'astro:content';
+import { isPublished } from '../lib/content-status';
 
 interface Props {
   href?: string;
@@ -86,6 +86,7 @@ if (id) {
 // Fetch data
 let youtubeId = '';
 let iconStr = '';
+let isUnpublishedTarget = false;
 
 async function getEntryCaseInsensitive(collection: any, idToFind: string): Promise<any> {
   if (!idToFind) return null;
@@ -99,17 +100,25 @@ if (type === 'glossary' && id) {
     title = title || entry.data.termName;
     snippet = snippet || entry.data.contextSnippet;
     href = entry.data.targetPost ? `/posts/${entry.data.targetPost.id.replace(/\/$/, '')}` : (href || '#');
+    if (entry.data.targetPost) {
+      const target = await getEntryCaseInsensitive('posts', entry.data.targetPost.id);
+      isUnpublishedTarget = !!target && !isPublished(target.data.pubDate);
+    }
   }
 } else if (type === 'post' && id) {
   const entry = await getEntryCaseInsensitive('posts', id);
-  if (entry) {
+  if (entry && !isPublished(entry.data.pubDate)) {
+    isUnpublishedTarget = true;
+  } else if (entry) {
     title = title || entry.data.title;
     snippet = snippet || entry.data.description;
     href = `/posts/${entry.slug}`;
   }
 } else if (type === 'video' && id) {
   const entry = await getEntryCaseInsensitive('videos', id);
-  if (entry) {
+  if (entry && !isPublished(entry.data.pubDate)) {
+    isUnpublishedTarget = true;
+  } else if (entry) {
     title = title || entry.data.title;
     snippet = snippet || entry.data.description;
     href = `/videos/${entry.slug}`;
@@ -153,7 +162,9 @@ if (type === 'glossary' && id) {
 const isSmartLink = !!type && (title || snippet);
 ---
 
-{!isSmartLink ? (
+{isUnpublishedTarget ? (
+  <span class={className}><slot>{anchorText || propTitle || id}</slot></span>
+) : !isSmartLink ? (
   <a href={href} class={className || "font-medium text-[#fd4f00] hover:underline"}
     {...(href?.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
   >

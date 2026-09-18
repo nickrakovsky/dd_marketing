@@ -79,51 +79,46 @@ const columns = {
 };
 ---
 
-<footer class="bg-black text-[#FFF8E9] py-12 border-t border-white/10 font-sans text-[1rem] min-[330px]:text-[1.1rem] min-[480px]:text-base transition-[font-size] duration-300" style="content-visibility: auto; contain-intrinsic-size: auto 500px;">
+<footer class="bg-black text-[#FFF8E9] py-12 border-t border-white/10 font-sans text-sm sm:text-base transition-[font-size] duration-300" style="content-visibility: auto; contain-intrinsic-size: auto 500px;">
   <div class="container mx-auto px-6 max-w-7xl">
 
-    {/* ── LINK COLUMNS ─────────────────────────────────────────────────────────────
-        Single responsive markup tree (previously five duplicate breakpoint blocks).
-        Each link/image/heading now appears exactly ONCE in the DOM and reflows via
-        CSS grid: 2 cols on small phones → 3 at 480px → 4 at desktop. Features holds
-        all 12 links and flows into 2 sub-columns on desktop via CSS columns.
-    ─────────────────────────────────────────────────────────────────────────────── */}
-    <div class="grid grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-x-8 gap-y-10 mb-10">
-      {/* Contact — semantic <address> for NAP consistency (local SEO) */}
-      <div>
-        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.contact.title}</h3>
-        <address class="not-italic text-[#FFF8E9]/90 leading-snug space-y-0 mb-4">
-          {columns.contact.address.map(line => <p>{line}</p>)}
-        </address>
-        <div class="flex flex-col gap-1">
-          <a href={`mailto:${columns.contact.email}`} class={hoverLinkClass}>{columns.contact.email}</a>
-          <a href={`tel:${columns.contact.phone.replace(/\D/g,'')}`} class={hoverLinkClass}>{columns.contact.phone}</a>
+    {/* One markup tree: phones stack supporting links beside Features; from 640px,
+        display: contents restores the existing tablet and desktop column layout. */}
+    <div class="footer-link-columns grid grid-cols-2 sm:grid-cols-3 md:grid-cols-[1.2fr_1fr_2.2fr_1fr] gap-x-6 sm:gap-x-8 gap-y-10 mb-10">
+      <div class="footer-support-columns flex min-w-0 flex-col gap-10 sm:contents">
+        {/* Contact — semantic <address> for NAP consistency (local SEO) */}
+        <div class="footer-contact min-w-0 sm:col-start-1 sm:row-start-1">
+          <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.contact.title}</h3>
+          <address class="not-italic text-[#FFF8E9]/90 leading-snug space-y-0 mb-4">
+            {columns.contact.address.map(line => <p>{line}</p>)}
+          </address>
+          <div class="flex flex-col gap-1">
+            <a href={`mailto:${columns.contact.email}`} class={hoverLinkClass}>{columns.contact.email.split("@")[0]}@<wbr class="sm:hidden" />{columns.contact.email.split("@")[1]}</a>
+            <a href={`tel:${columns.contact.phone.replace(/\D/g,'')}`} class={hoverLinkClass}>{columns.contact.phone}</a>
+          </div>
+        </div>
+
+        <div class="footer-quick-links min-w-0 sm:col-start-2 sm:row-start-2 md:col-start-4 md:row-start-1">
+          <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.quickLinks.title}</h3>
+          <ul class="space-y-1.5">
+            {columns.quickLinks.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
+          </ul>
+        </div>
+
+        <div class="footer-how-it-helps min-w-0 sm:col-start-2 sm:row-start-1">
+          <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.howItHelps.title}</h3>
+          <ul class="space-y-1.5">
+            {columns.howItHelps.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
+          </ul>
         </div>
       </div>
 
-      {/* How DataDocks Helps */}
-      <div>
-        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.howItHelps.title}</h3>
-        <ul class="space-y-1.5">
-          {columns.howItHelps.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-        </ul>
-      </div>
-
-      {/* Features — all 12 links; 2-up on desktop via CSS multi-column.
-          Spans both rows at the 3-col breakpoint so Quick Links can tuck under How DataDocks Helps. */}
-      <div class="min-[480px]:row-span-2 md:row-span-1">
+      {/* Features stays in the right column on phones, spans both tablet rows,
+          and flows into two sub-columns on desktop. */}
+      <div class="footer-features min-w-0 sm:col-start-3 sm:row-start-1 sm:row-span-2 md:row-span-1">
         <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.features1.title}</h3>
         <ul class="space-y-1.5 md:columns-2 md:gap-8 [&>li]:break-inside-avoid">
           {[...columns.features1.links, ...columns.features2.links].map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
-        </ul>
-      </div>
-
-      {/* Quick Links — at the 3-col breakpoint it lands under Contact by DOM order;
-          nudge it under "How DataDocks Helps" (col 2), then reset for the 4-col md grid. */}
-      <div class="min-[480px]:col-start-2 min-[480px]:row-start-2 md:col-start-auto md:row-start-auto">
-        <h3 class="font-recoleta font-bold text-lg mb-4 text-[#FFF8E9]">{columns.quickLinks.title}</h3>
-        <ul class="space-y-1.5">
-          {columns.quickLinks.links.map(link => (<li><a href={link.href} class={hoverLinkClass}>{link.label}</a></li>))}
         </ul>
       </div>
     </div>
@@ -135,13 +130,13 @@ const columns = {
     ─────────────────────────────────────────────────────────────────────────────── */}
     <div class="flex flex-col items-center gap-8 pt-8 border-t border-white/10 md:flex-row md:justify-between md:items-center">
       {/* Logo + trust badges */}
-      <div class="flex flex-nowrap items-center justify-center gap-6 min-[480px]:gap-10 md:justify-start">
-        <a href="/" class="hover:scale-105 transition-transform duration-300">
+      <div class="footer-trust-badges grid w-full grid-cols-2 items-center justify-center gap-6 sm:flex sm:w-auto sm:flex-nowrap sm:gap-10 md:justify-start">
+        <a href="/" class="justify-self-end hover:scale-105 transition-transform duration-300">
           <img src="/images/Orange-Logo.svg" alt="DataDocks Logo" width="56" height="56" class="h-16 w-16 min-[480px]:h-20 min-[480px]:w-20 max-w-full object-contain" loading="lazy" decoding="async" />
         </a>
-        <img src="/images/soc2-badge.webp" alt="AICPA SOC2 Certified" width="160" height="159" class="h-16 min-[480px]:h-20 w-auto max-w-full object-contain" loading="lazy" decoding="async" />
-        <a href="https://feddev-ontario.canada.ca/" target="_blank" rel="noopener noreferrer" class="hover:scale-105 transition-transform duration-300">
-          <img src="/images/canada-badge-1200.webp" srcset="/images/canada-badge-600.webp 600w, /images/canada-badge-1200.webp 1200w" sizes="(min-width: 480px) 563px, 226px" alt="Government of Canada" width="1200" height="85" class="h-10 w-auto max-w-full object-contain" loading="lazy" decoding="async" />
+        <img src="/images/soc2-badge.webp" alt="AICPA SOC2 Certified" width="160" height="159" class="justify-self-start h-16 min-[480px]:h-20 w-auto max-w-full object-contain" loading="lazy" decoding="async" />
+        <a href="https://feddev-ontario.canada.ca/" target="_blank" rel="noopener noreferrer" class="footer-funding-badge col-span-2 min-w-0 w-full hover:scale-105 transition-transform duration-300 sm:w-auto">
+          <img src="/images/canada-badge-1200.webp" srcset="/images/canada-badge-600.webp 600w, /images/canada-badge-1200.webp 1200w" sizes="(min-width: 640px) 563px, calc(100vw - 48px)" alt="Government of Canada" width="1200" height="85" class="h-auto w-full max-w-full object-contain sm:h-10 sm:w-auto" loading="lazy" decoding="async" />
         </a>
       </div>
 

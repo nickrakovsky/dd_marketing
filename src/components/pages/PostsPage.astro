@@ -1,0 +1,872 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navigation from "../../components/Navigation.astro";
+import Footer from "../../components/Footer.astro";
+import CTA from "../../components/home/CTA.astro";
+import DemoCapture from "../../components/home-revamp/DemoCapture.astro";
+import DailyBlogPreviewBanner from "../../components/preview/DailyBlogPreviewBanner.astro";
+import AuthorAvatar from "../../components/home-revamp/AuthorAvatar.astro";
+import { Truck, ChartNoAxesCombined, Warehouse, Network, Lightbulb } from "lucide-react";
+import { getModularHubData } from "../../lib/wireframe-data";
+import { ytThumb } from "../../lib/yt-thumb";
+import { Image } from "astro:assets";
+import PhoneFrame from "../../components/PhoneFrame.astro";
+import ResourceArchive from "../../components/wireframes/ResourceArchive.astro";
+import HubShorts from "../../components/wireframes/HubShorts.astro";
+import mobileScreenshot from "../../assets/solutionsscreenshots/visibility/appscreenshot-screen.webp";
+import desktopScreenshot from "../../assets/solutionsscreenshots/DataDocks-Calendar-Clean.webp";
+
+interface Props {
+  previewAsOf?: Date;
+}
+
+// A date override is available only to the explicit development preview wrapper.
+const previewAsOf = import.meta.env.DEV ? Astro.props.previewAsOf : undefined;
+
+const {
+  evergreen1,
+  evergreen2,
+  evergreen3,
+  evergreen4,
+  evergreen5,
+  evergreen6,
+  evergreen7,
+  evergreen8,
+  evergreen9,
+  foundationalGuides,
+  latest5Posts,
+  founderShorts,
+  deepDiveVideos,
+  olderResources
+} = await getModularHubData(previewAsOf);
+
+const feedTopicIcons: Record<string, typeof Warehouse> = {
+  'Facility Operations': Warehouse,
+  'Carrier Management': Truck,
+  'Supply Chain Strategy': ChartNoAxesCombined,
+  'Systems Integration': Network,
+};
+
+const title = "Resource Hub: Guides, Checklists & Insights for Operations Teams | DataDocks";
+const description = "Comprehensive operational playbooks, dock scheduling guides, warehouse checklists, and founder video deep dives.";
+---
+
+<Layout title={title} description={description} noindex={Boolean(previewAsOf)}>
+  <link
+    rel="stylesheet"
+    href="/css/lite-yt-embed.css"
+    media="print"
+    onload="this.media='all'"
+  />
+  <script is:inline src="/css/lite-yt-embed.js" defer></script>
+
+  <style is:global>
+    .modular-video-embed lite-youtube {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 1rem;
+    }
+  </style>
+
+  {/* 1. MAIN NAVIGATION */}
+  <Navigation demoHref="#book-demo" />
+  {previewAsOf && <DailyBlogPreviewBanner current="posts" />}
+
+  <main class="min-h-screen bg-[#FFF8EE] text-gray-900 font-sans pb-0">
+
+    {/* 2. HERO H1 (CENTRED, BRAND EDITORIAL STYLE MATCHING LIVE HUB) */}
+    <header class="pt-16 pb-12 text-center max-w-5xl mx-auto px-4">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[76px] font-bruta uppercase leading-[0.88] tracking-tight">
+        <span class="text-[#FE5000]">RESOURCE HUB:</span><br />
+        <span class="text-black">Guides, Checklists & Insights<br class="hidden sm:inline" /> for Operations Teams</span>
+      </h1>
+    </header>
+
+    <section id="start-guides" aria-label="Start with a guide" class="max-w-7xl mx-auto px-4 md:px-8 mb-10 md:mb-16">
+      <div class="quick-guides">
+        {[evergreen1, evergreen2, evergreen3].map(guide => (
+          <a href={guide.url} class="quick-guide group">
+            <span class="quick-guide-kicker">{guide.kicker}</span>
+            <h2 class="quick-guide-title">{guide.title}</h2>
+            <span class="quick-guide-arrow" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* 4. SPLIT SECTION: SQUARER LATEST INSIGHTS (EQUAL HEIGHT, 0 GAPS, SQUARE HOVER FILL) VS EVERGREEN 4 */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+        {/* Left Column (5/12 width): Squarer Latest Insights block */}
+        <div class="lg:col-span-5 flex flex-col h-full">
+          <div class="pb-3 border-b-2 border-black">
+            <h2 class="font-sans font-bold text-lg md:text-xl text-black">
+              Latest Insights
+            </h2>
+          </div>
+
+          {/* 5 invisible cards of strictly equal height, 0 gap, square hover fill */}
+          <div class="flex-1 flex flex-col divide-y divide-black/15">
+            {latest5Posts.map((post, idx) => {
+              const author = post.author === 'DataDocks' ? 'DataDocks Team' : post.author;
+              const TopicIcon = feedTopicIcons[post.topic || ''] || Lightbulb;
+              return <a
+                href={post.url}
+                class="latest-insight flex-1 flex items-center px-4 py-3.5 rounded-none group transition-colors duration-150 hover:bg-black/[0.05]"
+              >
+                <div class="latest-insight-layout flex items-baseline gap-3.5 w-full">
+                  <span class="latest-insight-number font-mono text-sm font-bold text-[#FE5000] shrink-0 w-5">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <div class="latest-insight-body min-w-0 flex-1">
+                    <div class="latest-insight-byline">
+                      <AuthorAvatar name={author} />
+                      <span class="latest-insight-attribution">
+                        <span class="latest-insight-author">{author}</span>
+                        <span aria-hidden="true">·</span>
+                        <time datetime={new Date(post.pubDateValue).toISOString()}>{post.displayDate}</time>
+                      </span>
+                    </div>
+                    <h3 class="latest-insight-title font-sans font-bold text-sm md:text-[15px] text-gray-900 leading-snug group-hover:text-[#FE5000] transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <span class="latest-insight-details">
+                      {post.topic && <><span class="latest-insight-topic"><TopicIcon size={14} strokeWidth={1.5} aria-hidden="true" /><span>{post.topic}</span></span><span aria-hidden="true">·</span></>}
+                      <span class="latest-insight-type">Article</span>
+                    </span>
+                  </div>
+                </div>
+              </a>;
+            })}
+          </div>
+        </div>
+
+        {/* Right Column (7/12 width): Most Popular Post (Evergreen 4), smooth hover & matched height */}
+        <a
+          href={evergreen4.url}
+          class="lg:col-span-7 flex flex-col group rounded-xl h-full"
+        >
+          {evergreen4.cardImage && (
+            <div class="w-full h-56 md:h-64 rounded-xl overflow-hidden bg-gray-100 relative shrink-0 block">
+              <Image
+                src={evergreen4.cardImage}
+                alt={evergreen4.cardAlt || evergreen4.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                loading="lazy"
+              />
+            </div>
+          )}
+
+          <div class="pt-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-gray-400 mb-1.5 transition-colors duration-200 group-hover:text-gray-600">
+                {evergreen4.displayDate}
+              </div>
+
+              <h2 class="font-bruta text-2xl md:text-3xl uppercase leading-tight text-black group-hover:text-[#FE5000] transition-colors mb-3">
+                {evergreen4.title}
+              </h2>
+
+              <p class="text-sm md:text-base text-gray-700 font-recoleta leading-relaxed line-clamp-4 transition-colors duration-200 group-hover:text-black">
+                {evergreen4.description}
+              </p>
+            </div>
+
+            <div class="pt-3 text-xs font-mono text-gray-500 transition-colors duration-200 group-hover:text-gray-900">
+              By {evergreen4.author} • {evergreen4.readTime}
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <HubShorts items={founderShorts} />
+
+    {/* 6. HUGE 'WHY' CTA FULL-WIDTH BANNER (NORMALIZED MARKETING HOOKS, SCALED SCREENSHOTS & CLEAN MOBILE CHASSIS) */}
+    <section id="why-datadocks" class="w-full bg-[#EFE2D2] py-10 md:py-20 mb-12 md:mb-20">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="why-layout">
+            <h2 class="why-heading font-bruta text-3xl sm:text-4xl md:text-5xl lg:text-[54px] uppercase tracking-tight text-black leading-[0.95]">
+              Why 10,000 Operations Trust DataDocks
+            </h2>
+
+          <div class="why-copy">
+            {/* 3 Oversized Icon-Illustrations NEXT TO 3 Normalized Arguments */}
+            <div class="space-y-6">
+
+              {/* Argument 1: Tactical and practical (Isometric Jigsaw Puzzle Piece) */}
+              <div class="flex items-start gap-5 group">
+                <div class="shrink-0 pt-0.5">
+                  <svg class="w-14 h-14 text-black shrink-0 transition-transform group-hover:scale-105 duration-300" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 25V33L28 42V34L12 25Z" fill="#C5B4A3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 42L44 33V25L28 34V42Z" fill="#B2A08F" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 8 L34 11.5 C35 10 36.5 9 38.5 9 C41 9 42.5 11 42 13 C41.5 15 39.5 15.5 38 15 L44 18.5 L38.5 22 C37.5 20.5 35.5 20 33.5 20.5 C31.5 21 30.5 23 31.5 24.5 C32.5 26 34.5 26 36 25 L28 30 L22 26.5 C20.5 27.5 18.5 27.5 17.5 26 C16.5 24.5 17.5 22.5 19.5 22 C21.5 21.5 23 23 24 24.5 L12 18.5 L18 15 C16.5 14.5 14.5 14 14 12 C13.5 10 15 8 17.5 8 C19.5 8 21 9 22 10.5 L28 8Z" fill="#FFF8EE" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <circle cx="28" cy="19" r="2.5" fill="#FE5000"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-recoleta font-bold text-xl md:text-2xl text-black leading-snug">
+                    Tactical and practical
+                  </h3>
+                  <p class="font-sans text-sm md:text-base text-gray-700 leading-relaxed mt-1">
+                    Mandatory POs and pre-verified appointment rules ensure fast driver check-ins and stop gate hold-ups before they start.
+                  </p>
+                </div>
+              </div>
+
+              {/* Argument 2: In depth (Isometric Lightbulb) */}
+              <div class="flex items-start gap-5 group">
+                <div class="shrink-0 pt-0.5">
+                  <svg class="w-14 h-14 text-black shrink-0 transition-transform group-hover:scale-105 duration-300" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M28 4V8" stroke="#FE5000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M14 10L17 13" stroke="#FE5000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M42 10L39 13" stroke="#FE5000" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M28 8C20 8 15 13.5 15 20C15 24 17.5 27.5 20 30.5V36C20 37 20.8 38 21.8 38H34.2C35.2 38 36 37 36 36V30.5C38.5 27.5 41 24 41 20C41 13.5 36 8 28 8Z" fill="#FFF8EE" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M21 41C21 42 21.8 43 23 43H33C34.2 43 35 42 35 41V38H21V41Z" fill="#D6C7B8" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M24 46C24 47 25 48 26.5 48H29.5C31 48 32 47 32 46V43H24V46Z" fill="#222222" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="21" y1="38" x2="35" y2="38" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="22" y1="41" x2="34" y2="41" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M25 28V20L28 16L31 20V28" stroke="#FE5000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="28" cy="16" r="1.5" fill="#FE5000"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-recoleta font-bold text-xl md:text-2xl text-black leading-snug">
+                    Smart appointment lengths
+                  </h3>
+                  <p class="font-sans text-sm md:text-base text-gray-700 leading-relaxed mt-1">
+                    Duration-based scheduling sets slot lengths by actual load type, smoothing daily dock flow and cutting driver detention.
+                  </p>
+                </div>
+              </div>
+
+              {/* Argument 3: Zero carrier friction (Isometric Shipping Parcel) */}
+              <div class="flex items-start gap-5 group">
+                <div class="shrink-0 pt-0.5">
+                  <svg class="w-14 h-14 text-black shrink-0 transition-transform group-hover:scale-105 duration-300" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 21V36L28 46V31L10 21Z" fill="#E2D6C7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 31V46L46 36V21L28 31Z" fill="#C5B4A3" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M28 10L46 20L28 30L10 20L28 10Z" fill="#FFF8EE" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M10 20L46 20" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/>
+                    <path d="M23 12.8L33 17.2L33 32.8L23 28.4Z" fill="#FE5000" fill-opacity="0.2" stroke="#FE5000" stroke-width="1.5" stroke-linejoin="round"/>
+                    <rect x="15" y="27" width="8" height="6" rx="1" transform="skewY(25)" fill="#FFFFFF" stroke="currentColor" stroke-width="1"/>
+                    <line x1="17" y1="28.5" x2="21" y2="28.5" transform="skewY(25)" stroke="currentColor" stroke-width="0.8"/>
+                    <line x1="17" y1="30.5" x2="21" y2="30.5" transform="skewY(25)" stroke="currentColor" stroke-width="0.8"/>
+                    <path d="M36 33L36 29M34 31L36 29L38 31" transform="skewY(-25)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-recoleta font-bold text-xl md:text-2xl text-black leading-snug">
+                    Zero carrier friction
+                  </h3>
+                  <p class="font-sans text-sm md:text-base text-gray-700 leading-relaxed mt-1">
+                    Carriers book directly through self-service links that respect your facility rules, eliminating endless email back-and-forth.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+
+          </div>
+
+          {/* Right Column: Real Software Product Showcase (Desktop Master Calendar + Floating Mobile Chassis) */}
+          <div class="why-showcase relative">
+            {/* Desktop Browser Window Mockup with Real Master Calendar Screenshot */}
+            <div class="showcase-desktop rounded-2xl overflow-hidden shadow-2xl border border-black/15 bg-white relative group/browser">
+              {/* Browser Header Bar */}
+              <div class="showcase-browser-bar bg-[#E5D7C5] border-b border-black/10 px-3 py-2.5 flex items-center justify-between gap-2">
+                <div class="flex gap-2 items-center py-0.5 shrink-0">
+                  {/* Red and Yellow are static muted controls */}
+                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
+                  <div class="w-3 h-3 rounded-full bg-black/20 border border-black/10" aria-hidden="true"></div>
+                  {/* Only Green button is interactive: lights up green when hovering anywhere on the frame, scales when hovered directly */}
+                  <button
+                    type="button"
+                    id="mac-fullscreen-btn"
+                    aria-haspopup="dialog"
+                    class="group/green p-1.5 -m-1.5 flex items-center justify-center cursor-pointer transition-transform hover:scale-125"
+                    title="View full screen (Esc to exit)"
+                    aria-label="View desktop screenshot full screen"
+                  >
+                    <span class="w-3 h-3 rounded-full bg-black/20 border border-black/10 group-hover/browser:bg-[#27C93F] group-hover/browser:border-[#1AAB29] transition-all duration-200 flex items-center justify-center shadow-sm">
+                      <svg class="w-1.5 h-1.5 text-black/80 opacity-0 group-hover/browser:opacity-100 transition-opacity duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+                <div class="showcase-address bg-white/90 rounded-md px-2 py-0.5 text-[11px] font-mono text-gray-500 min-w-0 max-w-[220px] truncate select-none">
+                  app.datadocks.com/schedule
+                </div>
+              </div>
+
+              {/* Static Desktop Screenshot (non-clickable, no bounce-zoom on mouseover) */}
+              <div class="relative overflow-hidden bg-white select-none">
+                <Image
+                  src={desktopScreenshot}
+                  alt="DataDocks Live Dock Scheduling Master Calendar"
+                  class="w-full h-auto object-cover object-top select-none pointer-events-none"
+                  loading="lazy"
+                  draggable="false"
+                />
+              </div>
+            </div>
+
+            {/* Floating Smartphone Screen using official PhoneFrame hardware component with real mobile app screenshot */}
+            <div class="showcase-phone">
+              <PhoneFrame
+                src={mobileScreenshot}
+                alt="DataDocks Mobile Dock Operations App"
+              />
+            </div>
+            <div class="showcase-mobile-details">
+              <p class="showcase-phone-caption">Your dock, wherever you are.</p>
+              <a href="/images/DataDocks-Calendar-Clean.webp" data-open-desktop-schedule aria-haspopup="dialog" class="showcase-desktop-link">
+                Explore the desktop schedule
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
+              </a>
+            </div>
+          </div>
+
+            {/* Book a Demo Email Capture (Full-width form spanning the text column above) */}
+            <form
+              id="demo-banner-form"
+              data-demo-capture
+              class="why-cta"
+            >
+              <input
+                type="email"
+                name="email"
+                aria-label="Email address"
+                autocomplete="email"
+                placeholder="Enter your email"
+                class="min-w-0 w-full px-5 bg-white text-black placeholder:text-gray-500 text-base border border-black/20 font-recoleta focus:border-black rounded-none transition-all duration-300 sm:hover:pl-6 sm:focus:pl-6"
+                required
+              />
+              <button
+                type="submit"
+                class="px-6 bg-black hover:bg-[#FE5000] text-white font-bold transition-colors duration-300 uppercase tracking-wide text-sm sm:text-base font-recoleta whitespace-nowrap rounded-none shrink-0"
+              >
+                Book a Demo
+              </button>
+              <p class="capture-status why-capture-status" data-capture-status role="status" aria-live="polite"></p>
+            </form>
+
+        </div>
+      </div>
+    </section>
+
+    {/* 7 & 8. CONNECTED EVERGREEN SECTION: BIG POST 5 (RATIONALIZED CLICKABILITY) + 3 TRICOLOR CARDS */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      {/* Big Evergreen Post 5: 100% unified clickability and hover response */}
+      <a
+        href={evergreen5.url}
+        class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mb-8 group rounded-xl"
+      >
+        <div class="aspect-[16/10] w-full rounded-xl bg-gray-100 overflow-hidden relative min-h-[200px]">
+          {evergreen5.cardImage && (
+            <Image
+              src={evergreen5.cardImage}
+              alt={evergreen5.cardAlt || evergreen5.title}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+          )}
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="font-bruta text-2xl md:text-4xl uppercase leading-tight text-black group-hover:text-[#FE5000] transition-colors">
+            {evergreen5.title}
+          </h2>
+
+          <div class="article-meta text-xs font-mono text-gray-500 flex items-center gap-3 transition-colors duration-200 group-hover:text-gray-900">
+            <span class="article-meta-author">By {evergreen5.author}</span>
+            <span class="article-meta-author-separator" aria-hidden="true">•</span>
+            <span class="article-meta-details">
+              <span>{evergreen5.displayDate}</span>
+              <span aria-hidden="true">•</span>
+              <span>{evergreen5.readTime}</span>
+            </span>
+          </div>
+
+          <p class="text-sm md:text-base text-gray-700 font-recoleta leading-relaxed line-clamp-3 transition-colors duration-200 group-hover:text-black">
+            {evergreen5.description}
+          </p>
+        </div>
+      </a>
+
+      {/* 3 Solid Fill Cards: Smooth scale zoom on hover without color shifts (Card 1 Orange, Card 2 Black, Card 3 Warm Sand) */}
+      <div id="product-links" class="product-links grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+
+        {/* Card 1: Official Orange Fill */}
+        <a
+          href={evergreen6.url}
+          class="product-link p-4 md:p-7 rounded-2xl bg-[#FE5000] text-white flex flex-col justify-between hover:scale-[1.03] hover:shadow-xl transition-all duration-300 ease-out group"
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="font-bruta uppercase text-xl md:text-2xl leading-tight text-white">
+                {evergreen6.title}
+              </h3>
+              <span class="text-lg transition-transform duration-300 group-hover:translate-x-2 shrink-0 text-white">
+                →
+              </span>
+            </div>
+            <p class="text-sm font-recoleta text-white/90 leading-relaxed">
+              {evergreen6.description}
+            </p>
+          </div>
+        </a>
+
+        {/* Card 2: Solid Black Fill */}
+        <a
+          href={evergreen7.url}
+          class="product-link p-4 md:p-7 rounded-2xl bg-[#000000] text-white flex flex-col justify-between hover:scale-[1.03] hover:shadow-xl transition-all duration-300 ease-out group"
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="font-bruta uppercase text-xl md:text-2xl leading-tight text-white">
+                {evergreen7.title}
+              </h3>
+              <span class="text-lg transition-transform duration-300 group-hover:translate-x-2 shrink-0 text-white">
+                →
+              </span>
+            </div>
+            <p class="text-sm font-recoleta text-white/90 leading-relaxed">
+              {evergreen7.description}
+            </p>
+          </div>
+        </a>
+
+        {/* Card 3: Warm Sand Neutral Fill */}
+        <a
+          href={evergreen8.url}
+          class="product-link p-4 md:p-7 rounded-2xl bg-[#EFE2D2] text-black border border-black/15 hover:border-black/30 flex flex-col justify-between hover:scale-[1.03] hover:shadow-xl transition-all duration-300 ease-out group"
+        >
+          <div>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="font-bruta uppercase text-xl md:text-2xl leading-tight text-black">
+                {evergreen8.title}
+              </h3>
+              <span class="text-lg transition-transform duration-300 group-hover:translate-x-2 shrink-0 text-black">
+                →
+              </span>
+            </div>
+            <p class="text-sm font-recoleta text-gray-700 leading-relaxed">
+              {evergreen8.description}
+            </p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    {/* 9. SPACIOUS, BREATHABLE 'LATEST VIDEO DEEP DIVES FROM NICK' (2 MOST RECENT LONGFORM) */}
+    <section class="max-w-7xl mx-auto px-4 md:px-8 mb-16">
+      <div class="pb-3 border-b-2 border-black mb-8">
+        <h2 class="font-bruta text-2xl md:text-3xl uppercase tracking-tight text-black">
+          Latest Video Deep Dives from Nick
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {deepDiveVideos.map((video) => (
+          <article class="group deep-dive-card cursor-pointer" data-video-id={video.youtubeId}>
+            <div class="aspect-video w-full rounded-xl overflow-hidden bg-black modular-video-embed">
+              {video.youtubeId && (
+                <lite-youtube
+                  videoid={video.youtubeId}
+                  playlabel={video.title}
+                  params="autoplay=1"
+                  style={`background-image: url('${ytThumb(video.youtubeId, 'sdwebp')}'), url('https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg'); background-position: center center; background-size: cover;`}
+                  class="w-full h-full"
+                />
+              )}
+            </div>
+
+            <div class="pt-4">
+              <div class="text-xs font-mono text-gray-400 mb-1.5">
+                {video.displayDate} • {video.author}
+              </div>
+
+              <h3 class="font-sans font-bold text-lg md:text-xl text-gray-900 group-hover:text-[#FE5000] transition-colors mb-2 leading-snug">
+                {video.title}
+              </h3>
+
+              <p class="text-sm md:text-[15px] text-gray-700 font-recoleta leading-relaxed">
+                {video.description}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    {/* 10. FULL-WIDTH BACKGROUND IMAGE WITH TRANSPARENT BLACK FILTER (NASA REF 2: SEAMLESS TOUCHING SECTION 11) */}
+    <a
+      href={evergreen9.url}
+      class="relative w-full overflow-hidden bg-black min-h-[520px] md:min-h-[620px] flex items-end group block"
+    >
+      {evergreen9.cardImage && (
+        <Image
+          src={evergreen9.cardImage}
+          alt={evergreen9.cardAlt || evergreen9.title}
+          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-75"
+          loading="lazy"
+        />
+      )}
+
+      {/* Single clean vignette overlay */}
+      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10"></div>
+
+      <div class="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-20">
+        <div class="max-w-2xl space-y-4">
+          <h2 class="font-bruta text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-tight text-white group-hover:text-[#FE5000] transition-colors">
+            {evergreen9.title}
+          </h2>
+
+          <p class="text-sm md:text-base text-gray-200 font-recoleta leading-relaxed line-clamp-4">
+            {evergreen9.description}
+          </p>
+
+          <div class="playbook-footer pt-2 flex items-center gap-3">
+            <span class="playbook-link inline-flex items-center gap-2.5 text-xs font-mono uppercase tracking-wider text-white group-hover:text-[#FE5000] transition-colors">
+              <span>Read Playbook</span>
+              <span class="playbook-arrow w-6 h-6 rounded-full bg-[#FE5000] text-white flex items-center justify-center text-xs group-hover:scale-110 transition-transform" aria-hidden="true">
+                →
+              </span>
+            </span>
+            <span class="playbook-meta text-xs font-mono text-gray-400 ml-4">
+              <span>By {evergreen9.author}</span>
+              <span class="playbook-meta-separator" aria-hidden="true">•</span>
+              <span>{evergreen9.displayDate}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <section id="foundational-guides" class="w-full bg-white py-10 md:py-20 mb-12 md:mb-16">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <h2 class="font-bruta uppercase text-2xl sm:text-3xl md:text-4xl tracking-tight text-black mb-5 md:mb-8">
+          Foundational Guides
+        </h2>
+        <div class="foundation-grid">
+          {foundationalGuides.map(item => (
+            <a href={item.url} class="foundation-card group">
+              <div class="foundation-art">
+                {item.cardImage && (
+                  <Image src={item.cardImage} alt={item.cardAlt || item.title} class="foundation-image" loading="lazy" />
+                )}
+              </div>
+              <div class="foundation-caption">
+                <h3>{item.title}</h3>
+                <span class="foundation-arrow" aria-hidden="true">→</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <ResourceArchive items={olderResources} />
+
+    <dialog id="desktop-screenshot-modal" class="schedule-dialog" aria-labelledby="schedule-dialog-title" aria-describedby="schedule-view-hint">
+      <header class="schedule-dialog-header">
+        <h2 id="schedule-dialog-title">Desktop schedule</h2>
+        <button type="button" id="close-desktop-screenshot" aria-label="Close desktop schedule">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" /></svg>
+        </button>
+      </header>
+      <div class="schedule-dialog-tools">
+        <button type="button" data-schedule-zoom aria-controls="schedule-image-viewport">Zoom to read</button>
+        <a href="/images/DataDocks-Calendar-Clean.webp" target="_blank" rel="noopener noreferrer">Open original image <span aria-hidden="true">↗</span></a>
+      </div>
+      {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- Keyboard focus lets visitors scroll the enlarged schedule with arrow keys. */}
+      <div id="schedule-image-viewport" class="schedule-image-viewport" data-schedule-viewport tabindex="0" role="region" aria-label="Schedule image. Use arrow keys to explore when zoomed.">
+        <img src="/images/DataDocks-Calendar-Clean.webp" alt="DataDocks desktop schedule with dock appointments across the week" width={desktopScreenshot.width} height={desktopScreenshot.height} loading="lazy" draggable="false" />
+      </div>
+      <p id="schedule-view-hint" class="schedule-view-hint" aria-live="polite">Zoom in to read appointment details.</p>
+    </dialog>
+
+    {/* 13. SITEWIDE CALL TO ACTION BANNER */}
+    <CTA captureFirst />
+
+  </main>
+
+  <DemoCapture standalone />
+  <Footer />
+
+
+  <style>
+    .quick-guides { display: grid; gap: 0; }
+    .quick-guide {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 2rem;
+      grid-template-areas: "title arrow" "kicker arrow";
+      align-items: center;
+      column-gap: 1rem;
+      row-gap: 0.25rem;
+      padding: 1rem 0;
+      border-top: 1px solid rgb(0 0 0 / 20%);
+    }
+    .quick-guide-title { grid-area: title; font-size: 1rem; font-weight: 700; line-height: 1.3; }
+    .quick-guide-kicker { grid-area: kicker; color: #596271; font-size: 0.875rem; line-height: 1.4; }
+    .quick-guide-arrow { grid-area: arrow; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: #fe5000; color: white; }
+    .quick-guide:hover .quick-guide-title { color: #c13d00; }
+    .quick-guide:focus-visible, .foundation-card:focus-visible, .product-link:focus-visible { outline: 2px solid black; outline-offset: 4px; }
+
+    .why-layout {
+      display: grid;
+      grid-template-areas: "heading" "copy" "showcase" "cta";
+      gap: 1.75rem;
+    }
+    .why-heading { grid-area: heading; }
+    .why-copy { grid-area: copy; min-width: 0; }
+    .why-showcase { grid-area: showcase; min-width: 0; padding-block: 0.5rem; }
+    .showcase-desktop { display: none; }
+    .showcase-phone { position: relative; width: min(76%, 18rem); margin-inline: auto; }
+    .showcase-mobile-details { margin-top: 1.5rem; text-align: center; }
+    .showcase-phone-caption { font: 1.125rem/1.4 'DD-Recoleta', Georgia, serif; }
+    .showcase-desktop-link { display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem; min-height: 44px; margin-top: 0.5rem; padding-block: 0.5rem; border-bottom: 1px solid currentColor; color: #39342d; font-size: 0.875rem; }
+    .showcase-desktop-link svg { flex-shrink: 0; }
+    .showcase-desktop-link:focus-visible { outline: 2px solid black; outline-offset: 4px; }
+    .article-meta-details { display: inline-flex; align-items: center; gap: 0.75rem; }
+    .playbook-link, .playbook-arrow { flex-shrink: 0; }
+    .playbook-link { white-space: nowrap; }
+    .playbook-arrow { aspect-ratio: 1; }
+    .playbook-meta { display: inline-flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+    .playbook-meta > span { white-space: nowrap; }
+
+    .schedule-dialog { width: min(1200px, calc(100% - 24px)); height: min(820px, calc(100dvh - 24px)); max-width: none; max-height: none; margin: auto; padding: 0; border: 1px solid #000; background: #fff8ee; color: #000; overflow: hidden; }
+    .schedule-dialog[open] { display: flex; flex-direction: column; }
+    .schedule-dialog::backdrop { background: rgb(0 0 0 / 75%); }
+    .schedule-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 1rem; }
+    .schedule-dialog-header h2 { font: 1.75rem/1 Bruta, Impact, sans-serif; text-transform: uppercase; }
+    .schedule-dialog-header button { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; }
+    .schedule-dialog-tools { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 0.75rem; padding: 0 1rem 0.75rem; font-size: 0.8125rem; }
+    .schedule-dialog-tools button { min-height: 44px; padding: 0.625rem 0.75rem; border: 1px solid #000; }
+    .schedule-dialog-tools a { display: inline-flex; align-items: center; min-height: 44px; gap: 0.25rem; text-decoration: underline; text-underline-offset: 3px; }
+    .schedule-image-viewport { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: #e7e0d6; border-block: 1px solid #d3cabe; }
+    .schedule-image-viewport img { display: block; max-width: none; height: auto; margin: auto; user-select: none; }
+    .schedule-image-viewport[data-zoomed] { cursor: grab; }
+    .schedule-image-viewport[data-dragging] { cursor: grabbing; }
+    .schedule-view-hint { padding: 0.75rem 1rem; font-size: 0.8125rem; line-height: 1.4; }
+    .schedule-dialog :focus-visible { outline: 2px solid #a93500; outline-offset: -3px; }
+    .latest-insight-byline { display: flex; align-items: center; gap: .5rem; min-width: 0; margin-bottom: .5rem; color: #605b53; font-size: 12px; line-height: 1.5; }
+    .latest-insight-attribution { display: flex; align-items: baseline; flex-wrap: wrap; gap: .125rem .4375rem; min-width: 0; }
+    .latest-insight-byline time { white-space: nowrap; }
+    .latest-insight-details { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .5rem; margin-top: .5rem; color: #605b53; font-size: 12px; line-height: 1.5; }
+    .latest-insight-topic { display: inline-flex; align-items: center; gap: .35rem; min-width: 0; }
+    .latest-insight-topic :global(svg) { flex-shrink: 0; }
+
+    @media (max-width: 639px) {
+      .latest-insight { padding: 1rem 0; --author-avatar-size: 28px; }
+      .latest-insight-byline { margin-bottom: 0; font-size: 13px; }
+      .latest-insight-details { grid-column: 1 / -1; font-size: 13px; }
+      .latest-insight-layout { display: grid; grid-template-columns: 2ch minmax(0, 1fr); gap: 0.25rem 0.75rem; }
+      .latest-insight-body { display: contents; }
+      .latest-insight-number { width: auto; }
+      .latest-insight-title { grid-column: 1 / -1; display: block; overflow: visible; -webkit-line-clamp: unset; font-size: 1rem; line-height: 1.4; }
+      .article-meta { align-items: flex-start; flex-direction: column; gap: 0.25rem; line-height: 1.5; }
+      .article-meta-author-separator { display: none; }
+      .article-meta-details { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+      .article-meta-details > span { white-space: nowrap; }
+      .playbook-footer { align-items: flex-start; flex-direction: column; gap: 1rem; }
+      .playbook-meta { margin-left: 0; }
+      .playbook-meta .playbook-meta-separator { display: none; }
+      .playbook-meta > span { display: block; flex-basis: 100%; }
+    }
+    .why-cta { grid-area: cta; display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; max-width: 35rem; }
+    .why-cta input, .why-cta button { min-height: 3.25rem; height: 3.25rem; }
+    .why-cta input { appearance: none; font-size: 1rem; }
+    .why-capture-status { grid-column: 1 / -1; color: #000; }
+    .why-cta :focus-visible { position: relative; outline: 2px solid #a93500; outline-offset: 3px; z-index: 1; }
+    .showcase-browser-bar { min-width: 0; }
+
+    .product-link { min-width: 0; border-radius: 0.75rem; }
+    .product-link h3 { font-size: 1.375rem; }
+    .product-link p { line-height: 1.45; }
+    .foundation-grid { display: grid; gap: 0.75rem; }
+    .foundation-card {
+      display: grid;
+      grid-template-columns: 6rem minmax(0, 1fr);
+      min-height: 7rem;
+      border: 1px solid rgb(0 0 0 / 15%);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      background: #fff8ee;
+      color: black;
+    }
+    .foundation-art { position: relative; min-width: 0; background: #efe2d2; }
+    .foundation-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .foundation-caption { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1rem; min-width: 0; }
+    .foundation-caption h3 { font-size: 0.9375rem; font-weight: 700; line-height: 1.35; }
+    .foundation-arrow { color: #c13d00; flex-shrink: 0; }
+    .foundation-card:hover h3 { color: #c13d00; }
+    @media (max-width: 374px) {
+      .foundation-card { grid-template-columns: 4.5rem minmax(0, 1fr); }
+      .foundation-caption { padding: 0.75rem; gap: 0.5rem; }
+      .showcase-address { max-width: 10rem; }
+    }
+    @media (min-width: 480px) {
+      .why-cta { grid-template-columns: minmax(0, 1fr) auto; }
+    }
+    @media (min-width: 640px) {
+      .quick-guides { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+      .quick-guide { align-content: start; grid-template-areas: "title arrow" "kicker kicker"; row-gap: 0.5rem; column-gap: 0.5rem; }
+      .quick-guide-title { min-height: 2.6em; }
+      .quick-guide-arrow { width: 1.5rem; height: 1.5rem; justify-self: end; }
+      .why-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.62fr);
+        grid-template-areas: "heading heading" "copy showcase" "cta showcase";
+        column-gap: 1.5rem;
+      }
+      .why-showcase { align-self: center; margin: 0; padding: 0; }
+      .showcase-phone { width: min(100%, 13rem); }
+      .showcase-mobile-details { margin-top: 1rem; }
+      .showcase-phone-caption { font-size: 1rem; }
+      .why-cta { align-self: start; }
+      .foundation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+      .foundation-card { grid-template-columns: 5.5rem minmax(0, 1fr); }
+    }
+    @media (min-width: 1024px) and (orientation: landscape), (min-width: 1280px) {
+      .quick-guides { width: 75%; }
+      .quick-guide { grid-template-areas: "kicker kicker" "title arrow"; }
+      .quick-guide-title { min-height: 0; }
+      .why-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas: "heading showcase" "copy showcase" "cta showcase";
+        column-gap: 3.5rem;
+        row-gap: 2rem;
+      }
+      .why-showcase { align-self: center; margin: 0; padding: 0; }
+      .showcase-desktop { display: block; }
+      /* Keep browser controls clear of the overlapping phone. */
+      .showcase-browser-bar { padding-right: calc(min(33%, 185px) - 0.5rem); }
+      .showcase-phone { position: absolute; bottom: -2rem; right: -1.25rem; width: 33%; max-width: 185px; margin: 0; z-index: 20; }
+      .showcase-mobile-details { display: none; }
+      .why-cta { grid-template-columns: minmax(0, 1fr) auto; }
+      .product-link { border-radius: 1rem; }
+      .product-link h3 { font-size: 1.5rem; }
+      .foundation-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
+      .foundation-card { display: flex; position: relative; aspect-ratio: 4 / 5; align-items: flex-end; border: 0; background: black; color: white; }
+      .foundation-art { position: absolute; inset: 0; }
+      .foundation-image { opacity: 0.55; transition: transform 300ms; }
+      .foundation-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 95%), rgb(0 0 0 / 40%), transparent); }
+      .foundation-caption { position: relative; width: 100%; padding: 1.5rem; align-items: flex-end; }
+      .foundation-caption h3 { font-size: 1.0625rem; }
+      .foundation-arrow { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: #fe5000; color: white; }
+      .foundation-card:hover h3 { color: #fe5000; }
+    }
+    @media (hover: none) {
+      .product-link:hover { transform: none; }
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      function attachInteractiveElements() {
+        // Trigger deep-dive video playback when clicking anywhere on the card
+        document.querySelectorAll('.deep-dive-card').forEach((card) => {
+          if (!card.dataset.clickBound) {
+            card.dataset.clickBound = 'true';
+            card.addEventListener('click', (e) => {
+              const yt = card.querySelector('lite-youtube');
+              if (!yt || yt.contains(e.target)) return;
+              const playBtn = yt.querySelector('.lty-playbtn');
+              if (playBtn) {
+                playBtn.click();
+              } else {
+                yt.click();
+              }
+            });
+          }
+        });
+
+        // Desktop master calendar screenshot full-screen modal
+        attachDesktopScreenshotModal();
+      }
+
+      function attachDesktopScreenshotModal() {
+        const modal = document.getElementById('desktop-screenshot-modal');
+        if (!modal || modal.dataset.bound || typeof modal.showModal !== 'function') return;
+        modal.dataset.bound = 'true';
+        const viewport = modal.querySelector('[data-schedule-viewport]');
+        const image = viewport.querySelector('img');
+        const toggle = modal.querySelector('[data-schedule-zoom]');
+        const closeButton = modal.querySelector('#close-desktop-screenshot');
+        const hint = modal.querySelector('#schedule-view-hint');
+        let trigger = null;
+        let zoomed = false;
+        let previousOverflow = '';
+        let drag = null;
+
+        function setZoom(value) {
+          zoomed = value;
+          image.style.width = zoomed ? Math.max(1600, viewport.clientWidth) + 'px' : '100%';
+          viewport.toggleAttribute('data-zoomed', zoomed);
+          toggle.textContent = zoomed ? 'Show full week' : 'Zoom to read';
+          hint.textContent = zoomed ? 'Swipe, drag or use arrow keys to explore the schedule.' : 'The full week. Zoom in to read appointment details.';
+          viewport.scrollTo({ left: 0, top: 0 });
+        }
+        function openModal(link) {
+          if (modal.open) return;
+          trigger = link;
+          previousOverflow = document.documentElement.style.overflow;
+          document.documentElement.style.overflow = 'hidden';
+          modal.showModal();
+          setZoom(window.matchMedia('(max-width: 639px)').matches);
+          closeButton.focus({ preventScroll: true });
+        }
+        function closeModal() { modal.close(); }
+        closeButton.addEventListener('click', closeModal);
+        modal.addEventListener('cancel', event => { event.preventDefault(); closeModal(); });
+        modal.addEventListener('close', () => {
+          document.documentElement.style.overflow = previousOverflow;
+          const focusTarget = trigger?.getClientRects().length ? trigger
+            : Array.from(document.querySelectorAll('[data-open-desktop-schedule], #mac-fullscreen-btn')).find(link => link.getClientRects().length);
+          focusTarget?.focus({ preventScroll: true });
+          drag = null;
+          viewport.removeAttribute('data-dragging');
+        });
+        modal.addEventListener('click', event => {
+          if (event.target !== modal) return;
+          const box = modal.getBoundingClientRect();
+          if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) closeModal();
+        });
+        toggle.addEventListener('click', () => setZoom(!zoomed));
+        viewport.addEventListener('pointerdown', event => {
+          if (!zoomed || event.pointerType !== 'mouse' || event.button !== 0) return;
+          drag = { id: event.pointerId, x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+          viewport.setPointerCapture(event.pointerId);
+          viewport.setAttribute('data-dragging', '');
+        });
+        viewport.addEventListener('pointermove', event => {
+          if (!drag || drag.id !== event.pointerId) return;
+          viewport.scrollLeft = drag.left + drag.x - event.clientX;
+          viewport.scrollTop = drag.top + drag.y - event.clientY;
+        });
+        const stopDrag = () => { drag = null; viewport.removeAttribute('data-dragging'); };
+        viewport.addEventListener('pointerup', stopDrag);
+        viewport.addEventListener('pointercancel', stopDrag);
+        viewport.addEventListener('lostpointercapture', stopDrag);
+        document.addEventListener('click', event => {
+          if (!(event.target instanceof Element)) return;
+          const link = event.target.closest('[data-open-desktop-schedule], #mac-fullscreen-btn');
+          if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+          event.preventDefault();
+          openModal(link);
+        });
+      }
+
+      attachInteractiveElements();
+      document.addEventListener('astro:page-load', attachInteractiveElements);
+
+
+    })();
+  </script>
+</Layout>
