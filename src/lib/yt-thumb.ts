@@ -9,7 +9,8 @@
 // these through an ordered fallback chain server-side and always terminates in
 // hqdefault.jpg, so a missing variant NEVER 404s the browser:
 //   sdwebp -> vi_webp/sddefault.webp -> sddefault.jpg -> hqdefault.jpg  (DEFAULT — WebP, ~half the bytes)
-//   maxres -> maxresdefault.jpg -> sddefault.jpg -> hqdefault.jpg       (featured / large hero cards)
+//   maxreswebp -> vi_webp/maxresdefault.webp -> maxresdefault.jpg -> ... (featured / large hero cards)
+//   maxres -> maxresdefault.jpg -> sddefault.jpg -> hqdefault.jpg       (JPEG-only; prefer maxreswebp)
 //   sd     -> sddefault.jpg -> hqdefault.jpg
 //   mq     -> mqdefault.jpg -> hqdefault.jpg
 //   hq     -> hqdefault.jpg
@@ -18,7 +19,7 @@
 // sddefault is higher-res (640x480 vs 480x360), so the card fetch is both
 // lighter and sharper. Safe now that the proxy falls back to JPEG when the
 // WebP variant is absent on older uploads.
-export type YtThumbQuality = 'hq' | 'mq' | 'sd' | 'maxres' | 'sdwebp';
+export type YtThumbQuality = 'hq' | 'mq' | 'sd' | 'maxres' | 'maxreswebp' | 'sdwebp';
 
 export function ytThumb(id: string, q: YtThumbQuality = 'sdwebp'): string {
   return `/yt-thumb/${id}${q === 'hq' ? '' : `?q=${q}`}`;
