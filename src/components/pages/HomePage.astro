@@ -117,7 +117,16 @@ const faqs = [
         </div>
         <figure class="product-figure">
           <a class="product-window" href={calendar.src} data-screenshot-zoom aria-label="Enlarge the DataDocks schedule screenshot">
-            <img src={calendar.src} srcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" sizes="(max-width: 600px) 900px, 1280px" alt="DataDocks weekly calendar showing truck appointments, loading statuses and facility capacity limits." width={calendar.width} height={calendar.height} loading="eager" fetchpriority="high" />
+            <picture>
+              {/* At <=960px .product-window is a 749x540 crop window (see the matching @media
+                  rule below): the base image only ever shows this rectangle, zoomed in via
+                  transform. Serving that exact crop pre-rendered means the browser downloads
+                  ~55 KB of already-correct pixels instead of 104-140 KB it would otherwise
+                  scale/crop client-side -- and it's sharper, not blurrier, since the crop
+                  supplies its full native resolution for the same on-screen box. */}
+              <source media="(max-width: 960px)" srcset="/images/DataDocks-Calendar-Screenshot-mobile-749x540.webp" />
+              <img src={calendar.src} srcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" sizes="(max-width: 600px) 900px, 1280px" alt="DataDocks weekly calendar showing truck appointments, loading statuses and facility capacity limits." width={calendar.width} height={calendar.height} loading="eager" fetchpriority="high" />
+            </picture>
           </a>
           <figcaption><a href={calendar.src} data-screenshot-zoom><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="m15 15 6 6M7 10h6M10 7v6" /></svg>Enlarge screenshot</a></figcaption>
         </figure>
@@ -372,6 +381,7 @@ const faqs = [
      Zoom: application starts at (138,63), including its logo and navigation.
      Both use the same untouched 2000 x 717 source. */
   .product-window { position: relative; display: block; height: auto; aspect-ratio: 978 / 540; border: 1px solid #d4cabb; background: #fff; overflow: hidden; box-shadow: none; cursor: zoom-in; }
+  .product-window picture { display: contents; }
   .product-window img { position: absolute; display: block; height: auto; width: 204.499%; max-width: none; left: 0; top: 0; transform: translate(-8.9%, -22.315%); }
 
 
@@ -429,7 +439,12 @@ const faqs = [
   }
   @media (max-width: 960px) {
     .product-window { aspect-ratio: 749 / 540; }
-    .product-window img { width: 267.023%; }
+    /* The <source> above is pre-cropped to this exact 749x540 window, so no zoom is needed.
+       width/height/left/top compensate for .product-window's 1px border: box-sizing:border-box
+       (set globally on .revamp *) makes the absolutely-positioned img's "100%" resolve against
+       the padding box, 2px narrower/shorter than the border box -- without this it left a
+       visible sliver of the window's white background on every edge. */
+    .product-window img { width: calc(100% + 2px); height: calc(100% + 2px); left: -1px; top: -1px; transform: none; }
     .section-heading { grid-template-columns: 1fr; gap: 22px; margin-bottom: 32px; }
     .section-heading h2 { font-size: clamp(36px, 7cqw, 60px); }
     .section-heading > p { max-width: 620px; }
