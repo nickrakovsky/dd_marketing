@@ -5,6 +5,7 @@
 // header on a domain we don't own, so we route the image through our own SSR
 // endpoint (see src/pages/yt-thumb/[id].ts) which re-serves it with a 24h TTL.
 //
+// Emits /yt-thumb/<quality>/<videoId>.
 // Quality maps to YouTube's thumbnail variants. The proxy resolves each of
 // these through an ordered fallback chain server-side and always terminates in
 // hqdefault.jpg, so a missing variant NEVER 404s the browser:
@@ -21,6 +22,12 @@
 // WebP variant is absent on older uploads.
 export type YtThumbQuality = 'hq' | 'mq' | 'sd' | 'maxres' | 'maxreswebp' | 'sdwebp';
 
+// The quality is a PATH segment, not `?q=`: the Cloudflare cache key for this
+// route ignores the query string, so the old form served every quality for a
+// given video id from ONE cached object (measured live — sdwebp was being
+// handed the 52 KB maxres WebP instead of its own 23 KB file). See
+// src/lib/yt-thumb-proxy.ts. The old `?q=` URLs still resolve for HTML that is
+// already edge-cached, but nothing should generate them any more.
 export function ytThumb(id: string, q: YtThumbQuality = 'sdwebp'): string {
-  return `/yt-thumb/${id}${q === 'hq' ? '' : `?q=${q}`}`;
+  return `/yt-thumb/${q}/${id}`;
 }
