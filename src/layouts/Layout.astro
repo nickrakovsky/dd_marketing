@@ -37,6 +37,18 @@ interface Props {
         uploadDate: Date;
         duration?: string;
     };
+    // Early <link rel="preload" as="image"> hints for a page's own LCP image, rendered
+    // immediately after the Bruta font preload -- i.e. before Beasties' inlined critical
+    // CSS -- so the preload scanner can discover the LCP resource without first parsing
+    // through that block. Each entry's href/imagesrcset/imagesizes/media MUST match its
+    // <img>/<source> counterpart character-for-character, or Chrome treats the preload as
+    // a different resource and double-fetches the image.
+    preloadImages?: {
+        href?: string;
+        imagesrcset?: string;
+        imagesizes?: string;
+        media?: string;
+    }[];
 }
 
 const {
@@ -48,7 +60,8 @@ const {
 
   schemaData,
   articleData,
-  videoData
+  videoData,
+  preloadImages
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
@@ -361,6 +374,13 @@ const jsonLd = {
              Recoleta loads via @font-face with font-display:swap; the Georgia
              fallback (with size-adjust metrics) renders immediately. Preloading
              all 3 fonts (146 KB) was saturating mobile bandwidth. */}
+
+        {/* A page's own LCP image, preloaded here (immediately after the Bruta preload,
+             before Beasties' inlined critical CSS) rather than left to the preload scanner
+             to discover deep in <body>. Opt-in per page via the preloadImages prop. */}
+        {preloadImages?.map((p) => (
+          <link rel="preload" as="image" fetchpriority="high" href={p.href} imagesrcset={p.imagesrcset} imagesizes={p.imagesizes} media={p.media} />
+        ))}
 
         {/* lite-youtube CSS is now injected conditionally via <slot name="head" />
              by BlogPostLayout (when hasYouTube) and video pages. Saves 2 KB of
