@@ -6,11 +6,13 @@ import solid from '@astrojs/solid-js';
 import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import Beasties from 'beasties';
+import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 
 // Build a map of post slugs to their most recent date (updatedDate or pubDate)
 const postsDir = path.resolve('./src/content/posts');
@@ -215,6 +217,11 @@ export default defineConfig({
         }
       }
     },
+    partytown({
+      config: {
+        forward: BENTO_PARTYTOWN_FORWARD,
+      },
+    }),
     tailwind(),
     react({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
