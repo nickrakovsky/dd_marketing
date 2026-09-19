@@ -1,21 +1,22 @@
 /**
  * Same-origin proxy for the Bento SDK loader script.
  *
- * The direct URL, https://fast.bentonow.com/?site_uuid=..., is loaded via
- * <script type="text/partytown" src="..."> in Layout.astro so the SDK runs in
- * a Partytown Web Worker instead of the main thread. To run script content
- * inside that worker, Partytown's main-thread bootstrap must fetch() the
- * script's source itself -- and fast.bentonow.com sends no
- * Access-Control-Allow-Origin header, so that fetch is CORS-blocked. The
- * script has never actually loaded: confirmed live via Playwright
- * (net::ERR_FAILED on the request, while a plain curl to the same URL
- * returns 200 with no CORS headers at all, from any Origin).
+ * fast.bentonow.com's response is a small loader that immediately creates a
+ * SECOND dynamic <script src="https://app.bentonow.com/{site_uuid}.js">
+ * for the real ~120 KB SDK bundle. Loading fast.bentonow.com directly used
+ * to fail via Partytown (it sends no CORS headers, and Partytown must
+ * fetch() a script's source to run it in its sandboxed worker); Bento is no
+ * longer loaded through Partytown at all (see Layout.astro), which fixes
+ * that specific failure mode, but doesn't help with the ad-blocker
+ * domain-blocking /api/bento-track's own comment already warns about, and
+ * doesn't touch the second hop at all.
  *
- * This mirrors the same fix already applied to /api/bento-track (see its
- * comment: "Ad blockers block all requests to *.bentonow.com. This endpoint
- * lives on datadocks.com so it is never blocked") and to /yt-thumb/ --
- * fetch the third party server-side and re-serve it same-origin, so neither
- * CORS nor domain-based ad-blocker rules can catch it.
+ * So this proxy still exists, for the same reason /api/bento-track and
+ * /yt-thumb/ exist: fetch the third party server-side and re-serve it
+ * same-origin, so ad-blocker domain rules against *.bentonow.com can't catch
+ * it. It also rewrites the embedded app.bentonow.com reference to point at
+ * /bento-sdk instead -- see that file's comment for why the second hop
+ * needs its own proxy for a completely different reason (ORB, not CORS).
  */
 import type { APIRoute } from 'astro';
 
@@ -52,7 +53,15 @@ export const GET: APIRoute = async ({ url, locals }) => {
     });
   }
 
-  const body = await upstream.text();
+  let body = await upstream.text();
+  // Confirmed live: exactly one occurrence, https://app.bentonow.com/{siteUuid}.js
+  // -- Bento's server renders the UUID in server-side, not as a client-side
+  // template. Target the exact known URL rather than a broad domain-wide
+  // replace, so this can't accidentally touch something unrelated if Bento
+  // ever changes unrelated parts of the loader.
+  const secondHop = `https://app.bentonow.com/${siteUuid}.js`;
+  body = body.split(secondHop).join(`/bento-sdk?site_uuid=${siteUuid}`);
+
   return new Response(body, {
     status: 200,
     headers: {

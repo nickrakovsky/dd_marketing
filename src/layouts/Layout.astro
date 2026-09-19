@@ -776,19 +776,26 @@ const jsonLd = {
 
         {PUBLIC_BENTO_UUID && (
           <Fragment>
-            {/* Set bentoSettings on the main thread so Partytown can read it */}
+            {/* Set bentoSettings on the main thread for the real SDK to read */}
             <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
                 window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
             </script>
-            {/* Load the actual Bento SDK inside a Partytown Web Worker.
-                 Routed through our own /bento-loader proxy, not fast.bentonow.com
-                 directly: Partytown fetches this URL's source to run it in the
-                 worker, and fast.bentonow.com sends no CORS headers, so that
-                 fetch was silently failing on every page load (confirmed live --
-                 the SDK never actually executed). Same fix as /api/bento-track:
-                 same-origin dodges both the CORS block and ad-blocker domain
-                 rules against *.bentonow.com. */}
-            <script is:inline type="text/partytown" src={`/bento-loader?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
+            {/* Loaded as a normal deferred script, NOT via Partytown. It was
+                 previously `type="text/partytown"`, but Bento's own loader
+                 immediately creates a SECOND dynamic script tag pointing at
+                 app.bentonow.com/{uuid}.js, and that domain also sends no CORS
+                 headers -- confirmed live, it fails inside Partytown's sandbox
+                 with the exact same error, logging Bento's own "Bento loading
+                 failed, please contact support." There is no guarantee that is
+                 the last hop either. A normal script tag sidesteps the whole
+                 problem: nested script tags it creates are real DOM script
+                 tags with no CORS requirement, regardless of how many hops
+                 Bento's own loader uses internally.
+                 Still routed through our own /bento-loader proxy rather than
+                 fast.bentonow.com directly, for the same reason /api/bento-track
+                 exists (see its header comment): ad blockers block requests to
+                 *.bentonow.com by domain; same-origin dodges that too. */}
+            <script is:inline defer src={`/bento-loader?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
 
