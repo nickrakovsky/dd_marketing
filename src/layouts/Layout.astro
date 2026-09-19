@@ -780,8 +780,15 @@ const jsonLd = {
             <script is:inline define:vars={{ PUBLIC_BENTO_UUID }}>
                 window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
             </script>
-            {/* Load the actual Bento SDK inside a Partytown Web Worker */}
-            <script is:inline type="text/partytown" src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
+            {/* Load the actual Bento SDK inside a Partytown Web Worker.
+                 Routed through our own /bento-loader proxy, not fast.bentonow.com
+                 directly: Partytown fetches this URL's source to run it in the
+                 worker, and fast.bentonow.com sends no CORS headers, so that
+                 fetch was silently failing on every page load (confirmed live --
+                 the SDK never actually executed). Same fix as /api/bento-track:
+                 same-origin dodges both the CORS block and ad-blocker domain
+                 rules against *.bentonow.com. */}
+            <script is:inline type="text/partytown" src={`/bento-loader?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
           </Fragment>
         )}
 
