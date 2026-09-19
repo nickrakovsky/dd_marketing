@@ -8,17 +8,34 @@ import { BENTO_FORWARDED_METHODS } from '../src/lib/bento-config.mjs';
  *   - src/components/pages/HomePage.astro  (homepage hero, id="book-demo")
  */
 
-test.describe('Bento SDK via Partytown', () => {
-  // Validates that the Partytown forward list in astro.config.mjs covers every method
-  // we care about. If the SDK fails to load (e.g. blocked by CSP, Partytown misconfig,
-  // or forward list drift), the `window.bento.<method>` proxy stubs won't exist and
-  // this test fails — the only automated signal we have that Bento is wired up.
-  test('forwarded methods are available on window.bento', async ({ page }) => {
+test.describe('Bento SDK', () => {
+  // Bento is no longer loaded via Partytown (see Layout.astro and
+  // src/pages/bento-loader.ts/bento-sdk.ts/bento-events/ for why: Bento's own
+  // loading chain is CORS/ORB-blocked at three separate hops, and Partytown's
+  // unconditional shim creation was masking that by making window.bento
+  // "exist" as a dead stub regardless of whether the real SDK ever loaded).
+  // window.bento now only becomes real once /bento-loader -> /bento-sdk
+  // actually execute, which requires PUBLIC_BENTO_SITE_UUID to be set.
+  //
+  // That env var is Production-only in Cloudflare Pages (confirmed: absent
+  // from local dev and from preview deployments alike) -- deliberately, so
+  // CI runs against a preview URL don't transmit real events into Bento.
+  // Since this suite runs against the preview URL, Bento's script tag is
+  // never even rendered here, and that's correct, not a bug. So this test
+  // first checks whether the page rendered the block at all (via
+  // window.bentoSettings, set synchronously in the same conditional as the
+  // script tag) and skips with a clear reason if not, rather than waiting
+  // out a timeout for something this environment was never going to have.
+  // Where the env var IS present (production), it verifies the real SDK
+  // object, not a stub -- every forwarded method must be an actual function.
+  test('forwarded methods are available on window.bento, where Bento is configured', async ({ page }) => {
     await page.goto('/');
 
-    // Partytown creates proxy stubs on window.bento for every forwarded method,
-    // queuing calls until the worker-side SDK is ready. Wait up to 10s — the
-    // script is deferred and the worker takes a moment to spin up.
+    const configured = await page.evaluate(() => typeof (window as { bentoSettings?: unknown }).bentoSettings !== 'undefined');
+    test.skip(!configured, 'PUBLIC_BENTO_SITE_UUID not set in this environment (expected on preview deploys) — Bento script is not rendered');
+
+    // Real network round trip (this env -> /bento-loader -> /bento-sdk), not
+    // a synchronously-created stub, so give it a few seconds.
     await page.waitForFunction(
       () => typeof (window as { bento?: unknown }).bento !== 'undefined',
       null,
@@ -30,7 +47,7 @@ test.describe('Bento SDK via Partytown', () => {
         (m) => typeof (window as { bento?: Record<string, unknown> }).bento?.[m],
         method
       );
-      expect(type, `window.bento.${method} should be a function (forward list drift?)`).toBe('function');
+      expect(type, `window.bento.${method} should be a function (SDK failed to load, or forward list drift?)`).toBe('function');
     }
   });
 
