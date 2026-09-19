@@ -91,7 +91,7 @@ const faqs = [
     <style is:inline set:html={`
       @font-face { font-family: 'Inter'; src: url('${interFont}') format('woff2'); font-style: normal; font-weight: 100 900; font-display: swap; }
     `} />
-    <link rel="stylesheet" href="/css/lite-yt-embed.css" />
+    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
     <script is:inline src="/css/lite-yt-embed.js" defer></script>
   </Fragment>
 
