@@ -32,16 +32,37 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       </div>
       {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- The scrollable region needs keyboard focus for arrow-key video browsing. */}
       <div id="hub-shorts-track" class="hub-shorts-track" tabindex="0" role="region" aria-label="Short videos" aria-describedby="hub-shorts-help">
-        {items.map((item, index) => (
+        {items.map((item, index) => {
+          // The whole section is below the fold, but the carousel itself only
+          // shows ~3-4 slides at once. Eagerly wiring every slide's
+          // lite-youtube element made the browser fire a poster-image
+          // request for ALL of them (20-30+ videos) the moment the HTML
+          // parsed, competing with the fonts/JS the page actually needs for
+          // its first paint. Only the first EAGER_SLIDES get a real
+          // lite-youtube element up front; the rest ship as an inert
+          // <template> that the client script clones in just before a slide
+          // scrolls into view (see the IntersectionObserver-driven hydrate()
+          // below), or immediately on demand if a user jumps straight to it.
+          const EAGER_SLIDES = 3;
+          const isEager = index < EAGER_SLIDES;
+          // A single poster layer only: our /yt-thumb proxy already resolves
+          // through a server-side fallback chain and never 404s, so a
+          // second, raw i.ytimg.com background layer was pure dead weight --
+          // CSS fetches every layer in a background-image list, so it
+          // doubled every poster download for no benefit.
+          const embed = (
+            <lite-youtube
+              js-api
+              videoid={item.youtubeId}
+              playlabel={`Play: ${item.rawTitle || item.title}`}
+              params={`controls=1&rel=0&iv_load_policy=3&loop=1&playlist=${item.youtubeId}&enablejsapi=1`}
+              style={`background-image: url('${ytThumb(item.youtubeId!, 'sdwebp')}');`}
+            />
+          );
+          return (
           <article class="hub-shorts-slide" data-short-title={item.rawTitle || item.title} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${items.length}: ${item.rawTitle || item.title}`}>
             <div class="hub-shorts-media">
-              <lite-youtube
-                js-api
-                videoid={item.youtubeId}
-                playlabel={`Play: ${item.rawTitle || item.title}`}
-                params={`controls=1&rel=0&iv_load_policy=3&loop=1&playlist=${item.youtubeId}&enablejsapi=1`}
-                style={`background-image: url('${ytThumb(item.youtubeId!, 'sdwebp')}'), url('https://i.ytimg.com/vi/${item.youtubeId}/hqdefault.jpg');`}
-              />
+              {isEager ? embed : <template data-lazy-embed>{embed}</template>}
               <div class="hub-shorts-shade" aria-hidden="true"></div>
               <div class="hub-shorts-caption">
                 <h3>{item.rawTitle || item.title}</h3>
@@ -56,7 +77,8 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
             {/* This strip remains swipeable after playback moves into a cross-origin iframe. */}
             <div class="hub-shorts-swipe-lane" aria-hidden="true"><span></span></div>
           </article>
-        ))}
+          );
+        })}
       </div>
       <h3 class="hub-shorts-mobile-caption" data-short-active-title>{items[0].rawTitle || items[0].title}</h3>
       <div class="hub-shorts-mobile-controls">
@@ -157,7 +179,11 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       const track = this.querySelector<HTMLElement>(".hub-shorts-track");
       if (!track) return;
       const slides = [...this.querySelectorAll<HTMLElement>(".hub-shorts-slide")];
-      const embeds = slides.map((slide) => slide.querySelector("lite-youtube") as ShortEmbed);
+      const mediaEls = slides.map((slide) => slide.querySelector<HTMLElement>(".hub-shorts-media")!);
+      // Most slides ship as an inert <template> (see HubShorts.astro) rather
+      // than a live lite-youtube element, so most entries here start null
+      // until hydrate() below clones one in just before the slide is needed.
+      const embeds: (ShortEmbed | null)[] = slides.map((slide) => slide.querySelector("lite-youtube") as ShortEmbed | null);
       const previous = [...this.querySelectorAll<HTMLButtonElement>("[data-short-prev]")];
       const next = [...this.querySelectorAll<HTMLButtonElement>("[data-short-next]")];
       const mobile = matchMedia("(max-width: 639px)");
@@ -184,9 +210,9 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
         const iframe = embed.querySelector("iframe");
         iframe?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
       };
-      const pauseOthers = (current?: ShortEmbed) => embeds.forEach((embed) => { if (embed !== current) pause(embed); });
+      const pauseOthers = (current?: ShortEmbed) => embeds.forEach((embed) => { if (embed && embed !== current) pause(embed); });
       const bindPlayers = () => embeds.forEach((embed) => {
-        if (!embed.playerPromise || pending.has(embed)) return;
+        if (!embed || !embed.playerPromise || pending.has(embed)) return;
         pending.add(embed);
         embed.playerPromise.then((player) => {
           if (disposed) { player.pauseVideo(); return; }
@@ -200,11 +226,28 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
           else pauseOthers(embed);
         }).catch(() => { pending.delete(embed); });
       });
+      // Clones a slide's <template data-lazy-embed> lite-youtube element into
+      // the DOM on demand -- the one-time cost of turning a slide "live".
+      // Idempotent: returns the existing embed once a slide is hydrated.
+      const hydrate = (index: number): ShortEmbed | null => {
+        const current = embeds[index];
+        if (current || index < 0 || index >= slides.length) return current;
+        const template = mediaEls[index].querySelector<HTMLTemplateElement>("template[data-lazy-embed]");
+        if (!template?.content.firstElementChild) return null;
+        const clone = template.content.firstElementChild.cloneNode(true) as ShortEmbed;
+        template.replaceWith(clone);
+        embeds[index] = clone;
+        clone.addEventListener("click", () => pauseOthers(clone), options);
+        observer.observe(clone, { childList: true, subtree: true });
+        visibility.observe(clone);
+        bindPlayers();
+        return clone;
+      };
       const update = () => {
         if (mobile.matches) {
           const old = active;
           active = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollTop / track.clientHeight)));
-          if (old !== active) pauseOthers(embeds[active]);
+          if (old !== active) pauseOthers(hydrate(active) ?? undefined);
           previous.forEach((button) => { button.disabled = active === 0; });
           next.forEach((button) => { button.disabled = active === slides.length - 1; });
         } else {
@@ -220,6 +263,7 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
         const behavior = reducedMotion.matches ? "instant" : "smooth";
         if (mobile.matches) {
           const target = Math.max(0, Math.min(slides.length - 1, active + direction));
+          hydrate(target);
           pauseOthers();
           track.scrollTo({ top: target * track.clientHeight, behavior });
         } else track.scrollBy({ left: direction * track.clientWidth * .75, behavior });
@@ -239,29 +283,48 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
           move(event.key === backwards ? -1 : 1);
         }
       }, options);
-      embeds.forEach((embed) => embed.addEventListener("click", () => pauseOthers(embed), options));
+      embeds.forEach((embed) => embed?.addEventListener("click", () => pauseOthers(embed!), options));
       const observer = new MutationObserver(bindPlayers);
-      embeds.forEach((embed) => observer.observe(embed, { childList: true, subtree: true }));
+      embeds.forEach((embed) => embed && observer.observe(embed, { childList: true, subtree: true }));
       const visibility = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           const embed = entry.target as ShortEmbed;
           if (entry.intersectionRatio < .5 && !fullscreenElement()?.contains(embed)) pause(embed);
         });
       }, { threshold: [0, .5, 1] });
-      embeds.forEach((embed) => visibility.observe(embed));
+      embeds.forEach((embed) => embed && visibility.observe(embed));
+      // Hydrates a slide's poster shortly before it scrolls into view, in
+      // either the vertical (mobile) or horizontal (desktop) direction.
+      const lazyLoad = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          hydrate(mediaEls.indexOf(entry.target as HTMLElement));
+          lazyLoad.unobserve(entry.target);
+        });
+      }, { rootMargin: "600px" });
+      mediaEls.forEach((media, index) => { if (!embeds[index]) lazyLoad.observe(media); });
+      // Safety net: a click can only land in a slide's dead space (nothing
+      // to activate) if it hasn't hydrated yet, e.g. a very fast scroll past
+      // the 600px lookahead above. Hydrate it immediately so the poster and
+      // click-to-play control appear -- a second click plays the video.
+      track.addEventListener("click", (event) => {
+        const media = (event.target as HTMLElement).closest<HTMLElement>(".hub-shorts-media");
+        if (media) hydrate(mediaEls.indexOf(media));
+      }, { ...options, capture: true });
       document.addEventListener("visibilitychange", () => { if (document.hidden) pauseOthers(); }, options);
       this.querySelector("[data-leave-shorts]")?.addEventListener("click", () => pauseOthers(), options);
       const fullscreenButtons = [...this.querySelectorAll<HTMLButtonElement>("[data-short-fullscreen]")];
       fullscreenButtons.forEach((button) => {
         const media = button.closest(".hub-shorts-media") as FullscreenMedia;
-        const embed = media.querySelector("lite-youtube") as ShortEmbed;
+        const index = mediaEls.indexOf(media);
         const nativeFullscreen = !!(media.requestFullscreen || media.webkitRequestFullscreen);
         if (!nativeFullscreen) { button.setAttribute("aria-label", "Watch on YouTube"); button.title = "Watch on YouTube"; }
         button.addEventListener("click", async (event) => {
           event.stopPropagation();
+          const embed = hydrate(index);
           if (!nativeFullscreen) {
             pauseOthers();
-            window.open(`https://www.youtube.com/shorts/${embed.getAttribute("videoid")}`, "_blank", "noopener,noreferrer");
+            if (embed) window.open(`https://www.youtube.com/shorts/${embed.getAttribute("videoid")}`, "_blank", "noopener,noreferrer");
             return;
           }
           try {

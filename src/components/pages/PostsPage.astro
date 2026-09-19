@@ -154,6 +154,8 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
                 alt={evergreen4.cardAlt || evergreen4.title}
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 loading="lazy"
+                widths={[448, 686, 900, 1200]}
+                sizes="(max-width: 1023px) 100vw, 686px"
               />
             </div>
           )}
@@ -481,7 +483,7 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
                   videoid={video.youtubeId}
                   playlabel={video.title}
                   params="autoplay=1"
-                  style={`background-image: url('${ytThumb(video.youtubeId, 'sdwebp')}'), url('https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg'); background-position: center center; background-size: cover;`}
+                  style={`background-image: url('${ytThumb(video.youtubeId, 'sdwebp')}'); background-position: center center; background-size: cover;`}
                   class="w-full h-full"
                 />
               )}
