@@ -19,7 +19,15 @@ const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <span class:list={['author-avatar', { 'nick-portrait': name === 'Nick Rakovsky', 'noel-portrait': name === 'Noel Moffatt', 'has-portrait': Boolean(portrait), 'team-avatar': team, 'long-monogram': initials.length > 2 }]} aria-hidden="true">
-  {portrait ? <Image src={portrait} alt="" width={144} loading="lazy" /> : team ? <img src={`${basePath}/brand-assets/logo-orange.svg`} alt="" width="18" height="18" loading="lazy" /> : initials}
+  {portrait ? (
+    // Every current usage renders --author-avatar-size at 24-28px, and the
+    // nick/noel "portrait" classes below zoom the <img> itself up to 200%
+    // of that box for face-framing -- so ~56px CSS is the largest this ever
+    // actually draws at. A flat width={144} shipped that same oversized
+    // file for every avatar on the page regardless. widths/sizes lets the
+    // browser pick a candidate sized for its real DPR instead.
+    <Image src={portrait} alt="" width={144} widths={[56, 84, 112, 168]} sizes="56px" loading="lazy" />
+  ) : team ? <img src={`${basePath}/brand-assets/logo-orange.svg`} alt="" width="18" height="18" loading="lazy" /> : initials}
 </span>
 
 <style>
