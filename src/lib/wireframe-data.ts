@@ -1,7 +1,5 @@
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
-import fs from 'node:fs';
-import path from 'node:path';
 import { isPublished } from './content-status';
 import { EVERGREEN_RESOURCE_SLUGS } from './evergreen-content';
 
@@ -105,8 +103,7 @@ export async function getKnowledgeHubData() {
 
   // 1. Check for /comparison page existence
   const comparisonPageExists = 
-    fs.existsSync(path.resolve('./src/pages/comparison.astro')) ||
-    fs.existsSync(path.resolve('./src/pages/comparison/index.astro')) ||
+    Object.keys(import.meta.glob('/src/pages/comparison{,/index}.astro')).length > 0 ||
     allPosts.some(p => p.slug === 'comparison');
 
   // Build the list of evergreen guide definitions

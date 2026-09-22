@@ -11,13 +11,8 @@ interface Props {
 
 const { src, alt, ...rest } = Astro.props;
 
-// A global map to track image counts per page pathname
-if (!(globalThis as any).mdxImageCounts) {
-  (globalThis as any).mdxImageCounts = new Map();
-}
-const pathname = Astro.url.pathname;
-const currentCount = ((globalThis as any).mdxImageCounts.get(pathname) || 0) + 1;
-(globalThis as any).mdxImageCounts.set(pathname, currentCount);
+const currentCount = (Astro.locals.mdxImageCount ?? 0) + 1;
+Astro.locals.mdxImageCount = currentCount;
 
 const isFirstImage = currentCount === 1;
 // Determine if we should treat it as a local/optimized image

@@ -20,9 +20,9 @@ let { href, type, title: propTitle, snippet: propSnippet, bibRef, citation } = A
 let id = rawId;
 let title = propTitle;
 let snippet = propSnippet;
+const asOf = Astro.locals.publicationDate ?? new Date();
 const isManual = !!(propTitle || propSnippet);
 
-console.log('SmartLink Render:', { href, id, text: Astro.slots.has('default') ? 'has_slot' : 'no_slot' });
 
 // Infer type and id from href if possible
 let parsedHref = href || '';
@@ -102,12 +102,12 @@ if (type === 'glossary' && id) {
     href = entry.data.targetPost ? `/posts/${entry.data.targetPost.id.replace(/\/$/, '')}` : (href || '#');
     if (entry.data.targetPost) {
       const target = await getEntryCaseInsensitive('posts', entry.data.targetPost.id);
-      isUnpublishedTarget = !!target && !isPublished(target.data.pubDate);
+      isUnpublishedTarget = !!target && !isPublished(target.data.pubDate, asOf);
     }
   }
 } else if (type === 'post' && id) {
   const entry = await getEntryCaseInsensitive('posts', id);
-  if (entry && !isPublished(entry.data.pubDate)) {
+  if (entry && !isPublished(entry.data.pubDate, asOf)) {
     isUnpublishedTarget = true;
   } else if (entry) {
     title = title || entry.data.title;
@@ -116,7 +116,7 @@ if (type === 'glossary' && id) {
   }
 } else if (type === 'video' && id) {
   const entry = await getEntryCaseInsensitive('videos', id);
-  if (entry && !isPublished(entry.data.pubDate)) {
+  if (entry && !isPublished(entry.data.pubDate, asOf)) {
     isUnpublishedTarget = true;
   } else if (entry) {
     title = title || entry.data.title;

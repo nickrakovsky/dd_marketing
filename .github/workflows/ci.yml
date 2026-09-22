@@ -9,10 +9,10 @@ on:
 
 jobs:
   # ── Job 1: Fast Fails ──────────────────────────────────────
-  # Runs on raw source — no build required.
+  # Source checks, then one local production build to verify publication timing.
   # If any fail, no point waiting for the Cloudflare preview.
   fast-checks:
-    name: Lint / Typecheck / Unit Tests
+    name: Lint / Typecheck / Unit / Publication Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -38,6 +38,14 @@ jobs:
 
       - name: Unit Tests (Vitest)
         run: npm test
+
+      - name: Build once and verify scheduled publication
+        run: |
+          npm run build
+          npm run test:publication
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+          WRANGLER_SEND_METRICS: "false"
 
   # ── Job 2: Integration Tests on Cloudflare Preview ─────────
   # Polls the GitHub Commit Status API until Cloudflare Pages

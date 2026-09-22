@@ -10,40 +10,20 @@ import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import matter from 'gray-matter';
 import Beasties from 'beasties';
+import { collectPublicationStyles, finishPublicationStyles } from './scripts/publication-build.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
-
-// Build a map of post slugs to their most recent date (updatedDate or pubDate)
-const postsDir = path.resolve('./src/content/posts');
-const postDateMap = new Map();
-const unpublishedPostPaths = new Set();
-const now = new Date();
-if (fs.existsSync(postsDir)) {
-  for (const file of fs.readdirSync(postsDir)) {
-    if (!file.endsWith('.mdx') && !file.endsWith('.md')) continue;
-    const content = fs.readFileSync(path.join(postsDir, file), 'utf-8');
-    const { data } = matter(content);
-    const pubDate = data.pubDate ? new Date(data.pubDate) : null;
-    const slug = file.replace(/\.mdx?$/, '');
-    // Protect the sitemap independently of route generation, in every mode.
-    if (pubDate && (isNaN(pubDate.getTime()) || pubDate > now)) {
-      unpublishedPostPaths.add(`/posts/${slug.toLowerCase()}`);
-      continue;
-    }
-    const date = data.updatedDate ? new Date(data.updatedDate) : pubDate;
-    if (date && !isNaN(date.getTime())) {
-      postDateMap.set(`https://datadocks.com/posts/${slug.toLowerCase()}`, date);
-    }
-  }
-}
+import precompiledImages from './integrations/precompiled-images.mjs';
 
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
-    imageService: 'compile',
+    imageService: 'custom',
+    workerEntryPoint: { path: 'src/worker.ts' },
   }),
+
+  image: { service: { entrypoint: './src/lib/images/service.ts' } },
 
   site: 'https://datadocks.com',
   base: '/',
@@ -53,6 +33,8 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   vite: {
+    // Use React's Worker renderer without relying on dashboard-only compatibility flags.
+    resolve: { alias: [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] },
     build: {
       cssCodeSplit: false,
     },
@@ -80,6 +62,9 @@ export default defineConfig({
       name: 'dev-only-pages',
       hooks: {
         'astro:config:setup': ({ injectRoute, command }) => {
+          if (command === 'build') {
+            injectRoute({ pattern: '/_build/publication/[...path]', entrypoint: './src/build-pages/publication-artifacts.astro', prerender: true });
+          }
           if (command === 'dev') {
             injectRoute({
               pattern: '/preview/daily-blog/home',
@@ -110,12 +95,13 @@ export default defineConfig({
           }
 
           // Cloudflare _routes.json has a 100-entry limit.
-          // Collapse individual /posts/*, /integrations/*, /datadocks-features/* into wildcards.
+          // Collapse static sections only. Runtime publication routes must reach the Worker.
           const routesPath = fileURLToPath(new URL('_routes.json', dir));
           if (fs.existsSync(routesPath)) {
             const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
-            const wildcardPrefixes = ['/posts/', '/news/', '/integrations/', '/datadocks-features/', '/benefits/'];
+            const wildcardPrefixes = ['/news/', '/integrations/', '/datadocks-features/', '/benefits/'];
             routes.exclude = routes.exclude.filter(rule => {
+              if (rule.startsWith('/_build/') || rule.startsWith('/posts/') || rule.startsWith('/videos/')) return false;
               return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
             });
             wildcardPrefixes.forEach(prefix => {
@@ -124,6 +110,10 @@ export default defineConfig({
                 routes.exclude.push(wildcard);
               }
             });
+            // A directory wildcard does not cover the hub's slashless URL.
+            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', '/_worker.js', '/_worker.js/*', '/_build/*']) {
+              if (!routes.include.includes(route)) routes.include.push(route);
+            }
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
 
@@ -181,6 +171,7 @@ export default defineConfig({
             return out;
           };
 
+          const publicationStyles = {};
           const htmlFiles = collectHtml(distDir);
           let processed = 0;
           let alreadyAsync = 0;
@@ -196,6 +187,7 @@ export default defineConfig({
                 continue;
               }
               const inlined = await beasties.process(html);
+              collectPublicationStyles(filePath, distDir, html, inlined, publicationStyles);
               // Guard the font regression described above: the real webfont
               // faces must survive into the output. If they ever stop doing so,
               // fail the build instead of silently shipping Georgia/Impact to
@@ -207,10 +199,12 @@ export default defineConfig({
               fs.writeFileSync(filePath, inlined);
               processed++;
             } catch (err) {
+              if (rel.startsWith('_build/publication/')) throw err;
               console.warn(`[critical-css] skipped ${rel}: ${err.message}`);
             }
           }
           console.log(`[critical-css] inlined critical CSS for ${processed}/${htmlFiles.length} pages (${alreadyAsync} had no blocking stylesheet)`);
+          finishPublicationStyles(distDir, publicationStyles);
           if (missingRealFaces > 0) {
             throw new Error(`[critical-css] ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
           }
@@ -230,22 +224,22 @@ export default defineConfig({
       include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
+      // This child sitemap evaluates publication dates on every request.
+      customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
+      // All article URLs belong to the runtime sitemap, including those already published.
       // Keyword landing pages are noindexed, so keep them out of the sitemap too.
-      filter: (page) => !new URL(page).pathname.startsWith('/preview/') && !unpublishedPostPaths.has(new URL(page).pathname.replace(/\/$/, '').toLowerCase()) && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      filter: (page) => !new URL(page).pathname.startsWith('/_build/') && !new URL(page).pathname.startsWith('/preview/') && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
           item.url = item.url.replace(/\/$/, '');
         }
-        // Add lastmod from post frontmatter if available
-        const postDate = postDateMap.get(item.url) || postDateMap.get(item.url + '/');
-        if (postDate) {
-          item.lastmod = postDate.toISOString();
-        }
-        // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
+        // Static pages omit lastmod; post dates are served by the runtime sitemap.
         return item;
       },
       customPages: [
+        'https://datadocks.com/',
+        'https://datadocks.com/posts',
         'https://datadocks.com/yard-management',
         'https://datadocks.com/datadocks-features/dock-dashboard',
         'https://datadocks.com/datadocks-features/carrier-portal',
@@ -268,6 +262,7 @@ export default defineConfig({
     // are now pre-rendered to static SVG by `npm run diagrams`. If mermaid
     // fences are ever needed in MDX, pre-render them the same way rather than
     // re-adding a global integration.
-    mdx()],
+    mdx(),
+    precompiledImages()],
 
 });
