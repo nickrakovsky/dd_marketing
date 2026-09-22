@@ -371,9 +371,21 @@ const jsonLd = {
 
 <link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
         {/* Only Bruta is preloaded — it's the H1/LCP font.
-             Recoleta loads via @font-face with font-display:swap; the Georgia
-             fallback (with size-adjust metrics) renders immediately. Preloading
-             all 3 fonts (146 KB) was saturating mobile bandwidth. */}
+             Recoleta loads via @font-face with font-display:optional: the
+             metric-matched Georgia fallback renders immediately, and Recoleta
+             only swaps in if it's already in cache by the first paint attempt.
+             On a slow connection the browser just keeps the fallback for that
+             pageview instead of blocking/swapping later — no layout shift
+             either way, since the fallback's metrics are tuned to match. This
+             was `swap` (always waits and swaps in whenever it arrives), but
+             the browser fetches it at a similar priority to Bruta regardless
+             of font-display, and on /posts some above-the-fold copy uses
+             Recoleta -- so the two Recoleta files were competing with Bruta
+             for bandwidth on the H1's own critical path. `optional` tells the
+             browser it's not blocking anything, so it's free to fetch Recoleta
+             at a lower priority than Bruta (still cached for next time, just
+             no longer racing it for the same bandwidth). Preloading all 3
+             fonts (146 KB) was saturating mobile bandwidth. */}
 
         {/* A page's own LCP image, preloaded here (immediately after the Bruta preload,
              before Beasties' inlined critical CSS) rather than left to the preload scanner
@@ -421,8 +433,8 @@ const jsonLd = {
               line-gap-override: 33.1707%;
             }
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
-            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: optional; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: optional; }
 
             .beasties-font-preserve { font-family: 'Bruta', 'DD-Recoleta'; }
 
