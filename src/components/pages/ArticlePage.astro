@@ -27,6 +27,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
+const hasYardSelector = entry.slug === 'best-yard-management-options';
 const asOf = Astro.locals.publicationDate ?? new Date();
 const { Content, headings } = await entry.render();
 
@@ -69,6 +70,8 @@ const getReadTime = (body: string) => {
 
 // Image loading priority belongs to this request, including concurrent visits.
 Astro.locals.mdxImageCount = 0;
+// The selector and introduction put this article's first body image below the fold.
+Astro.locals.prioritizeMdxImage = !hasYardSelector;
 ---
 
 {isVideo ? (
@@ -189,13 +192,13 @@ Astro.locals.mdxImageCount = 0;
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
-    {entry.slug === 'best-yard-management-options' && (
+    {hasYardSelector && (
       <YardTypeSelector slot="top-interactive" client:visible />
     )}
-    {entry.slug === 'best-yard-management-options' && (
+    {hasYardSelector && (
       <YardTypeNoscript slot="top-interactive" />
     )}
-    {entry.slug === 'best-yard-management-options' && (
+    {hasYardSelector && (
       <div slot="intro" class="mb-8 not-prose">
         <h3 class="text-xl sm:text-2xl font-bold font-recoleta text-neutral-950 dark:text-white mb-4">
           The 8 Best Yard Management Systems At a Glance

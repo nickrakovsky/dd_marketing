@@ -12,19 +12,21 @@ const SectionCard: Component<{ title: string; children: any; class?: string }> =
 
   return (
     <div class={cn("rounded-xl border border-[#ece6de] bg-[#faf8f5] shadow-sm overflow-hidden transition-all", props.class)}>
-      <button 
-        type="button"
-        onClick={() => setIsOpen(!isOpen())}
-        class="w-full flex items-center justify-between p-4 sm:p-5 text-left md:pointer-events-none select-none focus:outline-none cursor-pointer md:cursor-default bg-[#faf8f5]"
-      >
-        <h4 class="text-xs font-bold uppercase tracking-widest text-[#9c806d] font-sans">{props.title}</h4>
-        <span class="md:hidden text-[#9c806d] text-xs font-sans font-medium flex items-center gap-1.5 bg-[#ece6de]/60 px-2.5 py-1 rounded-full">
-          <span>{isOpen() ? "Collapse" : "Tap to edit"}</span>
-          <svg class={cn("w-3.5 h-3.5 transition-transform duration-200", isOpen() ? "rotate-180" : "rotate-0")} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M19 9l-7 7-7-7" />
-          </svg>
-        </span>
-      </button>
+      <h3>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen())}
+          class="w-full flex items-center justify-between p-4 sm:p-5 text-left md:pointer-events-none select-none focus:outline-none cursor-pointer md:cursor-default bg-[#faf8f5]"
+        >
+          <span class="text-xs font-bold uppercase tracking-widest text-[#9c806d] font-sans">{props.title}</span>
+          <span class="md:hidden text-[#9c806d] text-xs font-sans font-medium flex items-center gap-1.5 bg-[#ece6de]/60 px-2.5 py-1 rounded-full">
+            <span>{isOpen() ? "Collapse" : "Tap to edit"}</span>
+            <svg class={cn("w-3.5 h-3.5 transition-transform duration-200", isOpen() ? "rotate-180" : "rotate-0")} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </button>
+      </h3>
       <div class={cn("px-4 pb-4 sm:px-5 sm:pb-5 pt-0 md:block", isOpen() ? "block" : "hidden")}>
         {props.children}
       </div>
@@ -711,7 +713,7 @@ const RequirementsExplorer: Component = () => {
         class="mb-5"
       />
       
-      <h5 class="text-sm font-medium text-[#5f483a] font-sans mb-2">Solutions you're considering</h5>
+      <h4 class="text-sm font-medium text-[#5f483a] font-sans mb-2">Solutions you're considering</h4>
       <MultiSelectGroup
         values={requirementsState().solutionsConsidering}
         onChange={(v) => updateRequirementsState("solutionsConsidering", v)}

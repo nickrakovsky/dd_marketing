@@ -33,18 +33,9 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- The scrollable region needs keyboard focus for arrow-key video browsing. */}
       <div id="hub-shorts-track" class="hub-shorts-track" tabindex="0" role="region" aria-label="Short videos" aria-describedby="hub-shorts-help">
         {items.map((item, index) => {
-          // The whole section is below the fold, but the carousel itself only
-          // shows ~3-4 slides at once. Eagerly wiring every slide's
-          // lite-youtube element made the browser fire a poster-image
-          // request for ALL of them (20-30+ videos) the moment the HTML
-          // parsed, competing with the fonts/JS the page actually needs for
-          // its first paint. Only the first EAGER_SLIDES get a real
-          // lite-youtube element up front; the rest ship as an inert
-          // <template> that the client script clones in just before a slide
-          // scrolls into view (see the IntersectionObserver-driven hydrate()
-          // below), or immediately on demand if a user jumps straight to it.
-          const EAGER_SLIDES = 3;
-          const isEager = index < EAGER_SLIDES;
+          // The section is below the fold. Keep every poster inert until its
+          // slide approaches the viewport so it cannot compete with LCP.
+          // Navigation and fullscreen controls also hydrate slides on demand.
           // A single poster layer only: our /yt-thumb proxy already resolves
           // through a server-side fallback chain and never 404s, so a
           // second, raw i.ytimg.com background layer was pure dead weight --
@@ -60,9 +51,9 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
             />
           );
           return (
-          <article class="hub-shorts-slide" data-short-title={item.rawTitle || item.title} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${items.length}: ${item.rawTitle || item.title}`}>
+          <article class="hub-shorts-slide" data-short-title={item.rawTitle || item.title} aria-roledescription="slide" aria-label={`${index + 1} of ${items.length}: ${item.rawTitle || item.title}`}>
             <div class="hub-shorts-media">
-              {isEager ? embed : <template data-lazy-embed>{embed}</template>}
+              <template data-lazy-embed>{embed}</template>
               <div class="hub-shorts-shade" aria-hidden="true"></div>
               <div class="hub-shorts-caption">
                 <h3>{item.rawTitle || item.title}</h3>
@@ -180,8 +171,8 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
       if (!track) return;
       const slides = [...this.querySelectorAll<HTMLElement>(".hub-shorts-slide")];
       const mediaEls = slides.map((slide) => slide.querySelector<HTMLElement>(".hub-shorts-media")!);
-      // Most slides ship as an inert <template> (see HubShorts.astro) rather
-      // than a live lite-youtube element, so most entries here start null
+      // All slides ship as an inert <template> (see HubShorts.astro) rather
+      // than a live lite-youtube element, so entries here start null
       // until hydrate() below clones one in just before the slide is needed.
       const embeds: (ShortEmbed | null)[] = slides.map((slide) => slide.querySelector("lite-youtube") as ShortEmbed | null);
       const previous = [...this.querySelectorAll<HTMLButtonElement>("[data-short-prev]")];
@@ -366,6 +357,7 @@ const items = Astro.props.items.filter((item) => item.youtubeId);
         abort.abort();
         observer.disconnect();
         visibility.disconnect();
+        lazyLoad.disconnect();
         resize.disconnect();
         cancelAnimationFrame(frame);
       };

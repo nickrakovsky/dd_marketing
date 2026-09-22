@@ -62,10 +62,20 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
 
   <style is:global>
     .modular-video-embed lite-youtube {
+      display: block;
+      position: relative;
       aspect-ratio: 16 / 9;
       width: 100%;
       max-width: 100%;
       border-radius: 1rem;
+    }
+    .modular-video-embed .deep-dive-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
     }
   </style>
 
@@ -483,9 +493,27 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
                   videoid={video.youtubeId}
                   playlabel={video.title}
                   params="autoplay=1"
-                  style={`background-image: url('${ytThumb(video.youtubeId, 'sdwebp')}'); background-position: center center; background-size: cover;`}
+                  style="background-image: none;"
                   class="w-full h-full"
-                />
+                >
+                  {/* Keep offscreen posters inert until the card nears the viewport.
+                      An explicit background suppresses lite-youtube's eager fallback. */}
+                  <template data-deep-dive-poster>
+                    <img
+                      src={ytThumb(video.youtubeId, 'sdwebp')}
+                      alt=""
+                      width="640"
+                      height="480"
+                      class="deep-dive-poster"
+                      loading="lazy"
+                      decoding="async"
+                      fetchpriority="low"
+                    />
+                  </template>
+                  <noscript>
+                    <img src={ytThumb(video.youtubeId, 'sdwebp')} alt="" width="640" height="480" class="deep-dive-poster" loading="lazy" />
+                  </noscript>
+                </lite-youtube>
               )}
             </div>
 
@@ -772,6 +800,29 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
   <script is:inline>
     (function () {
       function attachInteractiveElements() {
+        const posterCards = [...document.querySelectorAll('.deep-dive-card')]
+          .filter(card => card.querySelector('template[data-deep-dive-poster]') && !card.dataset.posterBound);
+        const loadPoster = card => {
+          const template = card.querySelector('template[data-deep-dive-poster]');
+          template?.replaceWith(template.content.cloneNode(true));
+        };
+        if ('IntersectionObserver' in window && posterCards.length) {
+          const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting) return;
+              loadPoster(entry.target);
+              observer.unobserve(entry.target);
+            });
+          }, { rootMargin: '600px' });
+          posterCards.forEach(card => {
+            card.dataset.posterBound = 'true';
+            observer.observe(card);
+          });
+          document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
+        } else if (!('IntersectionObserver' in window)) {
+          posterCards.forEach(loadPoster);
+        }
+
         // Trigger deep-dive video playback when clicking anywhere on the card
         document.querySelectorAll('.deep-dive-card').forEach((card) => {
           if (!card.dataset.clickBound) {
