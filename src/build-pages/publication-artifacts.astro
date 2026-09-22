@@ -1,0 +1,55 @@
+---
+// Build-only renders collect optimized images and critical CSS for runtime pages.
+// Their HTML is removed before deployment; this is never a public preview route.
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { getImage } from 'astro:assets';
+import AuthorAvatar from '../components/home-revamp/AuthorAvatar.astro';
+import { EVERGREEN_RESOURCE_SLUGS } from '../lib/evergreen-content';
+import HomePage from '../components/pages/HomePage.astro';
+import PostsPage from '../components/pages/PostsPage.astro';
+import ArticlePage from '../components/pages/ArticlePage.astro';
+import VideoPage from '../components/pages/VideoPage.astro';
+
+type Props =
+  | { kind: 'home' | 'hub'; asOf: Date; entry?: never }
+  | { kind: 'post'; asOf: Date; entry: CollectionEntry<'posts'> }
+  | { kind: 'video'; asOf: Date; entry: CollectionEntry<'videos'> };
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const [posts, videos] = await Promise.all([getCollection('posts'), getCollection('videos')]);
+  const asOf = new Date(Math.max(Date.now(), ...[...posts, ...videos].map(entry => entry.data.pubDate.getTime())));
+  return [
+    { params: { path: 'home' }, props: { kind: 'home', asOf } },
+    { params: { path: 'hub' }, props: { kind: 'hub', asOf } },
+    ...posts.map(entry => ({ params: { path: `posts/${entry.slug}` }, props: { kind: 'post', entry, asOf } })),
+    ...videos.map(entry => ({ params: { path: `videos/${entry.slug}` }, props: { kind: 'video', entry, asOf } })),
+  ];
+}
+
+const { kind, entry, asOf } = Astro.props;
+Astro.locals.publicationDate = asOf;
+
+let sampledAuthors: string[] = [];
+if (kind === 'home') {
+  const [posts, videos] = await Promise.all([getCollection('posts'), getCollection('videos')]);
+  const resources = [...posts, ...videos];
+  sampledAuthors = [...new Set(resources.map(resource => resource.data.author))];
+  // At the final cutoff only a few articles occupy related-card slots. Compile
+  // every potential card so earlier publication states use the same widths too.
+  await Promise.all(resources.filter(resource => resource.data.cardImage).map(resource =>
+    getImage({ src: resource.data.cardImage!, width: 600, height: 375, widths: [380, 600, 760, 1000] })
+  ));
+  // A future-dated curated evergreen can change the homepage highlight. Its
+  // responsive variants must exist even when another guide wins the final sample.
+  await Promise.all(posts.filter(post => EVERGREEN_RESOURCE_SLUGS.has(post.slug) && post.data.cardImage).map(post =>
+    getImage({ src: post.data.cardImage!, width: 720, widths: [480, 720, 1080] })
+  ));
+}
+---
+
+{kind === 'home' && <HomePage><div slot="build-samples" hidden>{sampledAuthors.map(name => <AuthorAvatar name={name} />)}</div></HomePage>}
+{kind === 'hub' && <PostsPage />}
+{kind === 'post' && <ArticlePage entry={entry} />}
+{kind === 'video' && <VideoPage entry={entry} />}

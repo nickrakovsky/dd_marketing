@@ -20,6 +20,7 @@
     "crawl": "linkinator http://localhost:4321 --recurse --skip \"^https?://(?!(?:[a-zA-Z0-9-]+\\.)*pages\\.dev|(?:[a-zA-Z0-9-]+\\.)*datadocks\\.com|localhost)\"",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:publication": "node scripts/test-scheduled-publication.mjs",
     "perf": "lhci autorun"
   },
   "dependencies": {
