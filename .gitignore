@@ -1,3 +1,16 @@
+# Only site-related root directories belong in Git. New directory types require
+# an explicit exception here; the repository hygiene check enforces these rules.
+/*/
+!/.github/
+!/.vscode/
+!/src/
+!/public/
+!/scripts/
+!/tests/
+!/docs/
+!/integrations/
+!/content-revamps/
+
 # build output
 dist/
 
@@ -50,6 +63,7 @@ scratch/
 # Loose reference / artefact JSON files at repo root (keep tracked project files)
 /*.json
 !/package.json
+!/package-lock.json
 !/tsconfig.json
 
 # Backup files left by editors / agents
@@ -66,3 +80,18 @@ temp-import/
 /*-audit.md
 /*-audit-report.md
 /technical-seo-audit-datadocks.md
+
+# Local reference material, experiments, repairs, and generated artifacts
+/General Image Bank/
+/[Uu][Ii] [Ee]xperiments/
+/[Uu][Ii]-[Ee]xperiments/
+/codex-path-repair/
+/docs/analytics-crm-project.md
+/.wrangler/
+/node_modules
+/playwright-report/
+/test-results/
+/*.log
+/check_output*.txt
+/lhci_output.txt
+/report.html
