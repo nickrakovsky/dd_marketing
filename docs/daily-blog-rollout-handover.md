@@ -26,19 +26,19 @@ The rotation is A → B → C, repeated five times:
 |---|---|---|---|
 | 1 | Thu 2026-09-17 | A1 | Why Freight Plans Break at the Dock Door |
 | 2 | Fri 2026-09-18 | B1 | Before expanding automated store replenishment, look at the stock errors people fix every day |
-| 3 | Mon 2026-09-21 | C1 | When capable people hide broken processes |
-| 4 | Tue 2026-09-22 | A2 | You Won the Rate, but You Lost the Truck |
-| 5 | Wed 2026-09-23 | B2 | Can your warehouse run without its best supervisor? |
-| 6 | Thu 2026-09-24 | C2 | When does human judgement beat forecasting software? |
-| 7 | Fri 2026-09-25 | A3 | Who Actually Holds the Company Checkbook? |
-| 8 | Mon 2026-09-28 | B3 | You know how to improve operations. How do you get your company on board? |
-| 9 | Tue 2026-09-29 | C3 | Can your warehouses afford to have no spare capacity? |
-| 10 | Wed 2026-09-30 | A4 | The Friday 4:30 PM Meltdown |
-| 11 | Thu 2026-10-01 | B4 | Why are you getting retail stockouts when the system says there’s inventory? |
-| 12 | Fri 2026-10-02 | C4 | What are saved minutes worth if they don’t reduce payroll? |
-| 13 | Mon 2026-10-05 | A5 | Autopsy of a Freight Invoice |
-| 14 | Tue 2026-10-06 | B5 | What I ask when a supplier starts missing deliveries |
-| 15 | Wed 2026-10-07 | C5 | Sometimes a temporary 3PL is worth the time it buys |
+| 3 | Tue 2026-09-22 | C1 | When capable people hide broken processes |
+| 4 | Wed 2026-09-23 | A2 | You Won the Rate, but You Lost the Truck |
+| 5 | Thu 2026-09-24 | B2 | Can your warehouse run without its best supervisor? |
+| 6 | Fri 2026-09-25 | C2 | When does human judgement beat forecasting software? |
+| 7 | Mon 2026-09-28 | A3 | Who Actually Holds the Company Checkbook? |
+| 8 | Tue 2026-09-29 | B3 | You know how to improve operations. How do you get your company on board? |
+| 9 | Wed 2026-09-30 | C3 | Can your warehouses afford to have no spare capacity? |
+| 10 | Thu 2026-10-01 | A4 | The Friday 4:30 PM Meltdown |
+| 11 | Fri 2026-10-02 | B4 | Why are you getting retail stockouts when the system says there’s inventory? |
+| 12 | Mon 2026-10-05 | C4 | What are saved minutes worth if they don’t reduce payroll? |
+| 13 | Tue 2026-10-06 | A5 | Autopsy of a Freight Invoice |
+| 14 | Wed 2026-10-07 | B5 | What I ask when a supplier starts missing deliveries |
+| 15 | Thu 2026-10-08 | C5 | Sometimes a temporary 3PL is worth the time it buys |
 
 The machine-readable manifest is [daily-blog-schedule.json](daily-blog-schedule.json). It records titles, authors, slugs, timestamps, source paths and SHA-256 hashes. The runtime reads publication dates from article frontmatter; the manifest is the editorial audit record.
 
@@ -66,7 +66,7 @@ Views after all 15 have been published:
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-10-08T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-10-09T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 
