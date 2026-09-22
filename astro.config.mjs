@@ -249,7 +249,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/custom-rules',
         'https://datadocks.com/datadocks-features/data-validation',
         'https://datadocks.com/datadocks-features/notifications',
-        'https://datadocks.com/datadocks-features/live-editing',
         'https://datadocks.com/datadocks-features/access-anywhere',
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',

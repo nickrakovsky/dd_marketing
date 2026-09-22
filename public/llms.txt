@@ -41,7 +41,7 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Custom Rules](https://datadocks.com/datadocks-features/custom-rules): Flexible business rules for scheduling and approvals
 - [Data Validation](https://datadocks.com/datadocks-features/data-validation): Built-in validation for appointments and inputs
 - [Notifications](https://datadocks.com/datadocks-features/notifications): Automatic alerts and real-time notifications
-- [Live Editing](https://datadocks.com/datadocks-features/live-editing): Real-time collaborative schedule editing
+- [Live Editing](https://datadocks.com/datadocks-features/access-anywhere): Real-time collaborative schedule editing
 - [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Cloud-based access from any device — native iOS and Android apps available
 - [Integration](https://datadocks.com/datadocks-features/integration): WMS/TMS/ERP integration capabilities
 - [Documentation](https://datadocks.com/datadocks-features/documentation): Product documentation and developer guides
