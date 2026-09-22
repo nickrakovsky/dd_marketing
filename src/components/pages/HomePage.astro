@@ -86,7 +86,13 @@ const faqs = [
 ];
 ---
 
-<Layout title="Dock Scheduling & Yard Management for Your Working Day | DataDocks" description="Plan arrivals, keep your dock and yard moving, and give your team one shared view. Dock scheduling and yard management built around your operation." noindex={Boolean(previewAsOf)} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }}>
+<Layout title="Dock Scheduling & Yard Management for Your Working Day | DataDocks" description="Plan arrivals, keep your dock and yard moving, and give your team one shared view. Dock scheduling and yard management built around your operation." noindex={Boolean(previewAsOf)} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }} preloadImages={[
+  /* Values below must stay character-for-character identical to the <source>/<img> pair
+     in the hero <picture> further down this file, or Chrome treats the preload as a
+     different resource from the one actually used and double-fetches the hero image. */
+  { href: '/images/DataDocks-Calendar-Screenshot-mobile-749x540.webp', media: '(max-width: 960px)' },
+  { imagesrcset: '/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w', imagesizes: '(max-width: 600px) 900px, 1280px', media: '(min-width: 961px)' },
+]}>
   <Fragment slot="head">
     <style is:inline set:html={`
       @font-face { font-family: 'Inter'; src: url('${interFont}') format('woff2'); font-style: normal; font-weight: 100 900; font-display: swap; }
