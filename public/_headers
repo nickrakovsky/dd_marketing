@@ -15,10 +15,11 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+# Publication-sensitive routes /, /posts, /posts/*, /videos/* and
+# /sitemap-posts.xml use Worker middleware headers, not this static policy.
+
 # --- HTML pages: edge-cache 1 day, browser revalidates (unchanged policy) ---
 # Root-level pages (build.format:'file' serves these at clean paths)
-/
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /about
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /datadocks-vs-opendock
@@ -26,8 +27,6 @@
 /integrations
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /mobile-app
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
-/posts
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /privacy-policy
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
@@ -55,10 +54,6 @@
 /outgrowing-opendock
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 # Section directories
-/posts/*
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
-/videos/*
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /benefits/*
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /datadocks-features/*

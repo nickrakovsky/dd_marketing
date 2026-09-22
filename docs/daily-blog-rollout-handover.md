@@ -74,15 +74,31 @@ Retired routes, with no redirects: `/index/home-revamp` and `/wireframes/modular
 
 ## Scheduling and publication safeguards
 
-`.github/workflows/scheduled-publish.yml` now requests a weekday rebuild at 14:30 UTC. It uses the existing `CF_PAGES_DEPLOY_HOOK` secret, preserves manual dispatch and concurrency control, and removes the old 08:30 Pacific time gate.
+The original daily rebuild workflow has been removed. Publication now happens at request time on Cloudflare Pages: the homepage, hub, article and video routes, and article sitemap read one server timestamp per request. The existing 06:30 fixed PST / 14:30 UTC dates and A/B/C rotation are unchanged.
 
-Publication is build-triggered. Scheduled workflow runs can be delayed; posts become publicly available after the resulting deployment finishes, not necessarily at the exact scheduled minute. The workflow change takes effect when it reaches the default branch.
+One deployment is required to install this implementation and the scheduled content. After that, already-deployed posts become available at their own timestamp without deployments, cache clears, or a cron task. Adding or editing content still requires an ordinary deployment.
 
-The remote workflow enablement, secret availability, and deploy-hook target branch remain unverified. No deployment was triggered. The attempted read-only browser check was unavailable because browser access was not approved.
+Before publication, an article returns a real `404` with `noindex, nofollow`, and its title/body/URL do not appear in public listings or the article sitemap. At the cutoff, the same deployed Worker returns the article and includes it in the applicable feeds, archive, related articles and sitemap. Public query parameters and request headers cannot change the publication clock. Static feature/keyword-page resource blocks retain their build-time filtering; these 15 posts do not qualify for those blocks.
 
-Publication filtering now uses actual timestamps in development as well as production. Future dates are excluded from article/video routes, homepage feeds, the resource hub and archive, related content, SmartLink metadata, and sitemap URLs. Invalid dates do not publish. An internal link to a future post displays its authored text without exposing an unavailable link or preview metadata.
+`/sitemap.xml` and `/sitemap-index.xml` retain the static non-article sitemap and point to the request-time `/sitemap-posts.xml`. No article URL is baked into the static sitemap. Search engines decide when to crawl/index a newly available article; its availability is immediate, its indexing is not guaranteed at a specific time.
 
-## Verification
+Publication-sensitive responses use `Cache-Control: no-store` and `CDN-Cache-Control: no-store`, including pre-publication 404s, so a stale response cannot cross a release boundary. Other pages and immutable assets retain their existing caching. This trades a Worker invocation per content request for exact publication timing; do not add long-lived caching or stale-while-revalidate to these routes without boundary tests. Cloudflare cache rules that override origin no-store headers must not target these routes.
+
+Build-only samples render the complete content set to retain optimized image variants and critical CSS. Their HTML is deleted from `dist` before deployment and excluded from every sitemap; generated manifests stay inside the private Worker bundle. These samples are not production previews. The development-only preview URLs remain unchanged.
+
+React's server import uses its edge renderer so this does not require new dashboard-only Cloudflare compatibility flags. There are no new external services, content databases, or paid image-service dependencies.
+
+Run `npm run build` followed by `npm run test:publication` to exercise all 15 cutoffs against a single production artifact. The test copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
+
+## Request-time publication verification
+
+- Production build passes with the original Cloudflare compatibility date and flags, using React's edge renderer.
+- 191 checks pass across all 15 exact publication cutoffs against one unchanged compiled Worker, including private-file access and sitemap protections.
+- Existing production functional/accessibility suite: 61 passed, 3 intentionally skipped (development previews and live Calendly).
+- Type check: zero errors and warnings (42 existing hints). Unit tests: 36 passed. Lint: zero errors (88 existing warnings).
+- Repository hygiene check passes; unrelated local files are untracked, retained locally, and ignored. CI rejects any ignored files force-added to Git.
+
+## Original rollout verification (before the request-time correction)
 
 - Content audit: all 15 source hashes, titles, authors, images and destination files verified; five per group; exact A/B/C rotation; weekdays only; series order preserved.
 - `npm run check`: passed, no errors or warnings (42 existing hints).

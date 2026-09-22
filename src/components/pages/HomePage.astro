@@ -26,7 +26,7 @@ interface Props {
 // Only the explicit development preview wrapper supplies this prop.
 // Normal page URLs and query parameters always use the real publication date.
 const previewAsOf = import.meta.env.DEV ? Astro.props.previewAsOf : undefined;
-const asOf = previewAsOf ?? new Date();
+const asOf = previewAsOf ?? Astro.locals.publicationDate ?? new Date();
 
 // Shared by the canonical homepage and its development-only publication preview.
 const comparisonUrl = 'https://datadocks.com/comparison';
@@ -243,6 +243,7 @@ const faqs = [
       <footer class="screenshot-footer"><p id="screenshot-hint" aria-live="polite">The full week. Zoom in to read appointment details.</p><span class="screenshot-escape" aria-hidden="true">Esc to close</span></footer>
     </dialog>
   </div>
+  <slot name="build-samples" />
 </Layout>
 
 <script>

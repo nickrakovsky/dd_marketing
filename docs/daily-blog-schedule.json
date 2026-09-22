@@ -14,7 +14,7 @@
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
     "Card artwork reuses relevant existing site illustrations; no source drafts included images.",
-    "GitHub weekday rebuild is scheduled for 14:30 UTC. Publishing occurs when the resulting deployment finishes."
+    "Publication is checked by the Cloudflare Worker on each request at the fixed PST timestamp. One deployment installs the content and release rules; no daily deployments or cron jobs are required."
   ],
   "slots": [
     {
@@ -185,7 +185,7 @@
       "groupLabel": "Nick Rakovsky",
       "sequenceInGroup": 4,
       "author": "Nick Rakovsky",
-      "title": "Why are you getting retail stockouts when the system says there’s inventory?",
+      "title": "Why are you getting retail stockouts when the system says there\u2019s inventory?",
       "slug": "retail-stockouts-despite-inventory",
       "pubDate": "2026-10-01T14:30:00.000Z",
       "sourcePath": "outputs/drafts/post-04-retail-stockouts-and-inventory.md",
@@ -201,7 +201,7 @@
       "groupLabel": "Researched DataDocks Team",
       "sequenceInGroup": 4,
       "author": "DataDocks Team",
-      "title": "What are saved minutes worth if they don’t reduce payroll?",
+      "title": "What are saved minutes worth if they don\u2019t reduce payroll?",
       "slug": "saved-minutes-without-payroll-savings",
       "pubDate": "2026-10-02T14:30:00.000Z",
       "sourcePath": "outputs/drafts/post-09-saved-minutes-and-payroll.md",

@@ -38,7 +38,7 @@ const {
   founderShorts,
   deepDiveVideos,
   olderResources
-} = await getModularHubData(previewAsOf);
+} = await getModularHubData(previewAsOf ?? Astro.locals.publicationDate);
 
 const feedTopicIcons: Record<string, typeof Warehouse> = {
   'Facility Operations': Warehouse,
