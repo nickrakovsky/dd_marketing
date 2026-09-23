@@ -24,7 +24,8 @@ const jsonLd = {
             "@type": "ListItem",
             "position": matchIdx + 1,
             "item": {
-              "@type": "SoftwareApplication",
+              "@type": "Thing",
+              "additionalType": "https://schema.org/SoftwareApplication",
               "name": match.name,
               "applicationCategory": match.architecture || subCat.ymsFit,
               "description": match.capabilities || match.why || ""
