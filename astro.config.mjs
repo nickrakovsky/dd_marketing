@@ -48,6 +48,8 @@ export default defineConfig({
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
+    '/posts/datadocks-vs-opendock': '/datadocks-vs-opendock',
+    '/posts/comparison': '/comparison',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
     '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
