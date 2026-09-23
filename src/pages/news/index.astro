@@ -24,6 +24,7 @@ const artworkVariants = ['orange', 'paper', 'ink'] as const;
 <Layout
   title="DataDocks News & Updates | Awards, Press & Company News"
   description="The latest from DataDocks: industry awards, press coverage, interviews, and company updates from our dock scheduling and yard management team."
+  preloadRecoleta
   schemaData={{ collectionItems: items.map((item) => ({ name: item.title, url: item.href })) }}
 >
   <a class="news-skip-link" href="#main-content">Skip to news and updates</a>

@@ -15,6 +15,8 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
+    // Text-led pages can discover their above-the-fold Recoleta faces early.
+    preloadRecoleta?: boolean;
 
     schemaData?: {
         faq?: { question: string; answer: string }[];
@@ -59,6 +61,7 @@ const {
   image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
+  preloadRecoleta = false,
 
   schemaData,
   articleData,
@@ -379,14 +382,17 @@ const jsonLd = {
         <link rel="sitemap" href="/sitemap.xml" />
         <meta name="theme-color" content="#FFF8E9" />
 
-<link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
-        {/* Only Bruta is preloaded — it's the H1/LCP font.
-             Recoleta loads via @font-face with font-display:swap; the Georgia
-             fallback (with size-adjust metrics) renders immediately. The core
-             faces cover English copy and punctuation; accented Latin characters
-             load their own small subsets only when needed. */}
+        <link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
+        {/* Recoleta is preloaded only where intro text can shift the first section
+             as the font swaps. Extended character subsets remain demand-loaded. */}
+        {preloadRecoleta && (
+          <Fragment>
+            <link rel="preload" as="font" type="font/woff2" href={recoletaReg} crossorigin />
+            <link rel="preload" as="font" type="font/woff2" href={recoletaSemi} crossorigin />
+          </Fragment>
+        )}
 
-        {/* A page's own LCP image, preloaded here (immediately after the Bruta preload,
+        {/* A page's own LCP image, preloaded here (immediately after the font preloads,
              before Beasties' inlined critical CSS) rather than left to the preload scanner
              to discover deep in <body>. Opt-in per page via the preloadImages prop. */}
         {preloadImages?.map((p) => (

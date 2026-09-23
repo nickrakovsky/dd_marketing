@@ -140,5 +140,30 @@ were added to shorts and deep dives. The focused no-JavaScript navigation test
 passed, and normal JavaScript-enabled startup still makes zero shorts/deep-dive
 poster requests. This correction needs its own updated preview.
 
-Cloudflare's dashboard requires sign-in in the available browser. Account
-access was requested to inspect Zaraz settings; no settings were modified.
+The first preview's complete browser/accessibility checks passed. Mobile
+Lighthouse recorded the following (preview measurements, not a controlled
+before/after comparison with production):
+
+| Page | Performance | Accessibility | FCP | LCP | Speed Index | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Home | 87 | 96 | 1.49 s | 2.36 s | 2.52 s | 0.0003 |
+| Posts | 95 | 96 | 1.79 s | 2.72 s | 2.61 s | 0 |
+| Comparison | 99 | 97 | 1.51 s | 1.96 s | 1.51 s | 0.0450 |
+| News | 98 | 96 | 1.82 s | 2.12 s | 1.82 s | 0.0160 |
+| Yard article | 95 | 96 | 1.39 s | 2.12 s | 1.39 s | 0.0004 |
+
+The Lighthouse CI gate failed because comparison and news exceeded the existing
+0.01 CLS limit; link crawling was skipped after that failure. Their intro text
+changes line wrapping when Recoleta loads. Comparison explicitly identified the
+Regular Core font as the cause. Both pages now opt into early Core font preloads;
+other pages and Extended fonts retain their existing discovery behavior. This
+fix awaits GitHub's automatic checks. Home also has a non-blocking performance
+warning; the largest long task in that report comes from Partytown's sandbox.
+
+The user clarified that they are not the Cloudflare administrator and cannot
+sign in. Zaraz configuration is deferred to their administrator; no settings
+were modified. Repository changes do not resolve the injected Zaraz reflow.
+
+At the user's request, no further local tests, audits, or builds will run.
+Validation belongs to the normal GitHub/Cloudflare pipeline; do not manually
+rerun workflows merely to collect additional measurements.
