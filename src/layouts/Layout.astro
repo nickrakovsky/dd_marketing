@@ -793,29 +793,15 @@ const jsonLd = {
           </Fragment>
         )}
 
-        {/* Dealfront/Leadfeeder B2B visitor identification (company-level, from IP).
-             Deferred to requestIdleCallback. 12 KB brotli, async. Measured with 5
-             interleaved Lighthouse pairs (tracker blocked vs allowed) on throttled
-             mobile: median LCP delta -6ms, TBT 0ms both arms, score 99 both arms —
-             i.e. within noise. The capture-phase click listeners it attaches cost
-             +0.3ms on the worst interaction, so INP is unaffected.
-
-             Note idle can occasionally fire before LCP paints, so the fetch is not
-             guaranteed to land after it. Scroll- and interaction-gated variants were
-             tested and are worse on both counts: they overlap the LCP window MORE
-             (scrolling pushes LCP later while firing the trigger) and they miss any
-             visitor who never scrolls or taps, which is exactly the bounce traffic
-             this tool exists to identify.
-
-             Do NOT move this into <head> or drop in Dealfront's stock install snippet:
-             theirs is a synchronous head tag that lands in the critical path.
-
-             Do NOT wrap in Partytown either — unlike Bento (fire-and-forget), this
-             script reads document.cookie, scans the DOM, and attaches form/click
-             listeners. Each one becomes a sync main-thread round-trip through the
-             worker proxy, which is slower than running it natively and breaks form
-             tracking. The `timeout: 4000` matters: without it a visitor who never
-             stops scrolling may never hit an idle callback, and we'd lose the session. */}
+        {/* Dealfront/Leadfeeder stays asynchronous on the main thread: it reads
+             cookies and attaches form/click listeners. Wait for window.load before
+             requesting idle time so it cannot begin while initial load resources
+             are outstanding. The Sep 23 mobile report attributes 166 ms of CPU
+             work to the previous pre-load idle schedule. This gate does not prove
+             LCP has painted; verify actual LCP/TBT on the deployment preview.
+             Keep a bounded idle timeout and do not require interaction, so visitors
+             who read without clicking can still be identified. Very short visits
+             ending before load may be missed; compare tracking coverage on rollout. */}
         <script is:inline define:vars={{ DEALFRONT_SITE_ID, DEALFRONT_ALLOWED_HOSTS }}>
           (function () {
             // Production-only. Every Cloudflare Pages build gets a permanent
@@ -828,7 +814,11 @@ const jsonLd = {
             // disable tracking everywhere.
             if (DEALFRONT_ALLOWED_HOSTS.indexOf(window.location.hostname) === -1) return;
 
+            var scheduled = false;
+            var started = false;
             function loadDealfront() {
+              if (started) return;
+              started = true;
               // Dealfront's stock snippet leans on `ldfdr` as an implicit global
               // here; we qualify it with `window.` so it passes no-undef.
               window.ldfdr = window.ldfdr || function () {
@@ -840,11 +830,17 @@ const jsonLd = {
               s.async = true;
               firstScript.parentNode.insertBefore(s, firstScript);
             }
-            if ('requestIdleCallback' in window) {
-              requestIdleCallback(loadDealfront, { timeout: 4000 });
-            } else {
-              setTimeout(loadDealfront, 2500);
+            function scheduleDealfront() {
+              if (scheduled) return;
+              scheduled = true;
+              if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadDealfront, { timeout: 4000 });
+              } else {
+                setTimeout(loadDealfront, 2500);
+              }
             }
+            if (document.readyState === 'complete') scheduleDealfront();
+            else window.addEventListener('load', scheduleDealfront, { once: true });
           })();
         </script>
     </body>
