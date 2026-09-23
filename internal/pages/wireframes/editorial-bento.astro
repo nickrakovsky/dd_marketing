@@ -1,13 +1,13 @@
 ---
 export const prerender = true;
 
-import Layout from "../../layouts/Layout.astro";
-import Navigation from "../../components/Navigation.astro";
-import Footer from "../../components/Footer.astro";
-import CTA from "../../components/home/CTA.astro";
-import WireframeToolbar from "../../components/wireframes/WireframeToolbar.astro";
-import { getKnowledgeHubData } from "../../lib/wireframe-data";
-import { ytThumb } from "../../lib/yt-thumb";
+import Layout from "../../../src/layouts/Layout.astro";
+import Navigation from "../../../src/components/Navigation.astro";
+import Footer from "../../../src/components/Footer.astro";
+import CTA from "../../../src/components/home/CTA.astro";
+import WireframeToolbar from "../../components/WireframeToolbar.astro";
+import { getKnowledgeHubData } from "../../../src/lib/resource-hub-data";
+import { ytThumb } from "../../../src/lib/yt-thumb";
 import { Image } from "astro:assets";
 
 const { evergreenGuides, liveFeedItems, featureList, benefitsList } = await getKnowledgeHubData();
