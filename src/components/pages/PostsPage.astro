@@ -77,6 +77,15 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
       object-fit: cover;
       pointer-events: none;
     }
+    .modular-video-embed .deep-dive-fallback {
+      position: absolute;
+      inset: 0;
+      display: block;
+    }
+    .modular-video-embed .deep-dive-fallback:focus-visible {
+      outline: 3px solid #fe5000;
+      outline-offset: -3px;
+    }
   </style>
 
   {/* 1. MAIN NAVIGATION */}
@@ -512,7 +521,9 @@ const description = "Comprehensive operational playbooks, dock scheduling guides
                     />
                   </template>
                   <noscript>
-                    <img src={ytThumb(video.youtubeId, 'sdwebp')} alt="" width="640" height="480" class="deep-dive-poster" loading="lazy" />
+                    <a href={video.url} class="deep-dive-fallback" aria-label={`Watch: ${video.title}`}>
+                      <img src={ytThumb(video.youtubeId, 'sdwebp')} alt="" width="640" height="480" class="deep-dive-poster" loading="lazy" />
+                    </a>
                   </noscript>
                 </lite-youtube>
               )}

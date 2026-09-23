@@ -120,3 +120,25 @@ Resume with:
 4. Prioritize further work from the production results, including any remaining
    posts archive thumbnail contention. Development timing is not evidence of
    production LCP improvement.
+
+## Resumed — 2026-09-23
+
+Merged current main (`e719265`) into the performance branch without conflicts.
+An independent comparison confirmed that main's image compression, deferred
+video behavior, title/meta changes, and structured-data corrections survived.
+The complete yard taxonomy and JSON-LD match main (17 facilities, 140 entries).
+
+Draft PR: https://github.com/nickrakovsky/dd_marketing/pull/232
+First preview: https://f2f8a51c.dd-marketing.pages.dev (commit `ef967ad`).
+Its CI lint, type checks, unit tests, build and publication tests passed.
+Browser/accessibility/performance/link checks were still running when this
+checkpoint was written. Production remains unchanged.
+
+Review found that the fully deferred shorts had lost their no-JavaScript poster
+fallback. Linked fallback posters and a JavaScript-disabled regression check
+were added to shorts and deep dives. The focused no-JavaScript navigation test
+passed, and normal JavaScript-enabled startup still makes zero shorts/deep-dive
+poster requests. This correction needs its own updated preview.
+
+Cloudflare's dashboard requires sign-in in the available browser. Account
+access was requested to inspect Zaraz settings; no settings were modified.
