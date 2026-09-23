@@ -28,7 +28,7 @@ const title = "Resource Hub — Featured Pair + Split | DataDocks";
 const description = "Top featured playbooks followed by side-by-side core guides and latest releases.";
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} noindex={true}>
   <WireframeToolbar currentVariant="tabbed-hub" />
   <Navigation />
 
@@ -98,7 +98,7 @@ const description = "Top featured playbooks followed by side-by-side core guides
                 </div>
 
                 <h2 class="font-bruta text-2xl md:text-3xl uppercase leading-tight text-black group-hover:text-[#fd4f00] transition-colors">
-                  <a href={"/posts/" + featuredEvergreen.slug} class="after:absolute after:inset-0">
+                  <a href={featuredEvergreen.url} class="after:absolute after:inset-0">
                     {featuredEvergreen.data.title}
                   </a>
                 </h2>
@@ -142,7 +142,7 @@ const description = "Top featured playbooks followed by side-by-side core guides
                 </div>
 
                 <h2 class="font-bruta text-2xl md:text-3xl uppercase leading-tight text-black group-hover:text-[#fd4f00] transition-colors">
-                  <a href={"/posts/" + featuredDiscover.slug} class="after:absolute after:inset-0">
+                  <a href={featuredDiscover.url} class="after:absolute after:inset-0">
                     {featuredDiscover.data.title}
                   </a>
                 </h2>
@@ -187,7 +187,7 @@ const description = "Top featured playbooks followed by side-by-side core guides
                     </div>
 
                     <h4 class="font-bruta text-lg md:text-xl uppercase leading-snug text-black group-hover:text-[#fd4f00] transition-colors">
-                      <a href={"/posts/" + post.slug} class="after:absolute after:inset-0">
+                      <a href={post.url} class="after:absolute after:inset-0">
                         {post.data.title}
                       </a>
                     </h4>
@@ -227,7 +227,7 @@ const description = "Top featured playbooks followed by side-by-side core guides
                     </div>
 
                     <h4 class="font-bruta text-lg md:text-xl uppercase leading-snug text-black group-hover:text-[#fd4f00] transition-colors">
-                      <a href={"/posts/" + post.slug} class="after:absolute after:inset-0">
+                      <a href={post.url} class="after:absolute after:inset-0">
                         {post.data.title}
                       </a>
                     </h4>

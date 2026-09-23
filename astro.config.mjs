@@ -48,6 +48,8 @@ export default defineConfig({
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
+    '/posts/datadocks-vs-opendock': '/datadocks-vs-opendock',
+    '/posts/comparison': '/comparison',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
     '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
@@ -227,8 +229,8 @@ export default defineConfig({
       // This child sitemap evaluates publication dates on every request.
       customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
       // All article URLs belong to the runtime sitemap, including those already published.
-      // Keyword landing pages are noindexed, so keep them out of the sitemap too.
-      filter: (page) => !new URL(page).pathname.startsWith('/_build/') && !new URL(page).pathname.startsWith('/preview/') && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // Keyword landing pages and the internal wireframe mockups are noindexed, so keep them out of the sitemap too.
+      filter: (page) => !new URL(page).pathname.startsWith('/_build/') && !new URL(page).pathname.startsWith('/preview/') && !new URL(page).pathname.startsWith('/posts/') && !new URL(page).pathname.startsWith('/wireframes') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
@@ -249,7 +251,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/custom-rules',
         'https://datadocks.com/datadocks-features/data-validation',
         'https://datadocks.com/datadocks-features/notifications',
-        'https://datadocks.com/datadocks-features/live-editing',
         'https://datadocks.com/datadocks-features/access-anywhere',
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',

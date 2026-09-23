@@ -41,7 +41,7 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Custom Rules](https://datadocks.com/datadocks-features/custom-rules): Flexible business rules for scheduling and approvals
 - [Data Validation](https://datadocks.com/datadocks-features/data-validation): Built-in validation for appointments and inputs
 - [Notifications](https://datadocks.com/datadocks-features/notifications): Automatic alerts and real-time notifications
-- [Live Editing](https://datadocks.com/datadocks-features/live-editing): Real-time collaborative schedule editing
+- [Live Editing](https://datadocks.com/datadocks-features/access-anywhere): Real-time collaborative schedule editing
 - [Access Anywhere](https://datadocks.com/datadocks-features/access-anywhere): Cloud-based access from any device — native iOS and Android apps available
 - [Integration](https://datadocks.com/datadocks-features/integration): WMS/TMS/ERP integration capabilities
 - [Documentation](https://datadocks.com/datadocks-features/documentation): Product documentation and developer guides
@@ -68,7 +68,7 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 ### Guides -- Yard Management
 - [Yard Management](https://datadocks.com/yard-management): What yard management is, how it differs from dock scheduling and YMS, and when you need each
 - [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow): Steps, roles, and best practices for yard operations
-- [10 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options): Software comparison guide for warehouse and logistics buyers
+- [Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options): Software comparison guide for warehouse and logistics buyers
 - [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations): Automation roadmap for yard management
 - [Yard Visibility](https://datadocks.com/posts/yard-visibility): 3 easy ways to improve yard visibility fast
 
