@@ -271,9 +271,9 @@ if (schemaData?.newsArticle) {
 // FAQ answers are rendered as Markdown in the page body, but JSON-LD Answer.text
 // should contain the answer text itself. Keep visible links while removing Markdown syntax.
 const faqSchemaText = (answer: string) => answer
-  .replace(/!\\[([^\\]]*)\\]\\([^)]+\\)/g, '$1')
-  .replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, '$1')
-  .replace(/\\s+/g, ' ')
+  .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+  .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+  .replace(/\s+/g, ' ')
   .trim();
 
 if (schemaData?.faq) {
