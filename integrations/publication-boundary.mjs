@@ -22,8 +22,8 @@ export default function publicationBoundary() {
           },
         }] } });
       },
-      'astro:routes:resolved': ({ routes }) => { if (building) assertRoutes(routes); },
-      'astro:build:done': ({ dir, pages }) => { assertOutput(fileURLToPath(dir), pages); },
+      'astro:routes:resolved': ({ routes }) => { if (building) assertRoutes(routes, root); },
+      'astro:build:done': ({ dir, pages }) => { assertOutput(fileURLToPath(dir), pages, root); },
     },
   };
 }

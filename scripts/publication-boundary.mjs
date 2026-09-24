@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { isInternalPath } from '../src/lib/internal-paths.mjs';
 
 export const projectRoot = fileURLToPath(new URL('..', import.meta.url));
-export const readManifest = (root = projectRoot) => JSON.parse(fs.readFileSync(path.join(root, 'config/publication-manifest.json'), 'utf8'));
 const fail = message => { throw new Error(`[publication-boundary] ${message}`); };
 
 export function filesIn(directory) {
@@ -24,35 +23,24 @@ export function filesIn(directory) {
   return files.sort();
 }
 
-export function assertSources(root = projectRoot, manifest = readManifest(root)) {
-  for (const [directory, approved] of [
-    ['src/pages', manifest.pageEntrypoints.map(file => file.replace(/^src\/pages\//, ''))],
-    ['public', manifest.publicAssets],
-    ['src/content', manifest.contentFiles],
-    ['src/assets', manifest.sourceAssets],
-  ]) {
-    const actual = filesIn(path.join(root, directory));
-    for (const file of actual) {
-      if (!approved.includes(file)) fail(`Unapproved public file: ${directory}/${file}. Keep internal work in internal/; public additions require a reviewed manifest entry.`);
+export function assertSources(root = projectRoot) {
+  for (const directory of ['src/pages', 'public', 'src/content', 'src/assets']) {
+    for (const file of filesIn(path.join(root, directory))) {
       if (isInternalPath('/' + file.replace(/\.(astro|tsx?|jsx?|mdx?)$/, ''))) fail(`Reserved internal path in ${directory}: ${file}`);
     }
-    for (const file of approved) {
-      if (!actual.includes(file)) fail(`Stale manifest entry: ${directory}/${file}`);
-    }
-    if (new Set(approved).size !== approved.length) fail(`Duplicate manifest entries for ${directory}`);
   }
   // Vite's realpath resolution must not turn a public import into private input.
   filesIn(path.join(root, 'src'));
 }
 
-export function assertRoutes(routes, manifest = readManifest()) {
+export function assertRoutes(routes, root = projectRoot) {
   for (const route of routes) {
     if (route.pattern === '/_build/publication/[...path]' && route.entrypoint === 'src/build-pages/publication-artifacts.astro') continue;
     if (isInternalPath(route.pattern)) fail(`Internal production route: ${route.pattern}`);
     if (route.type === 'redirect') continue; // Explicit redirects in astro.config.mjs.
-    if (manifest.pageEntrypoints.includes(route.entrypoint)) continue;
-    if (manifest.integrationRoutes.includes(route.pattern)) continue;
-    fail(`Unapproved production route: ${route.pattern} (${route.entrypoint})`);
+    // Framework/plugin routes need no separate inventory. Internal entrypoints
+    // still cannot become public through injection under an innocent URL.
+    assertPublicModule(path.resolve(root, route.entrypoint), root);
   }
 }
 
@@ -67,14 +55,15 @@ export function assertPublicModule(id, root = projectRoot) {
   }
   if (fs.existsSync(clean)) {
     const relative = path.relative(fs.realpathSync(root), resolved).split(path.sep).join('/');
-    const allowed = ['src/', 'node_modules/', '.astro/'].some(prefix => relative.startsWith(prefix))
-      || relative === 'keystatic.config.ts'
-      || (relative.startsWith('public/') && readManifest(root).publicAssets.includes(relative.slice(7)));
+    const allowed = ['src/', 'public/', 'node_modules/', '.astro/'].some(prefix => relative.startsWith(prefix))
+      || relative === 'keystatic.config.ts';
     if (!allowed) fail(`Production import outside approved source roots: ${id}`);
   }
 }
 
-export function assertOutput(directory, pages, manifest = readManifest()) {
+export function assertOutput(directory, pages, root = projectRoot) {
+  // Derive copied assets from the publishing folder, not a maintained file list.
+  const publicAssets = new Set(filesIn(path.join(root, 'public')));
   const html = new Set(pages.map(({ pathname }) => {
     const clean = pathname.replace(/^\//, '').replace(/\/$/, '');
     return clean ? `${clean}.html` : 'index.html';
@@ -84,7 +73,7 @@ export function assertOutput(directory, pages, manifest = readManifest()) {
     // Worker files are server code, never static assets on Pages.
     if (file.startsWith('_worker.js/')) continue;
     if (isInternalPath('/' + file)) fail(`Internal artifact in deployment output: ${file}`);
-    if (manifest.publicAssets.includes(file) || html.has(file) || generated.has(file)) continue;
+    if (publicAssets.has(file) || html.has(file) || generated.has(file)) continue;
     if (file.startsWith('_astro/') || file.startsWith('~partytown/')) continue;
     fail(`Unexpected deployment artifact: ${file}`);
   }
@@ -98,5 +87,5 @@ export function assertOutput(directory, pages, manifest = readManifest()) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   assertSources();
-  console.log('Publication inputs match the public manifest.');
+  console.log('Publication inputs respect the internal/public folder boundary.');
 }
