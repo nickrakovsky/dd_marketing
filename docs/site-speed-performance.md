@@ -1,6 +1,6 @@
 # Five-page performance pass
 
-Branch: `codex/site-speed-performance`, based on `origin/main` at `d2556b5`.
+Branch: `codex/site-speed-performance`; main integrated through `e719265`.
 
 ## Baseline supplied for this work
 
@@ -33,7 +33,7 @@ These are the supplied baseline values, not new measurements or promised results
 - Extend Lighthouse CI from the homepage to all five routes using the same
   Cloudflare preview origin. Existing thresholds remain unchanged.
 
-## Forced reflow: Cloudflare follow-up
+## Forced reflow: evidence and next investigation
 
 A focused live mobile trace on 2026-09-22 reproduced the news layout call in
 `j.zaraz.init`, line 28, column 3126 (the reported column 3125 in zero-based
@@ -46,16 +46,17 @@ This initializer is injected by Cloudflare, not emitted by Astro source.
 It was absent from command-line HTTP responses but present for the browser,
 which explains why source-only searches did not identify the call.
 
-Changing first-party sidebar/carousel layout code will not remove this
-particular call. The next step is to inspect the live Zaraz injection settings
-and test a manually loaded, deferred initializer in Cloudflare's preview mode.
-Preserve automatic pageview tracking, consent behavior, attribution, and booking
-conversion events; avoid loading both auto-injected and manual initializers.
-Do not simply disable analytics or change the public site to hide an audit.
+This attributes a layout trigger, not a misconfigured tool or a proven fix.
+The saved trace has no script source and does not identify the exact DOM read.
+It shows a whole-document layout involving 501 elements on news. Site layout
+work and the timing of the read can affect its cost.
 
-Cloudflare documents the necessary configuration switch and initializer at:
-https://developers.cloudflare.com/zaraz/advanced/load-zaraz-manually/
-https://developers.cloudflare.com/zaraz/reference/settings/
+The next bounded investigation is source inspection: open the browser-delivered
+`/news` document in DevTools, find `j.zaraz.init` near the recorded location,
+and identify the layout-reading statement and immediately preceding DOM writes.
+Line/column numbers may change after deployment. This needs browser access, not
+Cloudflare administrator access. Do not change Zaraz loading or request broad
+dashboard investigation before identifying a specific operation or setting.
 
 No Cloudflare settings were changed in this worktree.
 
@@ -68,8 +69,9 @@ an ignored local config removes that alias only for the smoke-test server.
 The committed production configuration is unchanged.
 
 Full builds, Lighthouse timing, comprehensive accessibility, publication tests,
-and the remaining CI suite must run on the branch's Cloudflare preview. No
-post-change FCP/LCP/Speed Index or Lighthouse score is claimed until then.
+and the remaining CI suite belong to GitHub/Cloudflare. The local checks below
+are historical, from before the user's instruction to stop local testing.
+The later GitHub results are recorded separately below.
 
 Focused results:
 
@@ -161,9 +163,63 @@ fix awaits GitHub's automatic checks. Home also has a non-blocking performance
 warning; the largest long task in that report comes from Partytown's sandbox.
 
 The user clarified that they are not the Cloudflare administrator and cannot
-sign in. Zaraz configuration is deferred to their administrator; no settings
-were modified. Repository changes do not resolve the injected Zaraz reflow.
+sign in. No settings were modified. The original admin follow-up was withdrawn:
+no configuration defect has been identified. See the narrower source-inspection
+step above. Repository changes do not remove the injected Zaraz call.
 
 At the user's request, no further local tests, audits, or builds will run.
 Validation belongs to the normal GitHub/Cloudflare pipeline; do not manually
 rerun workflows merely to collect additional measurements.
+
+## GitHub checkpoint — `c91ff97`
+
+All required checks passed: lint, type checks, unit/publication checks, 66
+browser/accessibility cases, the five-page Lighthouse gate, and link crawling.
+Cloudflare's build passed. Early Recoleta loading removed the comparison/news
+layout shifts in this run. Home and yard retain warnings against the unchanged
+performance target of 93; the warnings do not fail the existing CI gate.
+
+Run: https://github.com/nickrakovsky/dd_marketing/actions/runs/35859912189
+Preview: https://440116f4.dd-marketing.pages.dev
+
+| Page | Performance | Accessibility | FCP | LCP | Speed Index | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Home | 81 | 96 | 1.64 s | 2.36 s | 2.64 s | 0.0003 |
+| Posts | 96 | 96 | 1.28 s | 2.28 s | 1.28 s | 0 |
+| Comparison | 98 | 97 | 1.54 s | 2.29 s | 1.54 s | 0 |
+| News | 99 | 96 | 1.27 s | 2.10 s | 1.27 s | 0 |
+| Yard article | 91 | 96 | 1.38 s | 2.34 s | 1.38 s | 0.0004 |
+
+These are single-run preview measurements, not a controlled production
+before/after comparison. They do not validate later commits.
+
+## Resumed without Zaraz changes — 2026-09-24
+
+The saved homepage report identifies a 53.6 KB customer-story poster requested
+while well below the initial viewport. It now remains in an inert template until
+the video is within 600 px of view or receives interaction. The hero Watch link,
+existing player, direct YouTube link and no-JavaScript poster are retained.
+This addresses early image traffic; it does not claim to resolve Partytown's
+blocking time or guarantee a Lighthouse score improvement. GitHub must validate
+this later change; no local tests, builds or audits were run.
+
+The yard report attributes long tasks to the combined BlogPostLayout script but
+does not identify the responsible function. Its desktop sidebar positioning
+already returns below 1024 px. No speculative sidebar or tracking change was
+made from that evidence.
+
+PR #234 remains open at `a4c4305`; main is still `e719265`. Performance PR #232
+must follow it. The latest boundary design deliberately removed the per-file
+publication manifest; do not reintroduce the superseded inventory requirement.
+Moved font implementation notes from `src/assets/fonts/` to `docs/` so they are
+outside publishing folders.
+
+After #234 reaches main, integrate main into this worktree, carry the existing
+HubShorts/ResourceArchive edits into `src/components/resource-hub/`, preserve
+the renamed resource-hub-data imports and keep `publicationBoundary()` last.
+Preserve internal/ separation and the boundary CI step. GitHub must validate
+publication-boundary checks, build, publication tests and the relevant browser
+and performance checks before merge. No post-integration validation is claimed.
+
+Do not stay active waiting for GitHub: push the completed change, state that
+checks are pending, and end the turn. Read their results when the user resumes.

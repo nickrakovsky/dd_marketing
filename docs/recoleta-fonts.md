@@ -20,4 +20,5 @@ with the generator.
 Regenerate manually with `python scripts/subset-recoleta.py` using
 `fonttools[woff]==4.60.2`. No font tooling is required in the production build.
 Source files are the existing Recoleta-Regular.woff2 and
-Recoleta-SemiBold.woff2 in this directory.
+Recoleta-SemiBold.woff2 in `src/assets/fonts/`. Keep these implementation notes
+outside the public asset directories.
