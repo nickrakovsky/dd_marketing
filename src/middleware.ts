@@ -14,8 +14,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // letting the edge (and the Cache Rule, once it stops excluding these
     // paths) serve real traffic from cache instead of hitting the Worker
     // on every request.
-    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
-    response.headers.set('CDN-Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=60');
+    response.headers.set('CDN-Cache-Control', 'public, max-age=60, stale-while-revalidate=60');
     if (response.status === 404) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
   if (!context.isPrerendered) response = await withPublicationStyles(response, pathname);
