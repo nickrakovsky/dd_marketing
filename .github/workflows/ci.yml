@@ -150,10 +150,9 @@ jobs:
 
       - name: Performance Audit (Lighthouse CI)
         run: |
-          # Pass the preview URL via CLI flags which override lighthouserc.cjs defaults.
-          # Explicitly set startServerCommand to empty string to suppress local server launch.
+          # lighthouserc.cjs uses PREVIEW_URL for all five priority pages.
+          # Suppress the local server because these checks target Cloudflare.
           npx lhci autorun \
-            --collect.url="${PREVIEW_URL}/" \
             --collect.startServerCommand="" \
             --collect.startServerReadyPattern="" \
             --collect.numberOfRuns=1

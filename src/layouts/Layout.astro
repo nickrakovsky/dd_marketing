@@ -2,8 +2,10 @@
 
 import '../styles/global.css';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
-import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
-import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
+import recoletaReg from '../assets/fonts/Recoleta-Regular-Core.woff2';
+import recoletaSemi from '../assets/fonts/Recoleta-SemiBold-Core.woff2';
+import recoletaRegExtended from '../assets/fonts/Recoleta-Regular-Extended.woff2';
+import recoletaSemiExtended from '../assets/fonts/Recoleta-SemiBold-Extended.woff2';
 import { getAuthor } from '../data/authors';
 import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
 
@@ -13,6 +15,8 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
+    // Text-led pages can discover their above-the-fold Recoleta faces early.
+    preloadRecoleta?: boolean;
 
     schemaData?: {
         faq?: { question: string; answer: string }[];
@@ -57,6 +61,7 @@ const {
   image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
+  preloadRecoleta = false,
 
   schemaData,
   articleData,
@@ -377,13 +382,17 @@ const jsonLd = {
         <link rel="sitemap" href="/sitemap.xml" />
         <meta name="theme-color" content="#FFF8E9" />
 
-<link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
-        {/* Only Bruta is preloaded — it's the H1/LCP font.
-             Recoleta loads via @font-face with font-display:swap; the Georgia
-             fallback (with size-adjust metrics) renders immediately. Preloading
-             all 3 fonts (146 KB) was saturating mobile bandwidth. */}
+        <link rel="preload" as="font" type="font/woff2" href={brutaFont} crossorigin />
+        {/* Recoleta is preloaded only where intro text can shift the first section
+             as the font swaps. Extended character subsets remain demand-loaded. */}
+        {preloadRecoleta && (
+          <Fragment>
+            <link rel="preload" as="font" type="font/woff2" href={recoletaReg} crossorigin />
+            <link rel="preload" as="font" type="font/woff2" href={recoletaSemi} crossorigin />
+          </Fragment>
+        )}
 
-        {/* A page's own LCP image, preloaded here (immediately after the Bruta preload,
+        {/* A page's own LCP image, preloaded here (immediately after the font preloads,
              before Beasties' inlined critical CSS) rather than left to the preload scanner
              to discover deep in <body>. Opt-in per page via the preloadImages prop. */}
         {preloadImages?.map((p) => (
@@ -429,8 +438,10 @@ const jsonLd = {
               line-gap-override: 33.1707%;
             }
             @font-face { font-family: 'Bruta'; src: url('${brutaFont}') format('woff2'); font-weight: 800; font-display: swap; }
-            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; }
-            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaReg}') format('woff2'); font-weight: 400; font-display: swap; unicode-range: U+20-7E,U+A9,U+AE,U+B0,U+B7,U+D7,U+F7,U+2013-2014,U+2018-2019,U+201C-201D,U+2026,U+2248; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemi}') format('woff2'); font-weight: 600; font-display: swap; unicode-range: U+20-7E,U+A9,U+AE,U+B0,U+B7,U+D7,U+F7,U+2013-2014,U+2018-2019,U+201C-201D,U+2026,U+2248; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaRegExtended}') format('woff2'); font-weight: 400; font-display: swap; unicode-range: U+A1-A8,U+AA-AB,U+AF,U+B1,U+B4,U+B6,U+B8,U+BA-D6,U+D8-F6,U+F8-FF; }
+            @font-face { font-family: 'DD-Recoleta'; src: url('${recoletaSemiExtended}') format('woff2'); font-weight: 600; font-display: swap; unicode-range: U+A1-A8,U+AA-AB,U+AF,U+B1,U+B4,U+B6,U+B8,U+BA-D6,U+D8-F6,U+F8-FF; }
 
             .beasties-font-preserve { font-family: 'Bruta', 'DD-Recoleta'; }
 

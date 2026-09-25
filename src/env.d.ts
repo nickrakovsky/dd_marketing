@@ -5,5 +5,7 @@ declare namespace App {
     /** Captured once at request start; never supplied by a visitor. */
     publicationDate?: Date;
     mdxImageCount?: number;
+    /** Disable body-image priority when content above the article fills the viewport. */
+    prioritizeMdxImage?: boolean;
   }
 }
