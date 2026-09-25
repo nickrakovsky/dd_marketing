@@ -210,6 +210,57 @@ export default defineConfig({
           if (missingRealFaces > 0) {
             throw new Error(`[critical-css] ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
           }
+
+          // Publication-sensitive HTML now caches for up to a day at the edge
+          // (see src/middleware.ts) instead of no-store, so an edited post or
+          // a manually-deployed change needs an explicit purge to show up
+          // immediately rather than waiting out that TTL. This runs at the
+          // end of every build/deploy — not on a schedule — so it never
+          // conflicts with the "no cron jobs" design behind request-time
+          // publication (see docs/daily-blog-schedule.json). Silently skipped
+          // if the token/zone env vars aren't set, so it never blocks a local
+          // or CI build that hasn't configured them.
+          const purgeToken = process.env.CF_PURGE_API_TOKEN;
+          const purgeZoneId = process.env.CF_ZONE_ID;
+          if (purgeToken && purgeZoneId) {
+            const site = 'https://datadocks.com';
+            const slugsIn = (folder) => {
+              const full = fileURLToPath(new URL(`./src/content/${folder}`, import.meta.url));
+              if (!fs.existsSync(full)) return [];
+              return fs.readdirSync(full)
+                .filter((f) => f.endsWith('.mdx') || f.endsWith('.md'))
+                .map((f) => f.replace(/\.mdx?$/, ''));
+            };
+            const urls = [
+              `${site}/`,
+              `${site}/posts`,
+              `${site}/sitemap-posts.xml`,
+              ...slugsIn('posts').map((slug) => `${site}/posts/${slug}`),
+              ...slugsIn('videos').map((slug) => `${site}/videos/${slug}`),
+            ];
+            const chunkSize = 30; // Cloudflare's purge_cache files-array limit
+            let purged = 0;
+            for (let i = 0; i < urls.length; i += chunkSize) {
+              const chunk = urls.slice(i, i + chunkSize);
+              try {
+                const res = await fetch(`https://api.cloudflare.com/client/v4/zones/${purgeZoneId}/purge_cache`, {
+                  method: 'POST',
+                  headers: { Authorization: `Bearer ${purgeToken}`, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ files: chunk }),
+                });
+                const json = await res.json();
+                if (json.success) purged += chunk.length;
+                else console.warn(`[cache-purge] Cloudflare rejected a chunk: ${JSON.stringify(json.errors)}`);
+              } catch (err) {
+                // A failed purge must never fail the build — the day-long TTL
+                // in src/middleware.ts is exactly the fallback for this case.
+                console.warn(`[cache-purge] failed to purge ${chunk.length} URLs: ${err.message}`);
+              }
+            }
+            console.log(`[cache-purge] purged ${purged}/${urls.length} publication-sensitive URLs from the edge cache`);
+          } else {
+            console.log('[cache-purge] CF_PURGE_API_TOKEN/CF_ZONE_ID not set — skipping edge purge (expected for local builds)');
+          }
         }
       }
     },
