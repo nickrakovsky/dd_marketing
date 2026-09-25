@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro';
+import Layout from '../../src/layouts/Layout.astro';
+import Navigation from '../../src/components/Navigation.astro';
+import Footer from '../../src/components/Footer.astro';
 
 export const prerender = true;
 
@@ -98,23 +98,23 @@ const branding = {
         <h2 class="text-xs font-bold uppercase tracking-widest text-[#FE5000] mb-8">01 / Logos</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-white border border-black/10 p-12 rounded-xl flex items-center justify-center h-48">
-                <img src="/brand-assets/logo-wordmark-black.svg" alt="Wordmark Black" class="max-h-full w-auto" />
+                <img src="/__internal/assets/brand/logo-wordmark-black.svg" alt="Wordmark Black" class="max-h-full w-auto" />
             </div>
             <div class="bg-white border border-black/10 p-12 rounded-xl flex items-center justify-center h-48">
-                <img src="/brand-assets/logo-wordmark-orange.svg" alt="Wordmark Orange" class="max-h-full w-auto" />
+                <img src="/__internal/assets/brand/logo-wordmark-orange.svg" alt="Wordmark Orange" class="max-h-full w-auto" />
             </div>
             <div class="bg-black p-12 rounded-xl flex items-center justify-center h-48">
-                <img src="/brand-assets/logo-wordmark-white.svg" alt="Wordmark White" class="max-h-full w-auto" />
+                <img src="/__internal/assets/brand/logo-wordmark-white.svg" alt="Wordmark White" class="max-h-full w-auto" />
             </div>
             <div class="grid grid-cols-3 gap-4 h-48">
                 <div class="bg-white border border-black/10 p-4 rounded-xl flex items-center justify-center">
-                    <img src="/brand-assets/logo-symbol-orange.svg" alt="Symbol Orange" class="h-10 w-auto" />
+                    <img src="/__internal/assets/brand/logo-symbol-orange.svg" alt="Symbol Orange" class="h-10 w-auto" />
                 </div>
                 <div class="bg-black p-4 rounded-xl flex items-center justify-center">
-                    <img src="/brand-assets/logo-symbol-white.svg" alt="Symbol White" class="h-10 w-auto" />
+                    <img src="/__internal/assets/brand/logo-symbol-white.svg" alt="Symbol White" class="h-10 w-auto" />
                 </div>
                 <div class="bg-white border border-black/10 p-4 rounded-xl flex items-center justify-center overflow-hidden">
-                    <img src="/brand-assets/logo-stamp.jpg" alt="Stamp" class="h-16 w-16 rounded-full" />
+                    <img src="/__internal/assets/brand/logo-stamp.jpg" alt="Stamp" class="h-16 w-16 rounded-full" />
                 </div>
             </div>
         </div>
@@ -216,16 +216,16 @@ const branding = {
                     <p class="text-sm text-black/60">Official PDF templates for sales and operations.</p>
                 </div>
                 <div class="flex gap-4">
-                    <a href="/brand-assets/proposal-template-full.pdf" class="bg-[#FE5000] text-white py-2 px-4 rounded font-bold text-xs">Full PDF</a>
-                    <a href="/brand-assets/proposal-template.pdf" class="bg-black/5 text-black py-2 px-4 rounded font-bold text-xs">Cover Only</a>
+                    <a href="/__internal/assets/brand/proposal-template-full.pdf" class="bg-[#FE5000] text-white py-2 px-4 rounded font-bold text-xs">Full PDF</a>
+                    <a href="/__internal/assets/brand/proposal-template.pdf" class="bg-black/5 text-black py-2 px-4 rounded font-bold text-xs">Cover Only</a>
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-4">
-                <img src="/brand-assets/li-cover.jpg" alt="LinkedIn" class="rounded border border-black/5" />
-                <img src="/brand-assets/tw-cover.jpg" alt="Twitter" class="rounded border border-black/5" />
-                <img src="/brand-assets/fb-cover.jpg" alt="Facebook" class="rounded border border-black/5" />
-                <img src="/brand-assets/bc-front.png" alt="Card" class="rounded border border-black/5 col-span-1" />
-                <img src="/brand-assets/bc-back.png" alt="Card" class="rounded border border-black/5 col-span-1" />
+                <img src="/__internal/assets/brand/li-cover.jpg" alt="LinkedIn" class="rounded border border-black/5" />
+                <img src="/__internal/assets/brand/tw-cover.jpg" alt="Twitter" class="rounded border border-black/5" />
+                <img src="/__internal/assets/brand/fb-cover.jpg" alt="Facebook" class="rounded border border-black/5" />
+                <img src="/__internal/assets/brand/bc-front.png" alt="Card" class="rounded border border-black/5 col-span-1" />
+                <img src="/__internal/assets/brand/bc-back.png" alt="Card" class="rounded border border-black/5 col-span-1" />
             </div>
         </div>
       </section>

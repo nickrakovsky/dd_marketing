@@ -177,6 +177,26 @@ export default {
   }
   assert.ok(!staticSitemap.text.includes('/_build/'), 'Static sitemap exposed build-only samples');
 
+  // Exercise the actual Cloudflare artifact, including static-asset fallback.
+  for (const path of [
+    '/wireframes', '/wireframes.html', '/wireframes/index.html',
+    '/wireframes/editorial-bento', '/wireframes/sidebar-engine',
+    '/wireframes/split-stream.html', '/wireframes/tabbed-hub/',
+    '/%77ireframes', '/brand-book', '/brand-book.html', '/sales-one-pager',
+    '/internal/marketing-pdf', '/preview/daily-blog/home', '/preview/daily-blog/posts',
+    '/brand-assets/proposal-template.pdf', '/brand-assets/proposal-template-full.pdf',
+    '/brand-assets/bc-front.png', '/__internal/assets/brand/proposal-template.pdf',
+    '/_offline_print/example.pdf',
+  ]) {
+    const hidden = await request(path, Date.parse(slots[0].pubDate));
+    assert.equal(hidden.response.status, 404, `${path}: internal content must not be public`);
+    assert.ok(!staticSitemap.text.includes(`https://datadocks.com${path}<`), `${path}: internal URL in sitemap`);
+    checks++;
+  }
+  const publicLogo = await request('/brand-assets/logo-orange.svg', Date.parse(slots[0].pubDate));
+  assert.equal(publicLogo.response.status, 200, 'The logo used by public pages must remain available');
+  checks++;
+
   for (const [index, slot] of slots.entries()) {
     const cutoff = Date.parse(slot.pubDate);
     for (const [phase, instant] of [['before', cutoff - 1], ['exact', cutoff], ['after', cutoff + 1]]) {

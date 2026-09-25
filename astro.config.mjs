@@ -14,6 +14,9 @@ import Beasties from 'beasties';
 import { collectPublicationStyles, finishPublicationStyles } from './scripts/publication-build.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
+import internalWorkspace from './integrations/internal-workspace.mjs';
+import publicationBoundary from './integrations/publication-boundary.mjs';
+import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -33,8 +36,9 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   vite: {
-    // Use React's Worker renderer without relying on dashboard-only compatibility flags.
-    resolve: { alias: [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] },
+    // The deployed Worker needs React's edge renderer; local development runs in Node.
+    resolve: { alias: process.env.NODE_ENV === 'production'
+      ? [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] : [] },
     build: {
       cssCodeSplit: false,
     },
@@ -60,42 +64,16 @@ export default defineConfig({
   },
 
   integrations: [
+    internalWorkspace(),
     {
-      name: 'dev-only-pages',
+      name: 'publication-build-artifacts',
       hooks: {
         'astro:config:setup': ({ injectRoute, command }) => {
           if (command === 'build') {
             injectRoute({ pattern: '/_build/publication/[...path]', entrypoint: './src/build-pages/publication-artifacts.astro', prerender: true });
           }
-          if (command === 'dev') {
-            injectRoute({
-              pattern: '/preview/daily-blog/home',
-              entrypoint: './src/offline-pages/daily-blog-home-preview.astro'
-            });
-            injectRoute({
-              pattern: '/preview/daily-blog/posts',
-              entrypoint: './src/offline-pages/daily-blog-posts-preview.astro'
-            });
-            injectRoute({
-              pattern: '/sales-one-pager',
-              entrypoint: './src/offline-pages/sales-one-pager.astro'
-            });
-            injectRoute({
-              pattern: '/internal/marketing-pdf',
-              entrypoint: './src/offline-pages/marketing-pdf.astro'
-            });
-            injectRoute({
-              pattern: '/brand-book',
-              entrypoint: './src/offline-pages/brand-book.astro'
-            });
-          }
         },
         'astro:build:done': async ({ dir }) => {
-          const offlinePath = fileURLToPath(new URL('_offline_print', dir));
-          if (fs.existsSync(offlinePath)) {
-            fs.rmSync(offlinePath, { recursive: true, force: true });
-          }
-
           // Cloudflare _routes.json has a 100-entry limit.
           // Collapse static sections only. Runtime publication routes must reach the Worker.
           const routesPath = fileURLToPath(new URL('_routes.json', dir));
@@ -103,7 +81,7 @@ export default defineConfig({
             const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
             const wildcardPrefixes = ['/news/', '/integrations/', '/datadocks-features/', '/benefits/'];
             routes.exclude = routes.exclude.filter(rule => {
-              if (rule.startsWith('/_build/') || rule.startsWith('/posts/') || rule.startsWith('/videos/')) return false;
+              if (rule === '/*.html' || isInternalPath(rule) || rule.startsWith('/posts/') || rule.startsWith('/videos/')) return false;
               return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
             });
             wildcardPrefixes.forEach(prefix => {
@@ -113,7 +91,7 @@ export default defineConfig({
               }
             });
             // A directory wildcard does not cover the hub's slashless URL.
-            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', '/_worker.js', '/_worker.js/*', '/_build/*']) {
+            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', ...internalPrefixes.map(prefix => prefix + '*'), '/brand-assets/*']) {
               if (!routes.include.includes(route)) routes.include.push(route);
             }
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
@@ -229,8 +207,8 @@ export default defineConfig({
       // This child sitemap evaluates publication dates on every request.
       customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
       // All article URLs belong to the runtime sitemap, including those already published.
-      // Keyword landing pages and the internal wireframe mockups are noindexed, so keep them out of the sitemap too.
-      filter: (page) => !new URL(page).pathname.startsWith('/_build/') && !new URL(page).pathname.startsWith('/preview/') && !new URL(page).pathname.startsWith('/posts/') && !new URL(page).pathname.startsWith('/wireframes') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // Internal namespaces are never published; paid landing pages remain public but noindexed.
+      filter: (page) => !isInternalPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
@@ -264,6 +242,7 @@ export default defineConfig({
     // fences are ever needed in MDX, pre-render them the same way rather than
     // re-adding a global integration.
     mdx(),
-    precompiledImages()],
+    precompiledImages(),
+    publicationBoundary()],
 
 });

@@ -5,7 +5,8 @@ export default {
   darkMode: ["class"],
   // I added 'astro' and 'html' to this list so Astro files work too
   content: [
-    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"
+    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
+    ...(process.env.NODE_ENV === "production" ? [] : ["./internal/**/*.{astro,ts}"])
   ],
   safelist: [
     'md:col-span-3', 'md:col-span-4', 'md:col-span-5', 'md:col-span-6', 'md:col-span-7',
