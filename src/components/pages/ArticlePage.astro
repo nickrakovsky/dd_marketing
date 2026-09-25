@@ -1,6 +1,6 @@
 ---
-import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { getRelatedEntries } from '../../lib/related-entries';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
@@ -39,8 +39,7 @@ const formattedDate = new Date(entry.data.pubDate).toLocaleDateString('en-US', {
   day: 'numeric'
 });
 
-const posts = await getCollection('posts');
-const videos = await getCollection('videos');
+const [posts, videos] = await getRelatedEntries();
 const allPosts = filterPublished([...posts, ...videos], asOf);
 
 const categoryPosts = allPosts

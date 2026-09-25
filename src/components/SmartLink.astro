@@ -90,9 +90,22 @@ let isUnpublishedTarget = false;
 
 async function getEntryCaseInsensitive(collection: any, idToFind: string): Promise<any> {
   if (!idToFind) return null;
-  const { getCollection } = await import('astro:content');
-  const allEntries = await getCollection(collection);
-  return allEntries.find((e: any) => e.slug.toLowerCase() === idToFind.toLowerCase());
+  // MDX can render many SmartLinks at once. Share one collection lookup and
+  // index within this request, while testing publication time separately below.
+  const indexes: Map<string, Promise<Map<string, any>>> = (Astro.locals as any).smartLinkIndexes ??= new Map();
+  let indexPromise = indexes.get(collection);
+  if (!indexPromise) {
+    indexPromise = import('astro:content').then(({ getCollection }) => getCollection(collection)).then((entries) => {
+      const index = new Map<string, any>();
+      for (const entry of entries as any[]) {
+        const slug = entry.slug.toLowerCase();
+        if (!index.has(slug)) index.set(slug, entry);
+      }
+      return index;
+    });
+    indexes.set(collection, indexPromise);
+  }
+  return (await indexPromise).get(idToFind.toLowerCase()) ?? null;
 }
 if (type === 'glossary' && id) {
   const entry = await getEntryCaseInsensitive('glossary', id);
