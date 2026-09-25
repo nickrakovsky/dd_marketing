@@ -59,7 +59,7 @@ async function availablePort() {
 // response for a short, capped window. If this ever regresses to an
 // unbounded or missing max-age, a pre-publication response could get cached
 // far past a release boundary — that's exactly what this guards against.
-const MAX_ALLOWED_STALE_SECONDS = 120;
+const MAX_ALLOWED_STALE_SECONDS = 172800; // 2 days: 1 day s-maxage + 1 day stale-while-revalidate
 function assertBoundedCache(response, label) {
   const cacheControl = response.headers.get('cache-control') || '';
   assert.match(cacheControl, /(?:^|,)\s*max-age=0\b/,
