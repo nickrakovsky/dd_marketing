@@ -49,12 +49,30 @@ async function availablePort() {
   return port;
 }
 
-// No-store is intentional: a cached pre-publication 404 or listing must never
-// outlive a release boundary. Revisit these assertions if bounded caching is
-// introduced, with a separate test for expiry and revalidation at the cutoff.
-function assertUncached(response, label) {
-  assert.match(response.headers.get('cache-control') || '', /(?:^|,)\s*(?:private\s*,\s*)?no-store\b/i,
-    `${label}: publication-sensitive responses must not be cached`);
+// Bounded caching (PR: short edge TTL instead of no-store) trades a small,
+// fixed staleness window for real edge cache hits. This harness runs the
+// Worker directly with no CDN in front of it, so it cannot exercise actual
+// edge expiry/revalidation — what it CAN and must keep proving is the
+// contract the origin hands to any downstream cache: browsers never treat
+// the page as fresh on their own (max-age=0, so every navigation revalidates
+// over the network), and any shared cache is only ever allowed to reuse a
+// response for a short, capped window. If this ever regresses to an
+// unbounded or missing max-age, a pre-publication response could get cached
+// far past a release boundary — that's exactly what this guards against.
+const MAX_ALLOWED_STALE_SECONDS = 172800; // 2 days: 1 day s-maxage + 1 day stale-while-revalidate
+function assertBoundedCache(response, label) {
+  const cacheControl = response.headers.get('cache-control') || '';
+  assert.match(cacheControl, /(?:^|,)\s*max-age=0\b/,
+    `${label}: publication-sensitive responses must force browser revalidation (max-age=0)`);
+  const sMaxAge = cacheControl.match(/(?:^|,)\s*s-maxage=(\d+)/);
+  assert.ok(sMaxAge, `${label}: publication-sensitive responses must declare a bounded s-maxage`);
+  assert.ok(Number(sMaxAge[1]) <= MAX_ALLOWED_STALE_SECONDS,
+    `${label}: s-maxage=${sMaxAge[1]} exceeds the ${MAX_ALLOWED_STALE_SECONDS}s cap — a longer edge TTL risks stale content surviving well past a release boundary`);
+  const swr = cacheControl.match(/(?:^|,)\s*stale-while-revalidate=(\d+)/);
+  if (swr) {
+    assert.ok(Number(swr[1]) <= MAX_ALLOWED_STALE_SECONDS,
+      `${label}: stale-while-revalidate=${swr[1]} exceeds the ${MAX_ALLOWED_STALE_SECONDS}s cap — bounds how long a stale copy can be served while revalidating`);
+  }
 }
 
 try {
@@ -159,6 +177,26 @@ export default {
   }
   assert.ok(!staticSitemap.text.includes('/_build/'), 'Static sitemap exposed build-only samples');
 
+  // Exercise the actual Cloudflare artifact, including static-asset fallback.
+  for (const path of [
+    '/wireframes', '/wireframes.html', '/wireframes/index.html',
+    '/wireframes/editorial-bento', '/wireframes/sidebar-engine',
+    '/wireframes/split-stream.html', '/wireframes/tabbed-hub/',
+    '/%77ireframes', '/brand-book', '/brand-book.html', '/sales-one-pager',
+    '/internal/marketing-pdf', '/preview/daily-blog/home', '/preview/daily-blog/posts',
+    '/brand-assets/proposal-template.pdf', '/brand-assets/proposal-template-full.pdf',
+    '/brand-assets/bc-front.png', '/__internal/assets/brand/proposal-template.pdf',
+    '/_offline_print/example.pdf',
+  ]) {
+    const hidden = await request(path, Date.parse(slots[0].pubDate));
+    assert.equal(hidden.response.status, 404, `${path}: internal content must not be public`);
+    assert.ok(!staticSitemap.text.includes(`https://datadocks.com${path}<`), `${path}: internal URL in sitemap`);
+    checks++;
+  }
+  const publicLogo = await request('/brand-assets/logo-orange.svg', Date.parse(slots[0].pubDate));
+  assert.equal(publicLogo.response.status, 200, 'The logo used by public pages must remain available');
+  checks++;
+
   for (const [index, slot] of slots.entries()) {
     const cutoff = Date.parse(slot.pubDate);
     for (const [phase, instant] of [['before', cutoff - 1], ['exact', cutoff], ['after', cutoff + 1]]) {
@@ -166,7 +204,7 @@ export default {
       const label = `Slot ${slot.slot} ${phase} (${new Date(instant).toISOString()})`;
       const { response, text } = await request(articlePath(slot), instant);
       assert.equal(response.status, published ? 200 : 404, `${label}: article availability`);
-      assertUncached(response, `${label} article`);
+      assertBoundedCache(response, `${label} article`);
       if (published) {
         assert.ok(text.includes(articlePath(slot)), `${label}: article canonical/content was not rendered`);
         assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${label}: published article is noindex`);
@@ -182,7 +220,7 @@ export default {
       for (const path of ['/', '/posts', '/sitemap-posts.xml']) {
         const result = await request(path, instant);
         assert.equal(result.response.status, 200, `${label}: ${path} response`);
-        assertUncached(result.response, `${label} ${path}`);
+        assertBoundedCache(result.response, `${label} ${path}`);
         assert.equal(result.text.includes(slot.slug), published, `${label}: ${path} visibility`);
         for (const future of slots.filter((entry) => Date.parse(entry.pubDate) > instant)) {
           assert.ok(!result.text.includes(future.slug), `${label}: ${path} leaked future post ${future.slug}`);

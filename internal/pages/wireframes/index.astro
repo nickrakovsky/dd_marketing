@@ -1,11 +1,11 @@
 ---
 export const prerender = true;
 
-import Layout from "../../layouts/Layout.astro";
-import Navigation from "../../components/Navigation.astro";
-import Footer from "../../components/Footer.astro";
-import WireframeToolbar from "../../components/wireframes/WireframeToolbar.astro";
-import { getWireframeData } from "../../lib/wireframe-data";
+import Layout from "../../../src/layouts/Layout.astro";
+import Navigation from "../../../src/components/Navigation.astro";
+import Footer from "../../../src/components/Footer.astro";
+import WireframeToolbar from "../../components/WireframeToolbar.astro";
+import { getWireframeData } from "../../../src/lib/resource-hub-data";
 
 const { evergreenPosts, discoverPosts } = await getWireframeData();
 

@@ -1,12 +1,12 @@
 ---
 export const prerender = true;
 
-import Layout from "../../layouts/Layout.astro";
-import Navigation from "../../components/Navigation.astro";
-import Footer from "../../components/Footer.astro";
-import CTA from "../../components/home/CTA.astro";
-import WireframeToolbar from "../../components/wireframes/WireframeToolbar.astro";
-import { getWireframeData } from "../../lib/wireframe-data";
+import Layout from "../../../src/layouts/Layout.astro";
+import Navigation from "../../../src/components/Navigation.astro";
+import Footer from "../../../src/components/Footer.astro";
+import CTA from "../../../src/components/home/CTA.astro";
+import WireframeToolbar from "../../components/WireframeToolbar.astro";
+import { getWireframeData } from "../../../src/lib/resource-hub-data";
 import { Image } from "astro:assets";
 
 const { evergreenPosts, discoverPosts, topics } = await getWireframeData();

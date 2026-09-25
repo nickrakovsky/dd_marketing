@@ -1,6 +1,7 @@
 # Five-page performance pass
 
-Branch: `codex/site-speed-performance`; main integrated through `e719265`.
+Branch: `codex/site-speed-performance-review`; main integrated through `b30e44e`.
+This review branch supersedes the earlier `codex/site-speed-performance` draft.
 
 ## Baseline supplied for this work
 
@@ -51,12 +52,12 @@ The saved trace has no script source and does not identify the exact DOM read.
 It shows a whole-document layout involving 501 elements on news. Site layout
 work and the timing of the read can affect its cost.
 
-The next bounded investigation is source inspection: open the browser-delivered
-`/news` document in DevTools, find `j.zaraz.init` near the recorded location,
-and identify the layout-reading statement and immediately preceding DOM writes.
-Line/column numbers may change after deployment. This needs browser access, not
-Cloudflare administrator access. Do not change Zaraz loading or request broad
-dashboard investigation before identifying a specific operation or setting.
+The user subsequently supplied the initializer source. Its `window.innerHeight`
+and `window.innerWidth` reads are plausible synchronous-layout triggers. The
+user's Vivaldi recording reported LCP 0.38 s, CLS 0 and a passed forced-reflow
+insight, so it did not confirm a problematic reflow at either statement. Zaraz
+investigation is parked unless a later production mobile audit reproduces it.
+No configuration defect or administrator action has been established.
 
 No Cloudflare settings were changed in this worktree.
 
@@ -223,3 +224,32 @@ and performance checks before merge. No post-integration validation is claimed.
 
 Do not stay active waiting for GitHub: push the completed change, state that
 checks are pending, and end the turn. Read their results when the user resumes.
+
+## Integrated prerequisite — 2026-09-25
+
+PR #234 merged as `b30e44e`. Integrated current main into the new
+`codex/site-speed-performance-review` branch for a fresh PR superseding #232.
+The merge carried the performance changes into the moved resource-hub files
+without conflicts. Source review confirms that the boundary integration remains
+last, internal material stays under `internal/`, and the Worker guards and latest
+cache-duration changes match main. There is no per-file publication manifest.
+
+The existing GitHub workflow covers `check:publication-boundary` through
+`npm run check`, plus `test:publication-boundary`, build, publication tests and
+browser/accessibility checks. Validation of this integration is pending; no local
+tests, builds or audits were run.
+
+All required checks passed on the earlier poster commit `251aa04`. Its saved
+reports confirm the poster request disappeared and homepage transfer fell from
+303,149 to 248,130 bytes. Performance scores were 70/77/97/99/89 for
+home/posts/comparison/news/yard. Comparing this run to `c91ff97` is not controlled:
+the host browser changed from Chrome 152 to 153 and runner benchmarks differed.
+Home/posts scores were affected by blocking-time spikes; yard's heading painted
+later despite reduced blocking time. These observations do not establish a
+regression caused by the poster change and do not validate the new integration.
+
+Treat GitHub's performance scores as diagnostic warnings. Assess the five live
+production URLs with PageSpeed Insights before/after deployment; its lab runs
+can vary and its real-user data covers a trailing 28-day period. Do not change
+analytics to improve an audit score. Keep publication and functional checks as
+merge requirements, and do not wait or poll while CI runs.

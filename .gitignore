@@ -9,6 +9,7 @@
 !/tests/
 !/docs/
 !/integrations/
+!/internal/
 !/content-revamps/
 
 # build output
@@ -40,12 +41,12 @@ pnpm-debug.log*
 webflow-migration/
 
 # Offline print assets - excluded from production build
-public/_offline_print/*
-!public/_offline_print/.gitkeep
+internal/assets/print/*
+!internal/assets/print/.gitkeep
 
 # Local marketing data & exports - NOT FOR GITHUB
-src/offline-pages/*.txt
-src/offline-pages/*.csv
+internal/pages/*.txt
+internal/pages/*.csv
 
 # Local analysis and experiments
 analysis/
