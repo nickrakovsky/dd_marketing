@@ -391,7 +391,7 @@ function SubCard(props: {
 /** Text-only list item for subcategories without images */
 function TextListItem(props: {
   sub: SubCategory;
-  onClick: () => void;
+  onClick: (e: MouseEvent) => void;
   index: number;
   disabled?: boolean;
   isBackwardNav?: boolean;
@@ -461,10 +461,15 @@ export default function YardTypeSelector() {
   const engine = createYardTypeEngine();
   const [isPreparingResults, setIsPreparingResults] = createSignal(false);
   const [resultsLoadError, setResultsLoadError] = createSignal(false);
-  const prepareResults = () => Promise.all([
+  let resultsPreparation: Promise<unknown> | undefined;
+  let resultSelection = 0;
+  const prepareResults = () => resultsPreparation ??= Promise.all([
     engine.loadSystemMatches(),
     loadSystemDetailPanel(),
-  ]);
+  ]).catch(error => {
+    resultsPreparation = undefined;
+    throw error;
+  });
 
   // Navigation & animation signals
   const [isNavigating, setIsNavigating] = createSignal(false);
@@ -533,6 +538,7 @@ export default function YardTypeSelector() {
   };
 
   onCleanup(() => {
+    resultSelection++;
     cleanupActiveAnimation();
     setIsHeaderThumbBoxTransparent(false);
   });
@@ -663,19 +669,13 @@ export default function YardTypeSelector() {
     }, maxExitDelay);
   };
 
-  const handleCategoryClick = async (catId: string, e: MouseEvent) => {
-    if (isNavigating() || isPreparingResults()) return;
+  const handleCategoryClick = (catId: string, e: MouseEvent) => {
+    if (isNavigating()) return;
     const targetBtn = e.currentTarget as HTMLElement;
-    setIsPreparingResults(true);
     setResultsLoadError(false);
-    try {
-      await prepareResults();
-    } catch {
-      setResultsLoadError(true);
-      return;
-    } finally {
-      setIsPreparingResults(false);
-    }
+    // Subcategories are already available. Fetch later steps without delaying
+    // this transition; report download failures only when results are requested.
+    void prepareResults().catch(() => {});
     originNode = targetBtn;
     const imgEl = targetBtn.querySelector("img");
     if (imgEl) {
@@ -702,10 +702,26 @@ export default function YardTypeSelector() {
     }
   };
 
-  const handleSubCategoryClick = (subId: string, e: MouseEvent) => {
-    if (isNavigating()) return;
-    
+  const handleSubCategoryClick = async (subId: string, e: MouseEvent) => {
+    if (isNavigating() || isPreparingResults()) return;
     const targetBtn = e.currentTarget as HTMLElement;
+    const cat = engine.selectedCategory();
+    const sub = cat?.subCategories.find((s) => s.id === subId);
+    if (!cat || !sub) return;
+
+    const selection = ++resultSelection;
+    setIsPreparingResults(true);
+    setResultsLoadError(false);
+    try {
+      await prepareResults();
+      // Back navigation or unmounting cancels this selection, not the download.
+      if (selection !== resultSelection) return;
+    } catch {
+      if (selection === resultSelection) setResultsLoadError(true);
+      return;
+    } finally {
+      if (selection === resultSelection) setIsPreparingResults(false);
+    }
     originNode = targetBtn;
     const imgEl = targetBtn.querySelector("img");
     if (imgEl) {
@@ -713,9 +729,7 @@ export default function YardTypeSelector() {
       originSrc = imgEl.currentSrc || imgEl.src;
     }
 
-    const cat = engine.selectedCategory();
-    const sub = cat?.subCategories.find((s) => s.id === subId);
-    const subIdx = cat ? cat.subCategories.findIndex((s) => s.id === subId) : 0;
+    const subIdx = cat.subCategories.findIndex((s) => s.id === subId);
     if (sub && cat) {
       setSelectedSystemIndex(0);
       setFacilityAdjoinsBuilding(null);
@@ -757,6 +771,9 @@ export default function YardTypeSelector() {
     nextThumbAspect: string | null
   ) => {
     if (isNavigating()) return;
+    resultSelection++;
+    setIsPreparingResults(false);
+    setResultsLoadError(false);
     setFacilityAdjoinsBuilding(null);
     setSelectedSystemIndex(0);
 
@@ -1239,7 +1256,7 @@ export default function YardTypeSelector() {
                       title={cat.title}
                       aspectRatio="508 / 276"
                       index={index()}
-                      disabled={isNavigating() || isPreparingResults()}
+                      disabled={isNavigating()}
                       isBackwardNav={engine.navDirection() === "backward"}
                       homeIndex={targetHomeIndex()}
                       isExitingCards={isExitingCards()}
@@ -1283,7 +1300,7 @@ export default function YardTypeSelector() {
                               index={index()}
                               isBackwardNav={isBackward()}
                               homeIndex={targetHomeIndex()}
-                              disabled={isNavigating()}
+                              disabled={isNavigating() || isPreparingResults()}
                               isExitingCards={isExitingCards()}
                               flipSourceIndex={flipSourceIndex()}
                               isHomeLandingComplete={isHomeLandingComplete()}
@@ -1306,7 +1323,7 @@ export default function YardTypeSelector() {
                               index={index()}
                               isBackwardNav={isBackward()}
                               homeIndex={targetHomeIndex()}
-                              disabled={isNavigating()}
+                              disabled={isNavigating() || isPreparingResults()}
                               isExitingCards={isExitingCards()}
                               flipSourceIndex={flipSourceIndex()}
                               isHomeLandingComplete={isHomeLandingComplete()}
@@ -1335,7 +1352,7 @@ export default function YardTypeSelector() {
                                   index={index()}
                                   isBackwardNav={isBackward()}
                                   homeIndex={targetHomeIndex()}
-                                  disabled={isNavigating()}
+                                  disabled={isNavigating() || isPreparingResults()}
                                   isExitingCards={isExitingCards()}
                                   flipSourceIndex={flipSourceIndex()}
                                   isHomeLandingComplete={isHomeLandingComplete()}
@@ -1361,7 +1378,7 @@ export default function YardTypeSelector() {
                                 index={index()}
                                 isBackwardNav={isBackward()}
                                 homeIndex={targetHomeIndex()}
-                                disabled={isNavigating()}
+                                disabled={isNavigating() || isPreparingResults()}
                                 isExitingCards={isExitingCards()}
                                 flipSourceIndex={flipSourceIndex()}
                                 isHomeLandingComplete={isHomeLandingComplete()}
@@ -1383,7 +1400,7 @@ export default function YardTypeSelector() {
                                 index={realIdx}
                                 isBackwardNav={isBackward()}
                                 homeIndex={targetHomeIndex()}
-                                disabled={isNavigating()}
+                                disabled={isNavigating() || isPreparingResults()}
                                 isExitingCards={isExitingCards()}
                                 flipSourceIndex={flipSourceIndex()}
                                 isHomeLandingComplete={isHomeLandingComplete()}
@@ -1404,11 +1421,11 @@ export default function YardTypeSelector() {
                             index={index()}
                             isBackwardNav={isBackward()}
                             homeIndex={targetHomeIndex()}
-                            disabled={isNavigating()}
+                            disabled={isNavigating() || isPreparingResults()}
                             isExitingCards={isExitingCards()}
                             flipSourceIndex={flipSourceIndex()}
                             isHomeLandingComplete={isHomeLandingComplete()}
-                            onClick={() => engine.selectSubCategory(sub.id)}
+                            onClick={(e) => handleSubCategoryClick(sub.id, e)}
                           />
                         )}
                       </For>
