@@ -51,6 +51,9 @@ internal/pages/*.csv
 # Local analysis and experiments
 analysis/
 
+# Local report-only external-link audit output
+/internal/outlink-audit/
+
 # Private internal assets
 internal-marketing/
 

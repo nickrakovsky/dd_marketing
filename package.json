@@ -23,7 +23,9 @@
     "test:publication": "node scripts/test-scheduled-publication.mjs",
     "perf": "lhci autorun",
     "check:publication-boundary": "node scripts/publication-boundary.mjs",
-    "test:publication-boundary": "node --test scripts/publication-boundary.test.mjs"
+    "test:publication-boundary": "node --test scripts/publication-boundary.test.mjs",
+    "test:outlinks": "node --test scripts/outlink-audit/*.test.mjs",
+    "audit:outlinks": "node scripts/outlink-audit.mjs scan"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

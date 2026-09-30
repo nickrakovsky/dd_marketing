@@ -1,0 +1,94 @@
+name: External Link Audit
+
+# Cloudflare's GitHub integration supplies Checks, not deployment_status events.
+# CI completion wakes this independent job after main pushes; the gate verifies
+# the same commit's dd-marketing deployment before allowing a production crawl.
+# No calendar trigger: no deployment means no automatic audit.
+# Cloudflare dashboard redeploys/deploy hooks that don't run main-push CI need a
+# manual dispatch. An explicit force bypasses cooldown; report_only only disables
+# issue writes, not the cooldown. Keep start artifacts for at least nine days.
+on:
+  workflow_run:
+    workflows: ['CI – Quality Gate']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Override the nine-day cooldown for a manual retry'
+        type: boolean
+        default: false
+      report_only:
+        description: 'Save the report without creating or updating an issue'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  issues: write
+
+# Keep the eligibility check and the scan under the SAME lock. Do not cancel
+# an active audit when another deployment completes.
+concurrency:
+  group: production-outlink-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - name: Check cooldown and successful production deployment
+        id: gate
+        run: node scripts/outlink-audit.mjs gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Install locked dependencies
+        if: steps.gate.outputs.due == 'true'
+        run: npm ci --ignore-scripts
+      - name: Record audit attempt
+        if: steps.gate.outputs.due == 'true'
+        run: node scripts/outlink-audit.mjs mark-start
+      - name: Persist cooldown before making crawl requests
+        if: steps.gate.outputs.due == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: outlink-audit-start
+          path: ${{ runner.temp }}/outlink-audit/start.json
+          retention-days: 30
+          if-no-files-found: error
+          overwrite: true
+      - name: Crawl production and verify external destinations
+        id: scan
+        if: steps.gate.outputs.due == 'true'
+        run: node scripts/outlink-audit.mjs scan
+      - name: Update the rolling editorial issue
+        if: >-
+          !cancelled() && steps.gate.outputs.due == 'true' &&
+          (steps.scan.outcome == 'success' || steps.scan.outcome == 'failure')
+        run: node scripts/outlink-audit.mjs report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTLINK_REPORT_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.report_only }}
+      - name: Save complete or partial audit evidence
+        if: ${{ !cancelled() && steps.gate.outputs.due == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: outlink-audit-report-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/outlink-audit/*.json
+          retention-days: 30
+          if-no-files-found: warn
