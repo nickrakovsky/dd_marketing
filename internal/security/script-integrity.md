@@ -8,7 +8,9 @@ This PR publishes reviewed copies at content-versioned `/_astro/vendor/` URLs:
 - Dealfront tracker.
 - Bento bootstrap **and** the SDK it loads. The bootstrap's SDK URL is rewritten to the reviewed local asset.
 
-`src/lib/vendor-assets.mjs` records the public source URLs and SHA-384 pins. The build verifies every download and cached file before publication and fails on unexpected bytes or a failed download. No live CDN fallback executes unreviewed code. Calendly and Dealfront additionally have browser SRI on their native script elements. Bento stays in Partytown, with build verification instead of pretending that an integrity attribute is enforced by Partytown.
+`src/lib/vendor-assets.mjs` records the public source URLs and SHA-384 pins. The build verifies every downloaded, cached or committed snapshot before publication and fails on unexpected bytes or a failed download. No live CDN fallback executes unreviewed code. Calendly and Dealfront additionally have browser SRI on their native script elements. Bento stays in Partytown, with build verification instead of pretending that an integrity attribute is enforced by Partytown.
+
+The Bento SDK uses a reviewed snapshot at `src/assets/vendor/bento-sdk.js`, captured from `https://app.bentonow.com/b4cb9a34a989bcc643714151df7b7154.js` on October 1, 2026. Its SHA-384 remains `sha384-wXML0YNxxUzw4ZMCNPmYMgFKJwZWr4rw8/XxyI56JGDzr5oC+To3I0lc3qRqEgJ1`. Bento returned HTTP 403 to the GitHub-hosted build runner, so builds read these exact approved bytes locally. Every build verifies the snapshot, even if a cached copy exists. A missing or modified snapshot fails without a network fallback. Changes to the SDK require source review, replacing the snapshot, and updating the pin together.
 
 The existing idle/on-demand schedules, booking URL, event forwarding and production hostname gate remain intact. The Calendly iframe still runs at calendly.com. Optional Bento surveys/chat/customizations are not used by this site and are outside this asset list; review their script dependencies if enabling those features.
 

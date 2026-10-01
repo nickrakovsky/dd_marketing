@@ -4,7 +4,8 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { verifyVendorSource, transformVendorSource, prepareVendorAssets } from '../integrations/verified-vendor-assets.mjs';
+import { pathToFileURL } from 'node:url';
+import { verifyVendorSource, transformVendorSource, prepareVendorAssets, loadVendorSource } from '../integrations/verified-vendor-assets.mjs';
 import { VENDOR_SOURCES, VENDOR_ASSETS, PINNED_BENTO_UUID, bentoScriptPath } from '../src/lib/vendor-assets.mjs';
 
 test('SHA-384 accepts reviewed bytes and rejects a one-byte change', () => {
@@ -50,4 +51,28 @@ test('cached vendor bytes are checked rather than trusted', async t => {
   const key = createHash('sha384').update(VENDOR_SOURCES.calendlyJs.integrity).digest('hex');
   await fs.writeFile(path.join(cache, key), 'corrupted cached code');
   await assert.rejects(prepareVendorAssets(path.join(root, 'dist'), cache, async () => { throw new Error('must not fetch'); }), /failed SHA-384/);
+});
+
+test('the reviewed Bento SDK builds without requesting its blocked upstream URL', async () => {
+  let networkRequests = 0;
+  const bytes = await loadVendorSource('bentoSdk', '/unused-cache', async () => {
+    networkRequests++;
+    return new Response('', { status: 403 });
+  });
+  verifyVendorSource('bentoSdk', bytes);
+  assert.equal(networkRequests, 0);
+});
+
+test('missing or corrupted SDK snapshots fail without falling back to the network', async t => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'dd-vendor-snapshot-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const sourceRoot = pathToFileURL(root + path.sep);
+  let networkRequests = 0;
+  const fetcher = async () => { networkRequests++; throw new Error('must not fetch'); };
+  await assert.rejects(loadVendorSource('bentoSdk', '/unused-cache', fetcher, sourceRoot), { code: 'ENOENT' });
+  const snapshot = path.join(root, VENDOR_SOURCES.bentoSdk.snapshot);
+  await fs.mkdir(path.dirname(snapshot), { recursive: true });
+  await fs.writeFile(snapshot, 'modified SDK');
+  await assert.rejects(loadVendorSource('bentoSdk', '/unused-cache', fetcher, sourceRoot), /failed SHA-384/);
+  assert.equal(networkRequests, 0);
 });

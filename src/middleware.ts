@@ -1,5 +1,6 @@
 import { withPublicationStyles } from './lib/publication-styles';
 import { defineMiddleware } from 'astro:middleware';
+import { CONTENT_SECURITY_POLICY, SCRIPT_POLICY_REPORT_ONLY } from './lib/security-policy.mjs';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // All availability checks within a response use the same instant.
@@ -29,5 +30,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  response.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY);
+  response.headers.set('Content-Security-Policy-Report-Only', SCRIPT_POLICY_REPORT_ONLY);
   return response;
 });

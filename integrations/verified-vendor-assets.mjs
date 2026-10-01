@@ -30,26 +30,39 @@ export function transformVendorSource(name, bytes) {
   return bytes;
 }
 
+export async function loadVendorSource(name, cacheRoot, fetcher = fetch, sourceRoot = new URL('../', import.meta.url)) {
+  const spec = VENDOR_SOURCES[name];
+  if (spec.snapshot) {
+    // A committed snapshot avoids vendor bot protection in CI. A missing or
+    // modified snapshot fails closed; never fall back to a live script.
+    const bytes = await fs.readFile(new URL(spec.snapshot, sourceRoot));
+    verifyVendorSource(name, bytes);
+    return bytes;
+  }
+  const key = createHash('sha384').update(spec.integrity).digest('hex');
+  const cacheFile = path.join(cacheRoot, key);
+  let bytes;
+  try {
+    bytes = await fs.readFile(cacheFile);
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    const response = await fetcher(spec.url, {
+      redirect: 'error', credentials: 'omit', signal: AbortSignal.timeout(30000),
+    });
+    if (!response.ok) throw new Error(`Vendor asset ${name} returned HTTP ${response.status}.`);
+    bytes = Buffer.from(await response.arrayBuffer());
+    verifyVendorSource(name, bytes);
+    await fs.writeFile(cacheFile, bytes);
+  }
+  // Recheck cached bytes too. There is no unverified CDN fallback.
+  verifyVendorSource(name, bytes);
+  return bytes;
+}
+
 export async function prepareVendorAssets(buildRoot, cacheRoot, fetcher = fetch) {
   await fs.mkdir(cacheRoot, { recursive: true });
-  for (const [name, spec] of Object.entries(VENDOR_SOURCES)) {
-    const key = createHash('sha384').update(spec.integrity).digest('hex');
-    const cacheFile = path.join(cacheRoot, key);
-    let bytes;
-    try {
-      bytes = await fs.readFile(cacheFile);
-    } catch (error) {
-      if (error.code !== 'ENOENT') throw error;
-      const response = await fetcher(spec.url, {
-        redirect: 'error', credentials: 'omit', signal: AbortSignal.timeout(30000),
-      });
-      if (!response.ok) throw new Error(`Vendor asset ${name} returned HTTP ${response.status}.`);
-      bytes = Buffer.from(await response.arrayBuffer());
-      verifyVendorSource(name, bytes);
-      await fs.writeFile(cacheFile, bytes);
-    }
-    // Recheck cached bytes too. There is no unverified CDN fallback.
-    verifyVendorSource(name, bytes);
+  for (const name of Object.keys(VENDOR_SOURCES)) {
+    const bytes = await loadVendorSource(name, cacheRoot, fetcher);
     const destination = path.join(buildRoot, VENDOR_ASSETS[name].path.slice(1));
     await fs.mkdir(path.dirname(destination), { recursive: true });
     await fs.writeFile(destination, transformVendorSource(name, bytes));

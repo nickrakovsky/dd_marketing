@@ -33,6 +33,9 @@ export const VENDOR_SOURCES = {
     url: `https://app.bentonow.com/${PINNED_BENTO_UUID}.js`,
     integrity: 'sha384-wXML0YNxxUzw4ZMCNPmYMgFKJwZWr4rw8/XxyI56JGDzr5oC+To3I0lc3qRqEgJ1',
     extension: 'js',
+    // Bento rejects GitHub-hosted build runners with HTTP 403. Publish the
+    // reviewed snapshot, checking the same pin before every build.
+    snapshot: 'src/assets/vendor/bento-sdk.js',
   },
 };
 
