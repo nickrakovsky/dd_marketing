@@ -15,8 +15,17 @@ import { collectPublicationStyles, finishPublicationStyles } from './scripts/pub
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
 
+const analyticsWorkers = partytown({ config: { forward: BENTO_PARTYTOWN_FORWARD } });
+const configureAnalyticsWorkers = analyticsWorkers.hooks['astro:config:setup'];
+analyticsWorkers.hooks['astro:config:setup'] = (context) => {
+  // Local analytics are inactive; their worker crashes the embedded preview.
+  if (context.command !== 'dev') return configureAnalyticsWorkers(context);
+};
+
 // https://astro.build/config
 export default defineConfig({
+  // Local previews are reviewed by the editor; omit the automatic dev audits.
+  devToolbar: { enabled: false },
   output: 'server',
   adapter: cloudflare({
     imageService: 'custom',
@@ -33,8 +42,6 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   vite: {
-    // Use React's Worker renderer without relying on dashboard-only compatibility flags.
-    resolve: { alias: [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] },
     build: {
       cssCodeSplit: false,
     },
@@ -63,11 +70,21 @@ export default defineConfig({
     {
       name: 'dev-only-pages',
       hooks: {
-        'astro:config:setup': ({ injectRoute, command }) => {
+        'astro:config:setup': ({ injectRoute, command, updateConfig }) => {
           if (command === 'build') {
+            // Production runs on Workers; local Astro dev uses Node's renderer.
+            updateConfig({
+              vite: {
+                resolve: { alias: [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] },
+              },
+            });
             injectRoute({ pattern: '/_build/publication/[...path]', entrypoint: './src/build-pages/publication-artifacts.astro', prerender: true });
           }
           if (command === 'dev') {
+            injectRoute({
+              pattern: '/posts/warehouse-audit-overview',
+              entrypoint: './src/offline-pages/warehouse-audit-overview.astro'
+            });
             injectRoute({
               pattern: '/preview/daily-blog/home',
               entrypoint: './src/offline-pages/daily-blog-home-preview.astro'
@@ -213,11 +230,7 @@ export default defineConfig({
         }
       }
     },
-    partytown({
-      config: {
-        forward: BENTO_PARTYTOWN_FORWARD,
-      },
-    }),
+    analyticsWorkers,
     tailwind(),
     react({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
