@@ -31,6 +31,9 @@ jobs:
       - name: Publication boundary regression tests
         run: npm run test:publication-boundary
 
+      - name: Vendor asset integrity regression tests
+        run: npm run test:vendor-assets
+
       - name: Linting (ESLint)
         run: npm run lint
 
