@@ -1,0 +1,2 @@
+# Preserve the exact SHA-384-pinned upstream SDK, including its whitespace.
+src/assets/vendor/bento-sdk.js -text -whitespace
