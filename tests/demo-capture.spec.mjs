@@ -33,6 +33,8 @@ async function prepare(page, baseURL) {
       return route.fulfill({status:mode === 'httpFailure' ? 503 : 200,contentType:'application/json',body:JSON.stringify({ok:mode === 'success'})});
     }
     if(url.hostname === 'assets.calendly.com') return route.fulfill({contentType:url.pathname.endsWith('.css')?'text/css':'application/javascript',body:''});
+    // The pinned local widget must not replace the booking stub either.
+    if(url.origin === origin && url.pathname.startsWith('/_astro/vendor/calendly')) return route.abort();
     if(url.origin === origin && ['GET','HEAD'].includes(request.method())) return route.continue();
     return route.abort();
   });

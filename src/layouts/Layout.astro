@@ -6,6 +6,7 @@ import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
 import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
 import { getAuthor } from '../data/authors';
 import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
+import { VENDOR_ASSETS, bentoScriptPath } from '../lib/vendor-assets.mjs';
 
 interface Props {
     title: string;
@@ -65,10 +66,10 @@ const {
 } = Astro.props;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
+const BENTO_SCRIPT_PATH = bentoScriptPath(PUBLIC_BENTO_UUID);
 
 // Dealfront (formerly Leadfeeder) B2B visitor identification. Public site ID,
 // safe to commit — it's exposed in the client bundle either way.
-const DEALFRONT_SITE_ID = '3P1w24d9vEoamY5n';
 // Only these hostnames load the tracker. www.datadocks.com 301s to the apex, but
 // it's listed so a visit that lands there before redirecting is still counted.
 const DEALFRONT_ALLOWED_HOSTS = ['datadocks.com', 'www.datadocks.com'];
@@ -398,15 +399,13 @@ const jsonLd = {
         <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
-        <link rel="dns-prefetch" href="https://fast.bentonow.com" />
-        {/* assets.calendly.com serves the widget JS/CSS; calendly.com is the booking
-             iframe origin. Both are only needed where booking happens, so we preconnect
+        {/* Verified widget JS/CSS are first-party; calendly.com is the booking
+             iframe origin. It is only needed where booking happens, so we preconnect
              on high-intent commercial pages and skip it on content pages (posts/videos)
              where warm-on-hover already covers the rare click. */}
 
         {!isContentPage && (
           <Fragment>
-            <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
             <link rel="preconnect" href="https://calendly.com" crossorigin />
           </Fragment>
         )}
@@ -475,7 +474,7 @@ const jsonLd = {
              event_scheduled postMessage and forward to Zaraz/GA4 only on real
              completed bookings — links to calendly.com/* are intercepted and
              reopened in the popup. */}
-        <script is:inline define:vars={{ CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR }}>
+        <script is:inline define:vars={{ CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR, VENDOR_ASSETS }}>
           (function() {
             // --- Telemetry helper ----------------------------------------
             // We swallow most errors silently so the script doesn't halt and
@@ -582,8 +581,8 @@ const jsonLd = {
               setTimeout(function() {
                 var c = navigator.connection;
                 if (c && (c.saveData || /2g/.test(c.effectiveType || ''))) return;
-                ['https://assets.calendly.com/assets/external/widget.css',
-                 'https://assets.calendly.com/assets/external/widget.js'].forEach(function(href) {
+                [VENDOR_ASSETS.calendlyCss.path,
+                 VENDOR_ASSETS.calendlyJs.path].forEach(function(href) {
                   var l = document.createElement('link');
                   l.rel = 'prefetch';
                   l.href = href;
@@ -598,16 +597,18 @@ const jsonLd = {
               calendlyAssetsLoaded = true;
               var css = document.createElement('link');
               css.rel = 'stylesheet';
-              css.href = 'https://assets.calendly.com/assets/external/widget.css';
+              css.href = VENDOR_ASSETS.calendlyCss.path;
               document.head.appendChild(css);
               return new Promise(function(resolve) {
                 var s = document.createElement('script');
-                s.src = 'https://assets.calendly.com/assets/external/widget.js';
+                s.src = VENDOR_ASSETS.calendlyJs.path;
+                s.integrity = VENDOR_ASSETS.calendlyJs.integrity;
+                s.crossOrigin = 'anonymous';
                 s.async = true;
                 s.onload = function() { resolve(); };
                 s.onerror = function() {
                   calendlyAssetsLoaded = false;
-                  // Calendly's CDN failing is a critical event — booking is
+                  // The pinned widget failing is a critical event — booking is
                   // about to fall back to opening a new tab. We want to know.
                   ddReportError('calendly_assets_load', 'widget.js failed');
                   resolve();
@@ -789,7 +790,7 @@ const jsonLd = {
                 window.bentoSettings = { uuid: PUBLIC_BENTO_UUID };
             </script>
             {/* Load the actual Bento SDK inside a Partytown Web Worker */}
-            <script is:inline type="text/partytown" src={`https://fast.bentonow.com?site_uuid=${PUBLIC_BENTO_UUID}`}></script>
+            <script is:inline type="text/partytown" src={BENTO_SCRIPT_PATH}></script>
           </Fragment>
         )}
 
@@ -816,7 +817,7 @@ const jsonLd = {
              worker proxy, which is slower than running it natively and breaks form
              tracking. The `timeout: 4000` matters: without it a visitor who never
              stops scrolling may never hit an idle callback, and we'd lose the session. */}
-        <script is:inline define:vars={{ DEALFRONT_SITE_ID, DEALFRONT_ALLOWED_HOSTS }}>
+        <script is:inline define:vars={{ DEALFRONT_ALLOWED_HOSTS, VENDOR_ASSETS }}>
           (function () {
             // Production-only. Every Cloudflare Pages build gets a permanent
             // branch alias AND a per-commit alias (e.g. d2862e0f.dd-marketing.pages.dev),
@@ -836,7 +837,9 @@ const jsonLd = {
               };
               var firstScript = document.getElementsByTagName('script')[0];
               var s = document.createElement('script');
-              s.src = 'https://sc.lfeeder.com/lftracker_v1_' + DEALFRONT_SITE_ID + '.js';
+              s.src = VENDOR_ASSETS.dealfront.path;
+              s.integrity = VENDOR_ASSETS.dealfront.integrity;
+              s.crossOrigin = 'anonymous';
               s.async = true;
               firstScript.parentNode.insertBefore(s, firstScript);
             }

@@ -4,6 +4,8 @@ dist
 .wrangler
 public
 src/env.d.ts
+# Reviewed upstream bytes: SHA-384 checked by test:vendor-assets and every build.
+src/assets/vendor/bento-sdk.js
 analysis
 internal-marketing
 webflow-migration

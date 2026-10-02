@@ -31,6 +31,12 @@ jobs:
       - name: Publication boundary regression tests
         run: npm run test:publication-boundary
 
+      - name: Vendor asset integrity regression tests
+        run: npm run test:vendor-assets
+
+      - name: Preview link checker regression tests
+        run: npm run test:preview-links
+
       - name: Linting (ESLint)
         run: npm run lint
 
@@ -165,35 +171,16 @@ jobs:
         # and assets recursively for broken links (404s).
         # Resolve production marketing URLs (including canonical links) against
         # this preview so new routes are checked before they exist on main.
-        # External URLs are skipped to prevent CI flakes caused by third-party bot protection,
-        # rate limits, or external server downtime.
-        run: |
-          npx linkinator "${PREVIEW_URL}" \
-            --recurse \
-            --retry \
-            --retry-errors \
-            --concurrency 25 \
-            --timeout 30000 \
-            --url-rewrite-search '^https?://(www\.)?datadocks\.com(?=[/?#]|$)' \
-            --url-rewrite-replace "${PREVIEW_URL}" \
-            --skip "^https?://(?!(?:[a-zA-Z0-9-]+\.)*pages\.dev|(?:[a-zA-Z0-9-]+\.)*datadocks\.com|localhost)" \
-            --format json > linkinator-results.json || {
-              echo "::error title=Linkinator Detected Broken Links::Linkinator found broken links in preview deployment"
-              node -e "
-                const fs = require('fs');
-                if (fs.existsSync('linkinator-results.json')) {
-                  const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
-                  const broken = data.links.filter(l => l.state === 'BROKEN');
-                  console.log('Total broken links found: ' + broken.length);
-                  for (const b of broken) {
-                    console.log('::error file=' + (b.parent || 'root') + '::' + b.status + ' ' + b.url);
-                  }
-                }
-              "
-              exit 1
-            }
-          node -e "
-            const fs = require('fs');
-            const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
-            console.log('✓ Linkinator passed: ' + data.links.length + ' links scanned with 0 broken links.');
-          "
+        # Only the preview origin is crawled; app and third-party links are skipped.
+        # The runner keeps retries alive, bounds the crawl, and always writes a
+        # report instead of trying to parse empty CLI output after a tool crash.
+        run: node scripts/check-preview-links.mjs "${PREVIEW_URL}"
+
+      - name: Upload link crawl report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkinator-results
+          path: linkinator-results.json
+          if-no-files-found: ignore
+          retention-days: 7

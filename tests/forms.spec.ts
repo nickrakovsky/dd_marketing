@@ -41,6 +41,7 @@ test.describe('Bento SDK via Partytown', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' })
     );
     await page.route('https://assets.calendly.com/**', route => route.abort());
+    await page.route('**/_astro/vendor/calendly*', route => route.abort());
     await page.addInitScript(() => {
       window.open = () => null;
       window.Calendly = { initPopupWidget() {} };
@@ -149,6 +150,7 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
     // Block the real Calendly widget assets and stub initPopupWidget so we
     // can capture the call without depending on Calendly's CDN.
     await page.route('https://assets.calendly.com/**', (route) => route.abort());
+    await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
     await page.addInitScript(() => {
       (window as any).__calendlyCalls = [];
       (window as any).Calendly = {
@@ -203,6 +205,7 @@ test.describe('Hero Form (Homepage — above the fold)', () => {
     });
 
     await page.route('https://assets.calendly.com/**', (route) => route.abort());
+    await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
     await page.addInitScript(() => {
       (window as any).__calendlyCalls = [];
       (window as any).Calendly = {

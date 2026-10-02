@@ -16,6 +16,7 @@ import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
 import internalWorkspace from './integrations/internal-workspace.mjs';
 import publicationBoundary from './integrations/publication-boundary.mjs';
+import verifiedVendorAssets from './integrations/verified-vendor-assets.mjs';
 import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
 
 // https://astro.build/config
@@ -191,6 +192,7 @@ export default defineConfig({
         }
       }
     },
+    verifiedVendorAssets(),
     partytown({
       config: {
         forward: BENTO_PARTYTOWN_FORWARD,
