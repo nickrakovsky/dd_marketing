@@ -88,19 +88,34 @@ try {
       await context.addInitScript(() => {
         Object.defineProperty(navigator, 'serviceWorker', { value: undefined });
         window.__ddAuditViolations = [];
+        window.__ddAuditScriptNodes = [];
+        const seen = new WeakSet();
+        const record = node => {
+          if (node instanceof HTMLScriptElement && !seen.has(node)) {
+            seen.add(node); window.__ddAuditScriptNodes.push(node);
+          }
+          node.querySelectorAll?.('script').forEach(record);
+        };
+        // Keep references to dynamically loaded scripts even when their loader
+        // removes the tag after execution (including New Relic chunks).
+        new MutationObserver(mutations => mutations.forEach(mutation => mutation.addedNodes.forEach(record))).observe(document, { subtree: true, childList: true });
         document.addEventListener('securitypolicyviolation', event => window.__ddAuditViolations.push({ directive: event.effectiveDirective, disposition: event.disposition, blockedURI: event.blockedURI, line: event.lineNumber }));
       });
       const page = await context.newPage(), executableResponses = [], errors = [];
       page.on('pageerror', error => errors.push(error.message));
       page.on('response', async response => {
         if (response.request().resourceType() === 'script' || /javascript/.test(response.headers()['content-type'] || '')) {
-          try { executableResponses.push({ url: cleanUrl(response.url()), status: response.status(), sha384: 'sha384-' + digest('sha384', await response.body()) }); }
+          try {
+            const body = await response.body();
+            executableResponses.push({ url: cleanUrl(response.url()), status: response.status(), sha384: 'sha384-' + digest('sha384', body), sha512: 'sha512-' + digest('sha512', body) });
+          }
           catch { executableResponses.push({ url: cleanUrl(response.url()), status: response.status(), bodyUnavailable: true }); }
         }
       });
       await context.route('**/*', route => {
         const req = route.request(), target = new URL(req.url());
         if (target.pathname === '/__security-verification/eval.js') return route.fulfill({ contentType: 'application/javascript', body: "try { new Function('window.__ddEvalRan = true')(); } catch { window.__ddEvalBlocked = true; }" });
+        if (target.origin === new URL(url).origin && ['/api/bento-track', '/cdn-cgi/zaraz/t'].includes(target.pathname) && req.method() === 'POST') return route.fulfill({ contentType: 'application/json', body: target.pathname === '/api/bento-track' ? '{"ok":true}' : '{}' });
         if (!['GET', 'HEAD'].includes(req.method()) || /(?:bentonow\.com|nr-data\.net|leadfeeder\.com|lfeeder\.com|google-analytics\.com)$/.test(target.hostname) || /^\/cdn-cgi\/(?:rum|zaraz\/t)/.test(target.pathname)) return route.abort();
         return route.continue();
       });
@@ -108,7 +123,22 @@ try {
         const response = await page.goto(url, { waitUntil: 'load', timeout: 45000 });
         await page.waitForTimeout(13000);
         const startupViolations = await page.evaluate(() => window.__ddAuditViolations);
-        const scriptElements = await page.locator('script').evaluateAll(nodes => nodes.filter(node => node.src).map(node => ({ url: new URL(node.src).origin + new URL(node.src).pathname, integrity: node.integrity || null, noncePresent: Boolean(node.nonce), type: node.type })));
+        let calendar;
+        if (url === 'https://datadocks.com/' && !mobile) {
+          const calendarResponses = [];
+          page.on('response', reply => {
+            if (reply.request().resourceType() === 'document' && new URL(reply.url()).hostname === 'calendly.com') calendarResponses.push({ status: reply.status(), url: cleanUrl(reply.url()) });
+          });
+          try {
+            await page.locator('form#book-demo input[name="email"]').fill('security-verification@example.invalid');
+            await page.locator('form#book-demo button[type="submit"]').click();
+            const iframe = page.locator('iframe[src^="https://calendly.com/"]').first();
+            await iframe.waitFor({ state: 'attached', timeout: 20000 });
+            await page.waitForTimeout(3000);
+            calendar = { iframeCreated: true, iframeUrl: cleanUrl(await iframe.getAttribute('src')), responses: calendarResponses };
+          } catch (error) { calendar = { error: error.message, responses: calendarResponses }; }
+        }
+        const scriptElements = await page.evaluate(() => window.__ddAuditScriptNodes.filter(node => node.src).map(node => ({ url: new URL(node.src).origin + new URL(node.src).pathname, integrity: node.integrity || null, noncePresent: Boolean(node.nonce), type: node.type })));
         await page.evaluate(() => {
           const inline = document.createElement('script'); inline.textContent = 'window.__ddUnapprovedRan = true'; document.head.appendChild(inline);
           const external = document.createElement('script'); external.src = '/__security-verification/eval.js'; document.head.appendChild(external);
@@ -116,7 +146,7 @@ try {
         });
         await page.waitForTimeout(500);
         const probes = await page.evaluate(() => ({ unapprovedInlineBlocked: window.__ddUnapprovedRan !== true, inlineAttributeBlocked: window.__ddAttributeRan !== true, eventListenerRan: window.__ddListenerRan === true, evalBlocked: window.__ddEvalBlocked === true, evalRan: window.__ddEvalRan === true }));
-        result.runtime.push({ url, mobile, status: response.status(), title: await page.title(), startupViolations, errors, probes, scriptElements, executableResponses });
+        result.runtime.push({ url, mobile, status: response.status(), title: await page.title(), startupViolations, errors, probes, calendar, scriptElements, executableResponses });
       } catch (error) { result.runtime.push({ url, mobile, error: error.message, errors, executableResponses }); }
       await context.close();
     }
