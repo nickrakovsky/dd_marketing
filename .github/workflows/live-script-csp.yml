@@ -34,7 +34,7 @@ jobs:
         run: xvfb-run --auto-servernum node scripts/inspect-live-script-csp.mjs https://datadocks.com 'sha256-Ll1gi9ZEysr6BZ+uNTJDmDnBLfzzjKXOxgcUJ2NCjLo='
         env:
           CSP_HEADED: '1'
-      - name: Verify cached reload and simulate retaining the cached CSP
+      - name: Reproduce cached reload and verify the 304 header fix
         run: xvfb-run --auto-servernum node scripts/inspect-csp-revalidation.mjs https://datadocks.com
         env:
           CSP_HEADED: '1'
