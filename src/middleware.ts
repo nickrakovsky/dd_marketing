@@ -36,7 +36,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const enforceScripts = BUILD_SCRIPT_POLICY && response.headers.get('Content-Type')?.includes('text/html')
     && !pathname.startsWith('/keystatic');
   response.headers.set('Content-Security-Policy', enforceScripts
-    ? `${CONTENT_SECURITY_POLICY}; ${BUILD_SCRIPT_POLICY}` : CONTENT_SECURITY_POLICY);
+    ? `${CONTENT_SECURITY_POLICY.replace("; script-src-attr 'none'", '')}; ${BUILD_SCRIPT_POLICY}` : CONTENT_SECURITY_POLICY);
   if (enforceScripts) response.headers.delete('Content-Security-Policy-Report-Only');
   else response.headers.set('Content-Security-Policy-Report-Only', SCRIPT_POLICY_REPORT_ONLY);
   return response;

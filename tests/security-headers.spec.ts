@@ -16,6 +16,10 @@ test.describe('Enforced inline event policy', () => {
       expect(response.status(), pathname).toBe(200);
       const headers = response.headers();
       const policy = headers['content-security-policy'];
+      for (const value of policy.split(',')) {
+        const directives = value.split(';').map(directive => directive.trim().split(/\s+/)[0]).filter(Boolean);
+        expect(new Set(directives).size, `${pathname}: duplicate CSP directive`).toBe(directives.length);
+      }
       expect(policy, pathname).toContain("script-src-attr 'none'");
       expect(policy, pathname).toMatch(/(?:^|[;,]\s*)script-src 'self' 'sha256-/);
       expect(policy, pathname).toContain("frame-ancestors 'self'");
