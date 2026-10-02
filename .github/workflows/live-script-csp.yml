@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - scripts/inspect-live-script-csp.mjs
+      - scripts/inspect-csp-revalidation.mjs
       - .github/workflows/live-script-csp.yml
 
 permissions:
@@ -31,6 +32,10 @@ jobs:
         run: npx playwright install-deps chromium
       - name: Inspect production startup and Partytown fallback
         run: xvfb-run --auto-servernum node scripts/inspect-live-script-csp.mjs https://datadocks.com 'sha256-Ll1gi9ZEysr6BZ+uNTJDmDnBLfzzjKXOxgcUJ2NCjLo='
+        env:
+          CSP_HEADED: '1'
+      - name: Verify cached reload and simulate retaining the cached CSP
+        run: xvfb-run --auto-servernum node scripts/inspect-csp-revalidation.mjs https://datadocks.com
         env:
           CSP_HEADED: '1'
       - uses: actions/upload-artifact@v4
