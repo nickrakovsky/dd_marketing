@@ -4,9 +4,9 @@ The live audit on October 1, 2026 found no CSP on either static or Worker-render
 
 ## What is enforced
 
-`base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests`
+`base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src-attr 'none'; upgrade-insecure-requests`
 
-This prevents cross-origin framing, external base-URL injection and plugin objects, and upgrades insecure resource URLs. It adds no JavaScript, response-body rewriting, per-request nonce or cache changes. The existing X-Frame-Options and nosniff headers remain in place.
+This prevents cross-origin framing, external base-URL injection, plugin objects and inline event attributes, and upgrades insecure resource URLs. A small listener in the document head applies asynchronously loaded stylesheets; it adds no network request. Static pages retain Beasties' preload behavior, and Worker pages retain print-media loading and critical CSS. Citation actions use a delegated click listener. There is no new response-body rewriting, per-request nonce or cache change. The existing X-Frame-Options and nosniff headers remain in place.
 
 **This is a first stage, not a complete script/XSS policy.** The enforced policy intentionally has no `script-src` or `default-src`. Absence of `unsafe-inline`/`unsafe-eval` in this header does not mean arbitrary scripts are blocked. Do not close the unsafe-script-policy concern based only on this PR.
 
@@ -17,10 +17,12 @@ The separate `Content-Security-Policy-Report-Only` header tests same-origin scri
 Before enforcing `script-src`:
 
 1. Move owned inline scripts into Astro-processed external modules, or add hashes for each trusted inline block at build time. Do not hash arbitrary response HTML at request time.
-2. Replace stylesheet `onload` attributes and the smart-link `onclick` attribute with event listeners. Preserve the current asynchronous critical-CSS loading.
+2. Keep stylesheet `onload` attributes and the smart-link `onclick` attribute absent. They have been replaced with event listeners; `tests/security-headers.spec.ts` verifies real browser enforcement, delayed CSS loading and mobile citation navigation.
 3. Test the Partytown worker, Bento event forwarding, Dealfront, lead forms, Calendly popup and fallback, blog search and video embeds on a production build. Check worker policy separately; Partytown executes vendor code inside a worker.
 4. Add only the required script sources/hashes. Do not enable `unsafe-inline`, `unsafe-eval` or all of `https:` as a shortcut.
 5. Enforce on preview, verify those flows without sending real leads, and only then promote the stricter policy to production.
+
+Partytown 0.13.2 (the locked version) uses `new Function(scriptContent)` in its worker. A nonce or hash on its bootstrap does not remove that evaluation requirement. Do not solve this by weakening the policy on Worker responses or adding `unsafe-eval`. Replace this execution path with an external, CSP-compatible worker or an explicitly reviewed native/server-side Bento integration, preserving the existing `identify`, `track`, `view`, `tag` and `updateFields` contract. If moving work onto the main thread, compare mobile LCP and total blocking time against the current build before rollout.
 
 ## Deployment and verification
 

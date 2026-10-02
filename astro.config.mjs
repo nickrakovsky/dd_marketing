@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Beasties from 'beasties';
-import { collectPublicationStyles, finishPublicationStyles } from './scripts/publication-build.mjs';
+import { collectPublicationStyles, finishPublicationStyles, withCspSafeStylesheets } from './scripts/publication-build.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
 import internalWorkspace from './integrations/internal-workspace.mjs';
@@ -167,7 +167,7 @@ export default defineConfig({
                 alreadyAsync++;
                 continue;
               }
-              const inlined = await beasties.process(html);
+              const inlined = withCspSafeStylesheets(await beasties.process(html));
               collectPublicationStyles(filePath, distDir, html, inlined, publicationStyles);
               // Guard the font regression described above: the real webfont
               // faces must survive into the output. If they ever stop doing so,

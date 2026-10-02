@@ -7,6 +7,7 @@ import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
 import { getAuthor } from '../data/authors';
 import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
 import { VENDOR_ASSETS, bentoScriptPath } from '../lib/vendor-assets.mjs';
+import AsyncStyles from '../components/AsyncStyles.astro';
 
 interface Props {
     title: string;
@@ -353,6 +354,7 @@ const jsonLd = {
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <AsyncStyles />
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />

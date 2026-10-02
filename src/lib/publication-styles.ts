@@ -10,7 +10,7 @@ export async function withPublicationStyles(response: Response, pathname: string
   const html = (await response.text()).replace(/<link\b[^>]*rel="stylesheet"[^>]*href="\/_astro\/[^"<>]+\.css"[^>]*>/g, link => {
     const critical = inserted ? '' : `<style data-publication-critical>${css}</style>`;
     inserted = true;
-    return `${critical}${link.replace('rel="stylesheet"', 'rel="stylesheet" media="print" onload="this.media=\'all\'"')}<noscript>${link}</noscript>`;
+    return `${critical}${link.replace('rel="stylesheet"', 'rel="stylesheet" media="print" data-dd-async-css')}<noscript>${link}</noscript>`;
   });
   const headers = new Headers(response.headers);
   headers.delete('Content-Length');

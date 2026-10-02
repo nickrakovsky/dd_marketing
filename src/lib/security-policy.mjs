@@ -1,6 +1,7 @@
-// These directives protect framing, base URLs and plugin content without
-// blocking the existing booking, analytics or critical-CSS loaders.
-export const CONTENT_SECURITY_POLICY = "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests";
+// Block inline event attributes while preserving the current script loaders.
+// A full script-src policy still needs trusted inline hashes and a replacement
+// for Partytown's eval-based vendor execution; this is not that final policy.
+export const CONTENT_SECURITY_POLICY = "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src-attr 'none'; upgrade-insecure-requests";
 
 // Diagnostic only: inline scripts must be externalized or individually hashed
 // before this can become an enforced script policy. Do not add unsafe-inline

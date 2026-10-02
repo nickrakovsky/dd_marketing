@@ -4,6 +4,19 @@ import path from 'node:path';
 const marker = '__PUBLICATION_CRITICAL_CSS__';
 const styles = html => Array.from(html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g), match => match[1]);
 
+/** Preserve Beasties' async CSS loading without an inline event attribute. */
+export function withCspSafeStylesheets(html) {
+  return html.replace(/<link\b[^>]*>/g, link => {
+    if (/\brel="stylesheet"/.test(link)) {
+      return link.replace(/\sonload="this\.media='all'"/, ' data-dd-async-css');
+    }
+    if (/\brel="preload"/.test(link) && /\bas="style"/.test(link)) {
+      return link.replace(/\sonload="this\.rel='stylesheet'"/, ' data-dd-async-css="preload"');
+    }
+    return link;
+  });
+}
+
 export function collectPublicationStyles(file, buildRoot, before, after, output) {
   const sampleRoot = path.join(buildRoot, '_build/publication');
   if (!file.startsWith(sampleRoot + path.sep)) return;
