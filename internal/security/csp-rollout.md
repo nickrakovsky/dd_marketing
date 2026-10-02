@@ -1,39 +1,29 @@
-# CSP rollout on Cloudflare Pages
+# Marketing script CSP
 
-The live audit on October 1, 2026 found no CSP on either static or Worker-rendered marketing pages. This change adds the same enforced policy to both delivery paths. Cloudflare Pages does not apply `public/_headers` to Pages Functions, so the Astro middleware is required too.
+Production currently enforces a foundational policy but leaves `script-src` in report-only mode. This PR promotes a real document script policy without changing script bodies, loading schedules, stylesheet priority or cache directives.
 
-## What is enforced
+## Document enforcement
 
-`base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests`
+The build parses its reviewed HTML with parse5 and hashes executable inline scripts. It includes the private home, hub, article and video render samples before their existing cleanup, so future publication states use the same reviewed allowlist. JSON-LD, inert templates, comments and external scripts do not expand the inline allowlist. Arbitrary response HTML is never hashed at request time.
 
-This prevents cross-origin framing, external base-URL injection and plugin objects, and upgrades insecure resource URLs. It adds no JavaScript, response-body rewriting, per-request nonce or cache changes. The existing X-Frame-Options and nosniff headers remain in place.
+The script policy allows only same-origin scripts and the build's SHA-256 hashes, blocks inline event attributes, and restricts worker URLs to the same origin. It has no `unsafe-inline`, `unsafe-eval`, `strict-dynamic` or broad HTTPS allowance. Existing first-party vendor pins/SRI remain unchanged.
 
-**This is a first stage, not a complete script/XSS policy.** The enforced policy intentionally has no `script-src` or `default-src`. Absence of `unsafe-inline`/`unsafe-eval` in this header does not mean arbitrary scripts are blocked. Do not close the unsafe-script-policy concern based only on this PR.
+The build adds document-only rules to `dist/_headers`; the foundational wildcard rule still supplies frame protection and other headers. Pages combines the two CSP values, and browsers enforce both policies. An early meta policy also protects the static 404 document returned at unknown URLs. Its charset remains first. Static worker JavaScript does not receive the document script policy.
 
-## Stricter script policy
+The compiled Worker receives the same build policy through a private placeholder replacement. Middleware enforces it on marketing HTML without reading or hashing response bodies. The authenticated `/keystatic` editor is a separate application and retains the earlier diagnostic policy. Limits are checked: 100 Pages rules and 2,000 characters per header line. A build fails instead of widening the policy if either limit is exceeded or the Worker placeholder is missing.
 
-The separate `Content-Security-Policy-Report-Only` header tests same-origin scripts plus the current vendor hosts and rejects inline event attributes in diagnostic mode. It logs violations in browser developer tools; no external reporting service is configured. Existing inline scripts will produce expected warnings while continuing to execute.
+## Partytown boundary
 
-Before enforcing `script-src`:
+Bento remains in the existing Partytown worker. Partytown 0.13.2 evaluates reviewed vendor code with `new Function`; its service-worker-generated sandbox and dedicated worker are separate execution contexts. This PR enforces document script restrictions and adds no eval exception. It does **not** claim to remove eval from Partytown or impose the document policy on that worker. Applying a zone-wide document CSP to its worker assets would break Bento. If the customer requires eval to be prohibited inside workers too, replacing Partytown is separate application work and needs tracking and performance validation.
 
-1. Move owned inline scripts into Astro-processed external modules, or add hashes for each trusted inline block at build time. Do not hash arbitrary response HTML at request time.
-2. Replace stylesheet `onload` attributes and the smart-link `onclick` attribute with event listeners. Preserve the current asynchronous critical-CSS loading.
-3. Test the Partytown worker, Bento event forwarding, Dealfront, lead forms, Calendly popup and fallback, blog search and video embeds on a production build. Check worker policy separately; Partytown executes vendor code inside a worker.
-4. Add only the required script sources/hashes. Do not enable `unsafe-inline`, `unsafe-eval` or all of `https:` as a shortcut.
-5. Enforce on preview, verify those flows without sending real leads, and only then promote the stricter policy to production.
+## Release checks
 
-## Deployment and verification
+1. Run `npm run test:script-csp`, lint, typecheck, unit tests, vendor/publication regression tests, build and scheduled-publication tests.
+2. Test the Cloudflare preview on `/`, `/integrations`, `/posts` and a published article. Prove that an unapproved inline script and document eval are blocked while async CSS, hydration, mobile citations, lead-form validation and the Calendly popup/fallback still work.
+3. Confirm Bento's worker/SDK load and event forwarding with test network interception. Verify Dealfront on the production hostname without submitting a real lead or booking.
+4. Review the three interleaved mobile Lighthouse runs for production and preview on the home page, integrations and yard-management article. The comparison fails on material LCP, TBT or CLS regressions and uploads its evidence. Dealfront remains production-only; lab comparisons cannot guarantee identical real-user performance.
+5. Merge after preview checks, deploy and purge the affected marketing HTML cache. Verify the deployed `script-src` header is enforced. A Cloudflare Transform Rule must not overwrite the new header with the old foundational-only policy.
 
-Merge and deploy through the normal Cloudflare Pages workflow. Check `/integrations` (static) and `/posts` and `/` (Worker-rendered):
+HSTS still needs a separate Cloudflare correction: repository headers already request `max-age=31536000; includeSubDomains`, while production returns `max-age=86400`.
 
-```sh
-curl -sSI https://datadocks.com/integrations
-curl -sSI https://datadocks.com/posts
-curl -sSI https://datadocks.com/
-```
-
-Each should have exactly one enforced CSP and one report-only header. A Cloudflare Response Header Transform using **Set static** can enforce the same foundational policy on proxied marketing hostnames. Keep it scoped to `datadocks.com` and `www.datadocks.com`; a zone-wide rule could affect the application or unrelated subdomains. Avoid adding a duplicate header or overwriting a later stricter policy.
-
-Request a SecurityScorecard finding retest after deployment. Report-only rules alone do not remediate a finding.
-
-Sources: [Cloudflare Pages headers](https://developers.cloudflare.com/pages/configuration/headers/), [Cloudflare response header rules](https://developers.cloudflare.com/rules/transform/response-header-modification/create-dashboard/), [Astro v5 CSP limitations](https://v5.docs.astro.build/en/reference/experimental-flags/csp/).
+Sources: [Cloudflare Pages headers](https://developers.cloudflare.com/pages/configuration/headers/), [Pages limits](https://developers.cloudflare.com/pages/platform/limits/), [Partytown configuration](https://partytown.qwik.dev/configuration/).

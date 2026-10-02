@@ -1,6 +1,9 @@
-// These directives protect framing, base URLs and plugin content without
-// blocking the existing booking, analytics or critical-CSS loaders.
-export const CONTENT_SECURITY_POLICY = "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; upgrade-insecure-requests";
+// Foundation applies to every response. Document script hashes are inserted
+// into the compiled Worker from reviewed build artifacts, with no runtime hashing.
+export const CONTENT_SECURITY_POLICY = "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src-attr 'none'; upgrade-insecure-requests";
+
+const serialized = '__DD_BUILD_SCRIPT_CSP__';
+export const BUILD_SCRIPT_POLICY = serialized.startsWith('script-src ') ? serialized : '';
 
 // Diagnostic only: inline scripts must be externalized or individually hashed
 // before this can become an enforced script policy. Do not add unsafe-inline

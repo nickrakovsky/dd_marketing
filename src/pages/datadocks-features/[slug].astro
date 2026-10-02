@@ -116,7 +116,7 @@ const youtubeId = feature.data.videoUrl?.match(/(?:youtu\.be\/|v=|embed\/)([A-Za
       paint — only the click-to-play upgrade does. */}
   {youtubeId && (
     <Fragment slot="head">
-      <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+      <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" data-dd-async-css />
       <script is:inline src="/css/lite-yt-embed.js" defer></script>
       <link rel="preload" as="image" href={ytThumb(youtubeId)} fetchpriority="high" />
     </Fragment>

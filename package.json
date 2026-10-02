@@ -20,6 +20,7 @@
     "crawl": "linkinator http://localhost:4321 --recurse --skip \"^https?://(?!(?:[a-zA-Z0-9-]+\\.)*pages\\.dev|(?:[a-zA-Z0-9-]+\\.)*datadocks\\.com|localhost)\"",
     "test": "vitest run",
     "test:vendor-assets": "node --test scripts/verified-vendor-assets.test.mjs",
+    "test:script-csp": "node --test scripts/script-csp.test.mjs",
     "test:preview-links": "node --test scripts/check-preview-links.test.mjs",
     "test:e2e": "playwright test",
     "test:publication": "node scripts/test-scheduled-publication.mjs",
@@ -119,6 +120,7 @@
     "jsdom": "^29.1.1",
     "linkinator": "^7.6.1",
     "mermaid": "^11.15.0",
+    "parse5": "7.3.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "vitest": "^4.1.5",
     "wait-on": "^9.0.5"

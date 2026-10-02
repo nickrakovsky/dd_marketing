@@ -61,7 +61,7 @@ Astro.locals.mdxImageCount = 0;
 >
   {youtubeId && (
     <Fragment slot="head">
-      <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+      <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" data-dd-async-css />
       <script is:inline src="/css/lite-yt-embed.js" defer></script>
     </Fragment>
   )}

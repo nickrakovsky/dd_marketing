@@ -709,7 +709,7 @@ if (priorityImgMatch) {
         </a>`;
       }
       if (bibRef) {
-        html += `<a href="${bibRef}" class="${secClass}" onclick="closeSmartLinkUI()">
+        html += `<a href="${bibRef}" class="${secClass}" data-close-smart-link>
           Full citation
           ${!isMobile ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 17l-4 4m0 0l-4-4m4 4V3" /></svg>' : ''}
         </a>`;
@@ -874,6 +874,12 @@ if (priorityImgMatch) {
       setTimeout(() => card.classList.add('hidden'), 200);
     }
   };
+
+  document.addEventListener('click', (event) => {
+    if (event.target instanceof Element && event.target.closest('[data-close-smart-link]')) {
+      window.closeSmartLinkUI();
+    }
+  });
 
   function getActiveTriggers(): HTMLElement[] {
     return Array.from(document.querySelectorAll('#content [data-smartlink-trigger="true"]')).filter((el: any) => {
