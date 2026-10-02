@@ -15,6 +15,7 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
+    demoAttribution?: 'session' | 'page';
 
     schemaData?: {
         faq?: { question: string; answer: string }[];
@@ -59,6 +60,7 @@ const {
   image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
+  demoAttribution = 'session',
 
   schemaData,
   articleData,
@@ -350,7 +352,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-demo-attribution={demoAttribution}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -500,9 +502,21 @@ const jsonLd = {
             }
 
             // --- Landing page (session-scoped, kept for Bento) -----------
-            if (!sessionStorage.getItem('dd_landing_page')) {
-              sessionStorage.setItem('dd_landing_page', window.location.href);
+            try {
+              if (!sessionStorage.getItem('dd_landing_page')) {
+                sessionStorage.setItem('dd_landing_page', window.location.href);
+              }
+            } catch (err) {
+              ddReportError('storage_write', err && err.message);
             }
+
+            // Campaign pages identify where the demo converts. Keep the original
+            // session landing and first/last touches for acquisition reporting.
+            window.ddGetDemoLandingPage = function() {
+              if (document.documentElement.dataset.demoAttribution === 'page') return window.location.href;
+              try { return sessionStorage.getItem('dd_landing_page') || window.location.href; }
+              catch { return window.location.href; }
+            };
 
             // --- Attribution: first-touch and last-touch -----------------
             var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
@@ -773,7 +787,7 @@ const jsonLd = {
                     email: knownEmail,
                     event: ddEvent,
                     source: window.location.pathname,
-                    landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                    landingPage: window.ddGetDemoLandingPage(),
                     visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
                     firstTouch: attribution.first,
                     lastTouch: attribution.last

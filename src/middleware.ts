@@ -7,7 +7,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.publicationDate = new Date();
   let response = await next();
   const pathname = context.url.pathname.replace(/\/$/, '') || '/';
-  if (pathname === '/' || pathname === '/posts' || pathname.startsWith('/posts/')
+  const usesHomePage = pathname === '/' || pathname === '/outbound-dock-management';
+  if (usesHomePage || pathname === '/posts' || pathname.startsWith('/posts/')
     || pathname.startsWith('/videos/') || pathname === '/sitemap-posts.xml') {
     // A publication cutoff must never be served stale for long, but a full
     // no-store defeats edge caching entirely (see the dd_marketing memory on
@@ -24,7 +25,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     response.headers.set('CDN-Cache-Control', 'public, max-age=86400, stale-while-revalidate=86400');
     if (response.status === 404) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
-  if (!context.isPrerendered) response = await withPublicationStyles(response, pathname);
+  // Homepage clones share the same layout and build-generated critical styles.
+  if (!context.isPrerendered) response = await withPublicationStyles(response, usesHomePage ? '/' : pathname);
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-Content-Type-Options', 'nosniff');
