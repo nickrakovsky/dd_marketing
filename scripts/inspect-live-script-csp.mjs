@@ -9,7 +9,7 @@ const target = process.argv[3];
 const directory = 'csp-diagnostics';
 fs.mkdirSync(directory, { recursive: true });
 const reports = [];
-const browser = await chromium.launch();
+const browser = await chromium.launch({ headless: process.env.CSP_HEADED !== '1' });
 const safeUrl = value => {
   try { const url = new URL(value); return `${url.origin}${url.pathname}`; }
   catch { return value; }

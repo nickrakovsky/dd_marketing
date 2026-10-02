@@ -30,7 +30,9 @@ jobs:
       - if: steps.browser-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
       - name: Inspect production startup and Partytown fallback
-        run: node scripts/inspect-live-script-csp.mjs https://datadocks.com 'sha256-Ll1gi9ZEysr6BZ+uNTJDmDnBLfzzjKXOxgcUJ2NCjLo='
+        run: xvfb-run --auto-servernum node scripts/inspect-live-script-csp.mjs https://datadocks.com 'sha256-Ll1gi9ZEysr6BZ+uNTJDmDnBLfzzjKXOxgcUJ2NCjLo='
+        env:
+          CSP_HEADED: '1'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
