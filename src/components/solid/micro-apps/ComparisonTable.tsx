@@ -97,33 +97,38 @@ const FeatureGroupSection: Component<{
 }> = (props) => {
   return (
     <div role="rowgroup" class="border border-[#ece6de] rounded-xl overflow-hidden transition-shadow duration-200 hover:shadow-sm">
-      {/* Group header */}
-      <button
-        type="button"
-        onClick={() => props.onToggle()}
-        class="w-full flex items-center justify-between px-5 py-4 bg-[#faf8f5] hover:bg-[#ece6de]/40 transition-colors duration-150 cursor-pointer group"
-        aria-expanded={props.isExpanded()}
-      >
-        <div class="flex items-center gap-3">
-          <span class={cn(
-            "flex h-6 w-6 items-center justify-center rounded-md transition-colors duration-200",
-            props.isExpanded() ? "bg-[#5f483a] text-white" : "bg-[#ece6de] text-[#5f483a] group-hover:bg-[#ad9686] group-hover:text-white"
-          )}>
-            <svg
-              class={cn("w-3.5 h-3.5 transition-transform duration-200", props.isExpanded() && "rotate-180")}
-              fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
-          </span>
-          <div class="flex items-center gap-2">
-            <span class="text-sm md:text-base font-semibold text-[#5f483a] font-recoleta">{props.group.label}</span>
-          </div>
+      {/* Keep a visible row when collapsed so each rowgroup retains its required child. */}
+      <div role="row">
+        <div role="cell" aria-colspan={props.competitor2 ? 4 : 3}>
+          <button
+            type="button"
+            onClick={() => props.onToggle()}
+            class="w-full flex items-center justify-between px-5 py-4 bg-[#faf8f5] hover:bg-[#ece6de]/40 transition-colors duration-150 cursor-pointer group"
+            aria-expanded={props.isExpanded()}
+            aria-controls={`comparison-features-${props.group.id}`}
+          >
+            <div class="flex items-center gap-3">
+              <span class={cn(
+                "flex h-6 w-6 items-center justify-center rounded-md transition-colors duration-200",
+                props.isExpanded() ? "bg-[#5f483a] text-white" : "bg-[#ece6de] text-[#5f483a] group-hover:bg-[#ad9686] group-hover:text-white"
+              )}>
+                <svg
+                  class={cn("w-3.5 h-3.5 transition-transform duration-200", props.isExpanded() && "rotate-180")}
+                  fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </span>
+              <div class="flex items-center gap-2">
+                <span class="text-sm md:text-base font-semibold text-[#5f483a] font-recoleta">{props.group.label}</span>
+              </div>
+            </div>
+          </button>
         </div>
-      </button>
+      </div>
 
       {/* Feature rows - rendered in DOM for SSR/bots, hidden via CSS when collapsed */}
-      <div class={cn("divide-y divide-[#ece6de]", !props.isExpanded() && "hidden")}>
+      <div id={`comparison-features-${props.group.id}`} class={cn("divide-y divide-[#ece6de]", !props.isExpanded() && "hidden")}>
         <For each={props.group.features}>
           {(feature: ComparisonFeature) => {
             const ddDetail = () => datadocksFeatures?.[feature.id] || { level: "none", text: "Not available" };
@@ -136,12 +141,12 @@ const FeatureGroupSection: Component<{
                 class={cn(
                   "group/row grid items-stretch gap-2 md:gap-4 px-5 py-2 hover:bg-[#faf8f5]/50 transition-colors duration-100",
                   props.competitor2 
-                    ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]" 
+                    ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]"
                     : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
                 )}
               >
                 {/* Feature name */}
-                <div role="cell" class="min-w-0 flex items-center gap-1.5">
+                <div role="rowheader" class="min-w-0 flex items-center gap-1.5">
                   <span class="text-sm text-[#5f483a] font-sans leading-snug">{feature.label}</span>
                 </div>
 
@@ -293,7 +298,7 @@ const ComparisonTable: Component = () => {
   };
 
   return (
-    <div class="space-y-6" role="table" aria-label="Dock Scheduling Side-by-Side Features Comparison">
+    <div class="space-y-6">
       
       {/* Title & Controls */}
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 text-center md:text-left">
@@ -319,90 +324,98 @@ const ComparisonTable: Component = () => {
         </div>
       </div>
 
-      {/* ── Column headers ── */}
-      <div
-        role="row"
-        class={cn(
-          "grid items-end gap-2 md:gap-4 px-5 pb-3 border-b border-[#ad9686] sticky top-0 bg-white/95 backdrop-blur-sm z-20 pt-4 -mt-4",
-          selectedCompetitor2() 
-            ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]" 
-            : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
-        )}
-      >
-        {/* Empty space for the feature name column */}
-        <div role="columnheader" aria-label="Feature"></div>
+      <div class="overflow-x-auto md:overflow-visible" role="region" aria-label="Scrollable feature comparison" tabIndex={0}>
+        <div
+          class={cn("space-y-6 md:min-w-0", selectedCompetitor2() ? "min-w-[760px]" : "min-w-[580px]")}
+          role="table"
+          aria-label="Dock Scheduling Side-by-Side Features Comparison"
+        >
+          {/* ── Column headers ── */}
+          <div
+            role="row"
+            class={cn(
+              "grid items-end gap-2 md:gap-4 px-5 pb-3 border-b border-[#ad9686] sticky top-0 bg-white/95 backdrop-blur-sm z-20 pt-4",
+              selectedCompetitor2()
+                ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]"
+                : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
+            )}
+          >
+            {/* Empty space for the feature name column */}
+            <div role="columnheader" aria-label="Feature"></div>
         
-        {/* DataDocks Fixed Pill */}
-        <div role="columnheader" class="flex flex-col w-full h-full justify-end">
-          <div class="w-full flex items-center justify-start gap-2 rounded-xl border border-[#ece6de] bg-white px-4 py-2 cursor-default shadow-sm relative min-h-[58px]">
-            <div class="flex-1 text-left min-w-0 font-sans">
-              <span class="block text-[15px] font-bold text-[#fd4f00] leading-tight tracking-wide">DataDocks</span>
-              <span class="block text-[11px] text-[#9c806d] mt-0.5 leading-tight whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal md:overflow-visible md:text-wrap font-recoleta">Enterprise dock & yard management</span>
+            {/* DataDocks Fixed Pill */}
+            <div role="columnheader" class="flex flex-col w-full h-full justify-end">
+              <div class="w-full flex items-center justify-start gap-2 rounded-xl border border-[#ece6de] bg-white px-4 py-2 cursor-default shadow-sm relative min-h-[58px]">
+                <div class="flex-1 text-left min-w-0 font-sans">
+                  <span class="block text-[15px] font-bold text-[#fd4f00] leading-tight tracking-wide">DataDocks</span>
+                  <span class="block text-[11px] text-[#9c806d] mt-0.5 leading-tight whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal md:overflow-visible md:text-wrap font-recoleta">Enterprise dock & yard management</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
         
-        {/* Competitor 1 Selector */}
-        <div role="columnheader" class="flex flex-col relative w-full h-full">
-          <CompetitorSelector
-            competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor2()?.id)}
-            selected={selectedCompetitor1()}
-            onSelect={setSelectedCompetitor1}
-          />
-          <Show when={!selectedCompetitor2()}>
-            {/* (+) button absolutely positioned to sit completely outside the right edge of the grid cell */}
-            <button
-              onClick={addThirdColumn}
-              class="absolute left-full top-1/2 -translate-y-1/2 ml-4 h-6 w-6 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:text-[#fd4f00] hover:border-[#fd4f00]/50 transition-colors tooltip-trigger shadow-sm shrink-0"
-              title="Add another competitor"
-              aria-label="Add another competitor"
-            >
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-            </button>
-          </Show>
-        </div>
-
-        {/* Competitor 2 Selector */}
-        <Show when={selectedCompetitor2()}>
-          <div role="columnheader" class="flex flex-col relative w-full h-full group">
-            <CompetitorSelector
-              competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor1().id)}
-              selected={selectedCompetitor2()}
-              onSelect={(c) => setSelectedCompetitor2(c)}
-              placeholder="Select..."
-            />
-            {/* Close button layered on the corner of the selector */}
-            <div class="absolute -top-1.5 -right-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-               <button
-                  onClick={() => setSelectedCompetitor2(null)}
-                  class="h-5 w-5 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:bg-[#ece6de] hover:text-[#5f483a] transition-colors shadow-sm"
-                  title="Remove column"
-                  aria-label="Remove column"
-               >
-                  <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            {/* Competitor 1 Selector */}
+            <div role="columnheader" class="flex flex-col relative w-full h-full">
+              <CompetitorSelector
+                competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor2()?.id)}
+                selected={selectedCompetitor1()}
+                onSelect={setSelectedCompetitor1}
+              />
+              <Show when={!selectedCompetitor2()}>
+                {/* (+) button absolutely positioned to sit completely outside the right edge of the grid cell */}
+                <button
+                  onClick={addThirdColumn}
+                  class="absolute left-full top-1/2 -translate-y-1/2 ml-4 h-6 w-6 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:text-[#fd4f00] hover:border-[#fd4f00]/50 transition-colors tooltip-trigger shadow-sm shrink-0"
+                  title="Add another competitor"
+                  aria-label="Add another competitor"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-               </button>
+                </button>
+              </Show>
             </div>
-          </div>
-        </Show>
-      </div>
 
-      {/* ── Feature groups ── */}
-      <div role="rowgroup" class="space-y-3">
-        <For each={comparisonFeatureGroups}>
-          {(group) => (
-            <FeatureGroupSection
-              group={group}
-              competitor1={selectedCompetitor1()}
-              competitor2={selectedCompetitor2()}
-              isExpanded={() => expandedGroups().has(group.id)}
-              onToggle={() => toggleGroup(group.id)}
-            />
-          )}
-        </For>
+            {/* Competitor 2 Selector */}
+            <Show when={selectedCompetitor2()}>
+              <div role="columnheader" class="flex flex-col relative w-full h-full group">
+                <CompetitorSelector
+                  competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor1().id)}
+                  selected={selectedCompetitor2()}
+                  onSelect={(c) => setSelectedCompetitor2(c)}
+                  placeholder="Select..."
+                />
+                {/* Close button layered on the corner of the selector */}
+                <div class="absolute -top-1.5 -right-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                   <button
+                      onClick={() => setSelectedCompetitor2(null)}
+                      class="h-5 w-5 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:bg-[#ece6de] hover:text-[#5f483a] transition-colors shadow-sm"
+                      title="Remove column"
+                      aria-label="Remove column"
+                   >
+                      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                   </button>
+                </div>
+              </div>
+            </Show>
+          </div>
+
+          {/* ── Feature groups ── */}
+          <div class="space-y-3">
+            <For each={comparisonFeatureGroups}>
+              {(group) => (
+                <FeatureGroupSection
+                  group={group}
+                  competitor1={selectedCompetitor1()}
+                  competitor2={selectedCompetitor2()}
+                  isExpanded={() => expandedGroups().has(group.id)}
+                  onToggle={() => toggleGroup(group.id)}
+                />
+              )}
+            </For>
+          </div>
+        </div>
       </div>
     </div>
   );

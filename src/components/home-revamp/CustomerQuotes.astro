@@ -12,7 +12,7 @@ const testimonials = [...rawTestimonials.slice(6, 7), ...rawTestimonials.slice(0
         const comma = item.author.indexOf(',');
         const name = item.author.slice(0, comma);
         const company = item.author.slice(comma + 1).trim();
-        return <figure class:list={['quote-slide', { active: index === 0 }]} aria-hidden={index !== 0 ? 'true' : undefined} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${testimonials.length}`}>
+        return <figure class:list={['quote-slide', { active: index === 0 }]} aria-hidden={index !== 0 ? 'true' : undefined} aria-roledescription="slide" aria-label={`${index + 1} of ${testimonials.length}`}>
           <blockquote data-quote-text>{item.quote}</blockquote>
           <figcaption>
             <div class="customer-identity">
