@@ -10,7 +10,7 @@ Booking's public HTML has no enforced or report-only CSP. Its New Relic and appl
 
 Marketing apex/www returns HSTS `max-age=86400` without includeSubDomains even though the repository already specifies a one-year policy with includeSubDomains. Check the Cloudflare HSTS setting and response-header transforms rather than opening another repository-header PR.
 
-HTTP redirects to HTTPS on the tested active hosts. go.datadocks.com now redirects to the marketing homepage, but its 301 discards campaign query strings. Full subdomain coverage still needs a Cloudflare DNS/hostname inventory. The legacy www.getdatadocks.com variant could not be validated reliably and must be checked before treating the legacy retirement as complete.
+HTTP redirects to HTTPS on the tested active hosts. go.datadocks.com now redirects to the marketing homepage, but its 301 discards campaign query strings. Full subdomain coverage still needs a Cloudflare DNS/hostname inventory. The legacy www.getdatadocks.com variant has no current DNS record (NXDOMAIN). If it appears in the old audit or legacy links, add it to the retirement redirects rather than treating the apex redirect as coverage for www.
 
 All six marketing vendor assets fetched from production match the reviewed, pinned build bytes and retain nosniff and immutable caching. This verifies deployed files, not every dynamically loaded runtime dependency or logged-in booking flow.
 
