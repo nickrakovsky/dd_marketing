@@ -2,6 +2,10 @@
 
 Destination: **https://datadocks.com/**. All old go paths land on the homepage; query strings, including campaign UTMs, are retained. This does not publish another copy of the website.
 
+## Current status
+
+The October 1, 2026 follow-up observed HTTP upgrading to HTTPS on go and HTTPS returning 301 to datadocks.com. Check the existing rule order, campaign paths/query strings and old-provider association before adding another rule. Reuse or adjust working redirects; do not create competing duplicates. This PR remains an operational handoff, not evidence that Cloudflare settings or provider removal were applied. TLS support on go port 8443 was not independently verified.
+
 ## Dashboard steps
 
 1. Select the **datadocks.com** zone. In **DNS > Records**, ensure the existing `go` record is **Proxied** (orange cloud). Keep its current target while preparing the rules.
