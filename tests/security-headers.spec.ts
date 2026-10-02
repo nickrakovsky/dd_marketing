@@ -110,17 +110,20 @@ test.describe('Enforced inline event policy', () => {
     await expect(page.locator('#preload-probe')).toHaveCSS('color', 'rgb(4, 5, 6)');
   });
 
-  test('full citation closes the mobile sheet and keeps anchor navigation', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(ARTICLE);
-    const reference = page.locator('#content [data-smartlink-type="academic"][data-smartlink-bibref^="#ref-"]').first();
-    await expect(reference).toHaveCount(1);
-    await reference.click();
-    const citation = page.locator('#sl-mobile-actions').getByRole('link', { name: 'Full citation' });
-    await expect(citation).toBeVisible();
-    const target = await citation.getAttribute('href');
-    await citation.click();
-    await expect(page.locator('#smartlink-scrim')).toBeHidden();
-    expect(new URL(page.url()).hash).toBe(target);
+  test.describe('Touch citation links', () => {
+    test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    test('full citation closes the mobile sheet and keeps anchor navigation', async ({ page }) => {
+      await page.goto(ARTICLE);
+      const reference = page.locator('#content [data-smartlink-type="academic"][data-smartlink-bibref^="#ref-"]').first();
+      await expect(reference).toHaveCount(1);
+      await expect(reference).toHaveAttribute('data-smartlink-events-bound', 'true');
+      await reference.click();
+      const citation = page.locator('#sl-mobile-actions').getByRole('link', { name: 'Full citation' });
+      await expect(citation).toBeVisible();
+      const target = await citation.getAttribute('href');
+      await citation.click();
+      await expect(page.locator('#smartlink-scrim')).toBeHidden();
+      expect(new URL(page.url()).hash).toBe(target);
+    });
   });
 });
