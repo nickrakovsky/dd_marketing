@@ -1,0 +1,45 @@
+name: Production security verification
+
+on:
+  push:
+    branches:
+      - codex/verify-security-20261002
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        id: browser-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - name: Inspect public production security and script startup
+        run: xvfb-run --auto-servernum node scripts/verify-public-security.mjs
+        env:
+          CSP_HEADED: '1'
+      - name: Test production forms, navigation, blog and CSP behavior
+        run: npx playwright test tests/demo-capture.spec.mjs tests/blog-hub-interactions.spec.mjs tests/blog-rollout.spec.mjs tests/security-headers.spec.ts
+        env:
+          PLAYWRIGHT_BASE_URL: https://datadocks.com
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-security-verification
+          path: production-security-evidence/
+          retention-days: 7
