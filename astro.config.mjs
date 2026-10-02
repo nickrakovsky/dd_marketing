@@ -19,6 +19,8 @@ import internalWorkspace from './integrations/internal-workspace.mjs';
 import publicationBoundary from './integrations/publication-boundary.mjs';
 import verifiedVendorAssets from './integrations/verified-vendor-assets.mjs';
 import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
+import { isCampaignLandingPath } from './src/lib/campaign-pages.mjs';
+import { assertCampaignSources, assertCampaignOutput } from './scripts/campaign-isolation.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -72,6 +74,7 @@ export default defineConfig({
       hooks: {
         'astro:config:setup': ({ injectRoute, command }) => {
           if (command === 'build') {
+            assertCampaignSources();
             injectRoute({ pattern: '/_build/publication/[...path]', entrypoint: './src/build-pages/publication-artifacts.astro', prerender: true });
           }
         },
@@ -155,6 +158,9 @@ export default defineConfig({
 
           const publicationStyles = {};
           const htmlFiles = collectHtml(distDir);
+          // Include runtime/future render samples before their normal cleanup.
+          // Fail the build if a paid-only page leaks into organic discovery.
+          assertCampaignOutput(distDir);
           // Include the private render samples before their normal cleanup so
           // future publication states share the reviewed script allowlist.
           prepareScriptPolicy(distDir);
@@ -214,7 +220,7 @@ export default defineConfig({
       customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
       // All article URLs belong to the runtime sitemap, including those already published.
       // Internal namespaces are never published; paid landing pages remain public but noindexed.
-      filter: (page) => !isInternalPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.includes('/outbound-dock-management') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      filter: (page) => !isInternalPath(new URL(page).pathname) && !isCampaignLandingPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
@@ -249,6 +255,14 @@ export default defineConfig({
     // re-adding a global integration.
     mdx(),
     precompiledImages(),
+    {
+      name: 'campaign-discovery-output',
+      hooks: {
+        // Sitemap generators have finished; the earlier check also covered
+        // runtime/future HTML samples before they were removed.
+        'astro:build:done': ({ dir }) => assertCampaignOutput(fileURLToPath(dir)),
+      },
+    },
     publicationBoundary()],
 
 });

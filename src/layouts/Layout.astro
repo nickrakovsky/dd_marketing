@@ -8,6 +8,7 @@ import { getAuthor } from '../data/authors';
 import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
 import { VENDOR_ASSETS, bentoScriptPath } from '../lib/vendor-assets.mjs';
 import AsyncStyles from '../components/AsyncStyles.astro';
+import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from '../lib/campaign-pages.mjs';
 
 interface Props {
     title: string;
@@ -83,6 +84,8 @@ const pathname = Astro.url.pathname === '/'
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
+const isCampaignPage = isCampaignLandingPath(pathname);
+const robots = isCampaignPage ? CAMPAIGN_ROBOTS : noindex ? 'noindex, follow' : 'index, follow';
 
 // Content pages (blog posts pass type="article", video pages pass type="video")
 // are low booking-intent and perf/SEO-sensitive, so we skip the Calendly
@@ -360,7 +363,7 @@ const jsonLd = {
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
-        <meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
+        <meta name="robots" content={robots} />
         <meta name="generator" content={Astro.generator} />
         <meta name="keywords" content="dock scheduling software, yard management system, logistics SaaS, supply chain automation" />
 
@@ -400,7 +403,7 @@ const jsonLd = {
              render-blocking CSS on pages without YouTube embeds. */}
         <slot name="head" />
 
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+        {!isCampaignPage && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>}
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         {/* Verified widget JS/CSS are first-party; calendly.com is the booking

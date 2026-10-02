@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { CAMPAIGN_PATHS, CAMPAIGN_ROBOTS } from '../src/lib/campaign-pages.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = resolve(root, process.env.PUBLICATION_TEST_DIST || 'dist');
@@ -170,6 +171,50 @@ export default {
   }
   checks++;
 
+  // Paid destinations remain usable for AdsBot, but excluded from search.
+  for (const campaign of CAMPAIGN_PATHS) {
+    assert.ok(!staticSitemap.text.includes(campaign), 'Static sitemap leaked a paid destination');
+    const variants = [campaign, `${campaign}/`, `${campaign}?utm_source=google&gclid=test-click`,
+      `${campaign}/?utm_source=google&gclid=test%2Fclick`,
+      `${campaign}.html`, `${campaign}/unknown-child`, campaign.toUpperCase(),
+      campaign.replace('/o', '/%6f'), campaign.replace('/o', '/%256f'),
+      campaign.replace('-dock-', '-%64ock-')];
+    for (const pathname of variants) {
+      let { response, text } = await request(pathname, Date.parse(slots[0].pubDate));
+      if (response.status === 404) {
+        // Pages may reject aliases before Worker routing. A true 404 with the
+        // site's noindex error page is also excluded from search.
+        assert.match(text, /<meta\b[^>]*name="robots"[^>]*content="[^"]*\bnoindex\b/,
+          `${pathname}: missing HTML exclusion on the error page`);
+        assert.ok(!text.includes('data-demo-attribution="page"'), `${pathname}: error served campaign markup`);
+      } else {
+        assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS, `${pathname}: missing HTTP exclusion`);
+      }
+      if ([301, 302, 308].includes(response.status)) {
+        const location = response.headers.get('location');
+        assert.ok(location, `${pathname}: redirect missing destination`);
+        const target = new URL(location, origin);
+        assert.equal(target.origin, origin, `${pathname}: redirect left the tested site`);
+        assert.equal(target.pathname, campaign, `${pathname}: redirect lost campaign identity`);
+        assert.equal(target.search, new URL(pathname, origin).search, `${pathname}: redirect lost ad tracking`);
+        ({ response, text } = await request(`${target.pathname}${target.search}`, Date.parse(slots[0].pubDate)));
+        assert.equal(response.status, 200, `${pathname}: redirect did not reach the campaign page`);
+        assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS, `${pathname}: redirect destination missing HTTP exclusion`);
+      }
+      if (pathname === campaign || pathname.includes('?')) {
+        assert.equal(response.status, 200, `${pathname}: campaign must remain accessible to ad visitors`);
+      } else {
+        assert.ok([200, 301, 302, 308, 404].includes(response.status), `${pathname}: unexpected alias response`);
+      }
+      if (response.status === 200) {
+        assert.ok(text.includes(`name="robots" content="${CAMPAIGN_ROBOTS}"`), `${pathname}: missing HTML exclusion`);
+        assert.ok(!text.includes('application/ld+json'), `${pathname}: paid page must not advertise SEO structured data`);
+        assert.ok(text.includes('data-demo-attribution="page"'), `${pathname}: campaign attribution mode lost`);
+      }
+      checks++;
+    }
+  }
+
   for (const path of ['/_worker.js/index.js', '/_build/publication/home', '/_build/publication/hub', `/_build/publication/posts/${slots[0].slug}`]) {
     const hidden = await request(path, Date.parse(slots[0].pubDate) - 1);
     assert.equal(hidden.response.status, 404, `${path}: build-only files must not be public`);
@@ -221,6 +266,9 @@ export default {
         const result = await request(path, instant);
         assert.equal(result.response.status, 200, `${label}: ${path} response`);
         assertBoundedCache(result.response, `${label} ${path}`);
+        for (const campaign of CAMPAIGN_PATHS) {
+          assert.ok(!result.text.includes(campaign), `${label}: ${path} advertised a paid destination`);
+        }
         assert.equal(result.text.includes(slot.slug), published, `${label}: ${path} visibility`);
         for (const future of slots.filter((entry) => Date.parse(entry.pubDate) > instant)) {
           assert.ok(!result.text.includes(future.slug), `${label}: ${path} leaked future post ${future.slug}`);
