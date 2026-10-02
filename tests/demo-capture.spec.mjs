@@ -27,6 +27,11 @@ async function prepare(page, baseURL) {
   });
   await page.route('**/*', async route => {
     const request = route.request(), url = new URL(request.url());
+    // Production injects Zaraz. Acknowledge tracking locally instead of
+    // aborting its fetch and creating an unrelated unhandled rejection.
+    if (url.origin === origin && url.pathname === '/cdn-cgi/zaraz/t' && request.method() === 'POST') {
+      return route.fulfill({ contentType: 'application/json', body: '{}' });
+    }
     if (url.origin === origin && url.pathname === '/api/bento-track') {
       captures.push(request.postDataJSON());
       if(mode === 'pending') await new Promise(resolve => release = resolve);
