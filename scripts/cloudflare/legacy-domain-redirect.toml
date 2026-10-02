@@ -1,0 +1,9 @@
+name = "datadocks-legacy-redirect"
+main = "legacy-domain-redirect.mjs"
+compatibility_date = "2026-10-01"
+workers_dev = false
+
+routes = [
+  { pattern = "getdatadocks.com/*", zone_name = "getdatadocks.com" },
+  { pattern = "www.getdatadocks.com/*", zone_name = "getdatadocks.com" }
+]
