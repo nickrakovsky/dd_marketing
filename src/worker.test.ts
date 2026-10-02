@@ -13,7 +13,7 @@ type WorkerArgs = Parameters<typeof worker.fetch>;
 
 function request(path: string, method = 'GET') {
   return worker.fetch(
-    new Request(`https://preview.example${path}`, { method }) as WorkerArgs[0],
+    new Request(`https://preview.example${path}`, { method }) as unknown as WorkerArgs[0],
     {} as WorkerArgs[1],
     {} as WorkerArgs[2],
   );
