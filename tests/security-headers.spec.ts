@@ -2,6 +2,12 @@ import { test, expect } from '@playwright/test';
 
 const ARTICLE = '/posts/dwell-time-in-trucking';
 const REPRESENTATIVE_ROUTES = ['/', '/integrations', '/posts', ARTICLE];
+type CspProbeWindow = Window & {
+  evalProbeBlocked?: boolean;
+  unreviewedInlineRan?: boolean;
+  evalProbeRan?: boolean;
+  ddGetAttribution?: unknown;
+};
 
 test.describe('Enforced inline event policy', () => {
   test('static and Worker HTML share the enforced policy and security headers', async ({ request }) => {
@@ -11,12 +17,34 @@ test.describe('Enforced inline event policy', () => {
       const headers = response.headers();
       const policy = headers['content-security-policy'];
       expect(policy, pathname).toContain("script-src-attr 'none'");
+      expect(policy, pathname).toMatch(/(?:^|[;,]\s*)script-src 'self' 'sha256-/);
       expect(policy, pathname).toContain("frame-ancestors 'self'");
       expect(policy, pathname).not.toMatch(/unsafe-inline|unsafe-eval/);
       expect(headers['x-content-type-options'], pathname).toBe('nosniff');
       // Includes build-generated CSS tags, not just the Astro source templates.
       expect(await response.text(), pathname).not.toMatch(/\s(?:onload|onclick)\s*=\s*["']/i);
     }
+  });
+
+  test('unapproved inline scripts and document eval are blocked while a reviewed script and CSS loader execute', async ({ page }) => {
+    await page.route('**/__csp-test/eval-probe.js', route => route.fulfill({
+      contentType: 'application/javascript',
+      body: "try { new Function('window.evalProbeRan = true')(); } catch { window.evalProbeBlocked = true; }",
+    }));
+    await page.goto('/integrations');
+    await page.evaluate(() => {
+      const inline = document.createElement('script');
+      inline.textContent = 'window.unreviewedInlineRan = true';
+      document.head.appendChild(inline);
+      const external = document.createElement('script');
+      external.src = '/__csp-test/eval-probe.js';
+      document.head.appendChild(external);
+    });
+    await expect.poll(() => page.evaluate(() => (window as CspProbeWindow).evalProbeBlocked)).toBe(true);
+    expect(await page.evaluate(() => (window as CspProbeWindow).unreviewedInlineRan)).toBeUndefined();
+    expect(await page.evaluate(() => (window as CspProbeWindow).evalProbeRan)).toBeUndefined();
+    expect(await page.evaluate(() => typeof (window as CspProbeWindow).ddGetAttribution)).toBe('function');
+    await expect(page.locator('link[data-dd-async-css][href^="/_astro/"]')).toHaveCount(0);
   });
 
   test('injected click attributes are blocked while event listeners still execute', async ({ page }) => {

@@ -12,6 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Beasties from 'beasties';
 import { collectPublicationStyles, finishPublicationStyles, withCspSafeStylesheets } from './scripts/publication-build.mjs';
+import { prepareScriptPolicy } from './scripts/script-csp.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
 import internalWorkspace from './integrations/internal-workspace.mjs';
@@ -154,6 +155,9 @@ export default defineConfig({
 
           const publicationStyles = {};
           const htmlFiles = collectHtml(distDir);
+          // Include the private render samples before their normal cleanup so
+          // future publication states share the reviewed script allowlist.
+          prepareScriptPolicy(distDir);
           let processed = 0;
           let alreadyAsync = 0;
           let missingRealFaces = 0;

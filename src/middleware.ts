@@ -1,6 +1,6 @@
 import { withPublicationStyles } from './lib/publication-styles';
 import { defineMiddleware } from 'astro:middleware';
-import { CONTENT_SECURITY_POLICY, SCRIPT_POLICY_REPORT_ONLY } from './lib/security-policy.mjs';
+import { CONTENT_SECURITY_POLICY, BUILD_SCRIPT_POLICY, SCRIPT_POLICY_REPORT_ONLY } from './lib/security-policy.mjs';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // All availability checks within a response use the same instant.
@@ -30,7 +30,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  response.headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY);
-  response.headers.set('Content-Security-Policy-Report-Only', SCRIPT_POLICY_REPORT_ONLY);
+  // Worker JavaScript has an independent CSP execution context. Applying the
+  // document policy to Partytown's worker would break its reviewed vendor runner.
+  // The CMS is a separate authenticated application, not a marketing document.
+  const enforceScripts = BUILD_SCRIPT_POLICY && response.headers.get('Content-Type')?.includes('text/html')
+    && !pathname.startsWith('/keystatic');
+  response.headers.set('Content-Security-Policy', enforceScripts
+    ? `${CONTENT_SECURITY_POLICY}; ${BUILD_SCRIPT_POLICY}` : CONTENT_SECURITY_POLICY);
+  if (enforceScripts) response.headers.delete('Content-Security-Policy-Report-Only');
+  else response.headers.set('Content-Security-Policy-Report-Only', SCRIPT_POLICY_REPORT_ONLY);
   return response;
 });

@@ -34,6 +34,9 @@ jobs:
       - name: Vendor asset integrity regression tests
         run: npm run test:vendor-assets
 
+      - name: Trusted script policy regression tests
+        run: npm run test:script-csp
+
       - name: Preview link checker regression tests
         run: npm run test:preview-links
 
@@ -165,6 +168,18 @@ jobs:
             --collect.numberOfRuns=1
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Compare mobile performance with production
+        run: node scripts/compare-preview-performance.mjs "${PREVIEW_URL}"
+
+      - name: Upload production and preview performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-performance-comparison
+          path: performance-comparison/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Link Crawl (Linkinator)
         # Linkinator crawls the live preview, verifying all internal pages, routes,
