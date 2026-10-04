@@ -10,6 +10,7 @@
 !/docs/
 !/integrations/
 !/content-revamps/
+!/workers/
 
 # build output
 dist/

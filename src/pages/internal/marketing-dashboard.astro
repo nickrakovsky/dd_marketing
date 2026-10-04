@@ -1,0 +1,58 @@
+---
+/**
+ * Internal marketing KPI dashboard. Not public.
+ *
+ * Protected by a Cloudflare Access application covering /internal/*.
+ * As a second line of defence this page 404s in production unless Access
+ * has attached its JWT header. TODO(nick): verify the JWT signature against
+ * https://<team>.cloudflareaccess.com/cdn-cgi/access/certs (see PRD).
+ *
+ * Data: D1 via the MARKETING_DB binding, or sample data until it exists.
+ */
+export const prerender = false;
+
+import '../../styles/global.css';
+import MarketingDashboard from '../../components/solid/internal/MarketingDashboard';
+import { loadDashboardData } from '../../lib/marketing-dashboard/repository';
+
+const noStore = { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex, nofollow' };
+
+// Local previews (astro dev, wrangler pages dev) have no Access in front of them.
+const isLocal = import.meta.env.DEV || ['localhost', '127.0.0.1'].includes(Astro.url.hostname);
+
+if (!isLocal && !Astro.request.headers.get('cf-access-jwt-assertion')) {
+  return new Response('Not found', { status: 404, headers: noStore });
+}
+
+for (const [k, v] of Object.entries(noStore)) Astro.response.headers.set(k, v);
+
+const env = (Astro.locals as any)?.runtime?.env;
+const data = await loadDashboardData(env);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Marketing KPIs | DataDocks internal</title>
+  </head>
+  <body class="min-h-screen bg-[#FFF8EE] font-sans text-black antialiased">
+    <main class="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+      <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-black/50">DataDocks internal</p>
+          <h1 class="text-2xl font-semibold tracking-tight">Marketing KPIs</h1>
+          <p class="mt-1 text-sm text-black/60">How marketing activity each month lines up with demos booked.</p>
+        </div>
+        {data.isMock && (
+          <p class="rounded-md border border-[#b45309]/30 bg-[#fff4e0] px-3 py-2 text-sm text-[#7a3e00]">
+            <strong>Sample data.</strong> Numbers are generated. Real data appears once the MARKETING_DB binding is connected.
+          </p>
+        )}
+      </header>
+      <MarketingDashboard client:idle data={data} />
+    </main>
+  </body>
+</html>

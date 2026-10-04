@@ -1,0 +1,25 @@
+# Marketing KPI sync Worker.
+# Cloudflare Pages cannot run cron jobs, so this separate Worker pulls every
+# source daily and writes monthly totals to D1. The site (Pages) reads the
+# same D1 database through its own MARKETING_DB binding.
+#
+# Setup (see PRD):
+#   npx wrangler d1 create marketing-kpis          -> paste database_id below
+#   npx wrangler d1 migrations apply marketing-kpis --remote
+#   npx wrangler secret put <NAME>                  -> once per secret in src/env.ts
+#   npx wrangler deploy
+
+name = "marketing-sync"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[triggers]
+# 09:00 UTC daily (early morning in Toronto).
+crons = ["0 9 * * *"]
+
+[[d1_databases]]
+binding = "MARKETING_DB"
+database_name = "marketing-kpis"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
