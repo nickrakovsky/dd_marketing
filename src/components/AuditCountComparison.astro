@@ -1,0 +1,123 @@
+---
+const stockLocations = [
+  { x: 46, y: 44 }, { x: 156, y: 44 }, { x: 266, y: 44 },
+  { x: 46, y: 156 }, { x: 156, y: 156 }, { x: 266, y: 156 },
+];
+const methods = [
+  {
+    id: 'cycle',
+    title: 'Cycle counting',
+    description: 'Selected items or locations in successive counts.',
+    selected: [0, 4],
+    rounds: [[0, 4], [1, 5], [2, 3]],
+    sheetLabel: 'Cover inventory over time',
+    drawingDescription: 'The warehouse has selected stock locations highlighted. Three count sheets show different selections across successive counts.',
+  },
+  {
+    id: 'full',
+    title: 'Full physical count',
+    description: 'All inventory within the defined count boundary.',
+    selected: [0, 1, 2, 3, 4, 5],
+    rounds: [[0, 1, 2, 3, 4, 5]],
+    sheetLabel: 'Count at a defined point in time',
+    drawingDescription: 'The same warehouse has every stock location highlighted within one count boundary. One count sheet shows complete coverage.',
+  },
+];
+const preparation = [
+  { text: 'Item and unit', path: 'M4 7 12 3l8 4v10l-8 4-8-4V7Zm0 0 8 4 8-4m-8 4v10', accent: 'M8 5l8 4' },
+  { text: 'Count boundary and time', path: 'M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6', accent: 'M12 8v5h4' },
+  { text: 'Stock movements', path: 'M3 7h17m-4-4 4 4-4 4', accent: 'M21 17H4m4-4-4 4 4 4' },
+  { text: 'Recount and reconciliation', path: 'M5 3h10l4 4v14H5V3Zm10 0v5h4M8 11h7', accent: 'm8 16 2 2 5-5' },
+];
+---
+
+<figure class="not-prose audit-count-comparison font-recoleta" aria-labelledby="audit-count-comparison-title">
+  <p id="audit-count-comparison-title" class="comparison-title">Two ways to organise a stock count</p>
+  <div class="count-methods">
+    {methods.map(method => (
+      <section class="count-method" aria-labelledby={`count-method-${method.id}`}>
+        <h3 id={`count-method-${method.id}`}>{method.title}</h3>
+        <p class="method-description">{method.description}</p>
+        <svg class="warehouse-coverage" viewBox="0 0 384 354" role="img" aria-labelledby={`count-drawing-${method.id}-title count-drawing-${method.id}-desc`}>
+          <title id={`count-drawing-${method.id}-title`}>{method.title}: count coverage</title>
+          <desc id={`count-drawing-${method.id}-desc`}>{method.drawingDescription}</desc>
+          <g stroke-linejoin="miter" stroke-linecap="square" stroke-width="2">
+            <path class="warehouse-floor" d="M24 24h336v218H218m-52 0H24V24Z" />
+            <path class="warehouse-aisle" d="M24 132h336M168 242v-12h48v12" />
+            {method.id === 'full' && <rect class="count-boundary" x="32" y="32" width="320" height="202" rx="2" />}
+            {stockLocations.map(({ x, y }, index) => (
+              <g transform={`translate(${x} ${y})`} class:list={['stock-location', { 'is-counted': method.selected.includes(index) }]}>
+                <rect class="location-focus" x="-6" y="-6" width="84" height="76" rx="2" />
+                <rect class="rack-frame" x="0" y="0" width="72" height="64" />
+                <path class="rack-beam" d="M0 30h72M0 61h72M4 0v64M68 0v64" />
+                <path class="carton" d="M10 8h22v19H10Zm31 3h19v16H41ZM10 39h20v19H10Zm30-2h22v21H40Z" />
+                <path class="carton-seam" d="M21 8v6m29-3v5M20 39v5m31-7v6" />
+              </g>
+            ))}
+            <path class="sheet-connection" d="M192 250v15" />
+            {method.rounds.map((selection, round) => {
+              const x = method.id === 'full' ? 159 : 71 + round * 88;
+              return <g transform={`translate(${x} 278)`}>
+                <path class="count-sheet" d="M0 0h50l14 14v55H0V0Zm50 0v14h14" />
+                <path class="sheet-rule" d="M10 9h28M10 58h43" />
+                {stockLocations.map((_, location) => (
+                  <rect class:list={['sheet-location', { 'sheet-counted': selection.includes(location) }]} x={10 + (location % 3) * 16} y={23 + Math.floor(location / 3) * 15} width="11" height="9" />
+                ))}
+              </g>;
+            })}
+          </g>
+        </svg>
+        <p class="sheet-label">{method.sheetLabel}</p>
+      </section>
+    ))}
+  </div>
+  <div class="count-preparation">
+    <p>For either method, define</p>
+    <ul role="list">
+      {preparation.map(({ text, path, accent }) => <li>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true" focusable="false"><path d={path} /><path d={accent} stroke="#fd4f00" /></svg>
+        <span>{text}</span>
+      </li>)}
+    </ul>
+  </div>
+  <figcaption>Both approaches need a defined count scope, timing and records that can be reconciled.</figcaption>
+</figure>
+
+<style>
+  .audit-count-comparison { --count-paper: #fff8e9; --count-sand: #efe2d2; --count-floor: #f8edd9; --count-line: #e5d3b3; --count-ink: #374151; --count-secondary: #5b6472; --count-focus: #fd4f00; margin: 2rem 0; container-type: inline-size; }
+  .comparison-title { margin: 0 0 1.5rem; font-size: 1.375rem; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+  .count-methods { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); grid-template-rows: auto auto auto auto; column-gap: 1.5rem; }
+  .count-method { min-width: 0; display: grid; grid-template-rows: subgrid; grid-row: span 4; }
+  .count-method h3 { margin: 0 0 .5rem; font-family: Inter, Arial, sans-serif; font-size: 1rem; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; }
+  .method-description, .sheet-label { margin: 0; font-family: Inter, Arial, sans-serif; color: var(--count-secondary); }
+  .method-description { font-size: .875rem; line-height: 1.5; }
+  .warehouse-coverage { display: block; width: 100%; height: auto; margin: .75rem 0 .5rem; overflow: visible; }
+  .warehouse-floor { fill: var(--count-floor); stroke: var(--count-ink); }
+  .warehouse-aisle { fill: none; stroke: var(--count-line); }
+  .count-boundary { fill: none; stroke: var(--count-focus); stroke-dasharray: 7 5; }
+  .location-focus { fill: none; stroke: none; }
+  .rack-frame { fill: var(--count-paper); stroke: var(--count-ink); }
+  .rack-beam { fill: none; stroke: var(--count-ink); }
+  .carton { fill: var(--count-sand); stroke: var(--count-ink); }
+  .carton-seam { fill: none; stroke: var(--count-ink); }
+  .is-counted .location-focus { fill: var(--count-focus); fill-opacity: .08; stroke: var(--count-focus); }
+  .is-counted .rack-beam { stroke: var(--count-focus); }
+  .sheet-connection { fill: none; stroke: var(--count-line); }
+  .count-sheet { fill: var(--count-paper); stroke: var(--count-ink); }
+  .sheet-rule { fill: none; stroke: var(--count-line); }
+  .sheet-location { fill: var(--count-sand); stroke: none; }
+  .sheet-counted { fill: var(--count-focus); }
+  .sheet-label { text-align: center; font-size: .75rem; font-weight: 500; line-height: 1.5; text-wrap: balance; }
+  .count-preparation { margin: 1.5rem 0 0; padding-top: 1.25rem; border-top: 1px solid var(--count-line); font-family: Inter, Arial, sans-serif; font-size: .8125rem; line-height: 1.5; }
+  .count-preparation p { margin: 0 0 .75rem; font-size: .75rem; font-weight: 600; line-height: 1.5; }
+  .count-preparation ul { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem 1.5rem; list-style: none; padding: 0; margin: 0; }
+  .count-preparation li { display: flex; align-items: flex-start; gap: .5rem; margin: 0; }
+  .count-preparation svg { flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; }
+  figcaption { margin: .75rem 0 0; font-family: Inter, Arial, sans-serif; font-size: .75rem; line-height: 1.5; color: var(--count-secondary); }
+  :global(.dark) .audit-count-comparison { --count-paper: #1f2937; --count-sand: #4b5563; --count-floor: #273343; --count-line: #6b7280; --count-ink: #d1d5db; --count-secondary: #b5becb; --count-focus: #ff7635; }
+  @container (max-width: 30rem) {
+    .count-methods { grid-template-columns: minmax(0,1fr); grid-template-rows: none; row-gap: 2rem; }
+    .count-method { grid-template-rows: auto; grid-row: auto; }
+  }
+  @media print { .count-method { break-inside: avoid; } }
+</style>

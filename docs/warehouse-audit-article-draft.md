@@ -1,6 +1,6 @@
 # Warehouse audit checklist
 
-*Editorial draft for Post 1, updated 1 October 2026. The checks, quotations and placement instructions remain working material for human authorship and further prose development. Design markers are not publication copy. See the [visual and interaction brief](warehouse-audit-visual-and-interaction-brief-turn-2.md) and [bibliography](warehouse-audit-article-bibliography.md).*
+*Editorial draft for Post 1, updated 5 October 2026 for the authorized stock-location example revision. The checks, quotations and placement instructions remain working material for human authorship and further prose development. Design markers are not publication copy. See the [visual and interaction brief](warehouse-audit-visual-and-interaction-brief-turn-2.md) and [bibliography](warehouse-audit-article-bibliography.md).*
 
 Operating a warehouse requires managing the constant tension between speed, safety, and accuracy. A warehouse audit compares what happens on the floor and in the records with the requirements the operation is meant to meet. This checklist helps you plan that review, investigate discrepancies and put the findings in front of someone who can act.
 
@@ -10,11 +10,13 @@ Operating a warehouse requires managing the constant tension between speed, safe
 
 The planned Excel workbook and printable PDF sheets will help you take your review questions, evidence and action records into a team discussion. When available, the pack will come with an optional DataDocks email subscription. The public article and checklist remain free to use without subscribing.
 
-*Single complete pack offer C04 at `warehouse-audit-working-pack`, directly after the opening paragraph. Keep the pack benefit, subscription exchange and coming-soon/unavailable status visible before the restored native disclosure. Use the two-line, full-width cream treatment with an outlined circular chevron: title “Excel and PDF audit pack”, action “Preview pack contents and signup”. It opens the approved artwork, full contents and the sole inactive accepted signup prototype in place. The offer is self-contained; remove its former late duplicate and put its contents-navigation entry first. V01 remains the opening illustration. Omit the unbuilt planner from current navigation. Keep inherited sentence-case typography, no text shadow and the agreed spacing.*
+*Early complete pack preview at `warehouse-audit-working-pack`, directly after the opening paragraph. Keep the pack benefit, subscription exchange and coming-soon/unavailable status visible before the restored native disclosure. `AuditPackDisclosure.astro` supplies the two-line, full-width treatment with an outlined circular chevron: title “Excel and PDF audit pack”, action “Preview pack contents and download”. One outer border encloses the summary and padded open body, which share the same edges; the signup is inset inside that panel. It opens `AuditPackContents.astro` artwork, full contents and an inactive accepted signup prototype, using email ID `audit-preview-email`. The repeat before planning uses the same disclosure component, while the later full offer uses the shared contents directly. Give all three email fields unique IDs. Keep the early preview self-contained and its contents-navigation entry first. V01 remains the opening illustration. Omit the unbuilt planner from current navigation. Keep inherited sentence-case typography, no text shadow and the agreed spacing.*
 
-**Inside “Preview pack contents and signup”:**
+*Disclosure implementation states: closed cream `#fff8e9`; open sand `#efe2d2` header and cream body inside the shared border. Closed hover uses sand. Open hover keeps its sand header and highlights the toggle orange. Keyboard focus gives an orange outline and toggle; pressing uses deeper sand `#e5d3b3`. Retain the existing dark palette. Hover applies only to hover-capable pointers, and reduced-motion preferences disable transitions. These are implementation facts for human review.*
 
-- Show the approved overlapping-file artwork once, here. Replace design sketches with crops of delivered files before launch.
+**Inside “Preview pack contents and download”:**
+
+- Show the approved overlapping-file artwork through `AuditPackContents.astro`, shared by all three placements. Replace design sketches with crops of delivered files before launch.
 - **Excel workbook:** editable scope, evidence, findings and action records.
 - **PDF field sheets:** printable records for the floor review.
 - **Completed examples:** examples showing how to record evidence, unresolved questions and follow-up.
@@ -22,6 +24,8 @@ The planned Excel workbook and printable PDF sheets will help you take your revi
 - **One inactive field:** Email address. **One inactive button:** Subscribe & get the audit pack.
 - **Status visible before opening the preview:** Coming soon. Downloads and email signup are not available yet.
 - **Conditional future exchange:** When the pack is available, you’ll be able to subscribe to DataDocks emails about warehouse guidance and product updates and receive the Excel and PDF files. Unsubscribe anytime. Link the applicable privacy notice.
+
+*Signup treatment: use a joined cream input and orange button where the panel's available width allows; stack them within narrow containers. Controls use normal-weight Recoleta, with a small Inter label and disclosure. Parent padding contains the joined row or stack. Keep the form inset in the shared pack panel, with no separate form card. The one-field prototype remains disabled.*
 
 *The pack is a generic reusable set of files for the reader's working records. The exact accepted launch button, disclosure and fulfilment remain in the future pack handoff below and the step 10 specification. Do not activate email capture or files, promise immediate availability now or send readers to find another offer later.*
 
@@ -31,13 +35,15 @@ A warehouse audit is a structured review of a physical warehouse's activities, r
 
 Recurring stock differences may prompt a review of the work between counts. A concern about late dispatches or storage conditions may call for operating records and observations. A customer review or warehouse-provider renewal may require evidence against the agreement and the customer's requirements. Establish the decision the review supports, whose requirements apply and who can act on the findings.
 
+*Asset 1, accepted 2 October 2026: `src/assets/blog-images/warehouse-audit-drift-approved-v1.png` preserves the approved v4 raster locked and unchanged. It replaces the provisional opening sketch in the preview at `audit-drift-figure`. The visible HTML caption is exactly “Illustrative drift and recovery”, in small Inter type directly joined to the image with no gap. The artwork wrapper now uses one even all-around shadow with .5rem corners and hidden overflow, replacing the rejected external blurred backdrop and the earlier inner feathering. The image stays sharp and fully opaque, with no duplicate backdrop, blur pseudo-element or masks. The user called the current framing “perfect” and asked to proceed to the next asset; this framing is accepted.*
+
 ## The practical warehouse audit checklist
 
 You can’t fix what you don’t look at. Start with the areas relevant to your review, and record what supports each answer.
 
 Use **Check against** to establish the applicable requirement, **Look for** to identify evidence and **If unclear** to decide the next step. A missing reference or contradictory account should remain visible. The 28 checks below are a starting framework to adapt to the actual review, not a claim to cover every industry's requirements.
 
-*Design: preserve the approved checklist model: eight static sentence-case area headings and a compact index explicitly labelled “Jump to an area in this checklist”, with downward-arrow anchors. Each complete numbered question is the only native disclosure in the checklist: its number, title, full question and a simple chevron form one summary. Guidance opens inside that question, with numbering and guidance sharing one alignment. The first question starts open. Remove area disclosures, separate “Evidence and follow-up” controls, interactive check counts and circular-arrow styling. Shared question links open their destination; printing opens all guidance and then restores previous states. Preserve all public check content. Stable IDs, source references and limitations live in the [shared editorial checks](warehouse-audit-checks.json) for the applet and later pack.*
+*Design: preserve the approved checklist model: eight static sentence-case area headings and a compact index explicitly labelled “Jump to an area in this checklist”. Each area anchor keeps its final word and existing `LinkIcon.astro` down chevron together in one nowrap inline span; only the label is underlined. Each complete numbered question is the only native disclosure in the checklist: its number, title, full question and a simple chevron form one summary. Keep the period attached to the number with nowrap text in the wider number column. Guidance opens inside that question and aligns with its heading text. The first question starts open. Remove area disclosures, separate “Evidence and follow-up” controls, interactive check counts and circular-arrow styling. Shared question links open their destination; printing opens all guidance and then restores previous states. Preserve all public check content. Stable IDs, source references and limitations live in the [shared editorial checks](warehouse-audit-checks.json) for the applet and later pack.*
 
 ### Inventory accuracy and storage
 
@@ -223,7 +229,13 @@ Use **Check against** to establish the applicable requirement, **Look for** to i
 - **Look for:** Compare reported completion with follow-up observations, records and recurring exceptions; retain limitations and any unresolved part of the finding.
 - **If unclear or a concern appears:** Record further work where effectiveness remains uncertain. Distinguish verified operating results from wider financial benefits that have not been demonstrated.
 
-*Continue from the checklist into planning. Explain the reusable pack at the opening and show its one subscription action after the examples; no extra scroll button or invitation after the checklist.*
+### Excel and PDF audit pack
+
+Keep this checklist, your evidence and follow-up in one working record for your team.
+
+**Coming soon.** The pack will be included with a DataDocks email subscription. Downloads and email signup are not available yet.
+
+*Additional complete expandable CTA immediately before “Plan the audit around the decision”. Use `AuditPackDisclosure.astro` with heading ID `warehouse-audit-pack-after-checklist`, heading level `h3` and email ID `audit-checklist-preview-email`. Its labels, markup, complete contents and all disclosure states are shared with the early preview. Keep both existing placements. This repeat adds no contents-navigation entry; it is an h3 inside the article rather than another top-level pack section.*
 
 ## Plan the audit around the decision you need to make
 
@@ -233,7 +245,7 @@ Use **Check against** to establish the applicable requirement, **Look for** to i
 - **Assign the work and the decisions.** Identify the sponsor, evidence providers, reviewer, action owners, resource approver and effectiveness reviewer as relevant. One person may hold several roles; record any resulting limits rather than inventing independence.
 - **Prepare an evidence request.** Ask for the records and observations that would distinguish competing explanations. An operating team can prepare a review this way; a director with no diagnosis can commission one without pretending findings already exist.
 
-*Design: V02 shows purpose/criteria → evidence → finding and uncertainty → action/decision → verification, with a return path when evidence or effectiveness is unresolved. B01 and B05 inform this proposed method.*
+*Design: V02 uses the shared `AuditTrail.astro` renderer for purpose and criteria → evidence → finding and uncertainty → action or decision → verification. Its angular two-tone SVG icons and connecting line use the same treatment as the inventory trail, with no square markers. Retain the return-to-investigation caption when evidence or effectiveness is unresolved. B01 and B05 inform this proposed method.*
 
 ## Executing the audit: don’t boil the ocean
 
@@ -248,13 +260,13 @@ Barratt, Kull and Sodero studied one retailer's distribution centre where employ
 
 > “This policy impaired employee productivity and, thus, reduced their productivity bonuses.”
 
-— Barratt et al. (2018).
+— Barratt, Kull and Sodero (2018).
 
 Locator: author manuscript p. 17, “Documents, Interviews, and Observations”. [Source](https://www.researchgate.net/publication/328417219_Inventory_Record_Inaccuracy_Dynamics_and_the_Role_of_Employees_within_Multi-Channel_Distribution_Center_Inventory_Systems).
 
 The practical question for a review is whether the measures used to assess work discourage the exception reporting the procedure requires.
 
-*Design: Q01, Q02 and Q03 each use one semantic figure containing the exact quotation, short source label and explicit locator line with the existing citation. Use ordinary quotation typography and attached attribution; remove orange/grey horizontal framing. Keep all attribution details attached when repositioning a quotation. Full author/publication information remains in the bibliography; Q01 attributes the account to the researchers.*
+*Design: Q01, Q02 and Q03 each use one semantic figure containing the exact quotation, short source label and explicit locator line with the existing citation. Keep the lightly tinted inset and orange Recoleta quotation mark in the smaller decorative grid. Quotation text inherits the article's reading size; supporting attribution and locator use Inter with their own spacing. Keep the quote, source and locator together without mismatched top/bottom bars. Full author/publication information remains in the bibliography; Q01 attributes the account to the researchers.*
 
 ### Keep stock counts and process observation distinct
 
@@ -262,6 +274,16 @@ The practical question for a review is whether the measures used to assess work 
 - **Blind counting** means counting without knowledge of or access to the recorded quantity, while retaining the identifying information needed to count. Its purpose is to reduce the influence of an expected number on the count. The GAO guide describes this practice and contextual alternatives; it is not universally mandatory or a guarantee of accuracy. [B10, Key Factor 8](https://www.gao.gov/assets/gao-02-447g.pdf#page=40).
 - Keep the initial result, recount, reconciliation and any authorised adjustment traceable. Document who did what and why a difference remains unexplained.
 - Distinguish preparing a controlled count from observing ordinary work. Correct immediate hazards through the site's response process, while recording the original conditions relevant to the review. Tidying the area must not erase evidence of a recurring process problem.
+
+### Example: review a stock location
+
+Choose one item and ask why it is stored in that position. Watch a pick and a refill, paying attention to how people reach and handle the stock and use the space in front of the rack.
+
+*Latest asset 3 persistent-marker revision, 5 October 2026, awaiting human review: `AuditSlottingIllustration.astro` retains the liked raster `src/assets/blog-images/warehouse-audit-slotting-v1.png` unchanged. The figure title remains “Why is this item stored here?” The initial interactive view has no selected option, annotation text, connecting lines or footprint overlays. Four visible numbered circles remain: 1 on the shelf, 1 by the cart, 2 on the incoming pallet load and 3 in the shared working space. Caption: “A stock location has to work for the pick and the refill.”*
+
+*The controls are Picking, Replenishment and Shared access, with no Overview choice. Clicking an active task button again clears it; numbered-marker clicks select or retain their assigned task. Picking reveals “From shelf to cart” and “Space used by a pick”; Replenishment reveals “From load to shelf” and “Space used by a refill”; Shared access reveals only “Where the jobs meet”. Each visible heading and explanation belong to the same task, and unrelated notes stay hidden. The two 1 markers select Picking, marker 2 selects Replenishment and marker 3 selects Shared access. Each visible circle is a 2rem native button whose clickable area is confined to that circle, replacing the broad transparent object rectangles. The source centres are shelf (50%, 44%), cart (84%, 70%), load (17%, 76%) and working space (50%, 82%). Picking's connector reaches both shelf and cart; the shared-space note 3 stays closer to its subject. Central brackets and plus affordances remain removed. Named controls start hidden and appear after binding. Numbered buttons start visible but disabled, and binding enables them. Without JavaScript, the disabled numbered markers remain with a separate text fallback below the artwork. Printing temporarily shows all default attached annotations and four decorative SVG numbers, hides the interactive buttons, then restores the chosen or unselected state. Source retains independent instances and Astro navigation cleanup/rebinding. Targeted Astro source compilation and script syntax passed. A hand-built minimal synthetic fixture verified persistent markers, binding, task mapping and retention, relevant notes/leaders/footprints, clearing, matching copy, independent instances, repeated print restoration and Astro cleanup/rebinding. It used no article HTML, CSS, images or browser render. Source verification confirms one shared coordinate definition and removal of broad transparent rectangles; the raster checksum is unchanged. A status-only local-preview request returned HTTP 200. The figure stays at `#audit-slotting-illustration` under this execution example, outside the checklist. The two earlier replacement concepts remain uncommissioned background ideas.*
+
+Compare those observations with how often the item is picked, its handling requirements and the workers’ explanation of the placement. Record any constraint and the evidence for it before proposing a move.
 
 ## Stock discrepancies and financial controls
 
@@ -272,13 +294,13 @@ The practical question for a review is whether the measures used to assess work 
 - Record the reason and authority for an adjustment, then preserve the reconciliation and unresolved investigation. Changing a balance and explaining why it became wrong are separate pieces of work.
 - Keep quantity, condition, custody, ownership and valuation distinct. Under PCAOB AS 2510, inventory-observation work includes quantities and physical condition. Its requirements apply within that auditing framework. [B06, .02 and .09–.14](https://pcaobus.org/oversight/standards/auditing-standards/details/AS2510).
 
-*Design: V03 follows the stock and supporting records; an unanswered link remains visibly open.*
+*Design: V03 uses the shared `AuditTrail.astro` renderer to follow receipt → stock record → movements → count and recount → adjustment. Each step has an angular two-tone SVG icon connected by the same line treatment as V02; neither trail uses square markers. Keep the title “Follow one item through the record” and caption “A missing connection is an evidence request, not a reason to guess.” The planning and inventory sequences retain their distinct meanings within the shared renderer.*
 
 Martin County's 2021 utilities warehouse report recommended independent verification when a count variance exceeded management's tolerance:
 
 > “The verification count should be performed by a staff member who did not participate in the original count.”
 
-— Martin County audit (2021).
+— Martin County warehouse audit (2021).
 
 Locator: p. 24, recommendation 4. [Source](https://www.martinclerk.com/DocumentCenter/View/856/Utilities-Warehouse-Audit-Report---2021-PDF#page=24).
 
@@ -307,17 +329,23 @@ United Warehouse describes internal, third-party, customer and insurance-related
 
 > “We are routinely audited by many of our customers, and even by their customers.”
 
-— United Warehouse (n.d.).
+— United Warehouse.
 
 Locator: “Customer audits”, first bullet. [Source](https://www.unitedwarehouse.com/why-united/quality-assurance/audits/).
 
 A customer review can therefore involve preparing evidence for another organisation and, at this operator, for that organisation's customers too.
 
-### An approved UK customs stock-accounting arrangement
+### Example: trace a removal from a UK customs warehouse
 
-HM Revenue & Customs (HMRC), the UK’s tax and customs authority, sets the requirements for this approved closing stock balance arrangement. In a UK customs warehouse using an HMRC-approved closing stock balance system, commercial records must contain consignment details, quantities and removal dates before the goods leave. The duty-management system is updated as soon as information is available, and before midnight on the following warehouse operation day. An auditable link must connect the commercial records to that update; the two systems jointly form the customs warehouse stock account. A review can trace a selected removal through its commercial entry, update time and audit trail. [B11](https://www.gov.uk/guidance/special-procedure-customs-warehousing/duty-management-and-closing-stock-balance-systems).
+Follow goods leaving the warehouse through the records to check that the entries connect and were made at the right time. In a closing stock balance system approved by HM Revenue & Customs (HMRC), the UK’s tax and customs authority, the commercial records and duty-management system together form the stock account.
 
-*Design: explain the approved arrangement in ordinary prose. Remove the old generic goods/records/customs schematic, which did not explain the actual timing and audit-trail requirement.*
+1. **Start with the commercial record.** Check that the consignment details, quantity and removal date were entered before the goods left.
+2. **Follow the audit trail.** Ask how the commercial entries feed into the duty-management update.
+3. **Check the update timing.** Confirm the duty-management system was fully updated as soon as information became available, before midnight of the following warehouse operation day. [B11](https://www.gov.uk/guidance/special-procedure-customs-warehousing/duty-management-and-closing-stock-balance-systems).
+
+Agree the removals and period to review with the person responsible for the warehouse’s customs authorisation, using the requirements of its approved arrangement.
+
+*Design: use the reader-led removal trace and its three evidence steps in ordinary prose. The approved UK closing-stock arrangement remains the source boundary. The old generic goods/records/customs schematic stays removed.*
 
 ## Turn findings into decisions and follow-through
 
@@ -362,6 +390,14 @@ The director's renewal decision remains open until these evidence requests and r
 
 *Integrate these prompts into the disputed-charge part of the provider review above. Do not introduce a separate billing chain in the stock-discrepancy section. This comparison is our editorial method; the actual agreement determines entitlement.*
 
+## Get the checklist in Excel and PDF
+
+**Coming soon. Downloads and email signup are not available yet.**
+
+Take the review into an editable workbook and printable floor sheets. The planned pack will help your team keep scope, evidence, findings, assigned work and management decisions together. When available, it will be included with a DataDocks email subscription. The public article and checklist remain free to use without subscribing.
+
+*Restored full offer C04 at `get-warehouse-audit-pack`, after the provider-renewal example and before the frequency section. Render the same artwork, complete contents and inactive signup through `AuditPackContents.astro`, with an email-field ID distinct from both expandable previews. Keep the shared one-field/button treatment and conditional future-availability disclosure above; do not activate submission or files. All three placements present the same offer and launch terms.*
+
 ## How often should you audit a warehouse
 
 - **Routine and pre-use checks:** tied to the actual task, equipment and applicable requirements. They support daily work; they do not replace the broader review.
@@ -369,7 +405,9 @@ The director's renewal decision remains open until these evidence requests and r
 - **Process or management reviews:** consider changes in work, recurring findings, risk and the decision that needs evidence. A change in conditions can justify revisiting an earlier conclusion.
 - **Specified assurance engagements:** follow the relevant customer, scheme, legal or engagement requirements. Identify those requirements before suggesting a schedule.
 
-*Design: four live-text comparison panels. B04, B06 and B07 illustrate distinct contexts; no universal monthly/quarterly frequency follows from them.*
+Inventory counts have their own coverage and timing. Cycle counting covers inventory through successive selections; a full physical count covers the defined inventory at a point in time. A wider warehouse audit examines the work and controls behind the records. [B10, printed p. 20](https://www.gao.gov/assets/gao-02-447g.pdf).
+
+*Asset 2: the user endorsed the diagram and requested typographic refinement, now implemented in `AuditCountComparison.astro` and awaiting human review. This static SVG/CSS comparison remains in the frequency section at `audit-count-comparison`. The same stock-location geometry renders both warehouse views. Cycle counting highlights selected locations and uses three count sheets to show successive selections; full physical counting highlights all locations within its boundary and uses one complete sheet. Supporting labels distinguish inventory coverage over time from counting at a defined point in time. One shared preparation strip covers item/unit, count boundary/time, movements and recount/reconciliation. There is no scope selector or script. Caption: “Both approaches need a defined count scope, timing and records that can be reconciled.” The Recoleta figure title and Inter method/supporting text now use a defined hierarchy, and shared CSS rows align the headings, descriptions and drawings without a fixed minimum text height. The diagram's geometry and content are unchanged. No automated design checks were run. B04, B06 and B07 illustrate distinct review contexts; no universal monthly/quarterly frequency follows from them.*
 
 ## How technology should help
 
@@ -420,7 +458,7 @@ A [dated checkout copy](baselines/warehouse-audit-checklist-2026-09-30.mdx) pres
 
 ### Future planner handoff
 
-The unbuilt planner has no visible section, static outline, link or contents entry in the current preview. Turn 3 retains applet position A01 and anchor `warehouse-audit-planner`, after the worked examples once it is built. The single pack offer now precedes the article; its move does not change the planner's build scope. Use the [functional specification](warehouse-audit-applet-and-download-step-10.md), shared check wording and unresolved case facts above.
+The unbuilt planner has no visible section, static outline, link or contents entry in the current preview. Turn 3 retains applet position A01 and anchor `warehouse-audit-planner`, after the worked examples once it is built. The three pack placements do not change the planner's build scope. Use the [functional specification](warehouse-audit-applet-and-download-step-10.md), shared check wording and unresolved case facts above.
 
 **Future entry copy:** Choose what you want to review. Build an evidence plan, or record what you have already found.
 
@@ -442,4 +480,4 @@ Once the real files and fulfilment work, reveal both download links after a succ
 
 ### Stage boundary
 
-**Turn 2 remains in human review:** all 28 checks developed; supporting bullets and both worked examples expanded; three exact source quotations selected; visual candidates and the single inactive pack form defined. Preserve the approved static area headings, “Jump to an area in this checklist” index and one native disclosure per complete numbered question. The single complete pack offer is early, with visible benefit, subscription exchange and coming-soon/unavailable status before “Preview pack contents and signup”; opening it reveals the artwork, full contents and inactive signup together. The former late offer is removed. Quote figures retain ordinary typography and attached source/locator without orange/grey horizontal framing; the planner remains reserved for the future handoff. The purpose-led opening, exact future launch signup copy, specific HMRC-approved stock-accounting sequence and unresolved provider-renewal decision remain. The [visual brief](warehouse-audit-visual-and-interaction-brief-turn-2.md) records the implementation handoff. **Turn 3:** build the applet MVP. **Turn 4:** develop flowing prose. Final images, working download files, provider configuration and publication remain outstanding. The live article is unchanged.
+**Turn 2 remains in human review:** all 28 checks developed; supporting bullets and both worked examples expanded; three exact source quotations selected; visual candidates and three inactive pack placements defined. Preserve the approved static area headings, “Jump to an area in this checklist” index and one native disclosure per complete numbered question. Final-word/chevron groups and number/period text stay together, with a wider number column and aligned guidance. The complete early expandable preview remains at `warehouse-audit-working-pack`; a second expandable CTA at `warehouse-audit-pack-after-checklist` sits immediately before planning, with no extra contents-navigation entry; the restored full offer “Get the checklist in Excel and PDF” remains at `get-warehouse-audit-pack`, after the provider-renewal example and before frequency. The two expandable placements share `AuditPackDisclosure.astro`; all three share `AuditPackContents.astro` with distinct email IDs. Pack benefit, subscription exchange, unavailable status and exact future launch terms remain; all three one-field prototypes stay inactive. Disclosure backgrounds, hover, focus, pressed, dark-palette and reduced-motion states are recorded above without a design-approval claim. Quote figures inherit the reading size, with a smaller decorative mark/grid and Inter attribution/locator spacing. Both diagrams use the shared angular two-tone `AuditTrail` renderer. The customs subsection follows one removal through three evidence steps within the approved UK arrangement. The purpose-led opening and unresolved provider-renewal decision remain. The planner is reserved for the future handoff. The [visual brief](warehouse-audit-visual-and-interaction-brief-turn-2.md) records the implementation handoff. **Turn 3:** build the applet MVP. **Turn 4:** develop flowing prose. Final images, working download files, provider configuration and publication remain outstanding. The live article is unchanged.

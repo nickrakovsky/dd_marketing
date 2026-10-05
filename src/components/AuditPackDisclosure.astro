@@ -1,0 +1,44 @@
+---
+import AuditPackContents from './AuditPackContents.astro';
+
+interface Props {
+  headingId: string;
+  headingLevel?: 'h2' | 'h3';
+  emailId: string;
+}
+const { headingId, headingLevel = 'h2', emailId } = Astro.props;
+const Heading = headingLevel;
+---
+
+<details class="audit-pack-preview">
+  <summary>
+    <Heading id={headingId}>
+      <span class="audit-pack-preview-labels"><span class="audit-pack-preview-title">Excel and PDF audit pack</span><span class="audit-pack-preview-action">Preview pack contents and download</span></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+    </Heading>
+  </summary>
+  <AuditPackContents emailId={emailId} />
+</details>
+
+<style>
+  .audit-pack-preview { background: var(--audit-pack-paper); border: 1px solid var(--audit-pack-line); }
+  summary { display: block; width: 100%; padding: 1.25rem; background: var(--audit-pack-paper); color: inherit; list-style: none; cursor: pointer; transition: background-color 180ms ease; }
+  summary::-webkit-details-marker { display: none; }
+  .audit-pack-preview[open] > summary { background: var(--audit-pack-header); border-bottom: 1px solid var(--audit-pack-line); }
+  h2, h3 { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0; font: inherit; scroll-margin-top: 2rem; }
+  .audit-pack-preview-labels { min-width: 0; }
+  .audit-pack-preview-title { display: block; font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+  .audit-pack-preview-action { display: block; margin-top: .4rem; font-size: 1rem; font-weight: 400; line-height: 1.5; }
+  summary svg { flex: none; width: 2.25rem; height: 2.25rem; padding: .5rem; border: 1px solid var(--audit-pack-line); border-radius: 50%; transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease; }
+  .audit-pack-preview[open] > summary svg { transform: rotate(180deg); color: var(--audit-pack-accent); border-color: var(--audit-pack-accent); }
+  @media (hover: hover) {
+    .audit-pack-preview:where(:not([open])) > summary:hover { background: var(--audit-pack-header); }
+    .audit-pack-preview > summary:hover svg { background: var(--audit-pack-accent); color: var(--audit-pack-action-ink); border-color: var(--audit-pack-accent); }
+  }
+  summary:focus-visible { background: var(--audit-pack-header); outline: 2px solid var(--audit-pack-accent); outline-offset: 3px; }
+  .audit-pack-preview > summary:focus-visible svg { background: var(--audit-pack-accent); color: var(--audit-pack-action-ink); border-color: var(--audit-pack-accent); }
+  .audit-pack-preview > summary:active, .audit-pack-preview[open] > summary:active { background: var(--audit-pack-pressed); }
+  @media (prefers-reduced-motion: reduce) {
+    summary, summary svg { transition: none; }
+  }
+</style>

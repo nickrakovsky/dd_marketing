@@ -89,13 +89,13 @@ The selection combines academic fieldwork, an actual warehouse audit report, an 
 - **Supports:** Examining activity between counts and how reporting discrepancies interacts with work measures and incentives. Worker accounts can expose a constraint that a balance correction misses.
 - **Limits:** One retailer's distribution centre; selected items across ten business days; incoming quantities assumed correct. Keep observed findings separate from modelled effects and do not present the sampled behaviour as universal.
 
-## B10 Blind counting with contextual alternatives
+## B10 Count methods and blind counting with contextual alternatives
 
 **United States General Accounting Office. (2002, March).** *Executive Guide: Best Practices in Achieving Consistent, Accurate Physical Counts of Inventory and Related Property*. GAO-02-447G. [Official PDF](https://www.gao.gov/assets/gao-02-447g.pdf).
 
 - **Type and role:** Official practice guide informed by visits to 12 locations at seven selected companies; adds a procedural basis for the blind-count explanation.
-- **Passages:** Key Factor 8, printed pp. 39–41, PDF pages 40–42; methodology, printed pp. 71–72. Keep printed and PDF pagination distinct.
-- **Supports:** Counting without knowing/accessing the recorded quantity while retaining the identifying information needed for the work, followed by comparison and reconciliation.
+- **Passages:** Count-method definitions, printed p. 20; Key Factor 8, printed pp. 39–41, PDF pages 40–42; methodology, printed pp. 71–72. Keep printed and PDF pagination distinct.
+- **Supports:** The distinction between progressive cycle-count coverage over time and full inventory coverage at a given point in time. Also counting without knowing/accessing the recorded quantity while retaining the identifying information needed for the work, followed by comparison and reconciliation.
 - **Limits:** Dated, deliberately selected practice examples rather than representative prevalence or experimental evidence. The guide also describes non-blind counts with independent teams and compensating controls. It does not make blind counting universally mandatory or guarantee accuracy. No direct quotation is selected.
 
 ## B11 An HMRC-approved closing stock balance system
