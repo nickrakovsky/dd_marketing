@@ -1,6 +1,7 @@
 /** @jsxImportSource solid-js */
-import { createSignal, createMemo, For, Show } from "solid-js";
+import { createSignal, createMemo, createUniqueId, onMount, onCleanup, For, Show } from "solid-js";
 import type { Component } from "solid-js";
+import "./ComparisonTable.css";
 import { cn } from "@/components/solid/lib/utils";
 import {
   comparisonCompetitors,
@@ -16,68 +17,98 @@ import type {
 
 // ─── Support Cell ────────────────────────────────────────────────────────
 
+const supportLabels = {
+  standout: "Standout",
+  full: "Full support",
+  partial: "Partial support",
+  none: "Not available",
+};
+
+// The wider matrix retains its original status palette.
+const supportIconColors = {
+  standout: "border-[#4a8136] text-[#4a8136]",
+  full: "border-[#4a8136] text-[#4a8136]",
+  partial: "border-[#eab308] text-[#eab308]",
+  none: "border-[#9c806d] text-[#9c806d]",
+};
+
+// At 900px, the page gutters leave 222px for features plus three 180px systems.
+// Keep the component styles, CSS tablet range, and viewport listener in sync.
+const comparisonColumns = (hasThirdSystem: boolean) => hasThirdSystem
+  ? "min-[900px]:grid-cols-[minmax(0,1fr)_180px_180px_180px]"
+  : "min-[900px]:grid-cols-[minmax(0,1fr)_180px_180px]";
+
+const supportTextColors = {
+  standout: "min-[900px]:text-[#4a8136]",
+  full: "min-[900px]:text-[#4a8136]",
+  partial: "min-[900px]:text-[#eab308]",
+  none: "min-[900px]:text-[#9c806d]",
+};
+
+// Standout is green for other systems; DataDocks retains its orange accent.
+const mobileSupportColors = {
+  standout: "bg-[#e4efd9] text-[#2e5623] font-bold",
+  full: "bg-[#edf4e8] text-[#37632a]",
+  partial: "bg-[#fff5d6] text-[#795600]",
+  none: "bg-[#f2efeb] text-[#65594f]",
+};
+
+const focusClasses = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5f483a]";
+
+const SupportIcon: Component<{ level: FeatureDetail["level"]; compact?: boolean }> = (props) => {
+  const size = () => props.compact ? "w-3 h-3" : "w-3.5 h-3.5";
+  return (
+    <>
+      <Show when={props.level === "standout"}>
+        <svg class={size()} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </Show>
+      <Show when={props.level === "full"}>
+        <svg class={size()} fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+      </Show>
+      <Show when={props.level === "partial"}>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>
+      </Show>
+      <Show when={props.level === "none"}>
+        <svg class={size()} fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </Show>
+    </>
+  );
+};
+
+const MobileSupportLabel: Component<{ vendor: string; detail: FeatureDetail | null; isDataDocks?: boolean }> = (props) => (
+  // Column headers and the answer's accessible status already supply these labels.
+  <div aria-hidden="true" class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans min-[900px]:hidden">
+    <span class="min-w-0 break-words text-[13px] font-semibold text-[#5f483a]">{props.vendor}</span>
+    <Show when={props.detail}>
+      <span class={cn("inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 py-0.5 text-xs leading-4 font-semibold", props.isDataDocks && props.detail!.level === "standout" ? "bg-[#fff0e6] text-[#46342a] [&_svg]:text-[#fd4f00]" : mobileSupportColors[props.detail!.level])}>
+        <SupportIcon level={props.detail!.level} compact />
+        {supportLabels[props.detail!.level]}
+      </span>
+    </Show>
+  </div>
+);
+
 const SupportCell: Component<{ detail: FeatureDetail | null | undefined; isDataDocks?: boolean }> = (props) => {
   const isStandout = () => props.detail?.level === "standout";
-
-  const textClasses = () => {
-    if (!props.detail) return "";
-    if (isStandout()) return props.isDataDocks ? "text-transparent bg-clip-text bg-gradient-to-r from-[#fd4f00] via-[#ffaa00] to-[#fd4f00] bg-[length:200%_auto] font-bold" : "text-transparent bg-clip-text bg-gradient-to-r from-[#4a8136] via-[#6bbf4e] to-[#4a8136] bg-[length:200%_auto] font-bold";
-    if (props.detail.level === "full") return "text-[#4a8136]";
-    if (props.detail.level === "partial") return "text-[#eab308]"; // yellow
-    return "text-[#9c806d]"; // mid-tier brown for none
-  };
-
   const iconColorClasses = () => {
     if (!props.detail) return "";
-    if (props.detail.level === "full") return "border border-[#4a8136] bg-transparent text-[#4a8136]";
-    if (props.detail.level === "partial") return "border border-[#eab308] bg-transparent text-[#eab308]";
-    return "border border-[#9c806d] bg-transparent text-[#9c806d]";
+    return isStandout() && props.isDataDocks
+      ? "border-[#fd4f00] text-[#fd4f00]"
+      : supportIconColors[props.detail.level];
   };
 
   return (
-    <div class="h-full w-full flex items-center justify-center p-2 rounded-lg transition-all duration-300">
+    <div class="h-full w-full min-w-0 flex items-start min-[900px]:items-center min-[900px]:justify-center min-[900px]:p-2 rounded-lg">
       <Show when={props.detail}>
-        <div class="flex items-center gap-2 max-w-full text-center relative z-10 font-sans">
-          
-          {/* Standout (Star) */}
-          <Show when={isStandout()}>
-            <div class={cn("relative shrink-0 h-5 w-5 rounded-full flex items-center justify-center transition-all duration-300 group-hover/row:scale-110", 
-              props.isDataDocks ? "border border-[#fd4f00] bg-transparent text-[#fd4f00]" : "border border-[#4a8136] bg-transparent text-[#4a8136]"
-            )}>
-              <svg class="w-3.5 h-3.5 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </div>
-          </Show>
-
-          {/* Full (Tick) */}
-          <Show when={props.detail?.level === "full" && !isStandout()}>
-            <div class={cn("shrink-0 h-5 w-5 rounded-full flex items-center justify-center transition-all duration-300", iconColorClasses())}>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-            </div>
-          </Show>
-          
-          {/* Partial (Dash) */}
-          <Show when={props.detail?.level === "partial"}>
-            <div class={cn("shrink-0 h-5 w-5 rounded-full flex items-center justify-center transition-all duration-300", iconColorClasses())}>
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>
-            </div>
-          </Show>
-          
-          {/* None (Cross) */}
-          <Show when={props.detail?.level === "none"}>
-            <div class={cn("shrink-0 h-5 w-5 rounded-full flex items-center justify-center transition-all duration-300", iconColorClasses())}>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-            </div>
-          </Show>
-          
+        <div class={cn("flex items-start min-[900px]:items-center gap-2 max-w-full min-w-0 font-sans text-[#46342a]", isStandout() && props.isDataDocks ? "min-[900px]:text-[#fd4f00]" : supportTextColors[props.detail!.level])}>
+          <span aria-hidden="true" class={cn("hidden min-[900px]:flex shrink-0 h-5 w-5 rounded-full border items-center justify-center", iconColorClasses())}>
+            <SupportIcon level={props.detail!.level} />
+          </span>
           <span class={cn(
-            "text-[13px] font-sans leading-tight text-center transition-all",
-            isStandout() && props.isDataDocks ? "text-[#fd4f00] font-bold" : "",
-            isStandout() && !props.isDataDocks ? "text-[#4a8136] font-bold" : "",
-            props.detail?.level === "full" && !isStandout() ? "text-[#4a8136]" : "",
-            props.detail?.level === "partial" ? "text-[#eab308]" : "",
-            props.detail?.level === "none" ? "text-[#9c806d]" : "",
-            isStandout() && "animate-shine group-hover/row:brightness-125"
+            "min-w-0 break-words text-base leading-relaxed text-left min-[900px]:text-[13px] min-[900px]:leading-snug min-[900px]:text-center",
+            isStandout() && "min-[900px]:font-bold"
           )}>
+            <span class="sr-only">{supportLabels[props.detail!.level]}: </span>
             {props.detail?.text}
           </span>
         </div>
@@ -92,25 +123,27 @@ const FeatureGroupSection: Component<{
   group: ComparisonFeatureGroup;
   competitor1: ComparisonCompetitor;
   competitor2: ComparisonCompetitor | null;
+  columnCount: number;
   isExpanded: () => boolean;
   onToggle: () => void;
 }> = (props) => {
+  const rowsId = createUniqueId();
   return (
     <div role="rowgroup" class="border border-[#ece6de] rounded-xl overflow-hidden transition-shadow duration-200 hover:shadow-sm">
-      {/* Keep a visible row when collapsed so each rowgroup retains its required child. */}
+      {/* Group header */}
       <div role="row">
-        <div role="cell" aria-colspan={props.competitor2 ? 4 : 3}>
+        <div role="cell" aria-colspan={props.columnCount}>
           <button
             type="button"
             onClick={() => props.onToggle()}
-            class="w-full flex items-center justify-between px-5 py-4 bg-[#faf8f5] hover:bg-[#ece6de]/40 transition-colors duration-150 cursor-pointer group"
+            class="w-full flex items-center justify-between px-4 min-[900px]:px-5 py-4 text-left bg-[#faf8f5] hover:bg-[#ece6de]/40 transition-colors duration-150 cursor-pointer group focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#5f483a]"
             aria-expanded={props.isExpanded()}
-            aria-controls={`comparison-features-${props.group.id}`}
+            aria-controls={rowsId}
           >
             <div class="flex items-center gap-3">
-              <span class={cn(
-                "flex h-6 w-6 items-center justify-center rounded-md transition-colors duration-200",
-                props.isExpanded() ? "bg-[#5f483a] text-white" : "bg-[#ece6de] text-[#5f483a] group-hover:bg-[#ad9686] group-hover:text-white"
+              <span aria-hidden="true" class={cn(
+                "flex shrink-0 h-6 w-6 items-center justify-center rounded-md transition-colors duration-200",
+                props.isExpanded() ? "bg-[#5f483a] text-white" : "bg-[#ece6de] text-[#5f483a] group-hover:bg-[#5f483a] min-[900px]:group-hover:bg-[#ad9686] group-hover:text-white"
               )}>
                 <svg
                   class={cn("w-3.5 h-3.5 transition-transform duration-200", props.isExpanded() && "rotate-180")}
@@ -120,7 +153,7 @@ const FeatureGroupSection: Component<{
                 </svg>
               </span>
               <div class="flex items-center gap-2">
-                <span class="text-sm md:text-base font-semibold text-[#5f483a] font-recoleta">{props.group.label}</span>
+                <span class="text-base font-bold text-[#46342a] font-sans min-[900px]:font-recoleta min-[900px]:font-semibold min-[900px]:text-[#5f483a]">{props.group.label}</span>
               </div>
             </div>
           </button>
@@ -128,7 +161,13 @@ const FeatureGroupSection: Component<{
       </div>
 
       {/* Feature rows - rendered in DOM for SSR/bots, hidden via CSS when collapsed */}
-      <div id={`comparison-features-${props.group.id}`} class={cn("divide-y divide-[#ece6de]", !props.isExpanded() && "hidden")}>
+      <div
+        role="presentation"
+        id={rowsId}
+        hidden={!props.isExpanded()}
+        data-system-count={props.competitor2 ? 3 : 2}
+        class="comparison-features divide-y divide-[#ece6de]"
+      >
         <For each={props.group.features}>
           {(feature: ComparisonFeature) => {
             const ddDetail = () => datadocksFeatures?.[feature.id] || { level: "none", text: "Not available" };
@@ -139,30 +178,31 @@ const FeatureGroupSection: Component<{
               <div
                 role="row"
                 class={cn(
-                  "group/row grid items-stretch gap-2 md:gap-4 px-5 py-2 hover:bg-[#faf8f5]/50 transition-colors duration-100",
-                  props.competitor2 
-                    ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]"
-                    : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
+                  "comparison-feature grid grid-cols-1 items-stretch gap-4 pb-5 min-[900px]:px-5 min-[900px]:py-2 min-[900px]:hover:bg-[#faf8f5]/50 transition-colors duration-100",
+                  comparisonColumns(!!props.competitor2)
                 )}
               >
                 {/* Feature name */}
-                <div role="rowheader" class="min-w-0 flex items-center gap-1.5">
-                  <span class="text-sm text-[#5f483a] font-sans leading-snug">{feature.label}</span>
+                <div role="rowheader" class="comparison-feature-title min-w-0 flex items-center gap-1.5 bg-[#faf8f5]/60 px-4 py-3 min-[900px]:bg-transparent min-[900px]:p-0">
+                  <span class="text-lg font-recoleta font-semibold text-neutral-800 leading-snug min-[900px]:font-sans min-[900px]:text-sm min-[900px]:font-normal min-[900px]:text-[#5f483a]">{feature.label}</span>
                 </div>
 
                 {/* DataDocks value */}
-                <div role="cell" class="flex items-center justify-center" aria-label={`DataDocks: ${ddDetail().text}`}>
+                <div role="cell" class="comparison-answer min-w-0 flex flex-col px-4 min-[900px]:px-0 min-[900px]:justify-center">
+                  <MobileSupportLabel vendor="DataDocks" detail={ddDetail()} isDataDocks />
                   <SupportCell detail={ddDetail()} isDataDocks={true} />
                 </div>
 
                 {/* Competitor 1 value */}
-                <div role="cell" class="flex items-center justify-center" aria-label={`${props.competitor1.name}: ${comp1Detail().text}`}>
+                <div role="cell" class="comparison-answer min-w-0 flex flex-col px-4 min-[900px]:px-0 min-[900px]:justify-center">
+                  <MobileSupportLabel vendor={props.competitor1.name} detail={comp1Detail()} />
                   <SupportCell detail={comp1Detail()} />
                 </div>
 
                 {/* Competitor 2 value */}
                 <Show when={props.competitor2}>
-                  <div role="cell" class="flex items-center justify-center" aria-label={`${props.competitor2?.name}: ${comp2Detail()?.text || ''}`}>
+                  <div role="cell" class="comparison-answer min-w-0 flex flex-col px-4 min-[900px]:px-0 min-[900px]:justify-center">
+                    <MobileSupportLabel vendor={props.competitor2!.name} detail={comp2Detail()} />
                     <SupportCell detail={comp2Detail()} />
                   </div>
                 </Show>
@@ -180,81 +220,40 @@ const FeatureGroupSection: Component<{
 const CompetitorSelector: Component<{
   competitors: ComparisonCompetitor[];
   selected: ComparisonCompetitor | null;
-  onSelect: (c: ComparisonCompetitor) => void;
-  placeholder?: string;
+  onSelect: (c: ComparisonCompetitor | null) => void;
+  label: string;
+  optional?: boolean;
+  selectRef?: (element: HTMLSelectElement) => void;
 }> = (props) => {
-  const [isOpen, setIsOpen] = createSignal(false);
-
+  const taglineId = createUniqueId();
   return (
-    <div class="relative w-full h-full flex flex-col justify-end">
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen(!isOpen());
+    <div class={cn("relative w-full flex items-center gap-2 min-[900px]:gap-1 rounded-xl border border-[#9c806d] min-[900px]:border-[#ad9686]/60 min-[900px]:hover:border-[#5f483a] px-4 min-[900px]:px-3 py-2 shadow-sm min-h-[58px] focus-within:ring-2 focus-within:ring-[#5f483a] focus-within:ring-offset-2", props.selected ? "bg-white" : "border-dashed bg-[#faf8f5]")}>
+      {/* The native control supplies touch, keyboard, and popup positioning behavior. */}
+      <select
+        ref={props.selectRef}
+        aria-label={props.label}
+        aria-describedby={taglineId}
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-base"
+        value={props.selected?.id ?? ""}
+        onChange={(event) => {
+          const selected = props.competitors.find((competitor) => competitor.id === event.currentTarget.value);
+          if (selected || props.optional) props.onSelect(selected ?? null);
         }}
-        class={cn(
-          "w-full flex items-center justify-between gap-2 rounded-xl border border-[#ad9686]/60 bg-white px-4 py-2",
-          "hover:border-[#5f483a] transition-all duration-200 cursor-pointer shadow-sm min-h-[58px]",
-          "focus:outline-none focus:ring-2 focus:ring-[#fd4f00]/30",
-          isOpen() && "border-[#5f483a]",
-          !props.selected && "border-dashed bg-[#faf8f5]"
-        )}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen()}
       >
-        <div class="flex-1 text-left min-w-0">
-          <Show when={props.selected} fallback={<span class="text-[13px] text-[#ad9686] font-sans">{props.placeholder || "Select..."}</span>}>
-            {(sel) => (
-              <>
-                <span class="block text-[15px] font-semibold text-[#5f483a] font-sans leading-tight">{sel().name}</span>
-                <span class="block text-[11px] text-[#9c806d] mt-0.5 leading-tight">{sel().tagline}</span>
-              </>
-            )}
-          </Show>
-        </div>
-        <svg
-          class={cn("w-4 h-4 text-[#ad9686] shrink-0 transition-transform duration-200", isOpen() && "rotate-180")}
-          fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </button>
-
-      {/* Dropdown panel */}
-      <Show when={isOpen()}>
-        <div class="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
-        <div
-          class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[240px] z-50 bg-white rounded-xl border border-[#ece6de] shadow-lg overflow-hidden max-h-[260px] overflow-y-auto"
-          role="listbox"
-        >
-          <For each={props.competitors}>
-            {(competitor) => (
-              <button
-                type="button"
-                role="option"
-                aria-selected={props.selected?.id === competitor.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  props.onSelect(competitor);
-                  setIsOpen(false);
-                }}
-                class={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-100 cursor-pointer border-b border-[#ece6de]/50 last:border-0",
-                  props.selected?.id === competitor.id
-                    ? "bg-[#faf8f5]"
-                    : "hover:bg-[#ece6de]/50"
-                )}
-              >
-                <div class="flex-1 min-w-0">
-                  <span class="block text-sm font-semibold text-[#5f483a] font-sans">{competitor.name}</span>
-                  <span class="block text-[11px] text-[#9c806d] truncate">{competitor.tagline}</span>
-                </div>
-              </button>
-            )}
-          </For>
-        </div>
-      </Show>
+        <Show when={props.optional}>
+          <option value="" selected={!props.selected}>No additional system</option>
+        </Show>
+        <For each={props.competitors}>
+          {(competitor) => <option value={competitor.id} selected={competitor.id === props.selected?.id}>{competitor.name}</option>}
+        </For>
+      </select>
+      <div class="flex-1 text-left min-w-0 pointer-events-none">
+        <span aria-hidden="true" class={cn("block text-base min-[900px]:text-[15px] font-sans leading-tight break-words", props.selected ? "font-semibold text-[#5f483a]" : "font-medium text-[#775f50]")}>{props.selected?.name ?? "Add another system"}</span>
+        <span id={taglineId} class={cn("block text-xs min-[900px]:text-[11px] min-[900px]:text-[#9c806d] mt-0.5 leading-snug", props.selected ? "text-[#5f483a]" : "text-[#775f50]")}>{props.selected?.tagline ?? "Optional third system"}</span>
+      </div>
+      <svg aria-hidden="true" class={cn("w-4 h-4 shrink-0 pointer-events-none", props.selected ? "text-[#9c806d]" : "text-[#775f50]")} fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d={props.selected ? "M19.5 8.25l-7.5 7.5-7.5-7.5" : "M12 5v14m-7-7h14"} />
+      </svg>
     </div>
   );
 };
@@ -275,6 +274,25 @@ const ComparisonTable: Component = () => {
 
   // Track which groups are expanded (collapsed by default as requested)
   const [expandedGroups, setExpandedGroups] = createSignal<Set<string>>(new Set<string>());
+  const [isMobile, setIsMobile] = createSignal(false);
+  const columnCount = () => isMobile() || selectedCompetitor2() ? 4 : 3;
+  let addSystemButton: HTMLButtonElement | undefined;
+  let secondSystemSelect: HTMLSelectElement | undefined;
+
+  onMount(() => {
+    const wideViewport = window.matchMedia("(min-width: 900px)");
+    const updateViewport = () => {
+      setIsMobile(!wideViewport.matches);
+      if (!wideViewport.matches) {
+        setExpandedGroups((previous) => previous.size > 1
+          ? new Set([previous.values().next().value!])
+          : previous);
+      }
+    };
+    updateViewport();
+    wideViewport.addEventListener("change", updateViewport);
+    onCleanup(() => wideViewport.removeEventListener("change", updateViewport));
+  });
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) => {
@@ -282,6 +300,7 @@ const ComparisonTable: Component = () => {
       if (next.has(groupId)) {
         next.delete(groupId);
       } else {
+        if (isMobile()) next.clear();
         next.add(groupId);
       }
       return next;
@@ -291,130 +310,132 @@ const ComparisonTable: Component = () => {
   const expandAll = () => setExpandedGroups(new Set(comparisonFeatureGroups.map((g) => g.id)));
   const collapseAll = () => setExpandedGroups(new Set<string>());
 
-  const addThirdColumn = () => {
-    // Pick the first competitor that isn't competitor 1
-    const available = sortedCompetitors().find((c) => c.id !== selectedCompetitor1().id);
-    if (available) setSelectedCompetitor2(available);
+  const [announcement, setAnnouncement] = createSignal("");
+  const selectFirst = (competitor: ComparisonCompetitor) => {
+    setSelectedCompetitor1(competitor);
+    setAnnouncement(`Comparison updated: DataDocks, ${competitor.name}${selectedCompetitor2() ? `, ${selectedCompetitor2()!.name}` : ""}.`);
+  };
+  const selectSecond = (competitor: ComparisonCompetitor | null) => {
+    setSelectedCompetitor2(competitor);
+    setAnnouncement(competitor
+      ? `Comparison updated: DataDocks, ${selectedCompetitor1().name}, ${competitor.name}.`
+      : `Comparison updated: DataDocks and ${selectedCompetitor1().name}.`);
+    if (!competitor && !isMobile()) queueMicrotask(() => addSystemButton?.focus());
+  };
+  const addSystem = () => {
+    const nextSystem = sortedCompetitors().find((competitor) => competitor.id !== selectedCompetitor1().id);
+    if (!nextSystem) return;
+    selectSecond(nextSystem);
+    queueMicrotask(() => secondSystemSelect?.focus());
   };
 
   return (
-    <div class="space-y-6">
+    <div class="comparison-table space-y-6 font-sans min-[900px]:font-recoleta">
       
       {/* Title & Controls */}
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 text-center md:text-left">
-        <h2 class="font-bruta text-3xl md:text-4xl lg:text-5xl uppercase tracking-wide">
-          <span class="text-black">COMPARE DOCK SCHEDULING FEATURES, </span><span class="text-[#fd4f00]">SIDE-BY-SIDE</span>
+      <div class="flex flex-col min-[900px]:flex-row min-[900px]:items-end min-[900px]:justify-between gap-4 text-center min-[900px]:text-left">
+        <h2 class="comparison-title font-bruta text-[28px] min-[360px]:text-[32px] min-[900px]:text-5xl leading-[1.12] uppercase tracking-wide text-black">
+          COMPARE DOCK<br class="min-[480px]:hidden" />{" "}
+          SCHEDULING<br class="hidden min-[480px]:inline min-[900px]:hidden" />{" "}
+          FEATURES,<br class="min-[480px]:hidden" />{" "}
+          <span class="whitespace-nowrap text-[#fd4f00]">SIDE-BY-SIDE</span>
         </h2>
-        <div class="flex items-center justify-center gap-3 shrink-0 mb-1">
+        <div class="hidden min-[900px]:flex items-center justify-center gap-3 shrink-0 mb-1">
           <button
             type="button"
             onClick={expandAll}
-            class="text-[11px] font-mono font-bold uppercase tracking-widest text-[#9c806d] hover:text-[#5f483a] transition-colors duration-150 cursor-pointer"
+            class={cn("min-h-11 px-2 text-[11px] font-mono font-bold uppercase tracking-widest text-[#9c806d] hover:text-[#5f483a] transition-colors duration-150 cursor-pointer", focusClasses)}
           >
             Expand all
           </button>
-          <span class="text-[#ece6de] text-[11px]">|</span>
+          <span aria-hidden="true" class="text-[#ece6de] text-[11px]">|</span>
           <button
             type="button"
             onClick={collapseAll}
-            class="text-[11px] font-mono font-bold uppercase tracking-widest text-[#9c806d] hover:text-[#5f483a] transition-colors duration-150 cursor-pointer"
+            class={cn("min-h-11 px-2 text-[11px] font-mono font-bold uppercase tracking-widest text-[#9c806d] hover:text-[#5f483a] transition-colors duration-150 cursor-pointer", focusClasses)}
           >
             Collapse all
           </button>
         </div>
       </div>
 
-      <div class="overflow-x-auto md:overflow-visible" role="region" aria-label="Scrollable feature comparison" tabIndex={0}>
-        <div
-          class={cn("space-y-6 md:min-w-0", selectedCompetitor2() ? "min-w-[760px]" : "min-w-[580px]")}
-          role="table"
-          aria-label="Dock Scheduling Side-by-Side Features Comparison"
-        >
-          {/* ── Column headers ── */}
-          <div
-            role="row"
-            class={cn(
-              "grid items-end gap-2 md:gap-4 px-5 pb-3 border-b border-[#ad9686] sticky top-0 bg-white/95 backdrop-blur-sm z-20 pt-4",
-              selectedCompetitor2()
-                ? "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)_minmax(120px,180px)]"
-                : "grid-cols-[1fr_minmax(120px,180px)_minmax(120px,180px)]"
-            )}
-          >
-            {/* Empty space for the feature name column */}
-            <div role="columnheader" aria-label="Feature"></div>
-        
-            {/* DataDocks Fixed Pill */}
-            <div role="columnheader" class="flex flex-col w-full h-full justify-end">
-              <div class="w-full flex items-center justify-start gap-2 rounded-xl border border-[#ece6de] bg-white px-4 py-2 cursor-default shadow-sm relative min-h-[58px]">
-                <div class="flex-1 text-left min-w-0 font-sans">
-                  <span class="block text-[15px] font-bold text-[#fd4f00] leading-tight tracking-wide">DataDocks</span>
-                  <span class="block text-[11px] text-[#9c806d] mt-0.5 leading-tight whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal md:overflow-visible md:text-wrap font-recoleta">Enterprise dock & yard management</span>
-                </div>
-              </div>
-            </div>
-        
-            {/* Competitor 1 Selector */}
-            <div role="columnheader" class="flex flex-col relative w-full h-full">
-              <CompetitorSelector
-                competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor2()?.id)}
-                selected={selectedCompetitor1()}
-                onSelect={setSelectedCompetitor1}
-              />
-              <Show when={!selectedCompetitor2()}>
-                {/* (+) button absolutely positioned to sit completely outside the right edge of the grid cell */}
-                <button
-                  onClick={addThirdColumn}
-                  class="absolute left-full top-1/2 -translate-y-1/2 ml-4 h-6 w-6 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:text-[#fd4f00] hover:border-[#fd4f00]/50 transition-colors tooltip-trigger shadow-sm shrink-0"
-                  title="Add another competitor"
-                  aria-label="Add another competitor"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                </button>
-              </Show>
-            </div>
+      <p class="sr-only" role="status">{announcement()}</p>
 
-            {/* Competitor 2 Selector */}
-            <Show when={selectedCompetitor2()}>
-              <div role="columnheader" class="flex flex-col relative w-full h-full group">
-                <CompetitorSelector
-                  competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor1().id)}
-                  selected={selectedCompetitor2()}
-                  onSelect={(c) => setSelectedCompetitor2(c)}
-                  placeholder="Select..."
-                />
-                {/* Close button layered on the corner of the selector */}
-                <div class="absolute -top-1.5 -right-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                   <button
-                      onClick={() => setSelectedCompetitor2(null)}
-                      class="h-5 w-5 rounded-full bg-white border border-[#ece6de] flex items-center justify-center text-[#ad9686] hover:bg-[#ece6de] hover:text-[#5f483a] transition-colors shadow-sm"
-                      title="Remove column"
-                      aria-label="Remove column"
-                   >
-                      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                   </button>
-                </div>
+      <div role="table" aria-label="Dock Scheduling Side-by-Side Features Comparison" aria-colcount={columnCount()} class="space-y-3">
+        {/* ── Column headers ── */}
+        <div
+          role="row"
+          class={cn(
+            "grid grid-cols-1 items-start min-[900px]:items-end gap-3 min-[900px]:gap-4 px-4 min-[900px]:px-[21px] pb-3 border-b border-[#ad9686] min-[900px]:sticky min-[900px]:top-0 bg-white min-[900px]:bg-white/95 min-[900px]:backdrop-blur-sm z-20 pt-4",
+            comparisonColumns(!!selectedCompetitor2())
+          )}
+        >
+          <div role="columnheader" class="sr-only min-[900px]:not-sr-only"><span class="sr-only">Feature</span></div>
+          <div role="columnheader" aria-label="DataDocks" class="min-w-0 flex flex-col w-full">
+            <div class="w-full flex items-center justify-start gap-2 rounded-xl border border-[#ece6de] bg-white px-4 py-2 shadow-sm min-h-[58px]">
+              <div class="flex-1 text-left min-w-0 font-sans">
+                <span class="block text-[19px] min-[900px]:text-[15px] font-bold text-[#fd4f00] leading-tight tracking-wide">DataDocks</span>
+                <span class="block text-xs min-[900px]:text-[11px] text-[#5f483a] min-[900px]:text-[#9c806d] mt-0.5 leading-snug font-sans min-[900px]:font-recoleta">Enterprise dock &amp; yard management</span>
               </div>
+            </div>
+          </div>
+          <div role="columnheader" class="relative min-w-0 flex flex-col gap-2 w-full" aria-label={selectedCompetitor1().name}>
+            <CompetitorSelector
+              competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor2()?.id)}
+              selected={selectedCompetitor1()}
+              onSelect={(competitor) => { if (competitor) selectFirst(competitor); }}
+              label="First system"
+            />
+            <Show when={!selectedCompetitor2()}>
+              <button
+                ref={addSystemButton}
+                type="button"
+                onClick={addSystem}
+                aria-label="Add another system"
+                title="Add another system"
+                class={cn("hidden min-[900px]:flex absolute left-full top-1/2 -translate-y-1/2 ml-2 min-[1024px]:ml-4 h-6 w-6 rounded-full bg-white border border-[#ece6de] items-center justify-center text-[#ad9686] hover:text-[#fd4f00] hover:border-[#fd4f00]/50 transition-colors shadow-sm after:absolute after:-inset-2.5", focusClasses)}
+              >
+                <svg aria-hidden="true" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14m-7-7h14" /></svg>
+              </button>
             </Show>
           </div>
-
-          {/* ── Feature groups ── */}
-          <div class="space-y-3">
-            <For each={comparisonFeatureGroups}>
-              {(group) => (
-                <FeatureGroupSection
-                  group={group}
-                  competitor1={selectedCompetitor1()}
-                  competitor2={selectedCompetitor2()}
-                  isExpanded={() => expandedGroups().has(group.id)}
-                  onToggle={() => toggleGroup(group.id)}
-                />
-              )}
-            </For>
+          <div role="columnheader" class={cn("relative min-w-0 flex flex-col w-full group", !selectedCompetitor2() && "min-[900px]:hidden")} aria-label={selectedCompetitor2()?.name ?? "Additional system"}>
+            <CompetitorSelector
+              competitors={sortedCompetitors().filter(c => c.id !== selectedCompetitor1().id)}
+              selected={selectedCompetitor2()}
+              onSelect={selectSecond}
+              label="Second system"
+              selectRef={(element) => { secondSystemSelect = element; }}
+              optional
+            />
+            <Show when={selectedCompetitor2()}>
+              <button
+                type="button"
+                onClick={() => selectSecond(null)}
+                aria-label="Remove additional system"
+                title="Remove additional system"
+                class={cn("hidden min-[900px]:flex absolute -top-1.5 -right-1.5 z-10 h-6 w-6 rounded-full bg-white border border-[#ece6de] items-center justify-center text-[#ad9686] hover:text-[#fd4f00] hover:border-[#fd4f00]/50 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-colors after:absolute after:-inset-2.5", focusClasses)}
+              >
+                <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="m6 6 12 12M6 18 18 6" /></svg>
+              </button>
+            </Show>
           </div>
+        </div>
+
+        {/* ── Feature groups ── */}
+        <div role="presentation" class="space-y-3">
+          <For each={comparisonFeatureGroups}>
+            {(group) => (
+              <FeatureGroupSection
+                group={group}
+                competitor1={selectedCompetitor1()}
+                competitor2={selectedCompetitor2()}
+                columnCount={columnCount()}
+                isExpanded={() => expandedGroups().has(group.id)}
+                onToggle={() => toggleGroup(group.id)}
+              />
+            )}
+          </For>
         </div>
       </div>
     </div>
