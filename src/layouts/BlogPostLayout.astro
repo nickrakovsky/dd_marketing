@@ -21,6 +21,12 @@ interface Heading {
 }
 
 const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
+// Per-post opt-in: set headerLayout: rich-content in frontmatter, or choose
+// "Rich content first screen" in the blog editor. Missing values stay standard.
+// This moves both the top-interactive slot and normal MDX body below the first
+// screen on smaller viewports. Pair JS islands with client:visible to postpone
+// hydration; this layout does not defer eager scripts or bundled component CSS.
+const richContentFirst = frontmatter.headerLayout === 'rich-content';
 const h2Headings = headings.filter((h: Heading) => h.depth === 2);
 
 // 2. Date Formatting
@@ -142,21 +148,20 @@ if (priorityImgMatch) {
 
     <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-gray-900 font-recoleta text-gray-800 dark:text-gray-200 transition-colors duration-300">
       
-      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pt-12 lg:pt-16 pb-12">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div class:list={["w-full max-w-7xl mx-auto px-4 md:px-12 pt-12 lg:pt-16 pb-12", { 'rich-content-header': richContentFirst }]}>
+        <div class="article-header-grid grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          <div class={`flex flex-col text-left ${frontmatter.heroFigure ? 'lg:col-span-7' : 'lg:col-span-12 w-full'} items-start order-2 lg:order-1`}>
+          <div class={`article-header-copy flex flex-col text-left ${frontmatter.heroFigure ? 'lg:col-span-7' : 'lg:col-span-12 w-full'} items-start order-2 lg:order-1`}>
             
-            <div class="font-recoleta text-black dark:text-gray-200 text-xl md:text-2xl font-bold mb-4 transition-colors duration-300">
-              {frontmatter.category || "Logistics & Supply Chain"}
-            </div>
-            
-            <div class="relative inline-block mb-6 w-full">
-              <h1 class="text-5xl md:text-6xl lg:text-7xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] leading-[1.05] break-words transition-colors duration-300 text-left w-full">
-                {frontmatter.title}
-              </h1>
-              
-
+            <div class="article-heading contents">
+              <div class="article-category font-recoleta text-black dark:text-gray-200 text-xl md:text-2xl font-bold mb-4 transition-colors duration-300">
+                {frontmatter.category || "Logistics & Supply Chain"}
+              </div>
+              <div class="article-title relative inline-block mb-6 w-full">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] leading-[1.05] break-words transition-colors duration-300 text-left w-full">
+                  {frontmatter.title}
+                </h1>
+              </div>
             </div>
             
             {/*
@@ -176,25 +181,25 @@ if (priorityImgMatch) {
               on desktop. If you widen anything in this row, re-check CLS at
               exactly 1024px.
             */}
-            <div class="flex flex-wrap items-center gap-x-6 lg:gap-x-4 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
-              <div class="flex flex-col">
-                <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{author.name}</div>
-                <div class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{author.role}</div>
-                <div class="text-xs text-gray-400 dark:text-gray-500 mt-1 max-w-md transition-colors duration-300">{author.shortBio}</div>
+            <div class="article-metadata flex flex-wrap items-center gap-x-6 lg:gap-x-4 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
+              <div class="article-author flex flex-col">
+                <div class="article-author-name font-bold text-black dark:text-white text-lg transition-colors duration-300">{author.name}</div>
+                <div class="article-author-role text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{author.role}</div>
+                <div class="article-author-bio text-xs text-gray-400 dark:text-gray-500 mt-1 max-w-md transition-colors duration-300">{author.shortBio}</div>
               </div>
               
-              <div class="flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+              <div class="article-dates flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
                 <span>First Published: {formattedDate}</span>
                 {formattedUpdatedDate && (
                   <span>Last Updated: {formattedUpdatedDate}</span>
                 )}
               </div>
               
-              <div class="text-sm font-bold text-gray-500 dark:text-gray-300 bg-[#F8EDD9] dark:bg-gray-800 px-3 py-1 rounded-full border border-transparent dark:border-gray-700 transition-colors duration-300">
+              <div class="article-read-time text-sm font-bold text-gray-500 dark:text-gray-300 bg-[#F8EDD9] dark:bg-gray-800 px-3 py-1 rounded-full border border-transparent dark:border-gray-700 transition-colors duration-300">
                 {finalReadTime}
               </div>
               
-              <div class={`flex gap-2 ${frontmatter.heroFigure ? 'ml-auto' : ''}`}>
+              <div class={`article-reading-controls flex gap-2 ${frontmatter.heroFigure ? 'ml-auto' : ''}`}>
                 <button id="theme-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 group" title="Toggle Theme" aria-label="Toggle between dark and light mode">
                   <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 block dark:hidden group-hover:text-[#fd4f00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                   <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 hidden dark:block group-hover:text-[#ff7635] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -207,7 +212,7 @@ if (priorityImgMatch) {
           </div>
           
           {frontmatter.heroFigure && (
-            <div class="w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
+            <div class="article-hero-figure w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
               <div class="w-full aspect-[4/5] flex items-center justify-center overflow-visible">
                 <Image
                   src={frontmatter.heroFigure}
@@ -318,9 +323,9 @@ if (priorityImgMatch) {
           prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
           prose-table:block prose-table:overflow-x-auto prose-table:w-full">
           
-          {/* If there's a mobile view, we could also render the heroFigure inline before the content, but leaving it clean for now */}
+          {/* Keep the illustration in the article below the first-screen header. */}
           {frontmatter.heroFigure && (
-            <div class="w-full mb-8 lg:hidden">
+            <div class:list={["w-full mb-8", richContentFirst ? 'rich-content-inline-figure' : 'lg:hidden']}>
               <Image
                 src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
@@ -1845,6 +1850,113 @@ if (priorityImgMatch) {
   setupResizeObserver();
   document.addEventListener('astro:page-load', setupResizeObserver);
 </script>
+
+<style>
+  @media (min-width: 1200px) {
+    .rich-content-inline-figure { display: none; }
+  }
+
+  /* A rich-content post gets an editorial first screen on phones and tablets.
+     Distribute the existing content through that screen, rather than adding a
+     spacer underneath it. The minimum can grow for long titles or larger text.
+     At 1200px the normal content-height header returns; client:visible can then
+     hydrate an applet on arrival if it fits in the viewport. This is a layout
+     breakpoint, not an assumption about the visitor's CPU or connection. */
+  @media (max-width: 1199px) {
+    .rich-content-header {
+      /* Match Navigation's closed height; svh stays stable as browser chrome
+         retracts. The extra pixel prevents edge-only visibility on first load. */
+      --article-nav-height: 6rem;
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - var(--article-nav-height) + 1px);
+      min-height: calc(100svh - var(--article-nav-height) + 1px);
+      padding-top: clamp(1.5rem, 4svh, 3rem);
+      padding-bottom: clamp(1.5rem, 4svh, 3rem);
+    }
+
+    .rich-content-header .article-header-grid {
+      display: flex;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .rich-content-header .article-header-copy {
+      width: 100%;
+      gap: 1.5rem;
+    }
+
+    .rich-content-header .article-heading {
+      display: block;
+      width: 100%;
+      margin-block: auto;
+    }
+
+    .rich-content-header .article-title {
+      display: block;
+      margin-bottom: 0;
+    }
+
+    .rich-content-header h1 {
+      font-size: clamp(3rem, min(10vw, 11svh), 6rem);
+      line-height: 1.04;
+      text-wrap: balance;
+    }
+
+    .rich-content-header .article-metadata {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "author author" "dates dates" "time controls";
+      gap: 1.25rem 1.5rem;
+      margin-top: 0;
+      padding-block: 1.25rem;
+    }
+
+    .rich-content-header .article-author { grid-area: author; }
+    .rich-content-header .article-author-name { font-size: 1.25rem; }
+    .rich-content-header .article-author-role { font-size: 1rem; }
+    .rich-content-header .article-author-bio { font-size: 0.875rem; line-height: 1.5; margin-top: 0.5rem; }
+    .rich-content-header .article-dates { grid-area: dates; }
+    .rich-content-header .article-read-time { grid-area: time; justify-self: start; }
+    .rich-content-header .article-reading-controls { grid-area: controls; margin-left: 0; justify-self: end; }
+    .rich-content-header .article-hero-figure { display: none; }
+  }
+
+  @media (min-width: 600px) and (max-width: 1199px) {
+    .rich-content-header .article-metadata {
+      grid-template-columns: minmax(0, 1fr) minmax(13rem, auto);
+      grid-template-areas: "author dates" "time controls";
+      column-gap: clamp(2rem, 5vw, 4rem);
+      padding-block: 1.5rem;
+    }
+
+    .rich-content-header .article-dates { align-self: start; }
+  }
+
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .rich-content-header { --article-nav-height: 8.5rem; }
+  }
+
+  @media (max-width: 1199px) and (max-height: 600px) {
+    .rich-content-header {
+      padding-block: 1.5rem;
+    }
+
+    .rich-content-header h1 {
+      font-size: clamp(2.5rem, 7vw, 3.5rem);
+    }
+  }
+
+  @media (max-width: 599px) and (max-height: 740px) {
+    .rich-content-header { padding-block: 1rem; }
+    .rich-content-header .article-header-copy { gap: 1rem; }
+    .rich-content-header h1 { font-size: clamp(2.5rem, 10vw, 3rem); }
+    .rich-content-header .article-metadata { gap: 1rem; padding-block: 1rem; }
+    .rich-content-header .article-author-name { font-size: 1.125rem; }
+    .rich-content-header .article-author-role { font-size: 0.875rem; }
+    .rich-content-header .article-author-bio { font-size: 0.8125rem; }
+  }
+</style>
 
 <style is:global>
   lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}

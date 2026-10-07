@@ -290,3 +290,37 @@ Source review confirmed the responsive-size calculations and preload/source
 alignment. No local tests, builds, browser checks or performance audits were
 run, per the user's instruction. GitHub validation remains pending; do not
 wait for its jobs during this turn or claim a new PageSpeed score.
+
+## Optional rich-content article header — 2026-10-07
+
+The blog editor now offers **Article Header Layout → Rich content first screen**.
+The equivalent post frontmatter is:
+
+```yaml
+headerLayout: rich-content
+```
+
+Enable this per article after identifying performance pressure from a substantial
+interactive tool or other rich content at the beginning. Missing values and
+`headerLayout: standard` retain the standard layout. The yard-management article
+opts in immediately; other articles remain standard.
+
+Below 1200px, the existing title and author information form a responsive first
+screen ahead of both the `top-interactive` slot and the normal MDX body. Phones
+use stacked details, medium widths use author/date columns, and short phones
+use more compact typography and spacing. Minimum heights allow long titles or
+enlarged text to grow. At 1200px and above, the natural header height returns.
+
+This option controls composition, not all resource delivery. Use `client:visible`
+for JavaScript applets that should hydrate when they enter view; the yard selector
+already does so. Do not assume this setting defers `client:load`, eager scripts,
+images or bundled CSS. Review those loading choices separately for each future
+post, including any useful above-the-fold resources on desktop.
+
+The approved header was visually reviewed at 375×667, 695×827, 820×1180,
+1024×768 and 1366×768. The full dev article repeatedly crashed in the in-app
+browser, so those previews used its rendered header markup/styles with scripts
+removed. Source integration and the diff were reviewed; no local test suite,
+production build or performance audit was run. GitHub validation remains pending;
+do not wait for it during this turn. Preview HTML and screenshots stay local in
+`internal/frontmatter-preview/` and are not part of the PR.
