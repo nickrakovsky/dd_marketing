@@ -31,7 +31,7 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The imported rollout has fifteen scheduled posts').toHaveLength(15);
+  expect(slots, 'The queue includes the October 9 extension').toHaveLength(16);
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);
@@ -102,7 +102,7 @@ test('an unpublished article cannot be opened through its public URL', async ({ 
 test.describe('development publication previews', () => {
   test.skip(process.env.PLAYWRIGHT_FUTURE_PREVIEWS !== '1', 'Requires the development-only preview routes.');
 
-  test('future hub includes all fifteen exactly once, split between latest five and older resources', async ({ page }) => {
+  test('future hub includes every queued post exactly once, split between latest five and older resources', async ({ page }) => {
     const response = await page.goto('/preview/daily-blog/posts');
     expect(response.status()).toBe(200);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
@@ -119,7 +119,7 @@ test.describe('development publication previews', () => {
       await expect(card.locator('.latest-insight-topic')).not.toBeEmpty();
       await expect(card.locator('.latest-insight-type')).toHaveText('Article');
     }
-    expect(archive.slice(0, 10)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
+    expect(archive.slice(0, slots.length - 5)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
     for (const slot of slots) {
       expect([...latest, ...archive].filter(path => path === `/posts/${slot.slug}`), slot.title).toHaveLength(1);
     }
