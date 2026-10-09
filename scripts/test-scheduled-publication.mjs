@@ -31,7 +31,7 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 15, 'Expected the complete 15-post rollout schedule');
+assert.equal(slots.length, 16, 'Expected the original rollout plus the October 9 queue extension');
 const originalWorkerHash = sha256(await readFile(originalWorker));
 const scratch = await mkdtemp(join(tmpdir(), 'datadocks-publication-test-'));
 let server;

@@ -1,0 +1,47 @@
+name: Live script CSP evidence
+
+on:
+  pull_request:
+    paths:
+      - scripts/inspect-live-script-csp.mjs
+      - scripts/inspect-csp-revalidation.mjs
+      - .github/workflows/live-script-csp.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        id: browser-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.browser-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.browser-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - name: Inspect production startup and Partytown fallback
+        run: xvfb-run --auto-servernum node scripts/inspect-live-script-csp.mjs https://datadocks.com 'sha256-Ll1gi9ZEysr6BZ+uNTJDmDnBLfzzjKXOxgcUJ2NCjLo='
+        env:
+          CSP_HEADED: '1'
+      - name: Reproduce cached reload and verify the 304 header fix
+        run: xvfb-run --auto-servernum node scripts/inspect-csp-revalidation.mjs https://datadocks.com
+        env:
+          CSP_HEADED: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-script-csp-evidence
+          path: csp-diagnostics/
+          if-no-files-found: ignore
+          retention-days: 7
