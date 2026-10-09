@@ -1,0 +1,87 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('../../../assets/fonts/Inter-Latin-Variable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* Wider phones and portrait tablets have room for two balanced title lines. */
+@media (min-width: 480px) and (max-width: 899px) {
+  .comparison-table .comparison-title {
+    font-size: clamp(36px, 7.2vw, 64px);
+  }
+}
+
+/* Indentation expresses the feature → system → answer hierarchy. */
+@media (max-width: 899px) {
+  .comparison-table .comparison-feature-title {
+    padding-inline: 24px 16px;
+  }
+
+  .comparison-table .comparison-answer {
+    padding-inline: 32px 16px;
+  }
+
+  /* Separate stacked vendors with a quiet rule aligned to their answer text. */
+  .comparison-answer + .comparison-answer {
+    position: relative;
+    padding-top: 16px;
+  }
+
+  .comparison-answer + .comparison-answer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: 32px 16px;
+    height: 1px;
+    background: rgb(95 72 58 / 10%);
+  }
+}
+
+/* Tablets: compare two systems across, or two features across. */
+@media (min-width: 768px) and (max-width: 899px) {
+  .comparison-features[data-system-count='2'] .comparison-feature {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .comparison-features[data-system-count='2'] .comparison-feature-title {
+    grid-column: 1 / -1;
+  }
+
+  .comparison-features[data-system-count='2'] .comparison-answer + .comparison-answer {
+    padding-top: 0;
+  }
+
+  .comparison-features[data-system-count='2'] .comparison-answer + .comparison-answer::before {
+    display: none;
+  }
+
+  .comparison-features[data-system-count='3']:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 16px;
+    background: #faf8f5;
+  }
+
+  .comparison-table .comparison-features[data-system-count='3'] .comparison-feature {
+    align-content: start;
+    background: white;
+    border: 1px solid #ece6de;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .comparison-features[data-system-count='3'] .comparison-feature-title {
+    padding-inline: 16px;
+  }
+
+  .comparison-features[data-system-count='3'] .comparison-answer {
+    padding-inline: 24px 16px;
+  }
+
+  .comparison-features[data-system-count='3'] .comparison-answer + .comparison-answer::before {
+    inset-inline-start: 24px;
+  }
+}

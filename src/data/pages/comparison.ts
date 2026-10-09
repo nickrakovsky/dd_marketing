@@ -1442,7 +1442,7 @@ export const comparisonCompetitors: ComparisonCompetitor[] = [
         "text": "C3 Yard jockey tasking with drop trailer support"
       },
       "yard-visibility": {
-        "level": "standout",
+        "level": "full",
         "text": "C3 Yard module has a color-coded visual yard inventory map"
       },
       "carrier-scorecarding": {
@@ -1658,8 +1658,8 @@ export const comparisonCompetitors: ComparisonCompetitor[] = [
         "text": "GDPR compliant; standard HTTPS/TLS encryption"
       },
       "license-architecture": {
-        "level": "partial",
-        "text": "Monthly terms; $99/month flat rate for unlimited usage"
+        "level": "standout",
+        "text": "Flat monthly pricing with unlimited warehouses, docks, users and bookings"
       },
       "custom-dev": {
         "level": "none",
@@ -2522,8 +2522,8 @@ export const comparisonCompetitors: ComparisonCompetitor[] = [
         "text": "No gate guard management tools"
       },
       "unscheduled-workins": {
-        "level": "full",
-        "text": "Virtual queue module for walk-in arrivals"
+        "level": "standout",
+        "text": "Smart Serve add-on: live walk-in queues and waiting-time updates"
       },
       "load-po-matching": {
         "level": "none",

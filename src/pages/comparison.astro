@@ -34,7 +34,7 @@ const description = "Compare dock scheduling methods side by side — from sprea
 >
   <Navigation />
 
-  <main class="bg-[#FFF8E9] min-h-screen overflow-x-hidden font-recoleta text-gray-800">
+  <main class="bg-[#FFF8E9] min-h-screen overflow-x-clip font-recoleta text-gray-800">
 
     {/* ═══ 1. HERO + TL;DR ════════════════════════════════════════════════ */}
     <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative">
@@ -237,54 +237,60 @@ const description = "Compare dock scheduling methods side by side — from sprea
       </div>
     </section>
 
-    {/* ═══ 1b. COMPARISON TABLE (Interactive 1v1) ═══════════════════════ */}
+    {/* ═══ 1b. COMPARISON TABLE (Up to three systems) ══════════════════ */}
     <section class="py-20 bg-white border-y border-[#ece6de]" id="comparison-table" style="content-visibility: auto; contain-intrinsic-size: auto 800px;">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10">
           {/* H2 moved into ComparisonTable component */}
         </div>
 
-        <ComparisonTable client:visible />
+        <div id="comparison-interactive">
+          <ComparisonTable client:visible />
+        </div>
 
         <noscript>
-          <div class="bg-[#FFF8E9] p-8 rounded-xl border border-[#ece6de] space-y-6">
-            <h2 class="font-bruta text-2xl sm:text-3xl md:text-4xl uppercase text-black text-center mb-4">
+          <style is:inline>#comparison-interactive { display: none; }</style>
+          <div class="bg-[#FFF8E9] p-4 sm:p-8 rounded-xl border border-[#ece6de] space-y-6">
+            <h2 id="comparison-fallback-heading" class="font-bruta text-2xl sm:text-3xl md:text-4xl uppercase text-black text-center mb-4">
               COMPARE DOCK SCHEDULING FEATURES, <span class="text-[#fd4f00]">SIDE-BY-SIDE</span>
             </h2>
-            <table class="w-full text-left text-sm text-[#5f483a] border-collapse border border-[#ece6de]">
-              <caption class="sr-only">Dock Scheduling Features Comparison Matrix</caption>
-              <thead>
-                <tr class="bg-[#faf8f5] border-b border-[#ece6de]">
-                  <th scope="col" class="p-3 font-bold border-r border-[#ece6de]">Feature</th>
-                  <th scope="col" class="p-3 font-bold border-r border-[#ece6de] text-[#fd4f00]">DataDocks</th>
-                  {comparisonCompetitors.slice(0, 3).map((comp) => (
-                    <th scope="col" class="p-3 font-bold border-r border-[#ece6de] last:border-0">{comp.name}</th>
+            {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- Keyboard focus enables arrow-key scrolling of the comparison. */}
+            <div role="region" aria-labelledby="comparison-fallback-heading" tabindex="0" class="overflow-x-auto rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#5f483a]">
+              <table class="w-full min-w-[760px] text-left text-sm text-[#5f483a] border-collapse border border-[#ece6de]">
+                <caption class="sr-only">Dock Scheduling Features Comparison Matrix</caption>
+                <thead>
+                  <tr class="bg-[#faf8f5] border-b border-[#ece6de]">
+                    <th scope="col" class="p-3 font-bold border-r border-[#ece6de]">Feature</th>
+                    <th scope="col" class="p-3 text-[19px] lg:text-sm font-bold border-r border-[#ece6de] text-[#fd4f00]">DataDocks</th>
+                    {comparisonCompetitors.slice(0, 3).map((comp) => (
+                      <th scope="col" class="p-3 font-bold border-r border-[#ece6de] last:border-0">{comp.name}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonFeatureGroups.map((group) => (
+                    <>
+                      <tr class="bg-[#ece6de]/40 border-b border-[#ece6de]">
+                        <td colspan={5} class="p-3 font-bold text-[#5f483a] font-recoleta">{group.label}</td>
+                      </tr>
+                      {group.features.map((feature) => {
+                        const dd = datadocksFeatures?.[feature.id]?.text || "Not available";
+                        return (
+                          <tr class="border-b border-[#ece6de] text-neutral-800 lg:text-[#5f483a] hover:bg-white">
+                            <th scope="row" class="p-3 font-medium border-r border-[#ece6de]">{feature.label}</th>
+                            <td class="p-3 font-semibold border-r border-[#ece6de] lg:text-[#fd4f00]">{dd}</td>
+                            {comparisonCompetitors.slice(0, 3).map((comp) => {
+                              const val = comp.features?.[feature.id]?.text || "Not available";
+                              return <td class="p-3 border-r border-[#ece6de] last:border-0">{val}</td>;
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonFeatureGroups.map((group) => (
-                  <>
-                    <tr class="bg-[#ece6de]/40 border-b border-[#ece6de]">
-                      <td colspan={5} class="p-3 font-bold text-[#5f483a] font-recoleta">{group.label}</td>
-                    </tr>
-                    {group.features.map((feature) => {
-                      const dd = datadocksFeatures?.[feature.id]?.text || "Not available";
-                      return (
-                        <tr class="border-b border-[#ece6de] hover:bg-white">
-                          <td class="p-3 font-medium border-r border-[#ece6de]">{feature.label}</td>
-                          <td class="p-3 font-semibold border-r border-[#ece6de] text-[#fd4f00]">{dd}</td>
-                          {comparisonCompetitors.slice(0, 3).map((comp) => {
-                            const val = comp.features?.[feature.id]?.text || "Not available";
-                            return <td class="p-3 border-r border-[#ece6de] last:border-0">{val}</td>;
-                          })}
-                        </tr>
-                      );
-                    })}
-                  </>
-                ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
         </noscript>
       </div>
