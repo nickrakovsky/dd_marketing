@@ -55,7 +55,7 @@ describe('legacy comparison redirects', () => {
   });
 });
 
-describe('paid campaign response indexing safeguards', () => {
+describe.each(['/outbound-dock-management', '/inbound-dock-management'])('paid campaign response indexing safeguards: %s', campaign => {
   for (const method of ['GET', 'HEAD']) {
     it.each([200, 301, 404])(
       `adds search exclusions to ${method} responses with status %s`, async status => {
@@ -63,29 +63,29 @@ describe('paid campaign response indexing safeguards', () => {
           'Content-Type': 'text/html',
           'Cache-Control': 'public, max-age=0, s-maxage=86400',
         });
-        if (status === 301) headers.set('Location', '/outbound-dock-management');
+        if (status === 301) headers.set('Location', campaign);
         adapterFetch.mockResolvedValue(new Response(method === 'HEAD' ? null : 'campaign response', {
           status,
           headers,
         }));
 
-        const response = await request('/outbound-dock-management', method);
+        const response = await request(campaign, method);
         expect(response.status).toBe(status);
         expect(response.headers.get('X-Robots-Tag')).toBe(CAMPAIGN_ROBOTS);
         expect(response.headers.get('Cache-Control')).toBe('public, max-age=0, s-maxage=86400');
         expect(response.headers.get('Content-Type')).toBe('text/html');
-        expect(response.headers.get('Location')).toBe(status === 301 ? '/outbound-dock-management' : null);
+        expect(response.headers.get('Location')).toBe(status === 301 ? campaign : null);
         expect(await response.text()).toBe(method === 'HEAD' ? '' : 'campaign response');
       });
   }
 
   it.each([
-    '/outbound-dock-management/',
-    '/outbound-dock-management?utm_source=google&utm_campaign=outbound&gclid=a%2Fb',
-    '/OUTBOUND-DOCK-MANAGEMENT',
-    '/%6futbound-dock-management',
-    '/outbound-dock-management.html',
-    '/outbound-dock-management/unknown-child',
+    `${campaign}/`,
+    `${campaign}?utm_source=google&utm_campaign=${campaign.slice(1)}&gclid=a%2Fb`,
+    campaign.toUpperCase(),
+    `/%${campaign.charCodeAt(1).toString(16)}${campaign.slice(2)}`,
+    `${campaign}.html`,
+    `${campaign}/unknown-child`,
   ])('keeps exclusions on accepted aliases and query variants: %s', async path => {
     adapterFetch.mockResolvedValue(new Response('campaign response'));
     const response = await request(path);
@@ -94,7 +94,7 @@ describe('paid campaign response indexing safeguards', () => {
   });
 
   it('preserves the original request and ad tracking parameters for attribution', async () => {
-    const path = '/outbound-dock-management/?utm_source=google&gclid=a%2Fb&ref=dispatch%20costs';
+    const path = `${campaign}/?utm_source=google&gclid=a%2Fb&ref=warehouse%20operations`;
     const original = new Request(`https://preview.example${path}`);
     adapterFetch.mockResolvedValue(new Response('campaign response'));
     await worker.fetch(original as unknown as WorkerArgs[0], {} as WorkerArgs[1], {} as WorkerArgs[2]);
@@ -103,15 +103,15 @@ describe('paid campaign response indexing safeguards', () => {
   });
 
   it('protects redirects whose original response headers are immutable', async () => {
-    const destination = 'https://preview.example/outbound-dock-management?gclid=a%2Fb';
+    const destination = `https://preview.example${campaign}?gclid=a%2Fb`;
     adapterFetch.mockResolvedValue(Response.redirect(destination, 301));
-    const response = await request('/outbound-dock-management/?gclid=a%2Fb');
+    const response = await request(`${campaign}/?gclid=a%2Fb`);
     expect(response.status).toBe(301);
     expect(response.headers.get('Location')).toBe(destination);
     expect(response.headers.get('X-Robots-Tag')).toBe(CAMPAIGN_ROBOTS);
   });
 
-  it.each(['/', '/posts', '/outbound-dock-management-guide', '/_astro/shared.js', '/images/hero.webp'])(
+  it.each(['/', '/posts', `${campaign}-guide`, '/_astro/shared.js', '/images/hero.webp'])(
     'leaves indexing headers on %s unchanged', async path => {
       const expected = new Response('unrelated response', { headers: { 'X-Robots-Tag': 'index, follow' } });
       adapterFetch.mockResolvedValue(expected);

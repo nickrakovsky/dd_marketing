@@ -22,14 +22,18 @@ import { CalendarCheck2, Truck, ChartNoAxesCombined, Warehouse, Network, Lightbu
 interface Props {
   previewAsOf?: Date;
   title?: string;
+  description?: string;
   headingLines?: [string, string];
+  heroDescription?: string;
   noindex?: boolean;
   demoAttribution?: 'session' | 'page';
 }
 
 const {
   title = 'Dock Scheduling & Yard Management for Your Working Day | DataDocks',
+  description = 'Plan arrivals, keep your dock and yard moving, and give your team one shared view. Dock scheduling and yard management built around your operation.',
   headingLines = ['YOUR OPERATIONS.', 'UNDER CONTROL.'],
+  heroDescription = 'Let carriers book within your rules. Keep appointments, yard activity and your team in sync, with less time spent chasing updates.',
   noindex = false,
   demoAttribution = 'session',
 } = Astro.props;
@@ -97,7 +101,7 @@ const faqs = [
 ];
 ---
 
-<Layout title={title} description="Plan arrivals, keep your dock and yard moving, and give your team one shared view. Dock scheduling and yard management built around your operation." noindex={noindex || Boolean(previewAsOf)} demoAttribution={demoAttribution} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }} preloadImages={[
+<Layout title={title} description={description} noindex={noindex || Boolean(previewAsOf)} demoAttribution={demoAttribution} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }} preloadImages={[
   /* Values below must stay character-for-character identical to the <source>/<img> pair
      in the hero <picture> further down this file, or Chrome treats the preload as a
      different resource from the one actually used and double-fetches the hero image. */
@@ -122,7 +126,7 @@ const faqs = [
         <div class="hero-copy">
           <p class="eyebrow">DOCK SCHEDULING + YARD MANAGEMENT</p>
           <h1 id="hero-title">{headingLines[0]}<br />{' '}<span>{headingLines[1]}</span></h1>
-          <p class="hero-description">Let carriers book within your rules. Keep appointments, yard activity and your team in sync, with less time spent chasing updates.</p>
+          <p class="hero-description">{heroDescription}</p>
           <div class="hero-actions">
             <form id="book-demo" class="hero-form" data-demo-capture>
               <label class="sr-only" for="hero-email">Email address</label>

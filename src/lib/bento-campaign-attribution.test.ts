@@ -7,7 +7,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('Bento campaign demo attribution', () => {
+describe.each(['/outbound-dock-management', '/inbound-dock-management'])('Bento campaign demo attribution: %s', source => {
   it.each(['Demo Subscriber', 'demo_booked'])(
     'forwards the campaign page for %s while preserving first-touch attribution', async event => {
       const upstream = vi.fn<typeof fetch>().mockResolvedValue(
@@ -16,8 +16,8 @@ describe('Bento campaign demo attribution', () => {
       vi.stubGlobal('fetch', upstream);
       vi.spyOn(console, 'log').mockImplementation(() => {});
 
-      const source = '/outbound-dock-management';
-      const landingPage = `https://datadocks.com${source}?utm_source=google&utm_medium=cpc&utm_campaign=outbound-dock-management`;
+      const campaign = source.slice(1);
+      const landingPage = `https://datadocks.com${source}?utm_source=google&utm_medium=cpc&utm_campaign=${campaign}`;
       const firstTouch = {
         utm_source: 'linkedin',
         utm_medium: 'social',
@@ -31,7 +31,7 @@ describe('Bento campaign demo attribution', () => {
       const lastTouch = {
         utm_source: 'google',
         utm_medium: 'cpc',
-        utm_campaign: 'outbound-dock-management',
+        utm_campaign: campaign,
         landing: source,
       };
       const context = {

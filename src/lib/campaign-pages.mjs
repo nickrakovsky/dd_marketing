@@ -1,5 +1,5 @@
 // Paid-only destinations must never enter organic discovery or internal links.
-export const CAMPAIGN_PATHS = ['/outbound-dock-management'];
+export const CAMPAIGN_PATHS = ['/outbound-dock-management', '/inbound-dock-management'];
 export const CAMPAIGN_ROBOTS = 'noindex, nofollow, nosnippet, noimageindex';
 
 export function isCampaignLandingPath(pathname) {

@@ -13,7 +13,7 @@ const attributionScript = [...layout.matchAll(/<script\b[^>]*>([\s\S]*?)<\/scrip
   .find(script => script.includes('window.ddGetAttribution ='));
 if (!attributionScript) throw new Error('Layout attribution script is missing');
 
-const campaignURL = 'https://datadocks.com/outbound-dock-management?utm_source=google&utm_medium=cpc&utm_campaign=outbound_dock&gclid=test-click';
+const campaignPaths = ['/outbound-dock-management', '/inbound-dock-management'];
 const originalTouch = { landing: '/', utm_source: 'newsletter', utm_medium: 'email' };
 type Message = { origin: string; data: { event: string } };
 interface AttributionWindow {
@@ -26,7 +26,7 @@ interface AttributionWindow {
 
 function setup({
   mode = 'page',
-  url = campaignURL,
+  url = 'https://datadocks.com/',
   storedLanding,
   blockedStorage = false,
 }: {
@@ -74,11 +74,14 @@ function setup({
   return { browser, request, listeners, session };
 }
 
-describe('campaign demo page attribution', () => {
-  it.each([undefined, 'https://datadocks.com/'])(
+describe.each(campaignPaths)('campaign demo page attribution: %s', campaign => {
+  const campaignName = campaign.slice(1);
+  const campaignURL = `https://datadocks.com${campaign}?utm_source=google&utm_medium=cpc&utm_campaign=${campaignName}&gclid=test-click`;
+  const sisterCampaign = campaignPaths.find(path => path !== campaign)!;
+  it.each([undefined, 'https://datadocks.com/', `https://datadocks.com${sisterCampaign}`])(
     'identifies the campaign for capture and booking with prior landing %s',
     async storedLanding => {
-      const { browser, request, listeners, session } = setup({ storedLanding });
+      const { browser, request, listeners, session } = setup({ storedLanding, url: campaignURL });
       await captureDemoLead('operator@example.com', {
         source: browser.location.pathname,
         landingPage: browser.ddGetDemoLandingPage(),
@@ -95,35 +98,35 @@ describe('campaign demo page attribution', () => {
       expect(payloads.map(payload => payload.event)).toEqual(['Demo Subscriber', 'demo_booked']);
       for (const payload of payloads) {
         expect(payload).toMatchObject({
-          source: '/outbound-dock-management',
+          source: campaign,
           landingPage: campaignURL,
           firstTouch: originalTouch,
-          lastTouch: { landing: '/outbound-dock-management', utm_source: 'google', utm_campaign: 'outbound_dock' },
+          lastTouch: { landing: campaign, utm_source: 'google', utm_campaign: campaignName },
         });
       }
       expect(session.get('dd_landing_page')).toBe(storedLanding || campaignURL);
     },
   );
 
-  it('preserves session-landing attribution on pages that do not opt in', () => {
-    const { browser } = setup({
-      mode: 'session',
-      url: 'https://datadocks.com/',
-      storedLanding: 'https://datadocks.com/posts/example',
-    });
-    expect(browser.ddGetDemoLandingPage()).toBe('https://datadocks.com/posts/example');
-  });
-
   it('still identifies the campaign when browser storage is unavailable', async () => {
-    const { browser, request } = setup({ blockedStorage: true });
+    const { browser, request } = setup({ blockedStorage: true, url: campaignURL });
     await captureDemoLead('operator@example.com', {
       source: browser.location.pathname,
       landingPage: browser.ddGetDemoLandingPage(),
       attribution: browser.ddGetAttribution(),
     }, request);
     expect(JSON.parse(String(request.mock.calls[0][1]?.body))).toMatchObject({
-      source: '/outbound-dock-management',
+      source: campaign,
       landingPage: campaignURL,
     });
   });
+});
+
+it('preserves session-landing attribution on pages that do not opt in', () => {
+  const { browser } = setup({
+    mode: 'session',
+    url: 'https://datadocks.com/',
+    storedLanding: 'https://datadocks.com/posts/example',
+  });
+  expect(browser.ddGetDemoLandingPage()).toBe('https://datadocks.com/posts/example');
 });
