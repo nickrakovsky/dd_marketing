@@ -34,6 +34,7 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
       ddGetEmail?: () => string;
       ddSetEmail?: (email: string) => void;
       ddGetAttribution?: () => { first: Record<string, unknown>; last: Record<string, unknown> };
+      ddGetDemoLandingPage?: () => string;
       getBentoVisitorUuid?: () => string | null;
       ddOpenCalendly?: (params: string) => void;
       bento?: { identify?: (email: string) => void };
@@ -110,8 +111,7 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
         form.setAttribute('aria-busy', 'true');
         button.textContent = 'One moment…';
         statusNode.textContent = '';
-        let landingPage = window.location.href;
-        try { landingPage = sessionStorage.getItem('dd_landing_page') || landingPage; } catch { /* Storage is optional. */ }
+        const landingPage = marketing.ddGetDemoLandingPage?.() || window.location.href;
         try {
           const email = await captureDemoLead(input.value, {
             source: window.location.pathname,

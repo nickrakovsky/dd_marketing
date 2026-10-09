@@ -22,6 +22,8 @@
     "test:vendor-assets": "node --test scripts/verified-vendor-assets.test.mjs",
     "test:script-csp": "node --test scripts/script-csp.test.mjs",
     "test:preview-links": "node --test scripts/check-preview-links.test.mjs",
+    "check:campaign-isolation": "node scripts/campaign-isolation.mjs",
+    "test:campaign-isolation": "node --test scripts/campaign-isolation.test.mjs",
     "test:e2e": "playwright test",
     "test:publication": "node scripts/test-scheduled-publication.mjs",
     "perf": "lhci autorun",

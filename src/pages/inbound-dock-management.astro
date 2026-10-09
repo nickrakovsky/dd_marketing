@@ -1,0 +1,18 @@
+---
+// Paid-only destination: keep out of menus, content links and discovery lists.
+// The shared campaign policy enforces robots metadata, headers and build checks.
+export const prerender = false;
+
+import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Schedule inbound deliveries and coordinate warehouse receiving appointments.';
+---
+
+<HomePage
+  title="Inbound Dock Software"
+  description={description}
+  headingLines={['INBOUND DOCK', 'MANAGEMENT SOFTWARE']}
+  heroDescription={description}
+  demoAttribution="page"
+  noindex
+/>

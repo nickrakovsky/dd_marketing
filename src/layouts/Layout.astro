@@ -10,6 +10,7 @@ import { getAuthor } from '../data/authors';
 import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
 import { VENDOR_ASSETS, bentoScriptPath } from '../lib/vendor-assets.mjs';
 import AsyncStyles from '../components/AsyncStyles.astro';
+import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from '../lib/campaign-pages.mjs';
 
 interface Props {
     title: string;
@@ -17,6 +18,7 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
+    demoAttribution?: 'session' | 'page';
     // Text-led pages can discover their above-the-fold Recoleta faces early.
     preloadRecoleta?: boolean;
 
@@ -46,14 +48,15 @@ interface Props {
     // Early <link rel="preload" as="image"> hints for a page's own LCP image, rendered
     // immediately after the Bruta font preload -- i.e. before Beasties' inlined critical
     // CSS -- so the preload scanner can discover the LCP resource without first parsing
-    // through that block. Each entry's href/imagesrcset/imagesizes/media MUST match its
-    // <img>/<source> counterpart character-for-character, or Chrome treats the preload as
-    // a different resource and double-fetches the image.
+    // through that block. Match the image's candidate selection (srcset/sizes/media/type)
+    // so the preload fetches the resource actually displayed. Only preload the preferred
+    // format: browsers supporting multiple formats otherwise download unused fallbacks.
     preloadImages?: {
         href?: string;
         imagesrcset?: string;
         imagesizes?: string;
         media?: string;
+        type?: string;
     }[];
 }
 
@@ -63,6 +66,7 @@ const {
   image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
+  demoAttribution = 'session',
   preloadRecoleta = false,
 
   schemaData,
@@ -86,6 +90,8 @@ const pathname = Astro.url.pathname === '/'
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
+const isCampaignPage = isCampaignLandingPath(pathname);
+const robots = isCampaignPage ? CAMPAIGN_ROBOTS : noindex ? 'noindex, follow' : 'index, follow';
 
 // Content pages (blog posts pass type="article", video pages pass type="video")
 // are low booking-intent and perf/SEO-sensitive, so we skip the Calendly
@@ -355,7 +361,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-demo-attribution={demoAttribution}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -363,7 +369,7 @@ const jsonLd = {
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
-        <meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
+        <meta name="robots" content={robots} />
         <meta name="generator" content={Astro.generator} />
         <meta name="keywords" content="dock scheduling software, yard management system, logistics SaaS, supply chain automation" />
 
@@ -399,7 +405,7 @@ const jsonLd = {
              before Beasties' inlined critical CSS) rather than left to the preload scanner
              to discover deep in <body>. Opt-in per page via the preloadImages prop. */}
         {preloadImages?.map((p) => (
-          <link rel="preload" as="image" fetchpriority="high" href={p.href} imagesrcset={p.imagesrcset} imagesizes={p.imagesizes} media={p.media} />
+          <link rel="preload" as="image" fetchpriority="high" href={p.href} imagesrcset={p.imagesrcset} imagesizes={p.imagesizes} media={p.media} type={p.type} />
         ))}
 
         {/* lite-youtube CSS is now injected conditionally via <slot name="head" />
@@ -407,7 +413,7 @@ const jsonLd = {
              render-blocking CSS on pages without YouTube embeds. */}
         <slot name="head" />
 
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+        {!isCampaignPage && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>}
 
         {/* GTM removed - GA4 now handled by Cloudflare Zaraz */}
         {/* Verified widget JS/CSS are first-party; calendly.com is the booking
@@ -511,9 +517,21 @@ const jsonLd = {
             }
 
             // --- Landing page (session-scoped, kept for Bento) -----------
-            if (!sessionStorage.getItem('dd_landing_page')) {
-              sessionStorage.setItem('dd_landing_page', window.location.href);
+            try {
+              if (!sessionStorage.getItem('dd_landing_page')) {
+                sessionStorage.setItem('dd_landing_page', window.location.href);
+              }
+            } catch (err) {
+              ddReportError('storage_write', err && err.message);
             }
+
+            // Campaign pages identify where the demo converts. Keep the original
+            // session landing and first/last touches for acquisition reporting.
+            window.ddGetDemoLandingPage = function() {
+              if (document.documentElement.dataset.demoAttribution === 'page') return window.location.href;
+              try { return sessionStorage.getItem('dd_landing_page') || window.location.href; }
+              catch { return window.location.href; }
+            };
 
             // --- Attribution: first-touch and last-touch -----------------
             var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
@@ -784,7 +802,7 @@ const jsonLd = {
                     email: knownEmail,
                     event: ddEvent,
                     source: window.location.pathname,
-                    landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                    landingPage: window.ddGetDemoLandingPage(),
                     visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
                     firstTouch: attribution.first,
                     lastTouch: attribution.last
