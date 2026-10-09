@@ -34,6 +34,7 @@ describe.each(['/outbound-dock-management', '/inbound-dock-management'])('Bento 
         utm_campaign: campaign,
         landing: source,
       };
+      // This route only reads request and locals; the remaining Astro context is intentionally absent.
       const context = {
         request: new Request('https://datadocks.com/api/bento-track', {
           method: 'POST',
@@ -57,7 +58,7 @@ describe.each(['/outbound-dock-management', '/inbound-dock-management'])('Bento 
             },
           },
         },
-      } as Parameters<typeof POST>[0];
+      } as unknown as Parameters<typeof POST>[0];
 
       const response = await POST(context);
       expect(await response.json()).toEqual({ ok: true });

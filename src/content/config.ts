@@ -14,6 +14,8 @@ const postsCollection = defineCollection({
         cardAlt: z.string().optional(),
         readTime: z.string().optional(),
         showToc: z.boolean().optional(),
+        // Opt in per article after identifying costly rich content at the top.
+        headerLayout: z.enum(['standard', 'rich-content']).default('standard'),
 
         postType: z.discriminatedUnion('discriminant', [
             z.object({

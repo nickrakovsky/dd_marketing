@@ -48,10 +48,11 @@ function setup({
     },
   });
   const listeners = new Map<string, (event: Message) => void>();
+  // The inline script installs the attribution methods when it runs in this mock window.
   const browser = {
     location: new URL(url),
     addEventListener: (name: string, listener: (event: Message) => void) => listeners.set(name, listener),
-  } as AttributionWindow;
+  } as unknown as AttributionWindow;
   const request = vi.fn<typeof fetch>().mockResolvedValue(new Response('{"ok":true}'));
   runInNewContext(attributionScript!, {
     window: browser,

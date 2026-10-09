@@ -48,14 +48,15 @@ interface Props {
     // Early <link rel="preload" as="image"> hints for a page's own LCP image, rendered
     // immediately after the Bruta font preload -- i.e. before Beasties' inlined critical
     // CSS -- so the preload scanner can discover the LCP resource without first parsing
-    // through that block. Each entry's href/imagesrcset/imagesizes/media MUST match its
-    // <img>/<source> counterpart character-for-character, or Chrome treats the preload as
-    // a different resource and double-fetches the image.
+    // through that block. Match the image's candidate selection (srcset/sizes/media/type)
+    // so the preload fetches the resource actually displayed. Only preload the preferred
+    // format: browsers supporting multiple formats otherwise download unused fallbacks.
     preloadImages?: {
         href?: string;
         imagesrcset?: string;
         imagesizes?: string;
         media?: string;
+        type?: string;
     }[];
 }
 
@@ -404,7 +405,7 @@ const jsonLd = {
              before Beasties' inlined critical CSS) rather than left to the preload scanner
              to discover deep in <body>. Opt-in per page via the preloadImages prop. */}
         {preloadImages?.map((p) => (
-          <link rel="preload" as="image" fetchpriority="high" href={p.href} imagesrcset={p.imagesrcset} imagesizes={p.imagesizes} media={p.media} />
+          <link rel="preload" as="image" fetchpriority="high" href={p.href} imagesrcset={p.imagesrcset} imagesizes={p.imagesizes} media={p.media} type={p.type} />
         ))}
 
         {/* lite-youtube CSS is now injected conditionally via <slot name="head" />

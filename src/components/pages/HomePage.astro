@@ -12,6 +12,22 @@ import { isPublished } from '../../lib/content-status';
 import { getFeaturedEvergreenPost } from '../../lib/evergreen-content';
 import interFont from '../../assets/fonts/Inter-Latin-Variable.woff2';
 const calendar = { src: '/images/DataDocks-Calendar-Screenshot.webp', width: 2000, height: 717 };
+// Share selection hints with the preload so only the displayed candidate is fetched.
+// Mobile uses the existing crop; desktop still displays a zoomed/cropped full image.
+const calendarMobile = {
+  media: '(max-width: 960px)',
+  sizes: '(max-width: 600px) calc(100vw - 40px), (max-width: 820px) calc(50vw - 32.5px), calc(54vw - 49.68px)',
+  avifSrcset: [400, 560, 749].map(width => `/images/calendar-hero-mobile-${width}.avif ${width}w`).join(', '),
+  webpSrcset: '/images/calendar-hero-mobile-400.webp 400w, /images/calendar-hero-mobile-560.webp 560w, /images/DataDocks-Calendar-Screenshot-mobile-749x540.webp 749w',
+};
+const calendarDesktop = {
+  media: '(min-width: 961px)',
+  // Match .hero.wrap's final width/gap, its 54% right column, the 2px border,
+  // and the image's 204.499% width. The visible crop alone understates resolution.
+  sizes: 'calc((min(1760px, 100vw - 64px) - clamp(40px, 4vw, 72px)) * 1.1042946 - 4.08998px)',
+  avifSrcset: [800, 1080, 1600, 2000].map(width => `/images/calendar-hero-desktop-${width}.avif ${width}w`).join(', '),
+  webpSrcset: '/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w',
+};
 import { ytThumb } from '../../lib/yt-thumb';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
@@ -102,11 +118,10 @@ const faqs = [
 ---
 
 <Layout title={title} description={description} noindex={noindex || Boolean(previewAsOf)} demoAttribution={demoAttribution} schemaData={{ faq: faqs, reviews: rawTestimonials.map(item => ({ author: item.author, quote: item.quote })) }} preloadImages={[
-  /* Values below must stay character-for-character identical to the <source>/<img> pair
-     in the hero <picture> further down this file, or Chrome treats the preload as a
-     different resource from the one actually used and double-fetches the hero image. */
-  { href: '/images/DataDocks-Calendar-Screenshot-mobile-749x540.webp', media: '(max-width: 960px)' },
-  { imagesrcset: '/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w', imagesizes: '(max-width: 600px) 900px, 1280px', media: '(min-width: 961px)' },
+  /* Preload only AVIF: preloading WebP too would fetch both formats in browsers
+     supporting both. Other browsers discover the eager WebP in the hero below. */
+  { type: 'image/avif', imagesrcset: calendarMobile.avifSrcset, imagesizes: calendarMobile.sizes, media: calendarMobile.media },
+  { type: 'image/avif', imagesrcset: calendarDesktop.avifSrcset, imagesizes: calendarDesktop.sizes, media: calendarDesktop.media },
 ]}>
   <Fragment slot="head">
     <style is:inline set:html={`
@@ -139,14 +154,12 @@ const faqs = [
         <figure class="product-figure">
           <a class="product-window" href={calendar.src} data-screenshot-zoom aria-label="Enlarge the DataDocks schedule screenshot">
             <picture>
-              {/* At <=960px .product-window is a 749x540 crop window (see the matching @media
-                  rule below): the base image only ever shows this rectangle, zoomed in via
-                  transform. Serving that exact crop pre-rendered means the browser downloads
-                  ~55 KB of already-correct pixels instead of 104-140 KB it would otherwise
-                  scale/crop client-side -- and it's sharper, not blurrier, since the crop
-                  supplies its full native resolution for the same on-screen box. */}
-              <source media="(max-width: 960px)" srcset="/images/DataDocks-Calendar-Screenshot-mobile-749x540.webp" />
-              <img src={calendar.src} srcset="/images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-800.webp 800w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1080.webp 1080w, /images/03f3c54fa64b3930f66a0bc62b3bc6f3_DataDocks-Calendar-Screenshot-p-1600.webp 1600w, /images/DataDocks-Calendar-Screenshot.webp 2000w" sizes="(max-width: 600px) 900px, 1280px" alt="DataDocks weekly calendar showing truck appointments, loading statuses and facility capacity limits." width={calendar.width} height={calendar.height} loading="eager" fetchpriority="high" />
+              {/* Keep the same mobile framing and native detail, with smaller candidates
+                  available when appropriate. No JavaScript or delayed quality swap. */}
+              <source type="image/avif" media={calendarMobile.media} srcset={calendarMobile.avifSrcset} sizes={calendarMobile.sizes} width="749" height="540" />
+              <source type="image/webp" media={calendarMobile.media} srcset={calendarMobile.webpSrcset} sizes={calendarMobile.sizes} width="749" height="540" />
+              <source type="image/avif" media={calendarDesktop.media} srcset={calendarDesktop.avifSrcset} sizes={calendarDesktop.sizes} />
+              <img src={calendar.src} srcset={calendarDesktop.webpSrcset} sizes={calendarDesktop.sizes} alt="DataDocks weekly calendar showing truck appointments, loading statuses and facility capacity limits." width={calendar.width} height={calendar.height} loading="eager" fetchpriority="high" />
             </picture>
           </a>
           <figcaption><a href={calendar.src} data-screenshot-zoom><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="6" /><path d="m15 15 6 6M7 10h6M10 7v6" /></svg>Enlarge screenshot</a></figcaption>
