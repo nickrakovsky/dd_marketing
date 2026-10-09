@@ -120,6 +120,7 @@ if (priorityImgMatch) {
   description={frontmatter.description}
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
+  preloadRecoleta={richContentFirst}
   articleData={{
     author: frontmatter.author,
     pubDate: frontmatter.pubDate,
@@ -1889,7 +1890,8 @@ if (priorityImgMatch) {
     .rich-content-header .article-heading {
       display: block;
       width: 100%;
-      margin-block: auto;
+      /* Keep the title anchored while metadata wraps as webfonts arrive. */
+      margin-block: 0;
     }
 
     .rich-content-header .article-title {
@@ -1908,7 +1910,7 @@ if (priorityImgMatch) {
       grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas: "author author" "dates dates" "time controls";
       gap: 1.25rem 1.5rem;
-      margin-top: 0;
+      margin-top: auto;
       padding-block: 1.25rem;
     }
 
