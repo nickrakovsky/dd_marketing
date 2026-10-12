@@ -11,6 +11,11 @@ type PlayerMode = 'ready' | 'api-failure' | 'api-timeout' | 'player-timeout';
 test.use({ serviceWorkers: 'block', reducedMotion: 'reduce' });
 
 test.beforeEach(async ({ page, baseURL }) => {
+  await page.addInitScript(() => {
+    // Playwright's blocked register() resolves undefined, unlike a browser failure.
+    // Use Partytown's supported no-worker fallback while keeping requests routable.
+    Object.defineProperty(navigator, 'serviceWorker', { value: undefined });
+  });
   const origin = new URL(baseURL!).origin;
   await page.route('**/*', route => {
     // Tests exercise production HTML/CSP without depending on third-party services.

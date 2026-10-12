@@ -1,9 +1,11 @@
 /** Replaced with build-only sample results; source and development need no map. */
 const serialized: string = '__PUBLICATION_CRITICAL_CSS__';
-const criticalByPath: Record<string, string> = serialized.startsWith('{') ? JSON.parse(serialized) : {};
+const criticalStyles: { styles: string[]; byPath: Record<string, number> } = serialized.startsWith('{')
+  ? JSON.parse(serialized)
+  : { styles: [], byPath: {} };
 
 export async function withPublicationStyles(response: Response, pathname: string): Promise<Response> {
-  const css = criticalByPath[pathname.toLowerCase()];
+  const css = criticalStyles.styles[criticalStyles.byPath[pathname.toLowerCase()]];
   if (!css || response.status !== 200 || !response.headers.get('Content-Type')?.includes('text/html')) return response;
 
   let inserted = false;
