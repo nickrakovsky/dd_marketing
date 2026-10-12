@@ -40,6 +40,9 @@ jobs:
       - name: Preview link checker regression tests
         run: npm run test:preview-links
 
+      - name: YouTube importer regression tests
+        run: npm run test:youtube-sync
+
       - name: Linting (ESLint)
         run: npm run lint
 

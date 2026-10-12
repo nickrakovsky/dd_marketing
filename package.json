@@ -6,7 +6,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "node sync-youtube.mjs && astro dev --base /",
+    "dev": "node sync-youtube.mjs --if-configured && astro dev --base /",
+    "sync:youtube": "node sync-youtube.mjs",
+    "test:youtube-sync": "node --test scripts/sync-youtube.test.mjs",
     "start": "astro dev",
     "build": "astro build && node -e \"import('fs').then(m => m.copyFileSync('dist/sitemap-index.xml', 'dist/sitemap.xml'))\"",
     "preview": "astro preview",
