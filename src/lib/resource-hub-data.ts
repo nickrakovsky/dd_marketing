@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content';
+import { getCachedCollection as getCollection } from './cached-content';
 import type { CollectionEntry } from 'astro:content';
 import { isPublished } from './content-status';
 import { EVERGREEN_RESOURCE_SLUGS } from './evergreen-content';

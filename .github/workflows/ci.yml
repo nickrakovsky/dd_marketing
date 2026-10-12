@@ -37,8 +37,17 @@ jobs:
       - name: Trusted script policy regression tests
         run: npm run test:script-csp
 
+      - name: Publication CSS regression tests
+        run: node --test scripts/publication-build.test.mjs
+
       - name: Preview link checker regression tests
         run: npm run test:preview-links
+
+      - name: YouTube importer regression tests
+        run: npm run test:youtube-sync
+
+      - name: Staged blog content and citation checks
+        run: npm run check:staging
 
       - name: Linting (ESLint)
         run: npm run lint
@@ -156,6 +165,15 @@ jobs:
           # Playwright config reads PLAYWRIGHT_BASE_URL and disables the local webServer when set.
           # See playwright.config.ts: const isRemote = baseURL.startsWith('https://')
           PLAYWRIGHT_BASE_URL: ${{ steps.cf-preview.outputs.preview_url }}
+
+      - name: Upload browser test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Performance Audit (Lighthouse CI)
         run: |

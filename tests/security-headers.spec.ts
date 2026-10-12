@@ -22,8 +22,12 @@ test.describe('Enforced inline event policy', () => {
       }
       expect(policy, pathname).toContain("script-src-attr 'none'");
       expect(policy, pathname).toMatch(/(?:^|[;,]\s*)script-src 'self' 'sha256-/);
+      const scriptSources = policy.match(/(?:^|[;,]\s*)script-src\s+([^;,]+)/)?.[1].split(/\s+/) ?? [];
+      expect(scriptSources.filter(source => !source.startsWith("'")), pathname).toEqual([
+        'https://www.youtube.com/iframe_api', 'https://www.youtube.com/s/player/',
+      ]);
       expect(policy, pathname).toContain("frame-ancestors 'self'");
-      expect(policy, pathname).not.toMatch(/unsafe-inline|unsafe-eval/);
+      expect(policy, pathname).not.toMatch(/unsafe-inline|unsafe-eval|strict-dynamic/);
       expect(headers['x-content-type-options'], pathname).toBe('nosniff');
       // Includes build-generated CSS tags, not just the Astro source templates.
       expect(await response.text(), pathname).not.toMatch(/\s(?:onload|onclick)\s*=\s*["']/i);

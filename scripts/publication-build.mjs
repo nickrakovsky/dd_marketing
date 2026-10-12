@@ -30,6 +30,21 @@ export function finishPublicationStyles(buildRoot, criticalByPath) {
   if (!criticalByPath['/'] || !criticalByPath['/posts']) {
     throw new Error('Missing publication critical CSS: build-only samples must be rendered and processed.');
   }
+  // Routes often share identical output. Store each complete CSS string once;
+  // its bytes and the per-route stylesheet transformation remain unchanged.
+  const styles = [];
+  const byPath = {};
+  const indexByCss = new Map();
+  for (const [pathname, css] of Object.entries(criticalByPath)) {
+    let index = indexByCss.get(css);
+    if (index === undefined) {
+      index = styles.length;
+      styles.push(css);
+      indexByCss.set(css, index);
+    }
+    byPath[pathname] = index;
+  }
+  const packed = JSON.stringify(JSON.stringify({ styles, byPath }));
   let injected = 0;
   const visit = directory => {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
@@ -40,7 +55,7 @@ export function finishPublicationStyles(buildRoot, criticalByPath) {
         // Replace the complete string literal, not source substrings containing it.
         const updated = source.replace(new RegExp(`(["'])${marker}\\1`, 'g'), () => {
           injected++;
-          return JSON.stringify(JSON.stringify(criticalByPath));
+          return packed;
         });
         if (updated !== source) fs.writeFileSync(file, updated);
       }

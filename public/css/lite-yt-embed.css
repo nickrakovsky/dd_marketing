@@ -79,6 +79,16 @@ lite-youtube.lyt-activated > .lty-playbtn {
     pointer-events: none;
 }
 
+lite-youtube[data-yt-failed] > .lty-playbtn {
+    display: grid;
+    place-items: center;
+    background: rgb(0 0 0 / 80%);
+    color: white;
+    font: 600 18px/1.4 system-ui, sans-serif;
+    text-decoration: underline;
+    filter: none;
+}
+
 .lyt-visually-hidden {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);

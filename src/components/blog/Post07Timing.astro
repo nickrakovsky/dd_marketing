@@ -1,0 +1,80 @@
+---
+import './timing.css';
+---
+
+<figure id="dd-post7-timing" class="ddp7 not-prose" aria-labelledby="ddp7-title" aria-describedby="ddp7-assumptions">
+  <header class="ddp7-heading">
+    <h2 id="ddp7-title">Faster can <br>still be late.</h2>
+    <p>One order. <strong>800 packs.</strong><br>Production must finish by <strong>12:00.</strong></p>
+  </header>
+
+  <fieldset class="ddp7-controls">
+    <legend>Try either change, or both</legend>
+    <div class="ddp7-choices">
+      <label for="ddp7-faster" aria-label="Faster production">
+        <input id="ddp7-faster" type="checkbox" aria-controls="ddp7-result" aria-describedby="ddp7-faster-help">
+        <span><strong>Faster production</strong><span id="ddp7-faster-help">200 to 400 packs/hour</span></span>
+      </label>
+      <label for="ddp7-earlier" aria-label="Earlier notice">
+        <input id="ddp7-earlier" type="checkbox" aria-controls="ddp7-result" aria-describedby="ddp7-earlier-help">
+        <span><strong>Earlier notice</strong><span id="ddp7-earlier-help">11:00 to 08:00</span></span>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="ddp7-calculation" aria-label="Production duration for the selected rate">
+    <span class="ddp7-normal-rate">800 packs ÷ 200 packs/hour = <strong>4 hours</strong></span>
+    <span class="ddp7-fast-rate">800 packs ÷ 400 packs/hour = <strong>2 hours</strong></span>
+  </div>
+
+  <div class="ddp7-plot" role="group" aria-label="Production on a shared time scale from 08:00 to 16:00">
+    <div class="ddp7-start">
+      <span>Starts</span>
+      <strong class="ddp7-late-start">11:00</strong>
+      <strong class="ddp7-early-start">08:00</strong>
+    </div>
+    <svg class="ddp7-chart" width="100%" height="160" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+      <rect class="ddp7-track" x="0" y="57" width="100%" height="44" rx="3"/>
+      <rect class="ddp7-bar" x="37.5%" y="57" width="50%" height="44" rx="3"/>
+      <line class="ddp7-deadline" x1="50%" x2="50%" y1="6" y2="52"/>
+      <line class="ddp7-deadline" x1="50%" x2="50%" y1="106" y2="160"/>
+    </svg>
+    <div class="ddp7-bar-label" aria-hidden="true">
+      <span class="ddp7-normal-rate">4 h</span><span class="ddp7-fast-rate">2 h</span>
+    </div>
+    <div class="ddp7-finish">
+      <span>Finishes</span>
+      <strong class="ddp7-state ddp7-base">15:00</strong>
+      <strong class="ddp7-state ddp7-speed">13:00</strong>
+      <strong class="ddp7-state ddp7-notice">12:00</strong>
+      <strong class="ddp7-state ddp7-both">10:00</strong>
+    </div>
+    <div class="ddp7-axis" aria-hidden="true">
+      <span style="--tick:0%">08:00</span>
+      <span style="--tick:25%">10:00</span>
+      <span class="ddp7-due-tick" style="--tick:50%">12:00<small>Deadline</small></span>
+      <span style="--tick:75%">14:00</span>
+      <span style="--tick:100%">16:00</span>
+    </div>
+  </div>
+
+  <div id="ddp7-result" class="ddp7-outcome" aria-live="polite" aria-atomic="true">
+    <div class="ddp7-state ddp7-base">
+      <strong class="ddp7-verdict">3 hours late</strong>
+      <p>An 11:00 start leaves one hour before the deadline. Production takes four.</p>
+    </div>
+    <div class="ddp7-state ddp7-speed">
+      <strong class="ddp7-verdict">Still 1 hour late</strong>
+      <p>Twice the output rate saves two hours. Starting at 11:00 still means finishing at 13:00.</p>
+    </div>
+    <div class="ddp7-state ddp7-notice">
+      <strong class="ddp7-verdict">Meets the deadline</strong>
+      <p>The same line finishes at 12:00 when it can start at 08:00.</p>
+    </div>
+    <div class="ddp7-state ddp7-both">
+      <strong class="ddp7-verdict">2 hours to spare</strong>
+      <p>An 08:00 start and two-hour run finish at 10:00. Both changes affect the result.</p>
+    </div>
+  </div>
+  <figcaption id="ddp7-assumptions"><strong>Hypothetical example.</strong> Production starts when the order arrives, with ingredients and the line available. Setup, packing and loading are excluded.</figcaption>
+</figure>

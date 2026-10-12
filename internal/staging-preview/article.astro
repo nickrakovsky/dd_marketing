@@ -1,0 +1,42 @@
+---
+import BlogPostLayout from '../../src/layouts/BlogPostLayout.astro';
+import SmartLink from '../../src/components/SmartLink.astro';
+import MDXTable from '../../src/components/MDXTable.astro';
+import MDXImage from '../../src/components/MDXImage.astro';
+import BibliographyItem from '../../src/components/BibliographyItem.astro';
+import Cite from '../../src/components/Cite.astro';
+import FAQ from '../../src/components/FAQ.astro';
+import RelatedFeatureCallout from '../../src/components/RelatedFeatureCallout.astro';
+import LeadMagnetForm from '../../src/components/LeadMagnetForm.astro';
+import cardImage from '../../src/assets/blog-images/warehouse-optimization-strategies-cover.png';
+import { posts } from './posts';
+
+const index = posts.findIndex(post => post.slug === Astro.params.slug);
+const post = posts[index];
+if (!post) return new Response('Post not found', { status: 404 });
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.locals.mdxImageCount = 0;
+Astro.locals.prioritizeMdxImage = true;
+const Content = post.document.default;
+const frontmatter = {
+  ...post.document.frontmatter,
+  ...(post.pubDate ? { pubDate: new Date(post.pubDate) } : {}),
+  ...(post.document.frontmatter.updatedDate ? { updatedDate: new Date(post.document.frontmatter.updatedDate) } : {}),
+  ...(post.document.frontmatter.cardImage ? { cardImage } : {}),
+};
+const headings = post.document.getHeadings();
+const previous = posts[index - 1];
+const next = posts[index + 1];
+---
+<BlogPostLayout frontmatter={frontmatter} headings={headings} noindex>
+  <nav slot="top-interactive" aria-label="Preview navigation" class="max-w-7xl mx-auto px-4 md:px-12 mb-8 font-sans text-sm flex flex-wrap justify-between gap-4">
+    <a class="text-[#a33300] dark:text-[#ff7635] underline" href="/preview/staging">← All {posts.length} posts</a>
+    <span>{post.label} · /posts/{post.slug}<br />{post.pubDate ? <time datetime={post.pubDate}>{post.publicationLabel}</time> : post.publicationLabel}</span>
+    <span class="flex gap-4">
+      {previous && <a class="text-[#a33300] dark:text-[#ff7635] underline" href={'/preview/staging/' + previous.slug}>Previous</a>}
+      {next && <a class="text-[#a33300] dark:text-[#ff7635] underline" href={'/preview/staging/' + next.slug}>Next</a>}
+    </span>
+  </nav>
+  <Content components={{ a: SmartLink, SmartLink, table: MDXTable, img: MDXImage, BibliographyItem, Cite, FAQ, RelatedFeatureCallout, LeadMagnetForm, ...post.components }} />
+</BlogPostLayout>
