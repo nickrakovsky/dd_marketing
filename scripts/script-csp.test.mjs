@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { inlineScriptHashes, prepareScriptPolicy } from './script-csp.mjs';
+import { buildScriptPolicy, inlineScriptHashes, prepareScriptPolicy } from './script-csp.mjs';
 
 const hash = text => `sha256-${createHash('sha256').update(text).digest('base64')}`;
 function fixture() {
@@ -28,6 +28,19 @@ test('hashes browser-parsed executable contents without trusting comments, templ
   assert.deepEqual(inlineScriptHashes(html), [hash('first()\nsecond()'), hash('moduleScript()')].sort());
 });
 
+test('limits external scripts to the YouTube API bootstrap and versioned player directory', () => {
+  const hashes = [hash('second()'), hash('first()'), hash('second()')];
+  const policy = buildScriptPolicy(hashes);
+  const [scripts, attributes, workers] = policy.split('; ');
+  assert.deepEqual(scripts.split(' '), [
+    'script-src', "'self'", ...[...new Set(hashes)].sort().map(value => `'${value}'`),
+    'https://www.youtube.com/iframe_api', 'https://www.youtube.com/s/player/',
+  ]);
+  assert.equal(attributes, "script-src-attr 'none'");
+  assert.equal(workers, "worker-src 'self'");
+  assert.ok(!/unsafe-inline|unsafe-eval|strict-dynamic/.test(policy));
+});
+
 test('covers static and future runtime builds without changing script contents, assets or cache rules', () => {
   const root = fixture();
   try {
@@ -35,7 +48,10 @@ test('covers static and future runtime builds without changing script contents, 
     assert.ok(policy.includes(`'${hash('window.reviewed = true;')}'`));
     assert.ok(policy.includes(`'${hash('window.future = true;')}'`));
     assert.ok(!policy.includes(hash('window.injected = true;')));
-    assert.ok(!/unsafe-inline|unsafe-eval|https:/.test(policy));
+    assert.ok(!/unsafe-inline|unsafe-eval|strict-dynamic/.test(policy));
+    assert.deepEqual(policy.match(/https:\/\/[^\s;]+/g), [
+      'https://www.youtube.com/iframe_api', 'https://www.youtube.com/s/player/',
+    ]);
     const headers = fs.readFileSync(path.join(root, '_headers'), 'utf8');
     assert.ok(headers.includes('/about\n  Content-Security-Policy: script-src'));
     assert.ok(!headers.includes('/_build/publication'));

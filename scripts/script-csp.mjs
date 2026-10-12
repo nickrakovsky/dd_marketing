@@ -5,6 +5,9 @@ import { parse } from 'parse5';
 
 const MARKER = '__DD_BUILD_SCRIPT_CSP__';
 const JAVASCRIPT_TYPES = new Set(['', 'module', 'text/javascript', 'application/javascript', 'text/ecmascript', 'application/ecmascript']);
+// Click-to-play embeds load the API bootstrap, then its versioned widget script.
+// Keep this exception scoped to those paths instead of trusting all YouTube scripts.
+const YOUTUBE_SCRIPT_SOURCES = ['https://www.youtube.com/iframe_api', 'https://www.youtube.com/s/player/'];
 
 export function inlineScriptHashes(html) {
   const hashes = new Set();
@@ -31,7 +34,8 @@ function filesIn(directory) {
 }
 
 export function buildScriptPolicy(hashes) {
-  return `script-src 'self' ${[...new Set(hashes)].sort().map(hash => `'${hash}'`).join(' ')}; script-src-attr 'none'; worker-src 'self'`;
+  const sources = ["'self'", ...[...new Set(hashes)].sort().map(hash => `'${hash}'`), ...YOUTUBE_SCRIPT_SOURCES];
+  return `script-src ${sources.join(' ')}; script-src-attr 'none'; worker-src 'self'`;
 }
 
 /** Hash reviewed build artifacts, never arbitrary request-time response HTML. */
