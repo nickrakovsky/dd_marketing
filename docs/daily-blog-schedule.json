@@ -9,13 +9,14 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-10-09T00:00:00Z",
+  "previewAsOf": "2026-10-10T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
     "Card artwork reuses relevant existing site illustrations; no source drafts included images.",
     "Publication is checked by the Cloudflare Worker on each request at the fixed PST timestamp. One deployment installs the content and release rules; no daily deployments or cron jobs are required.",
-    "On September 22, the thirteen pending posts were postponed by one weekday; the September 17 and 18 published posts remain unchanged. Exactly one pending post is due on September 22."
+    "On September 22, the thirteen pending posts were postponed by one weekday; the September 17 and 18 published posts remain unchanged. Exactly one pending post is due on September 22.",
+    "On October 8, the weekday queue was extended with a sixth Nick Rakovsky article for October 9 at the existing fixed PST time. The original 15-post A/B/C rotation is unchanged. The source image was omitted; existing site card artwork is reused."
   ],
   "slots": [
     {
@@ -257,6 +258,22 @@
       "sourceSha256": "ad3b3b6622d1ae8b2d466dfa5049adfaa4ef2d742b7e840d960d87383f3c25f5",
       "contentPath": "src/content/posts/temporary-3pl-buys-time.mdx",
       "cardImage": "../../assets/blog-images/what-is-a-freight-management-system-cover.png"
+    },
+    {
+      "slot": 16,
+      "date": "2026-10-09",
+      "weekday": "Friday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 6,
+      "author": "Nick Rakovsky",
+      "title": "Food fulfilment: are growing sales losing money, or becoming difficult to deliver?",
+      "slug": "food-fulfilment-economics",
+      "pubDate": "2026-10-09T14:30:00.000Z",
+      "sourcePath": "outputs/nick-food-beverage-daily-posts/articles/post-01-fulfilment-economics.md",
+      "sourceSha256": "3ac19ee06b07c92cc1c5929704a568b1a702925eaa41cfb7e393317f8f46615a",
+      "contentPath": "src/content/posts/food-fulfilment-economics.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-optimization-strategies-cover.png"
     }
   ]
 }

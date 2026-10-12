@@ -228,6 +228,15 @@ export default config({
                     defaultValue: 'Medium',
                 }),
                 showToc: fields.checkbox({ label: 'Show Table of Contents', defaultValue: true }),
+                headerLayout: fields.select({
+                    label: 'Article Header Layout',
+                    description: 'Use Rich content first screen for articles that open with a substantial interactive tool or visual. The title and author details fill the first screen on phones and tablets.',
+                    options: [
+                        { label: 'Standard', value: 'standard' },
+                        { label: 'Rich content first screen', value: 'rich-content' },
+                    ],
+                    defaultValue: 'standard',
+                }),
                 faq: fields.array(
                     fields.object({
                         question: fields.text({ label: 'Question' }),

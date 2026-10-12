@@ -253,3 +253,74 @@ production URLs with PageSpeed Insights before/after deployment; its lab runs
 can vary and its real-user data covers a trailing 28-day period. Do not change
 analytics to improve an audit score. Keep publication and functional checks as
 merge requirements, and do not wait or poll while CI runs.
+
+## Homepage calendar follow-up — 2026-10-06
+
+Started `codex/homepage-calendar-performance` from merged main `83e5fef` in the
+existing performance worktree. The user's production PageSpeed report identifies
+the calendar as the homepage LCP element (95 performance, 2.9 s LCP). These are
+the user's existing results, not a new audit:
+https://pagespeed.web.dev/analysis/https-datadocks-com/nz9x6wo3f8?form_factor=mobile
+
+The mobile picture now offers 400/560/749px AVIF crops and 400/560px WebP
+alternatives alongside the existing 749px WebP. Desktop adds 800/1080/1600/2000px
+AVIF alternatives while retaining its WebP candidates. Shared selection hints
+keep each AVIF preload aligned with its picture source; WebP is not also
+preloaded, avoiding two format downloads. Desktop sizing accounts for the final
+1760px wrapper and the image's 204.499% CSS zoom, rather than a fixed 1280px hint.
+No delayed quality swap or network-detection script was introduced. Eager/high
+priority loading and the on-demand 2000px enlargement are retained.
+
+Generate the derivatives with `node scripts/optimize-home-calendar.mjs`. It uses
+the original 2000x717 screenshot, extracting the same mobile rectangle at
+(178, 160), 749x540. AVIF uses quality 55 with 4:4:4 chroma to preserve coloured
+text edges; smaller WebP fallbacks use quality 90. Encoding samples and the
+generated assets were visually inspected, and dimensions and file sizes were
+read. The 749px AVIF is 49,480 bytes versus 58,226 bytes for the existing mobile
+WebP (15% smaller); 400/560px AVIFs are 18,910/32,792 bytes. The full 2000px AVIF
+is 117,176 bytes versus 140,054 bytes for the WebP. These are file-size comparisons,
+not measured LCP improvements. Candidate selection depends on the display and
+browser; dense screens can still select the largest available source.
+
+Available originals contain only 749px of genuine detail in the mobile crop.
+No asset is enlarged to invent a 1120px variant. A fresh higher-resolution
+capture is needed for true 3x detail at a 372px display width.
+
+Source review confirmed the responsive-size calculations and preload/source
+alignment. No local tests, builds, browser checks or performance audits were
+run, per the user's instruction. GitHub validation remains pending; do not
+wait for its jobs during this turn or claim a new PageSpeed score.
+
+## Optional rich-content article header — 2026-10-07
+
+The blog editor now offers **Article Header Layout → Rich content first screen**.
+The equivalent post frontmatter is:
+
+```yaml
+headerLayout: rich-content
+```
+
+Enable this per article after identifying performance pressure from a substantial
+interactive tool or other rich content at the beginning. Missing values and
+`headerLayout: standard` retain the standard layout. The yard-management article
+opts in immediately; other articles remain standard.
+
+Below 1200px, the existing title and author information form a responsive first
+screen ahead of both the `top-interactive` slot and the normal MDX body. Phones
+use stacked details, medium widths use author/date columns, and short phones
+use more compact typography and spacing. Minimum heights allow long titles or
+enlarged text to grow. At 1200px and above, the natural header height returns.
+
+This option controls composition, not all resource delivery. Use `client:visible`
+for JavaScript applets that should hydrate when they enter view; the yard selector
+already does so. Do not assume this setting defers `client:load`, eager scripts,
+images or bundled CSS. Review those loading choices separately for each future
+post, including any useful above-the-fold resources on desktop.
+
+The approved header was visually reviewed at 375×667, 695×827, 820×1180,
+1024×768 and 1366×768. The full dev article repeatedly crashed in the in-app
+browser, so those previews used its rendered header markup/styles with scripts
+removed. Source integration and the diff were reviewed; no local test suite,
+production build or performance audit was run. GitHub validation remains pending;
+do not wait for it during this turn. Preview HTML and screenshots stay local in
+`internal/frontmatter-preview/` and are not part of the PR.
