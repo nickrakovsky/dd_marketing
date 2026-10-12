@@ -1,0 +1,80 @@
+---
+title: "Cut warehouse overtime by scheduling the work behind each truck"
+description: "Reduce warehouse overtime by matching appointments to load complexity, staff and dock capacity, then checking that less overtime also means less waiting."
+author: "DataDocks Team"
+category: "Facility Operations"
+# Provisional date for this unmerged review deployment; assign the queue slot before merge.
+pubDate: "2026-10-12T00:00:00.000Z"
+cardImage: "../../assets/blog-images/the-overtime-trap-cover.webp"
+cardAlt: "Warehouse workers at loading docks with trucks waiting outside."
+readTime: "6 min read"
+showToc: true
+postType:
+  discriminant: article
+  value: {}
+---
+
+import WarehouseLoadTiming from '../../components/blog/WarehouseLoadTiming.astro';
+
+A warehouse can have enough people to handle the day's freight and still finish late. If several demanding loads arrive in the final hour, the capacity available earlier in the shift is already gone. Before adding another person or approving another evening of overtime, look at when the work becomes available and what each load requires.
+
+In *6 Ways Most Warehouse Managers Cut Overtime in Warehouse Operations*, DataDocks founder Nick Rakovsky examines the responses managers commonly reach for when trucks pile up. His central recommendation is to spread arrivals across the day and use operating data to match staffing to the workload. Making that approach work means looking beyond the number of appointments: the schedule also needs to account for the people, doors, equipment, and time behind them.
+
+<lite-youtube videoid="CGy9deNE7Us" playlabel="Play: 6 Ways Most Warehouse Managers Cut Overtime in Warehouse Operations"></lite-youtube>
+
+## Find the overtime created by the arrival pattern
+
+Nick describes a familiar imbalance: trucks arrive in bursts, employees wait during the gaps, and the final burst keeps everyone late. Adding labor can help clear today's queue, but it leaves the same arrival pattern waiting for tomorrow's shift.
+
+That is the useful distinction behind his criticism of mandatory overtime, temporary staffing, and incentives. Each changes staffing or asks more of the existing team. None automatically changes when the freight reaches the dock. A bonus cannot bring a late truck into an empty morning slot, and an overtime cap cannot make unfinished loads disappear.
+
+There are still circumstances where extra help makes sense. A genuine increase in volume or an absence needs a capacity response. The practical question is whether the team lacks enough capacity across the whole shift, or whether too much work is concentrated in a few hours. Start by comparing arrivals and completions through the day, including what remains when the scheduled shift ends.
+
+## Book enough time for each kind of load
+
+Nick's first steps are deliberately accessible: record every appointment, capture arrivals without bookings, and measure when trucks actually arrive and leave. A spreadsheet can establish that baseline before the operation chooses a more capable scheduling system.
+
+Use those records to distinguish loads with different handling requirements. An appointment count alone treats a straightforward pallet pickup and a complicated unload as equal demands. The team doing the work knows they are not.
+
+For illustration, suppose two doors are each available for one hour. Booking one truck at each looks balanced. If one truck takes 30 minutes and the other takes 90, the second appointment overruns its slot even though the combined work fits within two door-hours. Sharing that spare capacity may require a different door assignment, compatible equipment, or another trained employee; the calendar cannot assume those resources are interchangeable.
+
+This is where Nick's advice to measure load duration becomes a staffing decision. Plan around the work a load creates, and check that its crew and equipment are available during the proposed slot.
+
+## Move flexible work around fixed departures
+
+The same timing question applies inside the warehouse. Some activities have firm deadlines; others have room to move. Identify that flexibility before assuming every busy period needs more people.
+
+A [2021 study by Popović and colleagues in *Sustainability*](https://www.mdpi.com/2071-1050/13/4/2021) modeled employee assignments together with activities that could be postponed within completion deadlines. Jointly scheduling the work and the workforce reduced modeled labor costs compared with scheduling without that flexibility. The result supports examining task timing alongside headcount, although the modeled savings are not a forecast for an individual facility.
+
+For example, a manager might move a routine stock check away from a busy dispatch window, provided it does not delay a necessary inventory decision. The team should agree what can move, who will complete it, and its latest acceptable finish. Otherwise, apparent spare capacity can become a growing list of neglected tasks.
+
+The same timing principle applies to the two-load example. An earlier available slot lets the 90-minute unload begin before the final hour.
+
+<WarehouseLoadTiming />
+
+
+## Check whether existing doors can share the work
+
+Nick recommends using the data to investigate differences between loads and shifts. One further question is whether a queue remains at one door while another compatible door is available.
+
+A [2026 study by Na nan, Prasert, and Pakawanich](https://ph01.tci-thaijo.org/index.php/kbej/article/view/265820) tested dispatching and bay-sharing rules in a simulation based on a Thai beverage manufacturer's operations. Combining first-in, first-out dispatching with controlled sharing of compatible bays reduced the modeled time beyond shift end from a weighted daily average of about 113 minutes to 64 minutes. That measure captures when the final truck finishes; it is not total overtime paid to employees.
+
+Another policy produced a slightly shorter overrun but redistributed delays during peaks. That finding adds a useful condition to the pursuit of lower overtime: check what happens to the trucks still waiting. Before changing door assignments, establish which loads, handling equipment, and staff can safely use the alternative doors.
+
+## Measure where the waiting goes
+
+The consequences extend beyond the warehouse payroll. In [September 2024, *Truck News* reported on ATRI research](https://www.trucknews.com/transportation/truck-driver-detention-costs-industry-15-billion-in-2023-atri/1003188903/) estimating that detention cost U.S. for-hire trucking $11.5 billion in lost productivity and $3.6 billion in direct expenses in 2023. Those are industry estimates, but they illustrate why carrier waiting belongs in the improvement discussion.
+
+Track paid overtime alongside completed loads, truck waiting time, and unfinished work carried into the next shift. Compare days with similar volumes and load types. If payroll hours fall because fewer loads are completed or more freight is deferred, the result needs further investigation.
+
+Nick also calls for measuring actual performance against appointments. Keep that comparison useful by separating a carrier arriving late from a truck arriving on time and waiting for an unavailable door. Those problems need different corrections.
+
+## Improve one part of the schedule at a time
+
+Nick advises making one improvement, checking its effect, and building from there. Apply that discipline when introducing software as well as when changing a manual process.
+
+In [September 2026, *Supply Chain Dive* reported](https://www.supplychaindive.com/news/lands-end-continues-backlog-recovery-from-wms-hiccup/829953/) that Lands' End was still working through a backlog after a warehouse management system rollout encountered problems processing value-added service products. Executives said the issues in its core U.S. e-commerce business had been addressed and remained confident in the system's longer-term benefits. The case concerns a WMS, but it offers a relevant implementation lesson: test the workflows that are hardest to handle before expanding a change.
+
+Choose a recurring problem, such as complex loads bunching near shift end. Adjust the relevant appointment lengths or booking windows, tell carriers what changes, and review the results with the people working the doors. Keep enough flexibility to handle exceptions while learning what the new schedule can reliably support.
+
+DataDocks' dock scheduling approach follows the direction Nick sets out: use appointment and operating information to make the daily workload easier to plan. The next step for a manager is to establish where overtime originates, change that part of the schedule, and verify that the same work gets finished with less waiting and fewer hours beyond the planned shift.
