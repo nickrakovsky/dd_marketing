@@ -1,0 +1,93 @@
+#dd-payment-timing{color-scheme:light;--paper:#fff8ee;--surface:#faf8f5;--panel:#efe2d2;--ink:#000;--muted:#5f483a;--line:#d8c9b9;--stock:#ad9686;--orange:#fd4f00;--active:#000;--on-active:#fff8ee;font:16px/1.5 Inter,Arial,sans-serif}
+#dd-payment-timing,#dd-payment-timing *{box-sizing:border-box}
+#dd-payment-timing{margin:34px 0 0;padding:36px 40px 28px;background:var(--surface);border:1px solid var(--line);border-radius:5px;color:var(--ink)}
+#dd-payment-timing .eyebrow{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.5}
+#dd-payment-timing h2{font:800 clamp(40px,5.1vw,58px)/.99 Bruta,Impact,sans-serif;text-transform:uppercase;letter-spacing:0;margin:0}
+#dd-payment-timing .setup{font-size:17px;line-height:1.6;max-width:700px;margin:19px 0 27px}
+#dd-payment-timing .buying-plans{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+#dd-payment-timing .buying-plan{--card-accent:var(--stock);padding:22px 22px 10px;border:1px solid var(--line);border-top:3px solid var(--card-accent);border-radius:3px;min-width:0;background:var(--surface)}
+#dd-payment-timing .buying-plan.bulk{--card-accent:var(--orange)}
+#dd-payment-timing h3{font:600 17px/1.4 Inter,Arial,sans-serif;margin:0}
+#dd-payment-timing .unit-price{font:400 42px/1.1 "DD-Recoleta",Georgia,serif;margin:14px 0 6px}
+#dd-payment-timing .unit-price span{font:400 15px/1.4 Inter,Arial,sans-serif;color:var(--muted)}
+#dd-payment-timing .delivery-summary{font-size:14px;line-height:1.5;margin:0 0 24px;min-height:21px}
+#dd-payment-timing .chart-heading{font-size:12px;color:var(--muted);line-height:1.4;margin:0 0 10px}
+#dd-payment-timing .stock-chart{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+#dd-payment-timing .stock-week{display:flex;flex-direction:column;align-items:center;min-width:0}
+#dd-payment-timing .stock-week strong{font-size:18px;line-height:1.4;font-weight:650}
+#dd-payment-timing .stock-week svg{display:block;width:100%;max-width:72px;height:112px;border-bottom:1px solid var(--line);margin-bottom:8px}
+#dd-payment-timing .stock-week>span{font-size:11px;color:var(--muted);white-space:nowrap}
+#dd-payment-timing .case{fill:var(--stock)}
+#dd-payment-timing .bulk .case{fill:var(--orange)}
+#dd-payment-timing .case-seam{stroke:var(--surface);stroke-width:1;fill:none}
+#dd-payment-timing .pallet{stroke:var(--muted);stroke-width:2;fill:none}
+#dd-payment-timing .plan-costs{margin:22px 0 0;font-size:14px;line-height:1.4}
+#dd-payment-timing .plan-costs>div{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding:12px 0}
+#dd-payment-timing .plan-costs dt span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+#dd-payment-timing .plan-costs dd{font-weight:600;white-space:nowrap;margin:0;font-variant-numeric:tabular-nums}
+#dd-payment-timing .movement-note{font-size:12px;line-height:1.55;color:var(--muted);margin:12px 0 24px;max-width:760px}
+#dd-payment-timing .tradeoff{display:grid;grid-template-columns:1.1fr 1fr;gap:25px;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);align-items:center}
+#dd-payment-timing .tradeoff-math{display:flex;align-items:center;gap:18px}
+#dd-payment-timing .tradeoff-math p{margin:0}
+#dd-payment-timing .tradeoff-math strong{font:400 32px/1.2 "DD-Recoleta",Georgia,serif;display:block}
+#dd-payment-timing .tradeoff-math p span{font-size:12px;color:var(--muted);display:block;margin-top:5px}
+#dd-payment-timing .operator{font-size:24px;color:var(--muted)}
+#dd-payment-timing .remaining{border-left:2px solid var(--orange);padding-left:25px;display:flex;align-items:center;gap:16px}
+#dd-payment-timing .remaining-value{font:400 44px/1.1 "DD-Recoleta",Georgia,serif}
+#dd-payment-timing .remaining p{font-size:13px;line-height:1.5;margin:0}
+#dd-payment-timing .lesson{font:400 21px/1.45 "DD-Recoleta",Georgia,serif;margin:22px 0 29px;max-width:800px}
+#dd-payment-timing .payment-section{border:1px solid var(--line);border-radius:3px;padding:22px;background:var(--panel)}
+#dd-payment-timing .payment-section>p{font-size:14px;line-height:1.55;margin:8px 0 19px;max-width:680px}
+#dd-payment-timing .payment-controls{border:0;padding:0;margin:0 0 18px;min-width:0}
+#dd-payment-timing legend{padding:0;font-size:12px;line-height:1.5;margin-bottom:9px;color:var(--muted)}
+#dd-payment-timing .choices{display:flex;gap:8px;flex-wrap:wrap}
+#dd-payment-timing .choices label{display:flex;align-items:center;gap:9px;min-height:46px;padding:10px 15px;border:1px solid var(--line);border-radius:3px;font-size:14px;font-weight:500;background:var(--surface);cursor:pointer;transition:background-color .16s,color .16s}
+#dd-payment-timing .choices label:has(input:checked){background:var(--active);color:var(--on-active);border-color:var(--active)}
+#dd-payment-timing .choices label:hover{border-color:var(--ink)}
+#dd-payment-timing input{accent-color:var(--orange);margin:0;width:16px;height:16px;cursor:pointer;flex:none}
+#dd-payment-timing .choices label:has(input:focus-visible){outline:2px solid var(--orange);outline-offset:3px}
+#dd-payment-timing .scenario{display:none}
+#dd-payment-timing:has(#terms-delivery:checked) .scenario.delivery,#dd-payment-timing:has(#terms-30:checked) .scenario.credit{display:block}
+#dd-payment-timing .payment-result{font-size:15px;line-height:1.6;min-height:56px;margin:0 0 18px}
+#dd-payment-timing .payment-result p{font:inherit;margin:0}
+#dd-payment-timing .payment-result strong{font-weight:650}
+#dd-payment-timing .payment-facts{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding-top:17px;border-top:1px solid var(--line)}
+#dd-payment-timing .payment-facts p{margin:0;font-size:13px;line-height:1.5}
+#dd-payment-timing .payment-facts span{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
+#dd-payment-timing .payment-facts strong{display:block;font-weight:600}
+#dd-payment-timing .payment-facts small{display:block;font-size:12px;line-height:1.5;color:var(--muted);margin-top:4px}
+#dd-payment-timing summary{font-size:12px;font-weight:500;line-height:1.5;cursor:pointer;padding:10px 0;min-height:40px;width:fit-content}
+#dd-payment-timing summary:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+#dd-payment-timing .payment-detail{margin-top:12px}
+#dd-payment-timing table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.5}
+#dd-payment-timing table caption{text-align:left;font-weight:400;color:var(--muted);margin:5px 0 10px}
+#dd-payment-timing th{text-align:left;font-weight:500}
+#dd-payment-timing th,#dd-payment-timing td{padding:10px 10px 10px 0;vertical-align:top;border-bottom:1px solid var(--line);width:50%}
+#dd-payment-timing .payment-detail p,#dd-payment-timing .assumptions-detail p{font-size:12px;line-height:1.6;color:var(--muted);margin:10px 0 0}
+#dd-payment-timing figcaption{margin-top:18px;font-size:12px;line-height:1.55;color:var(--muted);max-width:800px}
+#dd-payment-timing .assumptions-detail summary{color:var(--muted);font-weight:400}
+@media(max-width:800px){#dd-payment-timing .remaining{flex-direction:column;align-items:flex-start;gap:4px}#dd-payment-timing .remaining p br{display:none}#dd-payment-timing .buying-plan{padding:18px 16px 7px}#dd-payment-timing .delivery-summary{min-height:42px}}
+@media(max-width:640px){
+ #dd-payment-timing{padding:26px 20px 22px;margin-left:-4px;margin-right:-4px}
+ #dd-payment-timing h2{font-size:46px}
+ #dd-payment-timing .setup{font-size:16px}
+ #dd-payment-timing .buying-plans{grid-template-columns:1fr;gap:16px}
+ #dd-payment-timing .buying-plan{padding:20px 18px 8px}
+ #dd-payment-timing .delivery-summary{min-height:0;margin-bottom:20px}
+ #dd-payment-timing .stock-chart{max-width:340px}
+ #dd-payment-timing .stock-week svg{height:94px}
+ #dd-payment-timing .stock-week>span{font-size:12px}
+ #dd-payment-timing .tradeoff{grid-template-columns:1fr;gap:18px}
+ #dd-payment-timing .tradeoff-math{gap:22px}
+ #dd-payment-timing .remaining{flex-direction:row;align-items:center;gap:16px;padding-left:17px}
+ #dd-payment-timing .lesson{font-size:20px}
+ #dd-payment-timing .payment-section{padding:19px 16px}
+ #dd-payment-timing .payment-facts{grid-template-columns:1fr;gap:15px}
+ #dd-payment-timing .choices{display:grid;grid-template-columns:1fr}
+ #dd-payment-timing .choices label{min-height:44px}
+}
+@media(max-width:370px){#dd-payment-timing{padding-left:14px;padding-right:14px}#dd-payment-timing h2{font-size:42px}#dd-payment-timing .buying-plan{padding-left:13px;padding-right:13px}#dd-payment-timing .payment-section{padding:17px 13px}#dd-payment-timing .choices label{font-size:13px;padding:10px}#dd-payment-timing .tradeoff-math{gap:18px}}
+@media(prefers-reduced-motion:reduce){#dd-payment-timing *,#dd-payment-timing *::after{transition:none!important;animation:none!important}}
+
+
+html.dark #dd-payment-timing,[data-theme="dark"] #dd-payment-timing{color-scheme:dark;--paper:#1b1917;--surface:#25221e;--panel:#302a24;--ink:#fff8ee;--muted:#d5c6b5;--line:#52483e;--active:#fff8ee;--on-active:#1b1917}

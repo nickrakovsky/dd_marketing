@@ -20,7 +20,7 @@ interface Heading {
   text: string;
 }
 
-const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
+const { frontmatter, headings = [] as Heading[], relatedPosts = [], noindex = false } = Astro.props;
 // Per-post opt-in: set headerLayout: rich-content in frontmatter, or choose
 // "Rich content first screen" in the blog editor. Missing values stay standard.
 // This moves both the top-interactive slot and normal MDX body below the first
@@ -121,12 +121,13 @@ if (priorityImgMatch) {
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
   preloadRecoleta={richContentFirst}
-  articleData={{
+  noindex={noindex}
+  articleData={frontmatter.pubDate ? {
     author: frontmatter.author,
     pubDate: frontmatter.pubDate,
     updatedDate: frontmatter.updatedDate,
     section: frontmatter.category
-  }}
+  } : undefined}
   schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
   {/* Head slot: LCP image preload + conditional lite-youtube CSS */}
@@ -190,7 +191,7 @@ if (priorityImgMatch) {
               </div>
               
               <div class="article-dates flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                <span>First Published: {formattedDate}</span>
+                <span>{frontmatter.pubDate ? `First Published: ${formattedDate}` : 'Unscheduled draft'}</span>
                 {formattedUpdatedDate && (
                   <span>Last Updated: {formattedUpdatedDate}</span>
                 )}
@@ -608,6 +609,7 @@ if (priorityImgMatch) {
 
 
 <script>
+  import { escapeLinkCardText, resolveExternalDetails } from '../lib/external-link-details';
   let hoverTimeout: number | undefined;
 
   function ensureUIElements() {
@@ -745,8 +747,8 @@ if (priorityImgMatch) {
   function getPremiumCardHTML(dataset: any, isInline: boolean = false): string {
     const type = dataset.smartlinkType;
     const href = dataset.smartlinkHref || '#';
-    const title = (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
-    const snippet = (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
+    const title = type === 'external' ? escapeLinkCardText(dataset.smartlinkTitle || '') : (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
+    const snippet = type === 'external' ? escapeLinkCardText(dataset.smartlinkSnippet || '') : (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
     const icon = dataset.smartlinkIcon || '';
     
     if (type === 'academic') {
@@ -1004,65 +1006,6 @@ if (priorityImgMatch) {
     }
   }
 
-  function resolveExternalDetails(trigger: HTMLElement) {
-    if (trigger.dataset.smartlinkType === 'external') {
-      if (trigger.dataset.smartlinkManual === 'true') return;
-      const domain = trigger.dataset.smartlinkTitle || 'External Link';
-      const linkText = trigger.textContent?.trim() || '';
-      
-      let surroundingText = '';
-      if (trigger.parentElement) {
-        const textContent = trigger.parentElement.textContent || '';
-        const sentences = textContent.match(/[^.!?]+[.!?]+/g) || [textContent];
-        const linkSentence = sentences.find(s => s.includes(linkText)) || textContent;
-        // Clean up the sentence to be a nice snippet
-        surroundingText = linkSentence.replace(/\s+/g, ' ').trim();
-        if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
-      }
-      
-      // Format domain as brand (e.g. assets.kpmg.com -> Kpmg)
-      let parts = domain.split('.');
-      const commonSubdomains = ['www', 'assets', 'blog', 'app', 'docs', 'help', 'support', 'info', 'news', 'shop', 'store', 'go', 'investors', 'investor', 'my', 'portal'];
-      while (parts.length > 1 && commonSubdomains.includes(parts[0].toLowerCase())) {
-        parts.shift();
-      }
-      const brandName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-      trigger.dataset.smartlinkTitle = brandName;
-      
-      // Try to extract a meaningful snippet from the URL path
-      let urlContext = '';
-      try {
-        const urlObj = new URL(trigger.dataset.smartlinkHref || '');
-        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 0 && !p.includes('.php') && !p.includes('.html'));
-        
-        // Find the last segment that contains some letters (ignoring trailing ID segments)
-        let meaningfulSegments = pathSegments.filter(p => /[a-zA-Z]{3,}/.test(p));
-        if (meaningfulSegments.length > 0) {
-          let lastSegment = meaningfulSegments[meaningfulSegments.length - 1];
-          try { lastSegment = decodeURIComponent(lastSegment); } catch {
-            // Ignore decode error
-          }
-          
-          // Replace hyphens/underscores with spaces and remove common file extensions
-          lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
-          
-          // Capitalize words
-          urlContext = lastSegment.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').trim();
-          
-          if (urlContext.length < 5) urlContext = '';
-        }
-      } catch {
-        // Ignore URL parsing error
-      }
-
-      if (urlContext && urlContext.toLowerCase() !== brandName.toLowerCase()) {
-        trigger.dataset.smartlinkSnippet = `Resource: ${urlContext}`;
-      } else {
-        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
-      }
-    }
-  }
-
   function openMobileSheet(trigger: HTMLElement) {
     resolveAcademicDetails(trigger);
     resolveExternalDetails(trigger);
@@ -1223,6 +1166,7 @@ if (priorityImgMatch) {
   function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
     if (window.innerWidth < 768 || window.innerWidth >= 1024) return;
     resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
     clearTimeout(hoverTimeout);
     ensureUIElements();
     const card    = document.getElementById('smartlink-desktop-card');

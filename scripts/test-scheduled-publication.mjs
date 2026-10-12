@@ -30,7 +30,25 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 16, 'Expected the original rollout plus the October 9 queue extension');
+assert.equal(slots.length, 26, 'Expected the original 16 slots plus the authorized ten-post October batch');
+const octoberBatch = [
+  ['cut-overtime-with-load-scheduling', '2026-10-12'],
+  ['inventory-and-cash', '2026-10-13'],
+  ['speculative-produce-buying', '2026-10-14'],
+  ['major-customer-demand-spikes', '2026-10-15'],
+  ['backup-suppliers', '2026-10-16'],
+  ['products-and-channels-readiness', '2026-10-19'],
+  ['expiry-and-missed-orders', '2026-10-20'],
+  ['frozen-food-network-fit', '2026-10-21'],
+  ['ingredient-traceability', '2026-10-22'],
+  ['food-production-runs', '2026-10-23'],
+];
+assert.deepEqual(slots.slice(16).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+  octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
+  'The authorized batch must publish on successive weekdays at 06:30 fixed UTC-08:00');
+assert.equal(manifest.timezone, 'UTC-08:00');
+assert.equal(manifest.localPublicationTime, '06:30:00');
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-10-24T00:00:00Z'));
 const originalWorkerHash = sha256(await readFile(originalWorker));
 const scratch = await mkdtemp(join(tmpdir(), 'datadocks-publication-test-'));
 let server;
@@ -184,6 +202,7 @@ export default {
     '/wireframes/split-stream.html', '/wireframes/tabbed-hub/',
     '/%77ireframes', '/brand-book', '/brand-book.html', '/sales-one-pager',
     '/internal/marketing-pdf', '/preview/daily-blog/home', '/preview/daily-blog/posts',
+    '/preview/staging', '/preview/staging/ingredient-traceability',
     '/brand-assets/proposal-template.pdf', '/brand-assets/proposal-template-full.pdf',
     '/brand-assets/bc-front.png', '/__internal/assets/brand/proposal-template.pdf',
     '/_offline_print/example.pdf',
@@ -207,6 +226,8 @@ export default {
       assertBoundedCache(response, `${label} article`);
       if (published) {
         assert.ok(text.includes(articlePath(slot)), `${label}: article canonical/content was not rendered`);
+        assert.ok(!/aria-label=["']Preview navigation["']/.test(text) && !text.includes('/preview/staging'),
+          `${label}: internal preview navigation leaked into the public article`);
         assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${label}: published article is noindex`);
         assert.ok(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(text),
           `${label}: published article contains a noindex meta tag`);

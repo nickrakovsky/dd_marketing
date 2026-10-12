@@ -43,6 +43,9 @@ jobs:
       - name: YouTube importer regression tests
         run: npm run test:youtube-sync
 
+      - name: Staged blog content and citation checks
+        run: npm run check:staging
+
       - name: Linting (ESLint)
         run: npm run lint
 
