@@ -29,6 +29,8 @@
     "perf": "lhci autorun",
     "check:publication-boundary": "node scripts/publication-boundary.mjs",
     "test:publication-boundary": "node --test scripts/publication-boundary.test.mjs",
+    "test:outlinks": "node --test scripts/outlink-audit/*.test.mjs",
+    "audit:outlinks": "node scripts/outlink-audit.mjs scan",
     "dev:staging": "astro dev --config internal/staging-preview/config.mjs --host 127.0.0.1 --port 4399",
     "check:staging": "node scripts/check-staging.mjs"
   },

@@ -31,6 +31,9 @@ jobs:
       - name: Publication boundary regression tests
         run: npm run test:publication-boundary
 
+      - name: External audit regression tests (offline)
+        run: npm run test:outlinks
+
       - name: Vendor asset integrity regression tests
         run: npm run test:vendor-assets
 
