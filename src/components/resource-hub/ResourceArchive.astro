@@ -375,7 +375,11 @@ const types = (Object.keys(typeLabels) as (keyof typeof typeLabels)[])
             || !(topic.value === 'all' || card.dataset.topic === topic.value);
           if (!card.hidden) visible++;
         }
-        grid.append(...sorted);
+        // The server already renders newest first. Keep those nodes in place
+        // during initialization and filtering; only move them when order changes.
+        if (sorted.some((card, index) => grid.children[index] !== card)) {
+          grid.append(...sorted);
+        }
         const filtersActive = type.value !== 'all' || topic.value !== 'all';
         const activeCount = Number(type.value !== 'all') + Number(topic.value !== 'all') + Number(sort.value !== 'newest');
         activeOptions.hidden = activeCount === 0;

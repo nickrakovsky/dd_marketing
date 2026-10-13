@@ -6,6 +6,18 @@ const slots = schedule.slots;
 const pageErrors = new WeakMap();
 const hubCards = '.latest-insight, resource-archive [data-resource-card]';
 const homeCards = '.feed-link, .featured-post';
+const octoberBatch = [
+  ['cut-overtime-with-load-scheduling', '2026-10-12'],
+  ['inventory-and-cash', '2026-10-13'],
+  ['speculative-produce-buying', '2026-10-14'],
+  ['major-customer-demand-spikes', '2026-10-15'],
+  ['backup-suppliers', '2026-10-16'],
+  ['products-and-channels-readiness', '2026-10-19'],
+  ['expiry-and-missed-orders', '2026-10-20'],
+  ['frozen-food-network-fit', '2026-10-21'],
+  ['ingredient-traceability', '2026-10-22'],
+  ['food-production-runs', '2026-10-23'],
+];
 
 // Future previews are development-only. Enable their cases when testing Astro dev:
 // PLAYWRIGHT_FUTURE_PREVIEWS=1 playwright test tests/blog-rollout.spec.mjs
@@ -31,7 +43,13 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The imported rollout has fifteen scheduled posts').toHaveLength(15);
+  expect(slots, 'The queue includes the authorized ten-post October batch').toHaveLength(26);
+  expect(slots.slice(16).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
+    octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
+  );
+  expect(schedule.timezone).toBe('UTC-08:00');
+  expect(schedule.localPublicationTime).toBe('06:30:00');
+  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-10-24T00:00:00Z'));
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);
@@ -102,7 +120,7 @@ test('an unpublished article cannot be opened through its public URL', async ({ 
 test.describe('development publication previews', () => {
   test.skip(process.env.PLAYWRIGHT_FUTURE_PREVIEWS !== '1', 'Requires the development-only preview routes.');
 
-  test('future hub includes all fifteen exactly once, split between latest five and older resources', async ({ page }) => {
+  test('future hub includes every queued post exactly once, split between latest five and older resources', async ({ page }) => {
     const response = await page.goto('/preview/daily-blog/posts');
     expect(response.status()).toBe(200);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
@@ -119,7 +137,7 @@ test.describe('development publication previews', () => {
       await expect(card.locator('.latest-insight-topic')).not.toBeEmpty();
       await expect(card.locator('.latest-insight-type')).toHaveText('Article');
     }
-    expect(archive.slice(0, 10)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
+    expect(archive.slice(0, slots.length - 5)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
     for (const slot of slots) {
       expect([...latest, ...archive].filter(path => path === `/posts/${slot.slug}`), slot.title).toHaveLength(1);
     }
@@ -136,8 +154,7 @@ test.describe('development publication previews', () => {
     expect(featuredPath).toBeTruthy();
     expect(slots.map(slot => `/posts/${slot.slug}`)).not.toContain(featuredPath);
     const authors = await page.locator('.feed-author').allTextContents();
-    expect(authors).toContain('Nick Rakovsky');
-    expect(authors).toContain('DataDocks Team');
+    expect(authors.map(author => author.trim())).toEqual(newestFirst.slice(0, 5).map(slot => slot.author));
     await expect(page.locator('.all-resources')).toHaveAttribute('href', '/preview/daily-blog/posts');
 
     // Neither visiting a future view nor adding an arbitrary cutoff query can publish content.

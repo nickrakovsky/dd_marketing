@@ -1,6 +1,7 @@
 ---
 // src/components/SmartLink.astro
 import { isPublished } from '../lib/content-status';
+import { externalSourceContext } from '../lib/external-link-details';
 
 interface Props {
   href?: string;
@@ -71,7 +72,6 @@ if (parsedHref && !type) {
       try {
         const extUrl = new URL(parsedHref);
         title = title || extUrl.hostname.replace(/^www\./, '');
-        snippet = snippet || '';
       } catch {
         title = title || 'External Link';
       }
@@ -90,7 +90,7 @@ let isUnpublishedTarget = false;
 
 async function getEntryCaseInsensitive(collection: any, idToFind: string): Promise<any> {
   if (!idToFind) return null;
-  const { getCollection } = await import('astro:content');
+  const { getCachedCollection: getCollection } = await import('../lib/cached-content');
   const allEntries = await getCollection(collection);
   return allEntries.find((e: any) => e.slug.toLowerCase() === idToFind.toLowerCase());
 }
@@ -157,6 +157,7 @@ if (type === 'glossary' && id) {
 } else if (type === 'external') {
   // External links — title is the domain, snippet can be overridden
   title = title || 'External Link';
+  snippet = snippet ?? externalSourceContext(href || '');
 }
 
 const isSmartLink = !!type && (title || snippet);

@@ -11,11 +11,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Beasties from 'beasties';
-import { collectPublicationStyles, finishPublicationStyles } from './scripts/publication-build.mjs';
+import { collectPublicationStyles, finishPublicationStyles, withCspSafeStylesheets } from './scripts/publication-build.mjs';
+import { prepareScriptPolicy } from './scripts/script-csp.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
 import internalWorkspace from './integrations/internal-workspace.mjs';
 import publicationBoundary from './integrations/publication-boundary.mjs';
+import verifiedVendorAssets from './integrations/verified-vendor-assets.mjs';
 import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
 
 // https://astro.build/config
@@ -153,6 +155,9 @@ export default defineConfig({
 
           const publicationStyles = {};
           const htmlFiles = collectHtml(distDir);
+          // Include the private render samples before their normal cleanup so
+          // future publication states share the reviewed script allowlist.
+          prepareScriptPolicy(distDir);
           let processed = 0;
           let alreadyAsync = 0;
           let missingRealFaces = 0;
@@ -166,7 +171,7 @@ export default defineConfig({
                 alreadyAsync++;
                 continue;
               }
-              const inlined = await beasties.process(html);
+              const inlined = withCspSafeStylesheets(await beasties.process(html));
               collectPublicationStyles(filePath, distDir, html, inlined, publicationStyles);
               // Guard the font regression described above: the real webfont
               // faces must survive into the output. If they ever stop doing so,
@@ -191,6 +196,7 @@ export default defineConfig({
         }
       }
     },
+    verifiedVendorAssets(),
     partytown({
       config: {
         forward: BENTO_PARTYTOWN_FORWARD,

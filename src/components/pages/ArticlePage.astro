@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCachedCollection as getCollection } from '../../lib/cached-content';
 import type { CollectionEntry } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Layout from '../../layouts/Layout.astro';
@@ -9,6 +9,16 @@ import SmartLink from '../../components/SmartLink.astro';
 import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
+import WarehouseLoadTiming from '../blog/WarehouseLoadTiming.astro';
+import Post02InventoryCash from '../blog/Post02InventoryCash.astro';
+import ProduceSellingWindow from '../blog/ProduceSellingWindow.astro';
+import Post04OrderAllocation from '../blog/Post04OrderAllocation.astro';
+import BackupIngredientPreparation from '../blog/BackupIngredientPreparation.astro';
+import ExpansionCosts from '../blog/ExpansionCosts.astro';
+import Post07Timing from '../blog/Post07Timing.astro';
+import FrozenNetworkTradeoff from '../blog/FrozenNetworkTradeoff.astro';
+import BackwardTraceTimer from '../blog/BackwardTraceTimer.astro';
+import ProductionRunTradeoff from '../blog/ProductionRunTradeoff.astro';
 
 import BibliographyItem from '../../components/BibliographyItem.astro';
 import Cite from '../../components/Cite.astro';
@@ -21,12 +31,25 @@ import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
 import { filterPublished } from '../../lib/content-status';
 
+const blogComponents = {
+  WarehouseLoadTiming,
+  Post02InventoryCash,
+  ProduceSellingWindow,
+  Post04OrderAllocation,
+  BackupIngredientPreparation,
+  ExpansionCosts,
+  Post07Timing,
+  FrozenNetworkTradeoff,
+  BackwardTraceTimer,
+  ProductionRunTradeoff,
+};
 
 interface Props {
   entry: CollectionEntry<'posts'>;
 }
 
 const { entry } = Astro.props;
+const hasYardSelector = entry.slug === 'best-yard-management-options';
 const asOf = Astro.locals.publicationDate ?? new Date();
 const { Content, headings } = await entry.render();
 
@@ -69,6 +92,8 @@ const getReadTime = (body: string) => {
 
 // Image loading priority belongs to this request, including concurrent visits.
 Astro.locals.mdxImageCount = 0;
+// The selector and introduction put this article's first body image below the fold.
+Astro.locals.prioritizeMdxImage = !hasYardSelector;
 ---
 
 {isVideo ? (
@@ -83,7 +108,7 @@ Astro.locals.mdxImageCount = 0;
       duration: 'duration' in entry.data.postType.value ? entry.data.postType.value.duration : undefined
     } : undefined}
   >
-    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="/css/lite-yt-embed.css" media="print" data-dd-async-css />
     <script is:inline src="/css/lite-yt-embed.js" defer></script>
     <a href="#video-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
     <Navigation />
@@ -121,7 +146,7 @@ Astro.locals.mdxImageCount = 0;
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage }} />
+                <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, ...blogComponents }} />
               </section>
             </div>
           </div>
@@ -190,13 +215,13 @@ Astro.locals.mdxImageCount = 0;
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
-    {entry.slug === 'best-yard-management-options' && (
+    {hasYardSelector && (
       <YardTypeSelector slot="top-interactive" client:visible />
     )}
-    {entry.slug === 'best-yard-management-options' && (
+    {hasYardSelector && (
       <YardTypeNoscript slot="top-interactive" />
     )}
-    {entry.slug === 'best-yard-management-options' && (
+    {hasYardSelector && (
       <div slot="intro" class="mb-8 not-prose">
         <h3 class="text-xl sm:text-2xl font-bold font-recoleta text-neutral-950 dark:text-white mb-4">
           The 8 Best Yard Management Systems At a Glance
@@ -216,6 +241,6 @@ Astro.locals.mdxImageCount = 0;
         </div>
       </div>
     )}
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents }} />
   </BlogPostLayout>
 )}
