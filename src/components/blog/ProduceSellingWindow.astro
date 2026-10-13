@@ -1,0 +1,116 @@
+---
+// One instance per article; register in article render maps and Keystatic.
+---
+
+<figure id="dd-produce-window" class="dd-produce-window not-prose" aria-labelledby="produce-window-title">
+  <header class="pw-heading">
+    <h2 id="produce-window-title">Same stock. Different sales deadlines.</h2>
+    <p>Illustrative lot: 8 days of shelf life. <span class="pw-base">2</span><span class="pw-delayed">3</span> days to prepare and deliver.</p>
+  </header>
+
+  <div class="pw-timelines" role="group" aria-label="Two customer requirements compared over the same eight days">
+    <div class="pw-row pw-buyer-a">
+      <div class="pw-row-label"><span>Buyer needs <strong>4 days</strong> on arrival</span><strong class="pw-deadline"><span class="pw-base">2 days</span><span class="pw-delayed">1 day</span> to find a buyer</strong></div>
+      <svg class="pw-timeline" xmlns="http://www.w3.org/2000/svg" width="100%" height="16" aria-hidden="true" focusable="false">
+        <defs><pattern id="pw-reserved-a" patternUnits="userSpaceOnUse" width="6" height="6"><path d="M-1 1L1-1M0 6L6 0M5 7L7 5" class="pw-hatch"/></pattern></defs>
+        <rect class="pw-reserve" x="50%" y="0" width="50%" height="16"/>
+        <rect x="50%" y="0" width="50%" height="16" fill="url(#pw-reserved-a)"/>
+        <rect class="pw-delivery" y="0" height="16"/>
+        <rect class="pw-selling" x="0" y="0" height="16"/>
+        <rect class="pw-boundary" y="0" width="2" height="16"/>
+      </svg>
+    </div>
+    <div class="pw-row pw-buyer-b">
+      <div class="pw-row-label"><span>Buyer needs <strong>2 days</strong> on arrival</span><strong class="pw-deadline"><span class="pw-base">4 days</span><span class="pw-delayed">3 days</span> to find a buyer</strong></div>
+      <svg class="pw-timeline" xmlns="http://www.w3.org/2000/svg" width="100%" height="16" aria-hidden="true" focusable="false">
+        <defs><pattern id="pw-reserved-b" patternUnits="userSpaceOnUse" width="6" height="6"><path d="M-1 1L1-1M0 6L6 0M5 7L7 5" class="pw-hatch"/></pattern></defs>
+        <rect class="pw-reserve" x="75%" y="0" width="25%" height="16"/>
+        <rect x="75%" y="0" width="25%" height="16" fill="url(#pw-reserved-b)"/>
+        <rect class="pw-delivery" y="0" height="16"/>
+        <rect class="pw-selling" x="0" y="0" height="16"/>
+        <rect class="pw-boundary" y="0" width="2" height="16"/>
+      </svg>
+    </div>
+    <div class="pw-axis" aria-hidden="true"><span>Day 0</span><span>Day 2</span><span>Day 4</span><span>Day 6</span><span>Day 8</span></div>
+  </div>
+
+  <ul class="pw-key" aria-label="Timeline key">
+    <li><i class="pw-key-sale" aria-hidden="true"></i>Find buyer</li>
+    <li><i class="pw-key-delivery" aria-hidden="true"></i>Prepare + deliver</li>
+    <li><i class="pw-key-reserve" aria-hidden="true"></i>Life required on arrival</li>
+  </ul>
+
+  <div class="pw-control">
+    <label><input id="pw-extra-day" type="checkbox" aria-describedby="pw-delay-explanation">Delivery takes an extra day</label>
+    <span class="pw-sr" id="pw-delay-explanation">With three days needed to prepare and deliver, the buyer requiring four days of shelf life must be found within one day; the buyer requiring two days must be found within three days. Uncheck for the original two-day delivery allowance.</span>
+  </div>
+</figure>
+
+<style is:global>
+/* Paired sales-deadline timelines. All component styles are scoped. */
+.dd-produce-window {
+  --pw-ink:#000;--pw-muted:#5f483a;--pw-line:#d8c9b9;--pw-orange:#fd4f00;
+  --pw-delivery:#9c806d;--pw-paper:#fff8ee;--pw-hatch:#9c806d;
+  --pw-normal:inline;--pw-extra:none;--pw-shipping-width:25%;
+  container-type:inline-size; color-scheme:light;
+  margin:30px auto;padding:22px 0 18px;max-width:760px;
+  border-top:1px solid var(--pw-line);border-bottom:1px solid var(--pw-line);
+  color:var(--pw-ink);font-family:Inter,Arial,sans-serif;font-size:14px;line-height:1.45;
+}
+.dd-produce-window,.dd-produce-window * {box-sizing:border-box}
+.dd-produce-window:has(#pw-extra-day:checked) {--pw-normal:none;--pw-extra:inline;--pw-shipping-width:37.5%}
+.dd-produce-window .pw-base {display:var(--pw-normal)}
+.dd-produce-window .pw-delayed {display:var(--pw-extra)}
+.dd-produce-window .pw-heading {margin:0 0 18px}
+.dd-produce-window .pw-heading h2 {margin:0 0 5px;font:400 27px/1.2 "DD-Recoleta",Recoleta,Georgia,serif;letter-spacing:-.02em;color:var(--pw-ink)}
+.dd-produce-window .pw-heading p {margin:0;color:var(--pw-muted);font-size:14px;line-height:1.5}
+.dd-produce-window .pw-row {margin-bottom:16px}
+.dd-produce-window .pw-row-label {display:flex;justify-content:space-between;gap:18px;align-items:baseline;margin:0 0 7px;font-size:14px}
+.dd-produce-window .pw-row-label strong {font-weight:600}
+.dd-produce-window .pw-deadline {text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dd-produce-window .pw-timeline {display:block;width:100%;max-width:none;overflow:visible}
+.dd-produce-window .pw-buyer-a {--pw-selling-width:25%;--pw-delivery-x:25%}
+.dd-produce-window .pw-buyer-b {--pw-selling-width:50%;--pw-delivery-x:50%}
+.dd-produce-window:has(#pw-extra-day:checked) .pw-buyer-a {--pw-selling-width:12.5%;--pw-delivery-x:12.5%}
+.dd-produce-window:has(#pw-extra-day:checked) .pw-buyer-b {--pw-selling-width:37.5%;--pw-delivery-x:37.5%}
+.dd-produce-window .pw-selling {fill:var(--pw-orange);width:var(--pw-selling-width);transition:width .25s ease}
+.dd-produce-window .pw-delivery {fill:var(--pw-delivery);x:var(--pw-delivery-x);width:var(--pw-shipping-width);transition:x .25s ease,width .25s ease}
+.dd-produce-window .pw-boundary {fill:var(--pw-paper);x:var(--pw-delivery-x);transition:x .25s ease}
+.dd-produce-window .pw-reserve {fill:var(--pw-paper)}
+.dd-produce-window .pw-hatch {fill:none;stroke:var(--pw-hatch);stroke-width:1}
+.dd-produce-window .pw-axis {position:relative;height:20px;font-size:14px;color:var(--pw-muted);font-variant-numeric:tabular-nums;margin-top:-6px}
+.dd-produce-window .pw-axis span {position:absolute;top:0;transform:translateX(-50%)}
+.dd-produce-window .pw-axis span:nth-child(1) {left:0;transform:none}
+.dd-produce-window .pw-axis span:nth-child(2) {left:25%}
+.dd-produce-window .pw-axis span:nth-child(3) {left:50%}
+.dd-produce-window .pw-axis span:nth-child(4) {left:75%}
+.dd-produce-window .pw-axis span:nth-child(5) {right:0;transform:none}
+.dd-produce-window .pw-key {display:flex;flex-wrap:wrap;gap:8px 24px;margin:12px 0 7px;padding:0;list-style:none;color:var(--pw-muted);font-size:14px}
+.dd-produce-window .pw-key li {display:flex;gap:7px;align-items:center;margin:0;padding:0;list-style:none}
+.dd-produce-window .pw-key i {display:block;width:18px;height:8px;flex-shrink:0}
+.dd-produce-window .pw-key-sale {background:var(--pw-orange)}
+.dd-produce-window .pw-key-delivery {background:var(--pw-delivery)}
+.dd-produce-window .pw-key-reserve {background:repeating-linear-gradient(135deg,var(--pw-paper) 0 3px,var(--pw-hatch) 3px 4px,var(--pw-paper) 4px 6px)}
+.dd-produce-window .pw-control {display:flex;align-items:center;flex-wrap:wrap;column-gap:18px;min-height:44px}
+.dd-produce-window .pw-control label {display:flex;align-items:center;gap:9px;min-height:44px;cursor:pointer;font-size:14px;color:var(--pw-ink)}
+.dd-produce-window input {width:16px;height:16px;accent-color:var(--pw-ink);margin:0;cursor:pointer}
+.dd-produce-window .pw-control label:has(input:focus-visible) {outline:2px solid var(--pw-orange);outline-offset:3px}
+.dd-produce-window .pw-sr {position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@container (max-width:520px) {
+  .dd-produce-window .pw-heading h2 {font-size:24px;max-width:350px}
+  .dd-produce-window .pw-row-label {gap:14px;align-items:center}
+  .dd-produce-window .pw-row-label>span {max-width:180px}
+  .dd-produce-window .pw-deadline {max-width:135px;white-space:normal}
+  .dd-produce-window .pw-key {gap:7px 16px}
+}
+@container (max-width:330px) {
+  .dd-produce-window .pw-heading h2 {font-size:23px}
+  .dd-produce-window .pw-row-label>span {max-width:145px}
+  .dd-produce-window .pw-deadline {max-width:120px}
+}
+@media(prefers-reduced-motion:reduce) {.dd-produce-window * {transition:none!important}}
+html.dark .dd-produce-window,html[data-theme="dark"] .dd-produce-window {
+  --pw-ink:#fff8ee;--pw-muted:#d5c6b5;--pw-line:#52483e;--pw-delivery:#ad9686;--pw-paper:#1b1917;--pw-hatch:#ad9686;color-scheme:dark;
+}
+@supports not selector(:has(*)) {.dd-produce-window .pw-control {display:none}}
+</style>

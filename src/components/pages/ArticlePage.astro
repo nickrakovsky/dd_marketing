@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCachedCollection as getCollection } from '../../lib/cached-content';
 import type { CollectionEntry } from 'astro:content';
 import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import Layout from '../../layouts/Layout.astro';
@@ -9,6 +9,16 @@ import SmartLink from '../../components/SmartLink.astro';
 import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro';
 import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
+import WarehouseLoadTiming from '../blog/WarehouseLoadTiming.astro';
+import Post02InventoryCash from '../blog/Post02InventoryCash.astro';
+import ProduceSellingWindow from '../blog/ProduceSellingWindow.astro';
+import Post04OrderAllocation from '../blog/Post04OrderAllocation.astro';
+import BackupIngredientPreparation from '../blog/BackupIngredientPreparation.astro';
+import ExpansionCosts from '../blog/ExpansionCosts.astro';
+import Post07Timing from '../blog/Post07Timing.astro';
+import FrozenNetworkTradeoff from '../blog/FrozenNetworkTradeoff.astro';
+import BackwardTraceTimer from '../blog/BackwardTraceTimer.astro';
+import ProductionRunTradeoff from '../blog/ProductionRunTradeoff.astro';
 
 import BibliographyItem from '../../components/BibliographyItem.astro';
 import Cite from '../../components/Cite.astro';
@@ -21,6 +31,18 @@ import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
 import { filterPublished } from '../../lib/content-status';
 
+const blogComponents = {
+  WarehouseLoadTiming,
+  Post02InventoryCash,
+  ProduceSellingWindow,
+  Post04OrderAllocation,
+  BackupIngredientPreparation,
+  ExpansionCosts,
+  Post07Timing,
+  FrozenNetworkTradeoff,
+  BackwardTraceTimer,
+  ProductionRunTradeoff,
+};
 
 interface Props {
   entry: CollectionEntry<'posts'>;
@@ -124,7 +146,7 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
 
             <div class="bg-gray-900 rounded-xl p-6 text-gray-300 leading-relaxed">
               <section aria-label="Video Description" itemprop="description">
-                <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage }} />
+                <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, ...blogComponents }} />
               </section>
             </div>
           </div>
@@ -219,6 +241,6 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
         </div>
       </div>
     )}
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents }} />
   </BlogPostLayout>
 )}

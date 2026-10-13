@@ -68,13 +68,30 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
     await expect(comparison.locator('astro-island[ssr]')).toHaveCount(0);
     await expectReportedRulesToPass(page, 'main');
 
-    await comparison.getByRole('button', { name: 'Expand all', exact: true }).click();
+    // Below 900px the comparison uses a single-category accordion and a selector.
+    const isMobileComparison = viewport.width < 900;
+    const category = comparison.getByRole('button', { name: 'Carrier Self-Booking Portal', exact: true });
+    const secondSystem = comparison.getByRole('combobox', { name: 'Second system', exact: true });
+    if (isMobileComparison) {
+      await category.click();
+    } else {
+      await comparison.getByRole('button', { name: 'Expand all', exact: true }).click();
+    }
     await expect(table.getByRole('rowheader').first()).toBeVisible();
     await expectReportedRulesToPass(page, '#comparison-table');
-    await comparison.getByRole('button', { name: 'Add another competitor' }).click();
+    if (isMobileComparison) {
+      await secondSystem.selectOption('opendock');
+    } else {
+      await comparison.getByRole('button', { name: 'Add another system', exact: true }).click();
+    }
+    await expect(secondSystem).not.toHaveValue('');
     await expect(table.getByRole('columnheader')).toHaveCount(4);
     await expectReportedRulesToPass(page, '#comparison-table');
-    await comparison.getByRole('button', { name: 'Collapse all', exact: true }).click();
+    if (isMobileComparison) {
+      await category.click();
+    } else {
+      await comparison.getByRole('button', { name: 'Collapse all', exact: true }).click();
+    }
     await expect(table.getByRole('rowheader')).toHaveCount(0);
     await expectReportedRulesToPass(page, '#comparison-table');
 

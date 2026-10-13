@@ -1,0 +1,178 @@
+---
+import './expansion.css';
+---
+
+<dd-growth-example>
+<figure class="dd-expansion-costs not-prose" aria-labelledby="dd-growth-title">
+  <header class="dd-growth-heading">
+    <h2 id="dd-growth-title">How many extra orders cover the added costs?</h2>
+  </header>
+
+  <fieldset class="dd-growth-costs">
+    <legend class="dd-growth-sr">Weekly expansion costs</legend>
+    <div class="dd-growth-field">
+      <div class="dd-growth-label"><label for="dd-growth-per-order">Left from each order</label><output for="dd-growth-per-order" data-per-order-value>$30</output></div>
+      <input id="dd-growth-per-order" data-per-order type="range" min="0" max="100" step="1" value="30" aria-describedby="dd-growth-per-order-hint" disabled>
+    </div>
+    <div class="dd-growth-field">
+      <div class="dd-growth-label"><label for="dd-growth-weekly-costs">Added weekly costs</label><output for="dd-growth-weekly-costs" data-weekly-value>$4,500</output></div>
+      <input id="dd-growth-weekly-costs" data-weekly-costs type="range" min="0" max="10000" step="100" value="4500" aria-describedby="dd-growth-weekly-hint" disabled>
+    </div>
+  </fieldset>
+
+  <div class="dd-growth-volume-control">
+    <div class="dd-growth-label"><label for="dd-growth-orders">Extra orders per week</label><output for="dd-growth-orders" data-orders-value>200</output></div>
+    <div class="dd-growth-volume-slider">
+      <svg class="dd-growth-bar" xmlns="http://www.w3.org/2000/svg" width="100%" height="44" aria-hidden="true">
+        <rect class="dd-growth-track" x="0" y="18" width="100%" height="8" rx="4"/>
+        <rect class="dd-growth-volume" data-volume x="0" y="18" width="40%" height="8" rx="4"/>
+        <line class="dd-growth-needed" data-needed x1="30%" x2="30%" y1="3" y2="41"/>
+      </svg>
+      <input id="dd-growth-orders" data-orders type="range" min="0" max="500" step="1" value="200" aria-describedby="dd-growth-threshold" aria-valuetext="200 orders; $1,500 left after the shown costs" disabled>
+    </div>
+    <p class="dd-growth-threshold" id="dd-growth-threshold"><i data-needed-key aria-hidden="true"></i><span data-threshold>150 orders cover the added costs.</span></p>
+  </div>
+
+  <div class="dd-growth-outcome"><strong data-balance>$1,500 left per week</strong></div>
+
+  <div class="dd-growth-footer">
+    <button type="button" data-growth-reset disabled>Reset</button>
+    <details>
+      <summary>How this works</summary>
+      <div class="dd-growth-explanation">
+        <p data-calculation>200 orders × $30 − $4,500 weekly costs = $1,500 left.</p>
+        <p id="dd-growth-per-order-hint">The amount left per order is its selling price minus product and other per-order costs.</p>
+        <p id="dd-growth-weekly-hint">Added weekly costs include extra overhead, labour or equipment, excluding anything already counted per order.</p>
+        <p>Changing order volume holds the amount per order and added weekly costs fixed.</p>
+        <p>These illustrative figures are in USD. The result covers only the costs shown, before other business costs and tax. It does not assess operating capacity.</p>
+      </div>
+    </details>
+  </div>
+  <p class="dd-growth-sr" data-announcement role="status"></p>
+  <noscript><p class="dd-growth-static-note">The example is shown. Enable JavaScript to adjust the sliders.</p></noscript>
+</figure>
+</dd-growth-example>
+
+<script>
+function requireIntegerInRange(name: string, value: number, minimum: number, maximum: number) {
+  if (!Number.isInteger(value) || value < minimum || value > maximum) {
+    throw new RangeError(`${name} must be an integer between ${minimum} and ${maximum}.`);
+  }
+}
+
+function chartAxisMaximum(expectedOrders: number, requiredOrders: number | null) {
+  const target = Math.max(expectedOrders, requiredOrders ?? 0, 1) * 1.15;
+  const magnitude = 10 ** Math.floor(Math.log10(target));
+  const factor = [1, 2, 2.5, 5, 10].find((candidate) => candidate * magnitude >= target);
+  return Math.max(1, Math.ceil(factor! * magnitude));
+}
+
+/** Calculate the entered scenario in integer cents, without making a readiness judgment. */
+function calculateScenario({ expectedOrders, contributionCents, weeklyCostCents, testOrders }: { expectedOrders: number; contributionCents: number; weeklyCostCents: number; testOrders: number }) {
+  requireIntegerInRange('expectedOrders', expectedOrders, 0, 1_000_000);
+  requireIntegerInRange('contributionCents', contributionCents, -100_000_000, 100_000_000);
+  requireIntegerInRange('weeklyCostCents', weeklyCostCents, 0, 100_000_000_000);
+  requireIntegerInRange('testOrders', testOrders, 0, expectedOrders);
+
+  const kind = contributionCents <= 0
+    ? 'nonpositive'
+    : weeklyCostCents === 0
+      ? 'no_weekly_costs'
+      : 'standard';
+  const requiredOrders = contributionCents <= 0
+    ? null
+    : Math.ceil(weeklyCostCents / contributionCents);
+
+  return {
+    requiredOrders,
+    expectedBalanceCents: expectedOrders * contributionCents - weeklyCostCents,
+    scenarioBalanceCents: testOrders * contributionCents - weeklyCostCents,
+    orderGap: requiredOrders === null ? null : expectedOrders - requiredOrders,
+    axisMax: chartAxisMaximum(expectedOrders, requiredOrders),
+    kind,
+  };
+}
+
+const currency = new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD', maximumFractionDigits: 0
+});
+const number = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const money = (cents: number) => currency.format(cents / 100);
+const count = (value: number) => number.format(value);
+const balanceText = (cents: number) => `${money(Math.abs(cents))} ${cents < 0 ? 'short' : 'left'}`;
+
+if (!customElements.get('dd-growth-example')) {
+  customElements.define('dd-growth-example', class extends HTMLElement {
+    renderScenario?: () => void;
+
+    connectedCallback() {
+      if (this.renderScenario) return;
+      const find = <T extends Element = HTMLElement>(selector: string): T => {
+        const element = this.querySelector(selector);
+        if (!element) throw new Error(`Missing expansion control: ${selector}`);
+        return element as T;
+      };
+      const orders = find<HTMLInputElement>('[data-orders]');
+      const perOrder = find<HTMLInputElement>('[data-per-order]');
+      const weekly = find<HTMLInputElement>('[data-weekly-costs]');
+      const reset = find<HTMLButtonElement>('[data-growth-reset]');
+      if (!orders || !perOrder || !weekly || !reset) return;
+      const controls = [orders, perOrder, weekly];
+      const threshold = find('[data-threshold]');
+      const announcement = find('[data-announcement]');
+      let latestAnnouncement = '';
+
+      this.renderScenario = () => {
+        const selectedOrders = orders.valueAsNumber;
+        const contributionCents = Math.round(perOrder.valueAsNumber * 100);
+        const weeklyCostCents = Math.round(weekly.valueAsNumber * 100);
+        const model = calculateScenario({ expectedOrders: selectedOrders, contributionCents, weeklyCostCents, testOrders: selectedOrders });
+        const inRange = model.kind === 'standard' && model.requiredOrders !== null && model.requiredOrders <= 500;
+        if (model.kind === 'standard' && model.requiredOrders !== null) {
+          threshold.textContent = inRange
+            ? `${count(model.requiredOrders)} orders cover the added costs.`
+            : `${count(model.requiredOrders)} orders needed—beyond this slider’s range.`;
+        } else if (model.kind === 'no_weekly_costs') {
+          threshold.textContent = 'No added weekly costs to cover.';
+        } else if (weeklyCostCents > 0) {
+          threshold.textContent = 'At $0 left per order, no volume covers these costs.';
+        } else {
+          threshold.textContent = 'Both cost assumptions are zero.';
+        }
+        const result = balanceText(model.scenarioBalanceCents);
+        find('[data-orders-value]').textContent = count(selectedOrders);
+        find('[data-per-order-value]').textContent = money(contributionCents);
+        find('[data-weekly-value]').textContent = money(weeklyCostCents);
+        orders.setAttribute('aria-valuetext', `${count(selectedOrders)} orders; ${result} after the shown costs`);
+        perOrder.setAttribute('aria-valuetext', `${money(contributionCents)} left per order`);
+        weekly.setAttribute('aria-valuetext', `${money(weeklyCostCents)} added weekly costs`);
+        find('[data-volume]').setAttribute('width', `${selectedOrders / 500 * 100}%`);
+        const marker = find('[data-needed]');
+        marker.style.display = inRange ? '' : 'none';
+        find('[data-needed-key]').hidden = !inRange;
+        if (inRange && model.requiredOrders !== null) {
+          const position = `${model.requiredOrders / 500 * 100}%`;
+          marker.setAttribute('x1', position);
+          marker.setAttribute('x2', position);
+        }
+        find('[data-balance]').textContent = `${result} per week`;
+        find('[data-calculation]').textContent = `${count(selectedOrders)} orders × ${money(contributionCents)} − ${money(weeklyCostCents)} weekly costs = ${result}.`;
+        latestAnnouncement = `${threshold.textContent} At ${count(selectedOrders)} orders, ${result} after the shown costs.`;
+      };
+      controls.forEach((control) => {
+        control.disabled = false;
+        control.addEventListener('input', () => this.renderScenario?.());
+        control.addEventListener('change', () => { announcement.textContent = latestAnnouncement; });
+      });
+      reset.addEventListener('click', () => {
+        controls.forEach((control) => { control.value = control.defaultValue; });
+        this.renderScenario?.();
+        announcement.textContent = `Example reset. ${latestAnnouncement}`;
+      });
+      reset.disabled = false;
+      this.renderScenario();
+    }
+  });
+}
+
+</script>

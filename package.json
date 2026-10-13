@@ -6,7 +6,9 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "node sync-youtube.mjs && astro dev --base /",
+    "dev": "node sync-youtube.mjs --if-configured && astro dev --base /",
+    "sync:youtube": "node sync-youtube.mjs",
+    "test:youtube-sync": "node --test scripts/sync-youtube.test.mjs",
     "start": "astro dev",
     "build": "astro build && node -e \"import('fs').then(m => m.copyFileSync('dist/sitemap-index.xml', 'dist/sitemap.xml'))\"",
     "preview": "astro preview",
@@ -28,7 +30,11 @@
     "test:publication": "node scripts/test-scheduled-publication.mjs",
     "perf": "lhci autorun",
     "check:publication-boundary": "node scripts/publication-boundary.mjs",
-    "test:publication-boundary": "node --test scripts/publication-boundary.test.mjs"
+    "test:publication-boundary": "node --test scripts/publication-boundary.test.mjs",
+    "test:outlinks": "node --test scripts/outlink-audit/*.test.mjs",
+    "audit:outlinks": "node scripts/outlink-audit.mjs scan",
+    "dev:staging": "astro dev --config internal/staging-preview/config.mjs --host 127.0.0.1 --port 4399",
+    "check:staging": "node scripts/check-staging.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

@@ -20,7 +20,7 @@ interface Heading {
   text: string;
 }
 
-const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
+const { frontmatter, headings = [] as Heading[], relatedPosts = [], noindex = false } = Astro.props;
 // Per-post opt-in: set headerLayout: rich-content in frontmatter, or choose
 // "Rich content first screen" in the blog editor. Missing values stay standard.
 // This moves both the top-interactive slot and normal MDX body below the first
@@ -121,12 +121,13 @@ if (priorityImgMatch) {
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
   preloadRecoleta={richContentFirst}
-  articleData={{
+  noindex={noindex}
+  articleData={frontmatter.pubDate ? {
     author: frontmatter.author,
     pubDate: frontmatter.pubDate,
     updatedDate: frontmatter.updatedDate,
     section: frontmatter.category
-  }}
+  } : undefined}
   schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
   {/* Head slot: LCP image preload + conditional lite-youtube CSS */}
@@ -190,7 +191,7 @@ if (priorityImgMatch) {
               </div>
               
               <div class="article-dates flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                <span>First Published: {formattedDate}</span>
+                <span>{frontmatter.pubDate ? `First Published: ${formattedDate}` : 'Unscheduled draft'}</span>
                 {formattedUpdatedDate && (
                   <span>Last Updated: {formattedUpdatedDate}</span>
                 )}
@@ -608,6 +609,7 @@ if (priorityImgMatch) {
 
 
 <script>
+  import { escapeLinkCardText, resolveExternalDetails } from '../lib/external-link-details';
   let hoverTimeout: number | undefined;
 
   function ensureUIElements() {
@@ -745,8 +747,8 @@ if (priorityImgMatch) {
   function getPremiumCardHTML(dataset: any, isInline: boolean = false): string {
     const type = dataset.smartlinkType;
     const href = dataset.smartlinkHref || '#';
-    const title = (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
-    const snippet = (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
+    const title = type === 'external' ? escapeLinkCardText(dataset.smartlinkTitle || '') : (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
+    const snippet = type === 'external' ? escapeLinkCardText(dataset.smartlinkSnippet || '') : (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
     const icon = dataset.smartlinkIcon || '';
     
     if (type === 'academic') {
@@ -1004,65 +1006,6 @@ if (priorityImgMatch) {
     }
   }
 
-  function resolveExternalDetails(trigger: HTMLElement) {
-    if (trigger.dataset.smartlinkType === 'external') {
-      if (trigger.dataset.smartlinkManual === 'true') return;
-      const domain = trigger.dataset.smartlinkTitle || 'External Link';
-      const linkText = trigger.textContent?.trim() || '';
-      
-      let surroundingText = '';
-      if (trigger.parentElement) {
-        const textContent = trigger.parentElement.textContent || '';
-        const sentences = textContent.match(/[^.!?]+[.!?]+/g) || [textContent];
-        const linkSentence = sentences.find(s => s.includes(linkText)) || textContent;
-        // Clean up the sentence to be a nice snippet
-        surroundingText = linkSentence.replace(/\s+/g, ' ').trim();
-        if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
-      }
-      
-      // Format domain as brand (e.g. assets.kpmg.com -> Kpmg)
-      let parts = domain.split('.');
-      const commonSubdomains = ['www', 'assets', 'blog', 'app', 'docs', 'help', 'support', 'info', 'news', 'shop', 'store', 'go', 'investors', 'investor', 'my', 'portal'];
-      while (parts.length > 1 && commonSubdomains.includes(parts[0].toLowerCase())) {
-        parts.shift();
-      }
-      const brandName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-      trigger.dataset.smartlinkTitle = brandName;
-      
-      // Try to extract a meaningful snippet from the URL path
-      let urlContext = '';
-      try {
-        const urlObj = new URL(trigger.dataset.smartlinkHref || '');
-        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 0 && !p.includes('.php') && !p.includes('.html'));
-        
-        // Find the last segment that contains some letters (ignoring trailing ID segments)
-        let meaningfulSegments = pathSegments.filter(p => /[a-zA-Z]{3,}/.test(p));
-        if (meaningfulSegments.length > 0) {
-          let lastSegment = meaningfulSegments[meaningfulSegments.length - 1];
-          try { lastSegment = decodeURIComponent(lastSegment); } catch {
-            // Ignore decode error
-          }
-          
-          // Replace hyphens/underscores with spaces and remove common file extensions
-          lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
-          
-          // Capitalize words
-          urlContext = lastSegment.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').trim();
-          
-          if (urlContext.length < 5) urlContext = '';
-        }
-      } catch {
-        // Ignore URL parsing error
-      }
-
-      if (urlContext && urlContext.toLowerCase() !== brandName.toLowerCase()) {
-        trigger.dataset.smartlinkSnippet = `Resource: ${urlContext}`;
-      } else {
-        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
-      }
-    }
-  }
-
   function openMobileSheet(trigger: HTMLElement) {
     resolveAcademicDetails(trigger);
     resolveExternalDetails(trigger);
@@ -1223,6 +1166,7 @@ if (priorityImgMatch) {
   function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
     if (window.innerWidth < 768 || window.innerWidth >= 1024) return;
     resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
     clearTimeout(hoverTimeout);
     ensureUIElements();
     const card    = document.getElementById('smartlink-desktop-card');
@@ -1963,6 +1907,7 @@ if (priorityImgMatch) {
 <style is:global>
   lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}
   .lite-youtube-short::after { padding-bottom: calc(100% / (9 / 16)) !important; }
+  lite-youtube[data-yt-failed] > .lty-playbtn { display: grid; place-items: center; background: rgb(0 0 0 / 80%); color: white; font: 600 18px/1.4 system-ui, sans-serif; text-decoration: underline; filter: none; }
   .prose .table-wrapper {
     display: block !important;
     width: 100% !important;

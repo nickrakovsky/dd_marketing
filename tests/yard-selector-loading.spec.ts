@@ -19,7 +19,8 @@ const subtypeName = 'Select Warehouse & Distribution Center Yards sub-category';
 const deferredModule = /\/Yard(?:TypeMatches|SystemDetailPanel)[.]/;
 
 async function openSelector(page: Page) {
-  await page.goto('/posts/best-yard-management-options');
+  const response = await page.goto('/posts/best-yard-management-options');
+  expect(response?.status(), `Yard article response: ${response?.url() ?? page.url()}`).toBe(200);
   const selector = page.locator('astro-island[component-url*="YardTypeSelector"]');
   await selector.scrollIntoViewIfNeeded();
   await expect(selector).not.toHaveAttribute('ssr', '');
