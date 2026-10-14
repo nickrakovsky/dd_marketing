@@ -17,7 +17,7 @@ const BENTO_UUID = "b4cb9a34a989bcc643714151df7b7154";
 const uid = Math.random().toString(36).slice(2, 9);
 ---
 
-<div class="sidebar-card mb-4 group/lmf lead-magnet-container !p-5" id={`lmf-${uid}`}>
+<div class="blog-lead-widget sidebar-card mb-4 group/lmf lead-magnet-container !p-5" id={`lmf-${uid}`}>
   <div class="success-message hidden w-full text-center py-2">
     <div class="flex items-center justify-center gap-1 text-green-700 font-bold font-recoleta text-sm">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,7 +39,7 @@ const uid = Math.random().toString(36).slice(2, 9);
     data-redirect={redirectUrl}
     data-uuid={BENTO_UUID}
   >
-    <div class="sidebar-card-title font-bold text-gray-900 dark:text-white leading-snug mb-3">
+    <div class="sidebar-card-title font-bold text-gray-900 dark:text-[color:var(--blog-ink,#fff)] leading-snug mb-3">
       {headline}
     </div>
 
@@ -49,7 +49,7 @@ const uid = Math.random().toString(36).slice(2, 9);
         name="email"
         placeholder="Enter your email"
         required
-        class="w-full h-10 px-3 bg-[#FFF8EE] dark:bg-gray-900 border border-[#E5D3B3] dark:border-gray-600 border-b-0 rounded-none text-sm font-sans placeholder:text-gray-400 focus:border-[#fd4f00] focus:outline-none transition-colors relative z-10 focus:border-b"
+        class="w-full h-10 px-3 bg-[#FFF8EE] dark:bg-[var(--blog-canvas,#111827)] border border-[#E5D3B3] dark:border-[var(--blog-control,#4b5563)] border-b-0 rounded-none text-sm font-sans placeholder:text-gray-400 focus:border-[#fd4f00] focus:outline-none transition-colors relative z-10 focus:border-b"
       />
       <button
         type="submit"
@@ -140,3 +140,29 @@ const uid = Math.random().toString(36).slice(2, 9);
     document.addEventListener('astro:page-load', attachSidebarLeadMagnetForms);
   })();
 </script>
+
+<style>
+  :global(html.dark[data-blog-theme]) .blog-lead-widget input {
+    color: var(--blog-ink);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-lead-widget input::placeholder,
+  :global(html.dark[data-blog-theme]) .blog-lead-widget .disclaimer-message {
+    color: var(--blog-muted);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-lead-widget button[type="submit"] {
+    background: var(--blog-canvas);
+    border: 1px solid var(--blog-orange);
+    color: var(--blog-ink);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-lead-widget button[type="submit"]:hover {
+    background: var(--blog-surface);
+    border-color: var(--blog-link);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-lead-widget .success-message > div {
+    color: var(--blog-ink);
+  }
+</style>

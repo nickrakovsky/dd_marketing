@@ -6,7 +6,7 @@
 .dd-load-timing .ddlt-heading h3{margin:0;color:var(--lt-ink);font:800 44px/1 Bruta,Impact,sans-serif;letter-spacing:0;text-transform:uppercase}
 .dd-load-timing .ddlt-heading p{margin:0;font-size:14px;line-height:1.6;white-space:nowrap;color:var(--lt-muted)}
 .dd-load-timing .ddlt-heading strong{color:var(--lt-ink);font-weight:650}
-.dd-load-timing .ddlt-control{display:flex;align-items:center;gap:12px;min-height:66px;margin:0 0 22px;padding:11px 14px;border:1px solid var(--lt-rule);border-radius:3px;cursor:pointer}
+.dd-load-timing .ddlt-control{display:flex;align-items:center;gap:12px;min-height:66px;margin:0 0 22px;padding:11px 14px;border:1px solid var(--blog-control, var(--lt-rule));border-radius:3px;cursor:pointer}
 .dd-load-timing .ddlt-control:hover{border-color:var(--lt-ink)}
 .dd-load-timing .ddlt-control:has(:focus-visible){outline:2px solid var(--lt-orange);outline-offset:4px}
 .dd-load-timing .ddlt-toggle{appearance:auto;width:20px;height:20px;flex:0 0 20px;margin:0;accent-color:var(--lt-ink);cursor:pointer}
@@ -46,7 +46,7 @@
 .dd-load-timing:has(.ddlt-toggle:checked) .ddlt-late{display:none}
 .dd-load-timing:has(.ddlt-toggle:checked) .ddlt-early{display:block}
 .dd-load-timing:has(.ddlt-toggle:checked) .ddlt-result>.ddlt-early{display:grid}
-html.dark .dd-load-timing,html[data-theme="dark"] .dd-load-timing{--lt-paper:#25221e;--lt-ink:#fff8ee;--lt-muted:#d5c6b5;--lt-rule:#574b3f;--lt-track:#493e34;color-scheme:dark}
+html.dark .dd-load-timing,html[data-theme="dark"] .dd-load-timing{--lt-paper:var(--blog-canvas, #25221e);--lt-ink:var(--blog-ink, #fff8ee);--lt-muted:var(--blog-muted, #d5c6b5);--lt-rule:var(--blog-rule, #574b3f);--lt-track:#493e34;color-scheme:dark}
 @container(max-width:510px){.dd-load-timing .ddlt-heading{display:block}.dd-load-timing .ddlt-heading h3{font-size:39px}.dd-load-timing .ddlt-heading p{margin-top:12px}.dd-load-timing .ddlt-result>div{grid-template-columns:1fr;gap:12px}.dd-load-timing .ddlt-result{min-height:145px}}
 @media(max-width:600px){.dd-load-timing{padding:22px 17px 20px;margin:28px auto}}
 @media(prefers-reduced-motion:reduce){.dd-load-timing *{transition:none!important}}

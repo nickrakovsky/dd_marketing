@@ -6,8 +6,8 @@
   font:16px/1.5 Inter,Arial,sans-serif; container-type:inline-size;
 }
 .dark .ddp9-trace, [data-theme="dark"] .ddp9-trace {
-  --ddp9-paper:#1e1c19; --ddp9-ink:#fff3df; --ddp9-muted:#d5c7b5; --ddp9-track:#3f352a;
-  --ddp9-rule:#796b5d; --ddp9-active:#c4b399; --ddp9-orange:#ff8752;
+  --ddp9-paper:var(--blog-canvas, #1e1c19); --ddp9-ink:var(--blog-ink, #fff3df); --ddp9-muted:var(--blog-muted, #d5c7b5); --ddp9-track:#3f352a;
+  --ddp9-rule:var(--blog-rule, #796b5d); --ddp9-active:#c4b399; --ddp9-orange:#ff8752;
 }
 .ddp9-trace,.ddp9-trace * {box-sizing:border-box}
 .ddp9-trace p {margin:0}
@@ -17,9 +17,9 @@
 .ddp9-trace fieldset {margin:0 0 24px;padding:0;border:0;min-width:0}
 .ddp9-trace legend {font-size:14px;padding:0;margin:0 0 9px;color:var(--ddp9-ink)}
 .ddp9-trace .ddp9-choices {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.ddp9-trace .ddp9-choice {position:relative;display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px 10px;border:1px solid var(--ddp9-rule);border-radius:4px;font-size:14px;font-weight:500;text-align:center;cursor:pointer}
+.ddp9-trace .ddp9-choice {position:relative;display:flex;align-items:center;justify-content:center;min-height:48px;padding:9px 10px;border:1px solid var(--blog-control, var(--ddp9-rule));border-radius:4px;font-size:14px;font-weight:500;text-align:center;cursor:pointer}
 .ddp9-trace .ddp9-choice input {position:absolute;opacity:0;width:1px;height:1px;margin:0}
-.ddp9-trace .ddp9-choice:has(input:checked) {background:var(--ddp9-ink);color:var(--ddp9-paper);border-color:var(--ddp9-ink)}
+.ddp9-trace .ddp9-choice:has(input:checked) {background:var(--blog-selected-surface, var(--ddp9-ink));color:var(--blog-selected-ink, var(--ddp9-paper));border-color:var(--blog-selected-surface, var(--ddp9-ink))}
 .ddp9-trace .ddp9-choice:has(input:focus-visible) {outline:3px solid var(--ddp9-ink);outline-offset:3px}
 .ddp9-trace .ddp9-choice:hover {border-color:var(--ddp9-ink)}
 .ddp9-trace .ddp9-case {display:none}
@@ -62,7 +62,7 @@
 .ddp9-trace .ddp9-key i {display:inline-block;width:12px;height:12px;margin-right:6px;background:var(--ddp9-active)}
 .ddp9-trace .ddp9-key i.ddp9-key-partner {background:var(--ddp9-orange)}
 .ddp9-trace .ddp9-key-unresolved {flex-basis:100%}
-.ddp9-trace .ddp9-finding {padding:16px 18px;background:var(--ddp9-track);border-left:3px solid var(--ddp9-orange)}
+.ddp9-trace .ddp9-finding {padding:16px 18px;background:var(--blog-surface, var(--ddp9-track));border-left:3px solid var(--ddp9-orange)}
 .ddp9-trace .ddp9-finding-label {font-weight:600;font-size:14px;margin-bottom:5px}
 .ddp9-trace .ddp9-finding>.ddp9-case {line-height:1.55}
 .ddp9-trace figcaption {margin-top:16px;font-size:14px;line-height:1.5;color:var(--ddp9-muted)}

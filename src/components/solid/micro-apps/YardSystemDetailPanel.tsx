@@ -54,17 +54,17 @@ function NextStepsCard(props: {
 
   return (
     <div
-      class={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 ${
+      class={`yard-nextsteps p-5 sm:p-6 rounded-2xl border transition-all duration-200 ${
         props.isDataDocks
           ? "bg-gradient-to-br from-[#FFF8E9] via-[#F8EDD9]/60 to-[#FFF8E9] dark:from-neutral-900 dark:via-neutral-900/90 dark:to-neutral-900 border-[#fd4f00]/30 dark:border-[#fd4f00]/40 shadow-xs"
-          : "bg-neutral-900 dark:bg-neutral-900 text-white border-neutral-800 dark:border-neutral-700 shadow-md"
+          : "bg-neutral-900 dark:bg-[var(--blog-surface,#171717)] text-white border-neutral-800 dark:border-[var(--blog-rule,#404040)] shadow-md"
       }`}
     >
       <div class="flex items-center justify-between gap-2 mb-2.5">
         <span
-          class={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full border ${
+          class={`yard-nextsteps-label text-[10px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full border ${
             props.isDataDocks
-              ? "bg-[#fd4f00]/10 text-[#fd4f00] dark:text-[#ff7635] border-[#fd4f00]/20 dark:border-[#fd4f00]/30"
+              ? "bg-[#fd4f00]/10 text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)] border-[#fd4f00]/20 dark:border-[#fd4f00]/30"
               : "bg-neutral-800 text-neutral-300 border-neutral-700"
           }`}
         >
@@ -73,8 +73,8 @@ function NextStepsCard(props: {
       </div>
 
       <h4
-        class={`text-base sm:text-lg font-bold leading-tight mb-1.5 ${
-          props.isDataDocks ? "text-neutral-950 dark:text-white" : "text-white"
+        class={`yard-nextsteps-heading text-base sm:text-lg font-bold leading-tight mb-1.5 ${
+          props.isDataDocks ? "text-neutral-950 dark:text-[color:var(--blog-ink,#fff)]" : "text-white"
         }`}
       >
         {props.isDataDocks
@@ -83,8 +83,8 @@ function NextStepsCard(props: {
       </h4>
 
       <p
-        class={`text-xs sm:text-sm leading-relaxed mb-4 ${
-          props.isDataDocks ? "text-neutral-700 dark:text-neutral-300" : "text-neutral-300"
+        class={`yard-nextsteps-description text-xs sm:text-sm leading-relaxed mb-4 ${
+          props.isDataDocks ? "text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)]" : "text-neutral-300"
         }`}
       >
         {props.isDataDocks
@@ -113,11 +113,11 @@ function NextStepsCard(props: {
                 value={email()}
                 onInput={(e) => setEmail(e.currentTarget.value)}
                 required
-                class="flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-700 focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+                class="yard-email-input flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-[var(--blog-canvas,#0a0a0a)] text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] border-neutral-300 dark:border-[var(--blog-rule,#404040)] focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-[color:var(--blog-muted,#737373)]"
               />
               <button
                 type="submit"
-                class="px-4 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap bg-[#fd4f00] hover:bg-[#e04600] text-white shadow-xs"
+                class="yard-demo-cta px-4 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap bg-[#fd4f00] hover:bg-[#e04600] text-white shadow-xs"
               >
                 <span>Book a Demo</span>
                 <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -144,26 +144,26 @@ export default function SystemDetailPanel(props: {
       <div
         class={`p-5 sm:p-6 rounded-2xl space-y-4 border transition-all duration-200 ${
           props.isDataDocks
-            ? "bg-[#F8EDD9]/40 dark:bg-neutral-900 border-[#E5D3B3] dark:border-[#fd4f00]/40 shadow-xs"
-            : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 shadow-xs"
+            ? "bg-[#F8EDD9]/40 dark:bg-[var(--blog-surface,#171717)] border-[#E5D3B3] dark:border-[#fd4f00]/40 shadow-xs"
+            : "bg-neutral-50/90 dark:bg-[var(--blog-surface,#171717)] border-neutral-200/80 dark:border-[var(--blog-rule,#262626)] shadow-xs"
         }`}
       >
         {/* Panel Header */}
-        <div class="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
+        <div class="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 dark:border-[var(--blog-rule,#262626)]">
           <div>
-            <span class="text-[10px] font-bold tracking-widest text-[#9c806d] dark:text-[#d4a276] uppercase">
+            <span class="text-[10px] font-bold tracking-widest text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)] uppercase">
               System Details
             </span>
             <h3
               class={`text-base sm:text-lg font-bold leading-tight mt-0.5 ${
-                props.isDataDocks ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-950 dark:text-white"
+                props.isDataDocks ? "text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]" : "text-neutral-950 dark:text-[color:var(--blog-ink,#fff)]"
               }`}
             >
               {props.item.name}
             </h3>
           </div>
           <span
-            class={`shrink-0 text-xs font-bold font-mono px-2.5 py-1 rounded-full border ${
+            class={`yard-score shrink-0 text-xs font-bold font-mono px-2.5 py-1 rounded-full border ${
               props.isDataDocks
                 ? "bg-[#fd4f00] text-white border-[#fd4f00]"
                 : "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 border-neutral-900 dark:border-neutral-100"
@@ -177,36 +177,36 @@ export default function SystemDetailPanel(props: {
         {/* Who Is It For */}
         <Show when={props.item.whoIsItFor}>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)] block mb-1">
               Who is it for?
             </span>
-            <p class="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+            <p class="text-sm text-neutral-800 dark:text-[color:var(--blog-ink,#e5e5e5)] leading-relaxed font-medium">
               {props.item.whoIsItFor}
             </p>
           </div>
         </Show>
 
         {/* Architecture & Capabilities (Side-by-Side 2-Column Grid) */}
-        <div class="grid sm:grid-cols-2 gap-4 pt-3 border-t border-neutral-200/70 dark:border-neutral-800 text-xs">
+        <div class="grid sm:grid-cols-2 gap-4 pt-3 border-t border-neutral-200/70 dark:border-[var(--blog-rule,#262626)] text-xs">
           <div>
-            <span class="font-bold text-[#9c806d] dark:text-[#d4a276] uppercase tracking-wider block mb-1">
+            <span class="font-bold text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)] uppercase tracking-wider block mb-1">
               Software Architecture
             </span>
-            <p class="font-bold text-neutral-950 dark:text-white leading-snug">
+            <p class="font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] leading-snug">
               {props.item.architecture ?? props.sub.ymsFit}
             </p>
           </div>
           <div>
-            <span class="font-bold text-[#9c806d] dark:text-[#d4a276] uppercase tracking-wider block mb-1">
+            <span class="font-bold text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)] uppercase tracking-wider block mb-1">
               Key Capabilities
             </span>
-            <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
+            <p class="text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)] leading-relaxed">
               {props.item.capabilities ?? props.sub.keyCapability}
             </p>
           </div>
         </div>
 
-        <p class="text-[11px] text-neutral-500 dark:text-neutral-400 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 italic">
+        <p class="text-[11px] text-neutral-500 dark:text-[color:var(--blog-muted,#a3a3a3)] pt-2 border-t border-neutral-200/60 dark:border-[var(--blog-rule,#262626)] italic">
           Note: Scores indicate category functional fit index, not a product review or quality rating.
         </p>
       </div>

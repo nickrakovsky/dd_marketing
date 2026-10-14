@@ -17,7 +17,7 @@ const BENTO_UUID = "b4cb9a34a989bcc643714151df7b7154";
 const uid = Math.random().toString(36).slice(2, 9);
 ---
 
-<div class="my-8 not-prose lead-magnet-container" id={`lmf-${uid}`}>
+<div class="blog-inline-lead my-8 not-prose lead-magnet-container" id={`lmf-${uid}`}>
   <div class="success-message hidden w-full bg-[#FFF8EE] border-2 border-black/15 p-6 text-center">
     <div class="flex items-center justify-center gap-2 text-green-700 font-bold font-recoleta text-lg">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,3 +139,48 @@ const uid = Math.random().toString(36).slice(2, 9);
     document.addEventListener('astro:page-load', attachLeadMagnetForms);
   })();
 </script>
+
+<style>
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .lead-magnet-form,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message {
+    background: var(--blog-surface);
+    border-color: var(--blog-rule);
+    color: var(--blog-ink);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .lead-magnet-form > div:first-child,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message > div {
+    color: var(--blog-ink);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .disclaimer-message,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message p,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead input::placeholder {
+    color: var(--blog-muted);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message a {
+    color: var(--blog-link);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead input {
+    background: var(--blog-canvas);
+    border-color: var(--blog-control);
+    color: var(--blog-ink);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead input:focus {
+    border-color: var(--blog-link);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead button[type="submit"] {
+    background: var(--blog-canvas);
+    border: 1px solid var(--blog-orange);
+    color: var(--blog-ink);
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-inline-lead button[type="submit"]:hover {
+    background: var(--blog-surface);
+    border-color: var(--blog-link);
+  }
+</style>

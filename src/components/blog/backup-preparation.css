@@ -27,7 +27,7 @@
 .dd-backup-prep .p5-controls { border: 0; padding: 0; margin: 24px 0 28px; min-width: 0; }
 .dd-backup-prep legend { font-size: 14px; line-height: 1.45; color: var(--p5-muted); padding: 0; margin-bottom: 10px; }
 .dd-backup-prep .p5-choices { display: flex; flex-wrap: wrap; gap: 8px; }
-.dd-backup-prep .p5-choices label { display: flex; align-items: center; gap: 9px; min-height: 46px; padding: 10px 13px; font-size: 14px; line-height: 1.45; font-weight: 500; border: 1px solid var(--p5-line); border-radius: 4px; background: var(--p5-surface); cursor: pointer; transition: background-color 180ms, color 180ms, border-color 180ms; }
+.dd-backup-prep .p5-choices label { display: flex; align-items: center; gap: 9px; min-height: 46px; padding: 10px 13px; font-size: 14px; line-height: 1.45; font-weight: 500; border: 1px solid var(--blog-control, var(--p5-line)); border-radius: 4px; background: var(--p5-surface); cursor: pointer; transition: background-color 180ms, color 180ms, border-color 180ms; }
 .dd-backup-prep .p5-choices label:hover { border-color: var(--p5-ink); }
 .dd-backup-prep input { margin: 0; width: 16px; height: 16px; flex: 0 0 16px; accent-color: var(--p5-orange); cursor: pointer; }
 .dd-backup-prep .p5-choices label:has(input:checked) { color: var(--p5-on-selected); background: var(--p5-selected); border-color: var(--p5-selected); }
@@ -108,7 +108,7 @@
   .dd-backup-prep *, .dd-backup-prep *::before, .dd-backup-prep *::after { transition: none !important; animation: none !important; }
 }
 html.dark .dd-backup-prep, [data-theme="dark"] .dd-backup-prep {
-  --p5-paper: #211e1a; --p5-surface: #29251f; --p5-ink: #fff8ee; --p5-muted: #d5c6b5; --p5-line: #5f5143; --p5-complete: #ad9686; --p5-check: #211e1a; --p5-selected: #fff8ee; --p5-on-selected: #211e1a; color-scheme: dark;
+  --p5-paper: var(--blog-canvas, #211e1a); --p5-surface: var(--blog-surface, #29251f); --p5-ink: var(--blog-ink, #fff8ee); --p5-muted: var(--blog-muted, #d5c6b5); --p5-line: var(--blog-rule, #5f5143); --p5-complete: #ad9686; --p5-check: #211e1a; --p5-selected: var(--blog-selected-surface, #fff8ee); --p5-on-selected: var(--blog-selected-ink, #211e1a); color-scheme: dark;
 }
 @supports not selector(:has(*)) {
   .dd-backup-prep .p5-controls { display: none; }

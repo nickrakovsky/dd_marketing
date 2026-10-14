@@ -110,7 +110,7 @@
 }
 @media(prefers-reduced-motion:reduce) {.dd-produce-window * {transition:none!important}}
 html.dark .dd-produce-window,html[data-theme="dark"] .dd-produce-window {
-  --pw-ink:#fff8ee;--pw-muted:#d5c6b5;--pw-line:#52483e;--pw-delivery:#ad9686;--pw-paper:#1b1917;--pw-hatch:#ad9686;color-scheme:dark;
+  --pw-ink:var(--blog-ink, #fff8ee);--pw-muted:var(--blog-muted, #d5c6b5);--pw-line:var(--blog-rule, #52483e);--pw-delivery:#ad9686;--pw-paper:var(--blog-canvas, #1b1917);--pw-hatch:#ad9686;color-scheme:dark;
 }
 @supports not selector(:has(*)) {.dd-produce-window .pw-control {display:none}}
 </style>
