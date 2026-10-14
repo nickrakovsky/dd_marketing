@@ -1,14 +1,28 @@
 # Warehouse audit article checkpoint
 
+## Asset 4 approved; next asset identified, 14 October 2026
+
+The user explicitly approved the current iceberg: “That's perfect. let's approve this asset and identify the next”. Both copy and visual presentation of `AuditDiscrepancyIceberg.astro` are approved, including **Count or comparison error** / **Recording error**, shared semibold Inter metadata, Recoleta main phrases, the two-line norm and lower-edge clearance. Freeze this asset unless the user requests further edits. Earlier rejections and pending-review notes below are history; asset 3's human-review status is unchanged. Root will save a local approval commit without push or publication.
+
+Next is asset 5: the updated static raster dock semi-infographic **Compare the plan with the work**, showing the same dock scene as **Arrival plan** / **Observed work**, supported by appointment, arrival, handling and staff records. Its intended position is in **Technology and the people doing the work**. This turn identifies the next asset only; no generation or implementation is authorized.
+
 ## Resume, 14 October 2026
 
-Resumed at the user's request. The lower-edge clearance and Recoleta-label revision is intact and remains awaiting human review. The interrupted 13 October pause saved the files and notes but did not complete a Git checkpoint. Preserve this current state before further implementation. The local review target remains port 4338.
+Resumed at the user's request. The interrupted 13 October pause saved the files and notes but did not complete a Git checkpoint. That state was subsequently preserved in `ca0f8d6` before further implementation. The current refinement remains local unless the user requests another checkpoint. The local review target remains port 4338.
+
+## Current asset 4 local refinement, 14 October 2026
+
+The latest copy correction replaced the overlapping immediate labels **Unrecorded stock change** / **Incorrect stock figures** with **Count or comparison error** / **Recording error**. The user identified their overlap and referred to the earlier discussion. Root recovered that discussion: count/comparison mismatch was distinct from physical changes missing from the record and an overstated record. The latter two were combined as recording errors. This exact pair was a new correction based on the recovered rationale, then explicitly approved with the current asset as recorded above. Other layer copy, shape, styles, metadata and placement remain unchanged. Targeted source compilation passed for the component and overview; the latest body-discarded status-only request returned HTTP 200 on port 4338. The technical results remain separate from the user's copy and presentation approval.
+
+The user says the asset is getting much better but reports “goods” touching the lower border and asks for a systemised label identity for “recorded”, “counted” and “Normalised assumption”, suggesting heavier weight. Improvement feedback is not acceptance.
+
+The norm statement has two deliberate lines, **goods out the door** / **= job done**, with its wording unchanged and a centred fit-content wrapper. The three metadata labels share one `iceberg-system-label` class: 12px Inter, 600 weight, 1.4 line height, .02em tracking and the same secondary ink. This supersedes their preceding separate typography. Main Recoleta phrases and counts, the iceberg shape, five layers and article placement remain unchanged. Targeted source compilation passed for the component and overview; a body-discarded status-only request returned HTTP 200 on port 4338. The user approved this current presentation on 14 October. No automated design, image/UI/browser/render, geometry, contrast, layout or font-metric checks were performed. Other assets and the three CTA placements remain unchanged.
 
 ## Pause, 13 October 2026
 
 Paused at the user's explicit “checkpoint and pause” request. The saved source is the lower-edge clearance and Recoleta-label revision described below. Source compilation passed for the component and overview; the body-discarded status-only request returned HTTP 200 on port 4338. Human review must still confirm the reported crop and typography. No artwork acceptance is claimed. Root will create the Git checkpoint; do not resume implementation or investigation until the user asks.
 
-## Current asset 4 local revision, 13 October 2026
+## Asset 4 local revision history, 13 October 2026
 
 The user supplied a screenshot of the first five-depth mockup and asked to get closer to a usable asset. Root acknowledged its elongated rock-like facets, a divider crossing the deepest label, uneven label wrapping, excessive height and an overemphatic bottom point. Those observations came from the user's supplied evidence; no automated design review was performed. The first five-depth presentation is superseded, while the accepted interpretation and exact copy remain.
 
@@ -20,7 +34,7 @@ The user subsequently said “we're getting warmer” and requested further typo
 
 The latest user feedback reports a cropped bottom and typography that is still not quite right. The current refinement expands the lower SVG viewBox height from 100 to 108, makes decorative SVG and figure overflow explicitly visible, and adds 4px of bottom label padding. Explanatory phrases now use the established `DD-Recoleta`/`Recoleta-Fallback`/Georgia stack at 15px, 14px in narrow containers, with 500 weight, 1.3 leading and normal tracking. The former noun/modifier bold and colour split is removed. Counts retain Recoleta numerals at 28px/24px and 600 weight; descriptors, norm prefix and caption retain 12px Inter. The norm sentence uses Recoleta at 400 weight. Native band heights, dividers, pale fills, widened tip and inward counts remain. Copy, case, content and placement are unchanged. These are source changes, not a claim that the reported cropping or typography has passed human review.
 
-The five depths retain this copy exactly:
+The five depths then used this copy, with the immediate pair subsequently superseded by the 14 October correction above:
 
 | Depth | Label content |
 |---|---|

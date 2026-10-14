@@ -7,7 +7,7 @@ const layers = [
   {
     name: 'Immediate explanations',
     className: 'iceberg-immediate',
-    labels: [['Unrecorded', 'stock change'], ['Incorrect', 'stock figures']],
+    labels: [['Count or', 'comparison error'], ['Recording', 'error']],
     face: 'M260 0H740C784 23 836 61 878 100H137C165 62 214 22 260 0Z',
     edges: 'M260 0C214 22 165 62 137 100M740 0C784 23 836 61 878 100',
     divider: null,
@@ -41,8 +41,8 @@ const layers = [
       <path class="iceberg-edge" d="M260 140 298 103 334 80 349 48 398 32 420 14 480 8 524 35 572 24 641 46 667 84 704 118 740 140" />
     </svg>
     <p class="iceberg-discrepancy">
-      <span><strong>12</strong> recorded</span>
-      <span><strong class="iceberg-counted">11</strong> counted</span>
+      <span><strong>12</strong> <span class="iceberg-system-label">recorded</span></span>
+      <span><strong class="iceberg-counted">11</strong> <span class="iceberg-system-label">counted</span></span>
     </p>
   </div>
 
@@ -66,7 +66,10 @@ const layers = [
         <path class="iceberg-divider" d="M210 1H800" />
       </svg>
       <div class="iceberg-labels">
-        <p><span class="iceberg-assumption-name">Normalised assumption:</span> goods out the door = job done</p>
+        <p>
+          <span class="iceberg-system-label iceberg-assumption-name">Normalised assumption:</span>
+          <span class="iceberg-assumption-example"><span>goods out the door</span> <span>= job done</span></span>
+        </p>
       </div>
     </div>
   </div>
@@ -135,7 +138,8 @@ const layers = [
     font-size: .75rem;
     line-height: 1.35;
   }
-  .iceberg-discrepancy span { display: grid; gap: .25rem; }
+  .iceberg-discrepancy > span { display: grid; gap: .25rem; }
+  .iceberg-system-label { color: var(--iceberg-label-secondary); font-family: Inter, Arial, sans-serif; font-size: .75rem; font-weight: 600; line-height: 1.4; letter-spacing: .02em; }
   .iceberg-discrepancy strong { color: var(--iceberg-ink); font-family: var(--iceberg-editorial); font-size: 1.75rem; font-weight: 600; line-height: 1; letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; }
   .iceberg-discrepancy .iceberg-counted { color: #fd4f00; }
   .iceberg-submerged { border-top: 1px solid var(--iceberg-waterline); }
@@ -163,7 +167,8 @@ const layers = [
   .iceberg-ownership .iceberg-labels { width: 66%; padding-block: 1.625rem; }
   .iceberg-assumption .iceberg-labels { grid-template-columns: minmax(0, 1fr); width: 51%; padding: 1.25rem 0 3.25rem; }
   .iceberg-assumption p { font-weight: 400; }
-  .iceberg-assumption .iceberg-assumption-name { margin-bottom: .375rem; color: var(--iceberg-label-secondary); font-family: Inter, Arial, sans-serif; font-size: .75rem; font-weight: 500; line-height: 1.4; letter-spacing: .01em; }
+  .iceberg-assumption-name { margin-bottom: .375rem; }
+  .iceberg-assumption-example { inline-size: fit-content; max-inline-size: 100%; margin-inline: auto; }
   .audit-discrepancy-iceberg figcaption { margin: .75rem 0 0; font-size: .75rem; line-height: 1.4; letter-spacing: .01em; color: var(--iceberg-caption); }
   @container (max-width: 24rem) {
     .iceberg-discrepancy { inset-inline: 31%; gap: .5rem; }
