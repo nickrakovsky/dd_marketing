@@ -1,6 +1,91 @@
 # Warehouse audit article checkpoint
 
-## Current pause, 5 October 2026
+## Resume, 14 October 2026
+
+Resumed at the user's request. The lower-edge clearance and Recoleta-label revision is intact and remains awaiting human review. The interrupted 13 October pause saved the files and notes but did not complete a Git checkpoint. Preserve this current state before further implementation. The local review target remains port 4338.
+
+## Pause, 13 October 2026
+
+Paused at the user's explicit “checkpoint and pause” request. The saved source is the lower-edge clearance and Recoleta-label revision described below. Source compilation passed for the component and overview; the body-discarded status-only request returned HTTP 200 on port 4338. Human review must still confirm the reported crop and typography. No artwork acceptance is claimed. Root will create the Git checkpoint; do not resume implementation or investigation until the user asks.
+
+## Current asset 4 local revision, 13 October 2026
+
+The user supplied a screenshot of the first five-depth mockup and asked to get closer to a usable asset. Root acknowledged its elongated rock-like facets, a divider crossing the deepest label, uneven label wrapping, excessive height and an overemphatic bottom point. Those observations came from the user's supplied evidence; no automated design review was performed. The first five-depth presentation is superseded, while the accepted interpretation and exact copy remain.
+
+`src/components/AuditDiscrepancyIceberg.astro` now assembles one connected iceberg from decorative SVG bands behind native live HTML labels. Each label band's text and padding determine its height; the dividers share band boundaries instead of running behind the text. Vertical padding is reduced, the large triangular facets are removed, and the lower end uses a broad curve. The source keeps pale ice material in both themes.
+
+The user then said the compact iteration was definitely better than the last but still did not look great: the 12 and 11 were almost crashing into the border, and the copy labels barely looked like they belonged. This is limited human feedback, not acceptance of that iteration. Root refined the same structure by broadening the tip around the counts and pulling the count columns inward, with 34% source insets and 31% in narrow containers. Narrow-container count labels use 12px type and numbers use 22px. The immediate pair uses a muted smaller modifier line above a stronger noun line without adding words. Working conditions retain complete phrases with natural wrapping in smaller semibold 14px type and tighter padding. Ownership uses 14px type; the norm prefix is quieter 12px medium text. These values record source decisions rather than a rendered or font-metric check.
+
+The user subsequently said “we're getting warmer” and requested further typography refinement. That was directional feedback, not acceptance. A subsequent source pass used Recoleta count numerals and unified Inter band labels; its presentation is now superseded and preserved at `output/checkpoints/asset4-compact-inter-typography-superseded-2026-10-13.astro`.
+
+The latest user feedback reports a cropped bottom and typography that is still not quite right. The current refinement expands the lower SVG viewBox height from 100 to 108, makes decorative SVG and figure overflow explicitly visible, and adds 4px of bottom label padding. Explanatory phrases now use the established `DD-Recoleta`/`Recoleta-Fallback`/Georgia stack at 15px, 14px in narrow containers, with 500 weight, 1.3 leading and normal tracking. The former noun/modifier bold and colour split is removed. Counts retain Recoleta numerals at 28px/24px and 600 weight; descriptors, norm prefix and caption retain 12px Inter. The norm sentence uses Recoleta at 400 weight. Native band heights, dividers, pale fills, widened tip and inward counts remain. Copy, case, content and placement are unchanged. These are source changes, not a claim that the reported cropping or typography has passed human review.
+
+The five depths retain this copy exactly:
+
+| Depth | Label content |
+|---|---|
+| Visible discrepancy | **12 recorded**, **11 counted** |
+| Immediate explanations | **Unrecorded stock change**, **Incorrect stock figures** |
+| Operating conditions in the broad central mass | **Time pressure**, **Handover gaps**, **Uncaught errors** |
+| Ownership and information | **No one owns the outcome**, **Information doesn’t reach other crews** |
+| Normalised assumption | **Normalised assumption: goods out the door = job done** |
+
+Depth still means more hidden and more deeply causative, without making the bottom an action target. The two immediate families and interacting conditions remain possibilities rather than a diagnosed pathway for the unresolved 11/12 example. Workload pressure and management priorities can shape the norm; it is not crew blame. The figure remains after the example setup and before the investigation/follow-up bullets. No new visible categories, cards, scripts, hover interactions or raster generation are part of this revision. Caption: “Possible causes at different depths”.
+
+The latest lower-edge/Recoleta-label pass passed targeted `@astrojs/compiler` transforms for the component and overview. A status-only request with its body discarded returned HTTP 200 on port 4338. Review target: `http://localhost:4338/posts/warehouse-audit-overview#audit-discrepancy-iceberg`. These confirm source compilation and page availability only. Human visual review must confirm the reported crop and typography; accepted interpretation/copy and “getting warmer” are not artwork approval. No automated design, image/UI/browser/render, geometry, contrast, layout or font-metric checks were performed. The first five-depth source is preserved at `output/checkpoints/asset4-five-depth-first-mockup-superseded-2026-10-13.astro`. All other assets, the three CTA placements and production remain unchanged. Asset 5 remains a proposal.
+
+## First asset 4 five-depth mockup, 8 October 2026 (superseded presentation)
+
+After concept alignment, the user authorized a local mockup of the five causal depths. That first implementation used inline decorative SVG and native live text at the existing placement after the 11/12 example setup and before the investigation/follow-up bullets. No raster generation was part of that revision. Its presentation is superseded by the 13 October revision above; acceptance of the interpretation and exact copy did not approve the artwork.
+
+Its copy and depth relationships were:
+
+| Depth | Label content |
+|---|---|
+| Visible discrepancy | **12 recorded**, **11 counted** |
+| Immediate explanations | **Unrecorded stock change**, **Incorrect stock figures** |
+| Operating conditions in the broad central mass | **Time pressure**, **Handover gaps**, **Uncaught errors** |
+| Ownership and information | **No one owns the outcome**, **Information doesn’t reach other crews** |
+| Normalised assumption | **Normalised assumption: goods out the door = job done** |
+
+The two immediate families allow several possible explanations, including stock changes without matching entries and incorrect count/record figures or unit/timing comparisons. They do not reduce the discrepancy to a missed pick. The deepest norm may become normalised through sustained workload pressure and management attention to keeping things moving; it does not blame crews. These are possible interacting explanations and conditions rather than a diagnosis of the unresolved 11/12 case or a universal cause.
+
+Depth means more hidden and more deeply causative, with a broad central mass. It does not make the bottom the action target. The first mockup's source specified editorial cream/ink, muted slate shading, facets, a waterline and depth strata. Live labels remained visible without cards, hover reveals, scripts or a root-destination arrow. The first raster and four-peer SVG remained superseded history. The targeted `@astrojs/compiler` transform passed for the component and overview. The stopped local preview was restarted on port 4327; a status-only HTTP request returned 200. The component had no scripts. The visible caption was “Possible causes at different depths”; a hidden caption supplied interpretive context. The superseded four-peer component is preserved at `output/checkpoints/asset4-four-peer-explanations-superseded-2026-10-08.astro`. These historical source and availability results do not establish visual acceptance of either five-depth presentation. No automated design checks, image/UI/browser inspection or rendered review were performed. Assets 1–3, CTA placements and production remained unchanged; no new commit was requested. Asset 5 remained a proposal.
+
+## Asset 4 concept history, 7 October 2026 (superseded proposed copy)
+
+The user accepted the causal-depth interpretation: deeper causes are more hidden and more deeply causative. Depth does not establish the focus or priority of an action. The iceberg should have a broad central mass rather than make its bottom a destination or root target. This acceptance applies to the interpretation, not to proposed layer labels or new artwork.
+
+The proposed five depths form one illustrative causal thread: **Visible discrepancy** (11 counted, 12 recorded); **Immediate mechanism** (one unit moved without a matching stock entry); **Everyday operating conditions** (recording postponed, ownership lost at a handoff, an omission missed during reconciliation); **Process/system design** (movement and recording are separate steps, ownership is divided, confirmation/check design); and **Operating assumptions** (what counts as finished, whether records are expected to catch up later). This is a possible explanation to illustrate depth, not a diagnosis of the unresolved 11/12 example.
+
+The display proposal is one static iceberg with a clear waterline, soft strata across its facets and all causal labels inside the body. The broad middle carries the interacting operating conditions and most of the content; lower layers taper and become quieter. Small side headings would serve only as depth guides. Fine editorial SVG lines, inherited cream/charcoal, muted shading, native Inter labels and a Recoleta title keep it within the brand. There are no arrows, step numbers, destination remedy, detached evidence-check cards or cartoon props. Mass expresses compositional breadth, not measured proportions or quantities. All information is visible by default.
+
+This was documentation-only concept development on 7 October. No implementation, generation or new technical/design checks were performed or authorized in that turn. Those specific layer labels and display were unimplemented and unapproved. Their proposed copy is superseded by the 8 October alignment. The four-peer-explanation SVG was still in the local preview as a conceptually rejected/superseded placeholder awaiting replacement; its historical source compilation and HTTP 200 results are not design acceptance. Assets 1–3 and the CTA placements remain unchanged, with asset 3 still awaiting human review. Asset 5 remains a proposal.
+
+## Resumption and asset 4 implementation history, 6 October 2026
+
+The user resumed after checkpoint `d1d85c0`. The saved asset 3 persistent-marker revision remains unchanged and awaits human review; resumption does not establish its acceptance. Asset 1 and its shadow framing remain accepted, and asset 2's diagram remains endorsed.
+
+Asset 4 was rebuilt in `src/components/AuditDiscrepancyIceberg.astro` on 6 October after the user's rejection of the first raster draft. That static cutaway used inline SVG in inherited cream, sand and charcoal, with live text and no raster import. A narrow visible tip carries **11 counted**, **12 recorded** and **Recount: 11**; the larger submerged body contains four possible mechanisms with their evidence checks. This revision attempted to restore the metaphor of a small visible symptom and a larger underlying investigation; its four peer explanations are now conceptually superseded. It remains immediately after the example's setup and before its investigation and follow-up bullets.
+
+All four hypotheses and evidence prompts are visible within the SVG-backed body:
+
+- **A pick not yet posted:** “Match pick and stock-entry times”.
+- **A pack conversion missed:** “Check unit definitions and pack changes”.
+- **A similar item or wrong bin counted:** “Match product codes and bin labels”.
+- **An incorrect movement entry:** “Trace the source quantity to the stock entry”.
+
+These are possibilities to investigate, not diagnoses or an exhaustive list. There are no detached category sidebars or controls. Narrow-container source styling keeps the labels inside the submerged body. Caption: “Trace the difference back through the records and the work.” The user subsequently superseded this four-peer-explanation concept with the causal-depth interpretation recorded above; its implementation is superseded by the authorized 8 October rebuild. Targeted Astro source compilation passed for the rebuilt component and overview; a status-only preview request returned HTTP 200. The component has no image import, `img` element, generated-artwork dependency or script. These are source and availability checks only. No image inspection, browser/UI review or automated design check was performed for this documentation update.
+
+Asset 5 remains a developed proposal awaiting artwork production. The two asset 3 replacement concepts remain uncommissioned background ideas. Preserve assets 1–3, CTA copy and three pack placements while work continues locally; production, publication, working downloads, email capture and the planner remain unchanged.
+
+### First asset 4 raster draft, 6 October 2026 (rejected)
+
+Asset 4's first draft was integrated as `src/components/AuditDiscrepancyIceberg.astro`, immediately after the 11-counted/12-recorded example's setup and before its investigation and follow-up bullets. The built-in image generator produced `src/assets/blog-images/warehouse-audit-iceberg-v1.png`; its exact prompt is `docs/artwork/warehouse-audit-iceberg-v1-prompt.txt`. Live labels show **Observed difference** with **Count: 11**, **Record: 12** and **Recount: 11**, followed by **Possible explanations**: **Timing** (“Compare count, movement and posting times”), **Units** (“Check cases, individual units and pack sizes”), **Item identity** (“Match product codes and bin labels”) and **Movements** (“Trace receipts, picks and transfers to stock entries”). These are four unranked possibilities for investigation, not established causes or an exhaustive list. All labels remain visible; the figure has no selector.
+
+The user rejected the first iceberg draft for defeating the iceberg metaphor and feeling cartoonish and off brand. Targeted Astro source compilation passed for the new component and changed overview; the overview's embedded script passed syntax compilation. A status-only request returned HTTP 200 after the local preview server restarted. PNG metadata is 1536 by 1024, colour type 6, and the generator output was copied unchanged. Its SHA-256 is `915c423e8c8cfc3a54ae726208f3484bdb4b1dd74ea9f029e46a9017a56e8585`. The saved slotting raster SHA-256 remains `3e9b9bf16890d3906df7e86da935ea42638a6950bc24669db1bd6d227c87cfe5`. These checks concern source, file format and availability only. No image inspection, browser review or automated design check was performed for this documentation update. The raster, exact prompt and rejected component backup remain available; the backup is `output/checkpoints/asset4-raster-implementation-rejected-2026-10-06.astro`. These successful technical results apply to the rejected raster implementation and do not establish the replacement's correctness or acceptance.
+
+## Pause, 5 October 2026
 
 Paused at the user's explicit request after the persistent-marker correction. Save this version as the current checkpoint on `codex/warehouse-audit-content-plan`; do not resume implementation until the user asks.
 
@@ -48,7 +133,7 @@ The latest customs example starts with the review task, introduces HMRC in conte
 
 The user asked why all five original article images were omitted. The original MDX and WebP assets remain available, and the live article still displays them. Section 9 of `docs/warehouse-audit-revamp-brief-step-10.md` records individual retirement/replacement reasons: an unsourced quantified drift graph, a guaranteed-outcome counting comparison, context-free slotting instructions, a predetermined root-cause hierarchy and an unestablished scheduling-to-audit causal claim. The preview omitted all five under that direction. At that stage, final replacement artwork had not been delivered and the code-native figures were draft work. Do not treat these document decisions as evidence of separate user approval for every removal.
 
-The user requested ideation and then selected the five visual directions: retain a qualitative drift graph with iconographic illustrations, use SVG/CSS for the count comparison, preserve the slotting scene with a possible raster/SVG upgrade, improve the iceberg while keeping its metaphor, and make an updated raster semi-infographic for the dock image. The visual brief develops all five into a coordinated series with article positions, candidate labels and concrete interaction behavior. The graph shows audit/corrective-action/follow-up without numerical claims or an automatic recovery at the audit. The count comparison stays fully visible and has no scope selector. The initial slotting concept used route highlighting and questions while keeping the scene fixed; this is superseded by the 5 October revision below. The iceberg shows observed facts above water and four possible explanation/evidence groups below, all visible. The dock image compares arrival plan with observed work and its supporting records. No replacement artwork was generated or integrated during the initial concept-development request; subsequent asset production and review status are recorded below. Assets 4–5 remain proposals for human review.
+The user requested ideation and then selected the five visual directions: retain a qualitative drift graph with iconographic illustrations, use SVG/CSS for the count comparison, preserve the slotting scene with a possible raster/SVG upgrade, improve the iceberg while keeping its metaphor, and make an updated raster semi-infographic for the dock image. The visual brief develops all five into a coordinated series with article positions, candidate labels and concrete interaction behavior. The graph shows audit/corrective-action/follow-up without numerical claims or an automatic recovery at the audit. The count comparison stays fully visible and has no scope selector. The initial slotting concept used route highlighting and questions while keeping the scene fixed; this is superseded by the 5 October revision below. The iceberg shows observed facts above water and four possible explanation/evidence groups below, all visible. The dock image compares arrival plan with observed work and its supporting records. No replacement artwork was generated or integrated during the initial concept-development request; subsequent asset production and review status are recorded below. On 6 October, asset 4's first raster draft was generated and integrated, then rejected by the user. The four-peer-explanation inline SVG cutaway replaced it, and is now conceptually superseded by the 7 October causal-depth direction. Asset 5 remains a developed proposal.
 
 ## Asset production status, 2 October 2026
 

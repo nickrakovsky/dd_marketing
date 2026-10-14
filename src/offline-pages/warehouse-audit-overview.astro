@@ -12,6 +12,7 @@ import AuditPackContents from '../components/AuditPackContents.astro';
 import AuditPackDisclosure from '../components/AuditPackDisclosure.astro';
 import AuditCountComparison from '../components/AuditCountComparison.astro';
 import AuditSlottingIllustration from '../components/AuditSlottingIllustration.astro';
+import AuditDiscrepancyIceberg from '../components/AuditDiscrepancyIceberg.astro';
 import checkData from '../../docs/warehouse-audit-checks.json';
 
 const entry = await getEntry('posts', 'warehouse-audit-checklist');
@@ -163,6 +164,7 @@ const inventoryTrail = [
   </figure>
   <h3>Example: 11 counted, 12 recorded</h3>
   <p>Suppose the team counts 11 units in a bin and the inventory record shows 12. A recount confirms 11. The team now needs to establish whether the record and count describe the same item, handling unit and point in time.</p>
+  <AuditDiscrepancyIceberg />
   <ul>
     <li><strong>Check what could explain the difference.</strong> Compare receipts, picks and transfers around the count. Check similar product codes and any change between cases and individual units. Record which explanations the evidence supports and which remain open.</li>
     <li><strong>Give the investigation an owner.</strong> The inventory lead follows up the unanswered points. Record any authorised adjustment alongside the investigation, including the evidence used for each.</li>
