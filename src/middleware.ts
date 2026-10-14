@@ -1,13 +1,16 @@
 import { withPublicationStyles } from './lib/publication-styles';
 import { defineMiddleware } from 'astro:middleware';
 import { CONTENT_SECURITY_POLICY, BUILD_SCRIPT_POLICY, SCRIPT_POLICY_REPORT_ONLY } from './lib/security-policy.mjs';
+import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from './lib/campaign-pages.mjs';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // All availability checks within a response use the same instant.
   context.locals.publicationDate = new Date();
   let response = await next();
   const pathname = context.url.pathname.replace(/\/$/, '') || '/';
-  if (pathname === '/' || pathname === '/posts' || pathname.startsWith('/posts/')
+  const isCampaignPage = isCampaignLandingPath(pathname);
+  const usesHomePage = pathname === '/' || isCampaignPage;
+  if (usesHomePage || pathname === '/posts' || pathname.startsWith('/posts/')
     || pathname.startsWith('/videos/') || pathname === '/sitemap-posts.xml') {
     // A publication cutoff must never be served stale for long, but a full
     // no-store defeats edge caching entirely (see the dd_marketing memory on
@@ -24,7 +27,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     response.headers.set('CDN-Cache-Control', 'public, max-age=86400, stale-while-revalidate=86400');
     if (response.status === 404) response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
-  if (!context.isPrerendered) response = await withPublicationStyles(response, pathname);
+  // Homepage clones share the same layout and build-generated critical styles.
+  if (!context.isPrerendered) response = await withPublicationStyles(response, usesHomePage ? '/' : pathname);
+  if (isCampaignPage) response.headers.set('X-Robots-Tag', CAMPAIGN_ROBOTS);
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-Content-Type-Options', 'nosniff');

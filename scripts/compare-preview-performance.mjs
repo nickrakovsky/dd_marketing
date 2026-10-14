@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import { formatComparisonSummary, formatRunMetrics, summarizeComparisons } from './performance-comparison.mjs';
 
 const preview = new URL(process.argv[2]);
 if (preview.protocol !== 'https:' || !preview.hostname.endsWith('.dd-marketing.pages.dev')) {
@@ -36,25 +37,13 @@ for (const route of routes) {
         tbt: report.audits['total-blocking-time'].numericValue,
         cls: report.audits['cumulative-layout-shift'].numericValue,
       });
-      console.log(`[performance] ${route} ${arm} pair ${pair + 1}: score ${results.at(-1).score}, LCP ${Math.round(results.at(-1).lcp)}ms`);
+      console.log(`[performance] ${route} ${arm} pair ${pair + 1}: ${formatRunMetrics(results.at(-1))}`);
     }
   }
 }
-const median = values => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
-const comparisons = routes.map(route => {
-  const summarize = arm => Object.fromEntries(['score', 'lcp', 'tbt', 'cls'].map(metric =>
-    [metric, median(results.filter(row => row.route === route && row.arm === arm).map(row => row[metric]))]));
-  const production = summarize('production');
-  const candidate = summarize('preview');
-  return { route, production, preview: candidate,
-    materialRegression: candidate.lcp > production.lcp * 1.1 + 100
-      || candidate.tbt > production.tbt + 50 || candidate.cls > Math.max(0.01, production.cls + 0.005),
-  };
-});
+const comparisons = summarizeComparisons(results, routes);
 fs.writeFileSync(path.join(output, 'comparison.json'), JSON.stringify({ results, comparisons }, null, 2) + '\n');
-const summary = '| Route | Production score | Preview score | Production LCP | Preview LCP | Regression |\n|---|---:|---:|---:|---:|---|\n'
-  + comparisons.map(row => `| ${row.route} | ${row.production.score} | ${row.preview.score} | ${Math.round(row.production.lcp)} ms | ${Math.round(row.preview.lcp)} ms | ${row.materialRegression ? 'Review required' : 'None detected'} |`).join('\n')
-  + '\n\nThree interleaved mobile runs per origin; identical browser, viewport and throttling. Lab evidence does not guarantee real-user equivalence. Production-only Dealfront remains disabled on preview.\n';
+const summary = formatComparisonSummary(comparisons);
 fs.writeFileSync(path.join(output, 'comparison.md'), summary);
 if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
 console.log(summary);

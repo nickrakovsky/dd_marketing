@@ -46,6 +46,9 @@ jobs:
       - name: Preview link checker regression tests
         run: npm run test:preview-links
 
+      - name: Performance comparison regression tests (offline)
+        run: node --test scripts/performance-comparison.test.mjs
+
       - name: YouTube importer regression tests
         run: npm run test:youtube-sync
 

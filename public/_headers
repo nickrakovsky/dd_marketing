@@ -20,6 +20,25 @@
 # Publication-sensitive routes /, /posts, /posts/*, /videos/* and
 # /sitemap-posts.xml use Worker middleware headers, not this static policy.
 
+# Defense in depth if a paid landing page ever becomes a static artifact.
+# Runtime responses carry the same rule in Worker middleware and the adapter wrapper.
+/outbound-dock-management
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
 # --- HTML pages: edge-cache 1 day, browser revalidates (unchanged policy) ---
 # Root-level pages (build.format:'file' serves these at clean paths)
 /about
