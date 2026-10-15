@@ -1,5 +1,6 @@
 /** @jsxImportSource solid-js */
 import { For, Switch, Match, Show, createSignal, onCleanup, createMemo } from "solid-js";
+import "./YardTypeSelector.css";
 import { createYardTypeEngine } from "./YardTypeEngine";
 import type { SubCategory, SystemMatch } from "./YardTypeEngine";
 import type SystemDetailPanelComponent from "./YardSystemDetailPanel";
@@ -432,7 +433,7 @@ function TextListItem(props: {
       style={delayStyle()}
       data-home-card={isHomeCard() ? "true" : undefined}
       aria-label={`Select ${props.sub.title}`}
-      class={`w-full text-left py-3.5 border-b border-[#ece6de] dark:border-neutral-800 flex items-center justify-between group hover:bg-neutral-50/80 dark:hover:bg-neutral-900/80 active:bg-neutral-100 dark:active:bg-neutral-800 transition-[background-color] duration-200 ease-out disabled:pointer-events-none ${
+      class={`w-full text-left py-3.5 border-b border-[#ece6de] dark:border-[var(--blog-rule,#262626)] flex items-center justify-between group hover:bg-neutral-50/80 dark:hover:bg-[var(--blog-surface,rgba(23,23,23,0.8))] active:bg-neutral-100 dark:active:bg-[var(--blog-surface,#262626)] transition-[background-color] duration-200 ease-out disabled:pointer-events-none ${
         isFlippingCard()
           ? "!opacity-0 !animation-none invisible"
           : props.isExitingCards
@@ -443,14 +444,14 @@ function TextListItem(props: {
       }`}
     >
       <div class="min-w-0 pr-4">
-        <span class="text-xs sm:text-sm font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] transition-colors block">
+        <span class="text-xs sm:text-sm font-bold text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] group-hover:text-[#fd4f00] dark:group-hover:text-[color:var(--blog-link,#ff7635)] transition-colors block">
           {props.sub.title}
         </span>
-        <span class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 leading-snug block">
+        <span class="text-xs text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)] mt-0.5 leading-snug block">
           {props.sub.description}
         </span>
       </div>
-      <Chevron class="text-neutral-300 dark:text-neutral-600 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] group-hover:translate-x-1.5" />
+      <Chevron class="text-neutral-300 dark:text-[color:var(--blog-muted,#525252)] group-hover:text-[#fd4f00] dark:group-hover:text-[color:var(--blog-link,#ff7635)] group-hover:translate-x-1.5" />
     </button>
   );
 }
@@ -1126,14 +1127,14 @@ export default function YardTypeSelector() {
   const currentThumbWidth = createMemo(() => computeHeaderThumbWidth(headerThumbAspect()));
 
   return (
-    <div aria-busy={isPreparingResults()} class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-8 font-sans text-neutral-900 dark:text-neutral-100 sm:min-h-[62rem] flex flex-col justify-start">
+    <div aria-busy={isPreparingResults()} class="yard-selector w-full max-w-7xl mx-auto px-4 md:px-12 pb-8 font-sans text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] sm:min-h-[62rem] flex flex-col justify-start">
       {/* Screen Reader Live Region */}
       <div aria-live="polite" aria-atomic="true" class="sr-only">
         {screenAnnouncement()}
       </div>
 
       {/* ── UNIFIED PERSISTENT HEADER FRAME (Always Present, Width Reflow) ── */}
-      <div class="mb-4 pb-3 border-b border-neutral-200/70 dark:border-neutral-800 flex items-center min-h-[4.5rem] relative">
+      <div class="mb-4 pb-3 border-b border-neutral-200/70 dark:border-[var(--blog-rule,#262626)] flex items-center min-h-[4.5rem] relative">
         {/* Always-Present Thumbnail Container with CSS Width Transition */}
         <div
           data-yt-header-thumb-box
@@ -1144,7 +1145,7 @@ export default function YardTypeSelector() {
             "margin-right": headerThumbAspect() ? "1rem" : "0px",
             "border-width": headerThumbAspect() ? "1px" : "0px"
           }}
-          class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-neutral-800 shadow-xs bg-neutral-100 dark:bg-neutral-900 relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-[var(--blog-rule,#262626)] shadow-xs bg-neutral-100 dark:bg-[var(--blog-surface,#171717)] relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
           <Show when={headerThumbSrc()}>
             {/*
@@ -1173,19 +1174,19 @@ export default function YardTypeSelector() {
               <div class="absolute inset-x-0 top-0 pointer-events-none yt-header-exit">
                 <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
                   <Show when={old().showBack}>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 shrink-0">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)] uppercase bg-neutral-200/70 dark:bg-[var(--blog-canvas,#262626)] shrink-0">
                       <span class="sm:hidden">BACK</span>
                       <span class="hidden sm:inline">{old().backLabel}</span>
                     </span>
                   </Show>
-                  <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
+                  <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                     {old().badge}
                   </span>
                 </div>
-                <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
+                <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] leading-snug">
                   {old().title}
                 </h2>
-                <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
+                <p class="text-xs text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)] mt-0.5 line-clamp-2 sm:line-clamp-none">
                   {old().subtitle}
                 </p>
               </div>
@@ -1207,7 +1208,7 @@ export default function YardTypeSelector() {
                   }}
                   disabled={isNavigating()}
                   aria-label="Go back"
-                  class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 hover:bg-neutral-300/80 dark:hover:bg-neutral-700 hover:text-black dark:hover:text-white active:scale-95 transition-[transform,background-color,color] duration-200 group disabled:pointer-events-none shrink-0"
+                  class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)] uppercase bg-neutral-200/70 dark:bg-[var(--blog-canvas,#262626)] hover:bg-neutral-300/80 dark:hover:bg-[var(--blog-surface,#404040)] hover:text-black dark:hover:text-[color:var(--blog-ink,#fff)] active:scale-95 transition-[transform,background-color,color] duration-200 group disabled:pointer-events-none shrink-0"
                 >
                   <svg class="size-3 group-hover:-translate-x-0.5 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -1216,15 +1217,15 @@ export default function YardTypeSelector() {
                   <span class="hidden sm:inline">{backButtonLabel()}</span>
                 </button>
               </Show>
-              <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
+              <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                 {headerBadge()}
               </span>
             </div>
 
-            <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
+            <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] leading-snug">
               {headerTitle()}
             </h2>
-            <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
+            <p class="text-xs text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)] mt-0.5 line-clamp-2 sm:line-clamp-none">
               {headerSubtitle()}
             </p>
           </div>
@@ -1232,10 +1233,10 @@ export default function YardTypeSelector() {
       </div>
 
       <Show when={isPreparingResults()}>
-        <p role="status" class="mb-3 text-sm text-neutral-600 dark:text-neutral-300">Loading recommendations…</p>
+        <p role="status" class="mb-3 text-sm text-neutral-600 dark:text-[color:var(--blog-muted,#d4d4d4)]">Loading recommendations…</p>
       </Show>
       <Show when={resultsLoadError()}>
-        <p role="alert" class="mb-3 text-sm text-neutral-700 dark:text-neutral-200">Recommendations could not load. Refresh the page to try again.</p>
+        <p role="alert" class="mb-3 text-sm text-neutral-700 dark:text-[color:var(--blog-ink,#e5e5e5)]">Recommendations could not load. Refresh the page to try again.</p>
       </Show>
 
       <Switch>
@@ -1413,7 +1414,7 @@ export default function YardTypeSelector() {
                     </div>
                   ) : (
                     /* Text list fallback */
-                    <div class="border-t border-[#ece6de] dark:border-neutral-800">
+                    <div class="border-t border-[#ece6de] dark:border-[var(--blog-rule,#262626)]">
                       <For each={cat.subCategories}>
                         {(sub, index) => (
                           <TextListItem
@@ -1474,7 +1475,7 @@ export default function YardTypeSelector() {
                       <div>
                         {/* ── TOP HORIZONTAL BAR: Facility Logistics Qualifier (Dark High-Contrast) ── */}
                         <Show when={!isDataDocksAlreadyTop}>
-                          <div class="p-4 sm:p-4.5 rounded-xl mb-4 bg-neutral-900 border border-neutral-800 text-white flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 transition-all shadow-md">
+                          <div class="yard-qualifier p-4 sm:p-4.5 rounded-xl mb-4 bg-neutral-900 border border-neutral-800 text-white flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 transition-all shadow-md">
                             <div class="min-w-0">
                               <span class="text-[10px] font-bold uppercase tracking-widest text-[#fd4f00] block mb-1">
                                 Facility Logistics Check
@@ -1490,7 +1491,8 @@ export default function YardTypeSelector() {
                                   setFacilityAdjoinsBuilding(true);
                                   setSelectedSystemIndex(0);
                                 }}
-                                class={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
+                                aria-pressed={facilityAdjoinsBuilding() === true}
+                                class={`yard-qualifier-answer inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
                                   facilityAdjoinsBuilding() === true
                                     ? "bg-[#fd4f00] text-white border-2 border-[#fd4f00] shadow-sm font-bold scale-[1.01]"
                                     : facilityAdjoinsBuilding() === null
@@ -1499,7 +1501,7 @@ export default function YardTypeSelector() {
                                 }`}
                               >
                                 <span
-                                  class={`size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
+                                  class={`yard-qualifier-indicator size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
                                     facilityAdjoinsBuilding() === true
                                       ? "bg-white text-[#fd4f00]"
                                       : "border border-neutral-400"
@@ -1515,7 +1517,8 @@ export default function YardTypeSelector() {
                                   setFacilityAdjoinsBuilding(false);
                                   setSelectedSystemIndex(0);
                                 }}
-                                class={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
+                                aria-pressed={facilityAdjoinsBuilding() === false}
+                                class={`yard-qualifier-answer inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
                                   facilityAdjoinsBuilding() === false
                                     ? "bg-white text-neutral-900 border-2 border-white shadow-sm font-bold scale-[1.01]"
                                     : facilityAdjoinsBuilding() === null
@@ -1524,7 +1527,7 @@ export default function YardTypeSelector() {
                                 }`}
                               >
                                 <span
-                                  class={`size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
+                                  class={`yard-qualifier-indicator size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
                                     facilityAdjoinsBuilding() === false
                                       ? "bg-neutral-900 text-white"
                                       : "border border-neutral-400"
@@ -1544,8 +1547,8 @@ export default function YardTypeSelector() {
                           <div class="lg:col-span-5 space-y-3">
                             {/* ── RECOMMENDED 2-SYSTEM SETUP EXTENSION ── */}
                             <Show when={!isDataDocksAlreadyTop && facilityAdjoinsBuilding() === true}>
-                              <div class="yt-fade-slide-in p-3.5 bg-[#F8EDD9]/60 dark:bg-neutral-900/80 border border-[#E5D3B3] dark:border-neutral-800 rounded-xl flex items-start gap-2.5 text-xs text-neutral-800 dark:text-neutral-200">
-                                <span class="inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
+                              <div class="yt-fade-slide-in p-3.5 bg-[#F8EDD9]/60 dark:bg-[var(--blog-surface,rgba(23,23,23,0.8))] border border-[#E5D3B3] dark:border-[var(--blog-rule,#262626)] rounded-xl flex items-start gap-2.5 text-xs text-neutral-800 dark:text-[color:var(--blog-ink,#e5e5e5)]">
+                                <span class="yard-recommended-check inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
                                   ✓
                                 </span>
                                 <p class="leading-relaxed">
@@ -1555,10 +1558,10 @@ export default function YardTypeSelector() {
                             </Show>
 
                             <div class="flex items-center justify-between pt-1">
-                              <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
+                              <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)]" id="yt-match-list-label">
                                 Category Match List
                               </span>
-                              <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
+                              <span class="text-[10px] font-medium text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)]">
                                 Click system to view details
                               </span>
                             </div>
@@ -1578,48 +1581,49 @@ export default function YardTypeSelector() {
                                         aria-selected={isSelected()}
                                         onClick={() => setSelectedSystemIndex(idx())}
                                         ref={(el: HTMLElement) => { if (idx() === 0) focusTargetRef = el; }}
-                                        class={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
+                                        class={`yard-match w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
                                           isSelected()
                                             ? isDataDocks
                                               ? "bg-[#F8EDD9] dark:bg-[#fd4f00]/15 border-[#fd4f00] shadow-md scale-[1.01]"
-                                              : "bg-white dark:bg-neutral-800 border-neutral-900 dark:border-neutral-300 shadow-md scale-[1.01]"
-                                            : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
+                                              : "bg-white dark:bg-[var(--blog-canvas,#262626)] border-neutral-900 dark:border-[var(--blog-ink,#d4d4d4)] shadow-md scale-[1.01]"
+                                            : "bg-neutral-50/90 dark:bg-[var(--blog-surface,#171717)] border-neutral-200/80 dark:border-[var(--blog-rule,#262626)] hover:border-neutral-400 dark:hover:border-[var(--blog-link,#525252)]"
                                         }`}
                                         aria-label={`${item.name}: ${item.score}% operational category match`}
                                         data-score-type="category-fit-percentage"
+                                        data-brand-match={isDataDocks ? "true" : undefined}
                                       >
-                                        <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                                        <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] mb-2">
                                           <span class="flex items-center gap-1.5 truncate pr-2">
-                                            <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-900 dark:text-neutral-100"}>
+                                            <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]" : "text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)]"}>
                                               {item.name}
                                             </span>
                                           </span>
                                           <span class="flex items-center gap-1 shrink-0">
-                                            <span class={`font-mono text-xs font-bold transition-all duration-300 ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-700 dark:text-neutral-300"}`}>
+                                            <span class={`font-mono text-xs font-bold transition-all duration-300 ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]" : "text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)]"}`}>
                                               {item.score}% Match
                                             </span>
                                             <svg class={`size-3.5 transition-colors ${
                                               isSelected()
                                                 ? isDataDocks
-                                                  ? "text-[#fd4f00] dark:text-[#ff7635]"
-                                                  : "text-neutral-900 dark:text-neutral-100"
-                                                : "text-neutral-400 dark:text-neutral-600"
+                                                  ? "text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]"
+                                                  : "text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)]"
+                                                : "text-neutral-400 dark:text-[color:var(--blog-muted,#525252)]"
                                             }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                             </svg>
                                           </span>
                                         </div>
 
-                                        <div class="h-2 w-full bg-neutral-200/70 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                        <div class="h-2 w-full bg-neutral-200/70 dark:bg-[var(--blog-canvas,#262626)] rounded-full overflow-hidden">
                                           <div
                                             class={`h-full rounded-full transition-all duration-500 ease-out ${
                                               isDataDocksSelected()
                                                 ? "bg-[#fd4f00]"
                                                 : item.score >= 80
-                                                ? "bg-neutral-800 dark:bg-neutral-200"
+                                                ? "bg-neutral-800 dark:bg-[var(--blog-ink,#e5e5e5)]"
                                                 : item.score >= 50
-                                                ? "bg-neutral-600 dark:bg-neutral-400"
-                                                : "bg-neutral-400 dark:bg-neutral-600"
+                                                ? "bg-neutral-600 dark:bg-[var(--blog-muted,#a3a3a3)]"
+                                                : "bg-neutral-400 dark:bg-[var(--blog-control,#525252)]"
                                             }`}
                                             style={{ width: `${item.score}%` }}
                                           />
@@ -1666,16 +1670,16 @@ export default function YardTypeSelector() {
                       /* ── STANDARD SUMMARY FOR OTHER CATEGORIES ── */
                       <div class="grid sm:grid-cols-2 gap-4 pt-4">
                         <div>
-                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]">
+                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)]">
                             Recommended Architecture
                           </span>
-                          <p class="text-sm font-bold text-neutral-950 dark:text-white mt-1">{sub.ymsFit}</p>
+                          <p class="text-sm font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] mt-1">{sub.ymsFit}</p>
                         </div>
                         <div>
-                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]">
+                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)]">
                             Key Capability
                           </span>
-                          <p class="text-sm text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed">
+                          <p class="text-sm text-neutral-800 dark:text-[color:var(--blog-ink,#e5e5e5)] mt-1 leading-relaxed">
                             {sub.keyCapability}
                           </p>
                         </div>
@@ -1683,12 +1687,12 @@ export default function YardTypeSelector() {
                     )}
                   </div>
 
-                  <div class="pt-4 mt-4 border-t border-[#ece6de] dark:border-neutral-800 flex items-center justify-between">
+                  <div class="pt-4 mt-4 border-t border-[#ece6de] dark:border-[var(--blog-rule,#262626)] flex items-center justify-between">
                     <button
                       type="button"
                       onClick={handleBackToCategories}
                       disabled={isNavigating()}
-                      class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors disabled:pointer-events-none"
+                      class="text-xs font-semibold text-neutral-500 dark:text-[color:var(--blog-muted,#a3a3a3)] hover:text-black dark:hover:text-[color:var(--blog-ink,#fff)] transition-colors disabled:pointer-events-none"
                     >
                       Start over
                     </button>

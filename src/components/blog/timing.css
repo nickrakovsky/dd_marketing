@@ -10,7 +10,7 @@
 .ddp7 .ddp7-controls{min-width:0;padding:0;margin:0 0 22px;border:0}
 .ddp7 legend{padding:0;margin:0 0 8px;font-size:14px;color:var(--p7-muted)}
 .ddp7 .ddp7-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ddp7 .ddp7-choices label{display:flex;align-items:center;gap:11px;padding:11px 13px;min-height:66px;border:1px solid var(--p7-rule);border-radius:3px;cursor:pointer;background:var(--p7-paper);transition:background-color .15s,color .15s}
+.ddp7 .ddp7-choices label{display:flex;align-items:center;gap:11px;padding:11px 13px;min-height:66px;border:1px solid var(--blog-control, var(--p7-rule));border-radius:3px;cursor:pointer;background:var(--p7-paper);transition:background-color .15s,color .15s}
 .ddp7 .ddp7-choices label:has(input:checked){background:var(--p7-active);color:var(--p7-active-text);border-color:var(--p7-active)}
 .ddp7 .ddp7-choices label:hover{border-color:var(--p7-ink)}
 .ddp7 .ddp7-choices label:has(input:focus-visible){outline:2px solid var(--p7-orange);outline-offset:4px}
@@ -64,7 +64,7 @@
 .ddp7:has(#ddp7-faster:checked):not(:has(#ddp7-earlier:checked)) .ddp7-outcome>.ddp7-speed,
 .ddp7:has(#ddp7-earlier:checked):not(:has(#ddp7-faster:checked)) .ddp7-outcome>.ddp7-notice,
 .ddp7:has(#ddp7-earlier:checked):has(#ddp7-faster:checked) .ddp7-outcome>.ddp7-both{display:grid}
-html.dark .ddp7,html[data-theme="dark"] .ddp7{--p7-paper:#25221e;--p7-ink:#fff8ee;--p7-muted:#d5c6b5;--p7-rule:#574b3f;--p7-track:#493e34;--p7-active:#fff8ee;--p7-active-text:#1b1917;color-scheme:dark}
+html.dark .ddp7,html[data-theme="dark"] .ddp7{--p7-paper:var(--blog-canvas, #25221e);--p7-ink:var(--blog-ink, #fff8ee);--p7-muted:var(--blog-muted, #d5c6b5);--p7-rule:var(--blog-rule, #574b3f);--p7-track:#493e34;--p7-active:var(--blog-selected-surface, #fff8ee);--p7-active-text:var(--blog-selected-ink, #1b1917);color-scheme:dark}
 @container(max-width:540px){
  .ddp7 .ddp7-heading{grid-template-columns:1fr;gap:14px;margin-bottom:20px}
  .ddp7 .ddp7-heading h2{font-size:43px}

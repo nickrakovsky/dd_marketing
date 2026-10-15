@@ -18,6 +18,7 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
+    blogTheme?: boolean;
     demoAttribution?: 'session' | 'page';
     // Text-led pages can discover their above-the-fold Recoleta faces early.
     preloadRecoleta?: boolean;
@@ -66,6 +67,7 @@ const {
   image = "/images/OG-Cover.png",
   type = "website",
   noindex = false,
+  blogTheme = false,
   demoAttribution = 'session',
   preloadRecoleta = false,
 
@@ -361,7 +363,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="en" data-demo-attribution={demoAttribution}>
+<html lang="en" data-demo-attribution={demoAttribution} data-blog-theme={blogTheme ? 'timeless-charcoal' : undefined}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

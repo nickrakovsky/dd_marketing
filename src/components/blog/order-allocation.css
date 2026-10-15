@@ -35,12 +35,12 @@
 .dd-order-allocation .oa-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .dd-order-allocation .oa-option {
   position: relative; display: flex; align-items: center; justify-content: center;
-  min-height: 48px; padding: 10px 12px; border: 1px solid var(--oa-line); border-radius: 8px;
+  min-height: 48px; padding: 10px 12px; border: 1px solid var(--blog-control, var(--oa-line)); border-radius: 8px;
   text-align: center; font-size: 14px; font-weight: 600; cursor: pointer;
   line-height: 1.3; color: var(--oa-ink); background: transparent;
 }
-.dd-order-allocation .oa-option:hover { background: var(--oa-soft); }
-.dd-order-allocation .oa-option:has(input:checked) { color: var(--oa-paper); background: var(--oa-ink); border-color: var(--oa-ink); }
+.dd-order-allocation .oa-option:hover { background: var(--blog-surface, var(--oa-soft)); }
+.dd-order-allocation .oa-option:has(input:checked) { color: var(--blog-selected-ink, var(--oa-paper)); background: var(--blog-selected-surface, var(--oa-ink)); border-color: var(--blog-selected-surface, var(--oa-ink)); }
 .dd-order-allocation .oa-option:has(input:focus-visible) { outline: 3px solid var(--oa-accent-text); outline-offset: 3px; }
 .dd-order-allocation input[type='radio'] { position: absolute; width: 1px; height: 1px; padding: 0; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .dd-order-allocation .oa-panel { display: none; }
@@ -78,8 +78,8 @@
 .dd-order-allocation .oa-caption { margin: 15px 0 0; font-size: 14px; line-height: 1.5; color: var(--oa-muted); }
 .dd-order-allocation .oa-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html.dark .dd-order-allocation, .dark .dd-order-allocation {
-  --oa-paper: #231f1b; --oa-ink: #fff3df; --oa-muted: #cebdac; --oa-soft: #3b3027;
-  --oa-line: #7c6957; --oa-accent: #ff955f; --oa-accent-text: #ffb389; --oa-cover: #cfb59a;
+  --oa-paper: var(--blog-canvas, #231f1b); --oa-ink: var(--blog-ink, #fff3df); --oa-muted: var(--blog-muted, #cebdac); --oa-soft: #3b3027;
+  --oa-line: var(--blog-rule, #7c6957); --oa-accent: #ff955f; --oa-accent-text: var(--blog-link, #ffb389); --oa-cover: #cfb59a;
 }
 @container (max-width: 500px) {
   .dd-order-allocation .oa-options { gap: 5px; }

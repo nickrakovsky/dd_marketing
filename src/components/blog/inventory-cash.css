@@ -41,7 +41,7 @@
 #dd-payment-timing .payment-controls{border:0;padding:0;margin:0 0 18px;min-width:0}
 #dd-payment-timing legend{padding:0;font-size:12px;line-height:1.5;margin-bottom:9px;color:var(--muted)}
 #dd-payment-timing .choices{display:flex;gap:8px;flex-wrap:wrap}
-#dd-payment-timing .choices label{display:flex;align-items:center;gap:9px;min-height:46px;padding:10px 15px;border:1px solid var(--line);border-radius:3px;font-size:14px;font-weight:500;background:var(--surface);cursor:pointer;transition:background-color .16s,color .16s}
+#dd-payment-timing .choices label{display:flex;align-items:center;gap:9px;min-height:46px;padding:10px 15px;border:1px solid var(--blog-control, var(--line));border-radius:3px;font-size:14px;font-weight:500;background:var(--surface);cursor:pointer;transition:background-color .16s,color .16s}
 #dd-payment-timing .choices label:has(input:checked){background:var(--active);color:var(--on-active);border-color:var(--active)}
 #dd-payment-timing .choices label:hover{border-color:var(--ink)}
 #dd-payment-timing input{accent-color:var(--orange);margin:0;width:16px;height:16px;cursor:pointer;flex:none}
@@ -90,4 +90,4 @@
 @media(prefers-reduced-motion:reduce){#dd-payment-timing *,#dd-payment-timing *::after{transition:none!important;animation:none!important}}
 
 
-html.dark #dd-payment-timing,[data-theme="dark"] #dd-payment-timing{color-scheme:dark;--paper:#1b1917;--surface:#25221e;--panel:#302a24;--ink:#fff8ee;--muted:#d5c6b5;--line:#52483e;--active:#fff8ee;--on-active:#1b1917}
+html.dark #dd-payment-timing,[data-theme="dark"] #dd-payment-timing{color-scheme:dark;--paper:var(--blog-canvas, #1b1917);--surface:var(--blog-canvas, #25221e);--panel:var(--blog-surface, #302a24);--ink:var(--blog-ink, #fff8ee);--muted:var(--blog-muted, #d5c6b5);--line:var(--blog-rule, #52483e);--active:var(--blog-selected-surface, #fff8ee);--on-active:var(--blog-selected-ink, #1b1917)}

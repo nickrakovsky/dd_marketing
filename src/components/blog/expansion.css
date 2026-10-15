@@ -67,5 +67,5 @@ dd-growth-example { display: block; }
 @media (max-width: 640px) { .dd-expansion-costs { padding: 24px 20px 20px; } }
 @media (max-width: 370px) { .dd-expansion-costs { padding-left: 15px; padding-right: 15px; } }
 html.dark .dd-expansion-costs {
-  --growth-paper: #25221e; --growth-ink: #fff8ee; --growth-muted: #d5c6b5; --growth-line: #64574c; --growth-track: #554a3f;
+  --growth-paper: var(--blog-canvas, #25221e); --growth-ink: var(--blog-ink, #fff8ee); --growth-muted: var(--blog-muted, #d5c6b5); --growth-line: var(--blog-rule, #64574c); --growth-track: #554a3f;
 }
