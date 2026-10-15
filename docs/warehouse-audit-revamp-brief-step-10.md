@@ -205,6 +205,8 @@ Retain the [step 4.1 evidence register](warehouse-audit-evidence-sweep-step-4-1.
 
 ## 9. Visual brief
 
+**Supersession, 14 October 2026: retain original image 5.** The user rejected the generated replacement and said the original is great. Remove image 5 from the replacement queue and restore the unchanged `src/assets/blog-images/warehouse-audit-checklist-5.webp` in the local overview's Technology and the people doing the work section. The earlier retirement decision below was overly broad: a concern about an implied causal claim was expanded into replacing a useful illustration. That retirement and the later replacement proposal are historical, not current instructions. Preserve rejected v1/prompt history; do not regenerate or add new prose/caption. Asset 4 remains approved and frozen.
+
 | Existing asset | Decision and reason |
 |---|---|
 | Image 1: quantified operational-drift timeline | Retire. The percentage scale and sharp improvements imply measured or predictable results without an identified dataset. |

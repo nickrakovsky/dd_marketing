@@ -3,6 +3,7 @@
 // Inherit the production post shell and fonts; do not restyle the page template.
 import { getEntry } from 'astro:content';
 import approvedDrift from '../assets/blog-images/warehouse-audit-drift-approved-v1.png';
+import originalDock from '../assets/blog-images/warehouse-audit-checklist-5.webp';
 import BlogPostLayout from '../layouts/BlogPostLayout.astro';
 import Cite from '../components/Cite.astro';
 import BibliographyItem from '../components/BibliographyItem.astro';
@@ -220,6 +221,9 @@ const inventoryTrail = [
 
   <h2 id="technology-and-people">Technology and the people doing the work</h2>
   <p>Records, photographs and warehouse systems can help a reviewer trace what happened. They still need a clear scope, the relevant requirements and someone who can explain how the work is done.</p>
+  <figure id="audit-dock-illustration" class="not-prose audit-dock-figure">
+    <img src={originalDock.src} width={originalDock.width} height={originalDock.height} alt="Dock Flow: Chaos vs. Control. Illustration comparing crowded unscheduled arrivals and pressured staging with coordinated arrivals and organised dock activity." loading="lazy" decoding="async" />
+  </figure>
   <p>A useful audit leaves people with an understandable finding, a practical next step and the support to carry it out. The aim is to make sure the system supports the work they do.</p>
 
   <h2 id="references">References</h2>
@@ -241,6 +245,8 @@ const inventoryTrail = [
   .audit-drift-artwork { overflow: hidden; border-radius: .5rem; box-shadow: 0 0 1.5rem .125rem rgb(31 41 55 / .12); }
   .audit-drift-figure img { display: block; width: 100%; height: auto; margin: 0; border-radius: 0; }
   .audit-drift-figure figcaption { margin: 0; padding: .5rem .75rem .75rem; font-family: Inter, Arial, sans-serif; font-size: .75rem; font-weight: 400; line-height: 1.5; color: #5b6472; }
+  .audit-dock-figure { margin: 2rem 0; }
+  .audit-dock-figure img { display: block; width: 100%; height: auto; margin: 0; }
   .audit-checklist { margin: 2rem 0 3rem; }
   .audit-area-index { margin: 0 0 2.5rem; }
   .audit-area-index p { margin: 0 0 .75rem; font-size: 1rem; font-weight: 600; }

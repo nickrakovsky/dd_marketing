@@ -1,10 +1,28 @@
 # Warehouse audit article checkpoint
 
+## Pause, 14 October 2026
+
+Paused immediately at the user's checkpoint request. The original dock image remains restored in the overview; rejected v1 and its prompt are retained as history. The newly authorized cleanup is in progress: `AuditDockFlow.astro` is an unintegrated raster/SVG scaffold with live title/labels, detailed truck symbols and theme variables. Its two staging PNG imports do not exist yet. Extraction prompts are saved in `docs/artwork/warehouse-audit-dock-cleanup-v2-prompts.txt`; no extraction generation has started. Resume with the original WebP as the edit target, generate the two transparent staging cutouts, then integrate and compile the component. Do not treat the scaffold as completed or visually approved. Asset 4 remains approved and frozen. No further work until the user resumes.
+
+## Asset 5 original retained; v1 rejected, 14 October 2026
+
+The user says the original is great and the replacement terrible. V1 is rejected; retain the original and remove asset 5 from the replacement queue. The earlier step 10 retirement rationale treated dock chaos versus an audit-ready outcome as an unestablished causal transition. That was an overly broad editorial decision: a concern about implied claims was expanded into replacing a useful illustration. No regeneration is commissioned.
+
+The unchanged `src/assets/blog-images/warehouse-audit-checklist-5.webp` is restored in the local overview after the opening paragraph of **Technology and the people doing the work**, before the conclusion, at figure ID `audit-dock-illustration`. No new prose, caption or image modification accompanies the restoration. Targeted Astro source compilation passed for the overview; a body-discarded status-only request returned HTTP 200 on port 4338. The live production article remains untouched, and no new checkpoint was requested. The rejected v1 at `output/imagegen/warehouse-audit-dock-v1.png` and its prompt at `docs/artwork/warehouse-audit-dock-v1-prompt.txt` remain historical. Asset 4 stays approved and frozen. No automated aesthetic/design/render/image/browser/geometry/contrast/font-metric checks were performed.
+
+## Asset 5 v1 generation history, 14 October 2026 (rejected)
+
+The user asks for a v1 of the potential replacement to compare with the original. This authorizes one new raster and inline comparison, superseding the preceding identification-only boundary. The original is `src/assets/blog-images/warehouse-audit-checklist-5.webp`, identified by the article alt as “Dock Flow: Chaos vs. Control”: unscheduled arrivals versus scheduled clean staging. It remains unchanged.
+
+The exact prompt, `docs/artwork/warehouse-audit-dock-v1-prompt.txt`, requests a new text-generated 3:2 semi-infographic with matched **Arrival plan** / **Observed work** dock scenes, staggered planning tokens versus bunched arrivals and overlapping handling, competent crews, and **Appointments**, **Actual arrivals**, **Handling times**, **Staff coverage** record labels. It specifies restrained cream/navy/tan/slate/orange illustration without numerical claims or outcome guarantees.
+
+Built-in image generation succeeded and displayed its output natively for user review. The generated file was copied unchanged from `/Users/work/.codex/generated_images/01a0d3fa-f98d-78a2-a1aa-02607a8ea5af/exec-f87d476f-5838-4e00-bd68-c221c1402f48.png` to `output/imagegen/warehouse-audit-dock-v1.png`. The user compared it with the original and rejected v1. No generated-image inspection, image editing, article integration, live replacement or automated design/render/UI/layout/geometry/contrast/font checks were performed for that preview. No source tests were needed for the image-only generation. The original WebP remains unchanged. Asset 4 remains approved and frozen at approval commit `2fbbe36`; other assets and the three CTA placements remain unchanged.
+
 ## Asset 4 approved; next asset identified, 14 October 2026
 
-The user explicitly approved the current iceberg: “That's perfect. let's approve this asset and identify the next”. Both copy and visual presentation of `AuditDiscrepancyIceberg.astro` are approved, including **Count or comparison error** / **Recording error**, shared semibold Inter metadata, Recoleta main phrases, the two-line norm and lower-edge clearance. Freeze this asset unless the user requests further edits. Earlier rejections and pending-review notes below are history; asset 3's human-review status is unchanged. Root will save a local approval commit without push or publication.
+The user explicitly approved the current iceberg: “That's perfect. let's approve this asset and identify the next”. Both copy and visual presentation of `AuditDiscrepancyIceberg.astro` are approved, including **Count or comparison error** / **Recording error**, shared semibold Inter metadata, Recoleta main phrases, the two-line norm and lower-edge clearance. Freeze this asset unless the user requests further edits. Earlier rejections and pending-review notes below are history; asset 3's human-review status is unchanged. The local approval commit is `2fbbe36`, without push or publication.
 
-Next is asset 5: the updated static raster dock semi-infographic **Compare the plan with the work**, showing the same dock scene as **Arrival plan** / **Observed work**, supported by appointment, arrival, handling and staff records. Its intended position is in **Technology and the people doing the work**. This turn identifies the next asset only; no generation or implementation is authorized.
+Asset 5 was identified as the updated static raster dock semi-infographic **Compare the plan with the work**, showing the same dock scene as **Arrival plan** / **Observed work**, supported by appointment, arrival, handling and staff records. Its intended position is in **Technology and the people doing the work**. That identification request did not authorize generation; the subsequent v1/comparison request above now does. Integration remains unauthorized.
 
 ## Resume, 14 October 2026
 

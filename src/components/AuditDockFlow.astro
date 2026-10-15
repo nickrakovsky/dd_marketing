@@ -1,0 +1,146 @@
+---
+import rushedStaging from '../assets/blog-images/warehouse-audit-dock-rushed-staging-v2.png';
+import cleanStaging from '../assets/blog-images/warehouse-audit-dock-clean-staging-v2.png';
+
+interface Props { id?: string; }
+const { id = 'audit-dock-illustration' } = Astro.props;
+const rows = [
+  { key: 'unscheduled', title: 'Unscheduled chaos', times: ['6:00 p.m.'], staging: rushedStaging, stagingLabel: 'Rushed staging', outcome: 'Audit errors', scheduled: false },
+  { key: 'scheduled', title: 'Scheduled shipping & receiving', times: ['1:00 p.m.', '2:30 p.m.', '4:00 p.m.'], staging: cleanStaging, stagingLabel: 'Clean staging', outcome: 'Audit ready', scheduled: true },
+];
+---
+
+<figure id={id} class="not-prose audit-dock-flow" aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`}>
+  <figcaption id={`${id}-title`} class="dock-flow-title">Dock flow: chaos vs. control</figcaption>
+  <p id={`${id}-description`} class="dock-sr-only">An illustrative comparison of bunched arrivals, rushed staging and audit errors with spaced appointments, orderly staging and audit readiness.</p>
+
+  <div class="dock-flow-rows">
+    {rows.map((row) => (
+      <section class:list={['dock-flow-row', { 'is-scheduled': row.scheduled }]} aria-label={row.title}>
+        <div class="dock-flow-step dock-arrivals">
+          <div class="dock-step-graphic dock-arrival-graphic">
+            <div class:list={['dock-arrival-times', { 'is-sequence': row.scheduled }]}>
+              {row.times.map((time) => <span>{time}</span>)}
+            </div>
+            <svg class="dock-arrival-art" viewBox="0 0 330 84" aria-hidden="true" focusable="false">
+              <defs>
+                <symbol id={`${id}-${row.key}-truck`} viewBox="0 0 128 76">
+                  <g stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+                    <path class="dock-truck-body" d="M6 10h79v44H6Z" />
+                    <path class="dock-truck-panel" d="M11 15h69v34H11Z" />
+                    <path class="dock-truck-cab" d="M85 54V28h16l21 19v11H85Z" />
+                    <path class="dock-truck-glass" d="M90 33h9l14 14H90Z" />
+                    <path class="dock-truck-frame" d="M4 54h118v7H4Z" />
+                    <path class="dock-truck-detail" d="M90 50h8m8-18h7v7M10 61a13 13 0 0 1 26 0m60 0a13 13 0 0 1 26 0" />
+                    <path class="dock-truck-accent" d="M6 55h4v5H6Zm112-5h4v4h-4Z" />
+                    <circle class="dock-truck-tyre" cx="23" cy="61" r="9" />
+                    <circle class="dock-truck-tyre" cx="109" cy="61" r="9" />
+                    <circle class="dock-truck-hub" cx="23" cy="61" r="3.5" />
+                    <circle class="dock-truck-hub" cx="109" cy="61" r="3.5" />
+                  </g>
+                </symbol>
+              </defs>
+              {row.scheduled ? <>
+                <use href={`#${id}-${row.key}-truck`} x="6" y="25" width="94" height="56" />
+                <use href={`#${id}-${row.key}-truck`} x="118" y="25" width="94" height="56" />
+                <use href={`#${id}-${row.key}-truck`} x="230" y="25" width="94" height="56" />
+                <path class="dock-sequence-arrow" d="M103 61h10m-5-5 5 5-5 5m107-5h10m-5-5 5 5-5 5" />
+              </> : <>
+                <use href={`#${id}-${row.key}-truck`} x="109" y="1" width="109" height="65" />
+                <use href={`#${id}-${row.key}-truck`} x="52" y="16" width="109" height="65" />
+                <use href={`#${id}-${row.key}-truck`} x="175" y="16" width="109" height="65" />
+              </>}
+              <path class="dock-ground-line" d="M2 78h326" />
+            </svg>
+          </div>
+          <p class="dock-flow-label">{row.title}</p>
+        </div>
+
+        <div class="dock-flow-connector" aria-hidden="true">
+          <svg viewBox="0 0 36 24" focusable="false"><path d="M2 12h30m-7-7 7 7-7 7" /></svg>
+        </div>
+
+        <div class="dock-flow-step dock-staging">
+          <div class="dock-step-graphic">
+            <img src={row.staging.src} width={row.staging.width} height={row.staging.height} alt="" loading="lazy" decoding="async" />
+          </div>
+          <p class="dock-flow-label">{row.stagingLabel}</p>
+        </div>
+
+        <div class="dock-flow-connector" aria-hidden="true">
+          <svg viewBox="0 0 36 24" focusable="false"><path d="M2 12h30m-7-7 7 7-7 7" /></svg>
+        </div>
+
+        <div class="dock-flow-step dock-outcome">
+          <div class="dock-step-graphic">
+            <svg class:list={['dock-outcome-mark', { 'is-error': !row.scheduled }]} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+              {row.scheduled ? <path d="m4 21 9 9L36 6" /> : <path d="m8 8 24 24M32 8 8 32" />}
+            </svg>
+          </div>
+          <p class="dock-flow-label">{row.outcome}</p>
+        </div>
+      </section>
+    ))}
+  </div>
+</figure>
+
+<style>
+  .audit-dock-flow {
+    --dock-ink: #243a45;
+    --dock-label: #374e58;
+    --dock-cargo: #efe2d2;
+    --dock-panel: #fff8e9;
+    --dock-cab: #e5c9a6;
+    --dock-glass: #d5e1df;
+    --dock-frame: #b9b8aa;
+    --dock-tyre: #24323b;
+    --dock-hub: #f4eddf;
+    --dock-accent: #fd4f00;
+    --dock-error: #b72e2b;
+    --dock-graphic-height: clamp(4.75rem, 18cqw, 6.5rem);
+    margin: 2rem 0;
+    background: transparent;
+    color: var(--dock-ink);
+    container-type: inline-size;
+  }
+  .dock-flow-title { margin: 0 0 1.5rem; color: var(--dock-ink); font-family: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif; font-size: 1.5rem; font-weight: 600; line-height: 1.2; text-align: center; text-wrap: balance; }
+  .dock-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .dock-flow-rows { display: grid; gap: 1.75rem; }
+  .dock-flow-row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(1rem, .45fr) minmax(0, 1.05fr) minmax(1rem, .45fr) minmax(0, .95fr); gap: .25rem; --dock-flow-line: var(--dock-ink); }
+  .dock-flow-row.is-scheduled { --dock-flow-line: var(--dock-accent); }
+  .dock-flow-step { min-width: 0; }
+  .dock-step-graphic { display: flex; align-items: center; justify-content: center; height: var(--dock-graphic-height); }
+  .dock-arrival-graphic { position: relative; display: block; }
+  .dock-arrival-times { position: absolute; inset-inline: 0; top: 0; font-family: Inter, Arial, sans-serif; font-size: .75rem; font-weight: 600; line-height: 1.4; text-align: center; color: var(--dock-label); }
+  .dock-arrival-times.is-sequence { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dock-arrival-times span { white-space: nowrap; }
+  .dock-arrival-art { position: absolute; inset-inline: 0; bottom: 0; display: block; width: 100%; height: calc(100% - 1.375rem); overflow: visible; }
+  .dock-truck-body, .dock-truck-panel, .dock-truck-cab, .dock-truck-glass, .dock-truck-frame, .dock-truck-tyre, .dock-truck-hub { stroke: var(--dock-ink); }
+  .dock-truck-body { fill: var(--dock-cargo); }
+  .dock-truck-panel { fill: var(--dock-panel); }
+  .dock-truck-cab { fill: var(--dock-cab); }
+  .dock-truck-glass { fill: var(--dock-glass); }
+  .dock-truck-frame { fill: var(--dock-frame); }
+  .dock-truck-tyre { fill: var(--dock-tyre); }
+  .dock-truck-hub { fill: var(--dock-hub); stroke-width: 1; }
+  .dock-truck-detail { fill: none; stroke: var(--dock-ink); }
+  .dock-truck-accent { fill: var(--dock-accent); stroke: var(--dock-ink); stroke-width: 1; }
+  .dock-ground-line { fill: none; stroke: var(--dock-ink); stroke-width: 1.4; }
+  .dock-sequence-arrow { fill: none; stroke: var(--dock-accent); stroke-width: 1.8; stroke-linecap: square; stroke-linejoin: miter; }
+  .dock-flow-connector { display: flex; align-items: center; justify-content: center; height: var(--dock-graphic-height); }
+  .dock-flow-connector svg { display: block; width: 100%; max-width: 2.25rem; height: auto; fill: none; stroke: var(--dock-flow-line); stroke-width: 2; stroke-linecap: square; stroke-linejoin: miter; }
+  .dock-staging img { display: block; width: 100%; max-height: 100%; object-fit: contain; }
+  .dock-outcome-mark { width: 2.75rem; height: 2.75rem; fill: none; stroke: var(--dock-ink); stroke-width: 6; stroke-linecap: square; stroke-linejoin: miter; overflow: visible; }
+  .dock-outcome-mark.is-error { stroke: var(--dock-error); }
+  .dock-flow-label { margin: .5rem 0 0; color: var(--dock-label); font-family: Inter, Arial, sans-serif; font-size: .75rem; font-weight: 500; line-height: 1.4; text-align: center; text-wrap: balance; }
+  .dock-arrivals .dock-flow-label, .dock-outcome .dock-flow-label { font-weight: 600; }
+  :global(.dark) .audit-dock-flow { --dock-ink: #e0e9e5; --dock-label: #d2dfdc; --dock-cargo: #3a505c; --dock-panel: #293d49; --dock-cab: #435961; --dock-glass: #83a09e; --dock-frame: #536975; --dock-tyre: #17232e; --dock-hub: #dce8e3; --dock-accent: #ff7635; --dock-error: #f36558; }
+  @container (max-width: 24rem) {
+    .dock-flow-title { font-size: 1.25rem; }
+    .dock-flow-row { gap: .125rem; }
+    .dock-arrival-times { font-size: .6875rem; }
+  }
+  @media print {
+    .audit-dock-flow { break-inside: avoid; --dock-ink: #243a45; --dock-label: #374e58; --dock-cargo: #efe2d2; --dock-panel: #fff8e9; --dock-cab: #e5c9a6; --dock-glass: #d5e1df; --dock-frame: #b9b8aa; --dock-tyre: #24323b; --dock-hub: #f4eddf; --dock-accent: #fd4f00; --dock-error: #b72e2b; }
+  }
+</style>
