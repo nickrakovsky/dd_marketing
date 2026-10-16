@@ -16,7 +16,7 @@ const { steps, caption, title, label } = Astro.props;
 
 <figure class="not-prose audit-record-trail font-recoleta" aria-label={label}>
   {title && <p class="audit-trail-title">{title}</p>}
-  <ol role="list">
+  <ol>
     {steps.map(({ title: stepTitle, text, paths, accent }) => <li>
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true" focusable="false">{paths.map(d => <path d={d} />)}<path d={accent} stroke="#fd4f00" /></svg>
       <div><strong>{stepTitle}</strong><span>{text}</span></div>

@@ -185,7 +185,8 @@ const hotspots = [
   const isTask = (value: string | undefined): value is SlottingTask => value === 'picking' || value === 'replenishment' || value === 'access';
 
   function bindSlottingIllustrations() {
-    document.querySelectorAll<HTMLElement>('[data-slotting-illustration]').forEach(figure => {
+    const figures = document.querySelectorAll<HTMLElement>('[data-slotting-illustration]');
+    figures.forEach(figure => {
       if (figure.dataset.slottingBound) return;
       const controls = figure.querySelector<HTMLElement>('[data-slotting-controls]');
       const hotspots = figure.querySelector<HTMLElement>('[data-slotting-hotspots]');

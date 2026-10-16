@@ -69,7 +69,7 @@ const inventoryTrail = [
     {areas.map((area, index) => (
       <section class="audit-check-area" id={`audit-area-${index + 1}`} aria-labelledby={`audit-area-title-${index + 1}`}>
         <h3 id={`audit-area-title-${index + 1}`}><span class="audit-area-heading-icon"><AuditAreaIcon area={area} /></span><span>{area}</span></h3>
-        <ol class="not-prose audit-checks font-recoleta" start={checkData.checks.findIndex(check => check.area === area) + 1} role="list">
+        <ol class="not-prose audit-checks font-recoleta" start={checkData.checks.findIndex(check => check.area === area) + 1}>
           {checkData.checks.filter(check => check.area === area).map(check => (
             <li class="audit-check" id={`audit-check-${check.id.toLowerCase()}`}>
               <details class="audit-check-guidance" data-audit-guidance open={check === checkData.checks[0]}>
@@ -290,7 +290,10 @@ const inventoryTrail = [
       try { id = decodeURIComponent(window.location.hash.slice(1)); } catch { return; }
       const target = document.getElementById(id);
       if (!target || !checklist.contains(target)) return;
-      if (target.matches('.audit-check')) target.querySelector<HTMLDetailsElement>('[data-audit-guidance]')?.setAttribute('open', '');
+      if (target.matches('.audit-check')) {
+        const guidance = target.querySelector<HTMLDetailsElement>('[data-audit-guidance]');
+        if (guidance) guidance.setAttribute('open', '');
+      }
       target.scrollIntoView({ block: 'start', behavior: 'instant' });
     };
     revealLinkedCheck();
