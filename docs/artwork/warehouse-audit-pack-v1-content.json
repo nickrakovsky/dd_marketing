@@ -2,7 +2,7 @@
   "metadata": {
     "title": "Warehouse Audit Working Pack",
     "articleURL": "https://datadocks.com/posts/warehouse-audit-checklist",
-    "checkSource": "docs/warehouse-audit-checks.json",
+    "checkSource": "src/data/warehouse-audit-checks.json",
     "intendedUse": "Plan a scoped warehouse review, record evidence and carry findings through to action and verification.",
     "scopeLimit": "The 28 starter checks need the requirements, goods, activities and operating conditions of your review. They do not provide a complete legal or sector-specific audit, certification or an overall pass score.",
     "examplesNote": "Examples are fictional and separate from blank working records."

@@ -27,6 +27,46 @@ const mdxComponents = {
         label: 'Warehouse audit checklist and templates',
         schema: {},
     }),
+    WarehouseLoadTiming: block({
+        label: 'Warehouse Load Timing',
+        schema: {},
+    }),
+    Post02InventoryCash: block({
+        label: 'Inventory and Cash',
+        schema: {},
+    }),
+    ProduceSellingWindow: block({
+        label: 'Produce Selling Window',
+        schema: {},
+    }),
+    Post04OrderAllocation: block({
+        label: 'Order Allocation',
+        schema: {},
+    }),
+    BackupIngredientPreparation: block({
+        label: 'Backup Ingredient Preparation',
+        schema: {},
+    }),
+    ExpansionCosts: block({
+        label: 'Expansion Costs',
+        schema: {},
+    }),
+    Post07Timing: block({
+        label: 'Expiry and Order Timing',
+        schema: {},
+    }),
+    FrozenNetworkTradeoff: block({
+        label: 'Frozen Food Network Tradeoff',
+        schema: {},
+    }),
+    BackwardTraceTimer: block({
+        label: 'Backward Ingredient Trace',
+        schema: {},
+    }),
+    ProductionRunTradeoff: block({
+        label: 'Production Run Tradeoff',
+        schema: {},
+    }),
     LeadMagnetForm: block({
         label: 'Lead Magnet Form',
         schema: {
@@ -52,13 +92,15 @@ const mdxComponents = {
         }
     }),
     SmartLink: inline({
-        label: 'Glossary SmartLink',
+        label: 'Smart Link',
         schema: {
             id: fields.relationship({
                 label: 'Glossary Term',
                 collection: 'glossary',
-                validation: { isRequired: true }
             }),
+            href: fields.url({ label: 'Source URL' }),
+            title: fields.text({ label: 'Source title', description: 'The standalone source title shown on the citation card.' }),
+            snippet: fields.text({ label: 'Source description', multiline: true }),
             anchorText: fields.text({ label: 'Anchor Text' }),
         }
     }),
@@ -232,6 +274,15 @@ export default config({
                     defaultValue: 'Medium',
                 }),
                 showToc: fields.checkbox({ label: 'Show Table of Contents', defaultValue: true }),
+                headerLayout: fields.select({
+                    label: 'Article Header Layout',
+                    description: 'Use Rich content first screen for articles that open with a substantial interactive tool or visual. The title and author details fill the first screen on phones and tablets.',
+                    options: [
+                        { label: 'Standard', value: 'standard' },
+                        { label: 'Rich content first screen', value: 'rich-content' },
+                    ],
+                    defaultValue: 'standard',
+                }),
                 faq: fields.array(
                     fields.object({
                         question: fields.text({ label: 'Question' }),

@@ -1,0 +1,13 @@
+{
+  "description": "Retain the cached HTML CSP during 304 revalidation",
+  "expression": "(http.host in {\"datadocks.com\" \"www.datadocks.com\"} and http.response.code eq 304 and any(http.request.headers[\"accept\"][*] contains \"text/html\"))",
+  "action": "rewrite",
+  "action_parameters": {
+    "headers": {
+      "content-security-policy": {
+        "operation": "remove"
+      }
+    }
+  },
+  "enabled": true
+}

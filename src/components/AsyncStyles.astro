@@ -1,0 +1,23 @@
+<!-- Register before stylesheet links so cached and delayed loads both work. -->
+<script is:inline>
+  (() => {
+    const activate = (link, loaded = false) => {
+      if (!(link instanceof HTMLLinkElement) || !link.hasAttribute('data-dd-async-css')) return;
+      if (link.dataset.ddAsyncCss === 'preload') {
+        if (!loaded && !performance.getEntriesByName(link.href, 'resource').length) return;
+        link.rel = 'stylesheet';
+      } else {
+        if (!link.sheet) return;
+        link.media = 'all';
+      }
+      link.removeAttribute('data-dd-async-css');
+    };
+    document.addEventListener('load', (event) => activate(event.target, true), true);
+    const recoverLoaded = () => document.querySelectorAll('link[data-dd-async-css]').forEach((link) => activate(link));
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', recoverLoaded, { once: true });
+    } else {
+      recoverLoaded();
+    }
+  })();
+</script>

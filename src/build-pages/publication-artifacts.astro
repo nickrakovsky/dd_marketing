@@ -41,6 +41,12 @@ if (kind === 'home') {
   await Promise.all(resources.filter(resource => resource.data.cardImage).map(resource =>
     getImage({ src: resource.data.cardImage!, width: 600, height: 375, widths: [380, 600, 760, 1000] })
   ));
+  // The resource archive uses intrinsic-size images. Its membership changes at
+  // publication cutoffs; it must not rely on internal wireframes to incidentally
+  // compile variants for resources absent from the final-cutoff hub sample.
+  await Promise.all(resources.filter(resource => resource.data.cardImage).map(resource =>
+    getImage({ src: resource.data.cardImage! })
+  ));
   // A future-dated curated evergreen can change the homepage highlight. Its
   // responsive variants must exist even when another guide wins the final sample.
   await Promise.all(posts.filter(post => EVERGREEN_RESOURCE_SLUGS.has(post.slug) && post.data.cardImage).map(post =>

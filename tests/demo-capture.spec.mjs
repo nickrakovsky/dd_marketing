@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+// Form readiness is asserted below; unrelated images need not finish loading.
 // All lead writes and third-party requests are intercepted, including analytics.
 // Calendly's real launcher runs against a stub, so its email prefill is checked.
 test.use({ serviceWorkers: 'block' });
@@ -33,6 +34,8 @@ async function prepare(page, baseURL) {
       return route.fulfill({status:mode === 'httpFailure' ? 503 : 200,contentType:'application/json',body:JSON.stringify({ok:mode === 'success'})});
     }
     if(url.hostname === 'assets.calendly.com') return route.fulfill({contentType:url.pathname.endsWith('.css')?'text/css':'application/javascript',body:''});
+    // The pinned local widget must not replace the booking stub either.
+    if(url.origin === origin && url.pathname.startsWith('/_astro/vendor/calendly')) return route.abort();
     if(url.origin === origin && ['GET','HEAD'].includes(request.method())) return route.continue();
     return route.abort();
   });
@@ -83,7 +86,8 @@ for(const path of ['/news','/posts']) {
   test(`${path}: mobile navigation closes and dialog dismissal restores hamburger focus`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
     await page.setViewportSize({width:390,height:844});
-    await page.goto(path);
+    const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     const menu=page.locator('[data-mobile-menu]'),toggle=page.locator('[data-mobile-toggle]'),dialog=page.locator('#demo-capture-dialog');
     for(const closeMethod of ['Escape','button']) {
       await toggle.click();
@@ -106,7 +110,8 @@ for(const path of ['/news','/posts']) {
   test(`${path}: desktop dialog dismissal restores trigger focus`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
     await page.setViewportSize({width:1280,height:900});
-    await page.goto(path);
+    const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     const link=page.locator('nav').getByRole('link',{name:'Schedule a Demo',exact:true});
     await expect(link).toHaveAttribute('href','#book-demo');
     await link.click();
@@ -119,7 +124,8 @@ for(const path of ['/news','/posts']) {
 
   test(`${path}: direct booking anchor and hash change open standalone capture`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
-    await page.goto(`${path}#book-demo`);
+    const response = await page.goto(`${path}#book-demo`, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     await expect(page.locator('#demo-capture-dialog')).toBeVisible();
     await page.keyboard.press('Escape');
     await page.evaluate(() => location.hash='');
@@ -133,7 +139,8 @@ for(const path of ['/news','/posts']) {
     test(`${path}: ${formId} waits for confirmed save and books once with email`,async ({page,baseURL}) => {
       const state=await prepare(page,baseURL);
       await page.setViewportSize({width:1280,height:900});
-      await page.goto(path);
+      const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+      expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
       if(formId==='dialog') await page.locator('nav').getByRole('link',{name:'Schedule a Demo',exact:true}).click();
       const form=page.locator(formId==='dialog'?'#demo-capture-dialog form':`#${formId}`);
       await checkForm(page,state,form,`${formId}@example.com`);
@@ -145,7 +152,8 @@ for (const formId of ['book-demo', 'cta-bento-form']) {
   test(`/: ${formId} captures email before booking and keeps homepage attribution`, async ({ page, baseURL }) => {
     const state = await prepare(page, baseURL);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     const form = page.locator(`form#${formId}`);
     const email = `home-${formId}@example.com`;
     await checkForm(page, state, form, email);

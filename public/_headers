@@ -14,9 +14,30 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src-attr 'none'; upgrade-insecure-requests
+  Content-Security-Policy-Report-Only: script-src 'self' https://fast.bentonow.com https://app.bentonow.com https://assets.calendly.com https://sc.lfeeder.com; script-src-attr 'none'; object-src 'none'; base-uri 'self'
 
 # Publication-sensitive routes /, /posts, /posts/*, /videos/* and
 # /sitemap-posts.xml use Worker middleware headers, not this static policy.
+
+# Defense in depth if a paid landing page ever becomes a static artifact.
+# Runtime responses carry the same rule in Worker middleware and the adapter wrapper.
+/outbound-dock-management
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
 
 # --- HTML pages: edge-cache 1 day, browser revalidates (unchanged policy) ---
 # Root-level pages (build.format:'file' serves these at clean paths)

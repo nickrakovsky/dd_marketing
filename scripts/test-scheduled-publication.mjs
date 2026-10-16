@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { CAMPAIGN_PATHS, CAMPAIGN_ROBOTS } from '../src/lib/campaign-pages.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dist = resolve(root, process.env.PUBLICATION_TEST_DIST || 'dist');
@@ -30,7 +31,25 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 15, 'Expected the complete 15-post rollout schedule');
+assert.equal(slots.length, 26, 'Expected the original 16 slots plus the authorized ten-post October batch');
+const octoberBatch = [
+  ['cut-overtime-with-load-scheduling', '2026-10-12'],
+  ['inventory-and-cash', '2026-10-13'],
+  ['speculative-produce-buying', '2026-10-14'],
+  ['major-customer-demand-spikes', '2026-10-15'],
+  ['backup-suppliers', '2026-10-16'],
+  ['products-and-channels-readiness', '2026-10-19'],
+  ['expiry-and-missed-orders', '2026-10-20'],
+  ['frozen-food-network-fit', '2026-10-21'],
+  ['ingredient-traceability', '2026-10-22'],
+  ['food-production-runs', '2026-10-23'],
+];
+assert.deepEqual(slots.slice(16).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+  octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
+  'The authorized batch must publish on successive weekdays at 06:30 fixed UTC-08:00');
+assert.equal(manifest.timezone, 'UTC-08:00');
+assert.equal(manifest.localPublicationTime, '06:30:00');
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-10-24T00:00:00Z'));
 const originalWorkerHash = sha256(await readFile(originalWorker));
 const scratch = await mkdtemp(join(tmpdir(), 'datadocks-publication-test-'));
 let server;
@@ -49,12 +68,30 @@ async function availablePort() {
   return port;
 }
 
-// No-store is intentional: a cached pre-publication 404 or listing must never
-// outlive a release boundary. Revisit these assertions if bounded caching is
-// introduced, with a separate test for expiry and revalidation at the cutoff.
-function assertUncached(response, label) {
-  assert.match(response.headers.get('cache-control') || '', /(?:^|,)\s*(?:private\s*,\s*)?no-store\b/i,
-    `${label}: publication-sensitive responses must not be cached`);
+// Bounded caching (PR: short edge TTL instead of no-store) trades a small,
+// fixed staleness window for real edge cache hits. This harness runs the
+// Worker directly with no CDN in front of it, so it cannot exercise actual
+// edge expiry/revalidation — what it CAN and must keep proving is the
+// contract the origin hands to any downstream cache: browsers never treat
+// the page as fresh on their own (max-age=0, so every navigation revalidates
+// over the network), and any shared cache is only ever allowed to reuse a
+// response for a short, capped window. If this ever regresses to an
+// unbounded or missing max-age, a pre-publication response could get cached
+// far past a release boundary — that's exactly what this guards against.
+const MAX_ALLOWED_STALE_SECONDS = 172800; // 2 days: 1 day s-maxage + 1 day stale-while-revalidate
+function assertBoundedCache(response, label) {
+  const cacheControl = response.headers.get('cache-control') || '';
+  assert.match(cacheControl, /(?:^|,)\s*max-age=0\b/,
+    `${label}: publication-sensitive responses must force browser revalidation (max-age=0)`);
+  const sMaxAge = cacheControl.match(/(?:^|,)\s*s-maxage=(\d+)/);
+  assert.ok(sMaxAge, `${label}: publication-sensitive responses must declare a bounded s-maxage`);
+  assert.ok(Number(sMaxAge[1]) <= MAX_ALLOWED_STALE_SECONDS,
+    `${label}: s-maxage=${sMaxAge[1]} exceeds the ${MAX_ALLOWED_STALE_SECONDS}s cap — a longer edge TTL risks stale content surviving well past a release boundary`);
+  const swr = cacheControl.match(/(?:^|,)\s*stale-while-revalidate=(\d+)/);
+  if (swr) {
+    assert.ok(Number(swr[1]) <= MAX_ALLOWED_STALE_SECONDS,
+      `${label}: stale-while-revalidate=${swr[1]} exceeds the ${MAX_ALLOWED_STALE_SECONDS}s cap — bounds how long a stale copy can be served while revalidating`);
+  }
 }
 
 try {
@@ -152,12 +189,108 @@ export default {
   }
   checks++;
 
+  // Paid destinations remain usable for AdsBot, but excluded from search.
+  const campaignContent = {
+    '/outbound-dock-management': {
+      title: 'outbound dock management',
+      heading: 'OUTBOUND DOCK MANAGEMENT',
+    },
+    '/inbound-dock-management': {
+      title: 'Inbound Dock Software',
+      heading: 'INBOUND DOCK MANAGEMENT SOFTWARE',
+      description: 'Schedule inbound deliveries and coordinate warehouse receiving appointments.',
+    },
+  };
+  const visibleText = value => value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  for (const campaign of CAMPAIGN_PATHS) {
+    const expected = campaignContent[campaign];
+    assert.ok(expected, `${campaign}: missing campaign content expectations`);
+    assert.ok(!staticSitemap.text.includes(campaign), 'Static sitemap leaked a paid destination');
+    const firstCharacter = campaign.charCodeAt(1).toString(16);
+    const variants = [campaign, `${campaign}/`, `${campaign}?utm_source=google&gclid=test-click`,
+      `${campaign}/?utm_source=google&gclid=test%2Fclick`,
+      `${campaign}.html`, `${campaign}/unknown-child`, campaign.toUpperCase(),
+      `/%${firstCharacter}${campaign.slice(2)}`, `/%25${firstCharacter}${campaign.slice(2)}`,
+      campaign.replace('-dock-', '-%64ock-')];
+    for (const pathname of variants) {
+      let { response, text } = await request(pathname, Date.parse(slots[0].pubDate));
+      if (response.status === 404) {
+        // Pages may reject aliases before Worker routing. A true 404 with the
+        // site's noindex error page is also excluded from search.
+        assert.match(text, /<meta\b[^>]*name="robots"[^>]*content="[^"]*\bnoindex\b/,
+          `${pathname}: missing HTML exclusion on the error page`);
+        assert.ok(!text.includes('data-demo-attribution="page"'), `${pathname}: error served campaign markup`);
+      } else {
+        assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS, `${pathname}: missing HTTP exclusion`);
+      }
+      if ([301, 302, 308].includes(response.status)) {
+        const location = response.headers.get('location');
+        assert.ok(location, `${pathname}: redirect missing destination`);
+        const target = new URL(location, origin);
+        assert.equal(target.origin, origin, `${pathname}: redirect left the tested site`);
+        assert.equal(target.pathname, campaign, `${pathname}: redirect lost campaign identity`);
+        assert.equal(target.search, new URL(pathname, origin).search, `${pathname}: redirect lost ad tracking`);
+        ({ response, text } = await request(`${target.pathname}${target.search}`, Date.parse(slots[0].pubDate)));
+        assert.equal(response.status, 200, `${pathname}: redirect did not reach the campaign page`);
+        assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS, `${pathname}: redirect destination missing HTTP exclusion`);
+      }
+      if (pathname === campaign || pathname.includes('?')) {
+        assert.equal(response.status, 200, `${pathname}: campaign must remain accessible to ad visitors`);
+      } else {
+        assert.ok([200, 301, 302, 308, 404].includes(response.status), `${pathname}: unexpected alias response`);
+      }
+      if (response.status === 200) {
+        assert.ok(text.includes(`name="robots" content="${CAMPAIGN_ROBOTS}"`), `${pathname}: missing HTML exclusion`);
+        assert.ok(!text.includes('application/ld+json'), `${pathname}: paid page must not advertise SEO structured data`);
+        assert.ok(text.includes('data-demo-attribution="page"'), `${pathname}: campaign attribution mode lost`);
+        assert.ok(text.includes(`<title>${expected.title}</title>`), `${pathname}: incorrect campaign title`);
+        const headings = [...text.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+        assert.equal(headings.length, 1, `${pathname}: expected exactly one campaign H1`);
+        assert.equal(visibleText(headings[0][1]), expected.heading, `${pathname}: incorrect visible campaign H1`);
+        assert.ok(text.includes(`rel="canonical" href="https://datadocks.com${campaign}"`),
+          `${pathname}: canonical lost campaign identity`);
+        if (expected.description) {
+          assert.ok(text.includes(`name="description" content="${expected.description}"`),
+            `${pathname}: incorrect campaign meta description`);
+          const hero = text.match(/<p\b[^>]*class="[^"]*\bhero-description\b[^"]*"[^>]*>([\s\S]*?)<\/p>/i);
+          assert.ok(hero, `${pathname}: missing hero description`);
+          assert.equal(visibleText(hero[1]), expected.description, `${pathname}: incorrect visible campaign description`);
+        }
+        for (const sisterCampaign of CAMPAIGN_PATHS.filter(path => path !== campaign)) {
+          assert.ok(!text.includes(sisterCampaign), `${pathname}: advertised its sister paid campaign`);
+        }
+      }
+      checks++;
+    }
+  }
+
   for (const path of ['/_worker.js/index.js', '/_build/publication/home', '/_build/publication/hub', `/_build/publication/posts/${slots[0].slug}`]) {
     const hidden = await request(path, Date.parse(slots[0].pubDate) - 1);
     assert.equal(hidden.response.status, 404, `${path}: build-only files must not be public`);
     checks++;
   }
   assert.ok(!staticSitemap.text.includes('/_build/'), 'Static sitemap exposed build-only samples');
+
+  // Exercise the actual Cloudflare artifact, including static-asset fallback.
+  for (const path of [
+    '/wireframes', '/wireframes.html', '/wireframes/index.html',
+    '/wireframes/editorial-bento', '/wireframes/sidebar-engine',
+    '/wireframes/split-stream.html', '/wireframes/tabbed-hub/',
+    '/%77ireframes', '/brand-book', '/brand-book.html', '/sales-one-pager',
+    '/internal/marketing-pdf', '/preview/daily-blog/home', '/preview/daily-blog/posts',
+    '/preview/staging', '/preview/staging/ingredient-traceability',
+    '/brand-assets/proposal-template.pdf', '/brand-assets/proposal-template-full.pdf',
+    '/brand-assets/bc-front.png', '/__internal/assets/brand/proposal-template.pdf',
+    '/_offline_print/example.pdf',
+  ]) {
+    const hidden = await request(path, Date.parse(slots[0].pubDate));
+    assert.equal(hidden.response.status, 404, `${path}: internal content must not be public`);
+    assert.ok(!staticSitemap.text.includes(`https://datadocks.com${path}<`), `${path}: internal URL in sitemap`);
+    checks++;
+  }
+  const publicLogo = await request('/brand-assets/logo-orange.svg', Date.parse(slots[0].pubDate));
+  assert.equal(publicLogo.response.status, 200, 'The logo used by public pages must remain available');
+  checks++;
 
   for (const [index, slot] of slots.entries()) {
     const cutoff = Date.parse(slot.pubDate);
@@ -166,9 +299,11 @@ export default {
       const label = `Slot ${slot.slot} ${phase} (${new Date(instant).toISOString()})`;
       const { response, text } = await request(articlePath(slot), instant);
       assert.equal(response.status, published ? 200 : 404, `${label}: article availability`);
-      assertUncached(response, `${label} article`);
+      assertBoundedCache(response, `${label} article`);
       if (published) {
         assert.ok(text.includes(articlePath(slot)), `${label}: article canonical/content was not rendered`);
+        assert.ok(!/aria-label=["']Preview navigation["']/.test(text) && !text.includes('/preview/staging'),
+          `${label}: internal preview navigation leaked into the public article`);
         assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${label}: published article is noindex`);
         assert.ok(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(text),
           `${label}: published article contains a noindex meta tag`);
@@ -182,7 +317,10 @@ export default {
       for (const path of ['/', '/posts', '/sitemap-posts.xml']) {
         const result = await request(path, instant);
         assert.equal(result.response.status, 200, `${label}: ${path} response`);
-        assertUncached(result.response, `${label} ${path}`);
+        assertBoundedCache(result.response, `${label} ${path}`);
+        for (const campaign of CAMPAIGN_PATHS) {
+          assert.ok(!result.text.includes(campaign), `${label}: ${path} advertised a paid destination`);
+        }
         assert.equal(result.text.includes(slot.slug), published, `${label}: ${path} visibility`);
         for (const future of slots.filter((entry) => Date.parse(entry.pubDate) > instant)) {
           assert.ok(!result.text.includes(future.slug), `${label}: ${path} leaked future post ${future.slug}`);

@@ -28,6 +28,33 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Publication boundary regression tests
+        run: npm run test:publication-boundary
+
+      - name: External audit regression tests (offline)
+        run: npm run test:outlinks
+
+      - name: Vendor asset integrity regression tests
+        run: npm run test:vendor-assets
+
+      - name: Trusted script policy regression tests
+        run: npm run test:script-csp
+
+      - name: Publication CSS regression tests
+        run: node --test scripts/publication-build.test.mjs
+
+      - name: Preview link checker regression tests
+        run: npm run test:preview-links
+
+      - name: Performance comparison regression tests (offline)
+        run: node --test scripts/performance-comparison.test.mjs
+
+      - name: YouTube importer regression tests
+        run: npm run test:youtube-sync
+
+      - name: Staged blog content and citation checks
+        run: npm run check:staging
+
       - name: Linting (ESLint)
         run: npm run lint
 
@@ -145,52 +172,53 @@ jobs:
           # See playwright.config.ts: const isRemote = baseURL.startsWith('https://')
           PLAYWRIGHT_BASE_URL: ${{ steps.cf-preview.outputs.preview_url }}
 
+      - name: Upload browser test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Performance Audit (Lighthouse CI)
         run: |
-          # Pass the preview URL via CLI flags which override lighthouserc.cjs defaults.
-          # Explicitly set startServerCommand to empty string to suppress local server launch.
+          # lighthouserc.cjs uses PREVIEW_URL for all five priority pages.
+          # Suppress the local server because these checks target Cloudflare.
           npx lhci autorun \
-            --collect.url="${PREVIEW_URL}/" \
             --collect.startServerCommand="" \
             --collect.startServerReadyPattern="" \
             --collect.numberOfRuns=1
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
+      - name: Compare mobile performance with production
+        run: node scripts/compare-preview-performance.mjs "${PREVIEW_URL}"
+
+      - name: Upload production and preview performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-performance-comparison
+          path: performance-comparison/
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Link Crawl (Linkinator)
         # Linkinator crawls the live preview, verifying all internal pages, routes,
         # and assets recursively for broken links (404s).
         # Resolve production marketing URLs (including canonical links) against
         # this preview so new routes are checked before they exist on main.
-        # External URLs are skipped to prevent CI flakes caused by third-party bot protection,
-        # rate limits, or external server downtime.
-        run: |
-          npx linkinator "${PREVIEW_URL}" \
-            --recurse \
-            --retry \
-            --retry-errors \
-            --concurrency 25 \
-            --timeout 30000 \
-            --url-rewrite-search '^https?://(www\.)?datadocks\.com(?=[/?#]|$)' \
-            --url-rewrite-replace "${PREVIEW_URL}" \
-            --skip "^https?://(?!(?:[a-zA-Z0-9-]+\.)*pages\.dev|(?:[a-zA-Z0-9-]+\.)*datadocks\.com|localhost)" \
-            --format json > linkinator-results.json || {
-              echo "::error title=Linkinator Detected Broken Links::Linkinator found broken links in preview deployment"
-              node -e "
-                const fs = require('fs');
-                if (fs.existsSync('linkinator-results.json')) {
-                  const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
-                  const broken = data.links.filter(l => l.state === 'BROKEN');
-                  console.log('Total broken links found: ' + broken.length);
-                  for (const b of broken) {
-                    console.log('::error file=' + (b.parent || 'root') + '::' + b.status + ' ' + b.url);
-                  }
-                }
-              "
-              exit 1
-            }
-          node -e "
-            const fs = require('fs');
-            const data = JSON.parse(fs.readFileSync('linkinator-results.json', 'utf-8'));
-            console.log('✓ Linkinator passed: ' + data.links.length + ' links scanned with 0 broken links.');
-          "
+        # Only the preview origin is crawled; app and third-party links are skipped.
+        # The runner keeps retries alive, bounds the crawl, and always writes a
+        # report instead of trying to parse empty CLI output after a tool crash.
+        run: node scripts/check-preview-links.mjs "${PREVIEW_URL}"
+
+      - name: Upload link crawl report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkinator-results
+          path: linkinator-results.json
+          if-no-files-found: ignore
+          retention-days: 7

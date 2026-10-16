@@ -1,25 +1,14 @@
 /** @jsxImportSource solid-js */
 import { For, Switch, Match, Show, createSignal, onCleanup, createMemo } from "solid-js";
+import "./YardTypeSelector.css";
 import { createYardTypeEngine } from "./YardTypeEngine";
 import type { SubCategory, SystemMatch } from "./YardTypeEngine";
+import type SystemDetailPanelComponent from "./YardSystemDetailPanel";
 import type { JSX } from "solid-js";
-import { bentoCall } from "@/lib/bento";
-import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
 
 /* ── Responsive sources for the primary category cards ── */
 
-// Only the four `yard-quadrant-*` files have a width ladder generated beside
-// them (400/600/800/1016, built from the .jpg sources in public/images/temp).
-// Every other image in the engine is already at its display size, so this
-// returns undefined for them and the plain `src` is used untouched — passing
-// a srcset that points at files which do not exist would silently break the
-// image, so the prefix check is deliberate, not defensive noise.
-// Width ladders generated beside the originals in public/images/temp, keyed by
-// filename stem. Each ladder stops at its source's real resolution — the
-// freight strips only exist as 508w/1024w art, so nothing here upscales.
-// A file with no entry gets no srcset and keeps its plain `src`: emitting a
-// srcset that points at files which do not exist would break the image
-// silently, so the lookup is deliberate rather than defensive noise.
+// Each width ladder stops at the source resolution; other images keep their src.
 const SRCSET_LADDERS: Record<string, number[]> = {
   "yard-quadrant-warehouse-docks":        [400, 600, 800, 1016],
   "yard-quadrant-rail-transit":           [400, 600, 800, 1016],
@@ -39,6 +28,14 @@ function laddered(src: string | null | undefined): string | undefined {
   const widths = SRCSET_LADDERS[stem];
   if (!widths) return undefined;
   return widths.map((w) => `${base}-${w}.webp ${w}w`).join(", ");
+}
+
+// Mirrors max-w-7xl, px-4/md:px-12, the 2-column breakpoint and the 10px gap.
+const CATEGORY_IMAGE_SIZES = "(min-width: 1280px) 587px, (min-width: 768px) calc((100vw - 106px) / 2), (min-width: 640px) calc((100vw - 42px) / 2), calc(100vw - 32px)";
+
+function categoryAvifSrcset(src: string): string | undefined {
+  if (!src.includes("/yard-quadrant-")) return undefined;
+  return laddered(src)?.replaceAll(".webp", ".avif");
 }
 
 /* ── Primary Category Color Tint Overlays (Page 1) ── */
@@ -169,222 +166,12 @@ function computeHeaderThumbWidth(aspectStr: string | null): string {
   return `${calculatedWidth}px`;
 }
 
-/* ── Next Steps CTA Card Component ── */
+let SystemDetailPanel: typeof SystemDetailPanelComponent;
 
-function NextStepsCard(props: {
-  selectedSystemName: string;
-  isDataDocks: boolean;
-  subCategoryTitle: string;
-  integrationEcosystem?: string;
-}) {
-  const [email, setEmail] = createSignal("");
-  const [isSubmitted, setIsSubmitted] = createSignal(false);
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    const mail = email().trim();
-    if (!mail) return;
-
-    const w = window as any;
-    if (typeof w.ddSetEmail === "function") w.ddSetEmail(mail);
-    bentoCall("identify", mail);
-
-    fetch("/api/bento-track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: mail,
-        event: props.isDataDocks ? "DataDocks Demo Request" : "YMS Shortlist Request",
-        source: window.location.pathname,
-        landingPage: sessionStorage.getItem("dd_landing_page") || window.location.href,
-        visitorUuid: typeof w.getBentoVisitorUuid === "function" ? w.getBentoVisitorUuid() : null,
-        attribution: typeof w.ddGetAttribution === "function" ? w.ddGetAttribution() : null,
-        metadata: {
-          selectedSystem: props.selectedSystemName,
-          subCategory: props.subCategoryTitle,
-        }
-      }),
-      keepalive: true,
-    }).catch(() => {});
-
-    setIsSubmitted(true);
-
-    const ddOpen = w.ddOpenCalendly;
-    if (typeof ddOpen === "function") {
-      ddOpen(CALENDLY_BRAND_PARAMS);
-    } else {
-      window.open(`${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`, "_blank", "noopener");
-    }
-  };
-
-  return (
-    <div
-      class={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 ${
-        props.isDataDocks
-          ? "bg-gradient-to-br from-[#FFF8E9] via-[#F8EDD9]/60 to-[#FFF8E9] dark:from-neutral-900 dark:via-neutral-900/90 dark:to-neutral-900 border-[#fd4f00]/30 dark:border-[#fd4f00]/40 shadow-xs"
-          : "bg-neutral-900 dark:bg-neutral-900 text-white border-neutral-800 dark:border-neutral-700 shadow-md"
-      }`}
-    >
-      <div class="flex items-center justify-between gap-2 mb-2.5">
-        <span
-          class={`text-[10px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full border ${
-            props.isDataDocks
-              ? "bg-[#fd4f00]/10 text-[#fd4f00] dark:text-[#ff7635] border-[#fd4f00]/20 dark:border-[#fd4f00]/30"
-              : "bg-neutral-800 text-neutral-300 border-neutral-700"
-          }`}
-        >
-          Next Steps
-        </span>
-      </div>
-
-      <h4
-        class={`text-base sm:text-lg font-bold leading-tight mb-1.5 ${
-          props.isDataDocks ? "text-neutral-950 dark:text-white" : "text-white"
-        }`}
-      >
-        {props.isDataDocks
-          ? "Book a Live DataDocks Demo"
-          : `Identify the Top 3 Systems for Your Operations`}
-      </h4>
-
-      <p
-        class={`text-xs sm:text-sm leading-relaxed mb-4 ${
-          props.isDataDocks ? "text-neutral-700 dark:text-neutral-300" : "text-neutral-300"
-        }`}
-      >
-        {props.isDataDocks
-          ? `See how DataDocks streamlines loading dock appointments, reduces driver dwell times, and integrates seamlessly with your ${props.integrationEcosystem || "main yard management software"}.`
-          : `Selecting the ideal software for your facility depends on your specific throughput, ERP ecosystem, and hardware requirements. We recommend booking demos with 3 relevant vendors to compare key capabilities and benchmark features directly against your operational requirements.`}
-      </p>
-
-      {/* ACTIONS */}
-      <Show when={props.isDataDocks}>
-        <div class="pt-1">
-          <Show
-            when={!isSubmitted()}
-            fallback={
-              <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-                <svg class="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-                <span>Opening calendar...</span>
-              </div>
-            }
-          >
-            <form onSubmit={handleSubmit} class="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder="Enter your work email"
-                value={email()}
-                onInput={(e) => setEmail(e.currentTarget.value)}
-                required
-                class="flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-700 focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
-              />
-              <button
-                type="submit"
-                class="px-4 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap bg-[#fd4f00] hover:bg-[#e04600] text-white shadow-xs"
-              >
-                <span>Book a Demo</span>
-                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </button>
-            </form>
-          </Show>
-        </div>
-      </Show>
-    </div>
-  );
-}
-
-/** System Detail Card & Next Steps CTA (Screen 3) */
-function SystemDetailPanel(props: {
-  item: SystemMatch;
-  sub: SubCategory;
-  isDataDocks: boolean;
-}) {
-  return (
-    <div class="space-y-4">
-      {/* System Details Card */}
-      <div
-        class={`p-5 sm:p-6 rounded-2xl space-y-4 border transition-all duration-200 ${
-          props.isDataDocks
-            ? "bg-[#F8EDD9]/40 dark:bg-neutral-900 border-[#E5D3B3] dark:border-[#fd4f00]/40 shadow-xs"
-            : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 shadow-xs"
-        }`}
-      >
-        {/* Panel Header */}
-        <div class="flex items-start justify-between gap-3 pb-3 border-b border-neutral-200/80 dark:border-neutral-800">
-          <div>
-            <span class="text-[10px] font-bold tracking-widest text-[#9c806d] dark:text-[#d4a276] uppercase">
-              System Details
-            </span>
-            <h3
-              class={`text-base sm:text-lg font-bold leading-tight mt-0.5 ${
-                props.isDataDocks ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-950 dark:text-white"
-              }`}
-            >
-              {props.item.name}
-            </h3>
-          </div>
-          <span
-            class={`shrink-0 text-xs font-bold font-mono px-2.5 py-1 rounded-full border ${
-              props.isDataDocks
-                ? "bg-[#fd4f00] text-white border-[#fd4f00]"
-                : "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 border-neutral-900 dark:border-neutral-100"
-            }`}
-          >
-            {props.item.score}% Match
-          </span>
-        </div>
-
-        {/* Who Is It For */}
-        {/* Who Is It For */}
-        <Show when={props.item.whoIsItFor}>
-          <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276] block mb-1">
-              Who is it for?
-            </span>
-            <p class="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
-              {props.item.whoIsItFor}
-            </p>
-          </div>
-        </Show>
-
-        {/* Architecture & Capabilities (Side-by-Side 2-Column Grid) */}
-        <div class="grid sm:grid-cols-2 gap-4 pt-3 border-t border-neutral-200/70 dark:border-neutral-800 text-xs">
-          <div>
-            <span class="font-bold text-[#9c806d] dark:text-[#d4a276] uppercase tracking-wider block mb-1">
-              Software Architecture
-            </span>
-            <p class="font-bold text-neutral-950 dark:text-white leading-snug">
-              {props.item.architecture ?? props.sub.ymsFit}
-            </p>
-          </div>
-          <div>
-            <span class="font-bold text-[#9c806d] dark:text-[#d4a276] uppercase tracking-wider block mb-1">
-              Key Capabilities
-            </span>
-            <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">
-              {props.item.capabilities ?? props.sub.keyCapability}
-            </p>
-          </div>
-        </div>
-
-        <p class="text-[11px] text-neutral-500 dark:text-neutral-400 pt-2 border-t border-neutral-200/60 dark:border-neutral-800 italic">
-          Note: Scores indicate category functional fit index, not a product review or quality rating.
-        </p>
-      </div>
-
-      {/* Next Steps CTA Card */}
-      <NextStepsCard
-        selectedSystemName={props.item.name}
-        isDataDocks={props.isDataDocks}
-        subCategoryTitle={props.sub.title}
-        integrationEcosystem={props.sub.integrationEcosystem}
-      />
-    </div>
-  );
+async function loadSystemDetailPanel() {
+  if (!SystemDetailPanel) {
+    SystemDetailPanel = (await import("./YardSystemDetailPanel")).default;
+  }
 }
 
 /* ── Shared Icon ── */
@@ -467,43 +254,22 @@ function CategoryCard(props: {
           : "yt-card-enter"
       }`}
     >
-      {/*
-        These four cards were the single worst thing on
-        /posts/best-yard-management-options: 462 KB of eager images.
-
-        Two separate problems, both fixed here.
-
-        1. ONE OVERSIZED FILE. There was no srcset, so every device got the
-           full 1016w original. The card renders at ~380 CSS px on a phone
-           and ~587 CSS px in the desktop 2-col grid — with DPR that is
-           ~665px and ~1174px of real pixels, so phones were downloading
-           roughly 2.3x more pixels than they could display. `quadrantSrcSet`
-           builds the 400/600/800/1016 ladder generated from the .jpg
-           sources; `sizes` mirrors the actual grid maths below so the
-           browser can pick before layout.
-
-        2. EAGER ON ALL FOUR. The grid is `grid-cols-1 sm:grid-cols-2`, so on
-           a phone only the first card is above the fold — yet all four were
-           `loading="eager"` and competed with the preloaded Bruta webfont for
-           a throttled connection. The H1 is the LCP element on this page, so
-           starving its font is exactly what pushed LCP out. Only index 0
-           stays eager; the rest load as they scroll in.
-
-        Do not put this back to a bare `src` + `eager` without re-checking
-        mobile LCP on a throttled connection.
-      */}
-      <img
-        src={props.src}
-        srcset={laddered(props.src)}
-        sizes="(min-width: 1280px) 587px, (min-width: 640px) 45vw, 92vw"
-        alt={props.alt ?? props.title}
-        width="508"
-        height="276"
-        class="w-full block rounded-xl scale-100"
-        style={{ "aspect-ratio": props.aspectRatio }}
-        loading={props.index === 0 ? "eager" : "lazy"}
-        decoding="async"
-      />
+      {/* Only the first category is eager; AVIF reduces bytes with WebP fallback. */}
+      <picture>
+        <source type="image/avif" srcset={categoryAvifSrcset(props.src)} sizes={CATEGORY_IMAGE_SIZES} />
+        <img
+          src={props.src}
+          srcset={laddered(props.src)}
+          sizes={CATEGORY_IMAGE_SIZES}
+          alt={props.alt ?? props.title}
+          width="508"
+          height="276"
+          class="w-full block rounded-xl scale-100"
+          style={{ "aspect-ratio": props.aspectRatio }}
+          loading={props.index === 0 ? "eager" : "lazy"}
+          decoding="async"
+        />
+      </picture>
       
       <Show when={theme()}>
         <div
@@ -626,7 +392,7 @@ function SubCard(props: {
 /** Text-only list item for subcategories without images */
 function TextListItem(props: {
   sub: SubCategory;
-  onClick: () => void;
+  onClick: (e: MouseEvent) => void;
   index: number;
   disabled?: boolean;
   isBackwardNav?: boolean;
@@ -667,7 +433,7 @@ function TextListItem(props: {
       style={delayStyle()}
       data-home-card={isHomeCard() ? "true" : undefined}
       aria-label={`Select ${props.sub.title}`}
-      class={`w-full text-left py-3.5 border-b border-[#ece6de] dark:border-neutral-800 flex items-center justify-between group hover:bg-neutral-50/80 dark:hover:bg-neutral-900/80 active:bg-neutral-100 dark:active:bg-neutral-800 transition-[background-color] duration-200 ease-out disabled:pointer-events-none ${
+      class={`w-full text-left py-3.5 border-b border-[#ece6de] dark:border-[var(--blog-rule,#262626)] flex items-center justify-between group hover:bg-neutral-50/80 dark:hover:bg-[var(--blog-surface,rgba(23,23,23,0.8))] active:bg-neutral-100 dark:active:bg-[var(--blog-surface,#262626)] transition-[background-color] duration-200 ease-out disabled:pointer-events-none ${
         isFlippingCard()
           ? "!opacity-0 !animation-none invisible"
           : props.isExitingCards
@@ -678,14 +444,14 @@ function TextListItem(props: {
       }`}
     >
       <div class="min-w-0 pr-4">
-        <span class="text-xs sm:text-sm font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] transition-colors block">
+        <span class="text-xs sm:text-sm font-bold text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] group-hover:text-[#fd4f00] dark:group-hover:text-[color:var(--blog-link,#ff7635)] transition-colors block">
           {props.sub.title}
         </span>
-        <span class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 leading-snug block">
+        <span class="text-xs text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)] mt-0.5 leading-snug block">
           {props.sub.description}
         </span>
       </div>
-      <Chevron class="text-neutral-300 dark:text-neutral-600 group-hover:text-[#fd4f00] dark:group-hover:text-[#ff7635] group-hover:translate-x-1.5" />
+      <Chevron class="text-neutral-300 dark:text-[color:var(--blog-muted,#525252)] group-hover:text-[#fd4f00] dark:group-hover:text-[color:var(--blog-link,#ff7635)] group-hover:translate-x-1.5" />
     </button>
   );
 }
@@ -694,6 +460,17 @@ function TextListItem(props: {
 
 export default function YardTypeSelector() {
   const engine = createYardTypeEngine();
+  const [isPreparingResults, setIsPreparingResults] = createSignal(false);
+  const [resultsLoadError, setResultsLoadError] = createSignal(false);
+  let resultsPreparation: Promise<unknown> | undefined;
+  let resultSelection = 0;
+  const prepareResults = () => resultsPreparation ??= Promise.all([
+    engine.loadSystemMatches(),
+    loadSystemDetailPanel(),
+  ]).catch(error => {
+    resultsPreparation = undefined;
+    throw error;
+  });
 
   // Navigation & animation signals
   const [isNavigating, setIsNavigating] = createSignal(false);
@@ -762,6 +539,7 @@ export default function YardTypeSelector() {
   };
 
   onCleanup(() => {
+    resultSelection++;
     cleanupActiveAnimation();
     setIsHeaderThumbBoxTransparent(false);
   });
@@ -782,6 +560,7 @@ export default function YardTypeSelector() {
   // Prefetch subcategory images on hover intent
   const prefetchedSets = new Set<string>();
   const prefetchImages = (catId: string) => {
+    void prepareResults().catch(() => {});
     if (prefetchedSets.has(catId)) return;
     prefetchedSets.add(catId);
     const cat = engine.allCategories.find((c) => c.id === catId);
@@ -893,8 +672,11 @@ export default function YardTypeSelector() {
 
   const handleCategoryClick = (catId: string, e: MouseEvent) => {
     if (isNavigating()) return;
-    
     const targetBtn = e.currentTarget as HTMLElement;
+    setResultsLoadError(false);
+    // Subcategories are already available. Fetch later steps without delaying
+    // this transition; report download failures only when results are requested.
+    void prepareResults().catch(() => {});
     originNode = targetBtn;
     const imgEl = targetBtn.querySelector("img");
     if (imgEl) {
@@ -921,10 +703,26 @@ export default function YardTypeSelector() {
     }
   };
 
-  const handleSubCategoryClick = (subId: string, e: MouseEvent) => {
-    if (isNavigating()) return;
-    
+  const handleSubCategoryClick = async (subId: string, e: MouseEvent) => {
+    if (isNavigating() || isPreparingResults()) return;
     const targetBtn = e.currentTarget as HTMLElement;
+    const cat = engine.selectedCategory();
+    const sub = cat?.subCategories.find((s) => s.id === subId);
+    if (!cat || !sub) return;
+
+    const selection = ++resultSelection;
+    setIsPreparingResults(true);
+    setResultsLoadError(false);
+    try {
+      await prepareResults();
+      // Back navigation or unmounting cancels this selection, not the download.
+      if (selection !== resultSelection) return;
+    } catch {
+      if (selection === resultSelection) setResultsLoadError(true);
+      return;
+    } finally {
+      if (selection === resultSelection) setIsPreparingResults(false);
+    }
     originNode = targetBtn;
     const imgEl = targetBtn.querySelector("img");
     if (imgEl) {
@@ -932,9 +730,7 @@ export default function YardTypeSelector() {
       originSrc = imgEl.currentSrc || imgEl.src;
     }
 
-    const cat = engine.selectedCategory();
-    const sub = cat?.subCategories.find((s) => s.id === subId);
-    const subIdx = cat ? cat.subCategories.findIndex((s) => s.id === subId) : 0;
+    const subIdx = cat.subCategories.findIndex((s) => s.id === subId);
     if (sub && cat) {
       setSelectedSystemIndex(0);
       setFacilityAdjoinsBuilding(null);
@@ -976,6 +772,9 @@ export default function YardTypeSelector() {
     nextThumbAspect: string | null
   ) => {
     if (isNavigating()) return;
+    resultSelection++;
+    setIsPreparingResults(false);
+    setResultsLoadError(false);
     setFacilityAdjoinsBuilding(null);
     setSelectedSystemIndex(0);
 
@@ -1328,14 +1127,14 @@ export default function YardTypeSelector() {
   const currentThumbWidth = createMemo(() => computeHeaderThumbWidth(headerThumbAspect()));
 
   return (
-    <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-8 font-sans text-neutral-900 dark:text-neutral-100 sm:min-h-[62rem] flex flex-col justify-start">
+    <div aria-busy={isPreparingResults()} class="yard-selector w-full max-w-7xl mx-auto px-4 md:px-12 pb-8 font-sans text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] sm:min-h-[62rem] flex flex-col justify-start">
       {/* Screen Reader Live Region */}
       <div aria-live="polite" aria-atomic="true" class="sr-only">
         {screenAnnouncement()}
       </div>
 
       {/* ── UNIFIED PERSISTENT HEADER FRAME (Always Present, Width Reflow) ── */}
-      <div class="mb-4 pb-3 border-b border-neutral-200/70 dark:border-neutral-800 flex items-center min-h-[4.5rem] relative">
+      <div class="mb-4 pb-3 border-b border-neutral-200/70 dark:border-[var(--blog-rule,#262626)] flex items-center min-h-[4.5rem] relative">
         {/* Always-Present Thumbnail Container with CSS Width Transition */}
         <div
           data-yt-header-thumb-box
@@ -1346,7 +1145,7 @@ export default function YardTypeSelector() {
             "margin-right": headerThumbAspect() ? "1rem" : "0px",
             "border-width": headerThumbAspect() ? "1px" : "0px"
           }}
-          class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-neutral-800 shadow-xs bg-neutral-100 dark:bg-neutral-900 relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          class="shrink-0 h-[4.75rem] max-w-[175px] rounded-xl overflow-hidden border-neutral-200/90 dark:border-[var(--blog-rule,#262626)] shadow-xs bg-neutral-100 dark:bg-[var(--blog-surface,#171717)] relative transition-[width,margin-right] duration-480 ease-[cubic-bezier(0.22,1,0.36,1)]"
         >
           <Show when={headerThumbSrc()}>
             {/*
@@ -1375,19 +1174,19 @@ export default function YardTypeSelector() {
               <div class="absolute inset-x-0 top-0 pointer-events-none yt-header-exit">
                 <div class="flex items-center gap-1.5 sm:gap-2 mb-1 min-h-6">
                   <Show when={old().showBack}>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 shrink-0">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)] uppercase bg-neutral-200/70 dark:bg-[var(--blog-canvas,#262626)] shrink-0">
                       <span class="sm:hidden">BACK</span>
                       <span class="hidden sm:inline">{old().backLabel}</span>
                     </span>
                   </Show>
-                  <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
+                  <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                     {old().badge}
                   </span>
                 </div>
-                <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
+                <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] leading-snug">
                   {old().title}
                 </h2>
-                <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
+                <p class="text-xs text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)] mt-0.5 line-clamp-2 sm:line-clamp-none">
                   {old().subtitle}
                 </p>
               </div>
@@ -1409,7 +1208,7 @@ export default function YardTypeSelector() {
                   }}
                   disabled={isNavigating()}
                   aria-label="Go back"
-                  class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-neutral-300 uppercase bg-neutral-200/70 dark:bg-neutral-800 hover:bg-neutral-300/80 dark:hover:bg-neutral-700 hover:text-black dark:hover:text-white active:scale-95 transition-[transform,background-color,color] duration-200 group disabled:pointer-events-none shrink-0"
+                  class="inline-flex items-center gap-1 px-2 py-0.5 -ml-1 rounded-md text-[10px] font-bold tracking-widest text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)] uppercase bg-neutral-200/70 dark:bg-[var(--blog-canvas,#262626)] hover:bg-neutral-300/80 dark:hover:bg-[var(--blog-surface,#404040)] hover:text-black dark:hover:text-[color:var(--blog-ink,#fff)] active:scale-95 transition-[transform,background-color,color] duration-200 group disabled:pointer-events-none shrink-0"
                 >
                   <svg class="size-3 group-hover:-translate-x-0.5 transition-transform duration-200 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -1418,20 +1217,27 @@ export default function YardTypeSelector() {
                   <span class="hidden sm:inline">{backButtonLabel()}</span>
                 </button>
               </Show>
-              <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[#ff7635] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
+              <span class="text-[10px] font-bold tracking-widest text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)] uppercase bg-[#F8EDD9] dark:bg-[#fd4f00]/15 px-2 py-0.5 rounded border border-[#E5D3B3] dark:border-[#fd4f00]/30 truncate max-w-[130px] sm:max-w-none">
                 {headerBadge()}
               </span>
             </div>
 
-            <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-white leading-snug">
+            <h2 class="text-sm sm:text-lg font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] leading-snug">
               {headerTitle()}
             </h2>
-            <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5 line-clamp-2 sm:line-clamp-none">
+            <p class="text-xs text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)] mt-0.5 line-clamp-2 sm:line-clamp-none">
               {headerSubtitle()}
             </p>
           </div>
         </div>
       </div>
+
+      <Show when={isPreparingResults()}>
+        <p role="status" class="mb-3 text-sm text-neutral-600 dark:text-[color:var(--blog-muted,#d4d4d4)]">Loading recommendations…</p>
+      </Show>
+      <Show when={resultsLoadError()}>
+        <p role="alert" class="mb-3 text-sm text-neutral-700 dark:text-[color:var(--blog-ink,#e5e5e5)]">Recommendations could not load. Refresh the page to try again.</p>
+      </Show>
 
       <Switch>
         {/* ── SCREEN 1: Primary Categories ── */}
@@ -1495,7 +1301,7 @@ export default function YardTypeSelector() {
                               index={index()}
                               isBackwardNav={isBackward()}
                               homeIndex={targetHomeIndex()}
-                              disabled={isNavigating()}
+                              disabled={isNavigating() || isPreparingResults()}
                               isExitingCards={isExitingCards()}
                               flipSourceIndex={flipSourceIndex()}
                               isHomeLandingComplete={isHomeLandingComplete()}
@@ -1518,7 +1324,7 @@ export default function YardTypeSelector() {
                               index={index()}
                               isBackwardNav={isBackward()}
                               homeIndex={targetHomeIndex()}
-                              disabled={isNavigating()}
+                              disabled={isNavigating() || isPreparingResults()}
                               isExitingCards={isExitingCards()}
                               flipSourceIndex={flipSourceIndex()}
                               isHomeLandingComplete={isHomeLandingComplete()}
@@ -1547,7 +1353,7 @@ export default function YardTypeSelector() {
                                   index={index()}
                                   isBackwardNav={isBackward()}
                                   homeIndex={targetHomeIndex()}
-                                  disabled={isNavigating()}
+                                  disabled={isNavigating() || isPreparingResults()}
                                   isExitingCards={isExitingCards()}
                                   flipSourceIndex={flipSourceIndex()}
                                   isHomeLandingComplete={isHomeLandingComplete()}
@@ -1573,7 +1379,7 @@ export default function YardTypeSelector() {
                                 index={index()}
                                 isBackwardNav={isBackward()}
                                 homeIndex={targetHomeIndex()}
-                                disabled={isNavigating()}
+                                disabled={isNavigating() || isPreparingResults()}
                                 isExitingCards={isExitingCards()}
                                 flipSourceIndex={flipSourceIndex()}
                                 isHomeLandingComplete={isHomeLandingComplete()}
@@ -1595,7 +1401,7 @@ export default function YardTypeSelector() {
                                 index={realIdx}
                                 isBackwardNav={isBackward()}
                                 homeIndex={targetHomeIndex()}
-                                disabled={isNavigating()}
+                                disabled={isNavigating() || isPreparingResults()}
                                 isExitingCards={isExitingCards()}
                                 flipSourceIndex={flipSourceIndex()}
                                 isHomeLandingComplete={isHomeLandingComplete()}
@@ -1608,7 +1414,7 @@ export default function YardTypeSelector() {
                     </div>
                   ) : (
                     /* Text list fallback */
-                    <div class="border-t border-[#ece6de] dark:border-neutral-800">
+                    <div class="border-t border-[#ece6de] dark:border-[var(--blog-rule,#262626)]">
                       <For each={cat.subCategories}>
                         {(sub, index) => (
                           <TextListItem
@@ -1616,11 +1422,11 @@ export default function YardTypeSelector() {
                             index={index()}
                             isBackwardNav={isBackward()}
                             homeIndex={targetHomeIndex()}
-                            disabled={isNavigating()}
+                            disabled={isNavigating() || isPreparingResults()}
                             isExitingCards={isExitingCards()}
                             flipSourceIndex={flipSourceIndex()}
                             isHomeLandingComplete={isHomeLandingComplete()}
-                            onClick={() => engine.selectSubCategory(sub.id)}
+                            onClick={(e) => handleSubCategoryClick(sub.id, e)}
                           />
                         )}
                       </For>
@@ -1669,7 +1475,7 @@ export default function YardTypeSelector() {
                       <div>
                         {/* ── TOP HORIZONTAL BAR: Facility Logistics Qualifier (Dark High-Contrast) ── */}
                         <Show when={!isDataDocksAlreadyTop}>
-                          <div class="p-4 sm:p-4.5 rounded-xl mb-4 bg-neutral-900 border border-neutral-800 text-white flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 transition-all shadow-md">
+                          <div class="yard-qualifier p-4 sm:p-4.5 rounded-xl mb-4 bg-neutral-900 border border-neutral-800 text-white flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 transition-all shadow-md">
                             <div class="min-w-0">
                               <span class="text-[10px] font-bold uppercase tracking-widest text-[#fd4f00] block mb-1">
                                 Facility Logistics Check
@@ -1685,7 +1491,8 @@ export default function YardTypeSelector() {
                                   setFacilityAdjoinsBuilding(true);
                                   setSelectedSystemIndex(0);
                                 }}
-                                class={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
+                                aria-pressed={facilityAdjoinsBuilding() === true}
+                                class={`yard-qualifier-answer inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
                                   facilityAdjoinsBuilding() === true
                                     ? "bg-[#fd4f00] text-white border-2 border-[#fd4f00] shadow-sm font-bold scale-[1.01]"
                                     : facilityAdjoinsBuilding() === null
@@ -1694,7 +1501,7 @@ export default function YardTypeSelector() {
                                 }`}
                               >
                                 <span
-                                  class={`size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
+                                  class={`yard-qualifier-indicator size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
                                     facilityAdjoinsBuilding() === true
                                       ? "bg-white text-[#fd4f00]"
                                       : "border border-neutral-400"
@@ -1710,7 +1517,8 @@ export default function YardTypeSelector() {
                                   setFacilityAdjoinsBuilding(false);
                                   setSelectedSystemIndex(0);
                                 }}
-                                class={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
+                                aria-pressed={facilityAdjoinsBuilding() === false}
+                                class={`yard-qualifier-answer inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs transition-all duration-150 cursor-pointer text-left ${
                                   facilityAdjoinsBuilding() === false
                                     ? "bg-white text-neutral-900 border-2 border-white shadow-sm font-bold scale-[1.01]"
                                     : facilityAdjoinsBuilding() === null
@@ -1719,7 +1527,7 @@ export default function YardTypeSelector() {
                                 }`}
                               >
                                 <span
-                                  class={`size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
+                                  class={`yard-qualifier-indicator size-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-colors ${
                                     facilityAdjoinsBuilding() === false
                                       ? "bg-neutral-900 text-white"
                                       : "border border-neutral-400"
@@ -1739,8 +1547,8 @@ export default function YardTypeSelector() {
                           <div class="lg:col-span-5 space-y-3">
                             {/* ── RECOMMENDED 2-SYSTEM SETUP EXTENSION ── */}
                             <Show when={!isDataDocksAlreadyTop && facilityAdjoinsBuilding() === true}>
-                              <div class="yt-fade-slide-in p-3.5 bg-[#F8EDD9]/60 dark:bg-neutral-900/80 border border-[#E5D3B3] dark:border-neutral-800 rounded-xl flex items-start gap-2.5 text-xs text-neutral-800 dark:text-neutral-200">
-                                <span class="inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
+                              <div class="yt-fade-slide-in p-3.5 bg-[#F8EDD9]/60 dark:bg-[var(--blog-surface,rgba(23,23,23,0.8))] border border-[#E5D3B3] dark:border-[var(--blog-rule,#262626)] rounded-xl flex items-start gap-2.5 text-xs text-neutral-800 dark:text-[color:var(--blog-ink,#e5e5e5)]">
+                                <span class="yard-recommended-check inline-flex items-center justify-center size-4 rounded-full bg-[#fd4f00] text-white text-[10px] font-bold shrink-0 mt-0.5">
                                   ✓
                                 </span>
                                 <p class="leading-relaxed">
@@ -1750,10 +1558,10 @@ export default function YardTypeSelector() {
                             </Show>
 
                             <div class="flex items-center justify-between pt-1">
-                              <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]" id="yt-match-list-label">
+                              <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)]" id="yt-match-list-label">
                                 Category Match List
                               </span>
-                              <span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-400">
+                              <span class="text-[10px] font-medium text-neutral-600 dark:text-[color:var(--blog-muted,#a3a3a3)]">
                                 Click system to view details
                               </span>
                             </div>
@@ -1773,48 +1581,49 @@ export default function YardTypeSelector() {
                                         aria-selected={isSelected()}
                                         onClick={() => setSelectedSystemIndex(idx())}
                                         ref={(el: HTMLElement) => { if (idx() === 0) focusTargetRef = el; }}
-                                        class={`w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
+                                        class={`yard-match w-full text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer block hover:scale-[1.01] hover:shadow-md ${
                                           isSelected()
                                             ? isDataDocks
                                               ? "bg-[#F8EDD9] dark:bg-[#fd4f00]/15 border-[#fd4f00] shadow-md scale-[1.01]"
-                                              : "bg-white dark:bg-neutral-800 border-neutral-900 dark:border-neutral-300 shadow-md scale-[1.01]"
-                                            : "bg-neutral-50/90 dark:bg-neutral-900 border-neutral-200/80 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600"
+                                              : "bg-white dark:bg-[var(--blog-canvas,#262626)] border-neutral-900 dark:border-[var(--blog-ink,#d4d4d4)] shadow-md scale-[1.01]"
+                                            : "bg-neutral-50/90 dark:bg-[var(--blog-surface,#171717)] border-neutral-200/80 dark:border-[var(--blog-rule,#262626)] hover:border-neutral-400 dark:hover:border-[var(--blog-link,#525252)]"
                                         }`}
                                         aria-label={`${item.name}: ${item.score}% operational category match`}
                                         data-score-type="category-fit-percentage"
+                                        data-brand-match={isDataDocks ? "true" : undefined}
                                       >
-                                        <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+                                        <div class="flex items-center justify-between text-xs font-semibold text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] mb-2">
                                           <span class="flex items-center gap-1.5 truncate pr-2">
-                                            <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-900 dark:text-neutral-100"}>
+                                            <span class={isDataDocksSelected() ? "font-bold text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]" : "text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)]"}>
                                               {item.name}
                                             </span>
                                           </span>
                                           <span class="flex items-center gap-1 shrink-0">
-                                            <span class={`font-mono text-xs font-bold transition-all duration-300 ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[#ff7635]" : "text-neutral-700 dark:text-neutral-300"}`}>
+                                            <span class={`font-mono text-xs font-bold transition-all duration-300 ${isDataDocksSelected() ? "text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]" : "text-neutral-700 dark:text-[color:var(--blog-muted,#d4d4d4)]"}`}>
                                               {item.score}% Match
                                             </span>
                                             <svg class={`size-3.5 transition-colors ${
                                               isSelected()
                                                 ? isDataDocks
-                                                  ? "text-[#fd4f00] dark:text-[#ff7635]"
-                                                  : "text-neutral-900 dark:text-neutral-100"
-                                                : "text-neutral-400 dark:text-neutral-600"
+                                                  ? "text-[#fd4f00] dark:text-[color:var(--blog-link,#ff7635)]"
+                                                  : "text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)]"
+                                                : "text-neutral-400 dark:text-[color:var(--blog-muted,#525252)]"
                                             }`} fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                             </svg>
                                           </span>
                                         </div>
 
-                                        <div class="h-2 w-full bg-neutral-200/70 dark:bg-neutral-800 rounded-full overflow-hidden">
+                                        <div class="h-2 w-full bg-neutral-200/70 dark:bg-[var(--blog-canvas,#262626)] rounded-full overflow-hidden">
                                           <div
                                             class={`h-full rounded-full transition-all duration-500 ease-out ${
                                               isDataDocksSelected()
                                                 ? "bg-[#fd4f00]"
                                                 : item.score >= 80
-                                                ? "bg-neutral-800 dark:bg-neutral-200"
+                                                ? "bg-neutral-800 dark:bg-[var(--blog-ink,#e5e5e5)]"
                                                 : item.score >= 50
-                                                ? "bg-neutral-600 dark:bg-neutral-400"
-                                                : "bg-neutral-400 dark:bg-neutral-600"
+                                                ? "bg-neutral-600 dark:bg-[var(--blog-muted,#a3a3a3)]"
+                                                : "bg-neutral-400 dark:bg-[var(--blog-control,#525252)]"
                                             }`}
                                             style={{ width: `${item.score}%` }}
                                           />
@@ -1861,16 +1670,16 @@ export default function YardTypeSelector() {
                       /* ── STANDARD SUMMARY FOR OTHER CATEGORIES ── */
                       <div class="grid sm:grid-cols-2 gap-4 pt-4">
                         <div>
-                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]">
+                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)]">
                             Recommended Architecture
                           </span>
-                          <p class="text-sm font-bold text-neutral-950 dark:text-white mt-1">{sub.ymsFit}</p>
+                          <p class="text-sm font-bold text-neutral-950 dark:text-[color:var(--blog-ink,#fff)] mt-1">{sub.ymsFit}</p>
                         </div>
                         <div>
-                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[#d4a276]">
+                          <span class="text-xs font-bold uppercase tracking-wider text-[#9c806d] dark:text-[color:var(--blog-muted,#d4a276)]">
                             Key Capability
                           </span>
-                          <p class="text-sm text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed">
+                          <p class="text-sm text-neutral-800 dark:text-[color:var(--blog-ink,#e5e5e5)] mt-1 leading-relaxed">
                             {sub.keyCapability}
                           </p>
                         </div>
@@ -1878,12 +1687,12 @@ export default function YardTypeSelector() {
                     )}
                   </div>
 
-                  <div class="pt-4 mt-4 border-t border-[#ece6de] dark:border-neutral-800 flex items-center justify-between">
+                  <div class="pt-4 mt-4 border-t border-[#ece6de] dark:border-[var(--blog-rule,#262626)] flex items-center justify-between">
                     <button
                       type="button"
                       onClick={handleBackToCategories}
                       disabled={isNavigating()}
-                      class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors disabled:pointer-events-none"
+                      class="text-xs font-semibold text-neutral-500 dark:text-[color:var(--blog-muted,#a3a3a3)] hover:text-black dark:hover:text-[color:var(--blog-ink,#fff)] transition-colors disabled:pointer-events-none"
                     >
                       Start over
                     </button>

@@ -5,18 +5,15 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-All 15 drafts have been imported and assigned publication timestamps. The redesigned homepage is `/`; the redesigned resource hub is `/posts`. The never-published prototype routes have been removed without redirects.
+The queue now contains 26 scheduled articles. The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment article for October 9, then with overtime on October 12 and food-and-beverage posts 2–10 on successive weekdays through October 23. Its source image is omitted; the article uses Nick’s existing site author profile and existing artwork for the resource card. The redesigned homepage is `/`; the redesigned resource hub is `/posts`. The never-published prototype routes have been removed without redirects.
 
-The changes are prepared in the branch; this task has not pushed, merged, or deployed them. The first post is already due and will be included in the merge deployment. If merging happens after additional scheduled dates, those posts will also be included.
-
-Worktree: `/Users/work/Work/dd_marketing-set-up-daily-blog-posts`.
-Local development server: `http://127.0.0.1:4337`.
+The October 12–23 extension is prepared in PR 255. It does not publish until merged and deployed. Any article whose timestamp has already passed will become eligible in that deployment. Preview controls remain local-only.
 
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through October 7, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time. The earlier timezone clarification was unanswered, and this implementation assumption was stated in the task.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through October 23, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time. The earlier timezone clarification was unanswered, and this implementation assumption was stated in the task.
 
-The rotation is A → B → C, repeated five times:
+The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 
 - A: the five-part Shadow Freight Spend series, in source order.
 - B: the five Nick Rakovsky posts, in draft-number order.
@@ -39,10 +36,23 @@ The rotation is A → B → C, repeated five times:
 | 13 | Tue 2026-10-06 | A5 | Autopsy of a Freight Invoice |
 | 14 | Wed 2026-10-07 | B5 | What I ask when a supplier starts missing deliveries |
 | 15 | Thu 2026-10-08 | C5 | Sometimes a temporary 3PL is worth the time it buys |
+| 16 | Fri 2026-10-09 | B6 | When growing food sales strain fulfilment |
+| 17 | Mon 2026-10-12 | C6 | Cut warehouse overtime by scheduling the work behind each truck |
+| 18 | Tue 2026-10-13 | B7 | Should a food business reduce inventory to free up cash? |
+| 19 | Wed 2026-10-14 | B8 | Buying fresh produce before you have a buyer |
+| 20 | Thu 2026-10-15 | B9 | When a major customer suddenly orders more |
+| 21 | Fri 2026-10-16 | B10 | Can you actually use your backup ingredient supplier? |
+| 22 | Mon 2026-10-19 | B11 | Is your food business ready for more products and sales channels? |
+| 23 | Tue 2026-10-20 | B12 | Expiring food and missed orders: what to fix first |
+| 24 | Wed 2026-10-21 | B13 | Does your frozen-food distribution network still fit your customers? |
+| 25 | Thu 2026-10-22 | B14 | How quickly can you trace ingredients back to their source? |
+| 26 | Fri 2026-10-23 | B15 | Agreeing on longer food-production runs |
 
 The machine-readable manifest is [daily-blog-schedule.json](daily-blog-schedule.json). It records titles, authors, slugs, timestamps, source paths and SHA-256 hashes. The runtime reads publication dates from article frontmatter; the manifest is the editorial audit record.
 
 ## Content import
+
+The October 12–23 batch comes from the project’s `staging/` packages. Its ten illustrations live in `src/components/blog/` and are registered in both article render paths and Keystatic. The MDX has named tags without imports. Verified external citation titles and publication/year descriptions use `SmartLink`; the accepted prose and URLs are preserved.
 
 Sources were read from `/Users/work/.codex/.chatgpt-projects/g-p-6aa2d8d753748191b2b5e4161818cc5e`. The five series files are at the root; the ten standalone drafts are under `outputs/drafts`. The source folder was not changed.
 
@@ -59,14 +69,14 @@ Current pages:
 - [Homepage](http://127.0.0.1:4337/)
 - [Resource hub](http://127.0.0.1:4337/posts)
 
-Views after all 15 have been published:
+Views after all 26 have been published:
 
 - [Future homepage](http://127.0.0.1:4337/preview/daily-blog/home)
 - [Future resource hub](http://127.0.0.1:4337/preview/daily-blog/posts)
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-10-09T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-10-24T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 
@@ -88,7 +98,7 @@ Build-only samples render the complete content set to retain optimized image var
 
 React's server import uses its edge renderer so this does not require new dashboard-only Cloudflare compatibility flags. There are no new external services, content databases, or paid image-service dependencies.
 
-Run `npm run build` followed by `npm run test:publication` to exercise all 15 cutoffs against a single production artifact. The test copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
+Run `npm run build` followed by `npm run test:publication` to exercise all 26 cutoffs against a single production artifact. The test copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
 
 ## Request-time publication verification
 

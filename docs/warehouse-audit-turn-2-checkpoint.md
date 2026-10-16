@@ -1,5 +1,13 @@
 # Warehouse audit article checkpoint
 
+## PR preparation and current-main integration, 16 October 2026
+
+The user authorised creating a GitHub PR against `main`, without waiting for CI, and will inspect checks and merge manually. Fetched and merged the 64 newer main commits, preserving its current article framework, theme, caching, source-link helpers, CSP and publication boundary. Resolved conflicts additively around the audit component registration, headings and citation overrides.
+
+The unchanged canonical 28-check JSON now lives at `src/data/warehouse-audit-checks.json`, so production imports remain inside the allowed source roots. Documentation links and local pack-builder references were updated. The old overview moved to `internal/pages/warehouse-audit-overview.astro`, registered only for local development through the existing internal workspace integration; production still uses the canonical article. No publication rule was relaxed. The main branch's final publication-boundary integration remains intact.
+
+After integration, targeted compilation, publication-source boundary checks, merge-marker/whitespace checks and all eight isolated capture tests pass. Full CI is left to GitHub and the user's review; no automated visual checks or live Bento submissions were performed. The original PDF/XLSX authoring builders remain local under ignored `output/build/`; the repository includes the final files and workbook-to-HTML preview generator.
+
 ## Canonical article integration, 16 October 2026
 
 The user approved **Warehouse Audit Checklist with PDF and Excel Templates** and authorised the focused editorial pass, contextual links and integration onto the existing `/posts/warehouse-audit-checklist` route. The canonical MDX now uses the shared `src/components/articles/WarehouseAuditArticle.astro`; the development-only overview wraps the same body. This supersedes earlier instructions to leave the production-route MDX unchanged. No deployment or push has occurred.
