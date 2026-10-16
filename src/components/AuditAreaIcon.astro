@@ -1,0 +1,68 @@
+---
+interface Props {
+  area: string;
+  size?: number;
+}
+
+const { area, size = 28 } = Astro.props;
+// Match the two-tone linework already used in the article's evidence trails.
+const icons: Record<string, { paths: string[]; accent: string }> = {
+  'Inventory accuracy and storage': {
+    paths: ['M3 3v18m18-18v18', 'M6 4h4v5H6Zm8 0h4v5h-4ZM6 13h4v5H6Zm8 0h4v5h-4Z'],
+    accent: 'M3 11h18M3 20h18',
+  },
+  'Receiving through dispatch': {
+    paths: ['M8 7h8v10H8Z', 'M8 10h8m-4 0v7'],
+    accent: 'M2 5h8m-3-3 3 3-3 3M14 19h8m-3-3 3 3-3 3',
+  },
+  'Warehouse layout and flow': {
+    paths: ['M3 3h18v18H3Z', 'M7 3v7h5m9 5h-6v6'],
+    accent: 'M7 17v-3h9m-3-3 3 3-3 3',
+  },
+  'Equipment and machinery': {
+    paths: ['M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0L22 5a6 6 0 0 1-7.94 7.94l-7.91 7.91a2.12 2.12 0 0 1-3-3l7.91-7.91A6 6 0 0 1 19 2Z'],
+    accent: 'm5 18 3-3',
+  },
+  'People and workplace safety': {
+    paths: ['M9 8v1a3 3 0 0 0 6 0V8', 'M4 21v-3a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v3M8 21v-4m8 4v-4'],
+    accent: 'M6 7h12M8 7V6a4 4 0 0 1 8 0v1M12 2v3',
+  },
+  'Goods protection and specific requirements': {
+    paths: ['M3 4h12v4M3 4v15h5M3 8h10M8 4v4', 'M16 8l5 2v5c0 3-2 5-5 7-3-2-5-4-5-7v-5Z'],
+    accent: 'm13 15 2 2 4-4',
+  },
+  'Financial controls and warehouse providers': {
+    paths: ['M11 21H4V3h10l4 4v4M14 3v5h4M7 11h5m-5 4h3', 'M22 17a4 4 0 1 0-8 0a4 4 0 1 0 8 0Z'],
+    accent: 'M18 15v4m-1-4h1m-1 4h2',
+  },
+  'Responsibilities and follow-through': {
+    paths: ['M8 4H5v17h14v-9', 'M9 2h6v4H9ZM8 10h4m-4 4h2'],
+    accent: 'm13 16 2 2 7-7',
+  },
+};
+const icon = icons[area];
+---
+
+{icon && <svg
+  class="audit-area-icon"
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="square"
+  stroke-linejoin="miter"
+  aria-hidden="true"
+  focusable="false"
+>
+  {icon.paths.map(d => <path d={d} />)}
+  <path class="audit-area-icon-accent" d={icon.accent} />
+</svg>}
+
+<style>
+  .audit-area-icon { display: block; flex: none; color: #243a45; }
+  .audit-area-icon-accent { stroke: #fd4f00; }
+  :global(.dark) .audit-area-icon { color: #dce8e3; }
+  :global(.dark) .audit-area-icon-accent { stroke: #ff7635; }
+</style>

@@ -22,8 +22,17 @@ import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
 import { isCampaignLandingPath } from './src/lib/campaign-pages.mjs';
 import { assertCampaignSources, assertCampaignOutput } from './scripts/campaign-isolation.mjs';
 
+const analyticsWorkers = partytown({ config: { forward: BENTO_PARTYTOWN_FORWARD } });
+const configureAnalyticsWorkers = analyticsWorkers.hooks['astro:config:setup'];
+analyticsWorkers.hooks['astro:config:setup'] = (context) => {
+  // Local analytics are inactive; their worker crashes the embedded preview.
+  if (context.command !== 'dev') return configureAnalyticsWorkers(context);
+};
+
 // https://astro.build/config
 export default defineConfig({
+  // Local previews are reviewed by the editor; omit the automatic dev audits.
+  devToolbar: { enabled: false },
   output: 'server',
   adapter: cloudflare({
     imageService: 'custom',
@@ -203,11 +212,7 @@ export default defineConfig({
       }
     },
     verifiedVendorAssets(),
-    partytown({
-      config: {
-        forward: BENTO_PARTYTOWN_FORWARD,
-      },
-    }),
+    analyticsWorkers,
     tailwind(),
     react({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
@@ -219,8 +224,8 @@ export default defineConfig({
       // This child sitemap evaluates publication dates on every request.
       customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
       // All article URLs belong to the runtime sitemap, including those already published.
-      // Internal namespaces are never published; paid landing pages remain public but noindexed.
-      filter: (page) => !isInternalPath(new URL(page).pathname) && !isCampaignLandingPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // Internal namespaces are never published; document previews and paid landing pages are noindexed.
+      filter: (page) => !new URL(page).pathname.startsWith('/files/') && !isInternalPath(new URL(page).pathname) && !isCampaignLandingPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {

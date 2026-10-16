@@ -1,0 +1,359 @@
+{
+  "metadata": {
+    "title": "Warehouse Audit Working Pack",
+    "articleURL": "https://datadocks.com/posts/warehouse-audit-checklist",
+    "checkSource": "src/data/warehouse-audit-checks.json",
+    "intendedUse": "Plan a scoped warehouse review, record evidence and carry findings through to action and verification.",
+    "scopeLimit": "The 28 starter checks need the requirements, goods, activities and operating conditions of your review. They do not provide a complete legal or sector-specific audit, certification or an overall pass score.",
+    "examplesNote": "Examples are fictional and separate from blank working records."
+  },
+  "instructions": [
+    {
+      "title": "Start with the decision",
+      "text": "Record the question this review must answer, the areas to examine and who will use the findings. You can plan evidence before making observations."
+    },
+    {
+      "title": "Establish the criteria",
+      "text": "Name the applicable procedure, agreement or other requirement and its version. Assign it to the relevant check. Write 'Not yet established' where it is unknown."
+    },
+    {
+      "title": "Keep the sample visible",
+      "text": "Record the goods, locations, shifts, period and transactions examined. Keep exclusions and evidence limits with the conclusion."
+    },
+    {
+      "title": "Use evidence references",
+      "text": "Enter short observations and record references. Use roles and site aliases where sufficient; avoid copying customer details or sensitive records into the pack."
+    },
+    {
+      "title": "Leave uncertainty open",
+      "text": "A blank status means Not reviewed. Record missing criteria, conflicting accounts and unanswered questions. Label a possible cause as a hypothesis."
+    },
+    {
+      "title": "Assign the next step",
+      "text": "Give each concern an action owner, target date and verification plan. Keep the person doing the work separate from anyone who must approve resources or make a decision."
+    },
+    {
+      "title": "Separate completion from effectiveness",
+      "text": "Record what was completed, then what the follow-up check showed. Work completed without effectiveness evidence remains awaiting verification."
+    },
+    {
+      "title": "Adapt the working record",
+      "text": "Save a copy before entering your review. Keep the starter check IDs and add local checks where needed. The examples illustrate recording; they are not findings about your operation."
+    }
+  ],
+  "statuses": [
+    {
+      "value": "Not reviewed",
+      "meaning": "No assessment recorded. Plan the evidence still needed."
+    },
+    {
+      "value": "Evidence supports the stated check",
+      "meaning": "Your evidence supports the check within the stated scope. Name the criterion and supporting reference; missing support remains a gap."
+    },
+    {
+      "value": "Concern found",
+      "meaning": "Record the observation, requirement and evidence, then assign follow-up. Do not assume the cause is established."
+    },
+    {
+      "value": "Inconclusive or conflicting evidence",
+      "meaning": "The available information does not settle the question. Preserve the uncertainty and request the next evidence."
+    },
+    {
+      "value": "Not applicable — reason recorded",
+      "meaning": "Explain why the check falls outside this review. A missing reason remains an unresolved scope gap."
+    }
+  ],
+  "scopeFields": [
+    {
+      "key": "decision",
+      "label": "Decision or question",
+      "prompt": "What must this review help someone decide?"
+    },
+    {
+      "key": "site",
+      "label": "Site or area alias",
+      "prompt": "Which operation or area is in scope?"
+    },
+    {
+      "key": "period",
+      "label": "Review date or period",
+      "prompt": "Which dates and comparison points apply?"
+    },
+    {
+      "key": "operatingConditions",
+      "label": "Operating conditions",
+      "prompt": "Which shifts, workloads or relevant changes will be examined?"
+    },
+    {
+      "key": "sample",
+      "label": "Coverage and sample",
+      "prompt": "Record the selected checks, goods, locations and transactions."
+    },
+    {
+      "key": "exclusions",
+      "label": "Exclusions and limits",
+      "prompt": "What will not be examined, and why?"
+    },
+    {
+      "key": "criteria",
+      "label": "Criteria and versions",
+      "prompt": "Name each requirement, its version and the checks it applies to. Mark unknowns Not yet established."
+    },
+    {
+      "key": "reviewer",
+      "label": "Reviewer and evidence providers",
+      "prompt": "Who examines the work, who supplies evidence and what competence or independence is required?"
+    },
+    {
+      "key": "actionOwner",
+      "label": "Action responsibilities",
+      "prompt": "Who can investigate, correct the record or change the process?"
+    },
+    {
+      "key": "decisionOwner",
+      "label": "Decision owner",
+      "prompt": "Who can approve the required decision, resources or change?"
+    }
+  ],
+  "examples": [
+    {
+      "id": "EX-INV",
+      "title": "Repeated inventory discrepancy",
+      "fictional": true,
+      "label": "Fictional worked example — investigation remains open",
+      "purpose": "Show how a confirmed difference can be recorded without inventing its cause or treating a balance adjustment as closure.",
+      "scope": {
+        "decision": "What explains the recurring difference, and what action should follow?",
+        "site": "Example bin A-01",
+        "period": "Comparison time and review dates not yet recorded.",
+        "operatingConditions": "Movement timing and unit history remain to be reconciled.",
+        "sample": "SKU-104 in bin A-01; count, recount and selected receipt/issue records. Linked checks INV01, INV02 and INV03.",
+        "exclusions": "This one-item example does not establish the condition of the whole inventory.",
+        "criteria": "Site inventory procedure identified; version, comparison boundary and applicable steps not yet recorded.",
+        "reviewer": "Reviewer and any required independent verification not yet assigned.",
+        "actionOwner": "Inventory lead, working with the process/system owner.",
+        "decisionOwner": "Adjustment or resource authority to be established under the site's procedure."
+      },
+      "findings": [
+        {
+          "id": "EX-INV-01",
+          "checkIds": ["INV01", "INV02", "INV03"],
+          "issue": "11 counted; 12 recorded",
+          "status": "Concern found",
+          "criterion": "Site inventory procedure. Version and effective comparison criteria not yet recorded.",
+          "observation": "The physical count for SKU-104 in bin A-01 is 11 units; the inventory record shows 12. A recount confirms 11.",
+          "evidenceObtained": "Count note, recount, stock-record comparison and references to selected receipt/issue records in this fictional case.",
+          "evidenceNeeded": "Reconcile receipt/issue timing, the record snapshot and unit/pack definitions at the comparison point.",
+          "uncertainty": "The difference is confirmed. Its cause, full transaction boundary and required action remain unresolved.",
+          "possibleCause": "Hypothesis only: unit-of-measure or transaction-timing issue. Neither is established.",
+          "nextAction": "Compare the receipt/issue trail and unit definitions with the process/system owner. Retain the explanation supported by evidence. Handle any balance adjustment separately under the authorised process.",
+          "actionType": "Investigation",
+          "owner": "Inventory lead",
+          "targetDate": "Not yet agreed",
+          "urgency": "Not assessed",
+          "completion": "Open — investigation not completed",
+          "verificationMethod": "After an evidenced action is chosen, examine subsequent relevant transactions and counts against the agreed criterion. Define the sample and timing before verification.",
+          "verificationOwner": "Not yet assigned",
+          "verificationDate": "Not yet agreed",
+          "verificationResult": "Pending — no effectiveness conclusion",
+          "decisionNeeded": "Establish adjustment authority and any process/system decision once the evidence is reviewed.",
+          "decisionOwner": "Not yet established"
+        }
+      ],
+      "managementNote": "Keep the one-unit difference, uncertain explanation and missing verification assignment visible. The case does not establish a missed pick, loss or successful fix."
+    },
+    {
+      "id": "EX-3PL",
+      "title": "Warehouse-provider renewal",
+      "fictional": true,
+      "label": "Fictional worked example — renewal decision remains open",
+      "purpose": "Bring service, storage and billing evidence to one decision while retaining separate criteria, owners and unanswered questions.",
+      "scope": {
+        "decision": "Renew the provider contract, request changes or seek further evidence?",
+        "site": "Example provider site",
+        "period": "Renewal review period, shipment sample and billed period not yet agreed.",
+        "operatingConditions": "Workload, staffing and exception context to be obtained for selected shipments.",
+        "sample": "Selected late dispatches, goods affected by the storage concern and disputed invoice lines. Linked checks FLOW03, FLOW04, GOODS02, GOODS04, CONTROL03 and CONTROL04.",
+        "exclusions": "This review has not established all provider qualifications or every product, legal or commercial requirement.",
+        "criteria": "Dispatch commitment, goods/customer storage requirement and applicable contract/rate version remain to be obtained and assigned to the relevant issue.",
+        "reviewer": "Service, product/quality and commercial/finance owners provide evidence. Review responsibilities and any specialist assessment to be agreed.",
+        "actionOwner": "A separate responsible owner for each issue.",
+        "decisionOwner": "Logistics director for renewal; other approval authorities to be established where required."
+      },
+      "findings": [
+        {
+          "id": "EX-3PL-01",
+          "checkIds": ["FLOW03", "FLOW04", "CONTROL03"],
+          "issue": "Late dispatches",
+          "status": "Inconclusive or conflicting evidence",
+          "criterion": "Agreed dispatch commitment and relevant agreement version not yet attached.",
+          "observation": "Recent dispatches are reported late. The selected shipment records have not yet been compared with the agreed commitment.",
+          "evidenceObtained": "Reported service concern in this fictional case; supporting timestamps not yet attached.",
+          "evidenceNeeded": "Agreed commitment, order-release and actual dispatch timestamps, workload, staffing and exception records for the selected shipments.",
+          "uncertainty": "Extent, contractual significance and reason for the delays remain unconfirmed.",
+          "possibleCause": "Not established",
+          "nextAction": "Obtain and compare the selected shipment records with the commitment; identify the constraint supported by the evidence.",
+          "actionType": "Investigation",
+          "owner": "Service owner",
+          "targetDate": "Not yet agreed",
+          "urgency": "Not assessed",
+          "completion": "Open — evidence requested",
+          "verificationMethod": "Once an action and service criterion are agreed, compare later relevant shipment performance and exception records. Verification period not yet established.",
+          "verificationOwner": "Not yet assigned",
+          "verificationDate": "Not yet agreed",
+          "verificationResult": "Pending — no effectiveness conclusion",
+          "decisionNeeded": "Consider any evidenced resource or service condition as part of renewal.",
+          "decisionOwner": "Logistics director"
+        },
+        {
+          "id": "EX-3PL-02",
+          "checkIds": ["GOODS02", "GOODS04", "CONTROL03"],
+          "issue": "Customer storage concern",
+          "status": "Inconclusive or conflicting evidence",
+          "criterion": "Actual product/customer storage requirement and its applicable version not yet established.",
+          "observation": "A customer has raised a storage concern. The affected goods, location and acceptability have not yet been established.",
+          "evidenceObtained": "Reported customer concern in this fictional case; supporting condition records not yet attached.",
+          "evidenceNeeded": "Affected goods/location, applicable storage requirement, monitoring records, reported exception and competent assessment of acceptability.",
+          "uncertainty": "The concern does not establish product condition, a breached requirement or the required disposition.",
+          "possibleCause": "Not established",
+          "nextAction": "Establish the applicable requirement, assess the affected goods and determine any action and verification needed.",
+          "actionType": "Investigation",
+          "owner": "Product/quality owner",
+          "targetDate": "Not yet agreed",
+          "urgency": "Not assessed",
+          "completion": "Open — requirement and assessment outstanding",
+          "verificationMethod": "Define the evidence needed to verify the chosen action against the actual storage requirement; method remains to be agreed by the responsible assessor.",
+          "verificationOwner": "Not yet assigned",
+          "verificationDate": "Not yet agreed",
+          "verificationResult": "Pending — no acceptability or effectiveness conclusion",
+          "decisionNeeded": "Bring the assessment, required action and remaining uncertainty into the renewal review.",
+          "decisionOwner": "Logistics director; product disposition authority not yet established"
+        },
+        {
+          "id": "EX-3PL-03",
+          "checkIds": ["CONTROL04"],
+          "issue": "Disputed charges",
+          "status": "Inconclusive or conflicting evidence",
+          "criterion": "Applicable contract/rate version, charging basis and billed period not yet attached.",
+          "observation": "Some invoice charges are disputed. The relevant invoice lines have not yet been reconciled to the agreement and activity records.",
+          "evidenceObtained": "Reported billing dispute in this fictional case; selected invoice and activity references not yet attached.",
+          "evidenceNeeded": "Contract/rate version, invoice lines, charging units, movement/storage/service records for the billed period and documented exceptions.",
+          "uncertainty": "Interpretation, entitlement and any adjustment remain unresolved. No saving has been established.",
+          "possibleCause": "Not established",
+          "nextAction": "Reconcile the selected invoice lines and charging units with the agreement and activity evidence; record any interpretation needing a decision.",
+          "actionType": "Investigation",
+          "owner": "Commercial/finance owner",
+          "targetDate": "Not yet agreed",
+          "urgency": "Not assessed",
+          "completion": "Open — reconciliation outstanding",
+          "verificationMethod": "Check any agreed resolution against the reconciled activity and resulting invoice or credit record. Requirements and reviewer remain to be agreed.",
+          "verificationOwner": "Not yet assigned",
+          "verificationDate": "Not yet agreed",
+          "verificationResult": "Pending — no entitlement or resolution conclusion",
+          "decisionNeeded": "Resolve any outstanding commercial interpretation and present it alongside the service and storage evidence.",
+          "decisionOwner": "Commercial/finance authority to be established; logistics director for renewal"
+        }
+      ],
+      "managementNote": "The director's renewal decision remains open. A service finding does not settle storage acceptability, provider qualification or invoice entitlement."
+    }
+  ],
+  "managementPrompts": [
+    {
+      "key": "decision",
+      "label": "Decision to make",
+      "prompt": "What decision is requested, and who has authority to make it?"
+    },
+    {
+      "key": "scope",
+      "label": "Scope and limits",
+      "prompt": "Which site, period, goods and sample support this brief? What was excluded?"
+    },
+    {
+      "key": "findings",
+      "label": "Findings and consequences",
+      "prompt": "What does the evidence establish, against which requirement, and what decision or activity does it affect?"
+    },
+    {
+      "key": "uncertainty",
+      "label": "Open evidence and criteria",
+      "prompt": "What remains missing, uncertain or conflicting? What evidence could change the decision?"
+    },
+    {
+      "key": "urgentConcerns",
+      "label": "User-flagged urgent concerns",
+      "prompt": "Record any concern the reviewer has flagged as urgent and its responsible response owner. Do not average it into an overall score."
+    },
+    {
+      "key": "options",
+      "label": "Options and resources",
+      "prompt": "What options are supported, what resources or approvals are needed, and what remains undecided?"
+    },
+    {
+      "key": "commitments",
+      "label": "Decision and commitments",
+      "prompt": "Record the decision, rationale, action owners, target dates and any unresolved dependency."
+    },
+    {
+      "key": "verification",
+      "label": "Follow-through",
+      "prompt": "Who checks effectiveness, using what evidence and when? What happens if the concern remains or returns?"
+    }
+  ],
+  "findingPrompts": [
+    {
+      "key": "identity",
+      "label": "Finding and linked check",
+      "prompt": "Give the finding an ID and record the starter check ID or custom area."
+    },
+    {
+      "key": "criterion",
+      "label": "Criterion or reference",
+      "prompt": "What requirement applies? Record the relevant version or Not yet established."
+    },
+    {
+      "key": "observation",
+      "label": "Observation and evidence",
+      "prompt": "What was observed, when and where? Add the record reference and sample."
+    },
+    {
+      "key": "uncertainty",
+      "label": "Evidence limits and possible cause",
+      "prompt": "What is uncertain? Keep a possible cause labelled as a hypothesis until evidence supports it."
+    },
+    {
+      "key": "consequence",
+      "label": "Consequence or decision affected",
+      "prompt": "Why does this finding matter within the stated review?"
+    },
+    {
+      "key": "action",
+      "label": "Next action",
+      "prompt": "Specify correction, investigation, corrective action or verification; describe the next step."
+    },
+    {
+      "key": "ownerAndDate",
+      "label": "Owner and target date",
+      "prompt": "Who will do the work, by when? Leave an unassigned owner or unagreed date visible."
+    },
+    {
+      "key": "urgency",
+      "label": "Urgency assigned by reviewer",
+      "prompt": "Choose Not assessed, Routine follow-up or User-flagged urgent concern. Use the site's response process for an immediate concern."
+    },
+    {
+      "key": "decision",
+      "label": "Decision or resources needed",
+      "prompt": "What prevents progress, who can resolve it and what decision is requested?"
+    },
+    {
+      "key": "completion",
+      "label": "Completion record",
+      "prompt": "What was completed, on what date and with which evidence?"
+    },
+    {
+      "key": "verification",
+      "label": "Effectiveness verification",
+      "prompt": "Record the method, reviewer, date, result and remaining limitations. Completion alone does not verify effectiveness."
+    }
+  ]
+}

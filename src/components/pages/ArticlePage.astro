@@ -30,6 +30,8 @@ import FAQ from '../../components/FAQ.astro';
 import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
 import { filterPublished } from '../../lib/content-status';
+import { warehouseAuditHeadings } from '../../data/warehouse-audit-article';
+import WarehouseAuditArticle from '../articles/WarehouseAuditArticle.astro';
 
 const blogComponents = {
   WarehouseLoadTiming,
@@ -51,7 +53,8 @@ interface Props {
 const { entry } = Astro.props;
 const hasYardSelector = entry.slug === 'best-yard-management-options';
 const asOf = Astro.locals.publicationDate ?? new Date();
-const { Content, headings } = await entry.render();
+const { Content, headings: mdxHeadings } = await entry.render();
+const headings = entry.slug === 'warehouse-audit-checklist' ? warehouseAuditHeadings : mdxHeadings;
 
 const postType = entry.data.postType?.discriminant || 'article';
 const isVideo = postType === 'video' || postType === 'short';
@@ -241,6 +244,6 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
         </div>
       </div>
     )}
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents, WarehouseAuditArticle }} />
   </BlogPostLayout>
 )}

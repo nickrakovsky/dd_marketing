@@ -1002,8 +1002,8 @@ if (priorityImgMatch) {
           }
           
           trigger.dataset.smartlinkHref = href;
-          trigger.dataset.smartlinkTitle = title;
-          trigger.dataset.smartlinkSnippet = shortenedCitation;
+          trigger.dataset.smartlinkTitle = trigger.dataset.smartlinkTitleOverride || title;
+          trigger.dataset.smartlinkSnippet = trigger.dataset.smartlinkCitationOverride || shortenedCitation;
           trigger.dataset.smartlinkResolved = 'true';
         }
       }
