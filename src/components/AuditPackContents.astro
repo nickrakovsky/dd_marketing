@@ -1,8 +1,13 @@
 ---
+import packFiles from '../data/warehouse-audit-pack.json';
+
 interface Props {
   emailId: string;
+  preview?: boolean;
 }
-const { emailId } = Astro.props;
+const { emailId, preview = false } = Astro.props;
+const localPreview = import.meta.env.DEV && preview;
+const fileSize = (bytes: number) => `${(bytes / 1000).toLocaleString('en-GB', { maximumFractionDigits: 1 })} KB`;
 ---
 
 <div class="audit-pack-content">
@@ -10,21 +15,50 @@ const { emailId } = Astro.props;
     <div class="audit-pack-sheet"><span>PDF</span><strong>Warehouse audit</strong><p>Scope<br />Evidence<br />Actions</p><i></i><i></i></div>
     <div class="audit-pack-workbook"><span>EXCEL</span><strong>A working record<br />for the whole review</strong><div class="audit-sheet-lines"><i></i><i></i><i></i><i></i></div></div>
   </div>
-  <p>The planned pack will bring these 28 checks into an editable working record and printable floor sheets, with examples to help you record findings and assign follow-up.</p>
+  <p>Bring these 28 checks into an editable working record and printable floor sheets, with examples to help you record findings and assign follow-up.</p>
   <ul class="audit-pack-contents">
     <li><strong>Editable Excel workbook:</strong> plan the review, record evidence and track findings, action owners and verification.</li>
     <li><strong>Printable PDF sheets:</strong> take the checklist onto the warehouse floor and make notes as you review.</li>
     <li><strong>Completed examples and a management review template:</strong> see how a stock investigation and provider review become findings, assigned work and decisions to follow up.</li>
   </ul>
-  <div class="audit-signup-preview" aria-label="Email signup preview, inactive">
-    <label for={emailId}>Email address</label>
-    <div class="audit-signup-fields">
-      <input id={emailId} type="email" placeholder="Your email address" disabled />
-      <button type="button" disabled>Subscribe &amp; get the audit pack</button>
+  <div class="audit-signup-preview" data-audit-pack-capture data-audit-pack-preview={localPreview ? 'true' : undefined}>
+    <form method="post" action="/api/bento-track">
+      <label for={emailId}>Email address</label>
+      <div class="audit-signup-fields">
+        <input id={emailId} name="email" type="email" autocomplete="email" placeholder="Your email address" aria-describedby={`${emailId}-subscription ${emailId}-error`} required disabled />
+        <button type="submit" disabled>Subscribe &amp; get the audit pack</button>
+      </div>
+      <p id={`${emailId}-subscription`} class="audit-small">Subscribe to DataDocks emails about warehouse guidance and product updates, and get the Excel and PDF audit pack immediately. Unsubscribe anytime. <a href="/privacy-policy">Privacy policy</a>.</p>
+      <p id={`${emailId}-error`} class="audit-small audit-capture-error" data-audit-pack-error role="alert"></p>
+      <noscript><p class="audit-small">Please enable JavaScript to request the audit pack.</p></noscript>
+    </form>
+    <div data-audit-pack-downloads hidden>
+      <p class="audit-download-heading" data-audit-pack-ready tabindex="-1"><strong>Your audit pack is ready</strong></p>
+      <ul class="audit-download-links">
+        <li>
+          <a href={packFiles.workbook.url} download>Download Excel workbook</a>
+          <div class="audit-download-meta">
+            <span>XLSX, {fileSize(packFiles.workbook.bytes)}</span>
+            <a href={packFiles.workbook.previewUrl} target="_blank" rel="noopener" aria-label="Open the Excel workbook preview in a new tab">Open in new tab</a>
+          </div>
+        </li>
+        <li>
+          <a href={packFiles.pdf.url} download>Download printable PDF</a>
+          <div class="audit-download-meta">
+            <span>PDF, {fileSize(packFiles.pdf.bytes)}</span>
+            <a href={packFiles.pdf.url} target="_blank" rel="noopener" aria-label="Open the printable PDF in a new tab">Open in new tab</a>
+          </div>
+        </li>
+      </ul>
     </div>
-    <p class="audit-small">When the pack is available, you’ll be able to subscribe to DataDocks emails about warehouse guidance and product updates and receive the Excel and PDF files. Unsubscribe anytime. <a href="/privacy-policy">Privacy policy</a>.</p>
   </div>
 </div>
+
+<script>
+  import { initAuditPackForms } from '../lib/audit-pack-capture';
+  initAuditPackForms();
+  document.addEventListener('astro:page-load', initAuditPackForms);
+</script>
 
 <style>
   .audit-pack-content { padding: 1.25rem; }
@@ -45,10 +79,17 @@ const { emailId } = Astro.props;
   .audit-signup-fields { display: grid; grid-template-columns: minmax(0,1fr); }
   .audit-signup-preview input { display: block; min-width: 0; width: 100%; min-height: 54px; padding: 12px 16px; background: #efe2d2; color: #000; border: 1px solid #cdbda8; border-bottom: 0; border-radius: 0; font: inherit; font-size: 1.125rem; line-height: 1.4; opacity: 1; -webkit-appearance: none; }
   .audit-signup-preview input::placeholder { color: #65533d; opacity: 1; }
-  .audit-signup-preview button { display: block; min-height: 54px; padding: 12px 16px; background: #fe5000; color: #fff; border: 0; border-radius: 0; font: inherit; font-size: 1.125rem; font-weight: 400; line-height: 1.4; text-shadow: none; cursor: default; opacity: 1; }
+  .audit-signup-preview button { display: block; min-height: 54px; padding: 12px 16px; background: #fe5000; color: #fff; border: 0; border-radius: 0; font: inherit; font-size: 1.125rem; font-weight: 400; line-height: 1.4; text-shadow: none; cursor: pointer; opacity: 1; }
+  .audit-signup-preview button:disabled { cursor: wait; }
   .audit-signup-preview .audit-small { margin: .875rem 0 0; font-family: Inter, Arial, sans-serif; font-size: .875rem; line-height: 1.6; }
   .audit-signup-preview a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
-  .audit-signup-preview a:focus-visible { outline: 2px solid var(--audit-pack-accent, #fe5000); outline-offset: 3px; }
+  .audit-signup-preview :is(a, input, button):focus-visible { outline: 2px solid var(--audit-pack-accent, #fe5000); outline-offset: 3px; }
+  .audit-signup-preview [hidden] { display: none !important; }
+  .audit-capture-error:empty { display: none; }
+  .audit-download-heading { margin: 0 0 .75rem; font-size: 1.125rem; line-height: 1.5; }
+  .audit-download-links { list-style: none; padding: 0; margin: 0; font-family: Inter, Arial, sans-serif; font-size: 1rem; line-height: 1.6; }
+  .audit-download-links li + li { margin-top: .75rem; }
+  .audit-download-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; font-size: .875rem; }
   @container (min-width: 32rem) {
     .audit-signup-fields { grid-template-columns: minmax(10rem,1fr) auto; }
     .audit-signup-preview input { border-right: 0; border-bottom: 1px solid #cdbda8; }

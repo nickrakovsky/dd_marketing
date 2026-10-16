@@ -255,7 +255,7 @@ Yard management becomes essential when a facility has 50+ trailer spots, frequen
 - [Warehouse Optimization Strategies](https://datadocks.com/posts/warehouse-optimization-strategies)
 - [Warehouse Receiving Best Practices](https://datadocks.com/posts/warehouse-receiving-process)
 - [7 Warehouse KPIs to Track in 2026](https://datadocks.com/posts/warehouse-kpis)
-- [Warehouse Audit Checklist](https://datadocks.com/posts/warehouse-audit-checklist)
+- [Warehouse Audit Checklist with PDF and Excel Templates](https://datadocks.com/posts/warehouse-audit-checklist)
 - [Warehouse Safety Checklist](https://datadocks.com/posts/warehouse-safety-checklist)
 - [Practical Ways to Reduce Turnaround Time](https://datadocks.com/posts/practical-ways-to-reduce-turnaround-time)
 

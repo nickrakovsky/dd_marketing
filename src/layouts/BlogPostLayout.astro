@@ -20,7 +20,7 @@ interface Heading {
   text: string;
 }
 
-const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
+const { frontmatter, headings = [] as Heading[], relatedPosts = [], noindex = false } = Astro.props;
 const h2Headings = headings.filter((h: Heading) => h.depth === 2);
 
 // 2. Date Formatting
@@ -113,6 +113,7 @@ if (priorityImgMatch) {
   title={`${frontmatter.title} | DataDocks`}
   description={frontmatter.description}
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
+  noindex={noindex}
   type="article"
   articleData={{
     author: frontmatter.author,
