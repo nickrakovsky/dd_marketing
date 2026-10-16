@@ -44,21 +44,21 @@ const hotspots = [
         <title id={`${instanceId}-highlights-title`}>Work to observe at this stock location</title>
         <desc id={`${instanceId}-highlights-description`} data-slotting-description>No task is selected. Use the numbered buttons to examine picking at the shelf and cart, replenishment at the load, or shared access in front of the rack.</desc>
 
-        <g class="shared-space-marks" data-slotting-annotation="shared" hidden aria-hidden="true">
+        <g class="shared-space-marks" data-slotting-annotation="shared" display="none" aria-hidden="true">
           <polygon class="physical-footprint shared-footprint" points={floor([[335,.77],[660,.77],[735,.90],[270,.90]])} />
         </g>
 
-        <g class="task-mark" data-slotting-highlight="picking" hidden aria-hidden="true">
+        <g class="task-mark" data-slotting-highlight="picking" display="none" aria-hidden="true">
           <polygon class="task-footprint" points={floor([[620,.76],[850,.76],[915,.90],[635,.90]])} />
         </g>
-        <g class="task-mark" data-slotting-highlight="replenishment" hidden aria-hidden="true">
+        <g class="task-mark" data-slotting-highlight="replenishment" display="none" aria-hidden="true">
           <ellipse class="task-footprint" cx="170" cy={y(.80)} rx="110" ry={y(.07)} />
         </g>
 
         <g class="annotation-leaders" aria-hidden="true">
-          <path class="annotation-leader picking-leader" data-slotting-annotation="picking" hidden d={`M730 ${y(.28)}H670L500 ${y(.44)}M730 ${y(.28)}H840V${y(.70)}`} />
-          <path class="annotation-leader replenishment-leader" data-slotting-annotation="replenishment" hidden d={`M270 ${y(.30)}H245V${y(.63)}L170 ${y(.76)}`} />
-          <path class="annotation-leader shared-leader" data-slotting-annotation="shared" hidden d={`M500 ${y(.82)}V${y(.92)}`} />
+          <path class="annotation-leader picking-leader" data-slotting-annotation="picking" display="none" d={`M730 ${y(.28)}H670L500 ${y(.44)}M730 ${y(.28)}H840V${y(.70)}`} />
+          <path class="annotation-leader replenishment-leader" data-slotting-annotation="replenishment" display="none" d={`M270 ${y(.30)}H245V${y(.63)}L170 ${y(.76)}`} />
+          <path class="annotation-leader shared-leader" data-slotting-annotation="shared" display="none" d={`M500 ${y(.82)}V${y(.92)}`} />
         </g>
         <g class="annotation-markers print-markers" aria-hidden="true">
           {hotspots.map(({ number, x, ratio }) => <g transform={`translate(${x} ${y(ratio)})`}>
@@ -107,7 +107,7 @@ const hotspots = [
   .physical-footprint { fill: #374151; fill-opacity: .035; stroke: #737a83; stroke-width: .75; }
   .shared-footprint { stroke-dasharray: 5 5; }
   [data-task="access"] .shared-footprint { fill: #fd4f00; fill-opacity: .08; stroke: #fd4f00; stroke-width: 1.25; stroke-dasharray: none; }
-  .task-mark[hidden], [data-slotting-annotation][hidden] { display: none; }
+  [data-slotting-annotation][hidden] { display: none; }
   .task-footprint { fill: #fd4f00; fill-opacity: .055; stroke: #fd4f00; stroke-width: 1.25; }
   .annotation-leader { fill: none; stroke: #737a83; stroke-width: .75; }
   .print-markers { display: none; }
@@ -184,6 +184,15 @@ const hotspots = [
   const visibleAnnotations: Record<SlottingView, SlottingAnnotation[]> = { none: [], picking: ['picking', 'shared'], replenishment: ['replenishment', 'shared'], access: ['shared'], print: ['picking', 'replenishment', 'shared'] };
   const isTask = (value: string | undefined): value is SlottingTask => value === 'picking' || value === 'replenishment' || value === 'access';
 
+  function setPartHidden(part: HTMLElement | SVGElement, hidden: boolean) {
+    if (part instanceof SVGElement) {
+      if (hidden) part.setAttribute('display', 'none');
+      else part.removeAttribute('display');
+    } else {
+      part.hidden = hidden;
+    }
+  }
+
   function bindSlottingIllustrations() {
     const figures = document.querySelectorAll<HTMLElement>('[data-slotting-illustration]');
     figures.forEach(figure => {
@@ -210,8 +219,8 @@ const hotspots = [
         task = nextTask;
         figure.dataset.task = nextTask;
         buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.slottingTask === nextTask)));
-        marks.forEach(mark => mark.toggleAttribute('hidden', mark.dataset.slottingHighlight !== nextTask));
-        annotationParts.forEach(part => part.toggleAttribute('hidden', !visibleAnnotations[nextTask].includes(part.dataset.slottingAnnotation as SlottingAnnotation)));
+        marks.forEach(mark => setPartHidden(mark, mark.dataset.slottingHighlight !== nextTask));
+        annotationParts.forEach(part => setPartHidden(part, !visibleAnnotations[nextTask].includes(part.dataset.slottingAnnotation as SlottingAnnotation)));
         headings.forEach(heading => {
           const key = heading.dataset.slottingHeading as SlottingAnnotation;
           heading.textContent = taskNotes[nextTask][key]?.title ?? defaultTitles.get(key) ?? '';
