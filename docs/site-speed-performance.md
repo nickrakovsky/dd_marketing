@@ -324,3 +324,35 @@ removed. Source integration and the diff were reviewed; no local test suite,
 production build or performance audit was run. GitHub validation remains pending;
 do not wait for it during this turn. Preview HTML and screenshots stay local in
 `internal/frontmatter-preview/` and are not part of the PR.
+
+## Comparison introduction font stability — 2026-10-19
+
+PR #261's Lighthouse run reported `/comparison` CLS 0.0912376 against the
+unchanged 0.01 limit. The performance scores on `/posts` and the yard-management
+article were warnings; the comparison layout shift was the blocking assertion.
+
+The user authorized a focused local layout-shift/font diagnostic for this failure.
+At the report's 412×823 mobile viewport, the normal cold load was stable and
+delaying the full stylesheet caused no shift. Delaying Recoleta made the intro
+grow from two lines to three, moving the summary 28px (CLS 0.0124711). A controlled
+Arial/Times fallback with delayed fonts reproduced the larger heading shift:
+Bruta changed four heading lines to three, moving the summary upward 50.39px
+(that event's CLS 0.0910685). This models missing Impact/Georgia on Linux; it is
+not a claim that the original runner's exact font state was recovered.
+
+The comparison heading and intro now use small, route-specific WOFF2 subsets
+embedded in the HTML. They retain the existing fonts, copy and final geometry,
+without depending on external font timing or platform fallback availability.
+Bruta's subset is 1,408 bytes and Recoleta's is 5,000 bytes. Shared font loading
+and other pages are unchanged. Source copy lives in `src/data/comparison-hero.json`.
+After editing it, regenerate with `python scripts/subset-comparison-hero.py`
+using `fonttools[woff]==4.60.2`; Python font tooling is not a build dependency.
+CI checks coverage and source-equivalent metrics/shaping with Fontkit.
+
+Applying the actual new CSS/assets to the failed preview HTML produced no
+layout-shift events under the same controlled fallback/delayed-font conditions.
+This is a focused diagnostic result, not a new Lighthouse score. GitHub validation
+of the built preview remains pending. No screenshots or wider visual audit ran.
+
+Lighthouse CI now saves trace and DevTools assets, and uploads them with its
+reports even when assertions fail. Limits and run count remain unchanged.
