@@ -1,0 +1,27 @@
+<div class="not-prose audit-checklist-print font-recoleta">
+  <button type="button" data-audit-checklist-print hidden>Print article and checklist — no email needed</button>
+  <noscript><p>Open any checklist questions whose guidance you want to include, then use your browser’s Print command. No email is needed.</p></noscript>
+</div>
+
+<script>
+  function bindAuditChecklistPrint() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-audit-checklist-print]');
+    buttons.forEach(button => {
+      if (button.dataset.bound) return;
+      button.dataset.bound = 'true';
+      button.addEventListener('click', () => window.print());
+      button.hidden = false;
+    });
+  }
+  bindAuditChecklistPrint();
+  document.addEventListener('astro:page-load', bindAuditChecklistPrint);
+</script>
+
+<style>
+  .audit-checklist-print { margin: 1rem 0; }
+  button { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+  button[hidden] { display: none; }
+  button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+  p { margin: 0; }
+  @media print { .audit-checklist-print { display: none; } }
+</style>

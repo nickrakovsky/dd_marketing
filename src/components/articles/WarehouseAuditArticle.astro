@@ -7,6 +7,7 @@ import AuditAreaIcon from '../AuditAreaIcon.astro';
 import AuditTrail from '../AuditTrail.astro';
 import AuditPackContents from '../AuditPackContents.astro';
 import AuditPackDisclosure from '../AuditPackDisclosure.astro';
+import AuditChecklistPrint from '../AuditChecklistPrint.astro';
 import AuditCountComparison from '../AuditCountComparison.astro';
 import AuditSlottingIllustration from '../AuditSlottingIllustration.astro';
 import AuditDiscrepancyIceberg from '../AuditDiscrepancyIceberg.astro';
@@ -49,6 +50,7 @@ const inventoryTrail = [
   <h2 id="what-is-a-warehouse-audit">What is a warehouse audit?</h2>
   <p>A warehouse audit is a planned review of how a warehouse operates against the requirements it needs to meet. It compares procedures and records with what happens on the floor, then records the findings and the work needed to address them.</p>
   <p>The reason for the review determines its scope. An inventory lead investigating repeated stock differences needs different evidence from a director reviewing a warehouse provider before renewal. Start with the question you need answered, then choose the relevant areas below.</p>
+  <p>This checklist reviews an existing physical warehouse. Daily task lists and pre-use inspections help people carry out particular work; a wider audit examines whether the processes and controls work as intended. Opening a new warehouse calls for a setup and launch plan. For analytical databases or mortgage lending, the relevant subjects are data-warehouse auditing and mortgage warehouse lending.</p>
 
 
   <figure id="audit-drift-figure" class="not-prose audit-drift-figure" aria-label="Operational drift and corrective action">
@@ -58,9 +60,10 @@ const inventoryTrail = [
     <figcaption>Illustrative drift and recovery</figcaption>
   </figure>
 
-  <h2 id="practical-checklist">The Practical Warehouse Audit Checklist</h2>
+  <h2 id="practical-checklist"><span id="the-practical-warehouse-audit-checklist">The Practical Warehouse Audit Checklist</span></h2>
   <p>Work through the areas relevant to your warehouse. Add the customer, product or legal requirements that each check needs to cover.</p>
   <p>Open a question for inspection prompts and follow-up guidance. For equipment checks, training and emergency preparation, see our <a href="/posts/warehouse-safety-checklist">warehouse safety checklist</a>.</p>
+  <AuditChecklistPrint />
   <div class="audit-checklist" data-audit-checklist>
     <nav class="not-prose audit-area-index font-recoleta" aria-label="Jump to a checklist area">
       <p>Jump to an area in this checklist</p>
@@ -96,7 +99,7 @@ const inventoryTrail = [
     <AuditPackDisclosure headingId="warehouse-audit-pack-after-checklist" headingLevel="h3" emailId="audit-checklist-preview-email" preview={preview} />
   </section>
 
-  <h2 id="plan-the-audit">Plan the audit around the decision</h2>
+  <h2 id="plan-the-audit"><span id="the-business-case-why-audits-matter">Plan the audit around the decision</span></h2>
   <p>If you are commissioning the review, tell the reviewer what you need to decide. “Why do these stock differences keep returning?” or “What do we need to resolve before renewing this provider?” gives the work a purpose.</p>
   <ul>
     <li><strong>Agree the scope.</strong> Name the site, activities, goods and period to review. Include the busy shifts or unusual conditions that matter to the concern.</li>
@@ -106,7 +109,11 @@ const inventoryTrail = [
   </ul>
   <AuditTrail steps={process} label="From review purpose to verified action" caption="If evidence is missing or an action has not worked, return to the investigation." />
 
-  <h2 id="execute-the-audit">Check what happens on the warehouse floor</h2>
+  <h3>Example: should the business add warehouse space?</h3>
+  <p>Suppose warehouse cost per order has risen and a director is considering more space. Commission the review to explain the increase and compare options before approving expansion. Compare order volume and mix, usable storage, labour hours, overtime, rework and outsourced charges over the same periods. Keep service commitments alongside the costs.</p>
+  <p>Observe when space or work backs up, then test the explanations against the records. More stock held for longer, an awkward order mix, a staffing constraint and work concentrated into a short window call for different responses. Ask the reviewer to report which explanation the evidence supports, the options still worth testing, and the cost and service implications of each. An average occupancy figure alone does not establish the need for another building.</p>
+
+  <h2 id="execute-the-audit"><span id="executing-the-audit-dont-boil-the-ocean">Check what happens on the warehouse floor</span></h2>
   <p>Start with a manageable selection of items, transactions or work periods relevant to the concern. Record what you examined so the next person can understand how far the finding extends.</p>
   <ul>
     <li>Compare records, direct observation and worker accounts. Keep conflicting accounts visible.</li>
@@ -148,8 +155,26 @@ const inventoryTrail = [
   </ul>
   <p>For a related example, see how <a href="/posts/automated-store-replenishment-stock-errors">recurring stock corrections can reveal problems in automated replenishment</a>.</p>
 
+  <h3 id="example-inventory-finding">A completed finding and follow-up</h3>
+  <p>Here is one fictional continuation of the 11-versus-12 example. The procedure, dates and record references below are illustrative; they show how to document a supported conclusion while leaving a wider question open.</p>
+  <ul>
+    <li><strong>Scope and criterion.</strong> Review SKU-104, bin A-01, in individual units at 09:00 on 6 October 2026. The example site's inventory procedure, INV04 version 3, requires stock issues to be posted before dispatch.</li>
+    <li><strong>Evidence and finding.</strong> Count C104 and independent recount RC104 both show 11; snapshot S104 shows 12. Pick P418 and dispatch D418 show one unit leaving at 16:40 on 5 October. Queue record Q418 shows its stock issue still pending at the comparison time. That unposted issue explains this difference. It does not establish why earlier discrepancies occurred.</li>
+    <li><strong>Immediate correction.</strong> At 11:00 on 6 October, the inventory manager authorises posting the one missing issue against D418. The recorded quantity becomes 11. Do not also enter a separate one-unit adjustment for the same movement.</li>
+    <li><strong>Accountable action.</strong> The inventory lead assigns a named handover owner and a pending-issue review before release, effective by 17:00 on 6 October. Handover record H104 records the change and the cover arrangement.</li>
+    <li><strong>Verification.</strong> At 15:00 on 9 October, the warehouse manager records check V104: all 20 selected dispatches across three shifts on 7–9 October had their issues posted before release; the selected bin also matched its record.</li>
+  </ul>
+  <p>The correction and the tested control have evidence within this sample. Earlier recurrences remain a separate investigation. Keep that limitation with the result rather than describing the whole inventory process as fixed.</p>
+
   <h2 id="compliance-and-customer-audits">Compliance and customer audits</h2>
   <p>If you are preparing for a customer’s audit, ask for the scope and evidence request before gathering documents. Confirm which goods, activities and dates the review covers, which requirements apply and who can answer questions about them.</p>
+  <h3>Establish which requirements apply</h3>
+  <p>For each important requirement, record its source and why it applies: a law or authorisation, a customer contract, an internal procedure or a voluntary standard the business has adopted. Include the version, goods, activities and period covered. A customer or regulatory review may arrive with its criteria already set; an internal improvement review still needs an agreed basis for judging the work.</p>
+  <p>Keep those criteria distinct. A favourable assurance report answers only the scope it covers; it does not settle every customer requirement. If two parties interpret a requirement differently, record the disagreement and identify who can resolve it before issuing a conclusion that depends on that interpretation.</p>
+  <h3>Agree who can judge the evidence and authorise action</h3>
+  <p>Choose reviewers who understand the work and can assess the relevant evidence, including any product or technical knowledge the review needs. Decide how any required independence will be achieved. If someone is examining a process they designed or manage, make that involvement visible and arrange another reviewer for an affected judgement where needed.</p>
+  <p>Name who supplies the records, who reaches each conclusion, who can approve corrective resources and who checks the result. One person may hold several roles, but an assignment without the necessary authority leaves work blocked.</p>
+  <p>Missing monitoring records establish an evidence gap; they do not, by themselves, establish the condition of the goods. State which conclusion remains unsupported and what evidence would resolve it. Take blocked access, disputed criteria or an unfunded action to the person who can decide, with the consequence, options and decision date. Keep the unresolved limitation in the report.</p>
   <p>United Warehouse describes customers bringing their own reviews into the operation:</p>
   <figure class="not-prose audit-quotation font-recoleta">
     <span class="audit-quote-mark" aria-hidden="true">“</span>
@@ -174,12 +199,13 @@ const inventoryTrail = [
   </ul>
   <h3>Example: reviewing a warehouse provider before renewal</h3>
   <p>Suppose dispatches from a 3PL have been late, a customer has questioned the storage conditions and some warehouse charges are disputed. A director needs the review to explain what each concern means for the renewal decision.</p>
+  <p>The following fictional review covers selected transactions from 1–7 October 2026, with a management decision recorded on 8 October. The agreements, records and amounts are illustrative. The billing figures exclude VAT and other invoice lines.</p>
   <ol>
-    <li><strong>Late dispatches.</strong> Compare the agreed dispatch commitment with order, dispatch and handover records for the affected period. Examine staffing, queues and other operating conditions around the delays. Ask the operations lead to report what is established, what needs investigating and any resource decision required.</li>
-    <li><strong>Storage conditions.</strong> Confirm the conditions required for the affected goods and request the storage records for the relevant dates. Check which goods, activities and period any assurance report covers. Ask the responsible quality or product specialist to identify the gaps and the evidence needed to answer the customer.</li>
-    <li><strong>Disputed charges.</strong> Take a disputed invoice line back to the contract, billed unit and activity record. Have the commercial owner record the calculation, supporting evidence and any correction or unresolved query.</li>
+    <li><strong>Service finding.</strong> SLA12 version 2 requires the selected orders to be ready for dispatch by 17:00. Order, staging and handover records establish that four of the 12 selected orders were late. The cause remains unresolved. The service lead must report the operating evidence and proposed response by 10 October; the warehouse manager will verify the agreed service criterion after that response is implemented.</li>
+    <li><strong>Storage conclusion still open.</strong> Customer specification CS2 version 2 requires dry storage, but a condition-record gap on 2 October leaves the evidence for the affected goods incomplete. The quality lead must assess their condition and report the evidence and any required action by 9 October. Neither the missing record nor an unrelated certificate settles acceptability.</li>
+    <li><strong>Billing finding resolved.</strong> The invoice charges 120 pallet-days at £2, or £240. The activity records confirm 120 pallet-days, but the signed rate schedule, version 2 effective 1 October, sets £1.50 per pallet-day: £180 for the same period and activity. The provider used the superseded rate. The commercial lead agrees credit CN82 for £60; the finance controller checks the credit and net £180 charge on 8 October.</li>
   </ol>
-  <p>Keep the service investigation, storage finding and invoice decision separate. The director can then decide which unresolved points must be settled before renewal and who will resolve them.</p>
+  <p><strong>Recorded management decision, 8 October:</strong> request the service plan and quality assessment before making the final renewal decision, with the named owners and dates above. Ask the commercial lead to confirm the available options against the contract timetable. The invoice line is resolved; service and product questions remain open. This gives the director a decision record without manufacturing a single pass score for the relationship.</p>
 
   <h2 id="get-warehouse-audit-pack">Get the checklist in Excel and PDF</h2>
   <section class="not-prose audit-pack-offer audit-pack-later font-recoleta" aria-labelledby="get-warehouse-audit-pack">
@@ -187,17 +213,17 @@ const inventoryTrail = [
     <div class="audit-pack-panel"><AuditPackContents emailId="audit-later-preview-email" preview={preview} /></div>
   </section>
 
-  <h2 id="audit-frequency">How often should you audit?</h2>
+  <h2 id="audit-frequency"><span id="frequency-cycle-counting-vs-wall-to-wall-audits">How often should you audit?</span></h2>
   <ul><li><strong>Routine checks:</strong> follow the requirements for the task.</li><li><strong>Planned reviews:</strong> choose a scope and interval informed by the operation and its obligations.</li><li><strong>Triggered reviews:</strong> respond to a material change, recurring discrepancy or incident.</li><li><strong>Follow-up checks:</strong> test whether an action worked.</li></ul>
   <p>These are different purposes, not a universal monthly or quarterly schedule.</p>
   <p>Inventory counts have their own coverage and timing. Cycle counting covers inventory through successive selections; a full physical count covers the defined inventory at a point in time. <Cite id="1" anchorId="cite-1-count-coverage" title="Accurate physical inventory counts" citation="U.S. General Accounting Office (2002)" /> A wider warehouse audit examines the work and controls behind the records.</p>
   <div id="audit-count-comparison"><AuditCountComparison /></div>
 
-  <h2 id="technology-and-people">Technology and the people doing the work</h2>
+  <h2 id="technology-and-people"><span id="how-technology-should-help">Technology and the people doing the work</span></h2>
   <p>Records, photographs and warehouse systems help reviewers reconstruct events. The people doing the work can explain gaps and exceptions in those records.</p>
   <p><a href="/posts/what-is-dock-scheduling">Dock scheduling</a> shapes the work an audit needs to understand. When arrivals bunch together, staging space and the team’s time come under pressure. Compare planned appointments with actual arrivals, then trace the loads through receiving or dispatch to check how staging, checks and stock entries were handled. Ask the team what changed during the peak and compare its account with the records.</p>
   <AuditDockFlow />
-  <p>A useful audit leaves people with an understandable finding, a practical next step and the support to carry it out. The aim is to make sure the system supports the work they do.</p>
+  <p id="the-bottom-line">A useful audit leaves people with an understandable finding, a practical next step and the support to carry it out. The aim is to make sure the system supports the work they do.</p>
 
   <h2 id="references">References</h2>
   <ol class="not-prose pl-3">
