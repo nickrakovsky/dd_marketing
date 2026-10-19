@@ -2,6 +2,7 @@
 import approvedDrift from '../../assets/blog-images/warehouse-audit-drift-approved-v1.png';
 import Cite from '../Cite.astro';
 import BibliographyItem from '../BibliographyItem.astro';
+import SmartLink from '../SmartLink.astro';
 import LinkIcon from '../LinkIcon.astro';
 import AuditAreaIcon from '../AuditAreaIcon.astro';
 import AuditTrail from '../AuditTrail.astro';
@@ -61,7 +62,7 @@ const inventoryTrail = [
 
   <h2 id="practical-checklist"><span id="the-practical-warehouse-audit-checklist">The Practical Warehouse Audit Checklist</span></h2>
   <p>Work through the areas relevant to your warehouse. Add the customer, product or legal requirements that each check needs to cover.</p>
-  <p>Open a question for inspection prompts and follow-up guidance. For equipment checks, training and emergency preparation, see our <a href="/posts/warehouse-safety-checklist">warehouse safety checklist</a>.</p>
+  <p>Open a question for inspection prompts and follow-up guidance. For equipment checks, training and emergency preparation, see our <SmartLink href="/posts/warehouse-safety-checklist" anchorText="warehouse safety checklist" />.</p>
   <div class="audit-checklist" data-audit-checklist>
     <nav class="not-prose audit-area-index font-recoleta" aria-label="Jump to a checklist area">
       <p>Jump to an area in this checklist</p>
@@ -132,7 +133,7 @@ const inventoryTrail = [
   <p>Compare those observations with how often the item is picked, its handling requirements and the workers’ explanation of the placement. Record any constraint and the evidence for it before proposing a move.</p>
 
   <h2 id="financial-controls">Stock discrepancies and financial controls</h2>
-  <p>When a count differs from the record, retain the count notes and compare the same item, unit, location and time. Trace <a href="/posts/warehouse-receiving-process">receiving records</a>, picks, transfers and dispatches across the count boundary. Record any adjustment, its authorisation and the explanation still to be established.</p>
+  <p>When a count differs from the record, retain the count notes and compare the same item, unit, location and time. Trace <SmartLink href="/posts/warehouse-receiving-process" anchorText="receiving records" />, picks, transfers and dispatches across the count boundary. Record any adjustment, its authorisation and the explanation still to be established.</p>
   <p>Reconciliation also connects warehouse records with finance records. Ask finance to explain how the stock report’s quantities and costs reconcile to the inventory balance in the accounts. Investigate differences, including transactions entered in different periods, so a correction in one system does not leave the other out of step.</p>
   <p>Keep custody and ownership distinct. A 3PL may hold a customer’s stock; a business may own goods held elsewhere. Use contracts, warehouse confirmations and movement records to establish whose goods the records describe.</p>
   <p>Condition and value need separate attention. Flag damaged, ageing or restricted stock with its quantity and condition, then have finance assess the recorded value using the applicable accounting policy. Warehouse observations inform that decision; a successful count does not settle it. <Cite id="6" title="Inventory quantity, ownership and valuation" citation="Public Company Accounting Oversight Board" /></p>
@@ -151,7 +152,7 @@ const inventoryTrail = [
     <li><strong>Give the investigation an owner.</strong> The inventory lead follows up the unanswered points. Record any authorised adjustment alongside the investigation, including the evidence used for each.</li>
     <li><strong>Check the next result.</strong> If the same difference keeps returning, use the investigation to choose a corrective action and agree how a later check will show whether it worked.</li>
   </ul>
-  <p>For a related example, see how <a href="/posts/automated-store-replenishment-stock-errors">recurring stock corrections can reveal problems in automated replenishment</a>.</p>
+  <p>For a related example, see how <SmartLink href="/posts/automated-store-replenishment-stock-errors" anchorText="recurring stock corrections can reveal problems in automated replenishment" />.</p>
 
   <h3 id="example-inventory-finding">A completed finding and follow-up</h3>
   <p>Here is one fictional continuation of the 11-versus-12 example. The procedure, dates and record references below are illustrative; they show how to document a supported conclusion while leaving a wider question open.</p>
@@ -219,7 +220,7 @@ const inventoryTrail = [
 
   <h2 id="technology-and-people"><span id="how-technology-should-help">Technology and the people doing the work</span></h2>
   <p>Records, photographs and warehouse systems help reviewers reconstruct events. The people doing the work can explain gaps and exceptions in those records.</p>
-  <p><a href="/posts/what-is-dock-scheduling">Dock scheduling</a> shapes the work an audit needs to understand. When arrivals bunch together, staging space and the team’s time come under pressure. Compare planned appointments with actual arrivals, then trace the loads through receiving or dispatch to check how staging, checks and stock entries were handled. Ask the team what changed during the peak and compare its account with the records.</p>
+  <p><SmartLink href="/posts/what-is-dock-scheduling" anchorText="Dock scheduling" /> shapes the work an audit needs to understand. When arrivals bunch together, staging space and the team’s time come under pressure. Compare planned appointments with actual arrivals, then trace the loads through receiving or dispatch to check how staging, checks and stock entries were handled. Ask the team what changed during the peak and compare its account with the records.</p>
   <AuditDockFlow />
   <p id="the-bottom-line">A useful audit leaves people with an understandable finding, a practical next step and the support to carry it out. The aim is to make sure the system supports the work they do.</p>
 
