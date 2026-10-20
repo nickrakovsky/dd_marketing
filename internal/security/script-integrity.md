@@ -12,6 +12,8 @@ This PR publishes reviewed copies at content-versioned `/_astro/vendor/` URLs:
 
 The Bento SDK uses a reviewed snapshot at `src/assets/vendor/bento-sdk.js`, captured from `https://app.bentonow.com/b4cb9a34a989bcc643714151df7b7154.js` on October 1, 2026. Its SHA-384 remains `sha384-wXML0YNxxUzw4ZMCNPmYMgFKJwZWr4rw8/XxyI56JGDzr5oC+To3I0lc3qRqEgJ1`. Bento returned HTTP 403 to the GitHub-hosted build runner, so builds read these exact approved bytes locally. Every build verifies the snapshot, even if a cached copy exists. A missing or modified snapshot fails without a network fallback. Changes to the SDK require source review, replacing the snapshot, and updating the pin together.
 
+The Dealfront tracker uses `src/assets/vendor/dealfront.js`, recovered on October 19, 2026 from the deployed `https://datadocks.com/_astro/vendor/dealfront._v0tGOWWqw5YY6BH.js` asset. Its bytes match the existing approved `sha384-/v0tGOWWqw5YY6BHWIep+y1E3FUIyQlsIHPycoC4tazQlNZnw9WABlaGiobscidO` pin. The original `https://sc.lfeeder.com/lftracker_v1_3P1w24d9vEoamY5n.js` URL now serves different bytes, so builds use the approved snapshot. The pin, browser SRI and published asset URL stay the same. As with Bento, every build verifies the snapshot; missing or modified bytes fail without a network fallback. Adopting a newer tracker requires reviewing its source, replacing the snapshot and updating the pin together.
+
 The existing idle/on-demand schedules, booking URL, event forwarding and production hostname gate remain intact. The Calendly iframe still runs at calendly.com. Optional Bento surveys/chat/customizations are not used by this site and are outside this asset list; review their script dependencies if enabling those features.
 
 ## Deploy and maintain
