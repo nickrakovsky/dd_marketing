@@ -1,6 +1,7 @@
 import type { SSRManifest } from 'astro';
 import { isInternalPath } from './lib/internal-paths.mjs';
 import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from './lib/campaign-pages.mjs';
+import { legacyRedirectPath } from './lib/legacy-redirects';
 import { createExports as createAstroExports } from '@astrojs/cloudflare/entrypoints/server.js';
 
 export function createExports(manifest: SSRManifest) {
@@ -21,9 +22,9 @@ export function createExports(manifest: SSRManifest) {
         // These prerendered redirects also match /posts/* Worker routing.
         // The adapter's ASSETS.fetch follows them internally and serves a 200
         // duplicate, so return the redirect before entering its asset fallback.
-        const legacyPath = pathname.replace(/\/$/, '');
-        if (legacyPath === '/posts/comparison' || legacyPath === '/posts/datadocks-vs-opendock') {
-          url.pathname = legacyPath.slice('/posts'.length);
+        const legacyDestination = legacyRedirectPath(pathname);
+        if (legacyDestination) {
+          url.pathname = legacyDestination;
           return new Response(null, {
             status: 301,
             headers: { Location: url.href },
