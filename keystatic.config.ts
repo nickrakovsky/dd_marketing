@@ -27,6 +27,16 @@ const mdxComponents = {
         label: 'Warehouse audit checklist and templates',
         schema: {},
     }),
+    WarehouseStockRecord: block({
+        label: 'Warehouse Stock Record',
+        schema: {},
+    }),
+    DemoCapture: block({
+        label: 'Demo email capture popover',
+        schema: {
+            standalone: fields.checkbox({ label: 'Open from the book-demo link', defaultValue: true }),
+        },
+    }),
     WarehouseLoadTiming: block({
         label: 'Warehouse Load Timing',
         schema: {},

@@ -9,7 +9,7 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-10-24T00:00:00Z",
+  "previewAsOf": "2026-10-27T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
@@ -17,7 +17,8 @@
     "Publication is checked by the Cloudflare Worker on each request at the fixed PST timestamp. One deployment installs the content and release rules; no daily deployments or cron jobs are required.",
     "On September 22, the thirteen pending posts were postponed by one weekday; the September 17 and 18 published posts remain unchanged. Exactly one pending post is due on September 22.",
     "On October 8, the weekday queue was extended with a sixth Nick Rakovsky article for October 9 at the existing fixed PST time. The original 15-post A/B/C rotation is unchanged. The source image was omitted; existing site card artwork is reused.",
-    "On October 12, the user authorized the overtime post for October 12 and food-and-beverage posts 2–10 on successive weekdays through October 23, at the existing 06:30 fixed PST time. The original slots remain unchanged. Titles, slugs and component behavior retain the reviewed versions; illustrations use the existing article/CMS framework."
+    "On October 12, the user authorized the overtime post for October 12 and food-and-beverage posts 2–10 on successive weekdays through October 23, at the existing 06:30 fixed PST time. The original slots remain unchanged. Titles, slugs and component behavior retain the reviewed versions; illustrations use the existing article/CMS framework.",
+    "On October 19, the user approved the missing-stock video companion post and requested its addition to the daily schedule. Slot 27 uses the next available weekday, October 26, at the existing 06:30 fixed UTC-08:00 time; all earlier slots are unchanged."
   ],
   "slots": [
     {
@@ -434,6 +435,22 @@
       "sourcePath": "staging/post-10-production-runs-and-shared-planning/food-production-runs.mdx",
       "sourceSha256": "940d488a64141df03cc962ae206ae8ee9aa9539fe05cb20eaeab30a922252866",
       "contentPath": "src/content/posts/food-production-runs.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-optimization-strategies-cover.png"
+    },
+    {
+      "slot": 27,
+      "date": "2026-10-26",
+      "weekday": "Monday",
+      "group": "C",
+      "groupLabel": "DataDocks Team",
+      "sequenceInGroup": 7,
+      "author": "DataDocks Team",
+      "title": "Stop letting warehouse workarounds hide missing stock",
+      "slug": "stop-hiding-missing-stock",
+      "pubDate": "2026-10-26T14:30:00.000Z",
+      "sourcePath": "staging/post-11-warehouse-stock-records/stop-hiding-missing-stock.mdx",
+      "sourceSha256": "0f824fb7cb83da023777fd510ef8dc07dc0804fe563aa1c59d4bc7b6e66bf3d7",
+      "contentPath": "src/content/posts/stop-hiding-missing-stock.mdx",
       "cardImage": "../../assets/blog-images/warehouse-optimization-strategies-cover.png"
     }
   ]

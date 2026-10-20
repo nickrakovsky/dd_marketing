@@ -5,13 +5,15 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The queue now contains 26 scheduled articles. The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment article for October 9, then with overtime on October 12 and food-and-beverage posts 2–10 on successive weekdays through October 23. Its source image is omitted; the article uses Nick’s existing site author profile and existing artwork for the resource card. The redesigned homepage is `/`; the redesigned resource hub is `/posts`. The never-published prototype routes have been removed without redirects.
+The queue now contains 27 scheduled articles. The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment article for October 9, then with overtime on October 12 and food-and-beverage posts 2–10 on successive weekdays through October 23. Its source image is omitted; the article uses Nick’s existing site author profile and existing artwork for the resource card. The redesigned homepage is `/`; the redesigned resource hub is `/posts`. The never-published prototype routes have been removed without redirects.
 
 The October 12–23 extension is prepared in PR 255. It does not publish until merged and deployed. Any article whose timestamp has already passed will become eligible in that deployment. Preview controls remain local-only.
 
+The approved missing-stock video companion post extends the queue to Monday, October 26 at 14:30 UTC. Its title is “Stop letting warehouse workarounds hide missing stock,” with URL `/posts/stop-hiding-missing-stock`. It reuses the existing demo email-capture popover and includes the reviewed stock-record illustration. This new entry becomes eligible at its timestamp once its PR is merged and deployed.
+
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through October 23, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time. The earlier timezone clarification was unanswered, and this implementation assumption was stated in the task.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through October 26, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time. The earlier timezone clarification was unanswered, and this implementation assumption was stated in the task.
 
 The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 
@@ -47,6 +49,7 @@ The original 15-post rotation is A → B → C, repeated five times. Slot 16 con
 | 24 | Wed 2026-10-21 | B13 | Does your frozen-food distribution network still fit your customers? |
 | 25 | Thu 2026-10-22 | B14 | How quickly can you trace ingredients back to their source? |
 | 26 | Fri 2026-10-23 | B15 | Agreeing on longer food-production runs |
+| 27 | Mon 2026-10-26 | C7 | Stop letting warehouse workarounds hide missing stock |
 
 The machine-readable manifest is [daily-blog-schedule.json](daily-blog-schedule.json). It records titles, authors, slugs, timestamps, source paths and SHA-256 hashes. The runtime reads publication dates from article frontmatter; the manifest is the editorial audit record.
 
@@ -69,14 +72,14 @@ Current pages:
 - [Homepage](http://127.0.0.1:4337/)
 - [Resource hub](http://127.0.0.1:4337/posts)
 
-Views after all 26 have been published:
+Views after all 27 have been published:
 
 - [Future homepage](http://127.0.0.1:4337/preview/daily-blog/home)
 - [Future resource hub](http://127.0.0.1:4337/preview/daily-blog/posts)
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-10-24T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-10-27T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 
