@@ -23,6 +23,9 @@ export const VENDOR_SOURCES = {
     url: 'https://sc.lfeeder.com/lftracker_v1_3P1w24d9vEoamY5n.js',
     integrity: 'sha384-/v0tGOWWqw5YY6BHWIep+y1E3FUIyQlsIHPycoC4tazQlNZnw9WABlaGiobscidO',
     extension: 'js',
+    // Preserve the approved tracker when its mutable upstream URL changes.
+    // Verify this snapshot against the same pin before every build.
+    snapshot: 'src/assets/vendor/dealfront.js',
   },
   bentoBootstrap: {
     url: `https://fast.bentonow.com?site_uuid=${PINNED_BENTO_UUID}`,
