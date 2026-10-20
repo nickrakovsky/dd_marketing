@@ -31,7 +31,7 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 26, 'Expected the original 16 slots plus the authorized ten-post October batch');
+assert.equal(slots.length, 27, 'Expected the original 26 slots plus the approved missing-stock article');
 const octoberBatch = [
   ['cut-overtime-with-load-scheduling', '2026-10-12'],
   ['inventory-and-cash', '2026-10-13'],
@@ -44,12 +44,15 @@ const octoberBatch = [
   ['ingredient-traceability', '2026-10-22'],
   ['food-production-runs', '2026-10-23'],
 ];
-assert.deepEqual(slots.slice(16).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+assert.deepEqual(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
   octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
   'The authorized batch must publish on successive weekdays at 06:30 fixed UTC-08:00');
+assert.deepEqual(slots.slice(26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+  [[27, 'stop-hiding-missing-stock', '2026-10-26T14:30:00.000Z']],
+  'The approved missing-stock article must use the next weekday slot at the existing publication time');
 assert.equal(manifest.timezone, 'UTC-08:00');
 assert.equal(manifest.localPublicationTime, '06:30:00');
-assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-10-24T00:00:00Z'));
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-10-27T00:00:00Z'));
 const originalWorkerHash = sha256(await readFile(originalWorker));
 const scratch = await mkdtemp(join(tmpdir(), 'datadocks-publication-test-'));
 let server;
@@ -307,6 +310,18 @@ export default {
         assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${label}: published article is noindex`);
         assert.ok(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(text),
           `${label}: published article contains a noindex meta tag`);
+        if (slot.slug === 'stop-hiding-missing-stock') {
+          assert.match(text, /<lite-youtube\b[^>]*videoid="EBz5ZOUYNZY"/,
+            `${label}: the article must embed the reviewed longform video`);
+          assert.match(text, /<input\b(?=[^>]*type="checkbox")(?=[^>]*class="ddsr-toggle")(?=[^>]*aria-controls="ddsr-result")[^>]*>/,
+            `${label}: the stock-record interaction must render its accessible toggle`);
+          assert.match(text, /<div\b(?=[^>]*id="ddsr-result")(?=[^>]*aria-live="polite")[^>]*>/,
+            `${label}: the stock-record result must remain an accessible live region`);
+          assert.match(text, /<a\b[^>]*href="#book-demo"[^>]*>\s*See how DataDocks could work at your warehouse\s*<\/a>/,
+            `${label}: the article CTA must open the existing booking capture`);
+          assert.match(text, /<dialog\b(?=[^>]*id="demo-capture-dialog")(?=[^>]*data-standalone)[^>]*>/,
+            `${label}: the article must include the standalone email-capture dialog`);
+        }
       } else {
         assert.match(response.headers.get('x-robots-tag') || '', /noindex/i,
           `${label}: unpublished article needs an explicit noindex response`);

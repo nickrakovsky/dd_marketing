@@ -71,6 +71,19 @@ async function componentMetadata(content: string) {
 }
 
 describe('scheduled blog articles in the Keystatic editor', () => {
+  it('preserves the missing-stock video, illustration and demo capture on save', async () => {
+    const { content } = matter(readFileSync(resolve(process.cwd(), 'src/content/posts/stop-hiding-missing-stock.mdx'), 'utf8'));
+    const saved = roundTrip(content);
+    const components = await componentMetadata(saved);
+    expect(components.map(item => item.name)).toEqual(['lite-youtube', 'WarehouseStockRecord', 'DemoCapture']);
+    expect(components[0].props).toMatchObject({ videoid: 'EBz5ZOUYNZY' });
+    // Keystatic writes true boolean props as the equivalent bare attribute.
+    expect(components[2].props).toEqual({ standalone: null });
+    expect(saved).toContain('[See how DataDocks could work at your warehouse](#book-demo)');
+    expect(saved).not.toMatch(/^\s*(?:import|export)\b/m);
+    expect(roundTrip(saved)).toBe(saved);
+  });
+
   it.each([
     ['cut-overtime-with-load-scheduling', 'WarehouseLoadTiming'],
     ['inventory-and-cash', 'Post02InventoryCash'],
