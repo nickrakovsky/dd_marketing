@@ -23,8 +23,8 @@ export const VENDOR_SOURCES = {
     url: 'https://sc.lfeeder.com/lftracker_v1_3P1w24d9vEoamY5n.js',
     integrity: 'sha384-/v0tGOWWqw5YY6BHWIep+y1E3FUIyQlsIHPycoC4tazQlNZnw9WABlaGiobscidO',
     extension: 'js',
-    // Reuse the previously reviewed, deployed bytes. Its mutable upstream URL
-    // changed; builds must not implicitly accept a new tracker version.
+    // Preserve the approved tracker when its mutable upstream URL changes.
+    // Verify this snapshot against the same pin before every build.
     snapshot: 'src/assets/vendor/dealfront.js',
   },
   bentoBootstrap: {

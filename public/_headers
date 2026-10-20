@@ -20,6 +20,10 @@
 # Publication-sensitive routes /, /posts, /posts/*, /videos/* and
 # /sitemap-posts.xml use Worker middleware headers, not this static policy.
 
+# Keep the interview guide downloadable and crawlable so bots can read noindex.
+/files/Acing-Your-Logistics-Coordinator-Interview.pdf
+  X-Robots-Tag: noindex
+
 # Defense in depth if a paid landing page ever becomes a static artifact.
 # Runtime responses carry the same rule in Worker middleware and the adapter wrapper.
 /outbound-dock-management
