@@ -6,6 +6,7 @@ public
 src/env.d.ts
 # Reviewed upstream bytes: SHA-384 checked by test:vendor-assets and every build.
 src/assets/vendor/bento-sdk.js
+src/assets/vendor/dealfront.js
 analysis
 internal-marketing
 webflow-migration
