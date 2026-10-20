@@ -63,6 +63,30 @@ test('the reviewed Bento SDK builds without requesting its blocked upstream URL'
   assert.equal(networkRequests, 0);
 });
 
+test('the reviewed Dealfront snapshot builds without requesting mutable upstream bytes', async () => {
+  let networkRequests = 0;
+  const bytes = await loadVendorSource('dealfront', '/unused-cache', async () => {
+    networkRequests++;
+    return new Response('unreviewed upstream update');
+  });
+  verifyVendorSource('dealfront', bytes);
+  assert.equal(networkRequests, 0);
+});
+
+test('a missing or changed Dealfront snapshot fails closed without an upstream fallback', async t => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'dd-dealfront-snapshot-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const sourceRoot = pathToFileURL(root + path.sep);
+  let networkRequests = 0;
+  const fetcher = async () => { networkRequests++; throw new Error('must not fetch'); };
+  await assert.rejects(loadVendorSource('dealfront', '/unused-cache', fetcher, sourceRoot), { code: 'ENOENT' });
+  const snapshot = path.join(root, VENDOR_SOURCES.dealfront.snapshot);
+  await fs.mkdir(path.dirname(snapshot), { recursive: true });
+  await fs.writeFile(snapshot, 'changed tracker');
+  await assert.rejects(loadVendorSource('dealfront', '/unused-cache', fetcher, sourceRoot), /failed SHA-384/);
+  assert.equal(networkRequests, 0);
+});
+
 test('missing or corrupted SDK snapshots fail without falling back to the network', async t => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'dd-vendor-snapshot-'));
   t.after(() => fs.rm(root, { recursive: true, force: true }));
