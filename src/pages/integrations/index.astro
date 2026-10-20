@@ -6,7 +6,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import CTA from '../../components/home/CTA.astro';
-import FAQ from '../../components/FAQ.tsx';
+import FAQ from '../../components/FAQ.astro';
 
 // We fetch and sort integrations so they appear in a consistent order
 const integrations = await getCollection('integrations');
@@ -134,7 +134,7 @@ const faqContent = {
     {/* Section 3: FAQ */}
     <div class="bg-secondary py-24 border-t border-orange-100/50">
       <div class="mx-auto max-w-6xl px-6 lg:px-8">
-        <FAQ content={faqContent} client:visible headerAlign="left" noBackground={true} />
+        <FAQ content={faqContent} headerAlign="left" noBackground={true} />
       </div>
     </div>
 
