@@ -356,3 +356,29 @@ of the built preview remains pending. No screenshots or wider visual audit ran.
 
 Lighthouse CI now saves trace and DevTools assets, and uploads them with its
 reports even when assertions fail. Limits and run count remain unchanged.
+
+## Paired yard-page TBT investigation — 2026-10-20
+
+PR #261's [CI run](https://github.com/nickrakovsky/dd_marketing/actions/runs/39414827854)
+reported median yard-page TBT of 180 ms in preview versus 85 ms in production,
+exceeding the unchanged 135 ms limit. All three production runs reached the
+load-completion timeout and warned that results may be incomplete; preview
+reports have no such warning. An unfinished,
+high-priority Google audiences request is present in every production report.
+This qualifies the comparison but does not invalidate its early TBT measurements.
+
+The retained reports attribute the preview's blocking time to two tasks from the
+existing BlogPostLayout bundle. Similar production tasks fall partly before FCP
+or vary in duration. Preview has lower median total main-thread work (1,323 ms
+versus 1,476 ms) and JavaScript bootup (148 ms versus 196 ms). The yard page receives
+no audit-only scripts, and its inline critical CSS is byte-identical between
+origins. These observations do not establish a new audit-feature workload.
+
+The paired comparison previously saved Lighthouse reports without trace or
+DevTools assets. It now retains those assets for every arm and pair in the
+existing `security-performance-comparison` artifact, prints each report's
+warnings, and records warnings and runner benchmarks in `comparison.json`.
+Verbose Lighthouse logs expose unresolved load conditions. Routes, settings,
+three-pair sampling and regression thresholds are unchanged. The next normal
+CI run must validate this diagnostic change; no manual workflow rerun or local
+performance audit was performed for it.
