@@ -96,7 +96,7 @@ export default defineConfig({
               }
             });
             // A directory wildcard does not cover the hub's slashless URL.
-            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', ...internalPrefixes.map(prefix => prefix + '*'), '/brand-assets/*']) {
+            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', '/Posts*', '/Datadocks*', ...internalPrefixes.map(prefix => prefix + '*'), '/brand-assets/*']) {
               if (!routes.include.includes(route)) routes.include.push(route);
             }
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));

@@ -1,16 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 const comparisonRedirects = [
+  ['/Posts', '/posts'],
+  ['/Datadocks', '/'],
   ['/posts/comparison', '/comparison'],
   ['/posts/datadocks-vs-opendock', '/datadocks-vs-opendock'],
 ] as const;
 
 const trackingQuery = '?utm_source=redirect-regression&utm_campaign=comparison%20test';
 
-test.describe('Legacy comparison redirects', () => {
+test.describe('Legacy marketing redirects', () => {
   for (const [source, destination] of comparisonRedirects) {
     for (const method of ['GET', 'HEAD']) {
-      for (const suffix of ['', '/', trackingQuery, `/${trackingQuery}`]) {
+      for (const suffix of ['', '/', '.html', trackingQuery, `/${trackingQuery}`, `.html${trackingQuery}`]) {
         test(`${method} ${source}${suffix} returns a permanent redirect`, async ({ request }) => {
           // Following redirects here would hide the original duplicate-page bug.
           const response = await request.fetch(`${source}${suffix}`, {
@@ -44,5 +46,22 @@ test.describe('Legacy comparison redirects', () => {
 
     const missing = await request.get('/posts/comparison-redirect-regression-missing', { maxRedirects: 0 });
     expect(missing.status()).toBe(404);
+  });
+
+  test('retired previews stay missing and cannot redirect to public content', async ({ request }) => {
+    for (const pathname of ['/wireframes/tabbed-hub', '/wireframes/tabbed-hub.html', '/WIREframes/tabbed-hub', '/%77ireframes/tabbed-hub']) {
+      const response = await request.get(pathname, { maxRedirects: 0 });
+      expect(response.status()).toBe(404);
+      // Canonical private routes reach the Worker guard. Case/encoded aliases
+      // can be rejected by Pages first; their 404 is sufficient for retirement.
+      if (pathname.startsWith('/wireframes/')) {
+        expect(response.headers()['x-robots-tag']).toContain('noindex');
+      }
+      expect(response.headers().location).toBeUndefined();
+    }
+    for (const pathname of ['/Posts/unknown', '/Datadocks/unknown']) {
+      const response = await request.get(pathname, { maxRedirects: 0 });
+      expect(response.status()).toBe(404);
+    }
   });
 });

@@ -1,3 +1,9 @@
+/Posts /posts 301
+/Posts/ /posts 301
+/Posts.html /posts 301
+/Datadocks / 301
+/Datadocks/ / 301
+/Datadocks.html / 301
 /*.html  /:splat  301
 /datadocks-features/live-editing /datadocks-features/access-anywhere 301
 /posts/dwell-time-in-trucking/ /posts/dwell-time-in-trucking 301
