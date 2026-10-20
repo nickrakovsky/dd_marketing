@@ -1,2 +1,3 @@
-# Preserve the exact SHA-384-pinned upstream SDK, including its whitespace.
+# Preserve the exact SHA-384-pinned vendor snapshots, including their whitespace.
 src/assets/vendor/bento-sdk.js -text -whitespace
+src/assets/vendor/dealfront.js -text -whitespace
