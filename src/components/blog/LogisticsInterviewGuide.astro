@@ -1,4 +1,6 @@
 ---
+import guideScriptURL from '../../lib/logistics-interview-guide.mjs?url&no-inline';
+
 export interface Props {
   headline: string;
   buttonText?: string;
@@ -68,78 +70,7 @@ const uid = Math.random().toString(36).slice(2, 9);
 
 </div>
 
-<script is:inline>
-  (function() {
-    function attachLeadMagnetForms() {
-      document.querySelectorAll('.lead-magnet-form:not([data-bound])').forEach(function(form) {
-        form.setAttribute('data-bound', 'true');
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-
-          var emailInput = form.querySelector('input[name="email"]');
-          var email = emailInput ? emailInput.value : '';
-          var eventName = form.getAttribute('data-event');
-          var redirectUrl = form.getAttribute('data-redirect');
-          var formData = new FormData();
-          formData.append('email', email);
-          if (redirectUrl) formData.append('redirect', redirectUrl);
-          formData.append('fields[source]', window.location.pathname);
-
-          if (email) {
-            // Client-side identify
-            if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
-              window.bento.identify(email);
-              window.bento.track(eventName, { source: window.location.pathname });
-            }
-
-            fetch('/api/bento-track', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: email,
-                event: eventName,
-                source: window.location.pathname,
-                landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-                visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
-              }),
-              keepalive: true
-            }).catch(function() {});
-          }
-
-          form.reset();
-
-          var container = form.closest('.lead-magnet-container');
-          if (container) {
-            form.classList.remove('block');
-            form.classList.add('hidden');
-
-            var disclaimer = container.querySelector('.disclaimer-message');
-            if (disclaimer) {
-              disclaimer.classList.remove('block');
-              disclaimer.classList.add('hidden');
-            }
-
-            var success = container.querySelector('.success-message');
-            if (success) {
-              success.classList.remove('hidden');
-              success.classList.add('block');
-            }
-          }
-
-          if (redirectUrl) {
-            window.open(redirectUrl, '_blank', 'noopener');
-          }
-        });
-      });
-    }
-
-    // Run immediately (handles direct page loads)
-    attachLeadMagnetForms();
-
-    // Re-run after Astro View Transition swaps
-    document.addEventListener('astro:page-load', attachLeadMagnetForms);
-  })();
-</script>
+<script is:inline type="module" src={guideScriptURL}></script>
 
 <style>
   .signup-disclosure { color: #605b53; font-family: Inter, Arial, sans-serif; text-wrap: pretty; }

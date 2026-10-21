@@ -1,4 +1,5 @@
 ---
+import dwellJourneyScript from '../../lib/dwell-time-journey.mjs?url&no-inline';
 import { Image } from 'astro:assets';
 import arrival from '../../assets/blog-images/dwell-journey-arrival-v2.webp';
 import waiting from '../../assets/blog-images/dwell-journey-waiting.webp';
@@ -137,101 +138,7 @@ const instanceId = `dwell-journey-${crypto.randomUUID()}`;
   </figure>
 </dwell-time-journey>
 
-<script>
-  class DwellTimeJourney extends HTMLElement {
-    private events?: AbortController;
-    private selection = 0;
-
-    connectedCallback() {
-      if (this.events) return;
-      this.events = new AbortController();
-      this.addEventListener('click', this.selectStage, { signal: this.events.signal });
-      const buttons = this.querySelectorAll<HTMLButtonElement>('[data-stage]');
-      buttons.forEach(button => {
-        button.disabled = false;
-      });
-    }
-
-    disconnectedCallback() {
-      this.selection += 1;
-      this.events?.abort();
-      this.events = undefined;
-    }
-
-    private selectStage = async (event: MouseEvent) => {
-      if (!(event.target instanceof Element)) return;
-      const button = event.target.closest<HTMLButtonElement>('button[data-stage]');
-      if (!button || !this.contains(button) || button.disabled) return;
-      const selection = ++this.selection;
-      const loadStatus = this.querySelector<HTMLElement>('[data-load-status]');
-      if (loadStatus) delete loadStatus.dataset.error;
-      const scene = this.querySelector<HTMLElement>('.journey-scene');
-      const controls = this.querySelectorAll<HTMLButtonElement>('[data-stage]');
-      controls.forEach(control => { delete control.dataset.loading; });
-      if (button.getAttribute('aria-pressed') === 'true') {
-        scene?.removeAttribute('aria-busy');
-        if (loadStatus) loadStatus.textContent = '';
-        return;
-      }
-
-      const stage = button.dataset.stage;
-      const photograph = this.querySelector<HTMLElement>(`[data-stage-photo="${stage}"]`);
-      if (!photograph) return;
-
-      // Inert templates keep unvisited photographs out of the browser's fetch queue.
-      const template = photograph.querySelector<HTMLTemplateElement>('template[data-photo-template]');
-      if (template) {
-        photograph.append(template.content.cloneNode(true));
-        template.remove();
-      }
-
-      // Keep the current photograph visible until its replacement is ready.
-      const photoImage = photograph.querySelector<HTMLImageElement>('img');
-      button.dataset.loading = 'true';
-      scene?.setAttribute('aria-busy', 'true');
-      if (loadStatus) loadStatus.textContent = 'Loading photograph…';
-      try {
-        if (!photoImage) throw new Error('Missing journey photograph');
-        await photoImage.decode();
-      } catch {
-        if (selection !== this.selection || !this.isConnected) return;
-        delete button.dataset.loading;
-        scene?.removeAttribute('aria-busy');
-        if (loadStatus) {
-          loadStatus.textContent = 'Photo unavailable. Try another stage.';
-          loadStatus.dataset.error = 'true';
-        }
-        return;
-      }
-      if (selection !== this.selection || !this.isConnected) return;
-      delete button.dataset.loading;
-      scene?.removeAttribute('aria-busy');
-      if (loadStatus) loadStatus.textContent = '';
-
-      const photographs = this.querySelectorAll<HTMLElement>('[data-stage-photo]');
-      photographs.forEach(photo => {
-        photo.hidden = photo !== photograph;
-      });
-      controls.forEach(control => {
-        control.setAttribute('aria-pressed', String(control === button));
-      });
-      const stops = this.querySelectorAll<HTMLElement>('[data-route-stop]');
-      stops.forEach(stop => {
-        stop.dataset.current = String(stop.dataset.routeStop === stage);
-      });
-
-      scene?.style.setProperty('--truck-position', button.dataset.position ?? '8.333%');
-      const title = this.querySelector<HTMLElement>('[data-insight-title]');
-      if (title) title.textContent = button.dataset.title ?? '';
-      const insight = this.querySelector<HTMLElement>('[data-insight-copy]');
-      if (insight) insight.textContent = button.dataset.insight ?? '';
-    };
-  }
-
-  if (!customElements.get('dwell-time-journey')) {
-    customElements.define('dwell-time-journey', DwellTimeJourney);
-  }
-</script>
+<script type="module" src={dwellJourneyScript}></script>
 
 <style>
   .dwell-journey {

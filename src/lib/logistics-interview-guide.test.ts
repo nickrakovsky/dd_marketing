@@ -1,13 +1,7 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { afterEach, expect, it, vi } from 'vitest';
 
-const component = readFileSync(
-  resolve('src/components/blog/LogisticsInterviewGuide.astro'),
-  'utf8',
-);
-const script = component.match(/<script is:inline>([\s\S]*?)<\/script>/)?.[1];
 const guide = '/files/Acing-Your-Logistics-Coordinator-Interview.pdf';
+let detach: (() => void) | undefined;
 
 function addGuideForm() {
   const container = document.createElement('div');
@@ -27,10 +21,11 @@ afterEach(() => {
   sessionStorage.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
+  detach?.();
+  vi.resetModules();
 });
 
-it('binds the approved guide forms once and submits their email, event and attribution', () => {
-  expect(script).toBeTruthy();
+it('binds the approved guide forms once and submits their email, event and attribution', async () => {
   window.history.replaceState({}, '', '/posts/logistics-coordinator-career-path');
   sessionStorage.setItem('dd_landing_page', 'https://datadocks.com/posts/logistics-coordinator-career-path');
   const fetch = vi.fn().mockResolvedValue({ ok: true });
@@ -41,9 +36,10 @@ it('binds the approved guide forms once and submits their email, event and attri
   const open = vi.spyOn(window, 'open').mockImplementation(() => null);
   const initial = addGuideForm();
 
-  // Execute the component's real browser script: a malformed selector string
-  // previously prevented every form on the page from binding at all.
-  window.eval(script!);
+  // Import the actual external browser module, including its initial binding
+  // and Astro navigation listener. All network and analytics calls are stubbed.
+  const { attachLogisticsInterviewGuides } = await import('./logistics-interview-guide.mjs');
+  detach = () => document.removeEventListener('astro:page-load', attachLogisticsInterviewGuides);
   const afterNavigation = addGuideForm();
   document.dispatchEvent(new Event('astro:page-load'));
   document.dispatchEvent(new Event('astro:page-load'));
