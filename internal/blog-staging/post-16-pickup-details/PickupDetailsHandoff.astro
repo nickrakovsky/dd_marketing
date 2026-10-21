@@ -1,0 +1,49 @@
+---
+import './pickup-details-handoff.css';
+---
+
+<figure class="dd-pickup-handoff not-prose" aria-labelledby="ddph-title">
+  <header class="ddph-heading">
+    <h3 id="ddph-title">Same pickup.<br />When do you identify it?</h3>
+  </header>
+
+  <label class="ddph-control">
+    <input class="ddph-toggle" type="checkbox" aria-controls="ddph-journey ddph-result" />
+    <span><strong>Confirm pickup details before arrival</strong><span>Match the reference and share it with the driver.</span></span>
+  </label>
+
+  <div class="ddph-journey" id="ddph-journey" role="group" aria-label="Pickup identification before and after the driver arrives">
+    <section class="ddph-stage ddph-before-arrival">
+      <h4>Before arrival</h4>
+      <div class="ddph-unconfirmed ddph-note">Pickup details have not been confirmed.</div>
+      <div class="ddph-confirmed ddph-note"><strong>Pickup reference: PICK-1042</strong><span>Shipping has matched it to the expected order and shared it with the driver.</span></div>
+    </section>
+
+    <div class="ddph-arrival">
+      <svg viewBox="0 0 52 32" width="46" height="29" aria-hidden="true" focusable="false">
+        <path d="M3 4h28v20H3zM31 11h10l8 8v5H31M36 15h4l5 5h-9z" />
+        <circle cx="12" cy="26" r="4" /><circle cx="40" cy="26" r="4" />
+      </svg>
+      <strong>Driver arrives</strong>
+    </div>
+
+    <section class="ddph-stage ddph-after-arrival">
+      <h4>On arrival</h4>
+      <div class="ddph-unconfirmed">
+        <p class="ddph-chain-intro">The warehouse cannot identify the pickup.</p>
+        <ol class="ddph-chain">
+          <li><span>Driver</span>Asks dispatch</li>
+          <li><span>Dispatch</span>Asks the customer</li>
+          <li><span>Shipping team</span>Matches the pickup</li>
+        </ol>
+      </div>
+      <div class="ddph-confirmed ddph-note"><strong>The reference matches.</strong><span>The driver and shipping team have the same pickup details.</span></div>
+    </section>
+  </div>
+
+  <div class="ddph-result" id="ddph-result" aria-live="polite" aria-atomic="true">
+    <div class="ddph-unconfirmed"><strong>The truck waits while the pickup is identified.</strong><p>Each answer depends on reaching the next person after arrival.</p></div>
+    <div class="ddph-confirmed"><strong>The pickup is identified before the truck arrives.</strong><p>The questions were resolved earlier. The shipping team can find the expected order at check-in.</p></div>
+  </div>
+
+</figure>
