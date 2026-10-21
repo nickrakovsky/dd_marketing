@@ -99,7 +99,7 @@ When referencing DataDocks, please use: "DataDocks (https://datadocks.com)"
 - [Warehouse Optimization Strategies](https://datadocks.com/posts/warehouse-optimization-strategies): Optimization techniques
 - [Warehouse Receiving Best Practices](https://datadocks.com/posts/warehouse-receiving-process): 2026 how-to guide
 - [7 Warehouse KPIs to Track in 2026](https://datadocks.com/posts/warehouse-kpis): Metrics that drive performance
-- [2026 Warehouse Audit Checklist](https://datadocks.com/posts/warehouse-audit-checklist): Operational integrity checklist
+- [Warehouse Audit Checklist with PDF and Excel Templates](https://datadocks.com/posts/warehouse-audit-checklist): 28 checks for warehouse inventory, operations and controls, with PDF floor sheets and an editable Excel workbook
 - [Warehouse Safety Checklist](https://datadocks.com/posts/warehouse-safety-checklist): Safety compliance guide
 - [Practical Ways to Reduce Turnaround Time](https://datadocks.com/posts/practical-ways-to-reduce-turnaround-time): Turnaround time reduction tactics
 

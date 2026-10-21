@@ -33,8 +33,8 @@ export function transformVendorSource(name, bytes) {
 export async function loadVendorSource(name, cacheRoot, fetcher = fetch, sourceRoot = new URL('../', import.meta.url)) {
   const spec = VENDOR_SOURCES[name];
   if (spec.snapshot) {
-    // A committed snapshot avoids vendor bot protection in CI. A missing or
-    // modified snapshot fails closed; never fall back to a live script.
+    // A committed snapshot avoids mutable responses and vendor bot protection.
+    // A missing or modified snapshot fails closed; never use a live fallback.
     const bytes = await fs.readFile(new URL(spec.snapshot, sourceRoot));
     verifyVendorSource(name, bytes);
     return bytes;

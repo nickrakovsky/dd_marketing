@@ -16,6 +16,8 @@ module.exports = {
       startServerReadyTimeout: 30000,
       url: performancePaths.map(path => new URL(path, baseURL).href),
       numberOfRuns: 1,
+      // Keep the trace behind a failed score so we can identify the cause.
+      settings: { saveAssets: true },
     },
     assert: {
       assertions: {

@@ -21,7 +21,7 @@ for (const route of routes) {
       const url = new URL(route, arm === 'preview' ? preview.origin : 'https://datadocks.com').href;
       const filename = path.join(output, `${routeKey}-${arm}-${pair}.json`);
       const run = spawnSync(path.resolve('node_modules/.bin/lighthouse'), [url,
-        '--quiet', '--output=json', `--output-path=${filename}`,
+        '--verbose', '--save-assets', '--output=json', `--output-path=${filename}`,
         '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage',
         '--only-categories=performance', '--form-factor=mobile', '--throttling-method=simulate',
         '--screenEmulation.mobile=true', '--screenEmulation.width=390',
@@ -32,10 +32,15 @@ for (const route of routes) {
       if (run.status !== 0) throw new Error(`Lighthouse failed for ${url}: ${run.error?.message ?? run.status}`);
       const report = JSON.parse(fs.readFileSync(filename, 'utf8'));
       if (report.runtimeError) throw new Error(`Lighthouse could not measure ${url}: ${report.runtimeError.message}`);
+      const warnings = report.runWarnings ?? [];
+      for (const warning of warnings) {
+        console.warn(`[performance] ${route} ${arm} pair ${pair + 1} warning: ${warning}`);
+      }
       results.push({ route, arm, pair, score: report.categories.performance.score * 100,
         lcp: report.audits['largest-contentful-paint'].numericValue,
         tbt: report.audits['total-blocking-time'].numericValue,
         cls: report.audits['cumulative-layout-shift'].numericValue,
+        warnings, benchmarkIndex: report.environment?.benchmarkIndex,
       });
       console.log(`[performance] ${route} ${arm} pair ${pair + 1}: ${formatRunMetrics(results.at(-1))}`);
     }

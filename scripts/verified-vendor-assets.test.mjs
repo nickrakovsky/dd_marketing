@@ -53,8 +53,8 @@ test('cached vendor bytes are checked rather than trusted', async t => {
   await assert.rejects(prepareVendorAssets(path.join(root, 'dist'), cache, async () => { throw new Error('must not fetch'); }), /failed SHA-384/);
 });
 
-for (const name of ['bentoSdk', 'dealfront']) {
-  test(`the reviewed ${name} snapshot builds without requesting its upstream URL`, async () => {
+for (const [name, label] of [['bentoSdk', 'Bento SDK'], ['dealfront', 'Dealfront tracker']]) {
+  test(`the reviewed ${label} snapshot loads without requesting its upstream URL`, async () => {
     let networkRequests = 0;
     const bytes = await loadVendorSource(name, '/unused-cache', async () => {
       networkRequests++;
@@ -64,7 +64,7 @@ for (const name of ['bentoSdk', 'dealfront']) {
     assert.equal(networkRequests, 0);
   });
 
-  test(`missing or corrupted ${name} snapshots fail without falling back to the network`, async t => {
+  test(`missing or corrupted ${label} snapshots fail without falling back to the network`, async t => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), 'dd-vendor-snapshot-'));
     t.after(() => fs.rm(root, { recursive: true, force: true }));
     const sourceRoot = pathToFileURL(root + path.sep);
@@ -73,7 +73,7 @@ for (const name of ['bentoSdk', 'dealfront']) {
     await assert.rejects(loadVendorSource(name, '/unused-cache', fetcher, sourceRoot), { code: 'ENOENT' });
     const snapshot = path.join(root, VENDOR_SOURCES[name].snapshot);
     await fs.mkdir(path.dirname(snapshot), { recursive: true });
-    await fs.writeFile(snapshot, 'modified SDK');
+    await fs.writeFile(snapshot, 'modified vendor script');
     await assert.rejects(loadVendorSource(name, '/unused-cache', fetcher, sourceRoot), /failed SHA-384/);
     assert.equal(networkRequests, 0);
   });

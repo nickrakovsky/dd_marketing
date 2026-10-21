@@ -23,6 +23,10 @@ const mdxImageOptions = {
 // bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
 // Astro render maps rather than imported in the MDX itself.
 const mdxComponents = {
+    WarehouseAuditArticle: block({
+        label: 'Warehouse audit checklist and templates',
+        schema: {},
+    }),
     WarehouseStockRecord: block({
         label: 'Warehouse Stock Record',
         schema: {},

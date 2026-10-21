@@ -5,6 +5,9 @@ import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import CTA from '../components/home/CTA.astro';
+import comparisonHero from '../data/comparison-hero.json';
+import heroBruta from '../assets/fonts/Comparison-Bruta-Hero.woff2?inline';
+import heroRecoleta from '../assets/fonts/Comparison-Recoleta-Hero.woff2?inline';
 
 // Component Imports
 import ComparisonTable from '@/components/solid/micro-apps/ComparisonTable';
@@ -32,6 +35,25 @@ const description = "Compare dock scheduling methods side by side — from sprea
   preloadRecoleta
   schemaData={{ faq: comparisonFaqs }}
 >
+  {/* These small subsets travel with the HTML, so the introduction never
+      changes its line breaks while the shared brand fonts are downloading.
+      Regenerate them with scripts/subset-comparison-hero.py when this copy changes. */}
+  <style slot="head" is:inline set:html={`
+    @font-face {
+      font-family: 'Comparison-Bruta';
+      src: url('${heroBruta}') format('woff2');
+      font-weight: 800;
+      font-display: block;
+    }
+    @font-face {
+      font-family: 'Comparison-Recoleta';
+      src: url('${heroRecoleta}') format('woff2');
+      font-weight: 400;
+      font-display: block;
+    }
+    h1.comparison-hero-title { font-family: 'Comparison-Bruta', Bruta, Bruta-Fallback, Impact, system-ui, sans-serif; }
+    .comparison-hero-intro { font-family: 'Comparison-Recoleta', DD-Recoleta, Recoleta-Fallback, Georgia, serif; }
+  `} />
   <Navigation />
 
   <main class="bg-[#FFF8E9] min-h-screen overflow-x-clip font-recoleta text-gray-800">
@@ -39,11 +61,11 @@ const description = "Compare dock scheduling methods side by side — from sprea
     {/* ═══ 1. HERO + TL;DR ════════════════════════════════════════════════ */}
     <section class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative">
       <div class="max-w-5xl mx-auto relative z-10">
-        <h1 class="font-bruta text-5xl md:text-6xl lg:text-7xl uppercase text-[#fd4f00] leading-[1.05] mb-6 text-center">
-          Dock Scheduling<br/>Tools Comparison
+        <h1 class="comparison-hero-title font-bruta text-5xl md:text-6xl lg:text-7xl uppercase text-[#fd4f00] leading-[1.05] mb-6 text-center">
+          {comparisonHero.heading[0]}<br/>{comparisonHero.heading[1]}
         </h1>
-        <p class="text-xl md:text-2xl text-center text-[#5f483a] mb-12 font-medium">
-          An interactive buyers' guide for operations teams evaluating dock scheduling software.
+        <p class="comparison-hero-intro text-xl md:text-2xl text-center text-[#5f483a] mb-12 font-medium">
+          {comparisonHero.intro}
         </p>
 
         {/* Summary Block */}
