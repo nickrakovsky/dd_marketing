@@ -1,0 +1,79 @@
+---
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<div id={id} class="coe-asset not-prose">
+  <slot />
+</div>
+
+<style>
+  @font-face {
+    font-family: 'Inter';
+    src: url('../../../assets/fonts/Inter-Latin-Variable.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  .coe-asset {
+    --paper: #fff8ee;
+    --ink: #24211d;
+    --muted: #686054;
+    --soft: #e3d5c4;
+    --line: #9f8d78;
+    --accent: #fe5000;
+    --coe-paper: var(--paper);
+    --coe-ink: var(--ink);
+    --coe-accent: var(--accent);
+    margin: 32px 0 42px;
+    color: var(--ink);
+    font: 400 16px/1.5 Inter, sans-serif;
+    scroll-margin-top: 24px;
+  }
+
+  :global(.dark) .coe-asset {
+    --paper: #211f1b;
+    --ink: #fff3df;
+    --muted: #c4b8a5;
+    --soft: #4d4134;
+    --line: #99856e;
+    --accent: #ff8752;
+    --coe-image-tone: saturate(.92) brightness(.9) contrast(.85);
+    --coe-paper: #211f1b;
+    --coe-ground: #2c2721;
+    --coe-ground-line: #554838;
+    --coe-wall: #675846;
+    --coe-roof: #79694f;
+    --coe-side: #4b4032;
+    --coe-roof-detail: #978266;
+    --coe-ink: #211b16;
+    --coe-structure: #c4b399;
+    --coe-fine: #a18d70;
+    --coe-window: #8d7a5f;
+    --coe-glass: #302820;
+    --coe-door: #827156;
+    --coe-door-line: #b49c77;
+    --coe-orange: #ff8752;
+    --coe-soft-orange: #a86e4e;
+    --coe-route: #ff986c;
+    --coe-trailer: #ac9b80;
+    --coe-trailer-top: #d2c3ab;
+    --coe-trailer-side: #806e55;
+    --coe-tire: #24201b;
+    --coe-tire-center: #bcab90;
+  }
+
+  :global(#content:has(.coe-asset) > h3) {
+    text-wrap: pretty;
+    margin-top: 2.4em;
+    margin-bottom: .8em;
+  }
+
+  :global(#content:has(.coe-asset) > h3 + p) {
+    margin-top: 0;
+  }
+</style>

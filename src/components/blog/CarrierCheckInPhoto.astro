@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import checkIn from '../../assets/blog-images/logistics-coordinator-career-checkin.webp';
+---
+
+<figure id="carrier-check-in-photo" class="carrier-check-in-photo not-prose">
+  <Image
+    src={checkIn}
+    alt="Illustrative shipping-office scene with a phone and shipment paperwork overlooking a truck in the loading yard"
+    widths={[360, 540, 720, 960]}
+    sizes="(min-width: 1280px) 608px, (min-width: 1024px) calc(100vw - 592px), (min-width: 768px) 672px, min(672px, calc(100vw - 2rem))"
+    width={960}
+    height={640}
+    quality={88}
+    loading="lazy"
+    decoding="async"
+  />
+</figure>
+
+<style>
+  .carrier-check-in-photo { width: 100%; margin: 1.5em 0; scroll-margin-top: 7rem; }
+  .carrier-check-in-photo img { display: block; width: 100%; height: auto; margin: 0; border: 0; border-radius: 0.75rem; }
+</style>

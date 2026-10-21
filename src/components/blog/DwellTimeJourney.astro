@@ -1,0 +1,345 @@
+---
+import { Image } from 'astro:assets';
+import arrival from '../../assets/blog-images/dwell-journey-arrival-v2.webp';
+import waiting from '../../assets/blog-images/dwell-journey-waiting.webp';
+import unloading from '../../assets/blog-images/dwell-journey-unloading.webp';
+import departure from '../../assets/blog-images/dwell-journey-departure-v2.webp';
+
+const stages = [
+  {
+    label: 'Arrival',
+    fullLabel: 'Arrival and check-in',
+    title: 'Arrival and check-in',
+    insight: 'Dwell begins at site arrival and includes check-in. Arriving ahead of an appointment can add to the total before the scheduled work begins.',
+    image: arrival,
+    alt: 'An ivory tractor-trailer entering through a gate from the public road outside, with a receiver checking a handheld device beside the gatehouse.',
+    position: '8.333%',
+  },
+  {
+    label: 'Waiting',
+    fullLabel: 'Waiting for a dock',
+    title: 'Waiting for a dock or crew',
+    insight: 'A truck may be waiting in the yard or already at a dock. A free door does not always mean the crew, equipment, and paperwork are ready.',
+    image: waiting,
+    alt: 'View from a parked truck cab toward warehouse dock doors and trailers, with the driver’s hand resting by the window.',
+    position: '36.111%',
+  },
+  {
+    label: 'At the dock',
+    fullLabel: 'Loading or unloading at the dock',
+    title: 'Loading or unloading',
+    insight: 'Loading and unloading are the working portion of dwell. Load size, packaging, and required checks shape this time, making similar loads a fairer comparison than all trucks combined.',
+    image: unloading,
+    alt: 'A warehouse receiver moving a pallet of cartons across a dock leveler with a powered pallet jack.',
+    position: '63.889%',
+  },
+  {
+    label: 'Departure',
+    fullLabel: 'Release and departure',
+    title: 'Release and departure',
+    insight: 'Moving the last pallet does not always end the visit. Shipment confirmation, paperwork, and release may still need to happen before the truck leaves.',
+    image: departure,
+    alt: 'An ivory tractor-trailer crossing an open exit gate toward the road, with two warehouse dock doors behind it.',
+    position: '91.667%',
+  },
+];
+
+const instanceId = `dwell-journey-${crypto.randomUUID()}`;
+---
+
+<dwell-time-journey class="dwell-journey">
+  <figure id="dwell-time-journey" class="journey-figure not-prose" aria-label="A truck's journey from arrival to departure">
+    <div class="journey-scene" style="--truck-position: 8.333%">
+      {stages.map((stage, index) => (
+        <div
+          class="journey-photograph"
+          data-stage-photo={index}
+          hidden={index !== 0}
+        >
+          {index === 0 ? (
+            <Image
+              src={stage.image}
+              alt={stage.alt}
+              widths={[320, 480, 640, 960, 1280]}
+              sizes="(max-width: 640px) calc(100vw - 2rem), 608px"
+              loading="eager"
+              fetchpriority="high"
+              class="journey-image"
+            />
+          ) : (
+            <template data-photo-template>
+              <Image
+                src={stage.image}
+                alt={stage.alt}
+                widths={[320, 480, 640, 960, 1280]}
+                sizes="(max-width: 640px) calc(100vw - 2rem), 608px"
+                loading="eager"
+                fetchpriority="auto"
+                class="journey-image"
+              />
+            </template>
+          )}
+        </div>
+      ))}
+
+      <div class="journey-route" aria-hidden="true">
+        <svg class="journey-route-lines" viewBox="0 0 600 76" preserveAspectRatio="none">
+          <path class="journey-track" d="M50 20H550" />
+          <path class="journey-bracket" d="M50 42V51H550V42" />
+        </svg>
+        {stages.map((stage, index) => (
+          <span class="journey-stop" style={`left: ${stage.position}`} data-route-stop={index} data-current={index === 0 ? 'true' : 'false'}></span>
+        ))}
+        <svg class="journey-truck" viewBox="0 0 38 25" fill="none">
+          <path d="M2 3H24V18H2V3Z M24 9H31L36 15V18H24" fill="#fff7e8" stroke="#fff7e8" stroke-width="1.5" stroke-linejoin="round" />
+          <path d="M27 10.5H30.2L33.8 14.5H27V10.5Z" fill="#302920" />
+          <circle cx="9" cy="19" r="3.5" fill="#302920" stroke="#fff7e8" stroke-width="1.5" />
+          <circle cx="29" cy="19" r="3.5" fill="#302920" stroke="#fff7e8" stroke-width="1.5" />
+          <path d="M5 6H21" stroke="#FE5000" stroke-width="2" />
+        </svg>
+        <span class="journey-total">Total dwell time</span>
+      </div>
+    </div>
+
+    <div class="journey-stage-controls" role="group" aria-label="Explore a stage of the visit">
+      {stages.map((stage, index) => (
+        <button
+          type="button"
+          class="journey-stage"
+          data-stage={index}
+          data-position={stage.position}
+          data-title={stage.title}
+          data-insight={stage.insight}
+          aria-label={stage.fullLabel}
+          aria-pressed={index === 0 ? 'true' : 'false'}
+          aria-controls={`${instanceId}-insight`}
+          disabled
+        >
+          <span>{stage.label}</span>
+        </button>
+      ))}
+    </div>
+
+    <p class="journey-load-status" data-load-status role="status" aria-atomic="true"></p>
+
+    <figcaption class="journey-caption" id={`${instanceId}-insight`} aria-live="polite" aria-atomic="true">
+      <p class="journey-insight-title" data-insight-title>{stages[0].title}</p>
+      <p class="journey-insight-copy" data-insight-copy>{stages[0].insight}</p>
+    </figcaption>
+
+    <noscript>
+      <ol class="journey-static-stages" start="2" aria-label="The remaining stages of the facility visit">
+        {stages.slice(1).map(stage => (
+          <li><strong>{stage.fullLabel}.</strong> {stage.insight}</li>
+        ))}
+      </ol>
+    </noscript>
+  </figure>
+</dwell-time-journey>
+
+<script>
+  class DwellTimeJourney extends HTMLElement {
+    private events?: AbortController;
+    private selection = 0;
+
+    connectedCallback() {
+      if (this.events) return;
+      this.events = new AbortController();
+      this.addEventListener('click', this.selectStage, { signal: this.events.signal });
+      const buttons = this.querySelectorAll<HTMLButtonElement>('[data-stage]');
+      buttons.forEach(button => {
+        button.disabled = false;
+      });
+    }
+
+    disconnectedCallback() {
+      this.selection += 1;
+      this.events?.abort();
+      this.events = undefined;
+    }
+
+    private selectStage = async (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const button = event.target.closest<HTMLButtonElement>('button[data-stage]');
+      if (!button || !this.contains(button) || button.disabled) return;
+      const selection = ++this.selection;
+      const loadStatus = this.querySelector<HTMLElement>('[data-load-status]');
+      if (loadStatus) delete loadStatus.dataset.error;
+      const scene = this.querySelector<HTMLElement>('.journey-scene');
+      const controls = this.querySelectorAll<HTMLButtonElement>('[data-stage]');
+      controls.forEach(control => { delete control.dataset.loading; });
+      if (button.getAttribute('aria-pressed') === 'true') {
+        scene?.removeAttribute('aria-busy');
+        if (loadStatus) loadStatus.textContent = '';
+        return;
+      }
+
+      const stage = button.dataset.stage;
+      const photograph = this.querySelector<HTMLElement>(`[data-stage-photo="${stage}"]`);
+      if (!photograph) return;
+
+      // Inert templates keep unvisited photographs out of the browser's fetch queue.
+      const template = photograph.querySelector<HTMLTemplateElement>('template[data-photo-template]');
+      if (template) {
+        photograph.append(template.content.cloneNode(true));
+        template.remove();
+      }
+
+      // Keep the current photograph visible until its replacement is ready.
+      const photoImage = photograph.querySelector<HTMLImageElement>('img');
+      button.dataset.loading = 'true';
+      scene?.setAttribute('aria-busy', 'true');
+      if (loadStatus) loadStatus.textContent = 'Loading photograph…';
+      try {
+        if (!photoImage) throw new Error('Missing journey photograph');
+        await photoImage.decode();
+      } catch {
+        if (selection !== this.selection || !this.isConnected) return;
+        delete button.dataset.loading;
+        scene?.removeAttribute('aria-busy');
+        if (loadStatus) {
+          loadStatus.textContent = 'Photo unavailable. Try another stage.';
+          loadStatus.dataset.error = 'true';
+        }
+        return;
+      }
+      if (selection !== this.selection || !this.isConnected) return;
+      delete button.dataset.loading;
+      scene?.removeAttribute('aria-busy');
+      if (loadStatus) loadStatus.textContent = '';
+
+      const photographs = this.querySelectorAll<HTMLElement>('[data-stage-photo]');
+      photographs.forEach(photo => {
+        photo.hidden = photo !== photograph;
+      });
+      controls.forEach(control => {
+        control.setAttribute('aria-pressed', String(control === button));
+      });
+      const stops = this.querySelectorAll<HTMLElement>('[data-route-stop]');
+      stops.forEach(stop => {
+        stop.dataset.current = String(stop.dataset.routeStop === stage);
+      });
+
+      scene?.style.setProperty('--truck-position', button.dataset.position ?? '8.333%');
+      const title = this.querySelector<HTMLElement>('[data-insight-title]');
+      if (title) title.textContent = button.dataset.title ?? '';
+      const insight = this.querySelector<HTMLElement>('[data-insight-copy]');
+      if (insight) insight.textContent = button.dataset.insight ?? '';
+    };
+  }
+
+  if (!customElements.get('dwell-time-journey')) {
+    customElements.define('dwell-time-journey', DwellTimeJourney);
+  }
+</script>
+
+<style>
+  .dwell-journey {
+    --journey-paper: #fff7e9;
+    --journey-ink: #251f18;
+    --journey-muted: #685c4d;
+    --journey-rule: #dccfb9;
+    --journey-orange: #FE5000;
+    --journey-active: #FFE6D4;
+    display: block;
+    container-type: inline-size;
+    margin: 0 0 2rem;
+    color: var(--journey-ink);
+    font-family: Inter, Arial, sans-serif;
+  }
+
+  :global(.dark) .dwell-journey {
+    --journey-paper: #241f19;
+    --journey-ink: #fff2dd;
+    --journey-muted: #cabba5;
+    --journey-rule: #514535;
+    --journey-active: #342e26;
+  }
+
+  .journey-figure {
+    overflow: hidden;
+    margin: 0;
+    background: var(--journey-paper);
+    border: 1px solid var(--journey-rule);
+    border-radius: 3px;
+  }
+
+  .journey-scene {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    isolation: isolate;
+    overflow: hidden;
+    background: #544c3c;
+  }
+
+  .journey-photograph { position: absolute; inset: 0; }
+  .journey-photograph[hidden] { display: none; }
+  .journey-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .journey-scene::after {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(20 17 13 / 0.2), transparent 25%, transparent 51%, rgb(20 17 13 / 0.86));
+    content: '';
+    pointer-events: none;
+  }
+
+  .journey-route { position: absolute; z-index: 2; right: 0.75rem; bottom: 0.25rem; left: 0.75rem; height: 76px; color: #fff7e9; }
+  .journey-route-lines { display: block; width: 100%; height: 76px; fill: none; }
+  .journey-route-lines path { vector-effect: non-scaling-stroke; }
+  .journey-track { stroke: rgb(255 247 233 / 0.55); stroke-width: 1; }
+  .journey-bracket { stroke: var(--journey-orange); stroke-width: 2; }
+  .journey-stop { position: absolute; top: 17px; width: 6px; height: 6px; border: 1px solid #fff7e9; border-radius: 50%; background: #3c3328; transform: translateX(-50%); }
+  .journey-stop[data-current='true'] { opacity: 0; }
+  .journey-truck { position: absolute; top: 0; left: var(--truck-position); width: 38px; height: 25px; transform: translateX(-50%); }
+  .journey-total { position: absolute; right: 0; bottom: 0; left: 0; color: #fff0dc; text-align: center; font-size: 0.6875rem; line-height: 1.5; letter-spacing: 0.025em; }
+
+  .journey-stage-controls { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--journey-rule); }
+  .journey-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 48px;
+    margin: 0;
+    padding: 0.75rem 0.5rem;
+    border: 0;
+    border-radius: 0;
+    color: var(--journey-muted);
+    background: transparent;
+    text-align: center;
+    font: inherit;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    cursor: pointer;
+  }
+
+  .journey-stage + .journey-stage { border-left: 1px solid var(--journey-rule); }
+  .journey-stage[aria-pressed='true'] { color: var(--journey-ink); background: var(--journey-active); font-weight: 600; }
+  .journey-stage[aria-pressed='true']::after { position: absolute; inset: auto 0 0; height: 3px; background: var(--journey-orange); content: ''; }
+  .journey-stage:focus-visible { z-index: 1; outline: 2px solid var(--journey-orange); outline-offset: -4px; }
+  .journey-stage:disabled { cursor: default; }
+  .journey-stage[data-loading='true'] { background: var(--journey-active); }
+  .journey-load-status { margin: 0; padding: 0.75rem 1.25rem 0; color: var(--journey-muted); font-size: 0.75rem; line-height: 1.5; }
+  .journey-load-status:not([data-error]) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .journey-caption { min-height: 103px; padding: 1.125rem 1.25rem; }
+  .journey-insight-title { margin: 0 0 0.3125rem; color: var(--journey-ink); font-size: 0.9375rem; font-weight: 600; line-height: 1.4; }
+  .journey-insight-copy { margin: 0; color: var(--journey-muted); font-size: 0.8125rem; line-height: 1.55; }
+  .journey-static-stages { margin: 0 1.25rem 1rem; padding-left: 1rem; color: var(--journey-muted); font-size: 0.8125rem; line-height: 1.55; }
+  .journey-static-stages li + li { margin-top: 0.5rem; }
+
+  @media (hover: hover) {
+    .journey-stage:not(:disabled):hover { background: var(--journey-active); color: var(--journey-ink); }
+  }
+
+  @container (max-width: 400px) {
+    .journey-scene { aspect-ratio: 4 / 3; }
+    .journey-route { right: 0.375rem; left: 0.375rem; }
+    .journey-stage { min-height: 44px; padding: 0.625rem 0.375rem; font-size: 0.6875rem; }
+    .journey-load-status[data-error] { padding-inline: 0.875rem; }
+    .journey-caption { min-height: 132px; padding: 1rem 0.875rem; }
+    .journey-insight-title { font-size: 0.875rem; }
+    .journey-insight-copy { font-size: 0.75rem; }
+  }
+</style>

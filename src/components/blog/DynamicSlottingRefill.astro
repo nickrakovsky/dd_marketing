@@ -1,0 +1,240 @@
+---
+const skuOptions = ['A', 'B', 'C', 'D'];
+const defaultPicks = ['B', 'B', 'C', 'B'];
+---
+
+<dynamic-slotting-refill class="refill-app">
+  <figure id="dynamic-slotting-refill" class="refill-figure not-prose" aria-label="Interactive example of a suggested refill for an empty forward-pick slot">
+    <div class="refill-queue" aria-label="Upcoming picks">
+      <span class="refill-queue-label">Upcoming picks</span>
+      {defaultPicks.map((code, index) => (
+        <button type="button" class="refill-button refill-pick" data-pick={index} data-recommended={code === 'B' ? 'true' : 'false'} aria-label={`Upcoming pick ${index + 1}: ${code}. Activate to change to ${skuOptions[(skuOptions.indexOf(code) + 1) % skuOptions.length]}.`} disabled>{code}</button>
+      ))}
+    </div>
+    <p class="refill-hint">Click or tap picks and occupied slots to cycle A–D.</p>
+    <div class="refill-pair">
+      <div>
+        <p class="refill-label">An opening in forward picking</p>
+        <div class="refill-bins" aria-label="Current forward slots">
+          <button type="button" class="refill-button refill-slot" data-slot="0" aria-label="Left occupied slot: A. Activate to change to B." disabled>A</button>
+          <span class="refill-bin refill-empty">Empty</span>
+          <button type="button" class="refill-button refill-slot" data-slot="1" aria-label="Right occupied slot: C. Activate to change to D." disabled>C</button>
+        </div>
+      </div>
+      <div>
+        <p class="refill-label">Suggested refill</p>
+        <div class="refill-bins" aria-label="Possible new slot assignment">
+          <span class="refill-bin" data-mirror="0">A</span>
+          <span class="refill-bin refill-chosen" data-result aria-label="Suggested refill: B">B</span>
+          <span class="refill-bin" data-mirror="1">C</span>
+        </div>
+        <svg class="refill-arrow" viewBox="0 0 272 68" role="img" aria-label="B from reserve is a suggested refill for the opening">
+          <g data-source-position transform="translate(136 0)">
+            <path class="refill-route" d="M0 37V3m-4 5 4-5 4 5" />
+            <rect class="refill-source" x="-16" y="39" width="32" height="25" rx="2" />
+            <text class="refill-source-label" x="0" y="56" text-anchor="middle" data-source-code>B</text>
+            <text class="refill-source-label" x="-23" y="56" text-anchor="end">Reserve</text>
+          </g>
+        </svg>
+        <p class="refill-detail" role="status" aria-live="polite" aria-atomic="true">B has 3 upcoming picks and no slot.</p>
+      </div>
+    </div>
+  </figure>
+</dynamic-slotting-refill>
+
+<script>
+  const codes = ['A', 'B', 'C', 'D'] as const;
+  type Sku = (typeof codes)[number];
+
+  class DynamicSlottingRefill extends HTMLElement {
+    private picks: Sku[] = ['B', 'B', 'C', 'B'];
+    private slots: Sku[] = ['A', 'C'];
+    private events?: AbortController;
+    private observer?: ResizeObserver;
+
+    connectedCallback() {
+      if (this.events) return;
+      this.events = new AbortController();
+      this.addEventListener('click', this.handleClick, { signal: this.events.signal });
+      this.render();
+      const controls = this.querySelectorAll<HTMLButtonElement>('button');
+      controls.forEach(control => { control.disabled = false; });
+      const arrow = this.querySelector<SVGSVGElement>('.refill-arrow');
+      if (arrow) {
+        this.observer = new ResizeObserver(() => this.positionSource());
+        this.observer.observe(arrow);
+      }
+    }
+
+    disconnectedCallback() {
+      this.events?.abort();
+      this.events = undefined;
+      this.observer?.disconnect();
+      this.observer = undefined;
+    }
+
+    private cycle(code: Sku): Sku {
+      return codes[(codes.indexOf(code) + 1) % codes.length];
+    }
+
+    private choose() {
+      // Prioritize SKU coverage, then use pick frequency to suggest an extra slot.
+      // This example does not model stock levels or slot capacity.
+      const unslotted = this.picks.filter(code => !this.slots.includes(code));
+      const alreadySlotted = unslotted.length === 0;
+      const candidates = [...new Set(alreadySlotted ? this.picks : unslotted)];
+      const counts = candidates.map(code => this.picks.filter(pick => pick === code).length);
+      const count = Math.max(0, ...counts);
+      // Set insertion order makes equal counts favor the next product needed.
+      const tied = candidates.filter((_, index) => counts[index] === count);
+      return { code: tied[0], count, tied, alreadySlotted };
+    }
+
+    private handleClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const control = event.target.closest<HTMLButtonElement>('button[data-pick], button[data-slot]');
+      if (!control || !this.contains(control) || control.disabled) return;
+      const values = control.hasAttribute('data-pick') ? this.picks : this.slots;
+      const index = Number(control.dataset.pick ?? control.dataset.slot);
+      if (!Number.isInteger(index) || index < 0 || index >= values.length) return;
+      values[index] = this.cycle(values[index]);
+      this.render();
+    };
+
+    private positionSource() {
+      const arrow = this.querySelector<SVGSVGElement>('.refill-arrow');
+      const source = this.querySelector<SVGGElement>('[data-source-position]');
+      if (!arrow || !source) return;
+      const width = Math.round(arrow.getBoundingClientRect().width);
+      if (!width) return;
+      arrow.setAttribute('viewBox', `0 0 ${width} 68`);
+      source.setAttribute('transform', `translate(${width / 2} 0)`);
+    }
+
+    private render() {
+      const candidate = this.choose();
+      const pickControls = this.querySelectorAll<HTMLButtonElement>('[data-pick]');
+      pickControls.forEach(control => {
+        const index = Number(control.dataset.pick);
+        const code = this.picks[index];
+        control.textContent = code;
+        control.dataset.recommended = String(code === candidate.code);
+        control.setAttribute('aria-label', `Upcoming pick ${index + 1}: ${code}. Activate to change to ${this.cycle(code)}.`);
+      });
+      const slotControls = this.querySelectorAll<HTMLButtonElement>('[data-slot]');
+      slotControls.forEach(control => {
+        const index = Number(control.dataset.slot);
+        const code = this.slots[index];
+        control.textContent = code;
+        control.setAttribute('aria-label', `${index === 0 ? 'Left' : 'Right'} occupied slot: ${code}. Activate to change to ${this.cycle(code)}.`);
+      });
+      const mirrors = this.querySelectorAll<HTMLElement>('[data-mirror]');
+      mirrors.forEach(slot => {
+        slot.textContent = this.slots[Number(slot.dataset.mirror)];
+      });
+      const result = this.querySelector<HTMLElement>('[data-result]');
+      if (result) {
+        result.textContent = candidate.code;
+        result.setAttribute('aria-label', `Suggested refill: ${candidate.code}`);
+      }
+      const arrow = this.querySelector<SVGSVGElement>('.refill-arrow');
+      arrow?.setAttribute('aria-label', `${candidate.code} from reserve is a suggested refill for the opening`);
+      const sourceCode = this.querySelector<SVGTextElement>('[data-source-code]');
+      if (sourceCode) sourceCode.textContent = candidate.code;
+      const detail = this.querySelector<HTMLElement>('.refill-detail');
+      if (detail) {
+        const pickCount = `${candidate.count} ${candidate.count === 1 ? 'pick' : 'picks'}`;
+        detail.textContent = candidate.tied.length > 1
+          ? `${candidate.tied.join(' and ')} tie at ${pickCount}; ${candidate.code} comes first.${candidate.alreadySlotted ? ` Consider an extra ${candidate.code} slot.` : ''}`
+          : candidate.alreadySlotted
+            ? `${candidate.code} has the most upcoming picks (${candidate.count}). Consider an extra ${candidate.code} slot.`
+            : `${candidate.code} has ${candidate.count} upcoming ${candidate.count === 1 ? 'pick' : 'picks'} and no slot.`;
+      }
+      this.positionSource();
+    }
+  }
+
+  if (!customElements.get('dynamic-slotting-refill')) {
+    customElements.define('dynamic-slotting-refill', DynamicSlottingRefill);
+  }
+</script>
+
+<style>
+  @font-face {
+    font-family: 'Warehouse-Inter';
+    src: url('../../assets/fonts/Inter-Latin-Variable.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  .refill-app { display: block; container-type: inline-size; margin: 1.5rem 0 2rem; scroll-margin-top: 7rem; }
+  .refill-figure {
+    --refill-paper: #fff8e9;
+    --refill-ink: #171510;
+    --refill-muted: #665a49;
+    --refill-rule: #e5d3b3;
+    --refill-orange: #d74609;
+    --refill-peach: #ffe1ca;
+    --refill-neutral: #e9dfcc;
+    --refill-panel: #fffcf5;
+    --refill-button-edge: #b7a17f;
+    margin: 0;
+    padding: 1.25rem;
+    color: var(--refill-ink);
+    background: var(--refill-paper);
+    border: 1px solid var(--refill-rule);
+    border-top: 3px solid #fd4f00;
+    border-radius: 0.25rem;
+    font-family: 'Warehouse-Inter', Inter, system-ui, sans-serif;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    scroll-margin-top: 7rem;
+  }
+  :global(.dark) .refill-figure {
+    --refill-paper: #1e1c19;
+    --refill-ink: #fff3df;
+    --refill-muted: #c8baa7;
+    --refill-rule: #504638;
+    --refill-orange: #ff986c;
+    --refill-peach: #4a3125;
+    --refill-neutral: #443b30;
+    --refill-panel: #302b24;
+    --refill-button-edge: #8a775d;
+  }
+  .refill-queue { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; }
+  .refill-queue-label { color: var(--refill-muted); margin-right: 0.5rem; }
+  .refill-button { display: grid; place-items: center; min-width: 0; padding: 0; color: var(--refill-ink); background: linear-gradient(var(--refill-panel), var(--refill-paper)); border: 1px solid var(--refill-muted); border-radius: 4px; box-shadow: 0 2px 0 var(--refill-button-edge), 0 3px 5px rgb(23 21 16 / 0.06); font: inherit; font-weight: 500; cursor: pointer; }
+  .refill-button:focus-visible { outline: 2px solid var(--refill-orange); outline-offset: 4px; }
+  .refill-button:not(:disabled):active { transform: translateY(2px); box-shadow: none; }
+  .refill-button:disabled { cursor: default; box-shadow: none; }
+  .refill-pick { width: 44px; min-height: 40px; }
+  .refill-pick[data-recommended='true'] { background: var(--refill-peach); border-color: var(--refill-orange); }
+  .refill-hint { margin: 0.5rem 0 1.25rem; color: var(--refill-muted); font-size: 0.75rem; }
+  .refill-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+  .refill-pair > div { min-width: 0; }
+  .refill-label { margin: 0 0 0.5625rem; font-weight: 500; }
+  .refill-bins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.375rem; }
+  .refill-bin { display: grid; place-items: center; min-height: 44px; padding: 0; background: var(--refill-neutral); border: 1px solid var(--refill-rule); border-radius: 3px; }
+  .refill-slot { min-height: 44px; }
+  .refill-empty { color: var(--refill-muted); background: transparent; border-style: dashed; }
+  .refill-chosen { background: var(--refill-peach); border-color: var(--refill-orange); font-weight: 500; }
+  .refill-arrow { display: block; width: 100%; height: 68px; margin-top: 0.5rem; }
+  .refill-arrow * { vector-effect: non-scaling-stroke; }
+  .refill-route { fill: none; stroke: var(--refill-orange); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .refill-source { fill: var(--refill-peach); stroke: var(--refill-orange); stroke-width: 1; }
+  .refill-source-label { fill: var(--refill-ink); font-family: 'Warehouse-Inter', Inter, system-ui, sans-serif; font-size: 13px; }
+  .refill-detail { margin: 0.5625rem 0 0; color: var(--refill-muted); font-size: 0.75rem; }
+
+  @container (max-width: 530px) {
+    .refill-pair { grid-template-columns: 1fr; gap: 1.25rem; }
+    .refill-pair > div { width: 100%; max-width: 300px; margin-inline: auto; }
+    .refill-queue-label { flex-basis: 100%; margin: 0 0 2px; }
+  }
+  @container (max-width: 380px) { .refill-figure { padding: 1rem; } }
+  @media (hover: hover) {
+    .refill-button:not(:disabled):hover { border-color: var(--refill-orange); box-shadow: 0 2px 0 var(--refill-button-edge), 0 4px 6px rgb(23 21 16 / 0.1); }
+    .refill-button:not(:disabled):active { box-shadow: none; }
+  }
+  @media (pointer: coarse) { .refill-pick { min-height: 44px; } }
+</style>
