@@ -11,6 +11,26 @@ This folder is the queue for future drafts. New posts remain undated until
 scheduling is authorized. Placing files here does not publish them. `internal/`
 must stay outside production imports and output.
 
+## Training-session batch queued on October 22, 2026
+
+The six slugs and interactive illustrations below have been accepted. These
+entries are undated drafts, not six completed articles awaiting release. The
+early-arrivals entry contains the full existing prose draft; the other five
+contain the reviewed introduction, illustration and closing bridge. Their
+remaining article bodies still need to be written and reviewed before dates
+are assigned. The current title for the sixth post remains a working title.
+
+| Draft title | Intended URL | Current text |
+|---|---|---|
+| Trucks Arriving Hours Early? How to Change the Pattern | `/posts/early-arrival-patterns` | Full prose draft; illustration placed later in the article |
+| Can You Fine Carriers for Late Arrivals and No-Shows? | `/posts/missed-slot-fees` | Reviewed excerpt; body pending |
+| Receiving Keeps Falling Behind: How to Find Where the Work Gets Stuck | `/posts/receiving-backlogs` | Reviewed excerpt; body pending |
+| What to Do When Missing Paperwork Holds Up Receiving | `/posts/paperwork-delays` | Reviewed excerpt; body pending |
+| You Sent Directions. Why Are Drivers Still Getting Out to Ask Where To Go? | `/posts/driver-wayfinding` | Reviewed excerpt; body pending |
+| Leading a Technology Project When Your Job Is Operations | `/posts/rollout-decisions` | Reviewed excerpt; body and final title review pending |
+
+## Package format and review
+
 Each folder contains one `<slug>.mdx` article, its named Astro component and any
 required CSS or unique assets. Preserve the accepted prose and source URLs.
 Keep `pubDate` absent until scheduling is authorized. Do not add per-post guides,
