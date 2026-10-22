@@ -1,0 +1,15 @@
+---
+import landPaths from './map-data/land-paths.json';
+
+interface Props {
+  class?: string;
+  fill?: string;
+}
+
+const { class: className, fill } = Astro.props;
+---
+
+<!-- Static Natural Earth I land geometry for an enclosing SVG viewBox="0 0 800 440". -->
+<g class={className} fill={fill} aria-hidden="true">
+  {landPaths.map((d) => <path d={d} />)}
+</g>

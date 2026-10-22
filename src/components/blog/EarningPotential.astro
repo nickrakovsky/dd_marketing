@@ -1,0 +1,201 @@
+---
+const factors = [
+  {
+    id: 'experience', title: 'Experience',
+    paths: ['M8 9V6h16v3', 'M5 10h22v18H5z', 'M10 15h12M10 20h8', 'm19 25 2 2 5-6'],
+    description: 'Relevant experience builds the judgment to resolve problems independently.',
+    example: '“Proven experience resolving shipment delays independently.”',
+    question: 'Which situations can you already handle without guidance?',
+  },
+  {
+    id: 'skills', title: 'Specialized skills',
+    paths: ['M5 6h22v16H5z', 'M11 28h10M16 22v6', 'M10 17v-4M16 17V9M22 17v-6'],
+    description: 'Specific tools, systems, or process knowledge can open up more demanding roles.',
+    example: '“Advanced Excel and transport management system experience.”',
+    question: 'Which requested skills can you demonstrate?',
+  },
+  {
+    id: 'responsibility', title: 'Responsibility',
+    paths: ['M12 8a4 4 0 1 0 8 0a4 4 0 1 0-8 0', 'M8 27v-5a8 8 0 0 1 16 0v5', 'M5 11a3 3 0 0 0 0 6M27 11a3 3 0 0 1 0 6', 'M3 27v-4a6 6 0 0 1 3-5M29 27v-4a6 6 0 0 0-3-5'],
+    description: 'The scope can extend from daily coordination to process improvement or team leadership.',
+    example: '“Own carrier performance reviews and supervise other coordinators.”',
+    question: 'What decisions and outcomes would you be accountable for?',
+  },
+  {
+    id: 'industry', title: 'Industry complexity',
+    paths: ['M4 28V14l8 4v-8l8 5V5h6v23z', 'M9 23h2M16 23h2M23 23h1', 'M21 9h4'],
+    description: 'The goods being moved shape the risk, regulation, and precision the job requires.',
+    example: '“Coordinate temperature-controlled shipments for a pharmaceutical distributor.”',
+    question: 'What makes this operation more complex than routine shipping?',
+  },
+  {
+    id: 'location', title: 'Location',
+    paths: ['M16 29S6 20 6 12a10 10 0 0 1 20 0c0 8-10 17-10 17Z', 'M12 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0'],
+    description: 'Local hiring demand and living costs put salary offers into context.',
+    example: 'Check the work location and whether the role is onsite, hybrid, or remote.',
+    question: 'How does the offer compare with similar roles in the same market?',
+  },
+];
+---
+
+<figure id="earning-potential" class="earning-potential not-prose" aria-labelledby="earning-potential-title">
+  <header class="explainer-header">
+    <div>
+      <h3 id="earning-potential-title">What shapes your <span>earning potential?</span></h3>
+      <p class="introduction">Five factors to weigh when comparing logistics coordinator roles.</p>
+    </div>
+    <svg class="header-illustration" viewBox="0 0 112 132" fill="none" aria-hidden="true" focusable="false">
+      <path class="illustration-paper" d="M20 17h65v96H20z" />
+      <path class="illustration-shadow" d="M28 9h65v96H28z" />
+      <path class="illustration-line" d="M40 28h39M40 37h23M40 85h13M62 85h17M40 94h39" />
+      <circle class="illustration-disc" cx="60" cy="61" r="14" />
+      <path class="illustration-dark" d="M60 51v20m6-16c-3-4-13-3-12 2 1 5 12 2 12 7 0 5-9 6-13 2" />
+      <path class="illustration-accent" d="M14 44H4m10 12H8M98 78h10m-10 12h5" />
+      <circle class="illustration-dot" cx="10" cy="28" r="3" />
+      <circle class="illustration-dot" cx="99" cy="117" r="4" />
+    </svg>
+  </header>
+
+  <ul class="factor-list">
+    {factors.map(factor => (
+      <li class:list={['factor', { 'factor-location': factor.id === 'location' }]}>
+        <div class="factor-heading">
+          <svg class="factor-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+            {factor.paths.map(d => <path d={d} />)}
+          </svg>
+          <h4>{factor.title}</h4>
+        </div>
+        <p class="factor-description">{factor.description}</p>
+        <details class="factor-example">
+          <summary>
+            <span>What to look for<span class="sr-only">: {factor.title.toLowerCase()}</span></span>
+            <svg class="disclosure-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+              <path d="M4 10h12" />
+              <path class="disclosure-vertical" d="M10 4v12" />
+            </svg>
+          </summary>
+          <div class="example-content">
+            <p class="example-quote">{factor.example}</p>
+            <p class="example-question"><strong>Ask yourself</strong> {factor.question}</p>
+          </div>
+        </details>
+      </li>
+    ))}
+  </ul>
+
+  <figcaption class="takeaway">
+    <p><strong>Compare the work behind the title.</strong> Then compare pay for similar roles in the same market.</p>
+  </figcaption>
+</figure>
+
+<style>
+  .earning-potential {
+    --ep-paper: #fff8ee;
+    --ep-panel: #f5eddf;
+    --ep-wash: #ffe6d4;
+    --ep-ink: #000;
+    --ep-muted: #5c554b;
+    --ep-line: #e3d5c4;
+    --ep-orange: #fe5000;
+    --ep-orange-ink: var(--ep-ink);
+    container-type: inline-size;
+    margin: 1.5em 0 2em;
+    color: var(--ep-ink);
+    background: var(--ep-paper);
+    border: 1px solid var(--ep-line);
+    border-top: 3px solid var(--ep-orange);
+    border-radius: 2px;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: max(0.8em, 1rem);
+    line-height: 1.5;
+    scroll-margin-top: 6rem;
+  }
+  :global(.dark) .earning-potential {
+    --ep-paper: #232622;
+    --ep-panel: #2c302a;
+    --ep-wash: #54382b;
+    --ep-ink: #fff8ee;
+    --ep-muted: #c5c0b5;
+    --ep-line: #4e5147;
+    --ep-orange: #ff7635;
+    --ep-orange-ink: var(--ep-ink);
+  }
+  .earning-potential * { box-sizing: border-box; }
+  .earning-potential p, .earning-potential h3, .earning-potential h4 { margin: 0; }
+  .explainer-header { display: grid; grid-template-columns: minmax(0, 1fr) 76px; align-items: center; gap: 1em; padding: 1.45em 1.4em 1.1em; }
+  .earning-potential h3 {
+    font-family: 'DD-Recoleta', Georgia, serif;
+    /* Keep the figure title below the article's 30px H2, including Aa mode. */
+    font-size: min(1.6em, 1.75rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-transform: none;
+    text-wrap: balance;
+  }
+  .earning-potential h3 span { color: var(--ep-orange); }
+  .earning-potential .introduction { margin-top: 0.65em; max-width: 30em; color: var(--ep-muted); font-size: 0.9375em; }
+  .header-illustration { width: 100%; transform: rotate(5deg); }
+  .illustration-paper { fill: var(--ep-wash); stroke: var(--ep-orange); stroke-width: 1.4; }
+  .illustration-shadow { fill: var(--ep-paper); stroke: var(--ep-ink); stroke-width: 1.4; }
+  .illustration-line { stroke: var(--ep-muted); stroke-width: 1.4; }
+  .illustration-disc, .illustration-dot { fill: var(--ep-wash); }
+  .illustration-dark { stroke: var(--ep-ink); stroke-width: 1.6; stroke-linecap: round; }
+  .illustration-accent { stroke: var(--ep-orange); stroke-width: 2; stroke-linecap: round; }
+  .earning-potential .factor-list { list-style: none; margin: 0; padding: 0 1.4em; display: grid; grid-template-columns: minmax(0, 1fr); }
+  .factor { display: flex; flex-direction: column; min-width: 0; padding: 1.1em 0 0.9em; border-top: 1px solid var(--ep-line); }
+  .factor-heading { display: flex; align-items: center; gap: 0.6em; }
+  .factor-icon { flex: 0 0 1.25em; width: 1.25em; height: 1.25em; color: var(--ep-orange); stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .earning-potential h4 { color: var(--ep-ink); font-family: inherit; font-size: 1.03em; line-height: 1.3; font-weight: 600; }
+  .earning-potential .factor-description { margin-top: 0.6em; max-width: 48ch; color: var(--ep-muted); font-size: 0.9375em; }
+  .factor-example { margin-top: auto; padding-top: 0.2em; }
+  .factor-example summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    min-height: 44px;
+    padding: 0.45em 0;
+    border: 0;
+    background: transparent;
+    color: var(--ep-orange-ink);
+    font-size: 0.875em;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    list-style: none;
+  }
+  .factor-example summary::-webkit-details-marker { display: none; }
+  .factor-example summary::marker { content: ''; }
+  .factor-example summary > span { text-decoration: underline dotted var(--ep-line); text-underline-offset: 4px; }
+  .factor-example summary:hover > span, .factor-example[open] summary > span { text-decoration-color: var(--ep-orange); }
+  .factor-example summary:focus-visible { outline: 2px solid var(--ep-orange); outline-offset: 4px; }
+  .disclosure-icon { flex-shrink: 0; width: 18px; height: 18px; color: var(--ep-orange); stroke: currentColor; stroke-width: 1.5; }
+  .factor-example[open] .disclosure-vertical { display: none; }
+  .example-content { padding: 0.9em; background: var(--ep-panel); border-left: 2px solid var(--ep-orange); font-size: 0.875em; }
+  .example-quote { font-weight: 600; }
+  .earning-potential .example-question { margin-top: 0.8em; color: var(--ep-muted); }
+  .example-question strong { display: block; margin-bottom: 0.2em; color: var(--ep-ink); font-weight: 600; }
+  .takeaway { margin: 0; padding: 1.1em 1.6em; background: var(--ep-panel); color: var(--ep-muted); font-size: 0.875em; }
+  .takeaway strong { display: block; margin-bottom: 0.2em; color: var(--ep-ink); font-weight: 600; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  @container (min-width: 510px) {
+    .earning-potential .factor-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.75em; }
+    .factor-location { grid-column: 1 / -1; }
+  }
+  @container (max-width: 350px) {
+    .explainer-header { grid-template-columns: minmax(0, 1fr) 60px; gap: 0.6em; padding: 1.3em 1.1em 1.1em; }
+    .earning-potential .factor-list { padding-inline: 1.1em; }
+    .takeaway { padding-inline: 1.25em; }
+  }
+  /* The article's Aa mode sets every p/li to an absolute !important size.
+     Keep this figure's relative hierarchy while its own em size grows with the article. */
+  :global(article.text-scaled) .earning-potential :is(p, li) { font-size: inherit !important; line-height: inherit !important; }
+  :global(article.text-scaled) .earning-potential :is(.introduction, .factor-description) { font-size: 0.9375em !important; }
+  @media print {
+    .factor-example summary { display: none; }
+    .factor-example > .example-content { display: block; }
+    .factor-example::details-content { content-visibility: visible; }
+    .factor { break-inside: avoid; }
+  }
+</style>
