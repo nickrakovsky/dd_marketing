@@ -6,6 +6,7 @@ export default function internalWorkspace() {
   let enabled = false;
   const assets = fileURLToPath(new URL('../internal/assets/', import.meta.url));
   const pages = {
+    '/posts/warehouse-audit-overview': 'warehouse-audit-overview.astro',
     '/preview/daily-blog/home': 'daily-blog-home-preview.astro',
     '/preview/daily-blog/posts': 'daily-blog-posts-preview.astro',
     '/sales-one-pager': 'sales-one-pager.astro',

@@ -23,6 +23,127 @@ const mdxImageOptions = {
 // bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
 // Astro render maps rather than imported in the MDX itself.
 const mdxComponents = {
+    WmsConnectedOperations: block({
+        label: 'Connected warehouse operations',
+        schema: {},
+    }),
+    WarehouseProcessComparison: block({
+        label: 'Warehouse Process Comparison',
+        schema: {},
+    }),
+    DynamicSlottingRefill: block({
+        label: 'Dynamic Slotting Refill',
+        schema: {},
+    }),
+    TeamCoverageScenarios: block({
+        label: 'Team Coverage Scenarios',
+        schema: {},
+    }),
+    DwellTimeJourney: block({
+        label: 'Dwell Time Journey',
+        schema: {},
+    }),
+    ReceivingDamageRecord: block({
+        label: 'Receiving Damage Record',
+        schema: {},
+    }),
+    ReceivingLoadFormat: block({
+        label: 'Receiving Load Format',
+        schema: {},
+    }),
+    ReceivingOrderToReceipt: block({
+        label: 'Receiving Order To Receipt',
+        schema: {},
+    }),
+    RetailInventoryPressure: block({
+        label: 'Retail Inventory Pressure',
+        schema: {},
+    }),
+    RetailChannelRoutes: block({
+        label: 'Retail Channel Routes',
+        schema: {},
+    }),
+    WarehouseSharedLoad: block({
+        label: 'Warehouse delivery handoff',
+        schema: {},
+    }),
+    BeforeYouApply: block({
+        label: 'Before You Apply',
+        schema: {},
+    }),
+    EarningPotential: block({
+        label: 'Earning Potential',
+        schema: {},
+    }),
+    DailyCoordination: block({
+        label: 'Daily Coordination',
+        schema: {},
+    }),
+    CarrierCheckInPhoto: block({
+        label: 'Carrier Check In Photo',
+        schema: {},
+    }),
+    LogisticsInterviewGuide: block({
+        label: 'Logistics interview guide signup',
+        schema: {
+            headline: fields.text({ label: 'Headline' }),
+            eventName: fields.text({ label: 'Event Name' }),
+            redirectUrl: fields.text({ label: 'Redirect URL' }),
+            buttonText: fields.text({ label: 'Button Text' }),
+        },
+    }),
+    ResponsibilityAreas: wrapper({
+        label: 'Responsibility areas',
+        schema: {},
+    }),
+    CoEOpening: block({
+        label: 'CoE opening illustration',
+        schema: {},
+    }),
+    CoECompany: block({
+        label: 'CoE company structure',
+        schema: {},
+    }),
+    CoEFacilityNetwork: block({
+        label: 'CoE facility learning network',
+        schema: {},
+    }),
+    CoEExperimentalUnit: block({
+        label: 'CoE experimental business unit',
+        schema: {},
+    }),
+    CoEChangeTeam: block({
+        label: 'CoE change team',
+        schema: {},
+    }),
+    CoERegional: block({
+        label: 'CoE regional map',
+        schema: {},
+    }),
+    CoERoleEvolution: block({
+        label: 'CoE role explorer',
+        schema: {},
+    }),
+    CoERemit: block({
+        label: 'CoE remit and trade-offs',
+        schema: {},
+    }),
+    CoEValueBalance: block({
+        label: 'CoE short- and long-term value',
+        schema: {},
+    }),
+    CoELocalized: block({
+        label: 'CoE close to operations',
+        schema: {},
+    }),
+    CoESharedImprovement: block({
+        label: 'CoE shared improvement',
+        schema: {},
+    }),
+    WarehouseAuditArticle: block({
+        label: 'Warehouse audit checklist and templates',
+        schema: {},
+    }),
     WarehouseStockRecord: block({
         label: 'Warehouse Stock Record',
         schema: {},

@@ -1,0 +1,177 @@
+---
+const slotExamples = [
+  { label: 'Separate slots', slots: ['A', 'B', 'C', 'D'], end: 204 },
+  { label: 'Adjacent slots', slots: ['A', 'D', 'B', 'C'], end: 92 },
+];
+const handoffExamples = [
+  { label: 'Wait for all four', start: 4, description: 'The picker completes orders one to four before handing them over. The packer waits for all four picks, then packs orders one to four.' },
+  { label: 'Pass each when ready', start: 1, description: 'The picker hands over each order as it is ready. The packer starts order one while the picker works on order two. The work takes the same time per order, but packing starts sooner.' },
+];
+---
+
+<figure id="warehouse-process-comparison" class="process-comparison not-prose" aria-label="Three examples of removing unnecessary warehouse work">
+  <div class="comparison-row">
+    <p class="row-title"><span class="row-number">1.</span> Excess movement</p>
+    <p class="row-context">A + D frequently appear on the same order.</p>
+    <div class="example-pair">
+      {slotExamples.map(({ label, slots, end }) => (
+        <div class="example">
+          <p class="example-label">{label}</p>
+          <svg class="slot-diagram" viewBox="0 0 240 84" role="img" aria-label={`${label}: the route between products A and D ${end === 204 ? 'crosses two other storage slots' : 'connects neighboring storage slots'}.`}>
+            {slots.map((slot, i) => (
+              <g>
+                <rect class:list={['slot', { 'selected-slot': slot === 'A' || slot === 'D' }]} x={12 + i * 56} y="8" width="48" height="34" rx="3" />
+                <text class:list={['slot-name', { 'selected-name': slot === 'A' || slot === 'D' }]} x={36 + i * 56} y="30">{slot}</text>
+              </g>
+            ))}
+            <path class="pick-route" d={`M36 48V65H${end}V48`} />
+            <circle class="route-point" cx="36" cy="48" r="2.5" />
+            <path class="pick-route" d={`m${end - 4} 53 4-5 4 5`} />
+          </svg>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="comparison-row">
+    <p class="row-title"><span class="row-number">2.</span> Over-processing</p>
+    <p class="row-context">The same receiving details, entered twice.</p>
+    <svg class="record-diagram" viewBox="0 0 348 136" role="img" aria-label="The delivery note, paper log and WMS each contain SKU A17 and quantity 24. The usual path copies those details through the paper log. An orange path goes directly from the delivery note to the WMS, removing one entry when the paper log has no separate use.">
+      <text class="node-label" x="49" y="17">Delivery note</text>
+      <text class="node-label" x="174" y="17">Paper log</text>
+      <text class="node-label" x="299" y="17">WMS</text>
+      {[3, 128, 253].map((x, i) => (
+        <g>
+          <rect class:list={['data-card', { 'copy-card': i === 1 }]} x={x} y="28" width="92" height="50" rx="3" />
+          <text class="record-value" x={x + 46} y="48">SKU A17</text>
+          <text class="record-value" x={x + 46} y="67">Qty 24</text>
+        </g>
+      ))}
+      <path class="copy-route" d="M100 53H122m-5-4 5 4-5 4M225 53H247m-5-4 5 4-5 4" />
+      <path class="direct-route" d="M49 85V108Q49 116 57 116H291Q299 116 299 108V85m-4 5 4-5 4 5" />
+      <rect class="label-backing" x="129" y="105" width="90" height="22" />
+      <text class="direct-label" x="174" y="121">Enter once</text>
+    </svg>
+    <p class="diagram-note">When no separate paper log is needed.</p>
+  </div>
+
+  <div class="comparison-row">
+    <p class="row-title"><span class="row-number">3.</span> Waiting</p>
+    <p class="row-context">Four orders. Earlier handoff lets packing start sooner.</p>
+    <div class="example-pair timeline-pair">
+      {handoffExamples.map(({ label, start, description }) => (
+        <div class="example">
+          <p class="example-label">{label}</p>
+          <svg class="timeline-diagram" viewBox="0 0 276 108" role="img" aria-label={description}>
+            <text class="time-label" x="59" y="15">Time →</text>
+            <text class="worker-label" x="0" y="43">Picker</text>
+            <text class="worker-label" x="0" y="85">Packer</text>
+            <rect class="waiting-time" x="59" y="68" width={start * 26} height="24" rx="2" />
+            {start === 4 && <text class="waiting-label" x="111" y="84">Waiting</text>}
+            {[1, 2, 3, 4].map((order, i) => (
+              <g>
+                <rect class="pick-block" x={59 + i * 26} y="26" width="24" height="24" rx="2" />
+                <text class="order-number" x={71 + i * 26} y="43">{order}</text>
+                <rect class="pack-block" x={59 + (i + start) * 26} y="68" width="24" height="24" rx="2" />
+                <text class="order-number" x={71 + (i + start) * 26} y="85">{order}</text>
+              </g>
+            ))}
+            <path class="handoff" d={`M${59 + start * 26 - 2} 53v11m-3-4 3 4 3-4`} />
+            <path class="time-baseline" d="M59 99H267" />
+          </svg>
+        </div>
+      ))}
+    </div>
+  </div>
+</figure>
+
+<style>
+  @font-face {
+    font-family: 'Warehouse-Inter';
+    src: url('../../assets/fonts/Inter-Latin-Variable.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  .process-comparison {
+    --paper: #fff8e9;
+    --ink: #171510;
+    --muted: #665a49;
+    --rule: #e5d3b3;
+    --orange: #d74609;
+    --peach: #ffe1ca;
+    --neutral: #e9dfcc;
+    --panel: #fffcf5;
+    container-type: inline-size;
+    margin: 1.5rem 0 2rem;
+    padding: 0 1.25rem;
+    scroll-margin-top: 7rem;
+    border: 1px solid var(--rule);
+    border-top: 3px solid #fd4f00;
+    border-radius: 0.25rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Warehouse-Inter', Inter, system-ui, sans-serif;
+  }
+
+  :global(.dark) .process-comparison {
+    --paper: #1e1c19;
+    --ink: #fff3df;
+    --muted: #c8baa7;
+    --rule: #504638;
+    --orange: #ff986c;
+    --peach: #4a3125;
+    --neutral: #443b30;
+    --panel: #302b24;
+  }
+
+  .comparison-row { padding: 1.125rem 0 1rem; }
+  .comparison-row + .comparison-row { border-top: 1px solid var(--rule); }
+  .row-title { display: flex; align-items: baseline; gap: 0.5rem; margin: 0; font-family: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif; font-size: 1.0625rem; font-weight: 600; line-height: 1.35; }
+  .row-number { color: var(--orange); font-family: 'Warehouse-Inter', Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; }
+  .row-context { margin: 0.375rem 0 0.875rem; color: var(--muted); font-size: 0.8125rem; line-height: 1.5; text-wrap: pretty; }
+  .example-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+  .example { min-width: 0; }
+  .example-label { margin: 0 0 0.375rem; color: var(--ink); font-size: 0.8125rem; font-weight: 500; line-height: 1.5; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  svg * { vector-effect: non-scaling-stroke; }
+  svg text { font-family: 'Warehouse-Inter', Inter, system-ui, sans-serif; fill: var(--ink); }
+  .slot-diagram { max-width: 240px; }
+  .slot { fill: var(--neutral); stroke: var(--rule); }
+  .selected-slot { fill: var(--peach); stroke: var(--orange); }
+  .slot-name { font-size: 14px; text-anchor: middle; fill: var(--muted); }
+  .selected-name { fill: var(--ink); font-weight: 600; }
+  .pick-route, .direct-route { fill: none; stroke: var(--orange); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .route-point { fill: var(--orange); }
+  .record-diagram { max-width: 348px; margin: 0.125rem auto 0; }
+  .node-label { font-size: 14px; font-weight: 500; text-anchor: middle; }
+  .data-card { fill: var(--panel); stroke: var(--rule); }
+  .copy-card { stroke-dasharray: 3 3; }
+  .record-value { font-size: 13px; text-anchor: middle; }
+  .copy-route { fill: none; stroke: var(--muted); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+  .label-backing { fill: var(--paper); }
+  .direct-label { font-size: 13px; font-weight: 500; text-anchor: middle; fill: var(--orange); }
+  .diagram-note { margin: 0.125rem 0 0; color: var(--muted); font-size: 0.8125rem; line-height: 1.5; text-align: center; }
+  .timeline-diagram { max-width: 276px; }
+  .time-label, .worker-label, .waiting-label { font-size: 13px; fill: var(--muted); }
+  .waiting-label { text-anchor: middle; }
+  .waiting-time { fill: var(--neutral); }
+  .pick-block { fill: var(--panel); stroke: var(--muted); stroke-width: 1; }
+  .pack-block { fill: var(--peach); stroke: var(--orange); stroke-width: 1; }
+  .order-number { font-size: 12px; font-weight: 500; text-anchor: middle; }
+  .handoff { fill: none; stroke: var(--orange); stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+  .time-baseline { fill: none; stroke: var(--rule); stroke-width: 1; }
+
+  @container (max-width: 540px) {
+    .timeline-pair { grid-template-columns: 1fr; gap: 0.875rem; }
+    .timeline-pair .example { width: 100%; max-width: 300px; margin-inline: auto; }
+    .timeline-diagram { margin-inline: auto; }
+  }
+
+  @container (max-width: 440px) {
+    .example-pair { grid-template-columns: 1fr; gap: 0.875rem; }
+    .example { width: 100%; max-width: 300px; margin-inline: auto; }
+    .slot-diagram, .timeline-diagram { margin-inline: auto; }
+  }
+</style>

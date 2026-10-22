@@ -1,0 +1,68 @@
+{
+  "buildRevision": "0.4",
+  "date": "2026-10-15",
+  "referenceFiles": [
+    "/Users/work/Downloads/DataDocks Brand Collateral/Proposal Cover.svg",
+    "/Users/work/Downloads/DataDocks Brand Collateral/Proposal 1.svg",
+    "/Users/work/Downloads/DataDocks Brand Collateral/Proposal 2.svg",
+    "/Users/work/Downloads/DataDocks Brand Collateral/Proposal 3.svg",
+    "/Users/work/Downloads/DataDocks Brand Collateral/Proposal 4.svg"
+  ],
+  "typography": {
+    "pdfDisplay": "Recoleta SemiBold",
+    "pdfFunctional": "Arial",
+    "workbookDisplay": "Georgia",
+    "workbookFunctional": "Arial"
+  },
+  "fontNote": "Recoleta supplies the branded editorial hierarchy in the PDF. Georgia is a native, portable serif adaptation for workbook task and section titles; Arial supports working text in both formats. Original agency SVG lettering is outlined. No font-metric or output design checks are performed.",
+  "wordmark": "Nine unchanged wordmark paths from agency Proposal Cover.svg Group; black variant changes fill only. ViewBox is an authored crop for placement; no logo has been redrawn.",
+  "symbol": "public/brand-assets/logo-symbol-white.svg",
+  "status": "The user accepted the v0.4 design direction with 'Ok this is good'. Release-status microcopy, internal versions and issued dates have been removed from the user-facing files. Content/functional checks pass; no automated design checks were performed.",
+  "referencePalette": {
+    "paper": "#FFF8EE",
+    "ink": "#000000",
+    "orange": "#FE5000",
+    "peach": "#FFE6D5",
+    "white": "#FFFFFF"
+  },
+  "palette": {
+    "paper": "#FFFFFF",
+    "ink": "#171411",
+    "muted": "#61594F",
+    "orange": "#FE5000",
+    "referenceCream": "#FFF8EE",
+    "editableWorkbookPeach": "#FFE6D5",
+    "rule": "#D8C9B8",
+    "warningFill": "#FFF1E9",
+    "warningInk": "#AA3400"
+  },
+  "adaptation": [
+    "Task titles, questions and editable records establish the hierarchy; publisher identity is secondary.",
+    "Use the same warm cream, peach, orange, black and serif/sans hierarchy across both artifacts, with different input treatments appropriate to paper and Excel.",
+    "PDF check sheets group the supplied criterion/evidence/next-step prompts on cream, separate from white writing space.",
+    "Workbook uses peach consistently for editable cells and cream for supplied reference material; labels explain the distinction.",
+    "Apply typography and spacing by role consistently across instructions, checks, management forms and examples.",
+    "Fine warm rules organize sections; no heavy boxes or generic dashboard styling.",
+    "Keep practical guide first and preserve all data, notes space, links and working behaviours."
+  ],
+  "wordmarkUse": "Small publisher text remains subordinate to the audit title and tasks. No giant wordmark, promotional cover or repeated logo images.",
+  "referenceRole": "A coherent DataDocks visual system: typography, colour, spacing, hierarchy and finish. The proposal composition is not an audit-pack template.",
+  "structureBase": "Retain v0.1 working-first guide, 28 full check sheets, evidence space, index and six operational workbook tabs.",
+  "earlierInterpretationErrors": [
+    "v0.2 copied the proposal cover/publisher prominence instead of translating the design system.",
+    "v0.3 restored useful working structure but reduced the brand reference to isolated accents."
+  ],
+  "v0.2MechanicallyAppliedChoices": [
+    "Cream page foundation with black functional text",
+    "Orange serif section headings",
+    "Fine black header/footer rules",
+    "Black table headers and peach reference bands",
+    "White input/writing areas",
+    "Wordmark-led cover with orange lower band"
+  ],
+  "outputs": [
+    "public/files/warehouse-audit-working-pack.xlsx",
+    "public/files/warehouse-audit-floor-pack.pdf"
+  ],
+  "verification": "All 28 complete prompts in both files, six workbook tabs, 57 native links, nine workbook boundary cases, zero cached formula errors, native tagged PDF text and working print index/bookmarks. No automated output design checks."
+}

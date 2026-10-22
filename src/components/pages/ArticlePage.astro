@@ -32,8 +32,68 @@ import FAQ from '../../components/FAQ.astro';
 import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
 import { filterPublished } from '../../lib/content-status';
+import { warehouseAuditHeadings } from '../../data/warehouse-audit-article';
+import WarehouseAuditArticle from '../articles/WarehouseAuditArticle.astro';
+
+import WmsConnectedOperations from '../blog/WmsConnectedOperations.astro';
+import WarehouseProcessComparison from '../blog/WarehouseProcessComparison.astro';
+import DynamicSlottingRefill from '../blog/DynamicSlottingRefill.astro';
+import TeamCoverageScenarios from '../blog/TeamCoverageScenarios.astro';
+import DwellTimeJourney from '../blog/DwellTimeJourney.astro';
+import ReceivingDamageRecord from '../blog/ReceivingDamageRecord.astro';
+import ReceivingLoadFormat from '../blog/ReceivingLoadFormat.astro';
+import ReceivingOrderToReceipt from '../blog/ReceivingOrderToReceipt.astro';
+import RetailInventoryPressure from '../blog/RetailInventoryPressure.astro';
+import RetailChannelRoutes from '../blog/RetailChannelRoutes.astro';
+import WarehouseSharedLoad from '../blog/WarehouseSharedLoad.astro';
+import BeforeYouApply from '../blog/BeforeYouApply.astro';
+import EarningPotential from '../blog/EarningPotential.astro';
+import DailyCoordination from '../blog/DailyCoordination.astro';
+import CarrierCheckInPhoto from '../blog/CarrierCheckInPhoto.astro';
+import LogisticsInterviewGuide from '../blog/LogisticsInterviewGuide.astro';
+import ResponsibilityAreas from '../blog/ResponsibilityAreas.astro';
+import CoEOpening from '../blog/coe/CoEOpening.astro';
+import CoECompany from '../blog/coe/CoECompany.astro';
+import CoEFacilityNetwork from '../blog/coe/CoEFacilityNetwork.astro';
+import CoEExperimentalUnit from '../blog/coe/CoEExperimentalUnit.astro';
+import CoEChangeTeam from '../blog/coe/CoEChangeTeam.astro';
+import CoERegional from '../blog/coe/CoERegional.astro';
+import CoERoleEvolution from '../blog/coe/CoERoleEvolution.astro';
+import CoERemit from '../blog/coe/CoERemit.astro';
+import CoEValueBalance from '../blog/coe/CoEValueBalance.astro';
+import CoELocalized from '../blog/coe/CoELocalized.astro';
+import CoESharedImprovement from '../blog/coe/CoESharedImprovement.astro';
+import CareerPathDiagram from '../blog/CareerPathDiagram.astro';
 
 const blogComponents = {
+  WmsConnectedOperations,
+  WarehouseProcessComparison,
+  DynamicSlottingRefill,
+  TeamCoverageScenarios,
+  DwellTimeJourney,
+  ReceivingDamageRecord,
+  ReceivingLoadFormat,
+  ReceivingOrderToReceipt,
+  RetailInventoryPressure,
+  RetailChannelRoutes,
+  WarehouseSharedLoad,
+  BeforeYouApply,
+  EarningPotential,
+  DailyCoordination,
+  CarrierCheckInPhoto,
+  LogisticsInterviewGuide,
+  ResponsibilityAreas,
+  CoEOpening,
+  CoECompany,
+  CoEFacilityNetwork,
+  CoEExperimentalUnit,
+  CoEChangeTeam,
+  CoERegional,
+  CoERoleEvolution,
+  CoERemit,
+  CoEValueBalance,
+  CoELocalized,
+  CoESharedImprovement,
   WarehouseStockRecord,
   DemoCapture,
   WarehouseLoadTiming,
@@ -54,8 +114,10 @@ interface Props {
 
 const { entry } = Astro.props;
 const hasYardSelector = entry.slug === 'best-yard-management-options';
+const hasCareerDiagram = entry.slug === 'logistics-coordinator-career-path';
 const asOf = Astro.locals.publicationDate ?? new Date();
-const { Content, headings } = await entry.render();
+const { Content, headings: mdxHeadings } = await entry.render();
+const headings = entry.slug === 'warehouse-audit-checklist' ? warehouseAuditHeadings : mdxHeadings;
 
 const postType = entry.data.postType?.discriminant || 'article';
 const isVideo = postType === 'video' || postType === 'short';
@@ -96,8 +158,8 @@ const getReadTime = (body: string) => {
 
 // Image loading priority belongs to this request, including concurrent visits.
 Astro.locals.mdxImageCount = 0;
-// The selector and introduction put this article's first body image below the fold.
-Astro.locals.prioritizeMdxImage = !hasYardSelector;
+// Top-of-article tools put the following raster images below the initial view.
+Astro.locals.prioritizeMdxImage = !hasYardSelector && !hasCareerDiagram;
 ---
 
 {isVideo ? (
@@ -219,6 +281,7 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
+    {hasCareerDiagram && <CareerPathDiagram slot="top-interactive" />}
     {hasYardSelector && (
       <YardTypeSelector slot="top-interactive" client:visible />
     )}
@@ -245,6 +308,6 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
         </div>
       </div>
     )}
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents, WarehouseAuditArticle }} />
   </BlogPostLayout>
 )}
