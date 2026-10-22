@@ -1,0 +1,34 @@
+[
+  {
+    "ref": "go_https_first",
+    "description": "Upgrade go.datadocks.com to HTTPS on the same hostname",
+    "expression": "(http.host eq \"go.datadocks.com\" and not ssl)",
+    "action": "redirect",
+    "action_parameters": {
+      "from_value": {
+        "status_code": 301,
+        "target_url": {
+          "expression": "concat(\"https://go.datadocks.com\", http.request.uri.path)"
+        },
+        "preserve_query_string": true
+      }
+    },
+    "enabled": true
+  },
+  {
+    "ref": "go_retire_marketing",
+    "description": "Retire go.datadocks.com marketing pages to the main website",
+    "expression": "(http.host eq \"go.datadocks.com\" and ssl)",
+    "action": "redirect",
+    "action_parameters": {
+      "from_value": {
+        "status_code": 301,
+        "target_url": {
+          "value": "https://datadocks.com/"
+        },
+        "preserve_query_string": true
+      }
+    },
+    "enabled": true
+  }
+]
