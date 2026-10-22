@@ -11,6 +11,45 @@ This folder is the queue for future drafts. New posts remain undated until
 scheduling is authorized. Placing files here does not publish them. `internal/`
 must stay outside production imports and output.
 
+## Consolidated working queue — October 22, 2026
+
+Continue new queue work on `codex/blog-posts-queue`, based on current `main`.
+This branch consolidates the outstanding packages from
+`codex/youtube-video-posts-batch` and `codex/queue-training-posts`, plus the
+message-response draft that was saved locally in the YouTube worktree.
+Use this branch for the eventual single batch PR; the source branches are
+historical references, not parallel queues to maintain.
+
+The 12 entries below remain undated. Folder numbers keep the local preview in a
+stable order; they do not assign publication dates. The four video articles
+marked approved retain that status from their source commits. The warehouse
+setup checklist and message-response draft have no recorded final editorial
+approval. All six training slugs and illustrations are accepted; only the first
+training post has a full prose draft. Preserve those distinctions before scheduling.
+
+| Queue entry | Draft title | Intended URL | Current status |
+|---|---|---|---|
+| 12 | Get detention warnings while there’s still time to act | `/posts/get-detention-warnings-in-time-to-act` | Full article; recorded as approved on the source branch |
+| 13 | Find where freight slows down in your warehouse | `/posts/find-where-freight-slows-down` | Full article; recorded as approved on the source branch |
+| 14 | Warehouse Setup Checklist for a New Facility | `/posts/warehouse-setup-checklist` | Full checklist; queued, final editorial approval not recorded |
+| 15 | Set appointment limits by load type | `/posts/set-appointment-limits-by-load-type` | Full article; recorded as approved on the source branch |
+| 16 | Confirm pickup details before the driver arrives | `/posts/confirm-pickup-details-before-the-driver-arrives` | Full article; recorded as approved on the source branch |
+| 17 | Agree which warehouse messages need an immediate response | `/posts/set-response-expectations-for-warehouse-messages` | Full draft in progress; approval not recorded |
+| 18 | Trucks Arriving Hours Early? How to Change the Pattern | `/posts/early-arrival-patterns` | Full prose draft; slug and illustration accepted |
+| 19 | Can You Fine Carriers for Late Arrivals and No-Shows? | `/posts/missed-slot-fees` | Reviewed excerpt and illustration; remaining body pending |
+| 20 | Receiving Keeps Falling Behind: How to Find Where the Work Gets Stuck | `/posts/receiving-backlogs` | Reviewed excerpt and illustration; remaining body pending |
+| 21 | What to Do When Missing Paperwork Holds Up Receiving | `/posts/paperwork-delays` | Reviewed excerpt and illustration; remaining body pending |
+| 22 | You Sent Directions. Why Are Drivers Still Getting Out to Ask Where To Go? | `/posts/driver-wayfinding` | Reviewed excerpt and illustration; remaining body pending |
+| 23 | Leading a Technology Project When Your Job Is Operations | `/posts/rollout-decisions` | Reviewed excerpt and illustration; remaining body and final title review pending |
+
+The existing 27 scheduled articles remain in `src/content/posts/` and the
+existing schedule. Do not copy them back into this queue. Warehouse audit,
+outbound dock management and food-fulfilment work already on `main` also need
+no duplicate entries. The training packages were renumbered from 12–17 to
+18–23 to avoid duplicate preview labels; their URL slugs and payloads are unchanged.
+
+## Package format and review
+
 Each folder contains one `<slug>.mdx` article, its named Astro component and any
 required CSS or unique assets. Preserve the accepted prose and source URLs.
 Keep `pubDate` absent until scheduling is authorized. Do not add per-post guides,
