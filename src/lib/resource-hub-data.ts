@@ -454,7 +454,9 @@ export async function getModularHubData(asOf: Date = new Date()) {
     findPost('retail-case-studies'),
     findPost('what-is-dock-scheduling'),
     findPost('warehouse-receiving-process'),
-    findPost('what-is-a-supply-chain-center-of-excellence')
+    findPost('what-is-a-supply-chain-center-of-excellence'),
+    ...(allPosts.some(post => post.slug === 'warehouse-setup-checklist')
+      ? [findPost('warehouse-setup-checklist')] : []),
   ];
 
   // Non-evergreen posts

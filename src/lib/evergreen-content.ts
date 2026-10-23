@@ -5,6 +5,7 @@ export const EVERGREEN_RESOURCE_SLUGS: ReadonlySet<string> = new Set([
   'best-yard-management-options',
   'comparison',
   'warehouse-audit-checklist',
+  'warehouse-setup-checklist',
   'yard-management-process-flow',
   'warehouse-management-career',
   'datadocks-vs-opendock',

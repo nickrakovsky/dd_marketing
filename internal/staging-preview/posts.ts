@@ -8,7 +8,7 @@ const productionComponents = import.meta.glob('../../src/components/blog/*.astro
 const articleSlug = (file: string) => file.split('/').at(-1)!.replace(/\.mdx$/, '');
 const articles = Object.entries(stagedArticles).map(([file, document]) => ({ file, document, production: false }));
 const stagedSlugs = new Set(articles.map(({ file }) => articleSlug(file)));
-for (const slot of schedule.slots.filter(slot => slot.sourcePath.startsWith('staging/'))) {
+for (const slot of schedule.slots.filter(slot => /^(?:staging|internal\/blog-staging)\//.test(slot.sourcePath))) {
   if (stagedSlugs.has(slot.slug)) continue;
   const load = productionArticles['../../' + slot.contentPath];
   if (!load) throw new Error(`Scheduled preview article missing: ${slot.contentPath}`);

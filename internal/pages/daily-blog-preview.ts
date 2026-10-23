@@ -1,3 +1,5 @@
-// This cutoff is after the last post in the September 17–October 23 rollout.
+import schedule from '../../docs/daily-blog-schedule.json';
+
+// Keep the local overview after the final scheduled article in the manifest.
 // Only development-only page wrappers import it; publication helpers use real time.
-export const DAILY_BLOG_PREVIEW_AS_OF = new Date('2026-10-24T00:00:00Z');
+export const DAILY_BLOG_PREVIEW_AS_OF = new Date(schedule.previewAsOf);
