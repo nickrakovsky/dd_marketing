@@ -1,0 +1,110 @@
+---
+import './revised-timelines.css';
+interface Props { id?: string }
+const { id = 'appointment-commitment' } = Astro.props;
+const scenarios = [
+  {
+    key: 'notice',
+    label: 'Delay reported in advance',
+    carrier: ['Delivery scheduled', 'Delay reported', 'Later arrival expected'],
+    receiving: ['Unloading planned', 'Advance notice received', 'Other work can fill the gap'],
+    connection: 'New arrival time reaches the receiving team',
+    point: 'Advance notice gives the receiving team a chance to rearrange work. If another job is ready, the crew can work on it until the delayed delivery arrives.',
+  },
+  {
+    key: 'absent',
+    label: 'No-show without notice',
+    carrier: ['Delivery scheduled', 'Truck does not arrive', 'Arrival time unknown'],
+    receiving: ['Unloading planned', 'No arrival update', 'Wait or start another job'],
+    connection: 'Carrier provides no update',
+    point: 'If the crew is ready to unload, the supervisor has a choice: keep them available or start another job that may still be in progress if the truck arrives later.',
+  },
+  {
+    key: 'rebooked',
+    label: 'Missed appointment rebooked',
+    carrier: ['Delivery scheduled', 'Appointment missed', 'New appointment booked'],
+    receiving: ['Unloading planned', 'Original slot goes unused', 'Unload in a later slot'],
+    connection: 'Original and replacement appointments',
+    point: 'Here, the original slot went unused and the delivery still needs unloading later. Rescheduling moves the work; it does not recover the unused slot.',
+  },
+];
+---
+<figure class="drev commitment-revision not-prose" aria-labelledby={`${id}-title`}>
+  <h3 id={`${id}-title`}>A booking reserves receiving capacity.</h3>
+  <p class="premise">The receiving team plans work around booked deliveries. A delay, no-show or rebooking changes how that reserved time can be used—and when the delivery can be unloaded.</p>
+  <fieldset>
+    <legend>Follow three changes to a booked delivery</legend>
+    {scenarios.map((scenario, index) => <label><input type="radio" name={`${id}-scenario`} value={scenario.key} checked={index === 0} /><span>{scenario.label}</span></label>)}
+  </fieldset>
+  <div class="scenario-views" aria-live="polite" aria-atomic="true">
+    {scenarios.map(scenario => <div class={`scenario scenario-${scenario.key}`}>
+      <div class="commitment-paths">
+        <div class="stage-headings" aria-hidden="true"><span>Booked</span><span>What changed</span><span>What happens next</span></div>
+        <div class="plan-row carrier-plan">
+          <div class="plan-name"><svg viewBox="0 0 40 30" fill="none" aria-hidden="true" focusable="false"><path d="M2 4H25V23H2ZM25 10H31L38 17V23H25ZM30 12V17H37"/><circle cx="9" cy="24" r="4"/><circle cx="31" cy="24" r="4"/></svg><strong>Carrier’s plan</strong></div>
+          <ol class="plan-steps">{scenario.carrier.map((step, index) => <li class={`step step-${index}`}><span class="mobile-stage">{['Booked', 'What changed', 'What happens next'][index]}</span><span>{step}</span></li>)}</ol>
+        </div>
+        <div class="connection">
+          <svg class="notice-connector" viewBox="0 0 32 42" fill="none" aria-hidden="true" focusable="false"><path d="M16 1V36M10 30L16 36L22 30"/></svg>
+          <svg class="absent-connector" viewBox="0 0 32 42" fill="none" aria-hidden="true" focusable="false"><path d="M16 1V12M16 30V41M9 15L23 28M23 15L9 28"/></svg>
+          <svg class="rebook-connector" viewBox="0 0 300 36" fill="none" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M5 3V24H295V3M289 9L295 3L300 9"/></svg>
+          <span>{scenario.connection}</span>
+        </div>
+        <div class="plan-row receiving-plan">
+          <div class="plan-name"><svg viewBox="0 0 40 33" fill="none" aria-hidden="true" focusable="false"><path d="M3 31V10L20 2L37 10V31H3ZM10 31V17H30V31M10 22H30M10 27H30M3 11H37"/></svg><strong>Receiving team’s plan</strong></div>
+          <ol class="plan-steps">{scenario.receiving.map((step, index) => <li class={`step step-${index}`}><span class="mobile-stage">{['Booked', 'What changed', 'What happens next'][index]}</span><span>{step}</span></li>)}</ol>
+        </div>
+      </div>
+      <p class="scenario-point">{scenario.point}</p>
+    </div>)}
+  </div>
+</figure>
+<style>
+  .commitment-revision legend{font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif;font-size:16px;font-weight:600}
+  .commitment-revision .step>span:not(.mobile-stage),.commitment-revision .connection>span{font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif}
+  .commitment-revision fieldset label{flex:1 1 170px}
+  .commitment-revision .scenario{display:none}.commitment-revision .scenario-notice{display:block}
+  .commitment-revision:has(input[value='absent']:checked) .scenario-notice,.commitment-revision:has(input[value='rebooked']:checked) .scenario-notice{display:none}
+  .commitment-revision:has(input[value='absent']:checked) .scenario-absent,.commitment-revision:has(input[value='rebooked']:checked) .scenario-rebooked{display:block}
+  .commitment-revision .commitment-paths{margin:22px 0}
+  .commitment-revision .stage-headings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px;margin:0 0 12px 124px;text-align:center;font-weight:650}
+  .commitment-revision .plan-row{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+  .commitment-revision .plan-name{display:flex;align-items:center;flex-direction:column;gap:6px;text-align:center;line-height:1.4}
+  .commitment-revision .plan-name svg{display:block;width:40px;height:34px;stroke:var(--ink);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+  .commitment-revision .plan-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px;list-style:none;padding:0;margin:0}
+  .commitment-revision .step{position:relative;display:grid;place-content:center;min-height:85px;padding:10px 8px;text-align:center;border:1px solid var(--rule);border-radius:3px;line-height:1.45;background:var(--paper)}
+  .commitment-revision .step:not(:last-child)::after{content:'';position:absolute;top:50%;left:100%;width:19px;border-top:1px solid var(--muted)}
+  .commitment-revision .step:not(:last-child)::before{content:'';position:absolute;top:calc(50% - 3px);right:-18px;width:6px;height:6px;border-top:1px solid var(--muted);border-right:1px solid var(--muted);transform:rotate(45deg)}
+  .commitment-revision .step-0{background:var(--soft)}
+  .commitment-revision .step-1{border-color:var(--accent)}
+  .commitment-revision .scenario-notice .step-2,.commitment-revision .scenario-absent .step-2{border-style:dashed}
+  .commitment-revision .scenario-rebooked .step-2{border-color:var(--accent);background:var(--soft)}
+  .commitment-revision .mobile-stage{display:none}
+  .commitment-revision .connection{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;min-height:59px;margin-left:124px;text-align:center;color:var(--accent)}
+  .commitment-revision .connection>svg{grid-column:2;grid-row:1;width:26px;height:42px;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+  .commitment-revision .connection>span{grid-column:3;text-align:left;color:var(--muted);line-height:1.35}
+  .commitment-revision .connection .absent-connector,.commitment-revision .connection .rebook-connector{display:none}
+  .commitment-revision .scenario-absent .connection .notice-connector{display:none}.commitment-revision .scenario-absent .connection .absent-connector{display:block}
+  .commitment-revision .scenario-rebooked .connection{display:flex;flex-direction:column;justify-content:center;gap:0;padding:6px 0}
+  .commitment-revision .scenario-rebooked .connection .notice-connector{display:none}.commitment-revision .scenario-rebooked .connection .rebook-connector{display:block;width:calc(100% - 50px);height:25px}
+  .commitment-revision .scenario-rebooked .connection>span{text-align:center}
+  .commitment-revision .scenario-point{margin:0;padding-top:16px;border-top:1px solid var(--rule)}
+  @media(max-width:620px){
+    .commitment-revision fieldset{display:grid;grid-template-columns:1fr}.commitment-revision fieldset label{width:100%}
+    .commitment-revision .stage-headings{display:none}
+    .commitment-revision .commitment-paths{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+    .commitment-revision .plan-row{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+    .commitment-revision .plan-name{min-height:64px}
+    .commitment-revision .plan-steps{grid-template-columns:1fr;gap:17px;flex:1}
+    .commitment-revision .step{min-height:112px;place-content:center;padding:10px 7px;gap:6px}
+    .commitment-revision .mobile-stage{display:block;color:var(--muted)}
+    .commitment-revision .step:not(:last-child)::after{top:100%;left:50%;width:0;height:17px;border-top:0;border-left:1px solid var(--muted)}
+    .commitment-revision .step:not(:last-child)::before{top:calc(100% + 10px);left:calc(50% - 2px);right:auto;transform:rotate(135deg)}
+    .commitment-revision .connection{grid-column:1/-1;grid-row:2;display:flex;justify-content:center;gap:8px;margin:0;min-height:0;padding:3px 0}
+    .commitment-revision .connection>span{text-align:center}
+    .commitment-revision .connection>svg{width:22px;height:26px;transform:rotate(90deg)}
+    .commitment-revision .receiving-plan{grid-column:2;grid-row:1}
+    .commitment-revision .scenario-rebooked .connection{padding:3px 0}
+    .commitment-revision .scenario-rebooked .connection .rebook-connector{display:none}
+  }
+</style>

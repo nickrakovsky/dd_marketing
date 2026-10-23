@@ -18,6 +18,19 @@ const octoberBatch = [
   ['ingredient-traceability', '2026-10-22'],
   ['food-production-runs', '2026-10-23'],
 ];
+const queueBatch = [
+  ['early-arrival-patterns', '2026-10-27', 'A'],
+  ['find-where-freight-slows-down', '2026-10-28', 'B'],
+  ['paperwork-delays', '2026-10-29', 'A'],
+  ['set-appointment-limits-by-load-type', '2026-10-30', 'B'],
+  ['rollout-decisions', '2026-11-02', 'A'],
+  ['get-detention-warnings-in-time-to-act', '2026-11-03', 'B'],
+  ['driver-wayfinding', '2026-11-04', 'A'],
+  ['set-response-expectations-for-warehouse-messages', '2026-11-05', 'B'],
+  ['receiving-backlogs', '2026-11-06', 'A'],
+  ['confirm-pickup-details-before-the-driver-arrives', '2026-11-09', 'B'],
+  ['missed-slot-fees', '2026-11-10', 'A'],
+];
 
 // Future previews are development-only. Enable their cases when testing Astro dev:
 // PLAYWRIGHT_FUTURE_PREVIEWS=1 playwright test tests/blog-rollout.spec.mjs
@@ -43,16 +56,20 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The queue includes the approved missing-stock article after the existing 26 slots').toHaveLength(27);
+  expect(slots, 'The schedule includes the unchanged 27 slots plus the 11 authorized daily articles').toHaveLength(38);
+  expect(slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The checklist is evergreen, outside the daily schedule').toBe(false);
   expect(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
     octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
   );
-  expect(slots.slice(26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
+  expect(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
     [[27, 'stop-hiding-missing-stock', '2026-10-26T14:30:00.000Z']],
+  );
+  expect(slots.slice(27).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup])).toEqual(
+    queueBatch.map(([slug, date, rotationGroup], index) => [28 + index, slug, `${date}T14:30:00.000Z`, rotationGroup]),
   );
   expect(schedule.timezone).toBe('UTC-08:00');
   expect(schedule.localPublicationTime).toBe('06:30:00');
-  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-10-27T00:00:00Z'));
+  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-11-11T00:00:00Z'));
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);

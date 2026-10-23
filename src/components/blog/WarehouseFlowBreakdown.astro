@@ -1,0 +1,32 @@
+---
+import './flow-breakdown.css';
+---
+
+<figure class="dd-flow-breakdown not-prose" aria-labelledby="ddfb-title">
+  <header class="ddfb-heading">
+    <h3 id="ddfb-title">Where did<br />the time go?</h3>
+    <p class="ddfb-total">90<span>minutes to storage</span></p>
+  </header>
+
+  <div class="ddfb-journey" role="group" aria-label="Three sequential stages: unloading 15 minutes, quality checks 15 minutes, put-away 60 minutes">
+    <div class="ddfb-journey-row"><div class="ddfb-label"><span>Unloading</span><strong>15 min</strong></div><div class="ddfb-timeline" aria-hidden="true"><span class="ddfb-unload"></span></div></div>
+    <div class="ddfb-journey-row"><div class="ddfb-label"><span>Quality checks</span><strong>15 min</strong></div><div class="ddfb-timeline" aria-hidden="true"><span class="ddfb-checks"></span></div></div>
+    <div class="ddfb-journey-row"><div class="ddfb-label"><span>Put-away</span><strong>60 min</strong></div><div class="ddfb-timeline" aria-hidden="true"><span class="ddfb-putaway"><span class="ddfb-wait-bar"></span><span class="ddfb-travel-bar"></span></span></div></div>
+  </div>
+
+  <fieldset class="ddfb-control">
+    <legend>What’s inside those 60 minutes?</legend>
+    <label><input type="radio" name="ddfb-cause" value="waiting" checked aria-controls="ddfb-result" /><span>Mostly waiting</span></label>
+    <label><input type="radio" name="ddfb-cause" value="travelling" aria-controls="ddfb-result" /><span>Mostly travelling</span></label>
+  </fieldset>
+
+  <div class="ddfb-split" aria-hidden="true">
+    <span><i class="ddfb-wait-key"></i>Waiting <strong><span class="ddfb-wait-case">50</span><span class="ddfb-travel-case">10</span> min</strong></span>
+    <span><i class="ddfb-travel-key"></i>Travelling <strong><span class="ddfb-wait-case">10</span><span class="ddfb-travel-case">50</span> min</strong></span>
+  </div>
+
+  <div id="ddfb-result" class="ddfb-result" aria-live="polite" aria-atomic="true">
+    <div class="ddfb-wait-case"><span class="ddfb-sr-only">50 minutes waiting, 10 minutes travelling.</span><strong>Check the handoff.</strong><p>Are cleared pallets waiting for an operator, equipment, or a free storage location? A shorter route will do little for a queue that barely moves.</p></div>
+    <div class="ddfb-travel-case"><span class="ddfb-sr-only">10 minutes waiting, 50 minutes travelling.</span><strong>Check the route.</strong><p>Are these loads using doors far from their storage location? Review dock allocation and repeated trips across the warehouse.</p></div>
+  </div>
+</figure>

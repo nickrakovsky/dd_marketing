@@ -194,6 +194,62 @@ const mdxComponents = {
         label: 'Production Run Tradeoff',
         schema: {},
     }),
+    DetentionWarningWindow: block({
+        label: 'Detention warning window',
+        schema: {},
+    }),
+    WarehouseFlowBreakdown: block({
+        label: 'Warehouse flow breakdown',
+        schema: {},
+    }),
+    SetupArticleNavigation: block({
+        label: 'Warehouse setup guide navigation',
+        schema: {},
+    }),
+    SetupHandoffRehearsal: block({
+        label: 'Warehouse setup handoff rehearsal',
+        schema: {},
+    }),
+    SetupReadinessStages: block({
+        label: 'Warehouse setup readiness checks',
+        schema: {},
+    }),
+    LoadTypeAvailability: block({
+        label: 'Load type availability',
+        schema: {},
+    }),
+    PickupDetailsHandoff: block({
+        label: 'Pickup details handoff',
+        schema: {},
+    }),
+    MessageResponseExpectations: block({
+        label: 'Warehouse message response expectations',
+        schema: {},
+    }),
+    PostOneRevised: block({
+        label: 'Early arrival patterns',
+        schema: {},
+    }),
+    PostTwoRevised: block({
+        label: 'Missed appointment communication',
+        schema: {},
+    }),
+    PostThreeRevised: block({
+        label: 'Receiving work plan',
+        schema: {},
+    }),
+    PostFourRevised: block({
+        label: 'Receiving paperwork check',
+        schema: {},
+    }),
+    PostFiveRevised: block({
+        label: 'Driver arrival instructions',
+        schema: {},
+    }),
+    PostSixRevised: block({
+        label: 'Technology rollout decisions',
+        schema: {},
+    }),
     LeadMagnetForm: block({
         label: 'Lead Magnet Form',
         schema: {
