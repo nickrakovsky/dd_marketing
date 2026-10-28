@@ -109,6 +109,11 @@ const youtubeId = feature.data.videoUrl?.match(/(?:youtu\.be\/|v=|embed\/)([A-Za
 <Layout
   title={`${feature.data.title} | DataDocks`}
   description={feature.data.description}
+  schemaData={{ article: {
+    headline: feature.data.title,
+    datePublished: feature.data.pubDate,
+    section: 'Features',
+  } }}
 >
   {/* lite-youtube assets, only on pages that actually have a video. The CSS is
       loaded non-blocking via the media="print" swap trick; the JS is deferred

@@ -27,6 +27,12 @@ interface Props {
         faq?: { question: string; answer: string }[];
         reviews?: { author: string; quote: string; role?: string }[];
         collectionItems?: { name: string; url: string }[];
+        article?: {
+            headline: string;
+            datePublished?: Date;
+            dateModified?: Date;
+            section?: string;
+        };
         newsArticle?: {
             headline: string;
             datePublished: Date;
@@ -260,6 +266,27 @@ if (schemaData?.collectionItems) {
       "@type": "ListItem", "position": index + 1,
       "name": item.name, "url": new URL(item.url, Astro.site).toString(),
     })),
+  });
+}
+
+// Guides and comparisons are articles even though they retain the commercial
+// page layout and booking preconnects. Dates are included only when known.
+if (schemaData?.article) {
+  const article = schemaData.article;
+  graph.push({
+    "@type": "Article",
+    "@id": `${canonicalURL.toString()}#article`,
+    "mainEntityOfPage": { "@id": canonicalURL.toString() },
+    "headline": article.headline,
+    "description": description,
+    "image": socialImageURL.toString(),
+    ...(article.datePublished ? { "datePublished": article.datePublished.toISOString() } : {}),
+    ...(article.dateModified ? { "dateModified": article.dateModified.toISOString() } : {}),
+    "author": { "@id": "https://datadocks.com/#organization" },
+    "publisher": { "@id": "https://datadocks.com/#organization" },
+    "articleSection": article.section,
+    "inLanguage": "en",
+    "isAccessibleForFree": true,
   });
 }
 
