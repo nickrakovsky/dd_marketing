@@ -127,7 +127,7 @@
     "gray-matter": "^4.0.3",
     "jsdom": "^29.1.1",
     "linkinator": "^7.6.1",
-    "mermaid": "^11.15.0",
+    "mermaid": "^11.16.1",
     "parse5": "7.3.0",
     "rollup-plugin-visualizer": "^7.0.1",
     "vitest": "^4.1.12",
