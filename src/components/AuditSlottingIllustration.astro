@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import slottingArtwork from '../assets/blog-images/warehouse-audit-slotting-v1.png';
 
 interface Props {
@@ -39,7 +40,7 @@ const hotspots = [
 
   <div id={`${instanceId}-scene`} class="slotting-composition">
     <div class="slotting-artwork">
-      <img src={slottingArtwork.src} width={slottingArtwork.width} height={slottingArtwork.height} loading="lazy" decoding="async" alt="A rack bay with a middle-level stock location, reserve stock on a pallet to its left and a picking cart to its right." />
+      <Image src={slottingArtwork} format="webp" quality={85} widths={[640, 960, 1280, 1536]} sizes="(min-width: 1024px) 960px, calc(100vw - 48px)" loading="lazy" decoding="async" alt="A rack bay with a middle-level stock location, reserve stock on a pallet to its left and a picking cart to its right." />
       <svg class="slotting-overlay" viewBox={`0 0 1000 ${drawingHeight}`} role="img" aria-labelledby={`${instanceId}-highlights-title ${instanceId}-highlights-description`}>
         <title id={`${instanceId}-highlights-title`}>Work to observe at this stock location</title>
         <desc id={`${instanceId}-highlights-description`} data-slotting-description>No task is selected. Use the numbered buttons to examine picking at the shelf and cart, replenishment at the load, or shared access in front of the rack.</desc>
