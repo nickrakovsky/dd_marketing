@@ -34,6 +34,9 @@ jobs:
       - name: External audit regression tests (offline)
         run: npm run test:outlinks
 
+      - name: Production cache purge safety tests (offline)
+        run: node --test scripts/purge-production-cache.test.mjs
+
       - name: Vendor asset integrity regression tests
         run: npm run test:vendor-assets
 
