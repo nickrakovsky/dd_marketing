@@ -16,8 +16,9 @@
    * Catches all hydration and browser console errors.
    * Uses network interception (`page.route`) to validate Bento CRM payloads without polluting the production database.
    * Uses `window.open` stubs to reliably test external routing (PDFs, Calendly) without popup flakiness.
-5. **Quality Assurance (Lighthouse CI & Linkinator):**
-   * Enforces a hard baseline for Core Web Vitals (0 CLS) and Axe-core accessibility standards.
+5. **Quality Assurance (Lighthouse & Linkinator):**
+   * `npm run perf` runs Lighthouse directly against all five configured preview pages. Performance below 93 warns; accessibility below 90 or CLS above 0.01 fails. Missing measurements also fail.
+   * Reports, traces, and devtools logs are retained in the GitHub Actions `lighthouse-diagnostics` artifact. The former `@lhci/cli` dependency was removed because it introduced the unpatched `extract-zip` package; archived instructions below describe the old setup.
    * Crawls the live preview for 404s, explicitly ignoring rate-limiting external domains (LinkedIn, Twitter, Calendly).
 
 ---

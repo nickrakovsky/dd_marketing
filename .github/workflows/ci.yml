@@ -49,6 +49,9 @@ jobs:
       - name: Performance comparison regression tests (offline)
         run: node --test scripts/performance-comparison.test.mjs
 
+      - name: Performance gates and dependency regression tests (offline)
+        run: node --test scripts/performance-audit.test.mjs
+
       - name: Comparison hero font coverage and metrics
         run: node --test scripts/comparison-hero-fonts.test.mjs
 
@@ -184,16 +187,10 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Performance Audit (Lighthouse CI)
-        run: |
-          # lighthouserc.cjs uses PREVIEW_URL for all five priority pages.
-          # Suppress the local server because these checks target Cloudflare.
-          npx lhci autorun \
-            --collect.startServerCommand="" \
-            --collect.startServerReadyPattern="" \
-            --collect.numberOfRuns=1
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - name: Performance Audit (Lighthouse)
+        # Keep all five priority pages and existing thresholds. Reports, traces
+        # and devtools logs are retained below as GitHub Actions artifacts.
+        run: npm run perf
 
       - name: Upload Lighthouse diagnostics
         if: always()
