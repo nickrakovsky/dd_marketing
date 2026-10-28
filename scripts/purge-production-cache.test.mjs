@@ -1,167 +1,204 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
-import { purgeProductionCache } from './purge-production-cache.mjs';
+import { handleNotification, purgeLiveDeployment, singleFlight } from './cloudflare-cache-purge/core.mjs';
 
 const sha = 'a'.repeat(40);
-const newerSha = 'b'.repeat(40);
-const accountId = 'c'.repeat(32);
-const zoneId = 'd'.repeat(32);
-const deploymentId = '12345678-1234-1234-1234-123456789abc';
-const repository = 'nickrakovsky/dd_marketing';
-const checkEvent = () => ({ action: 'completed', check_run: {
-  app: { slug: 'cloudflare-workers-and-pages' }, status: 'completed', conclusion: 'success', head_sha: sha,
-  details_url: `https://dash.cloudflare.com/?to=/${accountId}/pages/view/dd-marketing/${deploymentId}`,
-} });
+const account = 'b'.repeat(32), zone = 'c'.repeat(32);
+const deployment = '12345678-1234-1234-1234-123456789abc';
+const nextDeployment = '87654321-1234-1234-1234-123456789abc';
+const env = { CF_ACCOUNT_ID: account, CF_ZONE_ID: zone, CF_PURGE_API_TOKEN: 'api-secret-marker', WEBHOOK_SECRET: 'd'.repeat(64) };
 const project = () => ({ name: 'dd-marketing', production_branch: 'main', domains: ['datadocks.com'],
-  canonical_deployment: { id: deploymentId, environment: 'production',
-    deployment_trigger: { metadata: { branch: 'main', commit_hash: sha } },
+  canonical_deployment: { id: deployment, environment: 'production',
+    deployment_trigger: { metadata: { branch: 'main', commit_hash: sha, commit_dirty: false } },
     latest_stage: { name: 'deploy', status: 'success' } },
 });
-
-function harness({ projects = [project()], heads = [sha], purgeResponses = [] } = {}) {
-  const requests = [];
-  let projectReads = 0, headReads = 0, purgeCalls = 0;
+const notification = { alert_type: 'pages_event_alert', account_id: account, data: { project_name: 'dd-marketing' } };
+function request(body = notification, { secret = env.WEBHOOK_SECRET, path = '/pages-deployed', method = 'POST' } = {}) {
+  return new Request('https://purger.example.workers.dev'+path, { method,
+    headers: { 'cf-webhook-auth': secret, 'Content-Type': 'application/json' },
+    ...(method === 'GET' ? {} : { body: typeof body === 'string' ? body : JSON.stringify(body) }),
+  });
+}
+function harness({ projects = [project()], fail = false } = {}) {
+  const requests = [], state = new Map();
+  let reads = 0;
+  const storage = { get: async key => state.get(key), put: async (key, value) => { state.set(key, value); } };
   const fetchImpl = async (url, options) => {
     requests.push({ url, ...options });
-    if (url.startsWith('https://api.github.com/')) {
-      assert.equal(options.method, 'GET');
-      return Response.json({ object: { sha: heads[Math.min(headReads++, heads.length - 1)] } });
-    }
-    assert.equal(new URL(url).origin, 'https://api.cloudflare.com');
-    assert.equal(options.redirect, 'error');
+    assert.equal(options.redirect, 'manual');
+    assert.equal(options.headers.Authorization, `Bearer ${env.CF_PURGE_API_TOKEN}`);
     if (options.method === 'POST') {
-      assert.equal(url, `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`);
+      assert.equal(url, `https://api.cloudflare.com/client/v4/zones/${zone}/purge_cache`);
       assert.deepEqual(JSON.parse(options.body), { hosts: ['datadocks.com'] });
-      const response = purgeResponses[purgeCalls++];
-      return response ?? Response.json({ success: true, result: { id: 'purge-id' } });
+      return Response.json({ success: !fail, errors: [{ message: 'api-secret-marker' }] });
     }
-    assert.equal(url, `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/dd-marketing`);
-    return Response.json({ success: true, result: projects[Math.min(projectReads++, projects.length - 1)] });
+    assert.equal(url, `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/dd-marketing`);
+    return Response.json({ success: true, result: projects[Math.min(reads++, projects.length - 1)] });
   };
-  const options = { eventName: 'check_run', event: checkEvent(), repository, ref: 'refs/heads/main',
-    githubToken: 'github-test-token', token: 'cloudflare-test-token', accountId, zoneId,
-    fetchImpl, sleep: async () => {}, pollAttempts: 2, pollMs: 0 };
-  return { options, requests, run: overrides => purgeProductionCache({ ...options, ...overrides }),
-    posts: () => requests.filter(request => request.method === 'POST') };
+  return { storage, state, requests, run: () => purgeLiveDeployment(env, storage, fetchImpl),
+    posts: () => requests.filter(x => x.method === 'POST') };
 }
 
-test('verified live production deployment purges exactly the apex host after all verification', async () => {
+test('successful live production deployment purges exactly datadocks.com and records success', async () => {
   const h = harness();
   const result = await h.run();
   assert.equal(result.purged, true);
-  assert.equal(result.deployment, deploymentId);
   assert.equal(h.posts().length, 1);
-  assert.equal(h.requests.at(-2).url, `https://api.github.com/repos/${repository}/git/ref/heads/main`);
+  assert.equal(h.state.get('last-purged').id, deployment);
+  assert.equal(h.requests[1].method, 'GET');
   assert.deepEqual(JSON.parse(h.posts()[0].body), { hosts: ['datadocks.com'] });
 });
 
-test('CI main-push fallback and main-only manual retry verify the live deployment too', async () => {
+test('duplicate notifications do not purge the same deployment again', async () => {
   const h = harness();
-  const event = { action: 'completed', workflow_run: { event: 'push', head_branch: 'main',
-    head_sha: sha, head_repository: { full_name: repository } } };
-  assert.equal((await h.run({ eventName: 'workflow_run', event })).purged, true);
-  assert.equal((await h.run({ eventName: 'workflow_dispatch', event: {} })).purged, true);
-  assert.equal((await h.run({ eventName: 'workflow_dispatch', ref: 'refs/heads/feature', event: {} })).purged, false);
-  assert.equal(h.posts().length, 2);
-});
-
-test('irrelevant, failed, foreign, fork and PR triggers make no requests', async () => {
-  const variants = [
-    { eventName: 'push' }, { repository: 'someone/fork' },
-    { event: { action: 'completed', check_run: { ...checkEvent().check_run, conclusion: 'failure' } } },
-    { event: { action: 'completed', check_run: { ...checkEvent().check_run, app: { slug: 'github-actions' } } } },
-    { event: { action: 'completed', check_run: { ...checkEvent().check_run, details_url: 'https://evil.test/?to=/anything' } } },
-    { eventName: 'workflow_run', event: { action: 'completed', workflow_run: { event: 'pull_request', head_branch: 'main', head_sha: sha, head_repository: { full_name: repository } } } },
-    { eventName: 'workflow_run', event: { action: 'completed', workflow_run: { event: 'push', head_branch: 'preview', head_sha: sha, head_repository: { full_name: repository } } } },
-  ];
-  for (const variant of variants) {
-    const h = harness();
-    assert.equal((await h.run(variant)).purged, false);
-    assert.equal(h.requests.length, 0);
-  }
-});
-
-test('preview of the same main SHA cannot purge production', async () => {
-  const live = project();
-  live.canonical_deployment.id = '87654321-1234-1234-1234-123456789abc';
-  const h = harness({ projects: [live] });
-  assert.equal((await h.run()).purged, false);
-  assert.equal(h.posts().length, 0);
-});
-
-test('a preview commit, another account and superseded main skip before Cloudflare requests', async () => {
-  const h = harness();
-  const event = checkEvent(); event.check_run.head_sha = newerSha;
-  assert.equal((await h.run({ event })).purged, false);
-  assert.equal((await h.run({ accountId: 'e'.repeat(32) })).purged, false);
-  assert.equal(h.requests.some(request => request.url.startsWith('https://api.cloudflare.com')), false);
-});
-
-test('waits for deploy success rather than purging after build success', async () => {
-  const building = project(); building.canonical_deployment.latest_stage.name = 'build';
-  const h = harness({ projects: [building, project()] });
   assert.equal((await h.run()).purged, true);
-  assert.equal(h.requests.filter(request => request.url.includes('/pages/projects/')).length, 2);
+  assert.equal((await h.run()).purged, false);
   assert.equal(h.posts().length, 1);
 });
 
-test('unverified, failed, skipped and wrong-branch production builds never purge', async () => {
+test('a new production deployment causes another purge', async () => {
+  const next = project(); next.canonical_deployment.id = nextDeployment;
+  const h = harness({ projects: [project(), project(), next, next] });
+  assert.equal((await h.run()).purged, true);
+  assert.equal((await h.run()).purged, true);
+  assert.equal(h.posts().length, 2);
+});
+
+test('coordinator coalesces concurrent deliveries and permits later deployments', async () => {
+  const h = harness(); let calls = 0;
+  const coordinate = singleFlight(async () => { calls++; return h.run(); });
+  const results = await Promise.all(Array.from({ length: 10 }, () => coordinate()));
+  assert.equal(calls, 1);
+  assert.equal(h.posts().length, 1);
+  assert.ok(results.every(result => result.purged));
+  assert.equal((await coordinate()).purged, false);
+});
+
+test('preview, failed, unfinished, skipped, dirty and wrong-branch deployments cannot purge', async () => {
   for (const change of [
     p => { p.canonical_deployment.environment = 'preview'; },
     p => { p.canonical_deployment.latest_stage.status = 'failure'; },
-    p => { p.canonical_deployment.latest_stage.status = 'active'; },
-    p => { p.canonical_deployment.latest_stage.status = 'skipped'; },
+    p => { p.canonical_deployment.latest_stage.name = 'build'; },
     p => { p.canonical_deployment.is_skipped = true; },
-    p => { p.canonical_deployment.id = undefined; },
     p => { p.canonical_deployment.deployment_trigger.metadata.commit_dirty = true; },
     p => { p.canonical_deployment.deployment_trigger.metadata.branch = 'feature'; },
-    p => { p.canonical_deployment.deployment_trigger.metadata.commit_hash = newerSha; },
+    p => { p.canonical_deployment.deployment_trigger.metadata.commit_hash = 'invalid'; },
+    p => { p.canonical_deployment.id = undefined; },
   ]) {
-    const p = project(); change(p);
-    const h = harness({ projects: [p] });
-    await assert.rejects(h.run(), /No successful current production deployment/);
+    const p = project(); change(p); const h = harness({ projects: [p] });
+    assert.equal((await h.run()).purged, false);
     assert.equal(h.posts().length, 0);
+    assert.equal(h.state.size, 0);
   }
 });
 
-test('wrong project, production branch, missing apex domain or missing configuration fail closed', async () => {
-  for (const change of [p => { p.name = 'application'; }, p => { p.production_branch = 'feature'; },
+test('wrong project, production branch and app-only domains fail closed', async () => {
+  for (const change of [p => { p.name = 'application'; }, p => { p.production_branch = 'preview'; },
     p => { p.domains = ['www.datadocks.com', 'booking.datadocks.com']; }]) {
-    const p = project(); change(p);
-    const h = harness({ projects: [p] });
-    await assert.rejects(h.run(), /Unexpected Cloudflare Pages project/);
+    const p = project(); change(p); const h = harness({ projects: [p] });
+    await assert.rejects(h.run(), /Unexpected project/);
     assert.equal(h.posts().length, 0);
   }
-  const h = harness();
-  await assert.rejects(h.run({ token: '' }), /Configure CF_ACCOUNT_ID/);
-  await assert.rejects(h.run({ zoneId: '../another-zone' }), /Configure CF_ACCOUNT_ID/);
+});
+
+test('a deployment changing during verification is not purged', async () => {
+  const next = project(); next.canonical_deployment.id = nextDeployment;
+  const h = harness({ projects: [project(), next] });
+  await assert.rejects(h.run(), /deployment changed/);
   assert.equal(h.posts().length, 0);
 });
 
-test('main advancing while deployment is verified prevents an obsolete purge', async () => {
-  const h = harness({ heads: [sha, sha, newerSha] });
-  assert.equal((await h.run()).purged, false);
-  assert.equal(h.posts().length, 0);
-});
-
-test('rate-limit retry retains the same exact-host payload', async () => {
-  const h = harness({ purgeResponses: [Response.json({ success: false }, { status: 429 })] });
-  assert.equal((await h.run()).purged, true);
+test('a rejected purge is not recorded and can be retried', async () => {
+  const h = harness({ fail: true });
+  await assert.rejects(h.run(), /request rejected/);
+  assert.equal(h.state.size, 0);
+  await assert.rejects(h.run(), /request rejected/);
   assert.equal(h.posts().length, 2);
 });
 
-test('Cloudflare rejection fails visibly without leaking response contents or broadening scope', async () => {
-  const h = harness({ purgeResponses: [Response.json({ success: false, errors: [{ message: 'secret-marker' }] })] });
-  await assert.rejects(h.run(), error => /cache purge rejected/.test(error.message) && !error.message.includes('secret-marker'));
+test('missing configuration makes no API requests', async () => {
+  for (const change of [{ CF_PURGE_API_TOKEN: '' }, { CF_ZONE_ID: '../other-zone' }, { CF_ACCOUNT_ID: '' }]) {
+    let calls = 0;
+    await assert.rejects(purgeLiveDeployment({ ...env, ...change }, {}, async () => { calls++; }), /Configure/);
+    assert.equal(calls, 0);
+  }
+});
+
+test('an API redirect fails without following or forwarding credentials', async () => {
+  let calls = 0;
+  await assert.rejects(purgeLiveDeployment(env, {}, async (_url, options) => {
+    calls++;
+    assert.equal(options.redirect, 'manual');
+    return new Response(null, { status: 302, headers: { Location: 'https://untrusted.example/' } });
+  }), /HTTP 302/);
+  assert.equal(calls, 1);
+});
+
+test('authenticated Pages notification invokes coordinator', async () => {
+  let calls = 0;
+  const response = await handleNotification(request(), env, async () => { calls++; return { purged: true }; });
+  assert.equal(response.status, 200);
+  assert.equal(calls, 1);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+});
+
+test('missing/wrong/short webhook secrets reject before any coordinator call', async () => {
+  for (const [req, configuration] of [[request(undefined, { secret: '' }), env],
+    [request(undefined, { secret: 'wrong' }), env], [request(), { ...env, WEBHOOK_SECRET: 'short' }]]) {
+    const response = await handleNotification(req, configuration, () => { throw Error('must not run'); });
+    assert.equal(response.status, 401);
+  }
+});
+
+test('Save and Test, unrelated alerts and another account never purge', async () => {
+  for (const payload of [{ text: 'Hello World! This is a test message sent from https://cloudflare.com.' },
+    { ...notification, alert_type: 'workers_alert' }, { ...notification, account_id: 'e'.repeat(32) }]) {
+    const response = await handleNotification(request(payload), env, () => { throw Error('must not run'); });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).purged, false);
+  }
+});
+
+test('notification schema variants may omit optional account and type; live API remains authoritative', async () => {
+  const response = await handleNotification(request({ text: 'Pages update', data: { event: 'success' } }), env,
+    async () => ({ purged: false, reason: 'No successful live production deployment' }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).purged, false);
+});
+
+test('payload cannot override hostname, zone or deployment verification', async () => {
+  const h = harness();
+  const response = await handleNotification(request({ ...notification, hosts: ['booking.datadocks.com'],
+    purge_everything: true, zone: 'attacker', deployment: 'attacker' }), env, h.run);
+  assert.equal(response.status, 200);
   assert.equal(h.posts().length, 1);
 });
 
-test('workflow executes trusted main without write permissions or PR artifacts', () => {
-  const yaml = fs.readFileSync(new URL('../.github/workflows/purge-production-cache.yml', import.meta.url), 'utf8');
-  assert.match(yaml, /ref: main/);
-  assert.match(yaml, /persist-credentials: false/);
-  assert.doesNotMatch(yaml, /: write|download-artifact|pull_request_target|cancel-in-progress: true/);
-  assert.match(yaml, /check_run:/);
-  assert.match(yaml, /workflow_run:/);
+test('malformed, oversized, wrong-path and wrong-method requests cannot purge', async () => {
+  for (const [req, status] of [[request('invalid json'), 400], [request(' '.repeat(65537)), 413],
+    [request(null), 400], [request([], {}), 400], [request(undefined, { path: '/other' }), 404],
+    [request(undefined, { method: 'GET' }), 405]]) {
+    const response = await handleNotification(req, env, () => { throw Error('must not run'); });
+    assert.equal(response.status, status);
+  }
+});
+
+test('failure responses do not leak tokens or upstream messages', async () => {
+  const response = await handleNotification(request(), env, async () => { throw Error('api-secret-marker'); });
+  assert.equal(response.status, 502);
+  assert.doesNotMatch(await response.text(), /api-secret-marker/);
+});
+
+test('GitHub has offline tests only; deployed helper has no marketing/app routes', () => {
+  const workflowRoot = new URL('../.github/workflows/', import.meta.url);
+  assert.equal(fs.existsSync(new URL('purge-production-cache.yml', workflowRoot)), false);
+  for (const name of fs.readdirSync(workflowRoot)) {
+    assert.doesNotMatch(fs.readFileSync(new URL(name, workflowRoot), 'utf8'), /CF_PURGE_API_TOKEN|WEBHOOK_SECRET/);
+  }
+  const config = fs.readFileSync(new URL('./cloudflare-cache-purge/wrangler.jsonc', import.meta.url), 'utf8');
+  assert.match(config, /"routes": \[\]/);
+  assert.match(config, /"keep_vars": true/);
+  assert.match(config, /"preview_urls": false/);
+  assert.doesNotMatch(config, /"CF_PURGE_API_TOKEN"\s*:/);
 });
