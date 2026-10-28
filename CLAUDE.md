@@ -59,7 +59,7 @@ The canonical URL format is **no trailing slash, no `.html` extension**. Three c
 - Never link to competitor websites (dock scheduling, yard management, or WMS software vendors)
 - OK to link to: news/media, academic/research sources, government sites, industry associations, and non-competing software (e.g. ERP, BI tools)
 - When citing a statistic or concept, prefer linking to the original research source, not a competitor's blog post about it
-- Links to product/feature pages (datadocks.com/benefits/, datadocks.com/datadocks-features/) are absolute since they're served from Webflow
+- Product/feature pages (`/benefits/*`, `/datadocks-features/*`) are built in this repo (`src/pages/benefits/`, `src/pages/datadocks-features/[slug].astro`), not Webflow — they are NOT external. Existing links to them may still use absolute URLs from a pre-migration convention; treat them as regular internal pages for linking, caching, and performance purposes going forward
 
 ### SEO
 - All bots allowed in robots.txt — do NOT block any crawlers (search or training). User wants maximum AI visibility

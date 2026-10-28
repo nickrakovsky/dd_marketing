@@ -1,0 +1,14 @@
+.localized-scene {
+  --scene-paper: color-mix(in srgb, var(--paper, #fff8ee) 92%, var(--ink, #24211d));
+  --scene-panel: color-mix(in srgb, var(--paper, #fff8ee) 85%, var(--line, #9f8d78));
+  --scene-shade: color-mix(in srgb, var(--paper, #fff8ee) 65%, var(--line, #9f8d78));
+  --scene-ink: var(--ink, #24211d);
+  --scene-line: var(--line, #9f8d78);
+  --scene-orange: var(--accent, #fe5000);
+  --scene-skin: color-mix(in srgb, var(--paper, #fff8ee) 65%, #cb9468);
+  margin: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--scene-paper);
+}
+.localized-scene svg, .localized-scene img { display:block; width:100%; height:auto; }

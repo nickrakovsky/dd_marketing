@@ -9,7 +9,14 @@ The primary identity colors for DataDocks marketing and brand recognition.
 | :--- | :--- | :--- |
 | Official Orange | `#FE5000` | Primary brand color / Hero CTAs |
 | Paper White | `#FFF8EE` | Primary background canvas |
+| Dark Beige | `#EFE2D2` | Secondary marketing surfaces and section backgrounds |
 | Solid Black | `#000000` | Primary typography |
+
+### Orange surface text rule
+
+Black text on an orange background must never be an element's default appearance. Use white or the approved light paper colour for text and inherited icons on orange surfaces, including buttons, cards, banners, and navigation controls. Black text on orange is permitted only for special or temporary states, such as mouseover. Check child elements as well as the surface itself; they must not override this default with black text.
+
+White or paper text on Official Orange needs large-text sizing to meet AA contrast: at least 24px regular or 18.67px bold. Use 20px bold or larger for orange CTA labels; use a black surface with light text when smaller labels are necessary. Dark Beige is a background colour, not a substitute for light text on orange.
 
 ## Product Core (Neutrals)
 The secondary palette used within the DataDocks application interface.

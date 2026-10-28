@@ -1,6 +1,7 @@
 ---
 // 1. Imports
 import Layout from './Layout.astro';
+import '../styles/blog-theme.css';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
@@ -11,6 +12,7 @@ import RelatedFeatureCallout from '../components/RelatedFeatureCallout.astro';
 import LeadCaptureWidget from '../components/LeadCaptureWidget.astro';
 import LeadMagnetForm from '../components/LeadMagnetForm.astro';
 import SidebarShortVideo from '../components/SidebarShortVideo.astro';
+import FAQ from '../components/FAQ.astro';
 import { ytThumb } from '../lib/yt-thumb';
 
 interface Heading {
@@ -19,7 +21,13 @@ interface Heading {
   text: string;
 }
 
-const { frontmatter, headings = [] as Heading[], relatedPosts = [] } = Astro.props;
+const { frontmatter, headings = [] as Heading[], relatedPosts = [], noindex = false } = Astro.props;
+// Per-post opt-in: set headerLayout: rich-content in frontmatter, or choose
+// "Rich content first screen" in the blog editor. Missing values stay standard.
+// This moves both the top-interactive slot and normal MDX body below the first
+// screen on smaller viewports. Pair JS islands with client:visible to postpone
+// hydration; this layout does not defer eager scripts or bundled component CSS.
+const richContentFirst = frontmatter.headerLayout === 'rich-content';
 const h2Headings = headings.filter((h: Heading) => h.depth === 2);
 
 // 2. Date Formatting
@@ -109,20 +117,36 @@ if (priorityImgMatch) {
 ---
 
 <Layout
+  blogTheme
   title={`${frontmatter.title} | DataDocks`}
   description={frontmatter.description}
   image={typeof frontmatter.cardImage === 'string' ? frontmatter.cardImage : frontmatter.cardImage?.src}
   type="article"
-  articleData={{
+  preloadRecoleta={richContentFirst}
+  noindex={noindex}
+  articleData={frontmatter.pubDate ? {
     author: frontmatter.author,
     pubDate: frontmatter.pubDate,
     updatedDate: frontmatter.updatedDate,
     section: frontmatter.category
-  }}
+  } : undefined}
   schemaData={frontmatter.faq ? { faq: frontmatter.faq } : undefined}
 >
   {/* Head slot: LCP image preload + conditional lite-youtube CSS */}
   <Fragment slot="head">
+    <script is:inline>
+      // Resolve the reader's preference before the article paints. Storage may
+      // be blocked, in which case the operating-system preference still works.
+      (function() {
+        let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        try {
+          const saved = localStorage.getItem('theme');
+          if (saved === 'dark' || saved === 'light') dark = saved === 'dark';
+        } catch { /* Use the system preference when storage is unavailable. */ }
+        document.documentElement.classList.toggle('dark', dark);
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#181818' : '#FFF8E9');
+      })();
+    </script>
     {lcpImageSrc && (
       <link
         rel="preload"
@@ -136,52 +160,68 @@ if (priorityImgMatch) {
     {/* lite-youtube CSS moved to global style block */}
   </Fragment>
   <div class="min-h-screen flex flex-col">
-    <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
+    <a href="#content" class="blog-compact-action sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-[#fd4f00] text-white px-4 py-2 rounded-lg z-[100] font-bold">Skip to content</a>
     <Navigation />
 
-    <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-gray-900 font-recoleta text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    <main class="flex-grow w-full bg-[#FFF8E9] dark:bg-[var(--blog-canvas)] font-recoleta text-gray-800 dark:text-[var(--blog-ink)] transition-colors duration-300">
       
-      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pt-12 lg:pt-16 pb-12">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div class:list={["w-full max-w-7xl mx-auto px-4 md:px-12 pt-12 lg:pt-16 pb-12", { 'rich-content-header': richContentFirst }]}>
+        <div class="article-header-grid grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          <div class={`flex flex-col text-left ${frontmatter.heroFigure ? 'lg:col-span-7' : 'lg:col-span-12 w-full'} items-start order-2 lg:order-1`}>
+          <div class={`article-header-copy flex flex-col text-left ${frontmatter.heroFigure ? 'lg:col-span-7' : 'lg:col-span-12 w-full'} items-start order-2 lg:order-1`}>
             
-            <div class="font-recoleta text-black dark:text-gray-200 text-xl md:text-2xl font-bold mb-4 transition-colors duration-300">
-              {frontmatter.category || "Logistics & Supply Chain"}
+            <div class="article-heading contents">
+              <div class="article-category font-recoleta text-black dark:text-[var(--blog-ink)] text-xl md:text-2xl font-bold mb-4 transition-colors duration-300">
+                {frontmatter.category || "Logistics & Supply Chain"}
+              </div>
+              <div class="article-title relative inline-block mb-6 w-full">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bruta uppercase text-[#fd4f00] dark:text-[var(--blog-orange)] leading-[1.05] break-words transition-colors duration-300 text-left w-full">
+                  {frontmatter.title}
+                </h1>
+              </div>
             </div>
             
-            <div class="relative inline-block mb-6 w-full">
-              <h1 class="text-5xl md:text-6xl lg:text-7xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] leading-[1.05] break-words transition-colors duration-300 text-left w-full">
-                {frontmatter.title}
-              </h1>
-              
-
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-x-6 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-gray-800 mt-2 transition-colors duration-300 w-full justify-start">
-              <div class="flex flex-col">
-                <div class="font-bold text-black dark:text-white text-lg transition-colors duration-300">{author.name}</div>
-                <div class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{author.role}</div>
-                <div class="text-xs text-gray-400 dark:text-gray-500 mt-1 max-w-md transition-colors duration-300">{author.shortBio}</div>
+            {/*
+              `lg:gap-x-4` exists to buy this row a few pixels of slack, and is
+              load-bearing. The four blocks below measure 448 + 202 + 118 + 88 =
+              856px (the first is pinned to its `max-w-md` cap by any bio long
+              enough to fill it). At a 1024px viewport the container is exactly
+              928px, and three `gap-x-6` gaps are exactly 72px — so the row fits
+              in precisely zero spare pixels. Text rendered in the Georgia
+              fallback is a hair wider than DD-Recoleta, which pushed the last
+              block onto a fourth line until the webfont swapped in and pulled it
+              back up: a 0.095 CLS at 1024px (iPad landscape and small laptops),
+              right on the edge of failing. Dropping to 1rem gaps at lg+ leaves
+              24px of headroom, so the wrap point no longer depends on which font
+              is active. The settled layout is unchanged — same 144px row height,
+              same child widths — only the spacing between blocks tightens by 8px
+              on desktop. If you widen anything in this row, re-check CLS at
+              exactly 1024px.
+            */}
+            <div class="article-metadata flex flex-wrap items-center gap-x-6 lg:gap-x-4 gap-y-4 py-5 border-y-2 border-[#E5D3B3] dark:border-[var(--blog-rule)] mt-2 transition-colors duration-300 w-full justify-start">
+              <div class="article-author flex flex-col">
+                <div class="article-author-name font-bold text-black dark:text-[var(--blog-ink)] text-lg transition-colors duration-300">{author.name}</div>
+                <div class="article-author-role text-sm text-gray-500 dark:text-[var(--blog-muted)] transition-colors duration-300">{author.role}</div>
+                <div class="article-author-bio text-xs text-gray-400 dark:text-[var(--blog-muted)] mt-1 max-w-md transition-colors duration-300">{author.shortBio}</div>
               </div>
               
-              <div class="flex flex-col text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                <span>First Published: {formattedDate}</span>
+              <div class="article-dates flex flex-col text-sm text-gray-600 dark:text-[var(--blog-muted)] transition-colors duration-300">
+                <span>{frontmatter.pubDate ? `First Published: ${formattedDate}` : 'Unscheduled draft'}</span>
                 {formattedUpdatedDate && (
                   <span>Last Updated: {formattedUpdatedDate}</span>
                 )}
               </div>
               
-              <div class="text-sm font-bold text-gray-500 dark:text-gray-300 bg-[#F8EDD9] dark:bg-gray-800 px-3 py-1 rounded-full border border-transparent dark:border-gray-700 transition-colors duration-300">
+              <div class="article-read-time text-sm font-bold text-gray-500 dark:text-[var(--blog-ink)] bg-[#F8EDD9] dark:bg-[var(--blog-surface)] px-3 py-1 rounded-full border border-transparent dark:border-[var(--blog-rule)] transition-colors duration-300">
                 {finalReadTime}
               </div>
               
-              <div class={`flex gap-2 ${frontmatter.heroFigure ? 'ml-auto' : ''}`}>
-                <button id="theme-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 group" title="Toggle Theme" aria-label="Toggle between dark and light mode">
-                  <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 block dark:hidden group-hover:text-[#fd4f00] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                  <svg class="w-5 h-5 text-gray-700 dark:text-gray-300 hidden dark:block group-hover:text-[#ff7635] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+              <div class={`article-reading-controls flex gap-2 ${frontmatter.heroFigure ? 'ml-auto' : ''}`}>
+                <button id="theme-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-[var(--blog-control)] flex items-center justify-center hover:bg-white dark:hover:bg-[var(--blog-surface)] transition-all duration-300 group" title="Toggle Theme" aria-label="Toggle between dark and light mode">
+                  <svg class="w-5 h-5 text-gray-700 dark:text-[var(--blog-ink)] block dark:hidden group-hover:text-[#fd4f00] dark:group-hover:text-[var(--blog-link)] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                  <svg class="w-5 h-5 text-gray-700 dark:text-[var(--blog-ink)] hidden dark:block group-hover:text-[#ff7635] dark:group-hover:text-[var(--blog-link)] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </button>
-                <button id="text-size-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 font-bruta font-bold text-gray-700 dark:text-gray-300 hover:text-[#fd4f00] dark:hover:text-[#ff7635]" title="Toggle Text Size" aria-label="Toggle between normal and larger text sizes">
+                <button id="text-size-toggle" class="w-10 h-10 rounded-full border-2 border-[#E5D3B3] dark:border-[var(--blog-control)] flex items-center justify-center hover:bg-white dark:hover:bg-[var(--blog-surface)] transition-all duration-300 font-bruta font-bold text-gray-700 dark:text-[var(--blog-ink)] hover:text-[#fd4f00] dark:hover:text-[var(--blog-link)]" title="Toggle Text Size" aria-label="Toggle between normal and larger text sizes">
                   Aa
                 </button>
               </div>
@@ -189,7 +229,7 @@ if (priorityImgMatch) {
           </div>
           
           {frontmatter.heroFigure && (
-            <div class="w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
+            <div class="article-hero-figure w-full lg:col-span-5 relative order-1 lg:order-2 mb-8 lg:mb-0 hidden lg:block">
               <div class="w-full aspect-[4/5] flex items-center justify-center overflow-visible">
                 <Image
                   src={frontmatter.heroFigure}
@@ -205,16 +245,41 @@ if (priorityImgMatch) {
           
         </div>
       </div>
+
+      {/* Top Interactive Slot — renders at full header width, above prose article */}
+      <slot name="top-interactive" />
       
-      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:flex lg:items-start lg:gap-8 xl:gap-12">
+      {/*
+        `lg:grid` with explicit tracks replaces what used to be `lg:flex`.
+
+        This row has three children in DOM order: the TOC aside, the content
+        column, then #blog-right-sidebar (which lives AFTER the article, ~40KB
+        of HTML later). Under flex, the content column is `flex-grow` capped by
+        `xl:max-w-3xl`, so while the browser is still streaming the article the
+        sidebar does not exist yet and the column grows to its 768px cap. When
+        the sidebar finally parses it claims its 16rem, and the column reflows
+        768px -> 608px — every paragraph in the article re-wraps and moves. That
+        was a 0.05 desktop CLS on long posts, the single largest shift left on
+        the site.
+
+        Grid fixes it because track sizes come from the CONTAINER, not from the
+        children: all three columns are sized at the first layout whether or not
+        the third child has been parsed, so the content column is 608px from the
+        very first paint and never moves. The rendered result is identical to
+        the old settled state — the `max-w-2xl xl:max-w-3xl` on the column is
+        now inert (the track is always narrower) and is kept only as a guard.
+        Track widths must stay in sync with the asides' own `w-48 xl:w-56` and
+        `w-60 xl:w-64`, and with the `lg:gap-8 xl:gap-12` here.
+      */}
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 relative lg:grid lg:grid-cols-[12rem_minmax(0,1fr)_15rem] xl:grid-cols-[14rem_minmax(0,1fr)_16rem] lg:items-start lg:gap-8 xl:gap-12">
         
         {/* Desktop Side TOC (Visible on LG+) */}
         <aside id="desktop-toc" class="desktop-toc-container hidden lg:block w-48 xl:w-56 flex-shrink-0 sticky bottom-12 self-end z-20 pr-4" aria-label="Table of Contents">
           {h2Headings.length > 0 && (
             <div class="space-y-6">
               <div class="space-y-2">
-                <p class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] text-sm font-bold tracking-widest" aria-hidden="true">Contents</p>
-                <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[#ff7635] opacity-30"></div>
+                <p class="font-bruta uppercase text-[#fd4f00] dark:text-[var(--blog-link)] text-sm font-bold tracking-widest" aria-hidden="true">Contents</p>
+                <div class="w-8 h-1 bg-[#fd4f00] dark:bg-[var(--blog-orange)] opacity-30"></div>
               </div>
               <nav aria-label="Table of contents">
                 <ul class={`space-y-4 ${h2Headings.length > 12 ? '!space-y-1' : h2Headings.length > 7 ? '!space-y-2' : ''}`}>
@@ -222,7 +287,7 @@ if (priorityImgMatch) {
                     <li>
                       <a 
                         href={`#${heading.slug}`} 
-                        class={`toc-link block font-recoleta font-medium text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4 ${h2Headings.length > 12 ? 'text-[11px] py-0.5 leading-tight' : h2Headings.length > 7 ? 'text-xs py-1 leading-snug' : 'text-sm py-1'}`}
+                        class={`toc-link block font-recoleta font-medium text-gray-500 dark:text-[var(--blog-muted)] hover:text-[#fd4f00] dark:hover:text-[var(--blog-link)] transition-all duration-200 line-clamp-2 border-l-2 border-transparent pl-4 ${h2Headings.length > 12 ? 'text-[11px] py-0.5 leading-tight' : h2Headings.length > 7 ? 'text-xs py-1 leading-snug' : 'text-sm py-1'}`}
                       >
                         {heading.text}
                       </a>
@@ -236,20 +301,23 @@ if (priorityImgMatch) {
 
         {/* Main Content Area */}
         <div class="w-full min-w-0 max-w-2xl xl:max-w-3xl lg:mx-0 flex-grow relative">
-          {/* Static TOC for Mobile */}
+          {/* Top Intro Slot (e.g. At A Glance summary & Note) rendered before mobile TOC */}
+          <slot name="intro" />
+
+          {/* Static TOC for Mobile — renders BELOW intro slot on mobile viewports */}
           {h2Headings.length > 0 && (
             <div class="lg:hidden relative z-40 mb-12">
-              <details class="group bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 transition-colors duration-300 mobile-toc-details">
+              <details class="group bg-[#F8EDD9] dark:bg-[var(--blog-surface)] rounded-xl border border-[#E5D3B3] dark:border-[var(--blog-control)] transition-colors duration-300 mobile-toc-details">
                 <summary class="list-none cursor-pointer p-4 flex items-center justify-between outline-none">
-                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] font-bold tracking-wider text-sm">Table of Contents</span>
+                  <span class="font-bruta uppercase text-[#fd4f00] dark:text-[var(--blog-link)] font-bold tracking-wider text-sm">Table of Contents</span>
                   <svg class="w-5 h-5 text-[#fd4f00] transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 </summary>
-                <div class="absolute left-0 right-0 top-full mt-2 bg-[#F8EDD9] dark:bg-gray-800 rounded-xl border border-[#E5D3B3] dark:border-gray-700 shadow-xl p-4 z-50 max-h-[60vh] overflow-y-auto">
+                <div class="absolute left-0 right-0 top-full mt-2 bg-[#F8EDD9] dark:bg-[var(--blog-surface)] rounded-xl border border-[#E5D3B3] dark:border-[var(--blog-rule)] shadow-xl p-4 z-50 max-h-[60vh] overflow-y-auto">
                   <nav aria-label="Table of contents (mobile)">
                     <ul class="space-y-3">
                       {h2Headings.map((heading: Heading) => (
                         <li>
-                          <a href={`#${heading.slug}`} class="mobile-toc-link block text-sm text-gray-700 dark:text-gray-300 font-recoleta hover:text-[#fd4f00] dark:hover:text-[#ff7635] transition-colors border-l-2 border-transparent pl-3">
+                          <a href={`#${heading.slug}`} class="mobile-toc-link block text-sm text-gray-700 dark:text-[var(--blog-ink)] font-recoleta hover:text-[#fd4f00] dark:hover:text-[var(--blog-link)] transition-colors border-l-2 border-transparent pl-3">
                             {heading.text}
                           </a>
                         </li>
@@ -262,19 +330,19 @@ if (priorityImgMatch) {
           )}
         <article id="content" class="prose prose-lg md:prose-xl w-full max-w-none break-words transition-all duration-500
           dark:prose-invert 
-          prose-h1:font-bruta prose-h1:text-[#fd4f00] dark:prose-h1:text-[#ff7635]
-          prose-h2:font-recoleta prose-h2:text-3xl prose-h2:font-bold prose-h2:text-black dark:prose-h2:text-white
-          prose-h3:font-recoleta prose-h3:text-2xl prose-h3:font-bold prose-h3:text-black dark:prose-h3:text-white
-          prose-h4:font-bruta prose-h4:text-black dark:prose-h4:text-white prose-h4:text-xl
+          prose-h1:font-bruta prose-h1:text-[#fd4f00] dark:prose-h1:text-[var(--blog-orange)]
+          prose-h2:font-recoleta prose-h2:text-3xl prose-h2:font-bold prose-h2:text-black dark:prose-h2:text-[var(--blog-ink)]
+          prose-h3:font-recoleta prose-h3:text-2xl prose-h3:font-bold prose-h3:text-black dark:prose-h3:text-[var(--blog-ink)]
+          prose-h4:font-bruta prose-h4:text-black dark:prose-h4:text-[var(--blog-ink)] prose-h4:text-xl
           prose-p:font-recoleta prose-p:leading-relaxed 
-          prose-a:text-[#fd4f00] dark:prose-a:text-[#ff7635] prose-a:font-semibold hover:prose-a:underline
+          prose-a:text-[#fd4f00] dark:prose-a:text-[var(--blog-link)] prose-a:font-semibold hover:prose-a:underline
           prose-img:rounded-xl prose-img:w-full prose-img:border-0 prose-img:ring-0 prose-img:outline-none
-          prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
+          prose-strong:text-gray-900 dark:prose-strong:text-[var(--blog-ink)] prose-strong:font-bold
           prose-table:block prose-table:overflow-x-auto prose-table:w-full">
           
-          {/* If there's a mobile view, we could also render the heroFigure inline before the content, but leaving it clean for now */}
+          {/* Keep the illustration in the article below the first-screen header. */}
           {frontmatter.heroFigure && (
-            <div class="w-full mb-8 lg:hidden">
+            <div class:list={["w-full mb-8", richContentFirst ? 'rich-content-inline-figure' : 'lg:hidden']}>
               <Image
                 src={frontmatter.heroFigure}
                 alt={`Illustration for ${frontmatter.title}`}
@@ -322,14 +390,24 @@ if (priorityImgMatch) {
       </aside>
     </div>
 
+    {/* Bottom Content Slot (Full Width) */}
+    <slot name="bottom-content" />
+
+    {/* Automatic FAQ Rendering (Full Width) if frontmatter.faq exists */}
+    {frontmatter.faq && frontmatter.faq.length > 0 && (
+      <div class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-12">
+        <FAQ content={{ faqs: frontmatter.faq }} />
+      </div>
+    )}
+
     {relatedPosts.length > 0 && (
-      <section class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 border-t border-[#E5D3B3] dark:border-gray-800 pt-16 mt-8">
+      <section class="w-full max-w-7xl mx-auto px-4 md:px-12 pb-24 border-t border-[#E5D3B3] dark:border-[var(--blog-rule)] pt-16 mt-8">
         <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-10 gap-4">
           <div>
-            <h2 class="font-bruta uppercase text-black dark:text-white text-3xl md:text-4xl font-bold tracking-tight mb-4">Related Content</h2>
+            <h2 class="font-bruta uppercase text-black dark:text-[var(--blog-ink)] text-3xl md:text-4xl font-bold tracking-tight mb-4">Related Content</h2>
             <div class="w-16 h-1 bg-[#fd4f00]"></div>
           </div>
-          <a href="/posts" class="text-[#fd4f00] font-recoleta font-bold flex items-center gap-2 hover:underline">
+          <a href="/posts" class="text-[#fd4f00] dark:text-[var(--blog-link)] font-recoleta font-bold flex items-center gap-2 hover:underline">
             View all resources
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
           </a>
@@ -341,15 +419,27 @@ if (priorityImgMatch) {
             const href = item.collection === 'videos' ? `/videos/${item.slug}` : `/posts/${item.slug}`;
             
             return (
-              <a href={href} class="group flex flex-col bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[#E5D3B3] dark:border-gray-700 hover:-translate-y-1">
+              <a href={href} class="group flex flex-col bg-white dark:bg-[var(--blog-surface)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[#E5D3B3] dark:border-[var(--blog-rule)] hover:-translate-y-1">
                 {/* Image / Thumbnail */}
-                <div class="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-gray-900">
+                {/*
+                  The Image below needs `widths` + `sizes`: without them Astro
+                  emits a single 600w file, and these cards render ~378 CSS px on
+                  a phone and ~371 on desktop — 662 and 742 real pixels once DPR
+                  is applied, so every related-post thumbnail on every post was
+                  ~20% soft on any retina screen. The grid is 1-col below md and
+                  3-col above, hence the two-branch `sizes`. Astro never upscales
+                  past a source's own resolution, so cards with smaller art just
+                  get fewer rungs.
+                */}
+                <div class="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[var(--blog-canvas)]">
                   {item.data.cardImage ? (
                     <Image 
                       src={item.data.cardImage} 
                       alt={item.data.cardAlt || item.data.title}
                       width={600}
                       height={375}
+                      widths={[380, 600, 760, 1000]}
+                      sizes="(min-width: 768px) 380px, 92vw"
                       class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : isVideo && item.data.postType?.value?.youtubeId ? (
@@ -376,21 +466,21 @@ if (priorityImgMatch) {
 
                 <div class="p-6 flex flex-col flex-grow">
                   <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-[#fd4f00] bg-[#fd4f00]/5 px-2 py-1 rounded">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-[#fd4f00] dark:text-[var(--blog-link)] bg-[#fd4f00]/5 dark:bg-[var(--blog-surface)] px-2 py-1 rounded">
                       {item.data.category || 'Logistics'}
                     </span>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-[var(--blog-muted)]">
                       {isVideo ? 'Video' : 'Article'}
                     </span>
                   </div>
-                  <h3 class="font-recoleta text-lg md:text-xl font-bold text-gray-900 dark:text-white group-hover:text-[#fd4f00] transition-colors leading-tight mb-3 line-clamp-2">
+                  <h3 class="font-recoleta text-lg md:text-xl font-bold text-gray-900 dark:text-[var(--blog-ink)] group-hover:text-[#fd4f00] dark:group-hover:text-[var(--blog-link)] transition-colors leading-tight mb-3 line-clamp-2">
                     {item.data.title}
                   </h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4">
+                  <p class="text-sm text-gray-600 dark:text-[var(--blog-muted)] line-clamp-2 mb-4">
                     {item.data.description}
                   </p>
-                  <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                    <span class="text-[11px] font-medium text-gray-500">{isVideo ? 'Watch Now' : 'Read More'}</span>
+                  <div class="mt-auto pt-4 border-t border-gray-100 dark:border-[var(--blog-rule)] flex items-center justify-between">
+                    <span class="text-[11px] font-medium text-gray-500 dark:text-[var(--blog-muted)]">{isVideo ? 'Watch Now' : 'Read More'}</span>
                     <svg class="w-4 h-4 text-[#fd4f00] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                   </div>
                 </div>
@@ -412,29 +502,18 @@ if (priorityImgMatch) {
     )}
 
     <script is:inline>
-      // Immediately apply theme preference to avoid FOUC
-      (function() {
-        try {
-          const dflt = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme === 'dark' || (!savedTheme && dflt === 'dark')) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        } catch (e) {
-          // LocalStorage might be unavailable in some browser settings
-        }
-      })();
-
       function setupBlogInteractions() {
         // Theme Toggle Logic
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
+          themeToggle.setAttribute('aria-pressed', String(document.documentElement.classList.contains('dark')));
           themeToggle.onclick = () => {
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isDark ? '#181818' : '#FFF8E9');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); }
+            catch { /* The toggle still works when storage is unavailable. */ }
           };
         }
 
@@ -534,6 +613,7 @@ if (priorityImgMatch) {
 
 
 <script>
+  import { escapeLinkCardText, resolveExternalDetails } from '../lib/external-link-details';
   let hoverTimeout: number | undefined;
 
   function ensureUIElements() {
@@ -563,14 +643,14 @@ if (priorityImgMatch) {
     // Both open paths below reassign className wholesale, so this doesn't
     // interfere with showing the sheet. The scrim and desktop card are already
     // safe for the same reason — both ship with `hidden`.
-    sheet.className = 'hidden fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
+    sheet.className = 'hidden fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-[var(--blog-surface)] rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-[var(--blog-rule)] overflow-hidden not-prose';
     sheet.setAttribute('role', 'dialog');
     sheet.setAttribute('aria-labelledby', 'sl-mobile-title');
     sheet.innerHTML = `
-      <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-none mx-auto mt-3 mb-2"></div>
+      <div class="w-12 h-1.5 bg-gray-300 dark:bg-[var(--blog-control)] rounded-none mx-auto mt-3 mb-2"></div>
       <div class="px-6 pb-8 pt-2">
-        <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3">More Information</h3>
-        <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
+        <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[var(--blog-link)] mb-3">More Information</h3>
+        <p id="sl-mobile-snippet" class="text-gray-700 dark:text-[var(--blog-ink)] font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
         <div id="sl-mobile-actions" class="flex flex-col gap-3"></div>
       </div>
     `;
@@ -612,12 +692,12 @@ if (priorityImgMatch) {
     // Create Desktop Card
     const card = document.createElement('div');
     card.id = 'smartlink-desktop-card';
-    card.className = 'fixed z-50 hidden w-80 bg-white dark:bg-gray-800 shadow-2xl border border-[#E5D3B3] dark:border-gray-700 rounded-none transition-opacity duration-200 opacity-0 group not-prose';
+    card.className = 'fixed z-50 hidden w-80 bg-white dark:bg-[var(--blog-surface)] shadow-2xl border border-[#E5D3B3] dark:border-[var(--blog-rule)] rounded-none transition-opacity duration-200 opacity-0 group not-prose';
     card.innerHTML = `
       <div class="absolute -inset-y-6 inset-x-0 pointer-events-auto"></div>
       <div class="relative p-4">
-        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-white m-0 leading-tight"></h3>
-        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 leading-snug break-words line-clamp-3"></p>
+        <h3 id="sl-desktop-title" class="font-sans text-sm font-bold text-gray-900 dark:text-[var(--blog-ink)] m-0 leading-tight"></h3>
+        <p id="sl-desktop-snippet" class="font-sans text-xs text-gray-600 dark:text-[var(--blog-muted)] mt-1 leading-snug break-words line-clamp-3"></p>
         <div id="sl-desktop-actions" class="mt-3 flex items-center gap-3"></div>
       </div>
     `;
@@ -627,11 +707,11 @@ if (priorityImgMatch) {
   function getActionLinksHTML(type: string, href: string, bibRef: string, isMobile: boolean): string {
     if (type === 'academic') {
       const btnClass = isMobile 
-        ? "inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
-        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit";
+        ? "inline-flex items-center justify-center w-full py-3 px-4 blog-compact-action bg-[#fd4f00] text-white rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all"
+        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-[var(--blog-muted)] hover:text-[#fd4f00] dark:hover:text-[var(--blog-link)] hover:underline w-fit";
       const secClass = isMobile
         ? "inline-flex items-center justify-center w-full py-3 px-4 bg-gray-200 text-gray-800 rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-gray-300 transition-all"
-        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline w-fit";
+        : "inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-[var(--blog-muted)] hover:text-gray-900 dark:hover:text-[var(--blog-ink)] hover:underline w-fit";
         
       let html = '';
       if (href && href !== '#') {
@@ -641,7 +721,7 @@ if (priorityImgMatch) {
         </a>`;
       }
       if (bibRef) {
-        html += `<a href="${bibRef}" class="${secClass}" onclick="closeSmartLinkUI()">
+        html += `<a href="${bibRef}" class="${secClass}" data-close-smart-link>
           Full citation
           ${!isMobile ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 17l-4 4m0 0l-4-4m4 4V3" /></svg>' : ''}
         </a>`;
@@ -657,9 +737,9 @@ if (priorityImgMatch) {
     const targetAttrs = type === 'external' ? 'target="_blank" rel="noopener noreferrer"' : '';
     
     if (isMobile) {
-      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center justify-center w-full py-3 px-4 bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center justify-center w-full py-3 px-4 blog-compact-action bg-[#fd4f00] text-white text-center rounded-none font-recoleta font-bold text-lg border-b-4 border-transparent hover:bg-black transition-all">${linkText}</a>`;
     } else {
-      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-[#fd4f00] dark:hover:text-[#ff7635] hover:underline w-fit">
+      return `<a href="${href}" ${targetAttrs} class="inline-flex items-center gap-1 font-sans text-xs font-semibold text-gray-500 dark:text-[var(--blog-muted)] hover:text-[#fd4f00] dark:hover:text-[var(--blog-link)] hover:underline w-fit">
         ${linkText}
         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
           ${type === 'external' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />' : '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />'}
@@ -671,19 +751,19 @@ if (priorityImgMatch) {
   function getPremiumCardHTML(dataset: any, isInline: boolean = false): string {
     const type = dataset.smartlinkType;
     const href = dataset.smartlinkHref || '#';
-    const title = (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
-    const snippet = (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
+    const title = type === 'external' ? escapeLinkCardText(dataset.smartlinkTitle || '') : (dataset.smartlinkTitle || '').replace(/</g, '&lt;');
+    const snippet = type === 'external' ? escapeLinkCardText(dataset.smartlinkSnippet || '') : (dataset.smartlinkSnippet || '').replace(/</g, '&lt;');
     const icon = dataset.smartlinkIcon || '';
     
     if (type === 'academic') {
       const citeNum = dataset.smartlinkBibref ? dataset.smartlinkBibref.replace('#ref-', '') : '';
       return `
-        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-4 pl-6 rounded-none shadow-md transition-all duration-300 not-prose mt-2 mb-2">
-          ${citeNum ? `<span class="absolute -left-[14px] top-4 w-7 h-7 bg-[#fd4f00] text-white text-sm font-bold rounded-none flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">${citeNum}</span>` : ''}
-          <div class="font-sans text-sm font-bold text-gray-900 dark:text-white mb-1">
+        <div class="relative w-full border border-[#E5D3B3] dark:border-[var(--blog-rule)] border-l-4 border-l-[#fd4f00] bg-white dark:bg-[var(--blog-surface)] p-4 pl-6 rounded-none shadow-md transition-all duration-300 not-prose mt-2 mb-2">
+          ${citeNum ? `<span class="absolute -left-[14px] top-4 w-7 h-7 blog-citation-badge bg-[#fd4f00] text-white text-sm font-bold rounded-none flex items-center justify-center shadow-sm border-2 border-white dark:border-[var(--blog-rule)]">${citeNum}</span>` : ''}
+          <div class="font-sans text-sm font-bold text-gray-900 dark:text-[var(--blog-ink)] mb-1">
             ${title}
           </div>
-          <div class="font-sans text-sm text-gray-800 dark:text-gray-200 leading-relaxed [&>a]:text-[#fd4f00] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-white">
+          <div class="font-sans text-sm text-gray-800 dark:text-[var(--blog-ink)] leading-relaxed [&>a]:text-[#fd4f00] dark:[&>a]:text-[var(--blog-link)] [&>a]:font-medium [&>a:hover]:underline [&>strong]:text-gray-900 dark:[&>strong]:text-[var(--blog-ink)]">
             ${snippet}
           </div>
           <div class="mt-3 flex items-center gap-3">
@@ -694,15 +774,15 @@ if (priorityImgMatch) {
     }
     if (type === 'external') {
       return `
-        <div class="relative w-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-none shadow-sm transition-all duration-300 not-prose mt-2 mb-2 flex items-start gap-3">
-          <div class="w-8 h-8 shrink-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center rounded-none text-gray-500 dark:text-gray-400">
+        <div class="relative w-full border border-gray-200 dark:border-[var(--blog-rule)] bg-gray-50 dark:bg-[var(--blog-surface)] p-4 rounded-none shadow-sm transition-all duration-300 not-prose mt-2 mb-2 flex items-start gap-3">
+          <div class="w-8 h-8 shrink-0 bg-gray-200 dark:bg-[var(--blog-surface)] flex items-center justify-center rounded-none text-gray-500 dark:text-[var(--blog-muted)]">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
           </div>
           <div>
-            <div class="font-sans text-sm font-bold text-gray-900 dark:text-white leading-tight">
+            <div class="font-sans text-sm font-bold text-gray-900 dark:text-[var(--blog-ink)] leading-tight">
               ${title}
             </div>
-            <div class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-1 break-words line-clamp-3">
+            <div class="font-sans text-xs text-gray-600 dark:text-[var(--blog-muted)] mt-1 break-words line-clamp-3">
               ${snippet}
             </div>
             <div class="mt-2 flex items-center gap-3">
@@ -720,7 +800,7 @@ if (priorityImgMatch) {
       const isApple = href.includes('apple');
       currentTitle = isApple ? 'Available on the App Store' : 'Available on Google Play';
       currentIcon = isApple 
-        ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-black dark:text-white" fill="currentColor" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>`
+        ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-black dark:text-[var(--blog-ink)]" fill="currentColor" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>`
         : `<svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full" viewBox="0 0 24 24" fill="none"><path d="M3.715 2.124A1.85 1.85 0 003 3.65v16.7c0 .548.243 1.05.658 1.39l.067.054 9.516-9.513v-.37l-9.46-9.46-.066.073z" fill="#00e5ff"/><path d="M17.472 15.932l-4.23-4.23v-.37l4.233-4.233.1.56 5.013 2.844c1.433.81 1.433 2.133 0 2.946l-5.116 2.483z" fill="#ffeb3b"/><path d="M17.575 16.03l-4.333-4.33-10-10C3.784 1.258 4.606 1.11 5.485 1.6l12.09 6.85-4.333 4.33" fill="#00e676"/><path d="M17.575 8.16l-4.333 4.33-10 10c.542.44 1.36.494 2.243 0l12.09-6.85-4.333-4.33z" fill="#f44336"/></svg>`;
     }
 
@@ -735,20 +815,20 @@ if (priorityImgMatch) {
       }
       const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
       return `
-        <div class="relative w-full border border-[#E5D3B3] dark:border-gray-700 border-l-4 border-l-[#fd4f00] bg-white dark:bg-gray-800 p-5 rounded-none shadow-md transition-all duration-300 not-prose group/feature block">
+        <div class="relative w-full border border-[#E5D3B3] dark:border-[var(--blog-rule)] border-l-4 border-l-[#fd4f00] bg-white dark:bg-[var(--blog-surface)] p-5 rounded-none shadow-md transition-all duration-300 not-prose group/feature block">
           <a href="${href}" class="absolute inset-0 z-10" ${targetAttr}><span class="sr-only">${currentTitle}</span></a>
           <div class="flex flex-row items-start gap-4">
             ${iconHtml}
             <div class="flex-grow pr-6">
-              <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight mb-1 m-0 group-hover/feature:underline">
+              <h3 class="font-sans text-base font-bold text-[#fd4f00] dark:text-[var(--blog-link)] leading-tight mb-1 m-0 group-hover/feature:underline">
                 ${currentTitle}
               </h3>
-              <p class="font-sans text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-0">
+              <p class="font-sans text-sm text-gray-600 dark:text-[var(--blog-muted)] leading-relaxed mb-0">
                 ${snippet}
               </p>
             </div>
           </div>
-          <div class="absolute bottom-5 right-5 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+          <div class="absolute bottom-5 right-5 text-[#fd4f00] dark:text-[var(--blog-link)] opacity-60 group-hover/feature:opacity-100 transition-opacity">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -764,19 +844,19 @@ if (priorityImgMatch) {
       }
       const targetAttr = (type === 'app-store' || type === 'external') ? 'target="_blank" rel="noopener noreferrer"' : '';
       return `
-        <div class="relative border border-[#E5D3B3] dark:border-gray-700 border-t-4 border-t-[#fd4f00] bg-white dark:bg-gray-800 p-4 rounded-none shadow-md hover:shadow-lg transition-all duration-300 not-prose group/feature">
+        <div class="relative border border-[#E5D3B3] dark:border-[var(--blog-rule)] border-t-4 border-t-[#fd4f00] bg-white dark:bg-[var(--blog-surface)] p-4 rounded-none shadow-md hover:shadow-lg transition-all duration-300 not-prose group/feature">
           <div class="flex items-center gap-2.5 mb-2">
             ${iconHtml}
-            <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[#ff7635] leading-tight m-0">
+            <h3 class="font-sans text-sm font-bold text-[#fd4f00] dark:text-[var(--blog-link)] leading-tight m-0">
               <a href="${href}" class="before:absolute before:inset-0 outline-none hover:underline" ${targetAttr}>
                 ${currentTitle}
               </a>
             </h3>
           </div>
-          <p class="font-sans text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed pr-6">
+          <p class="font-sans text-xs text-gray-600 dark:text-[var(--blog-muted)] mt-2 leading-relaxed pr-6">
             ${snippet}
           </p>
-          <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[#ff7635] opacity-60 group-hover/feature:opacity-100 transition-opacity">
+          <div class="absolute bottom-4 right-4 text-[#fd4f00] dark:text-[var(--blog-link)] opacity-60 group-hover/feature:opacity-100 transition-opacity">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -806,6 +886,12 @@ if (priorityImgMatch) {
       setTimeout(() => card.classList.add('hidden'), 200);
     }
   };
+
+  document.addEventListener('click', (event) => {
+    if (event.target instanceof Element && event.target.closest('[data-close-smart-link]')) {
+      window.closeSmartLinkUI();
+    }
+  });
 
   function getActiveTriggers(): HTMLElement[] {
     return Array.from(document.querySelectorAll('#content [data-smartlink-trigger="true"]')).filter((el: any) => {
@@ -916,69 +1002,10 @@ if (priorityImgMatch) {
           }
           
           trigger.dataset.smartlinkHref = href;
-          trigger.dataset.smartlinkTitle = title;
-          trigger.dataset.smartlinkSnippet = shortenedCitation;
+          trigger.dataset.smartlinkTitle = trigger.dataset.smartlinkTitleOverride || title;
+          trigger.dataset.smartlinkSnippet = trigger.dataset.smartlinkCitationOverride || shortenedCitation;
           trigger.dataset.smartlinkResolved = 'true';
         }
-      }
-    }
-  }
-
-  function resolveExternalDetails(trigger: HTMLElement) {
-    if (trigger.dataset.smartlinkType === 'external') {
-      if (trigger.dataset.smartlinkManual === 'true') return;
-      const domain = trigger.dataset.smartlinkTitle || 'External Link';
-      const linkText = trigger.textContent?.trim() || '';
-      
-      let surroundingText = '';
-      if (trigger.parentElement) {
-        const textContent = trigger.parentElement.textContent || '';
-        const sentences = textContent.match(/[^.!?]+[.!?]+/g) || [textContent];
-        const linkSentence = sentences.find(s => s.includes(linkText)) || textContent;
-        // Clean up the sentence to be a nice snippet
-        surroundingText = linkSentence.replace(/\s+/g, ' ').trim();
-        if (surroundingText.length > 120) surroundingText = surroundingText.substring(0, 117) + '...';
-      }
-      
-      // Format domain as brand (e.g. assets.kpmg.com -> Kpmg)
-      let parts = domain.split('.');
-      const commonSubdomains = ['www', 'assets', 'blog', 'app', 'docs', 'help', 'support', 'info', 'news', 'shop', 'store', 'go', 'investors', 'investor', 'my', 'portal'];
-      while (parts.length > 1 && commonSubdomains.includes(parts[0].toLowerCase())) {
-        parts.shift();
-      }
-      const brandName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-      trigger.dataset.smartlinkTitle = brandName;
-      
-      // Try to extract a meaningful snippet from the URL path
-      let urlContext = '';
-      try {
-        const urlObj = new URL(trigger.dataset.smartlinkHref || '');
-        let pathSegments = urlObj.pathname.split('/').filter(p => p.length > 0 && !p.includes('.php') && !p.includes('.html'));
-        
-        // Find the last segment that contains some letters (ignoring trailing ID segments)
-        let meaningfulSegments = pathSegments.filter(p => /[a-zA-Z]{3,}/.test(p));
-        if (meaningfulSegments.length > 0) {
-          let lastSegment = meaningfulSegments[meaningfulSegments.length - 1];
-          try { lastSegment = decodeURIComponent(lastSegment); } catch {
-            // Ignore decode error
-          }
-          
-          // Replace hyphens/underscores with spaces and remove common file extensions
-          lastSegment = lastSegment.replace(/[-_]/g, ' ').replace(/\.(pdf|docx|xlsx)$/i, '');
-          
-          // Capitalize words
-          urlContext = lastSegment.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').trim();
-          
-          if (urlContext.length < 5) urlContext = '';
-        }
-      } catch {
-        // Ignore URL parsing error
-      }
-
-      if (urlContext && urlContext.toLowerCase() !== brandName.toLowerCase()) {
-        trigger.dataset.smartlinkSnippet = `Resource: ${urlContext}`;
-      } else {
-        trigger.dataset.smartlinkSnippet = surroundingText || `External resource: ${domain}`;
       }
     }
   }
@@ -1030,12 +1057,12 @@ if (priorityImgMatch) {
       }, 0);
     } else {
       // Re-setup standard layout just in case it was modified by portrait video
-      sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-gray-800 rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-gray-700 overflow-hidden not-prose';
+      sheet.className = 'fixed bottom-0 inset-x-0 z-50 translate-y-full transition-transform duration-300 bg-[#FFF8E9] dark:bg-[var(--blog-surface)] rounded-none shadow-2xl border-t border-[#E5D3B3] dark:border-[var(--blog-rule)] overflow-hidden not-prose';
       sheet.innerHTML = `
-        <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-none mx-auto mt-3 mb-2"></div>
+        <div class="w-12 h-1.5 bg-gray-300 dark:bg-[var(--blog-control)] rounded-none mx-auto mt-3 mb-2"></div>
         <div class="px-6 pb-8 pt-2">
-          <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3">More Information</h3>
-          <p id="sl-mobile-snippet" class="text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
+          <h3 id="sl-mobile-title" class="text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[var(--blog-link)] mb-3">More Information</h3>
+          <p id="sl-mobile-snippet" class="text-gray-700 dark:text-[var(--blog-ink)] font-recoleta text-lg leading-relaxed mb-6 break-words line-clamp-4"></p>
           <div id="sl-mobile-actions" class="flex flex-col gap-3"></div>
         </div>
       `;
@@ -1046,25 +1073,25 @@ if (priorityImgMatch) {
       if (!slTitle || !slSnip || !slActions) return;
 
       if (type === 'video' && youtubeId) {
-        slTitle.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        slTitle.className = 'text-xl font-sans font-bold text-gray-900 dark:text-[var(--blog-ink)] mb-2';
         slTitle.textContent = title;
         slSnip.className = 'w-full my-4 not-prose flex justify-center';
         slSnip.innerHTML = `
-          <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-gray-700" style="padding-bottom: calc(100% / (9 / 16)); max-width: 260px; width: 260px;">
+          <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-[var(--blog-rule)]" style="padding-bottom: calc(100% / (9 / 16)); max-width: 260px; width: 260px;">
             <lite-youtube videoid="${youtubeId}" playlabel="Play short" params="rel=0" class="lite-youtube-short absolute inset-0 w-full h-full" style="background-image: url('https://i.ytimg.com/vi/${youtubeId}/sddefault.jpg');"></lite-youtube>
           </div>
         `;
         slActions.innerHTML = '';
       } else if (type === 'academic') {
-        slTitle.className = 'text-xl font-sans font-bold text-gray-900 dark:text-white mb-2';
+        slTitle.className = 'text-xl font-sans font-bold text-gray-900 dark:text-[var(--blog-ink)] mb-2';
         slTitle.textContent = trigger.dataset.smartlinkTitle || 'Academic Reference';
-        slSnip.className = 'text-gray-700 dark:text-gray-300 font-serif text-base leading-relaxed mb-6';
+        slSnip.className = 'text-gray-700 dark:text-[var(--blog-ink)] font-serif text-base leading-relaxed mb-6';
         slSnip.innerHTML = trigger.dataset.smartlinkSnippet || '';
         slActions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
       } else {
-        slTitle.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[#ff7635] mb-3';
+        slTitle.className = 'text-2xl font-bruta uppercase text-[#fd4f00] dark:text-[var(--blog-link)] mb-3';
         slTitle.textContent = trigger.dataset.smartlinkTitle || 'Reference';
-        slSnip.className = 'text-gray-700 dark:text-gray-300 font-recoleta text-lg leading-relaxed mb-6';
+        slSnip.className = 'text-gray-700 dark:text-[var(--blog-ink)] font-recoleta text-lg leading-relaxed mb-6';
         slSnip.textContent = trigger.dataset.smartlinkSnippet || '';
         slActions.innerHTML = getActionLinksHTML(type, href, bibRef, true);
       }
@@ -1120,7 +1147,7 @@ if (priorityImgMatch) {
          card.dataset.hovered = 'false';
          card.style.padding = '0px';
          mediaHtml = `
-           <div class="p-3 border-b border-[#E5D3B3] dark:border-gray-700 bg-white dark:bg-gray-800 rounded-none group-data-[hovered=true]:border-[#fd4f00]">
+           <div class="p-3 border-b border-[#E5D3B3] dark:border-[var(--blog-rule)] bg-white dark:bg-[var(--blog-surface)] rounded-none group-data-[hovered=true]:border-[#fd4f00]">
              <div class="sidebar-card-title">${title}</div>
            </div>
            <div class="w-full bg-black relative rounded-none overflow-hidden" style="padding-bottom: calc(100% / (9 / 16));">
@@ -1143,6 +1170,7 @@ if (priorityImgMatch) {
   function showHoverCard(trigger: HTMLElement, e: MouseEvent) {
     if (window.innerWidth < 768 || window.innerWidth >= 1024) return;
     resolveAcademicDetails(trigger);
+    resolveExternalDetails(trigger);
     clearTimeout(hoverTimeout);
     ensureUIElements();
     const card    = document.getElementById('smartlink-desktop-card');
@@ -1566,7 +1594,7 @@ if (priorityImgMatch) {
                     if (youtubeId) {
                         inlineCard.className = 'smartlink-tablet-card w-full my-8 not-prose';
                         inlineCard.innerHTML = `
-                            <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-gray-700" style="padding-bottom: calc(100% / (16 / 9));">
+                            <div class="w-full bg-black relative rounded-none overflow-hidden shadow-lg border border-[#E5D3B3] dark:border-[var(--blog-rule)]" style="padding-bottom: calc(100% / (16 / 9));">
                                 <lite-youtube videoid="${youtubeId}" params="rel=0" class="absolute inset-0 w-full h-full"></lite-youtube>
                             </div>
                         `;
@@ -1772,9 +1800,118 @@ if (priorityImgMatch) {
   document.addEventListener('astro:page-load', setupResizeObserver);
 </script>
 
+<style>
+  @media (min-width: 1200px) {
+    .rich-content-inline-figure { display: none; }
+  }
+
+  /* A rich-content post gets an editorial first screen on phones and tablets.
+     Distribute the existing content through that screen, rather than adding a
+     spacer underneath it. The minimum can grow for long titles or larger text.
+     At 1200px the normal content-height header returns; client:visible can then
+     hydrate an applet on arrival if it fits in the viewport. This is a layout
+     breakpoint, not an assumption about the visitor's CPU or connection. */
+  @media (max-width: 1199px) {
+    .rich-content-header {
+      /* Match Navigation's closed height; svh stays stable as browser chrome
+         retracts. The extra pixel prevents edge-only visibility on first load. */
+      --article-nav-height: 6rem;
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - var(--article-nav-height) + 1px);
+      min-height: calc(100svh - var(--article-nav-height) + 1px);
+      padding-top: clamp(1.5rem, 4svh, 3rem);
+      padding-bottom: clamp(1.5rem, 4svh, 3rem);
+    }
+
+    .rich-content-header .article-header-grid {
+      display: flex;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .rich-content-header .article-header-copy {
+      width: 100%;
+      gap: 1.5rem;
+    }
+
+    .rich-content-header .article-heading {
+      display: block;
+      width: 100%;
+      /* Keep the title anchored while metadata wraps as webfonts arrive. */
+      margin-block: 0;
+    }
+
+    .rich-content-header .article-title {
+      display: block;
+      margin-bottom: 0;
+    }
+
+    .rich-content-header h1 {
+      font-size: clamp(3rem, min(10vw, 11svh), 6rem);
+      line-height: 1.04;
+      text-wrap: balance;
+    }
+
+    .rich-content-header .article-metadata {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "author author" "dates dates" "time controls";
+      gap: 1.25rem 1.5rem;
+      margin-top: auto;
+      padding-block: 1.25rem;
+    }
+
+    .rich-content-header .article-author { grid-area: author; }
+    .rich-content-header .article-author-name { font-size: 1.25rem; }
+    .rich-content-header .article-author-role { font-size: 1rem; }
+    .rich-content-header .article-author-bio { font-size: 0.875rem; line-height: 1.5; margin-top: 0.5rem; }
+    .rich-content-header .article-dates { grid-area: dates; }
+    .rich-content-header .article-read-time { grid-area: time; justify-self: start; }
+    .rich-content-header .article-reading-controls { grid-area: controls; margin-left: 0; justify-self: end; }
+    .rich-content-header .article-hero-figure { display: none; }
+  }
+
+  @media (min-width: 600px) and (max-width: 1199px) {
+    .rich-content-header .article-metadata {
+      grid-template-columns: minmax(0, 1fr) minmax(13rem, auto);
+      grid-template-areas: "author dates" "time controls";
+      column-gap: clamp(2rem, 5vw, 4rem);
+      padding-block: 1.5rem;
+    }
+
+    .rich-content-header .article-dates { align-self: start; }
+  }
+
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .rich-content-header { --article-nav-height: 8.5rem; }
+  }
+
+  @media (max-width: 1199px) and (max-height: 600px) {
+    .rich-content-header {
+      padding-block: 1.5rem;
+    }
+
+    .rich-content-header h1 {
+      font-size: clamp(2.5rem, 7vw, 3.5rem);
+    }
+  }
+
+  @media (max-width: 599px) and (max-height: 740px) {
+    .rich-content-header { padding-block: 1rem; }
+    .rich-content-header .article-header-copy { gap: 1rem; }
+    .rich-content-header h1 { font-size: clamp(2.5rem, 10vw, 3rem); }
+    .rich-content-header .article-metadata { gap: 1rem; padding-block: 1rem; }
+    .rich-content-header .article-author-name { font-size: 1.125rem; }
+    .rich-content-header .article-author-role { font-size: 0.875rem; }
+    .rich-content-header .article-author-bio { font-size: 0.8125rem; }
+  }
+</style>
+
 <style is:global>
   lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px}lite-youtube::before{content:attr(data-title);display:block;position:absolute;top:0;background-image:linear-gradient(180deg,rgb(0 0 0/67%) 0%,rgb(0 0 0/54%) 14%,rgb(0 0 0/15%) 54%,rgb(0 0 0/5%) 72%,rgb(0 0 0/0%) 94%);height:99px;width:100%;font-family:"YouTube Noto",Roboto,Arial,Helvetica,sans-serif;color:hsl(0deg 0% 93.33%);text-shadow:0 0 2px rgba(0,0,0,.5);font-size:18px;padding:25px 20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;box-sizing:border-box}lite-youtube:hover::before{color:#fff}lite-youtube::after{content:"";display:block;padding-bottom:calc(100% / (16 / 9))}lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}lite-youtube>.lty-playbtn{display:block;width:100%;height:100%;background:no-repeat center/68px 48px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');position:absolute;cursor:pointer;z-index:1;filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,0.2,1);border:0}lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}lite-youtube.lyt-activated{cursor:unset}lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}.lyt-visually-hidden{clip:rect(0 0 0 0);clip-path:inset(50%);height:1px;overflow:hidden;position:absolute;white-space:nowrap;width:1px}
   .lite-youtube-short::after { padding-bottom: calc(100% / (9 / 16)) !important; }
+  lite-youtube[data-yt-failed] > .lty-playbtn { display: grid; place-items: center; background: rgb(0 0 0 / 80%); color: white; font: 600 18px/1.4 system-ui, sans-serif; text-decoration: underline; filter: none; }
   .prose .table-wrapper {
     display: block !important;
     width: 100% !important;
@@ -1790,7 +1927,7 @@ if (priorityImgMatch) {
   }
 
   .dark .prose .table-wrapper {
-    border-color: #374151; /* gray-700 */
+    border-color: var(--blog-rule, #374151); /* gray-700 */
   }
 
   @media (min-width: 1024px) {
@@ -1803,7 +1940,7 @@ if (priorityImgMatch) {
     }
     
     .dark .prose .table-wrapper {
-      border-left-color: #ff7635 !important;
+      border-left-color: var(--blog-orange, #ff7635) !important;
       box-shadow: 15px 0 30px -10px rgba(0,0,0,0.3);
     }
   }
@@ -1833,7 +1970,7 @@ if (priorityImgMatch) {
     overflow: hidden;
   }
   .dark .prose > table {
-    border-color: #374151;
+    border-color: var(--blog-rule, #374151);
   }
 
   /* Table Headers */
@@ -1851,9 +1988,9 @@ if (priorityImgMatch) {
   }
 
   .dark .prose th {
-    background-color: #1f2937 !important; /* gray-800 */
-    color: #f3f4f6 !important; /* gray-100 */
-    border-bottom: 2px solid #ff7635 !important;
+    background-color: var(--blog-surface, #1f2937) !important; /* gray-800 */
+    color: var(--blog-ink, #f3f4f6) !important; /* gray-100 */
+    border-bottom: 2px solid var(--blog-orange, #ff7635) !important;
   }
 
   /* Standard Cells */
@@ -1865,7 +2002,7 @@ if (priorityImgMatch) {
   }
 
   .dark .prose td {
-    border-bottom: 1px solid rgba(55, 65, 81, 0.5) !important; /* gray-700 */
+    border-bottom: 1px solid var(--blog-rule, rgba(55, 65, 81, 0.5)) !important; /* gray-700 */
   }
 
   /* Zebra Striping */
@@ -1875,7 +2012,7 @@ if (priorityImgMatch) {
   }
 
   .dark .prose tr:nth-child(even) td {
-    background-color: rgba(17, 24, 39, 0.4); /* gray-900 */
+    background-color: var(--blog-surface, rgba(17, 24, 39, 0.4)); /* gray-900 */
   }
 
   @keyframes tocHighlightFlash {
@@ -1891,8 +2028,8 @@ if (priorityImgMatch) {
     animation: tocHighlightFlash 1.5s ease-out forwards;
   }
   .dark .toc-link.active, .dark .mobile-toc-link.active {
-    color: #ff7635 !important;
-    border-left-color: #ff7635 !important;
+    color: var(--blog-link, #ff7635) !important;
+    border-left-color: var(--blog-orange, #ff7635) !important;
     -webkit-text-stroke: 0.4px currentColor;
     animation: tocHighlightFlash 1.5s ease-out forwards;
   }
@@ -1934,4 +2071,55 @@ if (priorityImgMatch) {
     }
   }
 
+  /* YardTypeSelector keyframe animations */
+  @keyframes ytCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 16px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytSubCardEnter {
+    0%   { opacity: 0; transform: translate3d(0, 12px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytCardExit {
+    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, -8px, 0); }
+  }
+  @keyframes ytHeaderEnter {
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytHeaderExit {
+    0%   { opacity: 1; transform: translate3d(0, 0, 0); }
+    100% { opacity: 0; transform: translate3d(0, -6px, 0); }
+  }
+  .yt-subcard-enter, .yt-card-enter {
+    animation: ytSubCardEnter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-card-exit {
+    animation-name: ytCardExit;
+    animation-duration: 160ms;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    animation-fill-mode: forwards;
+  }
+  .yt-header-enter {
+    animation: ytHeaderEnter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-header-exit {
+    animation: ytHeaderExit 220ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+  @keyframes ytFadeSlideIn {
+    0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes ytScorePop {
+    0%   { transform: scale(0.96); opacity: 0.8; }
+    50%  { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .yt-fade-slide-in {
+    animation: ytFadeSlideIn 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .yt-score-pop {
+    animation: ytScorePop 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 </style>

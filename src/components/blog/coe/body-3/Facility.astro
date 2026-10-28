@@ -1,0 +1,22 @@
+---
+interface Props { highlighted?: boolean; }
+const { highlighted = false } = Astro.props;
+---
+<svg class:list={['facility', { highlighted }]} viewBox="0 0 104 72" width="104" height="72" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path class="wall" d="M14 62V31l24-12v12l24-12v12h27v31Z" />
+  <path class="roof" d="m14 31 24-12v8L14 39Zm24 0 24-12v8L38 39Z" stroke="none" />
+  <path d="M14 62V31l24-12v12l24-12v12h27v31M7 62h90" />
+  <path class="door" d="M66 62V43h15v19Z" />
+  <path d="M66 49h15m-15 6h15" />
+  <path class="glass" d="M22 44h10v8H22Zm18 0h10v8H40Z" />
+</svg>
+
+<style>
+  .facility { display: block; width: 100%; max-width: 104px; height: auto; color: var(--ink, #24211d); }
+  .wall { fill: var(--paper, #fff8ee); }
+  .roof { fill: var(--soft, #e3d5c4); }
+  .door { fill: color-mix(in srgb, var(--soft, #e3d5c4) 60%, var(--paper, #fff8ee)); }
+  .glass { fill: color-mix(in srgb, var(--soft, #e3d5c4) 35%, var(--paper, #fff8ee)); }
+  .highlighted .roof { fill: var(--accent, #fe5000); opacity: .65; }
+  .highlighted .door { fill: color-mix(in srgb, var(--accent, #fe5000) 24%, var(--paper, #fff8ee)); }
+</style>

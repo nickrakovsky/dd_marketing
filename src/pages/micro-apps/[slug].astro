@@ -21,7 +21,6 @@ const { app } = Astro.props;
 const { Content } = await app.render();
 
 const components = {
-    LTLCalculator: LTLCalculator,
     SmartLink: SmartLink,
     RelatedFeatureCallout: RelatedFeatureCallout,
     img: MDXImage,
@@ -58,6 +57,10 @@ if (!(globalThis as any).mdxImageCounts) {
             </header>
 
             <article class="prose prose-lg max-w-4xl mx-auto prose-headings:font-bruta prose-headings:uppercase prose-headings:tracking-tight prose-headings:font-normal prose-p:font-recoleta prose-p:font-normal prose-p:text-muted-foreground">
+                {/* The island lives here rather than in the MDX body: a `client:*`
+                    directive only works on a component the MDX file imports itself,
+                    and Keystatic's editor cannot parse ESM imports inside MDX. */}
+                {app.slug === 'ltl-freight-class-calculator' && <LTLCalculator client:load />}
                 <Content components={components} />
             </article>
         </div>
