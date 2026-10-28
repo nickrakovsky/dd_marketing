@@ -36,6 +36,8 @@ const MERMAID_BUNDLE = path.resolve('node_modules/mermaid/dist/mermaid.min.js');
 // AND on visitor devices, so build-time text metrics stay valid at runtime.
 const MERMAID_CONFIG = {
   startOnLoad: false,
+  // Mermaid 12 reads this at the top level, including edge labels.
+  htmlLabels: false,
   theme: 'default',
   fontFamily: 'Arial, Helvetica, sans-serif',
   flowchart: { useMaxWidth: true, htmlLabels: false, padding: 12 },
@@ -99,7 +101,11 @@ if (checkOnly) {
       stale.push(`${slug}: no pre-rendered SVG`);
       continue;
     }
-    const committed = fs.readFileSync(file, 'utf-8').match(STAMP_RE)?.[1];
+    const svg = fs.readFileSync(file, 'utf-8');
+    const committed = svg.match(STAMP_RE)?.[1];
+    if (svg.includes('<foreignObject') || !svg.includes('<text')) {
+      stale.push(`${slug}: diagram labels must use self-contained SVG text`);
+    }
     if (committed !== hash) {
       stale.push(`${slug}: SVG is out of date with the mermaid source in the MDX`);
     }
