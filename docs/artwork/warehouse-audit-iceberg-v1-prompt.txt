@@ -1,0 +1,18 @@
+Use case: infographic-diagram.
+Asset type: text-free raster artwork for an illustrated warehouse inventory investigation, with editable HTML labels added separately.
+
+Primary request: a polished editorial iceberg illustration that distinguishes a visible stock-count discrepancy from possible explanations still to be investigated. This is a visual metaphor, not a measured root-cause chart.
+
+Make one landscape 3:2 illustration on a genuinely transparent background. Use a single strong faceted iceberg silhouette centred in the canvas, with a modest visible tip and a broader submerged body. A clear slender horizontal waterline runs across the canvas at approximately 32% of its height. The tip sits above this line and the large submerged mass extends below it. The four explanations will be live text in the outer margins; do not build tiers, compartments or a cause hierarchy into the ice.
+
+Composition:
+- Keep the iceberg mainly between x29% and x71%. Its highest point is around y9%, its waterline intersection y32%, its broad submerged shoulders around y57%, and its lowest point around y96%.
+- At the visible tip, place two small recognisable warehouse evidence illustrations: a shallow stock bin with a few tan cartons and a paper count note on the left, and an inventory-record clipboard on the right. Keep them within x34%–66%, y8%–30%. No lettering or numbers on these objects, only simple short ruled lines and restrained orange details.
+- Below water, make four small evidence-object vignettes within the body of the ice, equally sized and at paired heights. Upper-left around x39%, y52%: a clock beside a short paper record. Upper-right around x61%, y52%: a shipping case with individual cartons beside it. Lower-left around x39%, y76%: a carton label with an abstract barcode and a matching shelf label. Lower-right around x61%, y76%: two short movement-record sheets with a small two-way goods-movement arrow between them.
+- The four vignettes should feel integrated into the translucent ice, yet remain crisp and legible. They do not imply four established causes or a ranking.
+- Leave x0%–26% and x74%–100% clear below the waterline for the page's live annotation text. Do not draw callout leaders or fill these margins with details.
+- The waterline may have a few subtle short ripples beside the central ice. No full painted water rectangle, landscape, sky or scenic backdrop.
+
+Style: crisp illustrated warehouse objects with dark charcoal outlines, simple planar depth and restrained local contact shadows. Faceted ice in very pale muted blue-grey and warm off-white, with deeper slate edges used sparingly. Tan/sand cartons, charcoal equipment, vivid orange #fd4f00 accents. Match the article's existing compact editorial warehouse-illustration language. Avoid photorealism, cartoon faces, glossy 3D and dramatic lighting.
+
+Critical exclusions: NO words, letters, numbers, titles, labels, quotation marks, legend, scale, percentages, badges or watermark. No human-error / vendor-error / process-failure tiers. No bottom-most villain or resolved diagnosis. No arrows leading to a guaranteed improvement. Preserve genuine alpha transparency outside the ice, evidence objects and thin waterline. This is the artwork layer only; all explanatory text belongs to live HTML.

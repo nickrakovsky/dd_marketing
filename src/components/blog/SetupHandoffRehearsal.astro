@@ -1,0 +1,224 @@
+<figure class="setup-handoff not-prose" aria-labelledby="sh-rehearsal-title" aria-describedby="sh-rehearsal-caption">
+  <header class="sh-heading">
+    <p class="sh-eyebrow">Prelaunch rehearsal</p>
+    <h3 id="sh-rehearsal-title">One receipt. Two trails.</h3>
+    <p>Walk a sample receipt from unloading to its stock entry.</p>
+  </header>
+
+  <label class="sh-control" for="sh-rehearsal-toggle">
+    <input id="sh-rehearsal-toggle" class="sh-toggle" type="checkbox" aria-controls="sh-rehearsal-outcome" aria-describedby="sh-rehearsal-caption" />
+    <span>Show the rehearsal finding</span>
+  </label>
+
+  <div class="sh-lanes">
+    <section class="sh-lane" aria-labelledby="sh-goods-label">
+      <div class="sh-lane-heading">
+        <h4 id="sh-goods-label">Physical goods</h4>
+        <span>Received → placed in storage</span>
+      </div>
+      <svg class="sh-diagram" viewBox="0 0 720 148" role="img" aria-labelledby="sh-goods-title sh-goods-description">
+        <title id="sh-goods-title">A receipt moves into the warehouse</title>
+        <desc id="sh-goods-description">A loading bay, a pallet, and a storage rack connected by arrows. This physical movement remains the same in both views.</desc>
+        <defs>
+          <marker id="sh-goods-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="m2 1 5 4-5 4" class="sh-arrow-head" />
+          </marker>
+        </defs>
+        <path class="sh-route" d="M188 76h91" marker-end="url(#sh-goods-arrow)" />
+        <path class="sh-route" d="M443 76h91" marker-end="url(#sh-goods-arrow)" />
+        <g class="sh-warehouse">
+          <path class="sh-outline" d="M44 119V47l62-25 62 25v72M35 119h142" />
+          <path class="sh-solid-fill" d="M81 119V63h50v56" />
+          <path class="sh-detail" d="M87 73h38m-38 10h38m-38 10h38m-38 10h38M57 57h11v16H57zM144 57h11v16h-11z" />
+          <path class="sh-accent-line" d="M80 121h52" />
+        </g>
+        <g class="sh-pallet">
+          <path class="sh-box-fill" d="M321 51h78v58h-78z" />
+          <path class="sh-outline" d="M321 51h78v58h-78zM318 116h84m-77 0v9m35-9v9m35-9v9" />
+          <path class="sh-detail" d="M360 52v22m-12 21h24" />
+          <path class="sh-accent-line" d="M321 109h78" />
+        </g>
+        <g class="sh-rack">
+          <path class="sh-outline" d="M566 27v99m105-99v99M562 64h113m-113 50h113" />
+          <path class="sh-box-fill" d="M578 37h31v26h-31zm44 0h36v26h-36zm-44 45h31v31h-31zm44 0h36v31h-36z" />
+          <path class="sh-detail" d="M593 38v8m47-8v8m-47 37v8m47-8v8" />
+          <path class="sh-accent-line" d="M562 65h113" />
+        </g>
+      </svg>
+    </section>
+
+    <section class="sh-lane sh-record-lane" aria-labelledby="sh-record-label">
+      <div class="sh-lane-heading">
+        <h4 id="sh-record-label">Stock record</h4>
+        <span class="sh-before">Planned: receipt → stock entry</span>
+        <span class="sh-after">Finding: received; stock entry missing</span>
+      </div>
+      <svg class="sh-diagram" viewBox="0 0 720 148" role="img" aria-labelledby="sh-stock-title sh-stock-description">
+        <title id="sh-stock-title">The stock record needs its own verified handoff</title>
+        <desc id="sh-stock-description">The planned path connects a receipt document to a stock record. The finding view reveals a broken connection and an empty stock record, although the physical goods reached storage.</desc>
+        <defs>
+          <marker id="sh-stock-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="m2 1 5 4-5 4" class="sh-arrow-head" />
+          </marker>
+        </defs>
+        <path class="sh-route sh-record-route" d="M188 76h346" marker-end="url(#sh-stock-arrow)" />
+        <path class="sh-gap-route" d="M188 76h122m100 0h124" />
+        <g class="sh-receipt">
+          <path class="sh-paper-fill" d="M75 23h45l26 26v76H75z" />
+          <path class="sh-outline" d="M75 23h45l26 26v76H75zM120 23v26h26" />
+          <path class="sh-detail" d="M89 66h43M89 81h43M89 96h28" />
+          <path class="sh-accent-line" d="M89 110h16" />
+        </g>
+        <g class="sh-stock-expected">
+          <rect class="sh-paper-fill sh-outline" x="564" y="27" width="108" height="98" rx="5" />
+          <path class="sh-detail" d="M564 54h108m-108 23h108m-108 23h108M597 54v71M636 54v71" />
+          <path class="sh-accent-line" d="M577 40h22m10 0h16m10 0h24" />
+          <path class="sh-detail" d="M576 66h10m23 0h15m24 0h10M576 89h10m23 0h15m24 0h10M576 112h10m23 0h15m24 0h10" />
+        </g>
+        <g class="sh-stock-missing">
+          <rect class="sh-gap-fill" x="564" y="27" width="108" height="98" rx="5" />
+          <path class="sh-gap-outline" d="M578 50h80m-80 27h80m-80 27h80" />
+          <circle class="sh-gap-fill" cx="360" cy="76" r="23" />
+          <path class="sh-accent-line" d="M360 64v14m0 9v1" />
+        </g>
+      </svg>
+    </section>
+  </div>
+
+  <div id="sh-rehearsal-outcome" class="sh-outcome" aria-live="polite" aria-atomic="true">
+    <p class="sh-before"><strong>Planned handoff:</strong> the goods and their record travel together. A rehearsal must verify each step.</p>
+    <p class="sh-after"><strong>Rehearsal finding:</strong> the pallet reached storage, but no stock entry followed. Receiving and inventory owners must trace the handoff; involve IT if the interface is implicated.</p>
+    <p class="sh-question">Before launch, who confirms the record reaches its next stage?</p>
+  </div>
+  <figcaption id="sh-rehearsal-caption">Fictional rehearsal: goods reach storage without a matching stock entry. The cause remains open.</figcaption>
+</figure>
+
+<style>
+  .setup-handoff {
+    --sh-ink: #292929;
+    --sh-muted: #626262;
+    --sh-line: #d8d1c5;
+    --sh-paper: #fffdf8;
+    --sh-panel: #f5f1e8;
+    --sh-orange: #fd4f00;
+    --sh-tint: #ebe4d8;
+    margin: 2.5rem 0;
+    padding: clamp(1rem, 3.8vw, 2rem);
+    color: var(--sh-ink);
+    background: var(--sh-panel);
+    border: 1px solid var(--sh-line);
+    border-radius: 1.25rem;
+    font-family: inherit;
+  }
+  :global(.dark) .setup-handoff {
+    --sh-ink: #f5f1e8;
+    --sh-muted: #c4c0b8;
+    --sh-line: #575757;
+    --sh-paper: #303030;
+    --sh-panel: #252525;
+    --sh-tint: #494949;
+  }
+  .sh-heading p, .sh-heading h3, .sh-lane h4, .sh-outcome p { margin: 0; }
+  .sh-heading .sh-eyebrow {
+    margin-bottom: .5rem;
+    font-size: .69rem;
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--sh-muted);
+  }
+  .sh-heading h3 {
+    font-family: inherit;
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -.035em;
+    color: var(--sh-ink);
+  }
+  .sh-heading > p:last-child { margin-top: .6rem; font-size: .93rem; line-height: 1.5; color: var(--sh-muted); }
+  .sh-control {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    width: fit-content;
+    max-width: 100%;
+    margin: 1.15rem 0;
+    padding: .65rem .85rem;
+    border: 1px solid var(--sh-line);
+    border-radius: .6rem;
+    background: var(--sh-paper);
+    color: var(--sh-ink);
+    font-size: .85rem;
+    line-height: 1.35;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .sh-toggle { flex: 0 0 auto; width: 1.15rem; height: 1.15rem; margin: 0; accent-color: var(--sh-orange); cursor: pointer; }
+  .sh-toggle:focus-visible { outline: 3px solid var(--sh-orange); outline-offset: 4px; }
+  .sh-lanes { display: grid; gap: .7rem; }
+  .sh-lane { min-width: 0; overflow: hidden; border: 1px solid var(--sh-line); border-radius: .75rem; background: var(--sh-paper); }
+  .sh-lane-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; column-gap: 1rem; row-gap: .25rem; padding: .8rem 1rem 0; }
+  .sh-lane h4 { font-family: inherit; font-size: .85rem; line-height: 1.4; font-weight: 700; color: var(--sh-ink); }
+  .sh-lane-heading > span { color: var(--sh-muted); font-size: .75rem; line-height: 1.4; }
+  .sh-diagram { display: block; width: 100%; height: auto; color: var(--sh-ink); }
+  .sh-outline, .sh-detail, .sh-route, .sh-gap-route, .sh-accent-line, .sh-gap-outline, .sh-arrow-head {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sh-detail { stroke-width: 2; }
+  .sh-route { stroke-width: 3; }
+  .sh-arrow-head { stroke-width: 1.5; }
+  .sh-solid-fill { fill: var(--sh-panel); stroke: currentColor; stroke-width: 2.5; }
+  .sh-box-fill { fill: var(--sh-tint); stroke: currentColor; stroke-width: 2; }
+  .sh-paper-fill { fill: var(--sh-paper); }
+  .sh-accent-line { stroke: var(--sh-orange); stroke-width: 3.5; }
+  .sh-gap-route { stroke: var(--sh-orange); stroke-width: 3; stroke-dasharray: 6 9; }
+  .sh-gap-fill { fill: var(--sh-tint); stroke: var(--sh-orange); stroke-width: 2.5; }
+  .sh-gap-outline { stroke: var(--sh-orange); stroke-width: 2; stroke-dasharray: 4 7; }
+  .sh-after, .sh-gap-route, .sh-stock-missing { display: none; }
+  .setup-handoff:has(.sh-toggle:checked) .sh-before,
+  .setup-handoff:has(.sh-toggle:checked) .sh-record-route,
+  .setup-handoff:has(.sh-toggle:checked) .sh-stock-expected { display: none; }
+  .setup-handoff:has(.sh-toggle:checked) .sh-after { display: block; }
+  .setup-handoff:has(.sh-toggle:checked) .sh-gap-route,
+  .setup-handoff:has(.sh-toggle:checked) .sh-stock-missing { display: inline; }
+  .setup-handoff:has(.sh-toggle:checked) .sh-record-lane { border-color: var(--sh-orange); }
+  .setup-handoff:has(.sh-toggle:checked) .sh-lane-heading .sh-after { color: var(--sh-ink); font-weight: 600; }
+  .sh-outcome { margin-top: 1rem; padding-left: .9rem; border-left: 3px solid var(--sh-orange); font-size: .85rem; line-height: 1.55; }
+  .sh-outcome strong { font-weight: 700; }
+  .sh-outcome .sh-question { margin-top: .6rem; font-weight: 600; }
+  .setup-handoff figcaption { margin-top: .9rem; color: var(--sh-muted); font-size: .7rem; line-height: 1.5; }
+  @media (max-width: 420px) {
+    .sh-lane-heading { padding: .7rem .7rem 0; }
+    .sh-lane-heading > span { flex-basis: 100%; }
+    .sh-control { font-size: .8rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .setup-handoff *, .setup-handoff *::before, .setup-handoff *::after { animation: none !important; transition: none !important; }
+  }
+  @media print {
+    .setup-handoff, :global(.dark) .setup-handoff {
+      --sh-ink: #292929;
+      --sh-muted: #626262;
+      --sh-line: #d8d1c5;
+      --sh-paper: #fff;
+      --sh-panel: #fff;
+      --sh-tint: #ebe4d8;
+      break-inside: avoid;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 0;
+      print-color-adjust: exact;
+    }
+    .sh-control { display: none; }
+    .sh-lanes { margin-top: 1rem; }
+    .sh-lane-heading .sh-before, .sh-record-route, .sh-stock-expected { display: none !important; }
+    .sh-lane-heading .sh-after, .sh-outcome .sh-before, .sh-outcome .sh-after { display: block !important; }
+    .sh-gap-route, .sh-stock-missing { display: inline !important; }
+    .sh-outcome .sh-after { margin-top: .6rem; }
+  }
+</style>

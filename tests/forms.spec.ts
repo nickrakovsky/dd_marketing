@@ -5,16 +5,18 @@ import { BENTO_FORWARDED_METHODS } from '../src/lib/bento-config.mjs';
  * Form submission tests targeting the actual DOM structure in:
  *   - src/components/LeadMagnetForm.astro  (blog lead magnets)
  *   - src/components/home/CTA.astro        (homepage bottom CTA, id="cta-bento-form")
- *   - src/components/home/Hero.astro       (homepage hero, id="hero-bento-form")
+ *   - src/components/pages/HomePage.astro  (homepage hero, id="book-demo")
  */
 
+// Form readiness is asserted below; unrelated images need not finish loading.
 test.describe('Bento SDK via Partytown', () => {
   // Validates that the Partytown forward list in astro.config.mjs covers every method
   // we care about. If the SDK fails to load (e.g. blocked by CSP, Partytown misconfig,
   // or forward list drift), the `window.bento.<method>` proxy stubs won't exist and
   // this test fails — the only automated signal we have that Bento is wired up.
   test('forwarded methods are available on window.bento', async ({ page }) => {
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
     // Partytown creates proxy stubs on window.bento for every forwarded method,
     // queuing calls until the worker-side SDK is ready. Wait up to 10s — the
@@ -34,37 +36,33 @@ test.describe('Bento SDK via Partytown', () => {
     }
   });
 
-  test('form submit triggers a Bento network request', async ({ page }) => {
-    // Capture any outbound request whose URL includes bentonow.com — covers both
-    // the main-thread SDK load (fast.bentonow.com) and the server-side proxy
-    // (/api/bento-track → app.bentonow.com). This is the end-to-end validation
-    // that a form submit actually reaches Bento infrastructure.
-    const bentoRequests: string[] = [];
-    page.on('request', (req) => {
-      const url = req.url();
-      if (url.includes('bentonow.com') || url.includes('/api/bento-track')) {
-        bentoRequests.push(url);
-      }
-    });
-
+  test('form submit sends the demo capture request to the Bento proxy', async ({ page }) => {
+    // Assert the actual form POST, not an unrelated SDK asset request.
+    // Fulfill it locally so tests never create a real lead.
+    await page.route('**/api/bento-track', route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' })
+    );
+    await page.route('https://assets.calendly.com/**', route => route.abort());
+    await page.route('**/_astro/vendor/calendly*', route => route.abort());
     await page.addInitScript(() => {
       window.open = () => null;
+      window.Calendly = { initPopupWidget() {} };
     });
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
-    await page.goto('/');
-
-    const heroForm = page.locator('#hero-bento-form');
+    const heroForm = page.locator('form#book-demo');
     await expect(heroForm).toBeVisible();
-    await heroForm.locator('input[name="email"]').fill('bento-e2e@datadocks.com');
-    await heroForm.locator('button[type="submit"]').click();
-
-    // Give the network a moment to flush (form uses keepalive: true)
-    await page.waitForTimeout(1500);
-
-    expect(
-      bentoRequests.length,
-      `No Bento-bound requests captured — Partytown worker or server proxy may be broken. Saw: ${JSON.stringify(bentoRequests)}`
-    ).toBeGreaterThan(0);
+    await heroForm.locator('input[name="email"]').fill('bento-e2e@example.com');
+    const [request] = await Promise.all([
+      page.waitForRequest(req => new URL(req.url()).pathname === '/api/bento-track' && req.method() === 'POST'),
+      heroForm.locator('button[type="submit"]').click(),
+    ]);
+    expect(request.postDataJSON()).toMatchObject({
+      email: 'bento-e2e@example.com',
+      event: 'Demo Subscriber',
+      source: '/',
+    });
   });
 });
 
@@ -101,7 +99,8 @@ test.describe('LeadMagnetForm (Blog Posts)', () => {
       };
     });
 
-    await page.goto(TEST_POST);
+    const response = await page.goto(TEST_POST, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Article response: ${response?.url() ?? page.url()}`).toBe(200);
 
     // LeadMagnetForm renders <form class="lead-magnet-form"> inside
     // <div class="lead-magnet-container">. The post has multiple — target the first visible one.
@@ -155,6 +154,7 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
     // Block the real Calendly widget assets and stub initPopupWidget so we
     // can capture the call without depending on Calendly's CDN.
     await page.route('https://assets.calendly.com/**', (route) => route.abort());
+    await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
     await page.addInitScript(() => {
       (window as any).__calendlyCalls = [];
       (window as any).Calendly = {
@@ -164,7 +164,8 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
       };
     });
 
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
     const ctaForm = page.locator('#cta-bento-form');
     await ctaForm.scrollIntoViewIfNeeded();
@@ -209,6 +210,7 @@ test.describe('Hero Form (Homepage — above the fold)', () => {
     });
 
     await page.route('https://assets.calendly.com/**', (route) => route.abort());
+    await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
     await page.addInitScript(() => {
       (window as any).__calendlyCalls = [];
       (window as any).Calendly = {
@@ -218,9 +220,10 @@ test.describe('Hero Form (Homepage — above the fold)', () => {
       };
     });
 
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
-    const heroForm = page.locator('#hero-bento-form');
+    const heroForm = page.locator('form#book-demo');
     await expect(heroForm).toBeVisible();
 
     await heroForm.locator('input[name="email"]').fill('e2e-hero@datadocks.com');

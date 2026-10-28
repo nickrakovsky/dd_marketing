@@ -1,0 +1,525 @@
+#!/usr/bin/env node
+/**
+ * Exercise every publication cutoff against ONE production build.
+ *
+ * Run `npm run build` first, then `node scripts/test-scheduled-publication.mjs`.
+ * This script copies dist to an OS temporary directory and wraps only the copied
+ * Worker with a controllable clock. Neither application source nor the original
+ * build receives a clock override or a publicly accessible preview mechanism.
+ * Requests run sequentially so each response has one consistent test instant.
+ */
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { createHash, randomBytes } from 'node:crypto';
+import { access, cp, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:net';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { setTimeout as sleep } from 'node:timers/promises';
+import matter from 'gray-matter';
+import { CAMPAIGN_PATHS, CAMPAIGN_ROBOTS } from '../src/lib/campaign-pages.mjs';
+
+const root = fileURLToPath(new URL('..', import.meta.url));
+const dist = resolve(root, process.env.PUBLICATION_TEST_DIST || 'dist');
+const originalWorker = join(dist, '_worker.js', 'index.js');
+const manifest = JSON.parse(await readFile(join(root, 'docs/daily-blog-schedule.json'), 'utf8'));
+const slots = [...manifest.slots].sort((a, b) => Date.parse(a.pubDate) - Date.parse(b.pubDate));
+const clockHeader = `x-publication-test-${randomBytes(12).toString('hex')}`;
+const articlePath = (slot) => `/posts/${slot.slug}`;
+const sha256 = (value) => createHash('sha256').update(value).digest('hex');
+
+await access(originalWorker).catch(() => {
+  throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
+});
+assert.equal(slots.length, 38, 'Expected the unchanged original 27 slots plus the 11 authorized daily articles');
+assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 27))),
+  'b6afdbce3a2ba8408513b556f0606f39b58246a3da8d9a5c52cac216c73cc1bd',
+  'Every field of the original 27 schedule records must remain unchanged');
+const octoberBatch = [
+  ['cut-overtime-with-load-scheduling', '2026-10-12'],
+  ['inventory-and-cash', '2026-10-13'],
+  ['speculative-produce-buying', '2026-10-14'],
+  ['major-customer-demand-spikes', '2026-10-15'],
+  ['backup-suppliers', '2026-10-16'],
+  ['products-and-channels-readiness', '2026-10-19'],
+  ['expiry-and-missed-orders', '2026-10-20'],
+  ['frozen-food-network-fit', '2026-10-21'],
+  ['ingredient-traceability', '2026-10-22'],
+  ['food-production-runs', '2026-10-23'],
+];
+assert.deepEqual(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+  octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
+  'The authorized batch must publish on successive weekdays at 06:30 fixed UTC-08:00');
+assert.deepEqual(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+  [[27, 'stop-hiding-missing-stock', '2026-10-26T14:30:00.000Z']],
+  'The approved missing-stock article must use the next weekday slot at the existing publication time');
+assert.equal(manifest.timezone, 'UTC-08:00');
+assert.equal(manifest.localPublicationTime, '06:30:00');
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-11-11T00:00:00Z'));
+assert.deepEqual(manifest.rotation, ['A', 'B', 'C'], 'The historical rotation must retain its original meanings');
+const queueBatch = [
+  ['early-arrival-patterns', '2026-10-27', 'A', 'training-session'],
+  ['find-where-freight-slows-down', '2026-10-28', 'B', 'youtube-video'],
+  ['paperwork-delays', '2026-10-29', 'A', 'training-session'],
+  ['set-appointment-limits-by-load-type', '2026-10-30', 'B', 'youtube-video'],
+  ['rollout-decisions', '2026-11-02', 'A', 'training-session'],
+  ['get-detention-warnings-in-time-to-act', '2026-11-03', 'B', 'youtube-video'],
+  ['driver-wayfinding', '2026-11-04', 'A', 'training-session'],
+  ['set-response-expectations-for-warehouse-messages', '2026-11-05', 'B', 'youtube-video'],
+  ['receiving-backlogs', '2026-11-06', 'A', 'training-session'],
+  ['confirm-pickup-details-before-the-driver-arrives', '2026-11-09', 'B', 'youtube-video'],
+  ['missed-slot-fees', '2026-11-10', 'A', 'training-session'],
+];
+assert.deepEqual(slots.slice(27).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
+  queueBatch.map(([slug, date, rotationGroup, provenance], index) =>
+    [28 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance]),
+  'The authorized daily queue must alternate training/YouTube on the agreed weekdays');
+assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
+assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
+assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);
+assert.deepEqual(manifest.queueRotation.futurePattern, ['A', 'B', 'C']);
+assert.equal(new Set(slots.map(slot => slot.slug)).size, slots.length, 'Scheduled article URLs must be unique');
+assert.equal(new Set(slots.map(slot => slot.pubDate)).size, slots.length, 'Publish only one scheduled article per timestamp');
+
+const renderer = await readFile(join(root, 'src/components/pages/ArticlePage.astro'), 'utf8');
+const cms = await readFile(join(root, 'keystatic.config.ts'), 'utf8');
+const queueRenderExpectations = new Map();
+const evergreenChecklist = {
+  slot: 'evergreen',
+  slug: 'warehouse-setup-checklist',
+  title: 'Warehouse Setup Checklist for a New Facility',
+  author: 'DataDocks Team',
+  pubDate: '2026-10-23T00:00:00.000Z',
+  sourcePath: 'internal/blog-staging/post-14-warehouse-setup-checklist/warehouse-setup-checklist.mdx',
+  sourceSha256: 'a8e139bbb312cc9cdf36ad7cc08aacf9c1d9bf7962a33d2d90e6e27c6878c677',
+  sourceBodySha256: '60fe085c60ef10af38209aa0c30750279790fa010f7c339e6b526b5994a02397',
+  contentPath: 'src/content/posts/warehouse-setup-checklist.mdx',
+  cardImage: '../../assets/blog-images/warehouse-optimization-strategies-cover.png',
+  provenance: 'warehouse-setup-research',
+};
+for (const [index, slot] of [...slots.slice(27), evergreenChecklist].entries()) {
+  const label = `Slot ${slot.slot} ${slot.slug}`;
+  const source = await readFile(join(root, slot.contentPath), 'utf8');
+  const { data } = matter(source);
+  const body = source.match(/^---\r?\n[\s\S]*?\r?\n---([\s\S]*)$/)?.[1];
+  assert.ok(body, `${label}: expected a complete MDX article with frontmatter`);
+  assert.equal(sha256(body), slot.sourceBodySha256, `${label}: accepted article body changed during integration`);
+  assert.equal(data.title, slot.title, `${label}: article title must match the authorized schedule`);
+  assert.equal(data.author, slot.author, `${label}: article author must match the schedule`);
+  assert.equal(data.author, 'DataDocks Team', `${label}: source format must not change the organization byline`);
+  assert.equal(new Date(data.pubDate).toISOString(), slot.pubDate, `${label}: article publication timestamp must match`);
+  assert.equal(data.cardImage, slot.cardImage, `${label}: card artwork must match the manifest`);
+  assert.ok(data.cardAlt?.trim() && data.description?.trim(), `${label}: article and card metadata must be complete`);
+  await access(resolve(root, 'src/content/posts', data.cardImage));
+  if (slot !== evergreenChecklist) {
+    assert.equal(slot.date, slot.pubDate.slice(0, 10), `${label}: calendar date and timestamp must agree`);
+    assert.ok(![0, 6].includes(new Date(slot.pubDate).getUTCDay()), `${label}: new releases must be weekdays`);
+    assert.equal(slot.weekday, new Date(slot.pubDate).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }));
+    assert.equal(slot.group, 'C', `${label}: retain historical DataDocks Team grouping`);
+    assert.equal(slot.sequenceInGroup, 8 + index, `${label}: continue historical group C after slot 27`);
+  }
+  assert.match(slot.sourcePath, /^internal\/blog-staging\/post-\d+-[^/]+\/[^/]+\.mdx$/);
+  assert.match(slot.sourceSha256, /^[a-f\d]{64}$/);
+  assert.doesNotMatch(source, /^(?:import|export)\s|<script\b|\b(?:TODO|TBD|FIXME|PLACEHOLDER)\b|[\ue000-\uf8ff]/im,
+    `${label}: publishing must not introduce imports, scripts, placeholders or citation tokens`);
+  await assert.rejects(access(join(root, slot.sourcePath)), `${label}: do not retain a duplicate staged article`);
+
+  const components = [...new Set([...body.matchAll(/<([A-Z][A-Za-z\d]*)\b/g)].map(match => match[1]))]
+    .filter(name => !['SmartLink', 'DemoCapture'].includes(name));
+  assert.ok(components.length, `${label}: the accepted illustration must remain in the body`);
+  const markers = [];
+  for (const name of components) {
+    const component = await readFile(join(root, `src/components/blog/${name}.astro`), 'utf8');
+    assert.ok(renderer.includes(`import ${name} from `) && renderer.includes(`\n  ${name},`),
+      `${label}: ${name} must be imported and registered in the article renderer`);
+    assert.match(cms, new RegExp(`\\b${name}:\\s*block\\(`), `${label}: ${name} must be editable in Keystatic`);
+    const marker = component.match(/<(figure|nav)\b[^>]*class="([^"]+)"/);
+    assert.ok(marker, `${label}: ${name} must expose its illustration or article navigation markup`);
+    markers.push({ tag: marker[1], classes: marker[2] });
+  }
+  const videoIds = [...body.matchAll(/<lite-youtube\b[^>]*videoid="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(videoIds.length, slot.provenance === 'youtube-video' ? 1 : 0,
+    `${label}: video embeds must agree with the source provenance`);
+  queueRenderExpectations.set(slot.slug, { markers, videoIds });
+}
+function assertIntegratedContent(text, slot, label) {
+  const expected = queueRenderExpectations.get(slot.slug);
+  if (!expected) return;
+  for (const { tag, classes } of expected.markers) {
+    assert.ok(text.includes(`<${tag} class="${classes}`),
+      `${label}: the accepted illustration/navigation must render from its registered component`);
+  }
+  for (const videoId of expected.videoIds) {
+    assert.ok(text.includes(`videoid="${videoId}"`), `${label}: the source YouTube video must render`);
+  }
+}
+const originalWorkerHash = sha256(await readFile(originalWorker));
+const scratch = await mkdtemp(join(tmpdir(), 'datadocks-publication-test-'));
+let server;
+let serverExit;
+let serverLog = '';
+let checks = 0;
+
+async function availablePort() {
+  const socket = createServer();
+  await new Promise((done, reject) => {
+    socket.once('error', reject);
+    socket.listen(0, '127.0.0.1', done);
+  });
+  const port = socket.address().port;
+  await new Promise((done, reject) => socket.close((error) => error ? reject(error) : done()));
+  return port;
+}
+
+// Bounded caching (PR: short edge TTL instead of no-store) trades a small,
+// fixed staleness window for real edge cache hits. This harness runs the
+// Worker directly with no CDN in front of it, so it cannot exercise actual
+// edge expiry/revalidation — what it CAN and must keep proving is the
+// contract the origin hands to any downstream cache: browsers never treat
+// the page as fresh on their own (max-age=0, so every navigation revalidates
+// over the network), and any shared cache is only ever allowed to reuse a
+// response for a short, capped window. If this ever regresses to an
+// unbounded or missing max-age, a pre-publication response could get cached
+// far past a release boundary — that's exactly what this guards against.
+const MAX_ALLOWED_STALE_SECONDS = 172800; // 2 days: 1 day s-maxage + 1 day stale-while-revalidate
+function assertBoundedCache(response, label) {
+  const cacheControl = response.headers.get('cache-control') || '';
+  assert.match(cacheControl, /(?:^|,)\s*max-age=0\b/,
+    `${label}: publication-sensitive responses must force browser revalidation (max-age=0)`);
+  const sMaxAge = cacheControl.match(/(?:^|,)\s*s-maxage=(\d+)/);
+  assert.ok(sMaxAge, `${label}: publication-sensitive responses must declare a bounded s-maxage`);
+  assert.ok(Number(sMaxAge[1]) <= MAX_ALLOWED_STALE_SECONDS,
+    `${label}: s-maxage=${sMaxAge[1]} exceeds the ${MAX_ALLOWED_STALE_SECONDS}s cap — a longer edge TTL risks stale content surviving well past a release boundary`);
+  const swr = cacheControl.match(/(?:^|,)\s*stale-while-revalidate=(\d+)/);
+  if (swr) {
+    assert.ok(Number(swr[1]) <= MAX_ALLOWED_STALE_SECONDS,
+      `${label}: stale-while-revalidate=${swr[1]} exceeds the ${MAX_ALLOWED_STALE_SECONDS}s cap — bounds how long a stale copy can be served while revalidating`);
+  }
+}
+
+try {
+  const copiedDist = join(scratch, 'dist');
+  await cp(dist, copiedDist, { recursive: true });
+  await cp(join(root, 'wrangler.toml'), join(scratch, 'wrangler.toml'));
+  const copiedEntry = join(copiedDist, '_worker.js', 'index.js');
+  await rename(copiedEntry, join(copiedDist, '_worker.js', 'publication-test-original.js'));
+  await writeFile(copiedEntry, `// TEST HARNESS ONLY. This file exists solely in an OS temporary directory.
+import worker from './publication-test-original.js';
+const RealDate = globalThis.Date;
+let requestTime;
+globalThis.Date = class extends RealDate {
+  constructor(...args) { super(...(args.length ? args : [requestTime ?? RealDate.now()])); }
+  static now() { return requestTime ?? RealDate.now(); }
+};
+export default {
+  ...worker,
+  async fetch(request, env, context) {
+    const clock = request.headers.get(${JSON.stringify(clockHeader)});
+    requestTime = clock === null ? undefined : RealDate.parse(clock);
+    if (requestTime !== undefined && !Number.isFinite(requestTime)) {
+      requestTime = undefined;
+      return new Response('Invalid harness clock', { status: 400 });
+    }
+    const headers = new Headers(request.headers);
+    headers.delete(${JSON.stringify(clockHeader)});
+    try {
+      const response = await worker.fetch(new Request(request, { headers }), env, context);
+      // Astro may stream HTML: keep the clock fixed until rendering is complete.
+      const body = response.body ? await response.arrayBuffer() : null;
+      return new Response(body, { status: response.status, statusText: response.statusText, headers: response.headers });
+    } finally {
+      requestTime = undefined;
+    }
+  }
+};
+`);
+
+  const port = await availablePort();
+  const origin = `http://127.0.0.1:${port}`;
+  const wrangler = join(root, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
+  await access(wrangler);
+  server = spawn(process.execPath, [wrangler, 'pages', 'dev', copiedDist,
+    '--port', String(port), '--ip', '127.0.0.1', '--kv', 'SESSION',
+    '--persist-to', join(scratch, 'wrangler-state'), '--log-level', 'warn'], {
+    cwd: scratch,
+    env: { ...process.env, CI: 'true', WRANGLER_SEND_METRICS: 'false', WRANGLER_LOG_PATH: join(scratch, 'wrangler.log') },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  serverExit = new Promise((done) => {
+    server.once('exit', (code, signal) => done({ code, signal }));
+    server.once('error', (error) => done({ error }));
+  });
+  for (const stream of [server.stdout, server.stderr]) {
+    stream.on('data', (chunk) => { serverLog = (serverLog + chunk).slice(-40000); });
+  }
+
+  const request = async (path, at, extraHeaders = {}) => {
+    const response = await fetch(`${origin}${path}`, {
+      redirect: 'manual',
+      headers: { ...extraHeaders, [clockHeader]: new Date(at).toISOString() },
+      signal: AbortSignal.timeout(30000),
+    });
+    const text = await response.text();
+    return { response, text };
+  };
+
+  const startupDeadline = Date.now() + 60000;
+  let ready = false;
+  while (Date.now() < startupDeadline) {
+    if (server.exitCode !== null) throw new Error(`Worker exited during startup (${server.exitCode})`);
+    try {
+      // A static asset avoids prewarming publication code under the real clock.
+      await fetch(`${origin}/robots.txt`, { signal: AbortSignal.timeout(1000) });
+      ready = true;
+      break;
+    } catch {
+      await sleep(250);
+    }
+  }
+  assert.ok(ready, 'Cloudflare production Worker did not start within 60 seconds');
+
+  // Both public sitemap entry points must point at the request-time post sitemap.
+  for (const path of ['/sitemap.xml', '/sitemap-index.xml']) {
+    const { response, text } = await request(path, Date.parse(slots[0].pubDate) - 1);
+    assert.equal(response.status, 200, `${path}: sitemap index must remain available`);
+    assert.ok(text.includes('/sitemap-posts.xml'), `${path}: missing the dynamic post sitemap`);
+    checks++;
+  }
+  const staticSitemap = await request('/sitemap-0.xml', Date.parse(slots[0].pubDate) - 1);
+  assert.equal(staticSitemap.response.status, 200, 'Static sitemap must remain available');
+  for (const slot of slots) {
+    assert.ok(!staticSitemap.text.includes(articlePath(slot)), `Static sitemap leaked ${slot.slug}`);
+  }
+  checks++;
+
+  // Paid destinations remain usable for AdsBot, but excluded from search.
+  const campaignContent = {
+    '/outbound-dock-management': {
+      title: 'outbound dock management',
+      heading: 'OUTBOUND DOCK MANAGEMENT',
+    },
+    '/inbound-dock-management': {
+      title: 'Inbound Dock Software',
+      heading: 'INBOUND DOCK MANAGEMENT SOFTWARE',
+      description: 'Schedule inbound deliveries and coordinate warehouse receiving appointments.',
+    },
+  };
+  const visibleText = value => value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  for (const campaign of CAMPAIGN_PATHS) {
+    const expected = campaignContent[campaign];
+    assert.ok(expected, `${campaign}: missing campaign content expectations`);
+    assert.ok(!staticSitemap.text.includes(campaign), 'Static sitemap leaked a paid destination');
+    const firstCharacter = campaign.charCodeAt(1).toString(16);
+    const variants = [campaign, `${campaign}/`, `${campaign}?utm_source=google&gclid=test-click`,
+      `${campaign}/?utm_source=google&gclid=test%2Fclick`,
+      `${campaign}.html`, `${campaign}/unknown-child`, campaign.toUpperCase(),
+      `/%${firstCharacter}${campaign.slice(2)}`, `/%25${firstCharacter}${campaign.slice(2)}`,
+      campaign.replace('-dock-', '-%64ock-')];
+    for (const pathname of variants) {
+      let { response, text } = await request(pathname, Date.parse(slots[0].pubDate));
+      if (response.status === 404) {
+        // Pages may reject aliases before Worker routing. A true 404 with the
+        // site's noindex error page is also excluded from search.
+        assert.match(text, /<meta\b[^>]*name="robots"[^>]*content="[^"]*\bnoindex\b/,
+          `${pathname}: missing HTML exclusion on the error page`);
+        assert.ok(!text.includes('data-demo-attribution="page"'), `${pathname}: error served campaign markup`);
+      } else {
+        assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS, `${pathname}: missing HTTP exclusion`);
+      }
+      if ([301, 302, 308].includes(response.status)) {
+        const location = response.headers.get('location');
+        assert.ok(location, `${pathname}: redirect missing destination`);
+        const target = new URL(location, origin);
+        assert.equal(target.origin, origin, `${pathname}: redirect left the tested site`);
+        assert.equal(target.pathname, campaign, `${pathname}: redirect lost campaign identity`);
+        assert.equal(target.search, new URL(pathname, origin).search, `${pathname}: redirect lost ad tracking`);
+        ({ response, text } = await request(`${target.pathname}${target.search}`, Date.parse(slots[0].pubDate)));
+        assert.equal(response.status, 200, `${pathname}: redirect did not reach the campaign page`);
+        assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS, `${pathname}: redirect destination missing HTTP exclusion`);
+      }
+      if (pathname === campaign || pathname.includes('?')) {
+        assert.equal(response.status, 200, `${pathname}: campaign must remain accessible to ad visitors`);
+      } else {
+        assert.ok([200, 301, 302, 308, 404].includes(response.status), `${pathname}: unexpected alias response`);
+      }
+      if (response.status === 200) {
+        assert.ok(text.includes(`name="robots" content="${CAMPAIGN_ROBOTS}"`), `${pathname}: missing HTML exclusion`);
+        assert.ok(!text.includes('application/ld+json'), `${pathname}: paid page must not advertise SEO structured data`);
+        assert.ok(text.includes('data-demo-attribution="page"'), `${pathname}: campaign attribution mode lost`);
+        assert.ok(text.includes(`<title>${expected.title}</title>`), `${pathname}: incorrect campaign title`);
+        const headings = [...text.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+        assert.equal(headings.length, 1, `${pathname}: expected exactly one campaign H1`);
+        assert.equal(visibleText(headings[0][1]), expected.heading, `${pathname}: incorrect visible campaign H1`);
+        assert.ok(text.includes(`rel="canonical" href="https://datadocks.com${campaign}"`),
+          `${pathname}: canonical lost campaign identity`);
+        if (expected.description) {
+          assert.ok(text.includes(`name="description" content="${expected.description}"`),
+            `${pathname}: incorrect campaign meta description`);
+          const hero = text.match(/<p\b[^>]*class="[^"]*\bhero-description\b[^"]*"[^>]*>([\s\S]*?)<\/p>/i);
+          assert.ok(hero, `${pathname}: missing hero description`);
+          assert.equal(visibleText(hero[1]), expected.description, `${pathname}: incorrect visible campaign description`);
+        }
+        for (const sisterCampaign of CAMPAIGN_PATHS.filter(path => path !== campaign)) {
+          assert.ok(!text.includes(sisterCampaign), `${pathname}: advertised its sister paid campaign`);
+        }
+      }
+      checks++;
+    }
+  }
+
+  for (const path of ['/_worker.js/index.js', '/_build/publication/home', '/_build/publication/hub', `/_build/publication/posts/${slots[0].slug}`]) {
+    const hidden = await request(path, Date.parse(slots[0].pubDate) - 1);
+    assert.equal(hidden.response.status, 404, `${path}: build-only files must not be public`);
+    checks++;
+  }
+  assert.ok(!staticSitemap.text.includes('/_build/'), 'Static sitemap exposed build-only samples');
+
+  // The setup checklist is evergreen, separately eligible on deployment today.
+  // Its source body/components remain accepted, and the regular publication gate
+  // still keeps it out of the curated evergreen views before its own timestamp.
+  const evergreenCutoff = Date.parse(evergreenChecklist.pubDate);
+  for (const [phase, instant] of [['before', evergreenCutoff - 1], ['exact', evergreenCutoff], ['after', evergreenCutoff + 1]]) {
+    const published = phase !== 'before';
+    const label = `Evergreen checklist ${phase}`;
+    const result = await request(articlePath(evergreenChecklist), instant);
+    assert.equal(result.response.status, published ? 200 : 404, `${label}: article availability`);
+    assertBoundedCache(result.response, label);
+    if (published) {
+      assert.ok(result.text.includes(`rel="canonical" href="https://datadocks.com${articlePath(evergreenChecklist)}"`),
+        `${label}: canonical article URL must render`);
+      assert.ok(result.text.includes('https://log.logcluster.org/en/site-selection-planning'), `${label}: accepted source citation must render`);
+      assertIntegratedContent(result.text, evergreenChecklist, label);
+    } else {
+      assert.ok(!result.text.includes(evergreenChecklist.title), `${label}: unpublished article content leaked`);
+      assert.match(result.response.headers.get('x-robots-tag') || '', /noindex/i);
+    }
+    checks++;
+    for (const path of ['/', '/posts', '/sitemap-posts.xml']) {
+      const overview = await request(path, instant);
+      assert.equal(overview.response.status, 200, `${label}: ${path} availability`);
+      assert.equal(overview.text.includes(articlePath(evergreenChecklist)), published,
+        `${label}: ${path} must follow evergreen publication eligibility`);
+      checks++;
+    }
+  }
+
+  // Exercise the actual Cloudflare artifact, including static-asset fallback.
+  for (const path of [
+    '/wireframes', '/wireframes.html', '/wireframes/index.html',
+    '/wireframes/editorial-bento', '/wireframes/sidebar-engine',
+    '/wireframes/split-stream.html', '/wireframes/tabbed-hub/',
+    '/%77ireframes', '/brand-book', '/brand-book.html', '/sales-one-pager',
+    '/internal/marketing-pdf', '/preview/daily-blog/home', '/preview/daily-blog/posts',
+    '/preview/staging', '/preview/staging/ingredient-traceability',
+    '/brand-assets/proposal-template.pdf', '/brand-assets/proposal-template-full.pdf',
+    '/brand-assets/bc-front.png', '/__internal/assets/brand/proposal-template.pdf',
+    '/_offline_print/example.pdf',
+  ]) {
+    const hidden = await request(path, Date.parse(slots[0].pubDate));
+    assert.equal(hidden.response.status, 404, `${path}: internal content must not be public`);
+    assert.ok(!staticSitemap.text.includes(`https://datadocks.com${path}<`), `${path}: internal URL in sitemap`);
+    checks++;
+  }
+  const publicLogo = await request('/brand-assets/logo-orange.svg', Date.parse(slots[0].pubDate));
+  assert.equal(publicLogo.response.status, 200, 'The logo used by public pages must remain available');
+  checks++;
+
+  for (const [index, slot] of slots.entries()) {
+    const cutoff = Date.parse(slot.pubDate);
+    for (const [phase, instant] of [['before', cutoff - 1], ['exact', cutoff], ['after', cutoff + 1]]) {
+      const published = phase !== 'before';
+      const label = `Slot ${slot.slot} ${phase} (${new Date(instant).toISOString()})`;
+      const { response, text } = await request(articlePath(slot), instant);
+      assert.equal(response.status, published ? 200 : 404, `${label}: article availability`);
+      assertBoundedCache(response, `${label} article`);
+      if (published) {
+        assert.ok(text.includes(articlePath(slot)), `${label}: article canonical/content was not rendered`);
+        assert.ok(!/aria-label=["']Preview navigation["']/.test(text) && !text.includes('/preview/staging'),
+          `${label}: internal preview navigation leaked into the public article`);
+        assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${label}: published article is noindex`);
+        assert.ok(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(text),
+          `${label}: published article contains a noindex meta tag`);
+        assertIntegratedContent(text, slot, label);
+        if (slot.slug === 'stop-hiding-missing-stock') {
+          assert.match(text, /<lite-youtube\b[^>]*videoid="EBz5ZOUYNZY"/,
+            `${label}: the article must embed the reviewed longform video`);
+          assert.match(text, /<input\b(?=[^>]*type="checkbox")(?=[^>]*class="ddsr-toggle")(?=[^>]*aria-controls="ddsr-result")[^>]*>/,
+            `${label}: the stock-record interaction must render its accessible toggle`);
+          assert.match(text, /<div\b(?=[^>]*id="ddsr-result")(?=[^>]*aria-live="polite")[^>]*>/,
+            `${label}: the stock-record result must remain an accessible live region`);
+          assert.match(text, /<a\b[^>]*href="#book-demo"[^>]*>\s*See how DataDocks could work at your warehouse\s*<\/a>/,
+            `${label}: the article CTA must open the existing booking capture`);
+          assert.match(text, /<dialog\b(?=[^>]*id="demo-capture-dialog")(?=[^>]*data-standalone)[^>]*>/,
+            `${label}: the article must include the standalone email-capture dialog`);
+        }
+      } else {
+        assert.match(response.headers.get('x-robots-tag') || '', /noindex/i,
+          `${label}: unpublished article needs an explicit noindex response`);
+        assert.ok(!text.includes(slot.title), `${label}: unpublished article body leaked`);
+      }
+      checks++;
+
+      for (const path of ['/', '/posts', '/sitemap-posts.xml']) {
+        const result = await request(path, instant);
+        assert.equal(result.response.status, 200, `${label}: ${path} response`);
+        assertBoundedCache(result.response, `${label} ${path}`);
+        for (const campaign of CAMPAIGN_PATHS) {
+          assert.ok(!result.text.includes(campaign), `${label}: ${path} advertised a paid destination`);
+        }
+        assert.equal(result.text.includes(slot.slug), published, `${label}: ${path} visibility`);
+        for (const future of slots.filter((entry) => Date.parse(entry.pubDate) > instant)) {
+          assert.ok(!result.text.includes(future.slug), `${label}: ${path} leaked future post ${future.slug}`);
+        }
+        if (path === '/sitemap-posts.xml') {
+          for (const due of slots.filter((entry) => Date.parse(entry.pubDate) <= instant)) {
+            assert.ok(result.text.includes(articlePath(due)), `${label}: sitemap omitted published post ${due.slug}`);
+          }
+        }
+        checks++;
+      }
+    }
+    console.log(`✓ Slot ${String(index + 1).padStart(2, '0')}: ${slot.slug} — hidden before, published at and after ${slot.pubDate}`);
+  }
+
+  // A public preview-style query/header must not move the application's clock.
+  const firstCutoff = Date.parse(slots[0].pubDate);
+  const attemptedOverride = await request(`${articlePath(slots[0])}?asOf=2099-01-01&previewAsOf=2099-01-01&now=2099-01-01`,
+    firstCutoff - 1, { 'x-preview-as-of': '2099-01-01', 'x-publication-time': '2099-01-01', 'x-test-now': '2099-01-01' });
+  assert.equal(attemptedOverride.response.status, 404, 'Public preview query/header bypassed the publication gate');
+  checks++;
+
+  // The second instalment shares the first instalment's category: related cards
+  // on the existing article must update when the new instalment is released.
+  const series = slots.filter((slot) => slot.group === 'A');
+  assert.ok(series.length >= 2, 'Expected at least two series instalments for related-resource coverage');
+  const nextInstallmentCutoff = Date.parse(series[1].pubDate);
+  for (const [instant, visible] of [[nextInstallmentCutoff - 1, false], [nextInstallmentCutoff, true]]) {
+    const result = await request(articlePath(series[0]), instant);
+    assert.equal(result.response.status, 200, 'Already-published article must remain available');
+    assert.equal(result.text.includes(articlePath(series[1])), visible, 'Related resources did not follow the publication cutoff');
+    checks++;
+  }
+
+  // Rewind the same warm Worker to prove collections were not captured by a
+  // module-level, first-request filter or permanently cached after publication.
+  const rewound = await request('/sitemap-posts.xml', firstCutoff - 1);
+  for (const slot of slots) assert.ok(!rewound.text.includes(slot.slug), `Warm Worker leaked ${slot.slug} after clock rewind`);
+  checks++;
+  assert.equal(sha256(await readFile(originalWorker)), originalWorkerHash, 'Original production Worker was modified');
+  console.log(`\nPassed ${checks} publication checks against one unchanged production build. No deployment or rebuild occurred between cutoffs.`);
+} catch (error) {
+  console.error(error.stack || error);
+  if (serverLog) console.error(`\nWorker log (last 40 KB):\n${serverLog}`);
+  process.exitCode = 1;
+} finally {
+  if (server && server.exitCode === null) {
+    server.kill('SIGTERM');
+    await Promise.race([serverExit, sleep(5000)]);
+    if (server.exitCode === null) {
+      server.kill('SIGKILL');
+      await serverExit;
+    }
+  }
+  await rm(scratch, { recursive: true, force: true });
+}

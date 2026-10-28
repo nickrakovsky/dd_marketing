@@ -1,0 +1,48 @@
+.dd-notification-route{--nr-paper:#fff8ee;--nr-ink:#000;--nr-muted:rgb(0 0 0 / .68);--nr-rule:#d8c9b7;--nr-accent:#fe5000;--nr-gap:56px;--nr-branch:28px;box-sizing:border-box;max-width:840px;margin:32px auto;padding:28px 30px 22px;border:1px solid var(--nr-rule);border-radius:4px;background:var(--nr-paper);color:var(--nr-ink);font:16px/1.5 Inter,Arial,sans-serif;text-align:left;color-scheme:light;container-type:inline-size}
+.dd-notification-route *{box-sizing:border-box}
+.dd-notification-route .ddnr-heading h3{margin:0;color:var(--nr-ink);font:800 42px/1.02 Bruta,Impact,sans-serif;letter-spacing:-.01em;text-transform:uppercase}
+.dd-notification-route .ddnr-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.dd-notification-route .ddnr-controls{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:24px 0 18px;padding:0;border:1px solid var(--nr-ink);border-radius:3px}
+.dd-notification-route .ddnr-controls label{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;margin:0;padding:11px 9px;cursor:pointer}
+.dd-notification-route .ddnr-controls label+label{border-left:1px solid var(--nr-ink)}
+.dd-notification-route .ddnr-controls label:has(:checked){background:var(--nr-ink);color:var(--nr-paper)}
+.dd-notification-route .ddnr-controls label:has(:focus-visible){outline:2px solid var(--nr-accent);outline-offset:4px;z-index:1}
+.dd-notification-route .ddnr-controls input{appearance:auto;flex:0 0 16px;width:16px;height:16px;margin:0;accent-color:var(--nr-ink);cursor:pointer}
+.dd-notification-route .ddnr-controls label:has(:checked) input{accent-color:var(--nr-paper);color-scheme:dark}
+.dd-notification-route .ddnr-controls span{font-size:13px;line-height:1.5;font-weight:600}
+.dd-notification-route .ddnr-diagram{display:grid;grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);align-items:center;gap:var(--nr-gap);padding:10px 0 16px}
+.dd-notification-route .ddnr-source{position:relative;text-align:center}
+.dd-notification-route .ddnr-source::after{content:"";position:absolute;top:50%;left:100%;width:var(--nr-gap);height:2px;background:var(--nr-accent)}
+.dd-notification-route .ddnr-source>svg{display:block;margin:0 auto 10px;fill:none;stroke:var(--nr-ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dd-notification-route .ddnr-source strong{display:block;color:var(--nr-ink);font-size:14px;line-height:1.4;font-weight:650}
+.dd-notification-route .ddnr-source p{max-width:150px;margin:6px auto 0;color:var(--nr-muted);font-size:12px;line-height:1.6}
+.dd-notification-route .ddnr-teams{position:relative;display:grid;gap:16px;margin:0;padding:0 0 0 var(--nr-branch);list-style:none}
+.dd-notification-route .ddnr-teams::before{content:"";position:absolute;top:26px;bottom:26px;left:0;width:2px;background:var(--nr-accent)}
+.dd-notification-route .ddnr-team{position:relative;display:flex;align-items:center;gap:10px;min-width:0;min-height:52px;margin:0;padding:0}
+.dd-notification-route .ddnr-team::before{content:"";position:absolute;top:50%;left:calc(-1 * var(--nr-branch));width:var(--nr-branch);height:2px;background:var(--nr-accent)}
+.dd-notification-route .ddnr-person{position:relative;display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border:1px solid var(--nr-accent);border-radius:50%;background:var(--nr-paper)}
+.dd-notification-route .ddnr-person svg{display:block;fill:none;stroke:var(--nr-ink);stroke-width:1.4;stroke-linecap:round}
+.dd-notification-route .ddnr-dot{position:absolute;top:-3px;right:-3px;width:10px;height:10px;border:2px solid var(--nr-paper);border-radius:50%;background:var(--nr-accent)}
+.dd-notification-route .ddnr-team-name{min-width:0}
+.dd-notification-route .ddnr-team-name strong{display:block;color:var(--nr-ink);font-size:13px;line-height:1.4;font-weight:550}
+.dd-notification-route .ddnr-team-name span{display:block;margin-top:3px;color:var(--nr-ink);font-size:10px;line-height:1.4;font-weight:600}
+.dd-notification-route .ddnr-owner .ddnr-team-name strong{font-weight:700}
+.dd-notification-route .ddnr-result{padding:14px 0;border-block:1px solid var(--nr-rule)}
+.dd-notification-route .ddnr-result p{margin:0;color:var(--nr-muted);font-size:14px;line-height:1.6}
+.dd-notification-route .ddnr-result strong{color:var(--nr-ink);font-weight:650}
+.dd-notification-route .ddnr-shared{display:flex;align-items:flex-start;gap:12px;margin-top:18px}
+.dd-notification-route .ddnr-shared svg{flex:0 0 22px;margin-top:2px;fill:none;stroke:var(--nr-ink);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.dd-notification-route .ddnr-shared p{margin:0;color:var(--nr-muted);font-size:12px;line-height:1.65}
+.dd-notification-route .ddnr-shared strong{display:block;color:var(--nr-ink);font-size:13px;font-weight:600}
+.dd-notification-route .ddnr-shared span{display:block;margin-top:4px}
+.dd-notification-route .ddnr-targeted{display:none}
+.dd-notification-route:has(input[value="owner"]:checked) .ddnr-broadcast{display:none}
+.dd-notification-route:has(input[value="owner"]:checked) .ddnr-targeted{display:block}
+.dd-notification-route:has(input[value="owner"]:checked) .ddnr-teams::before,.dd-notification-route:has(input[value="owner"]:checked) .ddnr-team:not(.ddnr-owner)::before{background:var(--nr-rule)}
+.dd-notification-route:has(input[value="owner"]:checked) .ddnr-team:not(.ddnr-owner) .ddnr-person{border-color:var(--nr-rule)}
+.dd-notification-route:has(input[value="owner"]:checked) .ddnr-team:not(.ddnr-owner) .ddnr-dot{visibility:hidden}
+html.dark .dd-notification-route,html[data-theme="dark"] .dd-notification-route{--nr-paper:var(--blog-surface,#191919);--nr-ink:var(--blog-ink,#fff8ee);--nr-muted:var(--blog-muted,rgb(255 248 238 / .72));--nr-rule:var(--blog-rule,rgb(255 248 238 / .28));color-scheme:dark}
+@container(max-width:440px){.dd-notification-route{--nr-gap:26px;--nr-branch:18px}.dd-notification-route .ddnr-heading h3{font-size:36px}.dd-notification-route .ddnr-controls label{gap:6px;padding:10px 6px}.dd-notification-route .ddnr-controls span{font-size:12px}.dd-notification-route .ddnr-diagram{grid-template-columns:90px minmax(0,1fr)}.dd-notification-route .ddnr-team{gap:7px}.dd-notification-route .ddnr-person{flex-basis:32px;width:32px;height:32px}.dd-notification-route .ddnr-person svg{width:30px;height:30px}.dd-notification-route .ddnr-team-name strong{font-size:12px}.dd-notification-route .ddnr-team-name span{font-size:9px}.dd-notification-route .ddnr-source strong{font-size:13px}.dd-notification-route .ddnr-source p{font-size:11px}.dd-notification-route .ddnr-result p{font-size:13px}}
+@media(max-width:600px){.dd-notification-route{padding:22px 17px 20px;margin:28px auto}}
+@supports not selector(:has(*)){.dd-notification-route .ddnr-controls{display:none}}
+@media print{.dd-notification-route{break-inside:avoid}.dd-notification-route .ddnr-controls{display:none}}

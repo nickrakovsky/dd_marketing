@@ -1,0 +1,274 @@
+---
+import { Image } from 'astro:assets';
+import slottingArtwork from '../assets/blog-images/warehouse-audit-slotting-v1.png';
+
+interface Props {
+  id?: string;
+}
+const { id } = Astro.props;
+const instanceId = id ?? `audit-slotting-${crypto.randomUUID()}`;
+const drawingHeight = 1000 * slottingArtwork.height / slottingArtwork.width;
+const y = (ratio: number) => drawingHeight * ratio;
+const floor = (points: [number, number][]) => points.map(([x, ratio]) => `${x},${y(ratio)}`).join(' ');
+const annotations = [
+  { key: 'picking', number: 1, title: 'Picking access', copy: 'Each pick repeats the reach and lift from this shelf to the cart.' },
+  { key: 'replenishment', number: 2, title: 'Replenishment access', copy: 'Refilling the shelf needs access for the incoming load and its equipment.' },
+  { key: 'shared', number: 3, title: 'Shared working space', copy: 'Picking and refilling use the same space in front of the rack.' },
+];
+const tasks = [
+  { key: 'picking', label: 'Picking' },
+  { key: 'replenishment', label: 'Replenishment' },
+  { key: 'access', label: 'Shared access' },
+];
+const hotspots = [
+  { key: 'shelf', task: 'picking', number: 1, x: 500, ratio: .44, name: 'Examine picking at the shelf' },
+  { key: 'cart', task: 'picking', number: 1, x: 840, ratio: .70, name: 'Examine picking with the cart' },
+  { key: 'pallet', task: 'replenishment', number: 2, x: 170, ratio: .76, name: 'Examine replenishment with the pallet truck' },
+  { key: 'space', task: 'access', number: 3, x: 500, ratio: .82, name: 'Examine shared access in front of the rack' },
+];
+---
+
+<figure id={instanceId} class="not-prose audit-slotting-illustration font-recoleta" aria-labelledby={`${instanceId}-title`} data-slotting-illustration data-task="none">
+  <p id={`${instanceId}-title`} class="slotting-title">Why is this item stored here?</p>
+
+  <div class="task-controls" data-slotting-controls hidden>
+    <p id={`${instanceId}-task-label`}>Examine the work</p>
+    <div class="task-buttons" role="group" aria-labelledby={`${instanceId}-task-label`}>
+      {tasks.map(({ key, label }) => <button type="button" data-slotting-task={key} aria-pressed="false" aria-controls={`${instanceId}-scene`}>{label}</button>)}
+    </div>
+  </div>
+
+  <div id={`${instanceId}-scene`} class="slotting-composition">
+    <div class="slotting-artwork">
+      <Image src={slottingArtwork} format="webp" quality={85} widths={[640, 960, 1280, 1536]} sizes="(min-width: 1024px) 960px, calc(100vw - 48px)" loading="lazy" decoding="async" alt="A rack bay with a middle-level stock location, reserve stock on a pallet to its left and a picking cart to its right." />
+      <svg class="slotting-overlay" viewBox={`0 0 1000 ${drawingHeight}`} role="img" aria-labelledby={`${instanceId}-highlights-title ${instanceId}-highlights-description`}>
+        <title id={`${instanceId}-highlights-title`}>Work to observe at this stock location</title>
+        <desc id={`${instanceId}-highlights-description`} data-slotting-description>No task is selected. Use the numbered buttons to examine picking at the shelf and cart, replenishment at the load, or shared access in front of the rack.</desc>
+
+        <g class="shared-space-marks" data-slotting-annotation="shared" display="none" aria-hidden="true">
+          <polygon class="physical-footprint shared-footprint" points={floor([[335,.77],[660,.77],[735,.90],[270,.90]])} />
+        </g>
+
+        <g class="task-mark" data-slotting-highlight="picking" display="none" aria-hidden="true">
+          <polygon class="task-footprint" points={floor([[620,.76],[850,.76],[915,.90],[635,.90]])} />
+        </g>
+        <g class="task-mark" data-slotting-highlight="replenishment" display="none" aria-hidden="true">
+          <ellipse class="task-footprint" cx="170" cy={y(.80)} rx="110" ry={y(.07)} />
+        </g>
+
+        <g class="annotation-leaders" aria-hidden="true">
+          <path class="annotation-leader picking-leader" data-slotting-annotation="picking" display="none" d={`M730 ${y(.28)}H670L500 ${y(.44)}M730 ${y(.28)}H840V${y(.70)}`} />
+          <path class="annotation-leader replenishment-leader" data-slotting-annotation="replenishment" display="none" d={`M270 ${y(.30)}H245V${y(.63)}L170 ${y(.76)}`} />
+          <path class="annotation-leader shared-leader" data-slotting-annotation="shared" display="none" d={`M500 ${y(.82)}V${y(.92)}`} />
+        </g>
+        <g class="annotation-markers print-markers" aria-hidden="true">
+          {hotspots.map(({ number, x, ratio }) => <g transform={`translate(${x} ${y(ratio)})`}>
+            <circle r="19" />
+            <text text-anchor="middle" dominant-baseline="central">{number}</text>
+          </g>)}
+        </g>
+      </svg>
+
+      <div class="slotting-hotspots" data-slotting-hotspots role="group" aria-label="Examine the work through the numbered markers">
+        {hotspots.map(({ key, task, name, number, x, ratio }) => <button type="button" class="slotting-marker" data-slotting-marker={key} data-slotting-task={task} style={`--marker-x: ${x / 10}%; --marker-y: ${ratio * 100}%;`} aria-label={`${number}: ${name}`} title={name} aria-pressed="false" aria-controls={`${instanceId}-scene`} disabled><span aria-hidden="true">{number}</span></button>)}
+      </div>
+    </div>
+
+    {annotations.map(({ key, number, title, copy }) => <section class={`slotting-annotation annotation-${key}`} data-slotting-annotation={key} hidden aria-labelledby={`${instanceId}-${key}-heading`}>
+      <h3 id={`${instanceId}-${key}-heading`}><span class="annotation-number" aria-hidden="true">{number}</span><span data-slotting-heading={key}>{title}</span></h3>
+      <p data-slotting-copy={key}>{copy}</p>
+    </section>)}
+  </div>
+
+  <noscript>
+    <div class="slotting-fallback">
+      {annotations.map(({ title, copy }) => <section><h3>{title}</h3><p>{copy}</p></section>)}
+    </div>
+  </noscript>
+
+  <p class="slotting-status" data-slotting-status aria-live="polite" aria-atomic="true"></p>
+  <figcaption>A stock location has to work for the pick and the refill.</figcaption>
+</figure>
+
+<style>
+  .audit-slotting-illustration { --slotting-paper: #fff8e9; --slotting-sand: #efe2d2; --slotting-rule: #e5d3b3; --slotting-ink: #374151; --slotting-secondary: #5b6472; --slotting-focus: #fd4f00; margin: 2rem 0; container-type: inline-size; color: var(--slotting-ink); }
+  .slotting-title { margin: 0 0 1.5rem; font-size: 1.375rem; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+  .task-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .625rem 1rem; margin: 0 0 1rem; font-family: Inter, Arial, sans-serif; }
+  .task-controls[hidden], .slotting-hotspots[hidden] { display: none; }
+  .task-controls p { margin: 0; font-size: .75rem; font-weight: 600; line-height: 1.5; }
+  .task-buttons { display: flex; flex-wrap: wrap; gap: .375rem; }
+  .task-buttons button { min-height: 2.5rem; padding: .5rem .75rem; border: 1px solid var(--slotting-rule); border-radius: 2px; background: transparent; color: var(--slotting-ink); font-family: Inter, Arial, sans-serif; font-size: .8125rem; line-height: 1.4; cursor: pointer; }
+  .task-buttons button[aria-pressed="true"] { border-color: var(--slotting-focus); background: var(--slotting-sand); font-weight: 600; }
+  button:focus-visible { outline: 2px solid var(--slotting-focus); outline-offset: 3px; }
+  .slotting-composition { display: grid; grid-template-columns: 27% minmax(0,1fr) 27%; }
+  .slotting-artwork { grid-column: 1 / -1; grid-row: 1; position: relative; min-width: 0; }
+  .slotting-artwork img { display: block; width: 100%; height: auto; }
+  .slotting-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .physical-footprint, .task-footprint, .annotation-leader { vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+  .physical-footprint { fill: #374151; fill-opacity: .035; stroke: #737a83; stroke-width: .75; }
+  .shared-footprint { stroke-dasharray: 5 5; }
+  [data-task="access"] .shared-footprint { fill: #fd4f00; fill-opacity: .08; stroke: #fd4f00; stroke-width: 1.25; stroke-dasharray: none; }
+  [data-slotting-annotation][hidden] { display: none; }
+  .task-footprint { fill: #fd4f00; fill-opacity: .055; stroke: #fd4f00; stroke-width: 1.25; }
+  .annotation-leader { fill: none; stroke: #737a83; stroke-width: .75; }
+  .print-markers { display: none; }
+  .annotation-markers circle { fill: #fff8e9; fill-opacity: .96; stroke: #374151; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .annotation-markers text { font-family: Inter, Arial, sans-serif; font-size: 21px; font-weight: 600; fill: #374151; }
+  .slotting-hotspots { position: absolute; inset: 0; pointer-events: none; }
+  .slotting-marker { position: absolute; left: var(--marker-x); top: var(--marker-y); transform: translate(-50%,-50%); display: grid; place-items: center; width: 2rem; height: 2rem; padding: 0; border: 1px solid #374151; border-radius: 50%; background: var(--slotting-paper); color: #374151; font-family: Inter, Arial, sans-serif; font-size: .875rem; font-weight: 600; line-height: 1; cursor: pointer; pointer-events: auto; }
+  .slotting-marker[aria-pressed="true"] { border-color: #fd4f00; color: #fd4f00; background: #efe2d2; }
+  .slotting-marker:disabled { cursor: default; }
+  .slotting-annotation { z-index: 1; min-width: 0; font-family: Inter, Arial, sans-serif; }
+  .annotation-picking { grid-column: 3; grid-row: 1; align-self: start; margin-top: 18%; padding-left: .75rem; }
+  .annotation-replenishment { grid-column: 1; grid-row: 1; align-self: start; margin-top: 18%; padding-right: .75rem; }
+  .annotation-shared { grid-column: 1 / -1; grid-row: 2; width: min(100%, 24rem); margin: -5% auto 0; }
+  .slotting-annotation h3 { display: flex; align-items: flex-start; gap: .375rem; margin: 0 0 .375rem; font-size: .875rem; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; }
+  .annotation-number { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 1.125rem; width: 1.125rem; height: 1.125rem; margin-top: .0625rem; border: 1px solid var(--slotting-rule); border-radius: 50%; font-size: .6875rem; line-height: 1; }
+  .slotting-annotation p { margin: 0; padding-left: 1.5rem; font-size: .8125rem; line-height: 1.5; color: var(--slotting-secondary); }
+  [data-task="picking"] .annotation-picking .annotation-number, [data-task="replenishment"] .annotation-replenishment .annotation-number, [data-task="access"] .annotation-shared .annotation-number { border-color: var(--slotting-focus); color: var(--slotting-focus); }
+  [data-task="picking"] .annotation-picking p, [data-task="replenishment"] .annotation-replenishment p, [data-task="access"] .annotation-shared p { color: var(--slotting-ink); }
+  .slotting-fallback { display: grid; gap: 1rem; margin-top: 1rem; font-family: Inter, Arial, sans-serif; }
+  .slotting-fallback h3 { margin: 0 0 .375rem; font-size: .875rem; font-weight: 600; line-height: 1.4; }
+  .slotting-fallback p { margin: 0; font-size: .8125rem; line-height: 1.5; color: var(--slotting-secondary); }
+  .slotting-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  figcaption { margin: 1rem 0 0; font-family: Inter, Arial, sans-serif; font-size: .75rem; line-height: 1.5; color: var(--slotting-secondary); }
+  @media (hover: hover) {
+    .task-buttons button:hover { background: var(--slotting-sand); }
+    .slotting-marker:not(:disabled):hover { border-color: #fd4f00; color: #fd4f00; }
+  }
+  @container (max-width: 30rem) {
+    .slotting-composition { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+    .slotting-artwork { grid-column: 1 / -1; grid-row: 1; }
+    .annotation-picking { grid-column: 1; grid-row: 2; }
+    .annotation-replenishment { grid-column: 2; grid-row: 2; }
+    .annotation-picking, .annotation-replenishment { margin-top: 0; padding: 0; }
+    .annotation-shared { grid-column: 1 / -1; grid-row: 3; width: 100%; margin: 0; }
+    [data-task="access"] .annotation-shared { grid-row: 2; }
+    .annotation-leaders { display: none; }
+  }
+  :global(.dark) .audit-slotting-illustration { --slotting-sand: #374151; --slotting-rule: #6b7280; --slotting-ink: #d1d5db; --slotting-secondary: #b5becb; --slotting-focus: #ff7635; }
+  @media print {
+    .task-controls, .slotting-hotspots, .task-mark, .slotting-status { display: none !important; }
+    .print-markers { display: inline; }
+    .slotting-composition { break-inside: avoid; }
+  }
+</style>
+
+<script>
+  type SlottingTask = 'picking' | 'replenishment' | 'access';
+  type SlottingView = SlottingTask | 'none' | 'print';
+  type SlottingAnnotation = 'picking' | 'replenishment' | 'shared';
+  type AnnotationCopy = { title: string; copy: string };
+  const taskNotes: Record<SlottingView, Partial<Record<SlottingAnnotation, AnnotationCopy>>> = {
+    none: {},
+    print: {},
+    picking: {
+      picking: { title: 'From shelf to cart', copy: 'Watch the reach into the shelf and the lift to the cart.' },
+      shared: { title: 'Space used by a pick', copy: 'Note where the picker and cart stand, and whether they interrupt other work.' },
+    },
+    replenishment: {
+      replenishment: { title: 'From load to shelf', copy: 'Watch how the incoming cartons are unloaded and placed on the shelf.' },
+      shared: { title: 'Space used by a refill', copy: 'Note where the pallet truck and load stand, and whether picking has to wait.' },
+    },
+    access: {
+      shared: { title: 'Where the jobs meet', copy: 'Watch a pick and a refill here. Note any waiting, obstruction or extra movement.' },
+    },
+  };
+  const taskDescriptions: Record<SlottingView, string> = {
+    none: 'No task is selected. Use the numbered buttons to examine picking at the shelf and cart, replenishment at the load, or shared access in front of the rack.',
+    print: 'Numbered markers connect the picking annotation to the shelf and cart, the replenishment annotation to the incoming load, and the shared-space annotation to the foreground.',
+    picking: 'Two markers numbered 1 connect the picking annotation to the shelf and cart. Label 3 explains the working space used during a pick.',
+    replenishment: 'The incoming load at the pallet truck is highlighted. Its annotation explains the refill, and the working-space annotation asks whether picking has to wait.',
+    access: 'The shared working space in front of the rack is highlighted. Its annotation asks the reader to observe waiting, obstruction or extra movement during a pick and refill.',
+  };
+  const taskLabels: Record<SlottingTask, string> = { picking: 'Picking', replenishment: 'Replenishment', access: 'Shared access' };
+  const visibleAnnotations: Record<SlottingView, SlottingAnnotation[]> = { none: [], picking: ['picking', 'shared'], replenishment: ['replenishment', 'shared'], access: ['shared'], print: ['picking', 'replenishment', 'shared'] };
+  const isTask = (value: string | undefined): value is SlottingTask => value === 'picking' || value === 'replenishment' || value === 'access';
+
+  function setPartHidden(part: HTMLElement | SVGElement, hidden: boolean) {
+    if (part instanceof SVGElement) {
+      if (hidden) part.setAttribute('display', 'none');
+      else part.removeAttribute('display');
+    } else {
+      part.hidden = hidden;
+    }
+  }
+
+  function bindSlottingIllustrations() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-slotting-illustration]');
+    figures.forEach(figure => {
+      if (figure.dataset.slottingBound) return;
+      const controls = figure.querySelector<HTMLElement>('[data-slotting-controls]');
+      const hotspots = figure.querySelector<HTMLElement>('[data-slotting-hotspots]');
+      const buttons = Array.from(figure.querySelectorAll<HTMLButtonElement>('[data-slotting-task]'));
+      const marks = Array.from(figure.querySelectorAll<SVGElement>('[data-slotting-highlight]'));
+      const annotationParts = Array.from(figure.querySelectorAll<HTMLElement | SVGElement>('[data-slotting-annotation]'));
+      const headings = Array.from(figure.querySelectorAll<HTMLElement>('[data-slotting-heading]'));
+      const notes = Array.from(figure.querySelectorAll<HTMLElement>('[data-slotting-copy]'));
+      const description = figure.querySelector<SVGDescElement>('[data-slotting-description]');
+      const status = figure.querySelector<HTMLElement>('[data-slotting-status]');
+      if (!controls || !hotspots || buttons.length !== 7 || marks.length !== 2 || headings.length !== 3 || notes.length !== 3 || !description || !status) return;
+
+      const defaultTitles = new Map(headings.map(heading => [heading.dataset.slottingHeading, heading.textContent ?? '']));
+      const defaultCopy = new Map(notes.map(note => [note.dataset.slottingCopy, note.textContent ?? '']));
+      const listeners = new AbortController();
+      const options = { signal: listeners.signal };
+      let task: SlottingView = 'none';
+      let taskBeforePrint: SlottingView | undefined;
+
+      const setTask = (nextTask: SlottingView, announce = false) => {
+        task = nextTask;
+        figure.dataset.task = nextTask;
+        buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.slottingTask === nextTask)));
+        marks.forEach(mark => setPartHidden(mark, mark.dataset.slottingHighlight !== nextTask));
+        annotationParts.forEach(part => setPartHidden(part, !visibleAnnotations[nextTask].includes(part.dataset.slottingAnnotation as SlottingAnnotation)));
+        headings.forEach(heading => {
+          const key = heading.dataset.slottingHeading as SlottingAnnotation;
+          heading.textContent = taskNotes[nextTask][key]?.title ?? defaultTitles.get(key) ?? '';
+        });
+        notes.forEach(note => {
+          const key = note.dataset.slottingCopy as SlottingAnnotation;
+          note.textContent = taskNotes[nextTask][key]?.copy ?? defaultCopy.get(key) ?? '';
+        });
+        description.textContent = taskDescriptions[nextTask];
+        if (announce) {
+          const changes = Object.values(taskNotes[nextTask]).map(note => `${note.title}. ${note.copy}`).join(' ');
+          status.textContent = nextTask === 'none' ? 'Selection cleared. Only the numbered markers remain.' : nextTask === 'print' ? '' : `${taskLabels[nextTask]} selected. ${changes}`;
+        }
+      };
+
+      buttons.forEach(button => button.addEventListener('click', () => {
+        const nextTask = button.dataset.slottingTask;
+        if (isTask(nextTask)) {
+          const clear = button.closest('[data-slotting-controls]') && task === nextTask;
+          setTask(clear ? 'none' : nextTask, true);
+        }
+      }, options));
+
+      window.addEventListener('beforeprint', () => {
+        taskBeforePrint ??= task;
+        setTask('print');
+      }, options);
+      window.addEventListener('afterprint', () => {
+        if (taskBeforePrint !== undefined) setTask(taskBeforePrint);
+        taskBeforePrint = undefined;
+      }, options);
+      document.addEventListener('astro:before-swap', () => {
+        listeners.abort();
+        controls.hidden = true;
+        buttons.forEach(button => { button.disabled = true; });
+        setTask('none');
+        status.textContent = '';
+        delete figure.dataset.slottingBound;
+      }, { once: true, signal: listeners.signal });
+
+      figure.dataset.slottingBound = 'true';
+      setTask('none');
+      controls.hidden = false;
+      buttons.forEach(button => { button.disabled = false; });
+    });
+  }
+
+  bindSlottingIllustrations();
+  document.addEventListener('astro:page-load', bindSlottingIllustrations);
+</script>

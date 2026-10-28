@@ -5,7 +5,8 @@ export default {
   darkMode: ["class"],
   // I added 'astro' and 'html' to this list so Astro files work too
   content: [
-    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"
+    "./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}",
+    ...(process.env.NODE_ENV === "production" ? [] : ["./internal/**/*.{astro,ts}"])
   ],
   safelist: [
     'md:col-span-3', 'md:col-span-4', 'md:col-span-5', 'md:col-span-6', 'md:col-span-7',
@@ -105,11 +106,16 @@ export default {
           "0%": { objectPosition: "0% 50%" },   // Start aligned Left
           "100%": { objectPosition: "100% 50%" }, // Move to align Right
         },
+        "shine": {
+          "from": { backgroundPosition: "200% center" },
+          "to": { backgroundPosition: "-200% center" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pan-x": "pan-x 10s linear infinite alternate",
+        "shine": "shine 6s linear infinite",
       },
     },
   },

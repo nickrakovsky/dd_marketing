@@ -1,0 +1,87 @@
+---
+import guideScriptURL from '../../lib/logistics-interview-guide.mjs?url&no-inline';
+
+export interface Props {
+  headline: string;
+  buttonText?: string;
+  eventName: string;
+  redirectUrl: string;
+}
+
+const {
+  headline,
+  eventName,
+  redirectUrl,
+} = Astro.props;
+
+const BENTO_UUID = "b4cb9a34a989bcc643714151df7b7154";
+const uid = Math.random().toString(36).slice(2, 9);
+---
+
+<div class="my-8 not-prose lead-magnet-container" id={`lmf-${uid}`}>
+  <div class="success-message hidden w-full bg-[#FFF8EE] border-2 border-black/15 p-6 text-center">
+    <div class="flex items-center justify-center gap-2 text-green-700 font-bold font-recoleta text-lg">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      Check your email for the download!
+    </div>
+    <p class="text-sm text-gray-500 mt-2 font-recoleta">
+      Didn't get it? Check your spam folder or{" "}
+      <a href={redirectUrl} target="_blank" rel="noreferrer" class="underline text-[#fd4f00]">
+        download directly
+      </a>.
+    </p>
+  </div>
+
+  <form
+    class="lead-magnet-form block w-full bg-[#FFF8EE] border-2 border-black/15 shadow-sm p-5 sm:p-6"
+    data-event={eventName}
+    data-redirect={redirectUrl}
+    data-uuid={BENTO_UUID}
+  >
+    <div class="font-recoleta font-bold text-gray-800 text-lg sm:text-xl mb-4">{headline}</div>
+
+    <p class="signup-disclosure text-sm mb-4 font-sans leading-relaxed">
+      By selecting “Subscribe &amp; get guide”, you subscribe to the DataDocks email
+      newsletter and receive this free guide. You can unsubscribe at any time
+      using the link in any newsletter. See our <a href="/privacy-policy" class="underline signup-privacy">privacy policy</a>.
+    </p>
+
+    <div class="signup-fields">
+      <input
+        type="email"
+        name="email"
+        autocomplete="email"
+        aria-label="Email address for the DataDocks newsletter"
+        placeholder="Enter your email"
+        required
+        class="signup-email"
+      />
+      <button
+        type="submit"
+        class="signup-submit"
+      >
+        Subscribe &amp; get guide
+      </button>
+    </div>
+  </form>
+
+
+</div>
+
+<script is:inline type="module" src={guideScriptURL}></script>
+
+<style>
+  .signup-disclosure { color: #605b53; font-family: Inter, Arial, sans-serif; text-wrap: pretty; }
+  .signup-privacy { white-space: nowrap; color: inherit; }
+  .signup-fields { display: flex; align-items: stretch; container-type: inline-size; }
+  .signup-fields .signup-email { flex: 1; min-width: 0; width: 100%; height: 54px; box-sizing: border-box; background: #EFE2D2; color: #000; padding: 12px 16px; font: 18px 'DD-Recoleta', Georgia, serif; border: 1px solid #cdbda8; border-right: 0; border-radius: 0; }
+  .signup-fields .signup-email::placeholder { color: #65533d; opacity: 1; }
+  .signup-fields .signup-submit { flex: 0 0 auto; min-height: 54px; background: #FE5000; color: #fff; padding: 10px 16px; font: 400 1.2rem/1.3 'DD-Recoleta', Georgia, serif; letter-spacing: .025em; text-shadow: 0 1px 2px #0006; white-space: nowrap; border: 0; border-radius: 0; cursor: pointer; }
+  .signup-fields .signup-submit:hover { background: #000; text-shadow: none; }
+  .signup-fields :is(input, button):focus-visible { outline: 2px solid #000; outline-offset: 3px; }
+  @container (max-width: 420px) { .signup-fields .signup-email { flex-basis: 100%; border-right: 1px solid #cdbda8; border-bottom: 0; } .signup-fields .signup-submit { width: 100%; } }
+  .signup-fields { flex-wrap: wrap; }
+  :global(.dark) .signup-disclosure { color: #c5c0b5; }
+</style>

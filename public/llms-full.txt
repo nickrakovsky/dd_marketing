@@ -72,7 +72,7 @@ Automatic alerts and real-time notifications. Push warnings when trucks approach
 
 ### Live Editing
 Real-time collaborative schedule editing. Multiple users can view and modify the schedule simultaneously. Changes propagate instantly to all stakeholders.
-- URL: https://datadocks.com/datadocks-features/live-editing
+- URL: https://datadocks.com/datadocks-features/access-anywhere
 
 ### Access Anywhere
 Cloud-based access from any device — desktop, tablet, or native iOS and Android mobile apps. Manage dock schedules and yard operations from the office, the dock floor, or on the road. The mobile apps provide push notifications, real-time schedule updates, and check-in capabilities for drivers and coordinators.
@@ -157,6 +157,8 @@ Facilities implementing DataDocks typically see:
 
 **vs. OpenDock**: See detailed comparison at https://datadocks.com/datadocks-vs-opendock
 
+**Dock Scheduling Tools Comparison (Buyers' Guide)**: Complete side-by-side feature comparison and interactive requirements engine at https://datadocks.com/comparison
+
 ---
 
 ## Frequently Asked Questions
@@ -217,7 +219,7 @@ Yard management becomes essential when a facility has 50+ trailer spots, frequen
 ### Yard Management
 - [Yard Management](https://datadocks.com/yard-management)
 - [Yard Management Process Flow](https://datadocks.com/posts/yard-management-process-flow)
-- [10 Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options)
+- [Best Yard Management Software Platforms in 2026](https://datadocks.com/posts/best-yard-management-options)
 - [The Path to Automated Yard Operations](https://datadocks.com/posts/automated-yard-operations)
 - [3 Easy Ways to Improve Yard Visibility Fast](https://datadocks.com/posts/yard-visibility)
 
@@ -253,7 +255,7 @@ Yard management becomes essential when a facility has 50+ trailer spots, frequen
 - [Warehouse Optimization Strategies](https://datadocks.com/posts/warehouse-optimization-strategies)
 - [Warehouse Receiving Best Practices](https://datadocks.com/posts/warehouse-receiving-process)
 - [7 Warehouse KPIs to Track in 2026](https://datadocks.com/posts/warehouse-kpis)
-- [Warehouse Audit Checklist](https://datadocks.com/posts/warehouse-audit-checklist)
+- [Warehouse Audit Checklist with PDF and Excel Templates](https://datadocks.com/posts/warehouse-audit-checklist)
 - [Warehouse Safety Checklist](https://datadocks.com/posts/warehouse-safety-checklist)
 - [Practical Ways to Reduce Turnaround Time](https://datadocks.com/posts/practical-ways-to-reduce-turnaround-time)
 
