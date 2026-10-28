@@ -1,7 +1,8 @@
 // Public site identifier. A different Bento site requires reviewing new pins.
 export const PINNED_BENTO_UUID = 'b4cb9a34a989bcc643714151df7b7154';
 
-// Reviewed October 1, 2026. Mutable vendor URLs must match these exact bytes
+// Initial review October 1, 2026; later reviews are noted per asset.
+// Mutable vendor URLs must match these exact bytes
 // before they can be published as first-party assets. Never auto-update pins.
 export const VENDOR_SOURCES = {
   calendlyJs: {
@@ -21,10 +22,12 @@ export const VENDOR_SOURCES = {
   },
   dealfront: {
     url: 'https://sc.lfeeder.com/lftracker_v1_3P1w24d9vEoamY5n.js',
-    integrity: 'sha384-/v0tGOWWqw5YY6BHWIep+y1E3FUIyQlsIHPycoC4tazQlNZnw9WABlaGiobscidO',
+    // Reviewed October 19, 2026: v2.75.0 defers tracking/plugin initialization
+    // during prerendering; destinations and captured fields are unchanged.
+    integrity: 'sha384-u2S0Z42kkNtkFxqBoMGD22eGUjjLx6hW0YwMda3cdO2jRihMTeUu8ulJDLumbtwu',
     extension: 'js',
-    // Preserve the reviewed bytes when the mutable upstream tracker changes.
-    // Clean builds verify this snapshot against the same pin as deployed assets.
+    // Preserve the approved tracker when its mutable upstream URL changes.
+    // Verify this snapshot against the same pin before every build.
     snapshot: 'src/assets/vendor/dealfront.js',
   },
   bentoBootstrap: {

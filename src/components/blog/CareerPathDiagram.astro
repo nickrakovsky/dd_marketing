@@ -1,0 +1,22 @@
+---
+import { renderCareerDiagram } from './career-path-diagram.mjs';
+import diagramURL from '../../assets/blog-images/logistics-coordinator-career-path-overview.svg?url';
+---
+<figure class="career-overview" id="career-path-overview">
+  <a href={diagramURL} target="_blank" rel="noopener noreferrer" aria-label="Open the logistics coordinator career-path diagram at full size">
+    <Fragment set:html={renderCareerDiagram()} />
+  </a>
+  <figcaption>
+    <span>Illustrative routes and salary estimates from this article.</span>
+    <a href={diagramURL} target="_blank" rel="noopener noreferrer">Open full-size diagram ↗</a>
+  </figcaption>
+</figure>
+<style>
+  .career-overview { --career-paper: #fff8ee; --career-ink: #302b25; --career-muted: #61564a; --career-rule: #d8c6ae; box-sizing: border-box; width: 100%; max-width: 80rem; margin: 0 auto 2.5rem; padding: 0 1rem; color: var(--career-muted); }
+  :global(.dark) .career-overview { --career-paper: #232622; --career-ink: #fff8ee; --career-muted: #c5c0b5; --career-rule: #4e5147; }
+  .career-overview :global(svg) { display: block; width: 100%; height: auto; }
+  .career-overview figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; margin-top: 0.75rem; font: 0.875rem/1.5 Inter, system-ui, sans-serif; }
+  .career-overview a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .career-overview a:focus-visible { outline: 2px solid #fe5000; outline-offset: 4px; }
+  @media (min-width: 768px) { .career-overview { padding-inline: 3rem; } }
+</style>

@@ -1,5 +1,11 @@
 /** Reviewed search snippets. Keep visible editorial headlines and publication metadata intact. */
 export const seoMetadata: Record<string, { title?: string; description?: string }> = {
+  "/posts/ingredient-traceability": {
+    "title": "Ingredient Traceability: Trace Back to Source | DataDocks"
+  },
+  "/posts/frozen-food-network-fit": {
+    "title": "Does Your Frozen-Food Distribution Network Fit? | DataDocks"
+  },
   "/posts": {
     "title": "Warehouse & Dock Scheduling Resources | DataDocks"
   },
@@ -108,4 +114,3 @@ export const seoMetadata: Record<string, { title?: string; description?: string 
     "description": "Use this warehouse safety checklist to review equipment, training, hazards and emergency preparation, and identify practical ways to reduce risk."
   }
 };
-

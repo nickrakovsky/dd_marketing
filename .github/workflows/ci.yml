@@ -49,6 +49,9 @@ jobs:
       - name: Performance comparison regression tests (offline)
         run: node --test scripts/performance-comparison.test.mjs
 
+      - name: Comparison hero font coverage and metrics
+        run: node --test scripts/comparison-hero-fonts.test.mjs
+
       - name: YouTube importer regression tests
         run: npm run test:youtube-sync
 
@@ -191,6 +194,19 @@ jobs:
             --collect.numberOfRuns=1
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-diagnostics
+          path: |
+            .lighthouseci/
+            *.trace.json
+            *.devtoolslog.json
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Compare mobile performance with production
         run: node scripts/compare-preview-performance.mjs "${PREVIEW_URL}"

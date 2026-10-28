@@ -10,6 +10,8 @@ import RelatedFeatureCallout from '../../components/RelatedFeatureCallout.astro'
 import MDXTable from '../../components/MDXTable.astro';
 import MDXImage from '../../components/MDXImage.astro';
 import WarehouseLoadTiming from '../blog/WarehouseLoadTiming.astro';
+import WarehouseStockRecord from '../blog/WarehouseStockRecord.astro';
+import DemoCapture from '../home-revamp/DemoCapture.astro';
 import Post02InventoryCash from '../blog/Post02InventoryCash.astro';
 import ProduceSellingWindow from '../blog/ProduceSellingWindow.astro';
 import Post04OrderAllocation from '../blog/Post04OrderAllocation.astro';
@@ -19,6 +21,20 @@ import Post07Timing from '../blog/Post07Timing.astro';
 import FrozenNetworkTradeoff from '../blog/FrozenNetworkTradeoff.astro';
 import BackwardTraceTimer from '../blog/BackwardTraceTimer.astro';
 import ProductionRunTradeoff from '../blog/ProductionRunTradeoff.astro';
+import DetentionWarningWindow from '../blog/DetentionWarningWindow.astro';
+import WarehouseFlowBreakdown from '../blog/WarehouseFlowBreakdown.astro';
+import SetupArticleNavigation from '../blog/SetupArticleNavigation.astro';
+import SetupHandoffRehearsal from '../blog/SetupHandoffRehearsal.astro';
+import SetupReadinessStages from '../blog/SetupReadinessStages.astro';
+import LoadTypeAvailability from '../blog/LoadTypeAvailability.astro';
+import PickupDetailsHandoff from '../blog/PickupDetailsHandoff.astro';
+import MessageResponseExpectations from '../blog/MessageResponseExpectations.astro';
+import PostOneRevised from '../blog/PostOneRevised.astro';
+import PostTwoRevised from '../blog/PostTwoRevised.astro';
+import PostThreeRevised from '../blog/PostThreeRevised.astro';
+import PostFourRevised from '../blog/PostFourRevised.astro';
+import PostFiveRevised from '../blog/PostFiveRevised.astro';
+import PostSixRevised from '../blog/PostSixRevised.astro';
 
 import BibliographyItem from '../../components/BibliographyItem.astro';
 import Cite from '../../components/Cite.astro';
@@ -30,8 +46,70 @@ import FAQ from '../../components/FAQ.astro';
 import YardTypeSelector from '@/components/solid/micro-apps/YardTypeSelector';
 import YardTypeNoscript from '@/components/solid/micro-apps/YardTypeNoscript.astro';
 import { filterPublished } from '../../lib/content-status';
+import { warehouseAuditHeadings } from '../../data/warehouse-audit-article';
+import WarehouseAuditArticle from '../articles/WarehouseAuditArticle.astro';
+
+import WmsConnectedOperations from '../blog/WmsConnectedOperations.astro';
+import WarehouseProcessComparison from '../blog/WarehouseProcessComparison.astro';
+import DynamicSlottingRefill from '../blog/DynamicSlottingRefill.astro';
+import TeamCoverageScenarios from '../blog/TeamCoverageScenarios.astro';
+import DwellTimeJourney from '../blog/DwellTimeJourney.astro';
+import ReceivingDamageRecord from '../blog/ReceivingDamageRecord.astro';
+import ReceivingLoadFormat from '../blog/ReceivingLoadFormat.astro';
+import ReceivingOrderToReceipt from '../blog/ReceivingOrderToReceipt.astro';
+import RetailInventoryPressure from '../blog/RetailInventoryPressure.astro';
+import RetailChannelRoutes from '../blog/RetailChannelRoutes.astro';
+import WarehouseSharedLoad from '../blog/WarehouseSharedLoad.astro';
+import BeforeYouApply from '../blog/BeforeYouApply.astro';
+import EarningPotential from '../blog/EarningPotential.astro';
+import DailyCoordination from '../blog/DailyCoordination.astro';
+import CarrierCheckInPhoto from '../blog/CarrierCheckInPhoto.astro';
+import LogisticsInterviewGuide from '../blog/LogisticsInterviewGuide.astro';
+import ResponsibilityAreas from '../blog/ResponsibilityAreas.astro';
+import CoEOpening from '../blog/coe/CoEOpening.astro';
+import CoECompany from '../blog/coe/CoECompany.astro';
+import CoEFacilityNetwork from '../blog/coe/CoEFacilityNetwork.astro';
+import CoEExperimentalUnit from '../blog/coe/CoEExperimentalUnit.astro';
+import CoEChangeTeam from '../blog/coe/CoEChangeTeam.astro';
+import CoERegional from '../blog/coe/CoERegional.astro';
+import CoERoleEvolution from '../blog/coe/CoERoleEvolution.astro';
+import CoERemit from '../blog/coe/CoERemit.astro';
+import CoEValueBalance from '../blog/coe/CoEValueBalance.astro';
+import CoELocalized from '../blog/coe/CoELocalized.astro';
+import CoESharedImprovement from '../blog/coe/CoESharedImprovement.astro';
+import CareerPathDiagram from '../blog/CareerPathDiagram.astro';
 
 const blogComponents = {
+  WmsConnectedOperations,
+  WarehouseProcessComparison,
+  DynamicSlottingRefill,
+  TeamCoverageScenarios,
+  DwellTimeJourney,
+  ReceivingDamageRecord,
+  ReceivingLoadFormat,
+  ReceivingOrderToReceipt,
+  RetailInventoryPressure,
+  RetailChannelRoutes,
+  WarehouseSharedLoad,
+  BeforeYouApply,
+  EarningPotential,
+  DailyCoordination,
+  CarrierCheckInPhoto,
+  LogisticsInterviewGuide,
+  ResponsibilityAreas,
+  CoEOpening,
+  CoECompany,
+  CoEFacilityNetwork,
+  CoEExperimentalUnit,
+  CoEChangeTeam,
+  CoERegional,
+  CoERoleEvolution,
+  CoERemit,
+  CoEValueBalance,
+  CoELocalized,
+  CoESharedImprovement,
+  WarehouseStockRecord,
+  DemoCapture,
   WarehouseLoadTiming,
   Post02InventoryCash,
   ProduceSellingWindow,
@@ -42,6 +120,20 @@ const blogComponents = {
   FrozenNetworkTradeoff,
   BackwardTraceTimer,
   ProductionRunTradeoff,
+  DetentionWarningWindow,
+  WarehouseFlowBreakdown,
+  SetupArticleNavigation,
+  SetupHandoffRehearsal,
+  SetupReadinessStages,
+  LoadTypeAvailability,
+  PickupDetailsHandoff,
+  MessageResponseExpectations,
+  PostOneRevised,
+  PostTwoRevised,
+  PostThreeRevised,
+  PostFourRevised,
+  PostFiveRevised,
+  PostSixRevised,
 };
 
 interface Props {
@@ -50,8 +142,10 @@ interface Props {
 
 const { entry } = Astro.props;
 const hasYardSelector = entry.slug === 'best-yard-management-options';
+const hasCareerDiagram = entry.slug === 'logistics-coordinator-career-path';
 const asOf = Astro.locals.publicationDate ?? new Date();
-const { Content, headings } = await entry.render();
+const { Content, headings: mdxHeadings } = await entry.render();
+const headings = entry.slug === 'warehouse-audit-checklist' ? warehouseAuditHeadings : mdxHeadings;
 
 const postType = entry.data.postType?.discriminant || 'article';
 const isVideo = postType === 'video' || postType === 'short';
@@ -92,8 +186,8 @@ const getReadTime = (body: string) => {
 
 // Image loading priority belongs to this request, including concurrent visits.
 Astro.locals.mdxImageCount = 0;
-// The selector and introduction put this article's first body image below the fold.
-Astro.locals.prioritizeMdxImage = !hasYardSelector;
+// Top-of-article tools put the following raster images below the initial view.
+Astro.locals.prioritizeMdxImage = !hasYardSelector && !hasCareerDiagram;
 ---
 
 {isVideo ? (
@@ -215,6 +309,7 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
   </Layout>
 ) : (
   <BlogPostLayout frontmatter={entry.data} headings={headings} relatedPosts={relatedPosts}>
+    {hasCareerDiagram && <CareerPathDiagram slot="top-interactive" />}
     {hasYardSelector && (
       <YardTypeSelector slot="top-interactive" client:visible />
     )}
@@ -241,6 +336,6 @@ Astro.locals.prioritizeMdxImage = !hasYardSelector;
         </div>
       </div>
     )}
-    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents }} />
+    <Content components={{ a: SmartLink, SmartLink, RelatedFeatureCallout, BibliographyItem, Cite, LeadMagnetForm, table: MDXTable, img: MDXImage, FAQ, ...blogComponents, WarehouseAuditArticle }} />
   </BlogPostLayout>
 )}

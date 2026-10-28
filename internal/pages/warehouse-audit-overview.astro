@@ -1,0 +1,15 @@
+---
+// Development-only preview of the same body used by the published article.
+import { getEntry } from 'astro:content';
+import BlogPostLayout from '../../src/layouts/BlogPostLayout.astro';
+import WarehouseAuditArticle from '../../src/components/articles/WarehouseAuditArticle.astro';
+import { warehouseAuditHeadings } from '../../src/data/warehouse-audit-article';
+
+const entry = await getEntry('posts', 'warehouse-audit-checklist');
+if (!entry) throw new Error('The warehouse audit post is required for this preview.');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+---
+
+<BlogPostLayout frontmatter={entry.data} headings={warehouseAuditHeadings} noindex>
+  <WarehouseAuditArticle preview />
+</BlogPostLayout>

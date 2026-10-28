@@ -8,6 +8,7 @@ import Cite from '../../src/components/Cite.astro';
 import FAQ from '../../src/components/FAQ.astro';
 import RelatedFeatureCallout from '../../src/components/RelatedFeatureCallout.astro';
 import LeadMagnetForm from '../../src/components/LeadMagnetForm.astro';
+import DemoCapture from '../../src/components/home-revamp/DemoCapture.astro';
 import cardImage from '../../src/assets/blog-images/warehouse-optimization-strategies-cover.png';
 import { posts } from './posts';
 
@@ -38,5 +39,5 @@ const next = posts[index + 1];
       {next && <a class="text-[#a33300] dark:text-[#ff7635] underline" href={'/preview/staging/' + next.slug}>Next</a>}
     </span>
   </nav>
-  <Content components={{ a: SmartLink, SmartLink, table: MDXTable, img: MDXImage, BibliographyItem, Cite, FAQ, RelatedFeatureCallout, LeadMagnetForm, ...post.components }} />
+  <Content components={{ a: SmartLink, SmartLink, table: MDXTable, img: MDXImage, BibliographyItem, Cite, FAQ, RelatedFeatureCallout, LeadMagnetForm, DemoCapture, ...post.components }} />
 </BlogPostLayout>

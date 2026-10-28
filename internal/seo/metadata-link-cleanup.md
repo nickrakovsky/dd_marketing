@@ -1,4 +1,9 @@
-# October 19 SEO cleanup
+# Search metadata and internal links
+
+October 27 follow-up: refreshed this branch against current main, retaining the
+current approved vendor snapshots and the retail article's interactive artwork.
+Added search titles for the newly flagged ingredient-traceability and
+frozen-food-network-fit articles, bringing the reviewed title count to 33.
 
 The audit flagged 31 indexable URLs with long search titles, six with long meta
 descriptions and ten with a single incoming dofollow internal link.

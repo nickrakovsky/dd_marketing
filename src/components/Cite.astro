@@ -4,16 +4,24 @@
 // post, which Keystatic's editor cannot parse (mdxjsEsm nodes are unsupported).
 interface Props {
   id: string;
+  /** Unique marker anchor when the same source is cited more than once. */
+  anchorId?: string;
+  /** Concise source title for the citation card; the full title stays in the bibliography. */
+  title?: string;
+  /** Explicit author/year label for sources that cannot be inferred from bibliography prose. */
+  citation?: string;
 }
-const { id } = Astro.props;
+const { id, anchorId, title, citation } = Astro.props;
 ---
 
 <a
   href={`#ref-${id}`}
-  id={`cite-${id}`}
+  id={anchorId ?? `cite-${id}`}
   data-smartlink-trigger="true"
   data-smartlink-type="academic"
   data-smartlink-bibref={`#ref-${id}`}
+  data-smartlink-title-override={title}
+  data-smartlink-citation-override={citation}
   class="inline underline decoration-dotted decoration-[#fd4f00] lg:decoration-gray-400 hover:decoration-[#fd4f00] !text-[#fd4f00] dark:!text-[color:var(--blog-link,#fd4f00)] dark:decoration-[color:var(--blog-link,#fd4f00)] hover:!text-[#fd4f00] dark:hover:!text-[color:var(--blog-link,#ff7635)] transition-colors cursor-pointer font-medium text-xs align-super"
   aria-label={`Reference ${id}`}
 >[{id}]</a>

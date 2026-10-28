@@ -1,0 +1,25 @@
+Original edit target: src/assets/blog-images/warehouse-audit-checklist-5.webp
+Built-in image generation, two isolated transparent raster cutouts.
+The original two-row composition is rebuilt with live text and SVG trucks/arrows/outcomes; these cutouts preserve the staging artwork.
+Exact prompts submitted 15 October 2026, transparent_background: true.
+
+Outputs copied unchanged into the project:
+src/assets/blog-images/warehouse-audit-dock-rushed-staging-v2.png
+src/assets/blog-images/warehouse-audit-dock-clean-staging-v2.png
+Generated with the built-in imagegen tool. No output inspection or pixel editing was performed; human review is pending.
+
+RUSHED STAGING
+Use case: background-extraction / precise-object-edit.
+Image 1 is the edit target, the original "Dock Flow: Chaos vs. Control" diagram. This is an extraction, not a new illustration or a redesign.
+Preserve the selected existing carton pile's arrangement, proportions, hand-drawn black linework, pale cream carton faces and original character exactly. Retain the original drawn objects; do not modernise, restyle, add boxes or make a different pile.
+Remove everything except the specified pile: all lettering, trucks, arrows, times, ground lines, outcome symbols, other pile, and the flat beige page background.
+Return one isolated cutout centred on a square canvas, with approximately 15% clear padding and a genuinely transparent alpha background. Carton faces stay opaque; spaces around and between boxes are transparent. No drop shadow, backdrop, halo, new text or additional objects.
+Selected pile: ONLY the loose, irregular carton heap in the UPPER row, originally labelled "Rushed Staging", near x535,y150 in the 800x437 input. This is the scattered pile, not the tidy pyramid below.
+
+CLEAN STAGING
+Use case: background-extraction / precise-object-edit.
+Image 1 is the edit target, the original "Dock Flow: Chaos vs. Control" diagram. This is an extraction, not a new illustration or a redesign.
+Preserve the selected existing carton pile's arrangement, proportions, hand-drawn black linework, pale cream carton faces and original character exactly. Retain the original drawn objects; do not modernise, restyle, add boxes or make a different pile.
+Remove everything except the specified pile: all lettering, trucks, arrows, times, ground lines, outcome symbols, other pile, and the flat beige page background.
+Return one isolated cutout centred on a square canvas, with approximately 15% clear padding and a genuinely transparent alpha background. Carton faces stay opaque; spaces around and between boxes are transparent. No drop shadow, backdrop, halo, new text or additional objects.
+Selected pile: ONLY the orderly carton pyramid in the LOWER row, originally labelled "Clean Staging", near x580,y335 in the 800x437 input. This is the stacked pyramid, not the loose heap above.

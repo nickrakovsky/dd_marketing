@@ -324,3 +324,61 @@ removed. Source integration and the diff were reviewed; no local test suite,
 production build or performance audit was run. GitHub validation remains pending;
 do not wait for it during this turn. Preview HTML and screenshots stay local in
 `internal/frontmatter-preview/` and are not part of the PR.
+
+## Comparison introduction font stability — 2026-10-19
+
+PR #261's Lighthouse run reported `/comparison` CLS 0.0912376 against the
+unchanged 0.01 limit. The performance scores on `/posts` and the yard-management
+article were warnings; the comparison layout shift was the blocking assertion.
+
+The user authorized a focused local layout-shift/font diagnostic for this failure.
+At the report's 412×823 mobile viewport, the normal cold load was stable and
+delaying the full stylesheet caused no shift. Delaying Recoleta made the intro
+grow from two lines to three, moving the summary 28px (CLS 0.0124711). A controlled
+Arial/Times fallback with delayed fonts reproduced the larger heading shift:
+Bruta changed four heading lines to three, moving the summary upward 50.39px
+(that event's CLS 0.0910685). This models missing Impact/Georgia on Linux; it is
+not a claim that the original runner's exact font state was recovered.
+
+The comparison heading and intro now use small, route-specific WOFF2 subsets
+embedded in the HTML. They retain the existing fonts, copy and final geometry,
+without depending on external font timing or platform fallback availability.
+Bruta's subset is 1,408 bytes and Recoleta's is 5,000 bytes. Shared font loading
+and other pages are unchanged. Source copy lives in `src/data/comparison-hero.json`.
+After editing it, regenerate with `python scripts/subset-comparison-hero.py`
+using `fonttools[woff]==4.60.2`; Python font tooling is not a build dependency.
+CI checks coverage and source-equivalent metrics/shaping with Fontkit.
+
+Applying the actual new CSS/assets to the failed preview HTML produced no
+layout-shift events under the same controlled fallback/delayed-font conditions.
+This is a focused diagnostic result, not a new Lighthouse score. GitHub validation
+of the built preview remains pending. No screenshots or wider visual audit ran.
+
+Lighthouse CI now saves trace and DevTools assets, and uploads them with its
+reports even when assertions fail. Limits and run count remain unchanged.
+
+## Paired yard-page TBT investigation — 2026-10-20
+
+PR #261's [CI run](https://github.com/nickrakovsky/dd_marketing/actions/runs/39414827854)
+reported median yard-page TBT of 180 ms in preview versus 85 ms in production,
+exceeding the unchanged 135 ms limit. All three production runs reached the
+load-completion timeout and warned that results may be incomplete; preview
+reports have no such warning. An unfinished,
+high-priority Google audiences request is present in every production report.
+This qualifies the comparison but does not invalidate its early TBT measurements.
+
+The retained reports attribute the preview's blocking time to two tasks from the
+existing BlogPostLayout bundle. Similar production tasks fall partly before FCP
+or vary in duration. Preview has lower median total main-thread work (1,323 ms
+versus 1,476 ms) and JavaScript bootup (148 ms versus 196 ms). The yard page receives
+no audit-only scripts, and its inline critical CSS is byte-identical between
+origins. These observations do not establish a new audit-feature workload.
+
+The paired comparison previously saved Lighthouse reports without trace or
+DevTools assets. It now retains those assets for every arm and pair in the
+existing `security-performance-comparison` artifact, prints each report's
+warnings, and records warnings and runner benchmarks in `comparison.json`.
+Verbose Lighthouse logs expose unresolved load conditions. Routes, settings,
+three-pair sampling and regression thresholds are unchanged. The next normal
+CI run must validate this diagnostic change; no manual workflow rerun or local
+performance audit was performed for it.

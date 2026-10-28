@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
+import matter from 'gray-matter';
 import { CAMPAIGN_PATHS, CAMPAIGN_ROBOTS } from '../src/lib/campaign-pages.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -31,7 +32,10 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 26, 'Expected the original 16 slots plus the authorized ten-post October batch');
+assert.equal(slots.length, 38, 'Expected the unchanged original 27 slots plus the 11 authorized daily articles');
+assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 27))),
+  'b6afdbce3a2ba8408513b556f0606f39b58246a3da8d9a5c52cac216c73cc1bd',
+  'Every field of the original 27 schedule records must remain unchanged');
 const octoberBatch = [
   ['cut-overtime-with-load-scheduling', '2026-10-12'],
   ['inventory-and-cash', '2026-10-13'],
@@ -44,12 +48,112 @@ const octoberBatch = [
   ['ingredient-traceability', '2026-10-22'],
   ['food-production-runs', '2026-10-23'],
 ];
-assert.deepEqual(slots.slice(16).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+assert.deepEqual(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
   octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
   'The authorized batch must publish on successive weekdays at 06:30 fixed UTC-08:00');
+assert.deepEqual(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()]),
+  [[27, 'stop-hiding-missing-stock', '2026-10-26T14:30:00.000Z']],
+  'The approved missing-stock article must use the next weekday slot at the existing publication time');
 assert.equal(manifest.timezone, 'UTC-08:00');
 assert.equal(manifest.localPublicationTime, '06:30:00');
-assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-10-24T00:00:00Z'));
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-11-11T00:00:00Z'));
+assert.deepEqual(manifest.rotation, ['A', 'B', 'C'], 'The historical rotation must retain its original meanings');
+const queueBatch = [
+  ['early-arrival-patterns', '2026-10-27', 'A', 'training-session'],
+  ['find-where-freight-slows-down', '2026-10-28', 'B', 'youtube-video'],
+  ['paperwork-delays', '2026-10-29', 'A', 'training-session'],
+  ['set-appointment-limits-by-load-type', '2026-10-30', 'B', 'youtube-video'],
+  ['rollout-decisions', '2026-11-02', 'A', 'training-session'],
+  ['get-detention-warnings-in-time-to-act', '2026-11-03', 'B', 'youtube-video'],
+  ['driver-wayfinding', '2026-11-04', 'A', 'training-session'],
+  ['set-response-expectations-for-warehouse-messages', '2026-11-05', 'B', 'youtube-video'],
+  ['receiving-backlogs', '2026-11-06', 'A', 'training-session'],
+  ['confirm-pickup-details-before-the-driver-arrives', '2026-11-09', 'B', 'youtube-video'],
+  ['missed-slot-fees', '2026-11-10', 'A', 'training-session'],
+];
+assert.deepEqual(slots.slice(27).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
+  queueBatch.map(([slug, date, rotationGroup, provenance], index) =>
+    [28 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance]),
+  'The authorized daily queue must alternate training/YouTube on the agreed weekdays');
+assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
+assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
+assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);
+assert.deepEqual(manifest.queueRotation.futurePattern, ['A', 'B', 'C']);
+assert.equal(new Set(slots.map(slot => slot.slug)).size, slots.length, 'Scheduled article URLs must be unique');
+assert.equal(new Set(slots.map(slot => slot.pubDate)).size, slots.length, 'Publish only one scheduled article per timestamp');
+
+const renderer = await readFile(join(root, 'src/components/pages/ArticlePage.astro'), 'utf8');
+const cms = await readFile(join(root, 'keystatic.config.ts'), 'utf8');
+const queueRenderExpectations = new Map();
+const evergreenChecklist = {
+  slot: 'evergreen',
+  slug: 'warehouse-setup-checklist',
+  title: 'Warehouse Setup Checklist for a New Facility',
+  author: 'DataDocks Team',
+  pubDate: '2026-10-23T00:00:00.000Z',
+  sourcePath: 'internal/blog-staging/post-14-warehouse-setup-checklist/warehouse-setup-checklist.mdx',
+  sourceSha256: 'a8e139bbb312cc9cdf36ad7cc08aacf9c1d9bf7962a33d2d90e6e27c6878c677',
+  sourceBodySha256: '60fe085c60ef10af38209aa0c30750279790fa010f7c339e6b526b5994a02397',
+  contentPath: 'src/content/posts/warehouse-setup-checklist.mdx',
+  cardImage: '../../assets/blog-images/warehouse-optimization-strategies-cover.png',
+  provenance: 'warehouse-setup-research',
+};
+for (const [index, slot] of [...slots.slice(27), evergreenChecklist].entries()) {
+  const label = `Slot ${slot.slot} ${slot.slug}`;
+  const source = await readFile(join(root, slot.contentPath), 'utf8');
+  const { data } = matter(source);
+  const body = source.match(/^---\r?\n[\s\S]*?\r?\n---([\s\S]*)$/)?.[1];
+  assert.ok(body, `${label}: expected a complete MDX article with frontmatter`);
+  assert.equal(sha256(body), slot.sourceBodySha256, `${label}: accepted article body changed during integration`);
+  assert.equal(data.title, slot.title, `${label}: article title must match the authorized schedule`);
+  assert.equal(data.author, slot.author, `${label}: article author must match the schedule`);
+  assert.equal(data.author, 'DataDocks Team', `${label}: source format must not change the organization byline`);
+  assert.equal(new Date(data.pubDate).toISOString(), slot.pubDate, `${label}: article publication timestamp must match`);
+  assert.equal(data.cardImage, slot.cardImage, `${label}: card artwork must match the manifest`);
+  assert.ok(data.cardAlt?.trim() && data.description?.trim(), `${label}: article and card metadata must be complete`);
+  await access(resolve(root, 'src/content/posts', data.cardImage));
+  if (slot !== evergreenChecklist) {
+    assert.equal(slot.date, slot.pubDate.slice(0, 10), `${label}: calendar date and timestamp must agree`);
+    assert.ok(![0, 6].includes(new Date(slot.pubDate).getUTCDay()), `${label}: new releases must be weekdays`);
+    assert.equal(slot.weekday, new Date(slot.pubDate).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }));
+    assert.equal(slot.group, 'C', `${label}: retain historical DataDocks Team grouping`);
+    assert.equal(slot.sequenceInGroup, 8 + index, `${label}: continue historical group C after slot 27`);
+  }
+  assert.match(slot.sourcePath, /^internal\/blog-staging\/post-\d+-[^/]+\/[^/]+\.mdx$/);
+  assert.match(slot.sourceSha256, /^[a-f\d]{64}$/);
+  assert.doesNotMatch(source, /^(?:import|export)\s|<script\b|\b(?:TODO|TBD|FIXME|PLACEHOLDER)\b|[\ue000-\uf8ff]/im,
+    `${label}: publishing must not introduce imports, scripts, placeholders or citation tokens`);
+  await assert.rejects(access(join(root, slot.sourcePath)), `${label}: do not retain a duplicate staged article`);
+
+  const components = [...new Set([...body.matchAll(/<([A-Z][A-Za-z\d]*)\b/g)].map(match => match[1]))]
+    .filter(name => !['SmartLink', 'DemoCapture'].includes(name));
+  assert.ok(components.length, `${label}: the accepted illustration must remain in the body`);
+  const markers = [];
+  for (const name of components) {
+    const component = await readFile(join(root, `src/components/blog/${name}.astro`), 'utf8');
+    assert.ok(renderer.includes(`import ${name} from `) && renderer.includes(`\n  ${name},`),
+      `${label}: ${name} must be imported and registered in the article renderer`);
+    assert.match(cms, new RegExp(`\\b${name}:\\s*block\\(`), `${label}: ${name} must be editable in Keystatic`);
+    const marker = component.match(/<(figure|nav)\b[^>]*class="([^"]+)"/);
+    assert.ok(marker, `${label}: ${name} must expose its illustration or article navigation markup`);
+    markers.push({ tag: marker[1], classes: marker[2] });
+  }
+  const videoIds = [...body.matchAll(/<lite-youtube\b[^>]*videoid="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(videoIds.length, slot.provenance === 'youtube-video' ? 1 : 0,
+    `${label}: video embeds must agree with the source provenance`);
+  queueRenderExpectations.set(slot.slug, { markers, videoIds });
+}
+function assertIntegratedContent(text, slot, label) {
+  const expected = queueRenderExpectations.get(slot.slug);
+  if (!expected) return;
+  for (const { tag, classes } of expected.markers) {
+    assert.ok(text.includes(`<${tag} class="${classes}`),
+      `${label}: the accepted illustration/navigation must render from its registered component`);
+  }
+  for (const videoId of expected.videoIds) {
+    assert.ok(text.includes(`videoid="${videoId}"`), `${label}: the source YouTube video must render`);
+  }
+}
 const originalWorkerHash = sha256(await readFile(originalWorker));
 const scratch = await mkdtemp(join(tmpdir(), 'datadocks-publication-test-'));
 let server;
@@ -271,6 +375,35 @@ export default {
   }
   assert.ok(!staticSitemap.text.includes('/_build/'), 'Static sitemap exposed build-only samples');
 
+  // The setup checklist is evergreen, separately eligible on deployment today.
+  // Its source body/components remain accepted, and the regular publication gate
+  // still keeps it out of the curated evergreen views before its own timestamp.
+  const evergreenCutoff = Date.parse(evergreenChecklist.pubDate);
+  for (const [phase, instant] of [['before', evergreenCutoff - 1], ['exact', evergreenCutoff], ['after', evergreenCutoff + 1]]) {
+    const published = phase !== 'before';
+    const label = `Evergreen checklist ${phase}`;
+    const result = await request(articlePath(evergreenChecklist), instant);
+    assert.equal(result.response.status, published ? 200 : 404, `${label}: article availability`);
+    assertBoundedCache(result.response, label);
+    if (published) {
+      assert.ok(result.text.includes(`rel="canonical" href="https://datadocks.com${articlePath(evergreenChecklist)}"`),
+        `${label}: canonical article URL must render`);
+      assert.ok(result.text.includes('https://log.logcluster.org/en/site-selection-planning'), `${label}: accepted source citation must render`);
+      assertIntegratedContent(result.text, evergreenChecklist, label);
+    } else {
+      assert.ok(!result.text.includes(evergreenChecklist.title), `${label}: unpublished article content leaked`);
+      assert.match(result.response.headers.get('x-robots-tag') || '', /noindex/i);
+    }
+    checks++;
+    for (const path of ['/', '/posts', '/sitemap-posts.xml']) {
+      const overview = await request(path, instant);
+      assert.equal(overview.response.status, 200, `${label}: ${path} availability`);
+      assert.equal(overview.text.includes(articlePath(evergreenChecklist)), published,
+        `${label}: ${path} must follow evergreen publication eligibility`);
+      checks++;
+    }
+  }
+
   // Exercise the actual Cloudflare artifact, including static-asset fallback.
   for (const path of [
     '/wireframes', '/wireframes.html', '/wireframes/index.html',
@@ -307,6 +440,19 @@ export default {
         assert.ok(!/noindex/i.test(response.headers.get('x-robots-tag') || ''), `${label}: published article is noindex`);
         assert.ok(!/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(text),
           `${label}: published article contains a noindex meta tag`);
+        assertIntegratedContent(text, slot, label);
+        if (slot.slug === 'stop-hiding-missing-stock') {
+          assert.match(text, /<lite-youtube\b[^>]*videoid="EBz5ZOUYNZY"/,
+            `${label}: the article must embed the reviewed longform video`);
+          assert.match(text, /<input\b(?=[^>]*type="checkbox")(?=[^>]*class="ddsr-toggle")(?=[^>]*aria-controls="ddsr-result")[^>]*>/,
+            `${label}: the stock-record interaction must render its accessible toggle`);
+          assert.match(text, /<div\b(?=[^>]*id="ddsr-result")(?=[^>]*aria-live="polite")[^>]*>/,
+            `${label}: the stock-record result must remain an accessible live region`);
+          assert.match(text, /<a\b[^>]*href="#book-demo"[^>]*>\s*See how DataDocks could work at your warehouse\s*<\/a>/,
+            `${label}: the article CTA must open the existing booking capture`);
+          assert.match(text, /<dialog\b(?=[^>]*id="demo-capture-dialog")(?=[^>]*data-standalone)[^>]*>/,
+            `${label}: the article must include the standalone email-capture dialog`);
+        }
       } else {
         assert.match(response.headers.get('x-robots-tag') || '', /noindex/i,
           `${label}: unpublished article needs an explicit noindex response`);
