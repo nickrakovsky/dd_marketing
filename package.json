@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
-    "@astrojs/cloudflare": "^13.1.10",
+    "@astrojs/cloudflare": "12.6.13",
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/partytown": "^2.1.7",
     "@astrojs/react": "^4.4.2",
@@ -86,7 +86,6 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.25",
-    "jimp": "^1.6.1",
     "lucide-react": "^0.555.0",
     "marked": "^18.0.5",
     "next-themes": "^0.4.6",
@@ -108,7 +107,6 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@lhci/cli": "^0.15.1",
-    "@playform/inline": "^0.1.4",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "^6.9.1",
