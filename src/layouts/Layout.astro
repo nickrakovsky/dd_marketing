@@ -11,6 +11,7 @@ import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR }
 import { VENDOR_ASSETS, bentoScriptPath } from '../lib/vendor-assets.mjs';
 import AsyncStyles from '../components/AsyncStyles.astro';
 import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from '../lib/campaign-pages.mjs';
+import { seoMetadata } from '../data/seo-metadata';
 
 interface Props {
     title: string;
@@ -91,6 +92,8 @@ const pathname = Astro.url.pathname === '/'
   : Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '');
 
 const canonicalURL = new URL(pathname, Astro.site);
+const searchTitle = seoMetadata[pathname]?.title ?? title;
+const searchDescription = seoMetadata[pathname]?.description ?? description;
 const socialImageURL = new URL(image, Astro.site);
 const isCampaignPage = isCampaignLandingPath(pathname);
 const robots = isCampaignPage ? CAMPAIGN_ROBOTS : noindex ? 'noindex, follow' : 'index, follow';
@@ -151,8 +154,8 @@ const graph: any[] = [
            : "ItemPage",
     "@id": canonicalURL.toString(),
     "url": canonicalURL.toString(),
-    "name": title,
-    "description": description,
+    "name": searchTitle,
+    "description": searchDescription,
     "isPartOf": { "@id": "https://datadocks.com/#website" },
     "primaryImageOfPage": { "@type": "ImageObject", "url": socialImageURL.toString() },
     "accessibilityControl": ["fullKeyboardControl", "fullMouseControl"],
@@ -368,8 +371,8 @@ const jsonLd = {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <AsyncStyles />
-        <title>{title}</title>
-        <meta name="description" content={description} />
+        <title>{searchTitle}</title>
+        <meta name="description" content={searchDescription} />
         <link rel="canonical" href={canonicalURL} />
         <meta name="robots" content={robots} />
         <meta name="generator" content={Astro.generator} />
@@ -377,15 +380,15 @@ const jsonLd = {
 
         <meta property="og:type" content={type} />
         <meta property="og:url" content={canonicalURL} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
+        <meta property="og:title" content={searchTitle} />
+        <meta property="og:description" content={searchDescription} />
         <meta property="og:image" content={socialImageURL} />
         <meta property="og:site_name" content="DataDocks" />
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={canonicalURL} />
-        <meta property="twitter:title" content={title} />
-        <meta property="twitter:description" content={description} />
+        <meta property="twitter:title" content={searchTitle} />
+        <meta property="twitter:description" content={searchDescription} />
         <meta property="twitter:image" content={socialImageURL} />
         <meta name="twitter:creator" content="@datadocks" />
 
