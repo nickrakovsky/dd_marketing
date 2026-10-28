@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import approvedDrift from '../../assets/blog-images/warehouse-audit-drift-approved-v1.png';
 import Cite from '../Cite.astro';
 import BibliographyItem from '../BibliographyItem.astro';
@@ -55,7 +56,7 @@ const inventoryTrail = [
 
   <figure id="audit-drift-figure" class="not-prose audit-drift-figure" aria-label="Operational drift and corrective action">
     <div class="audit-drift-artwork">
-      <img src={approvedDrift.src} width={approvedDrift.width} height={approvedDrift.height} alt="Illustrative graph of day-to-day practice drifting below an agreed standard. Audit identifies the departure. Corrective action branches into full recovery if the action works and a lower path if it does not. Follow-up checks the result. Warehouse illustrations show records, stock movement and review." loading="lazy" decoding="async" />
+      <Image src={approvedDrift} format="webp" quality={85} widths={[640, 960, 1280, 1536]} sizes="(min-width: 1024px) 960px, calc(100vw - 48px)" alt="Illustrative graph of day-to-day practice drifting below an agreed standard. Audit identifies the departure. Corrective action branches into full recovery if the action works and a lower path if it does not. Follow-up checks the result. Warehouse illustrations show records, stock movement and review." loading="lazy" decoding="async" />
     </div>
     <figcaption>Illustrative drift and recovery</figcaption>
   </figure>
