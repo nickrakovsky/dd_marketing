@@ -1,0 +1,51 @@
+---
+import './stock-record.css';
+---
+
+<figure class="dd-stock-record not-prose" aria-labelledby="ddsr-title" aria-describedby="ddsr-caption">
+  <header class="ddsr-heading">
+    <p class="ddsr-eyebrow">One pallet. Two different counts.</p>
+    <h3 id="ddsr-title">The stock changed.<br />Did the record?</h3>
+    <p>12 pallets received. One damaged pallet removed from available stock.</p>
+  </header>
+
+  <label class="ddsr-control" for="ddsr-record-damage" aria-label="Record the damaged pallet">
+    <input id="ddsr-record-damage" type="checkbox" class="ddsr-toggle" aria-controls="ddsr-result" />
+    <span><strong>Record the damaged pallet</strong><span>Update the stock available to pick.</span></span>
+  </label>
+
+  <div class="ddsr-comparison" aria-hidden="true">
+    <div class="ddsr-count">
+      <p class="ddsr-label">The stock record</p>
+      <div class="ddsr-pallets">
+        {Array.from({ length: 12 }, (_, index) => (
+          <svg class:list={['ddsr-pallet', { 'ddsr-extra': index === 11 }]} viewBox="0 0 50 48" focusable="false">
+            <rect class="ddsr-box" x="5" y="3" width="40" height="31" rx="2" />
+            <path class="ddsr-seam" d="M25 3v12m-7 10h14" />
+            <path class="ddsr-base" d="M3 39h44M8 39v6m17-6v6m17-6v6" />
+          </svg>
+        ))}
+      </div>
+      <p class="ddsr-total"><span class="ddsr-before">12</span><span class="ddsr-after">11</span><span>available to pick</span></p>
+    </div>
+    <div class="ddsr-count">
+      <p class="ddsr-label">What is actually available</p>
+      <div class="ddsr-pallets">
+        {Array.from({ length: 12 }, (_, index) => (
+          <svg class:list={['ddsr-pallet', { 'ddsr-removed': index === 11 }]} viewBox="0 0 50 48" focusable="false">
+            <rect class="ddsr-box" x="5" y="3" width="40" height="31" rx="2" />
+            <path class="ddsr-seam" d="M25 3v12m-7 10h14" />
+            <path class="ddsr-base" d="M3 39h44M8 39v6m17-6v6m17-6v6" />
+          </svg>
+        ))}
+      </div>
+      <p class="ddsr-total">11<span>usable pallets</span></p>
+    </div>
+  </div>
+
+  <div class="ddsr-result" id="ddsr-result" aria-live="polite" aria-atomic="true">
+    <div class="ddsr-before"><strong>1 pallet shown as available that cannot be picked</strong><p>The record shows 12 available. Only 11 are usable. The damage explains the difference, but the record does not.</p></div>
+    <div class="ddsr-after"><strong>The record now matches: 11 available</strong><p>The same 11 usable pallets remain. Recording the damage explains why the twelfth is no longer available.</p></div>
+  </div>
+  <figcaption id="ddsr-caption">Illustrative counts. This example has one known cause: recorded damage explains the difference. Other missing stock still needs investigating.</figcaption>
+</figure>

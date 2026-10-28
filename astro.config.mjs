@@ -10,32 +10,36 @@ import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import matter from 'gray-matter';
 import Beasties from 'beasties';
+import { collectPublicationStyles, finishPublicationStyles, withCspSafeStylesheets } from './scripts/publication-build.mjs';
+import { prepareScriptPolicy } from './scripts/script-csp.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
+import precompiledImages from './integrations/precompiled-images.mjs';
+import internalWorkspace from './integrations/internal-workspace.mjs';
+import publicationBoundary from './integrations/publication-boundary.mjs';
+import verifiedVendorAssets from './integrations/verified-vendor-assets.mjs';
+import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
+import { isCampaignLandingPath } from './src/lib/campaign-pages.mjs';
+import { assertCampaignSources, assertCampaignOutput } from './scripts/campaign-isolation.mjs';
 
-// Build a map of post slugs to their most recent date (updatedDate or pubDate)
-const postsDir = path.resolve('./src/content/posts');
-const postDateMap = new Map();
-if (fs.existsSync(postsDir)) {
-  for (const file of fs.readdirSync(postsDir)) {
-    if (!file.endsWith('.mdx') && !file.endsWith('.md')) continue;
-    const content = fs.readFileSync(path.join(postsDir, file), 'utf-8');
-    const { data } = matter(content);
-    const slug = file.replace(/\.mdx?$/, '');
-    const date = data.updatedDate ? new Date(data.updatedDate) : data.pubDate ? new Date(data.pubDate) : null;
-    if (date && !isNaN(date.getTime())) {
-      postDateMap.set(`https://datadocks.com/posts/${slug.toLowerCase()}`, date);
-    }
-  }
-}
+const analyticsWorkers = partytown({ config: { forward: BENTO_PARTYTOWN_FORWARD } });
+const configureAnalyticsWorkers = analyticsWorkers.hooks['astro:config:setup'];
+analyticsWorkers.hooks['astro:config:setup'] = (context) => {
+  // Local analytics are inactive; their worker crashes the embedded preview.
+  if (context.command !== 'dev') return configureAnalyticsWorkers(context);
+};
 
 // https://astro.build/config
 export default defineConfig({
+  // Local previews are reviewed by the editor; omit the automatic dev audits.
+  devToolbar: { enabled: false },
   output: 'server',
   adapter: cloudflare({
-    imageService: 'compile',
+    imageService: 'custom',
+    workerEntryPoint: { path: 'src/worker.ts' },
   }),
+
+  image: { service: { entrypoint: './src/lib/images/service.ts' } },
 
   site: 'https://datadocks.com',
   base: '/',
@@ -45,6 +49,9 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   vite: {
+    // The deployed Worker needs React's edge renderer; local development runs in Node.
+    resolve: { alias: process.env.NODE_ENV === 'production'
+      ? [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] : [] },
     build: {
       cssCodeSplit: false,
     },
@@ -58,6 +65,8 @@ export default defineConfig({
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
+    '/posts/datadocks-vs-opendock': '/datadocks-vs-opendock',
+    '/posts/comparison': '/comparison',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
     '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
@@ -68,38 +77,25 @@ export default defineConfig({
   },
 
   integrations: [
+    internalWorkspace(),
     {
-      name: 'dev-only-pages',
+      name: 'publication-build-artifacts',
       hooks: {
         'astro:config:setup': ({ injectRoute, command }) => {
-          if (command === 'dev') {
-            injectRoute({
-              pattern: '/sales-one-pager',
-              entrypoint: './src/offline-pages/sales-one-pager.astro'
-            });
-            injectRoute({
-              pattern: '/internal/marketing-pdf',
-              entrypoint: './src/offline-pages/marketing-pdf.astro'
-            });
-            injectRoute({
-              pattern: '/brand-book',
-              entrypoint: './src/offline-pages/brand-book.astro'
-            });
+          if (command === 'build') {
+            assertCampaignSources();
+            injectRoute({ pattern: '/_build/publication/[...path]', entrypoint: './src/build-pages/publication-artifacts.astro', prerender: true });
           }
         },
         'astro:build:done': async ({ dir }) => {
-          const offlinePath = fileURLToPath(new URL('_offline_print', dir));
-          if (fs.existsSync(offlinePath)) {
-            fs.rmSync(offlinePath, { recursive: true, force: true });
-          }
-
           // Cloudflare _routes.json has a 100-entry limit.
-          // Collapse individual /posts/*, /integrations/*, /datadocks-features/* into wildcards.
+          // Collapse static sections only. Runtime publication routes must reach the Worker.
           const routesPath = fileURLToPath(new URL('_routes.json', dir));
           if (fs.existsSync(routesPath)) {
             const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
-            const wildcardPrefixes = ['/posts/', '/integrations/', '/datadocks-features/', '/benefits/'];
+            const wildcardPrefixes = ['/news/', '/integrations/', '/datadocks-features/', '/benefits/'];
             routes.exclude = routes.exclude.filter(rule => {
+              if (rule === '/*.html' || isInternalPath(rule) || rule.startsWith('/posts/') || rule.startsWith('/videos/')) return false;
               return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
             });
             wildcardPrefixes.forEach(prefix => {
@@ -108,116 +104,115 @@ export default defineConfig({
                 routes.exclude.push(wildcard);
               }
             });
+            // A directory wildcard does not cover the hub's slashless URL.
+            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', ...internalPrefixes.map(prefix => prefix + '*'), '/brand-assets/*']) {
+              if (!routes.include.includes(route)) routes.include.push(route);
+            }
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
 
-          // Critical-CSS inlining for blog posts ONLY (dist/posts/*.html).
-          // The site ships a single shared stylesheet (cssCodeSplit stays false).
-          // On /posts/ pages that one file is render-blocking and delays LCP
-          // (~577ms). Beasties inlines the above-the-fold CSS into <head> and
-          // rewrites the <link> to load the SAME single file asynchronously, so
-          // first paint no longer waits on it. Scoped to /posts/ so every other
-          // page (home, features, etc.) is left byte-for-byte unchanged.
+          // ---------------------------------------------------------------
+          // Critical-CSS inlining for EVERY prerendered page.
+          //
+          // The site ships ONE shared stylesheet (cssCodeSplit stays false):
+          // ~163KB raw / ~20KB brotli. As a plain <link rel="stylesheet"> it is
+          // render-blocking, so first paint cannot happen until it has been
+          // requested, downloaded and parsed. On a real mobile connection that
+          // is a whole extra round-trip after the HTML — measured at 1.6Mbps /
+          // 150ms RTT / 6x CPU, a blog post went 660ms -> 1824ms FCP with the
+          // blocking link instead of inlined critical CSS.
+          //
+          // This used to be scoped to /posts/ and /datadocks-features/ only,
+          // which left the home page, /posts hub, /benefits/*, /integrations/*,
+          // /videos/*, the keyword landing pages and every root-level page
+          // blocking on that stylesheet — the slowest URLs on the site by a
+          // wide margin. Beasties now runs over all of dist: it inlines the
+          // above-the-fold CSS into <head> and rewrites the <link> to load the
+          // SAME shared file asynchronously, so first paint never waits on it.
+          //
+          // `reduceInlineStyles: false` is required, not cosmetic:
+          //   1. Layout.astro emits the real @font-face rules (Bruta,
+          //      DD-Recoleta) and the metric-override fallback faces in an
+          //      inline <style>. There is no external copy. With the default
+          //      (true) Beasties treats that block as prunable and — because
+          //      inlineFonts is false — deletes the faces outright, so the
+          //      webfonts vanish, the Bruta preload goes unused, and text falls
+          //      back to Georgia/Impact. Leaving inline styles alone keeps them.
+          //   2. Feature pages inline pre-rendered diagram SVGs that each carry
+          //      their own <style>. Hoisting those into a merged <head> block
+          //      detaches diagram CSS from its SVG and mangles the diagrams.
           const distDir = fileURLToPath(dir);
-          const postsDistDir = path.join(distDir, 'posts');
-          if (fs.existsSync(postsDistDir)) {
-            const beasties = new Beasties({
-              path: distDir,          // resolve /_astro/*.css from the build root
-              publicPath: '/',
-              preload: 'swap',        // async-load the full sheet, apply on load
-              pruneSource: false,     // keep the shared external file intact for other pages
-              inlineFonts: false,     // fonts already handled in Layout.astro
-              logLevel: 'silent',
-            });
-            // Beasties strips @font-face rules from the inline critical CSS when
-            // inlineFonts:false. On posts those faces live ONLY in the inline
-            // Layout.astro <style> (there's no external copy), so Beasties deletes
-            // them outright: the real webfonts (Bruta/DD-Recoleta) vanish, the Bruta
-            // preload goes unused, and text falls back to Georgia/Impact. We fix this
-            // by capturing BOTH font-face sets from the original HTML (before Beasties
-            // sees them) and re-injecting them into <head> after processing:
-            //   1. Real webfonts — @font-face with url(...woff2). Extracted per-file so
-            //      the content-hashed /_astro paths always match this exact build (no
-            //      hardcoding that can drift when Astro rehashes).
-            //   2. Metric-override fallbacks — @font-face with src:local(...). These
-            //      size-match Impact/Georgia to Bruta/Recoleta so text does NOT shift
-            //      when the real webfont swaps in (font-display:swap); without them the
-            //      swap causes CLS, worst on body text (Recoleta isn't preloaded).
-            // Both must be in the critical inline CSS (not the async sheet) to apply at
-            // first paint.
-            const FALLBACK_FONT_FACES = `@font-face{font-family:'Recoleta-Fallback';src:local('Georgia');size-adjust:98.7952%;ascent-override:101.2195%;descent-override:36.4252%;line-gap-override:0%}@font-face{font-family:'Bruta-Fallback';src:local('Impact');size-adjust:102.5000%;ascent-override:73.1707%;descent-override:24.3902%;line-gap-override:33.1707%}`;
-            const postFiles = fs.readdirSync(postsDistDir).filter(f => f.endsWith('.html'));
-            let processed = 0;
-            let missingRealFaces = 0;
-            for (const file of postFiles) {
-              const filePath = path.join(postsDistDir, file);
-              try {
-                const html = fs.readFileSync(filePath, 'utf-8');
-                // Capture the real webfont faces from the ORIGINAL html before Beasties
-                // strips them. Match only @font-face blocks containing url(...).
-                const realFaces = (html.match(/@font-face\s*\{[^}]*url\([^}]*\}/g) || []).join('');
-                if (!realFaces) missingRealFaces++;
-                let inlined = await beasties.process(html);
-                inlined = inlined.replace('</head>', `<style>${realFaces}${FALLBACK_FONT_FACES}</style></head>`);
-                fs.writeFileSync(filePath, inlined);
-                processed++;
-              } catch (err) {
-                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
+          const beasties = new Beasties({
+            path: distDir,          // resolve /_astro/*.css from the build root
+            publicPath: '/',
+            preload: 'swap',        // async-load the full sheet, apply on load
+            pruneSource: false,     // keep the shared external file intact
+            inlineFonts: false,     // fonts are handled in Layout.astro
+            reduceInlineStyles: false, // never touch inline <style> — see above
+            logLevel: 'silent',
+          });
+
+          const collectHtml = (dirPath) => {
+            const out = [];
+            for (const entry of fs.readdirSync(dirPath, { withFileTypes: true })) {
+              const full = path.join(dirPath, entry.name);
+              if (entry.isDirectory()) {
+                out.push(...collectHtml(full));
+              } else if (entry.name.endsWith('.html')) {
+                out.push(full);
               }
             }
-            console.log(`[critical-css] inlined critical CSS + font faces for ${processed}/${postFiles.length} blog posts`);
-            if (missingRealFaces > 0) {
-              console.warn(`[critical-css] WARNING: ${missingRealFaces} post(s) had no real @font-face url() to preserve — check Layout.astro font block`);
+            return out;
+          };
+
+          const publicationStyles = {};
+          const htmlFiles = collectHtml(distDir);
+          // Include runtime/future render samples before their normal cleanup.
+          // Fail the build if a paid-only page leaks into organic discovery.
+          assertCampaignOutput(distDir);
+          // Include the private render samples before their normal cleanup so
+          // future publication states share the reviewed script allowlist.
+          prepareScriptPolicy(distDir);
+          let processed = 0;
+          let alreadyAsync = 0;
+          let missingRealFaces = 0;
+          for (const filePath of htmlFiles) {
+            const rel = path.relative(distDir, filePath);
+            try {
+              const html = fs.readFileSync(filePath, 'utf-8');
+              // Nothing render-blocking left to fix (e.g. a page with no
+              // stylesheet link at all) — leave it byte-for-byte unchanged.
+              if (!/<link[^>]+rel="stylesheet"[^>]+href="\/_astro\//.test(html)) {
+                alreadyAsync++;
+                continue;
+              }
+              const inlined = withCspSafeStylesheets(await beasties.process(html));
+              collectPublicationStyles(filePath, distDir, html, inlined, publicationStyles);
+              // Guard the font regression described above: the real webfont
+              // faces must survive into the output. If they ever stop doing so,
+              // fail the build instead of silently shipping Georgia/Impact to
+              // every visitor.
+              if (!/@font-face[^}]*url\(/.test(inlined)) {
+                missingRealFaces++;
+                console.warn(`[critical-css] ${rel} lost its real @font-face url()`);
+              }
+              fs.writeFileSync(filePath, inlined);
+              processed++;
+            } catch (err) {
+              if (rel.startsWith('_build/publication/')) throw err;
+              console.warn(`[critical-css] skipped ${rel}: ${err.message}`);
             }
           }
-
-          // Critical-CSS inlining for /datadocks-features/ pages.
-          // Same problem as /posts/: the single shared stylesheet is
-          // render-blocking (~150 ms of the 405 ms style.css fetch shows up as
-          // "Render-blocking requests" on these pages).
-          //
-          // This uses a SEPARATE Beasties instance from the posts one above,
-          // configured with `reduceInlineStyles: false`, for two reasons:
-          //   1. Feature pages inline pre-rendered diagram SVGs, and each SVG
-          //      carries its own <style> block. The default (true) would hoist
-          //      those into a merged <style> in <head>, detaching diagram CSS
-          //      from its SVG and risking mangled diagrams.
-          //   2. Leaving the Layout.astro inline <style> untouched means the real
-          //      @font-face rules survive, so the font re-injection workaround
-          //      the posts path needs does not apply here.
-          const featuresDistDir = path.join(distDir, 'datadocks-features');
-          if (fs.existsSync(featuresDistDir)) {
-            const featureBeasties = new Beasties({
-              path: distDir,
-              publicPath: '/',
-              preload: 'swap',
-              pruneSource: false,
-              inlineFonts: false,
-              reduceInlineStyles: false, // never touch inline <style> — see above
-              logLevel: 'silent',
-            });
-            const featureFiles = fs.readdirSync(featuresDistDir).filter(f => f.endsWith('.html'));
-            let featuresProcessed = 0;
-            for (const file of featureFiles) {
-              const filePath = path.join(featuresDistDir, file);
-              try {
-                const html = fs.readFileSync(filePath, 'utf-8');
-                fs.writeFileSync(filePath, await featureBeasties.process(html));
-                featuresProcessed++;
-              } catch (err) {
-                console.warn(`[critical-css] skipped ${file}: ${err.message}`);
-              }
-            }
-            console.log(`[critical-css] inlined critical CSS for ${featuresProcessed}/${featureFiles.length} feature pages`);
+          console.log(`[critical-css] inlined critical CSS for ${processed}/${htmlFiles.length} pages (${alreadyAsync} had no blocking stylesheet)`);
+          finishPublicationStyles(distDir, publicationStyles);
+          if (missingRealFaces > 0) {
+            throw new Error(`[critical-css] ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
           }
         }
       }
     },
-    partytown({
-      config: {
-        forward: BENTO_PARTYTOWN_FORWARD,
-      },
-    }),
+    verifiedVendorAssets(),
+    analyticsWorkers,
     tailwind(),
     react({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
@@ -226,22 +221,22 @@ export default defineConfig({
       include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
-      // Keyword landing pages are noindexed, so keep them out of the sitemap too.
-      filter: (page) => !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // This child sitemap evaluates publication dates on every request.
+      customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
+      // All article URLs belong to the runtime sitemap, including those already published.
+      // Internal namespaces are never published; document previews and paid landing pages are noindexed.
+      filter: (page) => !new URL(page).pathname.startsWith('/files/') && !isInternalPath(new URL(page).pathname) && !isCampaignLandingPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
           item.url = item.url.replace(/\/$/, '');
         }
-        // Add lastmod from post frontmatter if available
-        const postDate = postDateMap.get(item.url) || postDateMap.get(item.url + '/');
-        if (postDate) {
-          item.lastmod = postDate.toISOString();
-        }
-        // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
+        // Static pages omit lastmod; post dates are served by the runtime sitemap.
         return item;
       },
       customPages: [
+        'https://datadocks.com/',
+        'https://datadocks.com/posts',
         'https://datadocks.com/yard-management',
         'https://datadocks.com/datadocks-features/dock-dashboard',
         'https://datadocks.com/datadocks-features/carrier-portal',
@@ -251,7 +246,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/custom-rules',
         'https://datadocks.com/datadocks-features/data-validation',
         'https://datadocks.com/datadocks-features/notifications',
-        'https://datadocks.com/datadocks-features/live-editing',
         'https://datadocks.com/datadocks-features/access-anywhere',
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
@@ -264,6 +258,16 @@ export default defineConfig({
     // are now pre-rendered to static SVG by `npm run diagrams`. If mermaid
     // fences are ever needed in MDX, pre-render them the same way rather than
     // re-adding a global integration.
-    mdx()],
+    mdx(),
+    precompiledImages(),
+    {
+      name: 'campaign-discovery-output',
+      hooks: {
+        // Sitemap generators have finished; the earlier check also covered
+        // runtime/future HTML samples before they were removed.
+        'astro:build:done': ({ dir }) => assertCampaignOutput(fileURLToPath(dir)),
+      },
+    },
+    publicationBoundary()],
 
 });

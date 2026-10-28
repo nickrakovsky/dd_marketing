@@ -1,0 +1,46 @@
+---
+interface Props { kind: string; }
+const { kind } = Astro.props;
+---
+<svg viewBox="0 0 160 112" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <g stroke="var(--ink, #24211d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    {kind === 'plan' && <>
+      <rect x="30" y="21" width="100" height="76" rx="5" fill="var(--paper, #fff8ee)" />
+      <path d="M30 43h100M48 15v14m26-14v14m26-14v14" />
+      <path d="M43 57h15m-15 14h15m-15 14h15" stroke="var(--line, #9f8d78)" />
+      <rect x="69" y="53" width="45" height="12" rx="3" fill="var(--accent, #fe5000)" stroke="none" />
+      <path d="M69 77h18m-4-4 4 4-4 4" stroke="var(--accent, #fe5000)" />
+      <rect x="94" y="71" width="20" height="12" rx="3" stroke="var(--line, #9f8d78)" />
+    </>}
+    {kind === 'compare' && <>
+      <rect x="33" y="16" width="72" height="81" rx="5" fill="var(--paper, #fff8ee)" />
+      <path d="M48 34h40M48 49h22M48 64h22M48 79h14" stroke="var(--line, #9f8d78)" />
+      <circle cx="108" cy="73" r="26" fill="var(--paper, #fff8ee)" />
+      <path d="M108 57v16l11 7" stroke="var(--accent, #fe5000)" stroke-width="3" />
+      <path d="M89 33h8m-4-4v8" stroke="var(--accent, #fe5000)" />
+    </>}
+    {kind === 'improve' && <>
+      <path d="M27 29h64a7 7 0 0 1 7 7v30a7 7 0 0 1-7 7H54L40 86V73H27a7 7 0 0 1-7-7V36a7 7 0 0 1 7-7Z" fill="var(--paper, #fff8ee)" />
+      <path d="M43 47h31M43 57h20" stroke="var(--line, #9f8d78)" />
+      <path d="M111 44h21a7 7 0 0 1 7 7v28a7 7 0 0 1-7 7h-8v12l-13-12H90a7 7 0 0 1-7-7v-6" fill="var(--paper, #fff8ee)" />
+      <path d="m100 66 7 7 13-16" stroke="var(--accent, #fe5000)" stroke-width="3" />
+    </>}
+    {kind === 'facility' && <>
+      <path d="M18 91V43L80 18l62 25v48Z" fill="var(--paper, #fff8ee)" />
+      <path d="M18 43h124M34 91V57h30v34m32 0V57h30v34M34 67h30m-30 10h30m32-10h30m-30 10h30" />
+      <path d="M71 91V65h17v26" fill="var(--accent, #fe5000)" stroke="none" />
+      <path d="M10 96h140" stroke="var(--line, #9f8d78)" />
+    </>}
+    {kind === 'carrier' && <>
+      <rect x="11" y="34" width="90" height="46" rx="3" fill="var(--paper, #fff8ee)" />
+      <path d="M105 80V44h22l7 18h15v18Z" fill="var(--accent, #fe5000)" />
+      <path d="M112 50h10l4 12h-14Z" fill="var(--paper, #fff8ee)" />
+      <path d="M12 72h89M101 80h48" />
+      <g fill="var(--paper, #fff8ee)">
+        <circle cx="29" cy="83" r="8" /><circle cx="48" cy="83" r="8" />
+        <circle cx="111" cy="83" r="8" /><circle cx="138" cy="83" r="8" />
+      </g>
+      <path d="M10 96h140" stroke="var(--line, #9f8d78)" />
+    </>}
+  </g>
+</svg>

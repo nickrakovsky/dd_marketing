@@ -5,9 +5,11 @@ import { CALENDLY_BOOKING_URL } from "../lib/calendly-config.mjs";
 
 interface Props {
   isOrange?: boolean;
+  demoHref?: string;
+  featuresHref?: string;
 }
 
-const { isOrange = false } = Astro.props;
+const { isOrange = false, demoHref = CALENDLY_BOOKING_URL, featuresHref = '/#features' } = Astro.props;
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -20,15 +22,15 @@ const dropdownItems = [
 
 const textClass = isOrange
   ? "text-white hover:text-white/80"
-  : "text-foreground dark:text-gray-200 hover:text-foreground/70 dark:hover:text-gray-400";
+  : "text-foreground dark:text-[color:var(--blog-ink,#e5e7eb)] hover:text-foreground/70 dark:hover:text-[color:var(--blog-link,#9ca3af)]";
 
 const mobileTextClass = isOrange
   ? "text-white border-white/20"
-  : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700";
+  : "text-foreground dark:text-[color:var(--blog-ink,#e5e7eb)] border-[#e3d5c4a6] dark:border-[var(--blog-rule,#374151)]";
 
 const mobileBg = isOrange
   ? "bg-[#fd4f00] border-white/20"
-  : "bg-[#FFF8E9] dark:bg-gray-900 border-border dark:border-gray-700";
+  : "bg-[#FFF8E9] dark:bg-[var(--blog-canvas,#111827)] border-border dark:border-[var(--blog-rule,#374151)]";
 
 const desktopBtnClass = isOrange
   ? "bg-white text-[#fd4f00] hover:bg-black hover:text-white border-transparent hover:border-b-white"
@@ -40,14 +42,14 @@ const mobileBtnClass = isOrange
 
 const mobileDropdownBg = isOrange
   ? ""
-  : "bg-[#EFE2D2] dark:bg-gray-800";
+  : "bg-[#EFE2D2] dark:bg-[var(--blog-surface,#1f2937)]";
 
 const mobileDropdownLinkClass = isOrange
   ? "text-white/90 border-white/10 hover:text-white"
-  : "text-foreground dark:text-gray-200 border-[#e3d5c4a6] dark:border-gray-700 hover:text-[#665238] dark:hover:text-[#ff7635]";
+  : "text-foreground dark:text-[color:var(--blog-ink,#e5e7eb)] border-[#e3d5c4a6] dark:border-[var(--blog-rule,#374151)] hover:text-[#665238] dark:hover:text-[color:var(--blog-link,#ff7635)]";
 ---
 
-<nav class={`z-50 transition-colors duration-300 ${isOrange ? "relative bg-transparent" : "relative bg-[#FFF8E9] dark:bg-gray-900"}`} data-nav aria-label="Main">
+<nav class={`z-50 transition-colors duration-300 ${isOrange ? "relative bg-transparent" : "relative bg-[#FFF8E9] dark:bg-[var(--blog-canvas,#111827)]"}`} data-nav aria-label="Main">
   <div class="container mx-auto px-0 md:px-8 pt-4 md:pt-12 pb-4 md:pb-6">
     <div class="flex items-center justify-between flex-wrap min-h-[4rem] gap-2 sm:gap-4 px-4 md:px-0 py-2 md:py-0 w-full">
 
@@ -79,11 +81,11 @@ const mobileDropdownLinkClass = isOrange
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </button>
           <div class="absolute top-full left-0 mt-0 pt-2 w-56 z-50 hidden" data-dropdown-menu>
-            <div class="bg-[#EFE2D2] dark:bg-gray-800 border border-border dark:border-gray-700 rounded-[8px] overflow-hidden py-2 transition-colors duration-300">
+            <div class="bg-[#EFE2D2] dark:bg-[var(--blog-surface,#1f2937)] border border-border dark:border-[var(--blog-rule,#374151)] rounded-[8px] overflow-hidden py-2 transition-colors duration-300">
               {dropdownItems.map((item) => (
                 <a
                   href={item.href}
-                  class="block px-4 py-1.5 text-foreground dark:text-gray-200 hover:pl-6 hover:translate-x-1 hover:text-[#665238] dark:hover:text-[#ff7635] transition-all duration-300 font-recoleta text-base"
+                  class="block px-4 py-1.5 text-foreground dark:text-[color:var(--blog-ink,#e5e7eb)] hover:pl-6 hover:translate-x-1 hover:text-[#665238] dark:hover:text-[color:var(--blog-link,#ff7635)] transition-all duration-300 font-recoleta text-base"
                 >
                   {item.label}
                 </a>
@@ -92,16 +94,16 @@ const mobileDropdownLinkClass = isOrange
           </div>
         </div>
 
-        <a href="/#features" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Features</a>
+        <a href={featuresHref} class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Features</a>
         <a href={`${basePath}/posts`} class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Resources</a>
         <a href="/integrations" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Integrations</a>
-        <a href="https://booking.datadocks.com/sessions/new" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Login</a>
+        <a href="https://booking.datadocks.com/" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Login</a>
 
         <a
-          href={CALENDLY_BOOKING_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class={`inline-flex items-center justify-center whitespace-nowrap h-10 px-6 font-recoleta font-normal rounded-none text-[1.2rem] xl:text-[1.2rem] border-b-4 transition-all shadow-none ${desktopBtnClass}`}
+          href={demoHref}
+          target={demoHref.startsWith('#') ? undefined : '_blank'}
+          rel={demoHref.startsWith('#') ? undefined : 'noopener noreferrer'}
+          class={`blog-nav-cta inline-flex items-center justify-center whitespace-nowrap h-10 px-6 font-recoleta font-normal rounded-none text-[1.2rem] xl:text-[1.2rem] border-b-4 transition-all shadow-none ${desktopBtnClass}`}
         >
           Schedule a Demo
         </a>
@@ -110,7 +112,7 @@ const mobileDropdownLinkClass = isOrange
       <!-- Mobile hamburger -->
       <button
         aria-label="Toggle Navigation Menu"
-        class={`lg:hidden shrink-0 p-2 transition-colors duration-300 ${isOrange ? "text-white" : "text-foreground dark:text-gray-200"}`}
+        class={`lg:hidden shrink-0 p-2 transition-colors duration-300 ${isOrange ? "text-white" : "text-foreground dark:text-[color:var(--blog-ink,#e5e7eb)]"}`}
         data-mobile-toggle
       >
         <svg class="w-6 h-6" data-icon-menu xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
@@ -142,17 +144,18 @@ const mobileDropdownLinkClass = isOrange
           </div>
         </div>
 
-        <a href="/#features" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Features</a>
+        <a href={featuresHref} class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Features</a>
         <a href={`${basePath}/posts`} class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Resources</a>
         <a href="/integrations" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Integrations</a>
-        <a href="https://booking.datadocks.com/sessions/new" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Login</a>
+        <a href="https://booking.datadocks.com/" class={`px-4 py-3 font-recoleta border-b transition-colors duration-300 ${mobileTextClass}`} data-mobile-link>Login</a>
 
         <div class="p-0">
           <a
-            href={CALENDLY_BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            class={`w-full inline-flex items-center justify-center rounded-none border-b-4 transition-all shadow-none font-recoleta font-normal py-8 text-[1.2rem] ${mobileBtnClass}`}
+            href={demoHref}
+            target={demoHref.startsWith('#') ? undefined : '_blank'}
+            rel={demoHref.startsWith('#') ? undefined : 'noopener noreferrer'}
+            data-mobile-link
+            class={`blog-nav-cta w-full inline-flex items-center justify-center rounded-none border-b-4 transition-all shadow-none font-recoleta font-normal py-8 text-[1.2rem] ${mobileBtnClass}`}
           >
             Schedule a Demo
           </a>
@@ -218,3 +221,19 @@ const mobileDropdownLinkClass = isOrange
   initNav();
   document.addEventListener('astro:after-swap', initNav);
 </script>
+
+<style>
+  :global(html.dark[data-blog-theme]) .blog-nav-cta {
+    background: var(--blog-orange);
+    color: #fff;
+    font-family: Inter, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  :global(html.dark[data-blog-theme]) .blog-nav-cta:hover {
+    background: var(--blog-surface);
+    border-bottom-color: var(--blog-orange);
+    color: var(--blog-ink);
+  }
+</style>

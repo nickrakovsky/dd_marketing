@@ -1,0 +1,115 @@
+---
+const markup = `<figure class="dd-order-allocation not-prose" aria-labelledby="dd-p04-heading" aria-describedby="dd-p04-caption">
+  <h2 class="oa-heading" id="dd-p04-heading">What does covering the bigger order change?</h2>
+  <p class="oa-intro">The major account now needs 60 cases instead of 40. Customers B and C still need 30 each.</p>
+  <p class="oa-totals"><span><strong>120</strong> cases ordered</span><span><strong>100</strong> cases ready</span></p>
+  <fieldset class="oa-choices">
+    <legend>Redirect cases from B and C to the major account</legend>
+    <div class="oa-options">
+      <label class="oa-option"><input type="radio" name="dd-p04-scenario" value="move0" aria-controls="dd-p04-move0"><span>0 cases</span></label>
+      <label class="oa-option"><input type="radio" name="dd-p04-scenario" value="move10" aria-controls="dd-p04-move10"><span>10 cases</span></label>
+      <label class="oa-option"><input type="radio" name="dd-p04-scenario" value="move20" aria-controls="dd-p04-move20" checked><span>20 cases</span></label>
+    </div>
+  </fieldset>
+  <div class="oa-results" aria-live="polite" aria-atomic="true">
+    <section class="oa-panel oa-panel-move0" id="dd-p04-move0" aria-label="0 cases redirected">
+      <div class="oa-chart">
+        <p class="oa-chart-title">Share of each order covered by ready stock</p>
+        <div class="oa-axis" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span></div>
+        <div class="oa-row" data-customer="0" data-ordered="60" data-allocated="40" data-gap="20" data-coverage="67">
+          <div class="oa-row-heading"><span class="oa-customer">Major account</span><span class="oa-quantity">40 of 60 cases <strong class="oa-percent">67%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Major account: 40 of 60 cases allocated, 67 percent of the order covered; 20 cases still to cover.">
+            <defs><pattern id="dd-p04-hatch-move0-0" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="oa-gap-bg"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" class="oa-hatch"/></pattern></defs><path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="400" height="23" class="oa-allocated"/><rect x="400" y="1" width="200" height="23" fill="url(#dd-p04-hatch-move0-0)" class="oa-gap"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-row" data-customer="1" data-ordered="30" data-allocated="30" data-gap="0" data-coverage="100">
+          <div class="oa-row-heading"><span class="oa-customer">Customer B</span><span class="oa-quantity">30 of 30 cases <strong class="oa-percent">100%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Customer B: 30 of 30 cases allocated, 100 percent of the order covered; 0 cases still to cover.">
+            <path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="600" height="23" class="oa-allocated"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-row" data-customer="2" data-ordered="30" data-allocated="30" data-gap="0" data-coverage="100">
+          <div class="oa-row-heading"><span class="oa-customer">Customer C</span><span class="oa-quantity">30 of 30 cases <strong class="oa-percent">100%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Customer C: 30 of 30 cases allocated, 100 percent of the order covered; 0 cases still to cover.">
+            <path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="600" height="23" class="oa-allocated"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-legend" aria-hidden="true"><span><i class="oa-key"></i>Allocated now</span><span><i class="oa-key oa-key-gap"></i>Still to cover</span></div>
+      </div>
+      <p class="oa-takeaway">Keeping B and C’s allocations intact leaves the major account 20 cases short.</p>
+      <p class="oa-action">Cover the extra requirement or agree a change with the major account.</p>
+    </section>
+    <section class="oa-panel oa-panel-move10" id="dd-p04-move10" aria-label="10 cases redirected">
+      <div class="oa-chart">
+        <p class="oa-chart-title">Share of each order covered by ready stock</p>
+        <div class="oa-axis" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span></div>
+        <div class="oa-row" data-customer="0" data-ordered="60" data-allocated="50" data-gap="10" data-coverage="83">
+          <div class="oa-row-heading"><span class="oa-customer">Major account</span><span class="oa-quantity">50 of 60 cases <strong class="oa-percent">83%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Major account: 50 of 60 cases allocated, 83 percent of the order covered; 10 cases still to cover.">
+            <defs><pattern id="dd-p04-hatch-move10-0" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="oa-gap-bg"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" class="oa-hatch"/></pattern></defs><path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="500" height="23" class="oa-allocated"/><rect x="500" y="1" width="100" height="23" fill="url(#dd-p04-hatch-move10-0)" class="oa-gap"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-row" data-customer="1" data-ordered="30" data-allocated="25" data-gap="5" data-coverage="83">
+          <div class="oa-row-heading"><span class="oa-customer">Customer B</span><span class="oa-quantity">25 of 30 cases <strong class="oa-percent">83%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Customer B: 25 of 30 cases allocated, 83 percent of the order covered; 5 cases still to cover.">
+            <defs><pattern id="dd-p04-hatch-move10-1" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="oa-gap-bg"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" class="oa-hatch"/></pattern></defs><path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="500" height="23" class="oa-allocated"/><rect x="500" y="1" width="100" height="23" fill="url(#dd-p04-hatch-move10-1)" class="oa-gap"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-row" data-customer="2" data-ordered="30" data-allocated="25" data-gap="5" data-coverage="83">
+          <div class="oa-row-heading"><span class="oa-customer">Customer C</span><span class="oa-quantity">25 of 30 cases <strong class="oa-percent">83%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Customer C: 25 of 30 cases allocated, 83 percent of the order covered; 5 cases still to cover.">
+            <defs><pattern id="dd-p04-hatch-move10-2" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="oa-gap-bg"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" class="oa-hatch"/></pattern></defs><path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="500" height="23" class="oa-allocated"/><rect x="500" y="1" width="100" height="23" fill="url(#dd-p04-hatch-move10-2)" class="oa-gap"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-legend" aria-hidden="true"><span><i class="oa-key"></i>Allocated now</span><span><i class="oa-key oa-key-gap"></i>Still to cover</span></div>
+      </div>
+      <p class="oa-takeaway">The increase is only half covered, and two other orders now need replacement stock.</p>
+      <p class="oa-action">Find 5 replacement cases each for B and C, alongside the 10 still needed for the major account.</p>
+    </section>
+    <section class="oa-panel oa-panel-move20" id="dd-p04-move20" aria-label="20 cases redirected">
+      <div class="oa-chart">
+        <p class="oa-chart-title">Share of each order covered by ready stock</p>
+        <div class="oa-axis" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100%</span></div>
+        <div class="oa-row" data-customer="0" data-ordered="60" data-allocated="60" data-gap="0" data-coverage="100">
+          <div class="oa-row-heading"><span class="oa-customer">Major account</span><span class="oa-quantity">60 of 60 cases <strong class="oa-percent">100%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Major account: 60 of 60 cases allocated, 100 percent of the order covered; 0 cases still to cover.">
+            <path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="600" height="23" class="oa-allocated"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-row" data-customer="1" data-ordered="30" data-allocated="20" data-gap="10" data-coverage="67">
+          <div class="oa-row-heading"><span class="oa-customer">Customer B</span><span class="oa-quantity">20 of 30 cases <strong class="oa-percent">67%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Customer B: 20 of 30 cases allocated, 67 percent of the order covered; 10 cases still to cover.">
+            <defs><pattern id="dd-p04-hatch-move20-1" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="oa-gap-bg"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" class="oa-hatch"/></pattern></defs><path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="400" height="23" class="oa-allocated"/><rect x="400" y="1" width="200" height="23" fill="url(#dd-p04-hatch-move20-1)" class="oa-gap"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-row" data-customer="2" data-ordered="30" data-allocated="20" data-gap="10" data-coverage="67">
+          <div class="oa-row-heading"><span class="oa-customer">Customer C</span><span class="oa-quantity">20 of 30 cases <strong class="oa-percent">67%</strong></span></div>
+          <svg class="oa-bar" viewBox="0 0 600 25" preserveAspectRatio="none" role="img" aria-label="Customer C: 20 of 30 cases allocated, 67 percent of the order covered; 10 cases still to cover.">
+            <defs><pattern id="dd-p04-hatch-move20-2" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" class="oa-gap-bg"/><path d="M-2 2L2-2M0 10L10 0M8 12L12 8" class="oa-hatch"/></pattern></defs><path d="M0 0V25M150 0V25M300 0V25M450 0V25M600 0V25" class="oa-grid"/>
+            <rect x="0" y="1" width="400" height="23" class="oa-allocated"/><rect x="400" y="1" width="200" height="23" fill="url(#dd-p04-hatch-move20-2)" class="oa-gap"/><rect x="0" y="1" width="600" height="23" class="oa-order"/>
+          </svg>
+        </div>
+        <div class="oa-legend" aria-hidden="true"><span><i class="oa-key"></i>Allocated now</span><span><i class="oa-key oa-key-gap"></i>Still to cover</span></div>
+      </div>
+      <p class="oa-takeaway">Covering the increase leaves one-third of each other order needing replacement stock.</p>
+      <p class="oa-action">Find 10 replacement cases for B and 10 for C, and discuss any delivery changes.</p>
+    </section>
+  </div>
+  <figcaption class="oa-caption" id="dd-p04-caption">Hypothetical quantities for one interchangeable product. Percentages are rounded. The equal split between B and C is illustrative, not a priority rule. Unallocated cases are not necessarily late.</figcaption>
+</figure>
+`;
+import './order-allocation.css';
+// Unique radio and SVG IDs keep separate instances independent. No client script.
+const instanceId = `dd-orders-${crypto.randomUUID()}`;
+const content = markup.replaceAll('dd-p04', instanceId);
+---
+
+<Fragment set:html={content} />

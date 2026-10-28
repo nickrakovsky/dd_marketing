@@ -4,6 +4,7 @@ export interface Author {
   role: string;
   shortBio: string;
   linkedIn?: string;
+  type?: "Person" | "Organization";
 }
 
 export const authors: Record<string, Author> = {
@@ -23,7 +24,7 @@ export const authors: Record<string, Author> = {
     name: "Nick Rakovsky",
     slug: "nick-rakovsky",
     role: "CEO, DataDocks",
-    shortBio: "Nick is the CEO of DataDocks, the dock scheduling and yard management platform he co-founded in 2013. He leads product strategy and works directly with enterprise warehouse and distribution operations across North America.",
+    shortBio: "Nick is the creator and CEO of DataDocks, a dock scheduling and yard management platform serving customers internationally. He leads product strategy and works directly with warehouse and distribution teams.",
     linkedIn: "https://www.linkedin.com/in/nickrakovsky",
   },
   "Tim Branch": {
@@ -51,6 +52,7 @@ export const authors: Record<string, Author> = {
     shortBio: "Chris is a writer and editor with a background in retail merchandising. He covers supply chain operations, dock scheduling, and logistics technology with a focus on clarity and practical application.",
   },
   "DataDocks": {
+    type: "Organization",
     name: "DataDocks Team",
     slug: "datadocks-team",
     role: "DataDocks",
@@ -65,5 +67,5 @@ export const authors: Record<string, Author> = {
 };
 
 export function getAuthor(name: string): Author {
-  return authors[name] || authors["DataDocks"];
+  return authors[name === "DataDocks Team" ? "DataDocks" : name] || authors["DataDocks"];
 }

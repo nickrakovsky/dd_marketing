@@ -1,0 +1,91 @@
+---
+interface Props {
+  kind: 'brand' | 'retailer' | 'shopper' | 'direct';
+}
+
+const { kind } = Astro.props;
+const isPhone = kind === 'direct';
+---
+
+<svg
+  class="channel-artwork"
+  viewBox={isPhone ? '0 0 40 72' : '0 0 160 128'}
+  width={isPhone ? 40 : 160}
+  height={isPhone ? 72 : 128}
+  aria-hidden="true"
+  focusable="false"
+>
+  {kind === 'brand' && (
+    <g>
+      <ellipse class="surface" cx="80" cy="116" rx="64" ry="6" />
+      <rect class="soft shape-stroke" x="26" y="86" width="110" height="27" rx="2" />
+      <rect class="accent shape-stroke" x="23" y="80" width="116" height="10" rx="2" />
+      <path class="paper shape-stroke" d="m30 68 4-26 20 9 13-6 18 16 24 6q18 4 25 11v5H35q-8-3-5-15Z" />
+      <path class="soft shape-stroke" d="m34 42 20 9-7 21H30Z" />
+      <path class="surface shape-stroke" d="M29 73q17 6 35 4h70v7H35q-7-2-6-11Z" />
+      <path class="detail" d="m65 52 10 6m-4 1 10 6M112 100h13" />
+    </g>
+  )}
+
+  {kind === 'retailer' && (
+    <g>
+      <ellipse class="surface" cx="80" cy="116" rx="67" ry="6" />
+      <path class="surface shape-stroke" d="M24 40h112v73H24Z" />
+      <rect class="paper shape-stroke" x="22" y="25" width="116" height="21" rx="2" />
+      <path class="detail" d="M49 35h62" />
+      <path class="soft shape-stroke" d="m23 46-6 17h126l-6-17Z" />
+      <path class="accent" d="m40 46-4 17h19l1-17Zm32 0v17h18V46Zm34 0 2 17h19l-5-17Z" />
+      <path class="shape-stroke" d="M17 63h126" />
+      <rect class="glass shape-stroke" x="33" y="73" width="56" height="30" rx="1" />
+      <path class="paper shape-stroke" d="m41 85 9 3 5-3 10 7 13 2v5H41Z" />
+      <rect class="glass shape-stroke" x="101" y="73" width="25" height="40" rx="1" />
+      <path class="detail" d="M120 90v8" />
+      <path class="shape-stroke" d="M19 113h122" />
+    </g>
+  )}
+
+  {kind === 'shopper' && (
+    <g>
+      <ellipse class="surface" cx="80" cy="116" rx="49" ry="6" />
+      <path class="ink shape-stroke" d="M59 81h27l3 31H78l-7-22-2 22H57Z" />
+      <path class="paper shape-stroke" d="M57 109h12v7H50q0-5 7-7Zm21 0h11q8 2 8 7H78Z" />
+      <path class="soft shape-stroke" d="m57 52-12 21-6-2 12-23Zm27 1 12 20 10 6-5 7-13-9-13-17Z" />
+      <path class="accent shape-stroke" d="m61 44-11 5-7 15 13 5 4-9-2 24h30l-4-25 5 9 11-7-11-13-11-4Z" />
+      <path class="soft shape-stroke" d="M65 36h12v10q-6 6-12 0Z" />
+      <ellipse class="soft shape-stroke" cx="71" cy="28" rx="12" ry="14" />
+      <path class="ink" d="M59 29q-4-14 7-17 16-4 18 14l-8-4-2-5-7 7-6 1v6Z" />
+      <path class="soft shape-stroke" d="M96 86h24l4 28H93Z" />
+      <path class="shape-stroke" d="M102 86v-7q0-5 5-5t5 5v7" />
+    </g>
+  )}
+
+  {kind === 'direct' && (
+    <g>
+      <rect class="paper shape-stroke" x="4" y="2" width="32" height="68" rx="5" />
+      <rect class="glass" x="8" y="12" width="24" height="45" rx="1" />
+      <path class="detail" d="M16 7h8m-8 57h8" />
+      <path class="paper shape-stroke" d="m11 29 7 3 4-2 4 7 5 2v6H10Z" />
+      <path class="accent" d="M14 50h13v3H14Z" />
+    </g>
+  )}
+</svg>
+
+<style>
+  .channel-artwork {
+    display: block;
+    width: 100%;
+    height: auto;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .shape-stroke { stroke: var(--chart-ink, #302b25); stroke-width: 2.5; }
+  .detail { fill: none; stroke: var(--chart-muted, #6b5a48); stroke-width: 2; }
+  .paper { fill: var(--chart-paper, #fff8e9); }
+  .surface { fill: var(--chart-rule, #e5d3b3); }
+  .ink { fill: var(--chart-ink, #302b25); }
+  .accent { fill: var(--chart-accent, #fd4f00); }
+  .soft { fill: var(--chart-soft, #f8bc8d); }
+  .glass { fill: var(--chart-glass, #d9e3df); }
+</style>

@@ -1,0 +1,401 @@
+{
+  "version": "draft-2026-09-30-turn-2",
+  "status": "Editorial draft for human review; not an externally validated audit instrument",
+  "checks": [
+    {
+      "id": "INV01",
+      "area": "Inventory accuracy and storage",
+      "label": "Count versus record",
+      "question": "Do the quantities in selected locations agree with the inventory records for the same point in time?",
+      "criterion": "Establish the item, unit, location, count boundary and comparison time before interpreting a difference.",
+      "evidence": "Compare count notes with stock records and movements around the count; retain the sample, timing and any recount.",
+      "nextStep": "Resolve timing or unit uncertainty, record the unexplained variance and assign investigation before treating an adjustment as closure.",
+      "sources": [
+        "B02",
+        "B05",
+        "B06",
+        "B09",
+        "B10"
+      ],
+      "sourceLimit": "These sources support scoped comparisons, not a universal sampling rule, tolerance or counting procedure. B06 concerns its specified financial-audit framework."
+    },
+    {
+      "id": "INV02",
+      "area": "Inventory accuracy and storage",
+      "label": "Item, location and unit identity",
+      "question": "Can the team distinguish the item, storage location and handling unit without having to guess?",
+      "criterion": "Check against the operation's agreed item, location and unit definitions, including relevant pack-size changes.",
+      "evidence": "Trace selected labels, item records, locations and transaction entries; ask workers how similar-looking products or changed packs are distinguished.",
+      "nextStep": "Record the specific ambiguity and affected transactions, then identify who can correct the definition and check the resulting records.",
+      "sources": [
+        "B02",
+        "B09"
+      ],
+      "sourceLimit": "Record content varies by operation. Similar-SKU and pack-size checks are editorial applications, not findings attributed to every site or source."
+    },
+    {
+      "id": "INV03",
+      "area": "Inventory accuracy and storage",
+      "label": "Discrepancies and recurrence",
+      "question": "When stock discrepancies return, does the team investigate what happens between counts?",
+      "criterion": "Establish how discrepancies should be reported, investigated and closed, separately from correcting the balance.",
+      "evidence": "Follow selected recurring differences through adjustments, movement records, worker accounts and earlier actions; retain competing explanations and gaps.",
+      "nextStep": "Assign the next evidence request and an investigation owner. Identify what a later check would need to show before calling the problem resolved.",
+      "sources": [
+        "B05",
+        "B09"
+      ],
+      "sourceLimit": "B05 is one municipal audit; B09 is one distribution-centre field study. Neither establishes the cause of the reader's discrepancies."
+    },
+    {
+      "id": "FLOW01",
+      "area": "Receiving through dispatch",
+      "label": "Receipt identification and exceptions",
+      "question": "Can you trace what arrived, what was accepted and what happened to any discrepancy?",
+      "criterion": "Identify the receipt, acceptance and exception requirements for the goods and transaction being reviewed.",
+      "evidence": "Compare expected shipment details, receipt records and recorded damage or shortages; ask who decided the disposition and informed the next team.",
+      "nextStep": "Record any missing decision or broken record link, and assign the person responsible for resolving that receipt exception.",
+      "sources": [
+        "B02",
+        "B03"
+      ],
+      "sourceLimit": "Humanitarian operating guidance informs the evidence chain; its document names, notice periods and rejection rules are not universal."
+    },
+    {
+      "id": "FLOW02",
+      "area": "Receiving through dispatch",
+      "label": "Putaway and staging handoffs",
+      "question": "Do accepted goods reach the intended storage location with their status and records still clear?",
+      "criterion": "Confirm the site's putaway, staging and exception arrangements for the goods, including who owns each handoff.",
+      "evidence": "Trace selected receipts from staging to storage and record updates; observe delays, unclear ownership or goods awaiting a decision.",
+      "nextStep": "Separate an unrecorded movement from a physical delay, establish the dependency and assign the next responsible action.",
+      "sources": [
+        "B02",
+        "B03"
+      ],
+      "sourceLimit": "The sources support placement and movement records, not a universal maximum staging time or a prescribed warehouse layout."
+    },
+    {
+      "id": "FLOW03",
+      "area": "Receiving through dispatch",
+      "label": "Picking and dispatch verification",
+      "question": "Can the team connect the authorised order, prepared goods and recorded release to the same shipment?",
+      "criterion": "Establish the operation's order, verification and release requirements, including authority to resolve a mismatch.",
+      "evidence": "Compare selected pick or release instructions, item quantities, shipment records and handover details; examine how changes or shortages were communicated.",
+      "nextStep": "Identify the failed or uncertain handoff and its owner. Keep checking this shipment distinct from reviewing recurring process failures.",
+      "sources": [
+        "B02",
+        "B03"
+      ],
+      "sourceLimit": "The sources describe humanitarian pick/release records and dispatch checks; they do not supply a complete sector-specific picking audit."
+    },
+    {
+      "id": "FLOW04",
+      "area": "Receiving through dispatch",
+      "label": "Arrival timing and resource coordination",
+      "question": "Does the team have the information and resources needed for the arrivals and departures it must handle?",
+      "criterion": "Establish the relevant service commitments, operating constraints and responsibilities for communicating or changing the plan.",
+      "evidence": "Compare planned and actual timing with workload, staffing, available space and exception records across selected operating periods.",
+      "nextStep": "Investigate which constraint affected service before choosing an intervention; assign any unresolved coordination or resource decision to its owner.",
+      "sources": [
+        "B01",
+        "B03"
+      ],
+      "sourceLimit": "This comparison is an editorial method. The sources do not prove that scheduling caused a failure or that software would resolve it."
+    },
+    {
+      "id": "SPACE01",
+      "area": "Warehouse layout and flow",
+      "label": "Usable space and congestion",
+      "question": "Where does work queue or spill into space needed for another activity?",
+      "criterion": "Confirm the intended use and relevant constraints of each area for the operating conditions being examined.",
+      "evidence": "Observe selected busy and quieter periods; compare queues, space use, workload and available resources with the plan and worker explanations.",
+      "nextStep": "Distinguish a recurring constraint from an isolated event, and identify the evidence needed before changing capacity or layout.",
+      "sources": [
+        "B01",
+        "B04"
+      ],
+      "sourceLimit": "Observation guidance does not establish a universal capacity, aisle dimension or safe layout. Applicable technical criteria require separate confirmation."
+    },
+    {
+      "id": "SPACE02",
+      "area": "Warehouse layout and flow",
+      "label": "Slotting, travel and replenishment",
+      "question": "Does the placement of stock support the picking, replenishment and handling work people actually perform?",
+      "criterion": "Establish the relevant product, handling, access and workload requirements rather than assuming one arrangement suits every item.",
+      "evidence": "Follow selected pick and replenishment paths; compare item activity, travel, repeated interruptions and worker accounts with the placement rationale.",
+      "nextStep": "Record the constraint and competing explanations, then identify who should assess a proposed change and its effects.",
+      "sources": [
+        "B01",
+        "B04"
+      ],
+      "sourceLimit": "These sources support contextual assessment, not a universal golden zone, pick-path design or ergonomic prescription."
+    },
+    {
+      "id": "SPACE03",
+      "area": "Warehouse layout and flow",
+      "label": "Housekeeping and recurring obstructions",
+      "question": "When clutter or obstructions return, is there a clear owner and an explanation beyond clearing them again?",
+      "criterion": "Identify the site's relevant housekeeping, access and storage requirements and the responsibility for acting on exceptions.",
+      "evidence": "Compare current observations with earlier reports, assigned work and worker accounts of why material accumulates.",
+      "nextStep": "Follow the site's response arrangements for current concerns, then assign investigation of recurring causes and a check that the action worked.",
+      "sources": [
+        "B01",
+        "B04"
+      ],
+      "sourceLimit": "B04 provides British safety guidance from 2007. Do not infer a universal inspection frequency or an adequate response to a particular hazard."
+    },
+    {
+      "id": "EQUIP01",
+      "area": "Equipment and machinery",
+      "label": "Inspection and maintenance coverage",
+      "question": "Are the equipment inspections and maintenance required for this operation identifiable, assigned and supported by records?",
+      "criterion": "Confirm the applicable equipment instructions, inspection requirements and competence needed with the responsible equipment owner.",
+      "evidence": "Match selected equipment to its identity, inspection and maintenance records, due work and the people responsible.",
+      "nextStep": "Refer missing coverage or uncertain criteria to the appropriate owner or competent reviewer; do not fill the gap with a generic checklist.",
+      "sources": [
+        "B04"
+      ],
+      "sourceLimit": "B04 supports responsibility and inspection evidence, particularly for racking; current equipment-specific requirements remain to be verified."
+    },
+    {
+      "id": "EQUIP02",
+      "area": "Equipment and machinery",
+      "label": "Defect reports and operating restrictions",
+      "question": "Can people report an equipment defect and find out what restrictions or action apply?",
+      "criterion": "Establish the defect-reporting and response arrangements, including who is authorised to assess the equipment.",
+      "evidence": "Trace selected defect reports to decisions, communications and current operating status; ask affected workers what they were told.",
+      "nextStep": "Escalate missing or conflicting status information through the site's responsible owner. Keep any technical assessment with a person competent for that equipment.",
+      "sources": [
+        "B04"
+      ],
+      "sourceLimit": "This is an evidence and responsibility check, not a damage threshold, repair instruction or clearance to keep equipment in use."
+    },
+    {
+      "id": "EQUIP03",
+      "area": "Equipment and machinery",
+      "label": "Repair and return to use",
+      "question": "What evidence supports returning equipment to use after a reported defect or repair?",
+      "criterion": "Confirm the applicable acceptance requirements and who can authorise the change in operating status.",
+      "evidence": "Follow selected defects through repair records, assessment or checks required for acceptance, remaining restrictions and communication to users.",
+      "nextStep": "Keep missing acceptance evidence visible and refer the decision to the authorised owner; a completed work order alone may not answer the readiness question.",
+      "sources": [
+        "B04"
+      ],
+      "sourceLimit": "Acceptance steps vary by equipment and setting. The source does not establish a universal return-to-service procedure."
+    },
+    {
+      "id": "PEOPLE01",
+      "area": "People and workplace safety",
+      "label": "Site hazards and controls",
+      "question": "Do the controls for identified site hazards match the work being performed?",
+      "criterion": "Establish the applicable hazard assessments, requirements and control arrangements with the responsible safety and operating owners.",
+      "evidence": "Compare recorded controls with observations, worker accounts, reported concerns and changes in goods, equipment or activity.",
+      "nextStep": "Route an immediate concern through the site's response process. Assign unresolved control questions to the competent owner and record the evidence still needed.",
+      "sources": [
+        "B04"
+      ],
+      "sourceLimit": "This prompts assessment against applicable controls; it does not provide a complete current legal checklist or declare a workplace safe."
+    },
+    {
+      "id": "PEOPLE02",
+      "area": "People and workplace safety",
+      "label": "Competence and handover",
+      "question": "Do people know how to perform their assigned work and pass unresolved issues to the next responsible person?",
+      "criterion": "Confirm the task's competence requirements and the site's arrangements for handover, exceptions and escalation.",
+      "evidence": "Compare preparation records with explanations and observed work; follow a selected unresolved issue across a shift or team boundary.",
+      "nextStep": "Identify whether the gap concerns preparation, instructions, authority or communication, then assign support and a suitable follow-up check.",
+      "sources": [
+        "B01",
+        "B04"
+      ],
+      "sourceLimit": "The selected sources support worker questions and safety responsibilities; a detailed warehouse-specific shift-handover method needs additional procedural evidence."
+    },
+    {
+      "id": "PEOPLE03",
+      "area": "People and workplace safety",
+      "label": "Workload, worker accounts and practical constraints",
+      "question": "What makes it difficult for people to follow the agreed process or report a problem?",
+      "criterion": "Establish the expected work, available resources and reporting responsibilities for the shifts and tasks reviewed.",
+      "evidence": "Combine worker accounts with workload, interruption and exception records; examine whether instructions or performance measures pull people in different directions.",
+      "nextStep": "Preserve differing accounts, test the explanation against records and observations, and escalate resource or authority constraints to the person who can change them.",
+      "sources": [
+        "B01",
+        "B09"
+      ],
+      "sourceLimit": "B09 describes one distribution centre. Its findings do not establish the reader's incentives or behaviour, or settle labour-rights compliance."
+    },
+    {
+      "id": "GOODS01",
+      "area": "Goods protection and specific requirements",
+      "label": "Access, custody and loss controls",
+      "question": "Can the operation account for who had custody of selected goods and how unexplained losses are handled?",
+      "criterion": "Identify the applicable custody, access and loss-reporting controls for the goods, ownership arrangement and review purpose.",
+      "evidence": "Trace selected goods through movement and handover records; compare any access records, loss reports and assigned investigations.",
+      "nextStep": "Separate a missing record from an established loss or wrongdoing, and assign unresolved custody or security questions to the appropriate owner.",
+      "sources": [
+        "B02",
+        "B06"
+      ],
+      "sourceLimit": "The sources support movement records and scoped custody questions, not a complete security-control assessment. Access-control criteria need operation-specific support."
+    },
+    {
+      "id": "GOODS02",
+      "area": "Goods protection and specific requirements",
+      "label": "Product condition and traceability",
+      "question": "Can the team establish the identity, recorded condition and relevant movement history of selected goods?",
+      "criterion": "Confirm the product, customer and applicable assurance requirements, including which identifiers and condition records matter.",
+      "evidence": "Trace selected goods through receipt, storage and release records, including condition exceptions, holds and disposition decisions where relevant.",
+      "nextStep": "Identify the break in the evidence chain and the responsible product or quality owner; preserve uncertainty about condition or acceptability until assessed.",
+      "sources": [
+        "B02",
+        "B03"
+      ],
+      "sourceLimit": "These sources offer traceability and condition-record context. Actual food, pharmaceutical or other product criteria require an applicable specialist source."
+    },
+    {
+      "id": "GOODS03",
+      "area": "Goods protection and specific requirements",
+      "label": "Controlled goods and customs requirements",
+      "question": "Where controlled goods or customs arrangements apply, can the team identify the requirements and produce the relevant evidence?",
+      "criterion": "Name the actual goods, activities, jurisdiction and programme, then establish the applicable criteria with the responsible specialist.",
+      "evidence": "Compare selected movement, status and exception records with those criteria and any required permissions or declarations.",
+      "nextStep": "Record the precise unanswered requirement and assign its resolution to the appropriate compliance owner before drawing an assurance conclusion.",
+      "sources": [
+        "B02",
+        "B03",
+        "B11"
+      ],
+      "sourceLimit": "B11 supplies a specific HMRC customs-warehousing example; it does not establish rules for every jurisdiction or controlled-goods programme. Confirm the actual scope and applicable requirements."
+    },
+    {
+      "id": "GOODS04",
+      "area": "Goods protection and specific requirements",
+      "label": "Storage conditions and environmental obligations",
+      "question": "Are relevant storage conditions and environmental responsibilities defined, monitored and acted on when something goes wrong?",
+      "criterion": "Establish the goods, site and activity requirements and identify who determines acceptable conditions and responses.",
+      "evidence": "Review applicable monitoring records, exceptions, decisions and follow-up alongside observations of the relevant area or activity.",
+      "nextStep": "Assign missing criteria, unexplained exceptions or unresolved actions to the responsible product, facilities or environmental owner; distinguish operating concerns from formal assurance findings.",
+      "sources": [
+        "B02",
+        "B03"
+      ],
+      "sourceLimit": "These sources support goods-specific storage and record context, not environmental conformity. Specific environmental obligations and technical limits need applicable primary evidence."
+    },
+    {
+      "id": "CONTROL01",
+      "area": "Financial controls and warehouse providers",
+      "label": "Adjustment and write-off authority",
+      "question": "Can each selected inventory adjustment or write-off be explained and linked to the authority required for it?",
+      "criterion": "Establish the organisation's applicable authorisation and supporting-document requirements for the transaction being reviewed.",
+      "evidence": "Compare adjustment entries with reasons, investigation records, approvals and relevant count or movement evidence; retain missing or conflicting support.",
+      "nextStep": "Refer unsupported entries or unclear authority to the inventory and finance owners. Record the control question without treating a variance as proof of fraud.",
+      "sources": [
+        "B05"
+      ],
+      "sourceLimit": "B05 illustrates adjustment-documentation weaknesses in one municipal warehouse; its recommendations and tolerances are not universal control requirements."
+    },
+    {
+      "id": "CONTROL02",
+      "area": "Financial controls and warehouse providers",
+      "label": "Custody and reconciliation evidence",
+      "question": "Can warehouse and finance records be reconciled without confusing physical quantity, custody, ownership and value?",
+      "criterion": "Agree the reconciliation's purpose, period, records and responsibilities with the relevant inventory and finance owners.",
+      "evidence": "Compare selected stock and transaction records, counts and any applicable external-custody evidence; record unresolved differences and the assertions they affect.",
+      "nextStep": "Assign each gap to its evidence owner and identify any further financial-audit work required; a matching quantity alone does not answer every financial question.",
+      "sources": [
+        "B02",
+        "B05",
+        "B06"
+      ],
+      "sourceLimit": "B06 supports quantities, condition and scoped outside-custodian work, not all ownership or valuation procedures. The framework and engagement determine further work."
+    },
+    {
+      "id": "CONTROL03",
+      "area": "Financial controls and warehouse providers",
+      "label": "Contracted service and qualification evidence",
+      "question": "Does the evidence address both the service a warehouse provider delivers and the qualifications required for this relationship?",
+      "criterion": "Identify the actual service commitments, qualification requirements, review period and people responsible for each decision.",
+      "evidence": "Compare selected service records and exceptions with current qualification or assurance evidence relevant to the required scope.",
+      "nextStep": "Keep performance, qualification and renewal questions separate. Request missing evidence and assign the decision rather than treating one favourable document as settling the whole relationship.",
+      "sources": [
+        "B05",
+        "B07"
+      ],
+      "sourceLimit": "B05 supplies contractor-oversight context; B07 is an operator's self-description. Actual service and qualification criteria must come from the relevant agreement or requirement."
+    },
+    {
+      "id": "CONTROL04",
+      "area": "Financial controls and warehouse providers",
+      "label": "Charged activity, units and rates",
+      "question": "Can selected warehouse charges be traced to the applicable agreement and the activity or unit being billed?",
+      "criterion": "Identify the relevant contract and rate version, charging basis, period and authority for resolving a dispute.",
+      "evidence": "Compare invoice lines with available movement, storage or service records and documented exceptions; retain gaps or inconsistent interpretations.",
+      "nextStep": "Record the disputed point and supporting evidence, then refer it to the commercial or finance decision owner without assuming entitlement or savings.",
+      "sources": [
+        "B02"
+      ],
+      "sourceLimit": "B02 supports underlying movement records only. The billing comparison is editorial synthesis; charges and entitlement require the actual applicable contract."
+    },
+    {
+      "id": "GOV01",
+      "area": "Responsibilities and follow-through",
+      "label": "Purpose, criteria and responsibilities",
+      "question": "Is everyone clear about the decision this review supports and what each participant is responsible for?",
+      "criterion": "Record the purpose, scope, criteria, intended users and any required assessor competence or independence.",
+      "evidence": "Compare the review brief with responsibilities understood by the sponsor, evidence providers, assessor and action owners; identify missing authority or conflicting expectations.",
+      "nextStep": "Resolve the commissioning gap with the relevant decision maker before treating a generic checklist as the agreed scope.",
+      "sources": [
+        "B01",
+        "B04",
+        "B07"
+      ],
+      "sourceLimit": "The role model is editorial synthesis. Applicable engagement requirements determine competence or independence; the sources do not establish a universal governance structure."
+    },
+    {
+      "id": "GOV02",
+      "area": "Responsibilities and follow-through",
+      "label": "Evidence coverage and limitations",
+      "question": "Can a reader tell what was examined, what was not and where the evidence remains uncertain?",
+      "criterion": "Establish the review's coverage, period and evidence needs against its actual purpose and criteria.",
+      "evidence": "Record selected locations, goods, shifts and transactions, together with missing records, conflicting accounts and reasons for exclusions.",
+      "nextStep": "Limit each conclusion to its support, identify what additional evidence would change the decision and name who should obtain or assess it.",
+      "sources": [
+        "B01",
+        "B05",
+        "B09"
+      ],
+      "sourceLimit": "These sources illustrate bounded assessment and sampling. They do not prescribe a representative sample size or validate conclusions drawn from this checklist."
+    },
+    {
+      "id": "GOV03",
+      "area": "Responsibilities and follow-through",
+      "label": "Action ownership, resources and escalation",
+      "question": "Does each finding have a next action and someone with the authority or support to move it forward?",
+      "criterion": "Agree the action owner, decision owner, required resources, target date and escalation route for unresolved dependencies.",
+      "evidence": "Compare recorded actions with commitments, available authority and the decisions still outstanding; distinguish doing the work from approving resources.",
+      "nextStep": "Make the blocked decision explicit and take it to the responsible person rather than repeatedly assigning work the team cannot complete.",
+      "sources": [
+        "B01",
+        "B04",
+        "B05"
+      ],
+      "sourceLimit": "The fields are an editorial planning method informed by responsibility and follow-up evidence, not a prescribed universal management system."
+    },
+    {
+      "id": "GOV04",
+      "area": "Responsibilities and follow-through",
+      "label": "Verification and recurring findings",
+      "question": "What shows that an action addressed the finding, and what happens if the concern returns?",
+      "criterion": "Agree what effectiveness means for the finding, who will check it and under which relevant operating conditions.",
+      "evidence": "Compare reported completion with follow-up observations, records and recurring exceptions; retain limitations and any unresolved part of the finding.",
+      "nextStep": "Record further work where effectiveness remains uncertain. Distinguish verified operating results from wider financial benefits that have not been demonstrated.",
+      "sources": [
+        "B04",
+        "B05",
+        "B08"
+      ],
+      "sourceLimit": "B05 distinguishes reported action from verified implementation. B08 qualifies business-performance claims; it does not test audit effectiveness or establish causation."
+    }
+  ]
+}

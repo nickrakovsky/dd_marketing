@@ -1,0 +1,49 @@
+---
+import './load-type-availability.css';
+const windows = [
+  { time: '09:00', end: '10:00', flatbeds: 1, vans: 0 },
+  { time: '10:00', end: '11:00', flatbeds: 0, vans: 2 },
+  { time: '11:00', end: '12:00', flatbeds: 1, vans: 1 },
+];
+---
+
+<figure class="dd-load-availability not-prose" aria-labelledby="ddla-title">
+  <header class="ddla-heading">
+    <h3 id="ddla-title">A free slot.<br />Is the right dock free?</h3>
+  </header>
+
+  <fieldset class="ddla-control">
+    <legend>Which truck needs an appointment?</legend>
+    <label><input type="radio" name="ddla-load-type" value="flatbed" checked aria-controls="ddla-result" /><span>Flatbed</span></label>
+    <label><input type="radio" name="ddla-load-type" value="van" aria-controls="ddla-result" /><span>Van</span></label>
+  </fieldset>
+
+  <div class="ddla-key"><span><i class="ddla-busy-key" aria-hidden="true"></i>Booked</span><span><i aria-hidden="true"></i>Free</span></div>
+
+  <div class="ddla-windows" role="group" aria-label="Existing bookings across three one-hour windows">
+    {windows.map(({ time, end, flatbeds, vans }) => (
+      <section class:list={['ddla-window', { 'ddla-flatbed-open': flatbeds === 0, 'ddla-van-open': vans < 2 }]} aria-label={`${time} to ${end}`}>
+        <h4>{time}<span>–{end}</span></h4>
+        <div class="ddla-resource ddla-flatbed-resource">
+          <p>Flatbed bay</p>
+          <div class="ddla-positions" aria-hidden="true"><i class:list={{ 'ddla-busy': flatbeds > 0 }}></i></div>
+          <span>{flatbeds} of 1 booked</span>
+        </div>
+        <div class="ddla-resource ddla-van-resource">
+          <p>Van doors</p>
+          <div class="ddla-positions" aria-hidden="true">{Array.from({ length: 2 }, (_, index) => <i class:list={{ 'ddla-busy': index < vans }}></i>)}</div>
+          <span>{vans} of 2 booked</span>
+        </div>
+        <p class="ddla-availability">
+          <span class="ddla-flatbed-case">{flatbeds === 0 ? 'Available for a flatbed' : 'Flatbed bay full'}</span>
+          <span class="ddla-van-case">{vans < 2 ? 'Available for a van' : 'Van doors full'}</span>
+        </p>
+      </section>
+    ))}
+  </div>
+
+  <div class="ddla-result" id="ddla-result" aria-live="polite" aria-atomic="true">
+    <div class="ddla-flatbed-case"><strong>Only 10:00 can take another flatbed.</strong><p>Free van doors at 09:00 and 11:00 do not add flatbed capacity.</p></div>
+    <div class="ddla-van-case"><strong>A van can book 09:00 or 11:00.</strong><p>At 10:00, the flatbed bay is free, but both van doors are occupied.</p></div>
+  </div>
+</figure>

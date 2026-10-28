@@ -1,0 +1,82 @@
+/* These refinements apply only to the blog's Timeless Charcoal theme. */
+html.dark[data-blog-theme] .yard-qualifier,
+html.dark[data-blog-theme] .yard-nextsteps {
+  background: var(--blog-surface);
+  border-color: var(--blog-rule);
+  color: var(--blog-ink);
+}
+
+html.dark[data-blog-theme] .yard-qualifier p,
+html.dark[data-blog-theme] .yard-nextsteps-heading {
+  color: var(--blog-ink);
+}
+
+html.dark[data-blog-theme] .yard-qualifier > div > span,
+html.dark[data-blog-theme] .yard-nextsteps-label {
+  color: var(--blog-link);
+}
+
+html.dark[data-blog-theme] .yard-nextsteps-description {
+  color: var(--blog-muted);
+}
+
+html.dark[data-blog-theme] .yard-nextsteps-label {
+  background: var(--blog-canvas);
+  border-color: var(--blog-rule);
+}
+
+html.dark[data-blog-theme] .yard-qualifier-answer,
+html.dark[data-blog-theme] .yard-demo-cta {
+  background: var(--blog-canvas);
+  border: 1px solid var(--blog-control);
+  color: var(--blog-ink);
+}
+
+html.dark[data-blog-theme] .yard-qualifier-answer[aria-pressed="true"],
+html.dark[data-blog-theme] .yard-demo-cta {
+  border: 2px solid var(--blog-orange);
+}
+
+html.dark[data-blog-theme] .yard-qualifier-answer:hover,
+html.dark[data-blog-theme] .yard-demo-cta:hover {
+  background: var(--blog-surface);
+  border-color: var(--blog-link);
+}
+
+html.dark[data-blog-theme] .yard-qualifier-indicator {
+  background: var(--blog-canvas);
+  border: 1px solid var(--blog-control);
+  color: var(--blog-ink);
+}
+
+html.dark[data-blog-theme] .yard-qualifier-answer[aria-pressed="true"] .yard-qualifier-indicator {
+  border-color: var(--blog-orange);
+}
+
+html.dark[data-blog-theme] .yard-score,
+html.dark[data-blog-theme] .yard-recommended-check {
+  background: var(--blog-canvas);
+  border: 1px solid var(--blog-orange);
+  color: var(--blog-ink);
+}
+
+html.dark[data-blog-theme] .yard-match {
+  background: var(--blog-surface);
+  border-color: var(--blog-control);
+}
+
+html.dark[data-blog-theme] .yard-match[aria-selected="true"] {
+  border-color: var(--blog-ink);
+}
+
+html.dark[data-blog-theme] .yard-match[data-brand-match="true"][aria-selected="true"] {
+  border-color: var(--blog-orange);
+}
+
+html.dark[data-blog-theme] .yard-match:hover {
+  border-color: var(--blog-link);
+}
+
+html.dark[data-blog-theme] .yard-email-input {
+  border-color: var(--blog-control);
+}

@@ -1,0 +1,244 @@
+<figure class="dd-run-widget not-prose" id="dd-production-run-tradeoff" aria-labelledby="dd-run-title" aria-describedby="dd-run-intro">
+ <header class="dd-run-heading"><h2 id="dd-run-title">Longer runs save time but leave more stock.</h2><p id="dd-run-intro">Ship the same 800 cases over four days: 200 a day.</p></header>
+ <fieldset class="dd-run-controls"><legend>Run size</legend><div class="dd-run-choices"><label for="dd-run-daily" aria-label="200 cases, 4 runs"><input id="dd-run-daily" name="dd-post10-run-size" type="radio" value="200" aria-describedby="dd-run-desc-daily"><span><strong>200 cases</strong><small>4 runs</small></span></label>
+<label for="dd-run-two" aria-label="400 cases, 2 runs"><input id="dd-run-two" name="dd-post10-run-size" type="radio" value="400"  aria-describedby="dd-run-desc-two"><span><strong>400 cases</strong><small>2 runs</small></span></label>
+<label for="dd-run-four" aria-label="800 cases, 1 run"><input id="dd-run-four" name="dd-post10-run-size" type="radio" value="800" checked aria-describedby="dd-run-desc-four"><span><strong>800 cases</strong><small>1 run</small></span></label></div><span class="dd-run-sr" id="dd-run-desc-daily">Four daily runs: 4 hours of line time and no stock left after each day’s dispatch.</span>
+<span class="dd-run-sr" id="dd-run-desc-two">Two runs: 1 hour saved compared with daily runs; 200 cases left after dispatch on Days 1 and 3.</span>
+<span class="dd-run-sr" id="dd-run-desc-four">One run: 1.5 hours saved compared with daily runs; 600 cases left after Day 1 dispatch.</span></fieldset>
+ <div class="dd-run-results"><section class="dd-run-scenario dd-run-daily" aria-label="200 cases per run">
+ <p class="dd-run-plan">Four daily runs: <strong>4 hours on the line, no stock carried overnight.</strong></p>
+ <div class="dd-run-charts">
+  <section class="dd-run-chart time-chart" aria-labelledby="dd-time-daily">
+   <h3 id="dd-time-daily">Time on the line</h3>
+   <div class="dd-run-time-comparison">
+    <div class="dd-run-comparison-row is-active">
+     <p class="dd-run-row-label"><span>4 daily runs</span><span>4 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="4 daily runs: 2 hours of production plus 2 hours of setup and cleaning; 4 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="50%" height="22"/>
+     </svg>
+    </div>
+    <div class="dd-run-comparison-row">
+     <p class="dd-run-row-label"><span>2 runs</span><span>3 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="2 runs: 2 hours of production plus 1 hour of setup and cleaning; 3 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="25%" height="22"/>
+     </svg>
+    </div>
+    <div class="dd-run-comparison-row">
+     <p class="dd-run-row-label"><span>1 run</span><span>2.5 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="1 run: 2 hours of production plus 0.5 hours of setup and cleaning; 2.5 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="12.5%" height="22"/>
+     </svg>
+    </div>
+   </div>
+   <div class="dd-run-time-axis" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4 h</span></div>
+   <div class="dd-run-legend"><span><i class="production-key" aria-hidden="true"></i>Production</span><span><i class="setup-key" aria-hidden="true"></i>Setup and cleaning</span></div>
+  </section>
+  <section class="dd-run-chart stock-chart" aria-labelledby="dd-stock-daily">
+   <h3 id="dd-stock-daily">Cases left after dispatch</h3>
+   <div class="dd-run-stock-plot"><div class="dd-run-stock-axis" aria-hidden="true"><span style="top:26px">600</span><span style="top:76.667px">400</span><span style="top:127.333px">200</span><span style="top:178px">0</span></div><svg class="dd-run-stock-svg" width="100%" height="220" role="img" aria-labelledby="dd-stock-title-daily dd-stock-desc-daily">
+<title id="dd-stock-title-daily">Cases left after dispatch, 200 cases per run</title>
+<desc id="dd-stock-desc-daily">Days 1 to 4: 0, 0, 0, 0 cases respectively. Each day ships 200 cases.</desc>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="35" y2="35"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="85.6662" y2="85.6662"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="136.334" y2="136.334"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="187" y2="187"/>
+<line class="dd-run-zero" x1="5%" x2="20%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="12.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="12.5%" y="211" text-anchor="middle">Day 1</text>
+<line class="dd-run-zero" x1="30%" x2="45%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="37.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="37.5%" y="211" text-anchor="middle">Day 2</text>
+<line class="dd-run-zero" x1="55%" x2="70%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="62.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="62.5%" y="211" text-anchor="middle">Day 3</text>
+<line class="dd-run-zero" x1="80%" x2="95%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="87.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="87.5%" y="211" text-anchor="middle">Day 4</text>
+</svg></div>
+  </section>
+ </div>
+
+</section><section class="dd-run-scenario dd-run-two" aria-label="400 cases per run">
+ <p class="dd-run-plan">Run on Days 1 and 3: <strong>save 1 hour and carry 200 cases overnight.</strong></p>
+ <div class="dd-run-charts">
+  <section class="dd-run-chart time-chart" aria-labelledby="dd-time-two">
+   <h3 id="dd-time-two">Time on the line</h3>
+   <div class="dd-run-time-comparison">
+    <div class="dd-run-comparison-row">
+     <p class="dd-run-row-label"><span>4 daily runs</span><span>4 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="4 daily runs: 2 hours of production plus 2 hours of setup and cleaning; 4 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="50%" height="22"/>
+     </svg>
+    </div>
+    <div class="dd-run-comparison-row is-active">
+     <p class="dd-run-row-label"><span>2 runs</span><span>3 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="2 runs: 2 hours of production plus 1 hour of setup and cleaning; 3 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="25%" height="22"/>
+     </svg>
+    </div>
+    <div class="dd-run-comparison-row">
+     <p class="dd-run-row-label"><span>1 run</span><span>2.5 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="1 run: 2 hours of production plus 0.5 hours of setup and cleaning; 2.5 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="12.5%" height="22"/>
+     </svg>
+    </div>
+   </div>
+   <div class="dd-run-time-axis" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4 h</span></div>
+   <div class="dd-run-legend"><span><i class="production-key" aria-hidden="true"></i>Production</span><span><i class="setup-key" aria-hidden="true"></i>Setup and cleaning</span></div>
+  </section>
+  <section class="dd-run-chart stock-chart" aria-labelledby="dd-stock-two">
+   <h3 id="dd-stock-two">Cases left after dispatch</h3>
+   <div class="dd-run-stock-plot"><div class="dd-run-stock-axis" aria-hidden="true"><span style="top:26px">600</span><span style="top:76.667px">400</span><span style="top:127.333px">200</span><span style="top:178px">0</span></div><svg class="dd-run-stock-svg" width="100%" height="220" role="img" aria-labelledby="dd-stock-title-two dd-stock-desc-two">
+<title id="dd-stock-title-two">Cases left after dispatch, 400 cases per run</title>
+<desc id="dd-stock-desc-two">Days 1 to 4: 200, 0, 200, 0 cases respectively. Each day ships 200 cases.</desc>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="35" y2="35"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="85.6662" y2="85.6662"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="136.334" y2="136.334"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="187" y2="187"/>
+<rect class="dd-run-stock-bar" x="5%" y="136.334" width="15%" height="50.6666" rx="3"/>
+<text class="dd-run-chart-value" x="12.5%" y="126.333" text-anchor="middle">200</text>
+<text class="dd-run-day" x="12.5%" y="211" text-anchor="middle">Day 1</text>
+<line class="dd-run-zero" x1="30%" x2="45%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="37.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="37.5%" y="211" text-anchor="middle">Day 2</text>
+<rect class="dd-run-stock-bar" x="55%" y="136.334" width="15%" height="50.6666" rx="3"/>
+<text class="dd-run-chart-value" x="62.5%" y="126.333" text-anchor="middle">200</text>
+<text class="dd-run-day" x="62.5%" y="211" text-anchor="middle">Day 3</text>
+<line class="dd-run-zero" x1="80%" x2="95%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="87.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="87.5%" y="211" text-anchor="middle">Day 4</text>
+</svg></div>
+  </section>
+ </div>
+
+</section><section class="dd-run-scenario dd-run-four" aria-label="800 cases per run">
+ <p class="dd-run-plan">Run once on Day 1: <strong>save 1.5 hours and leave 600 cases for the next three shipments.</strong></p>
+ <div class="dd-run-charts">
+  <section class="dd-run-chart time-chart" aria-labelledby="dd-time-four">
+   <h3 id="dd-time-four">Time on the line</h3>
+   <div class="dd-run-time-comparison">
+    <div class="dd-run-comparison-row">
+     <p class="dd-run-row-label"><span>4 daily runs</span><span>4 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="4 daily runs: 2 hours of production plus 2 hours of setup and cleaning; 4 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="50%" height="22"/>
+     </svg>
+    </div>
+    <div class="dd-run-comparison-row">
+     <p class="dd-run-row-label"><span>2 runs</span><span>3 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="2 runs: 2 hours of production plus 1 hour of setup and cleaning; 3 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="25%" height="22"/>
+     </svg>
+    </div>
+    <div class="dd-run-comparison-row is-active">
+     <p class="dd-run-row-label"><span>1 run</span><span>2.5 h</span></p>
+     <svg class="dd-run-time-svg" width="100%" height="22" role="img" aria-label="1 run: 2 hours of production plus 0.5 hours of setup and cleaning; 2.5 hours total.">
+      <rect class="dd-run-track" x="0" y="0" width="100%" height="22" rx="3"/>
+      <rect class="dd-run-production" x="0" y="0" width="50%" height="22"/>
+      <rect class="dd-run-setup" x="50%" y="0" width="12.5%" height="22"/>
+     </svg>
+    </div>
+   </div>
+   <div class="dd-run-time-axis" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4 h</span></div>
+   <div class="dd-run-legend"><span><i class="production-key" aria-hidden="true"></i>Production</span><span><i class="setup-key" aria-hidden="true"></i>Setup and cleaning</span></div>
+  </section>
+  <section class="dd-run-chart stock-chart" aria-labelledby="dd-stock-four">
+   <h3 id="dd-stock-four">Cases left after dispatch</h3>
+   <div class="dd-run-stock-plot"><div class="dd-run-stock-axis" aria-hidden="true"><span style="top:26px">600</span><span style="top:76.667px">400</span><span style="top:127.333px">200</span><span style="top:178px">0</span></div><svg class="dd-run-stock-svg" width="100%" height="220" role="img" aria-labelledby="dd-stock-title-four dd-stock-desc-four">
+<title id="dd-stock-title-four">Cases left after dispatch, 800 cases per run</title>
+<desc id="dd-stock-desc-four">Days 1 to 4: 600, 400, 200, 0 cases respectively. Each day ships 200 cases.</desc>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="35" y2="35"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="85.6662" y2="85.6662"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="136.334" y2="136.334"/>
+<line class="dd-run-gridline" x1="0" x2="100%" y1="187" y2="187"/>
+<rect class="dd-run-stock-bar" x="5%" y="35" width="15%" height="152" rx="3"/>
+<text class="dd-run-chart-value" x="12.5%" y="25" text-anchor="middle">600</text>
+<text class="dd-run-day" x="12.5%" y="211" text-anchor="middle">Day 1</text>
+<rect class="dd-run-stock-bar" x="30%" y="85.6666" width="15%" height="101.333" rx="3"/>
+<text class="dd-run-chart-value" x="37.5%" y="75.6666" text-anchor="middle">400</text>
+<text class="dd-run-day" x="37.5%" y="211" text-anchor="middle">Day 2</text>
+<rect class="dd-run-stock-bar" x="55%" y="136.334" width="15%" height="50.6666" rx="3"/>
+<text class="dd-run-chart-value" x="62.5%" y="126.333" text-anchor="middle">200</text>
+<text class="dd-run-day" x="62.5%" y="211" text-anchor="middle">Day 3</text>
+<line class="dd-run-zero" x1="80%" x2="95%" y1="187" y2="187"/>
+<text class="dd-run-chart-value" x="87.5%" y="177" text-anchor="middle">0</text>
+<text class="dd-run-day" x="87.5%" y="211" text-anchor="middle">Day 4</text>
+</svg></div>
+  </section>
+ </div>
+
+</section></div>
+ <p class="dd-run-outcome">Plan the production run, the stock and the deliveries together.</p>
+</figure>
+
+<style is:global>
+/* SVG + CSS only. All styles are scoped to this article component. */
+.dd-run-widget{--run-bg:#fff8ee;--run-surface:#faf8f5;--run-ink:#181512;--run-muted:#5f483a;--run-line:#d4c7b6;--run-track:#efe2d2;--run-production:#ad9686;--run-accent:#fd4f00;box-sizing:border-box;margin:32px 0;padding:24px 28px 18px;border:1px solid var(--run-line);border-radius:12px;background:var(--run-bg);color:var(--run-ink);font-family:Inter,Arial,sans-serif;container-type:inline-size;color-scheme:light;}
+.dd-run-widget *, .dd-run-widget *::before,.dd-run-widget *::after{box-sizing:border-box;}
+.dd-run-widget p,.dd-run-widget h2,.dd-run-widget h3{margin:0;}
+.dd-run-heading{margin-bottom:18px;}
+.dd-run-widget h2{font-family:Bruta,Impact,sans-serif;font-weight:800;text-transform:uppercase;font-size:40px;line-height:1.05;letter-spacing:0;max-width:100%;text-wrap:balance;}
+.dd-run-heading>p:last-child{font-size:16px;line-height:1.55;max-width:650px;margin-top:10px;}
+.dd-run-controls{margin:0;padding:0;border:0;min-width:0;}
+.dd-run-controls legend{padding:0;margin-bottom:9px;font-size:14px;font-weight:600;}
+.dd-run-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.dd-run-choices label{position:relative;display:block;cursor:pointer;}
+.dd-run-choices input{position:absolute;width:1px;height:1px;opacity:0;margin:0;inset:22px auto auto 14px;}
+.dd-run-choices label>span{display:block;border:1px solid var(--blog-control, var(--run-line));border-radius:6px;padding:12px 14px;background:var(--run-surface);transition:background .16s ease,border-color .16s ease;}
+.dd-run-choices strong{display:block;font-size:16px;line-height:1.3;font-weight:650;}
+.dd-run-choices small{display:block;font-size:14px;line-height:1.35;margin-top:3px;}
+.dd-run-choices input:checked+span{background:var(--blog-selected-surface, var(--run-ink));color:var(--blog-selected-ink, var(--run-bg));border-color:var(--blog-selected-surface, var(--run-ink));}
+.dd-run-choices input:focus-visible+span{outline:3px solid var(--run-accent);outline-offset:3px;}
+.dd-run-choices label:hover>span{border-color:var(--run-accent);}
+.dd-run-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;}
+.dd-run-scenario{display:none;}
+.dd-run-four{display:block;}
+.dd-run-widget:has(#dd-run-two:checked) .dd-run-four,.dd-run-widget:has(#dd-run-daily:checked) .dd-run-four{display:none;}
+.dd-run-widget:has(#dd-run-two:checked) .dd-run-two,.dd-run-widget:has(#dd-run-daily:checked) .dd-run-daily{display:block;}
+.dd-run-plan{font-size:16px;line-height:1.5;padding:14px 0 16px;color:var(--run-ink);}
+.dd-run-charts{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+.dd-run-chart{min-width:0;}
+.dd-run-chart h3{font-family:DD-Recoleta,Georgia,serif;font-weight:400;font-size:21px;line-height:1.3;}
+.dd-run-track{fill:var(--run-track);}
+.dd-run-production{fill:var(--run-production);}
+.dd-run-setup,.dd-run-stock-bar{fill:var(--run-accent);}
+.dd-run-time-axis{position:relative;height:26px;font-size:14px;color:var(--run-muted);margin-top:7px;}
+.dd-run-time-axis span{position:absolute;transform:translateX(-50%);}
+.dd-run-time-axis span:nth-child(1){left:0;transform:none}.dd-run-time-axis span:nth-child(2){left:25%}.dd-run-time-axis span:nth-child(3){left:50%}.dd-run-time-axis span:nth-child(4){left:75%}.dd-run-time-axis span:nth-child(5){right:0;transform:none}
+.dd-run-legend i{display:block;width:13px;height:13px;border-radius:2px;}.production-key{background:var(--run-production)}.setup-key{background:var(--run-accent)}
+.dd-run-stock-plot{display:flex;gap:8px;margin-top:14px;}
+.dd-run-stock-axis{width:30px;flex-shrink:0;position:relative;font-size:14px;line-height:18px;color:var(--run-muted);}
+.dd-run-stock-axis span{position:absolute;right:0;}
+.dd-run-stock-svg{display:block;overflow:visible;min-width:0;}
+.dd-run-gridline{stroke:var(--run-line);stroke-width:1;}.dd-run-zero{stroke:var(--run-accent);stroke-width:3;stroke-linecap:round;}
+.dd-run-chart-value{fill:var(--run-ink);font:600 15px Inter,Arial,sans-serif;}.dd-run-day{fill:var(--run-muted);font:14px Inter,Arial,sans-serif;}
+.dd-run-outcome{margin-top:18px!important;font-weight:600;padding:12px 0 11px 14px;border-left:3px solid var(--run-accent);font-size:16px;line-height:1.5;}
+@container (max-width:460px){.dd-run-widget h2{font-size:32px}.dd-run-charts{grid-template-columns:1fr;gap:22px}.dd-run-chart h3{font-size:21px}.dd-run-choices label>span{padding:12px 9px}.dd-run-choices strong{font-size:15px}.dd-run-choices small{font-size:14px}.dd-run-time-axis{height:22px}}
+@media(max-width:500px){.dd-run-widget{padding:24px 18px 20px;margin:24px 0;border-radius:8px}.dd-run-choices{gap:6px}.dd-run-heading>p:last-child{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.dd-run-widget *{transition:none!important;animation:none!important;}}
+:where(html.dark,[data-theme="dark"]) .dd-run-widget{--run-bg:var(--blog-canvas, #211b17);--run-surface:var(--blog-surface, #2e251f);--run-ink:var(--blog-ink, #fff8ee);--run-muted:var(--blog-muted, #ded0c0);--run-line:var(--blog-rule, #645143);--run-track:#3c3028;--run-production:#ad9686;color-scheme:dark;}
+@media print{.dd-run-controls{display:none}.dd-run-scenario{break-inside:avoid}.dd-run-widget{border-color:#999;break-inside:avoid;print-color-adjust:exact}}
+
+.dd-run-time-comparison{margin-top:14px;}
+.dd-run-comparison-row+.dd-run-comparison-row{margin-top:12px;}
+.dd-run-widget .dd-run-row-label{display:flex;justify-content:space-between;gap:12px;font-size:14px;line-height:1.5;margin-bottom:5px;font-variant-numeric:tabular-nums;}
+.dd-run-comparison-row.is-active .dd-run-row-label{font-weight:700;}
+.dd-run-time-svg{display:block;overflow:visible;}
+.dd-run-legend{display:flex;flex-wrap:wrap;gap:7px 18px;font-size:14px;line-height:1.5;margin-top:4px;}
+.dd-run-legend>span{display:flex;align-items:center;gap:7px;}
+</style>

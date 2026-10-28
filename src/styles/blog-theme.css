@@ -1,0 +1,79 @@
+/* Timeless Charcoal: blog-only dark extension of the agency's black, paper,
+   orange and beige palette. Shared components use fallbacks outside articles. */
+html[data-blog-theme] { color-scheme: light; }
+html.dark[data-blog-theme] {
+  color-scheme: dark;
+  --blog-canvas: #181818;
+  --blog-surface: #262626;
+  --blog-ink: #fff5e1;
+  --blog-muted: #cebfa9;
+  --blog-link: #ff986c;
+  --blog-orange: #fd4f00;
+  --blog-rule: #51483d;
+  --blog-control: #99866f;
+  --blog-selected-surface: #fff5e1;
+  --blog-selected-ink: #181818;
+}
+html.dark[data-blog-theme] body {
+  background: var(--blog-canvas);
+  color: var(--blog-ink);
+}
+html.dark[data-blog-theme] .prose {
+  --tw-prose-body: var(--blog-ink);
+  --tw-prose-headings: var(--blog-ink);
+  --tw-prose-lead: var(--blog-muted);
+  --tw-prose-links: var(--blog-link);
+  --tw-prose-bold: var(--blog-ink);
+  --tw-prose-counters: var(--blog-muted);
+  --tw-prose-bullets: var(--blog-muted);
+  --tw-prose-hr: var(--blog-rule);
+  --tw-prose-quotes: var(--blog-ink);
+  --tw-prose-quote-borders: var(--blog-orange);
+  --tw-prose-captions: var(--blog-muted);
+  --tw-prose-code: var(--blog-ink);
+  --tw-prose-pre-code: var(--blog-ink);
+  --tw-prose-pre-bg: var(--blog-surface);
+  --tw-prose-th-borders: var(--blog-rule);
+  --tw-prose-td-borders: var(--blog-rule);
+}
+html.dark[data-blog-theme] .prose :where(a):not(:where(.not-prose, .not-prose *)) {
+  text-decoration: underline;
+  text-underline-offset: .16em;
+}
+/* Opacity on a whole card also dims its text and invalidates the colour pairs. */
+html.dark[data-blog-theme] :is(.desktop-toc-container, .sidebar-card, .smartlink-persistent-card) {
+  opacity: 1 !important;
+  filter: none !important;
+}
+html.dark[data-blog-theme] .sidebar-card {
+  background: var(--blog-surface);
+  border-color: var(--blog-rule);
+}
+html.dark[data-blog-theme] .sidebar-card-title { color: var(--blog-ink); }
+html.dark[data-blog-theme] .sidebar-card-snippet { color: var(--blog-muted); }
+html.dark[data-blog-theme] .sidebar-card-link { color: var(--blog-link); }
+/* Small labels need more contrast than pale text on solid Brave Orange. */
+html.dark[data-blog-theme] :is(.blog-compact-action, .blog-citation-badge) {
+  background: var(--blog-surface);
+  color: var(--blog-ink);
+  border: 2px solid var(--blog-orange);
+}
+html.dark[data-blog-theme] .blog-compact-action:hover {
+  background: var(--blog-canvas);
+  color: var(--blog-ink);
+  border-color: var(--blog-link);
+}
+html.dark[data-blog-theme] .blog-editorial-callout {
+  background: var(--blog-surface);
+  border-color: var(--blog-rule);
+}
+html.dark[data-blog-theme] .blog-editorial-callout p { color: var(--blog-ink); }
+html.dark[data-blog-theme] .blog-editorial-callout > p:first-child { color: var(--blog-link); }
+html.dark[data-blog-theme] :is(a, button, input, select, summary):focus-visible {
+  outline: 2px solid var(--blog-link);
+  outline-offset: 4px;
+}
+html.dark[data-blog-theme] ::selection {
+  background: var(--blog-selected-surface);
+  color: var(--blog-selected-ink);
+}

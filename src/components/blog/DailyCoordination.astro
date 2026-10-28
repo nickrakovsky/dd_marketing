@@ -1,0 +1,75 @@
+---
+const tasks = [
+  {
+    title: 'Check changes',
+    description: 'Review new appointments and changes to the schedule.',
+    paths: ['M5 7h22v21H5z', 'M10 4v6M22 4v6M5 13h22', 'M10 18h4M18 18h4M10 23h4'],
+  },
+  {
+    title: 'Confirm arrivals',
+    description: 'Check with security or the supervisor which trucks have arrived.',
+    paths: ['M3 8h16v16H3z', 'M19 14h5l5 6v4H19', 'M24 14v6h5', 'M7 24a3 3 0 1 0 6 0a3 3 0 1 0-6 0', 'M21 24a3 3 0 1 0 6 0a3 3 0 1 0-6 0'],
+  },
+  {
+    title: 'Keep everyone aligned',
+    description: 'Track loads and keep the operations team informed.',
+    paths: ['M6 5h20v24H6z', 'M11 11h3M18 11h3M11 17h3M18 17h3M11 23h10'],
+  },
+];
+---
+
+<figure id="daily-coordination" class="daily-coordination not-prose" aria-label="Daily logistics coordination work">
+  <ul class="daily-work-list">
+    {tasks.map(task => (
+      <li class="daily-task">
+        <svg class="task-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+          {task.paths.map(d => <path d={d} />)}
+        </svg>
+        <div class="task-copy">
+          <h3>{task.title}</h3>
+          <p>{task.description}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .daily-coordination {
+    --daily-paper: #fff8ee;
+    --daily-ink: #302b25;
+    --daily-muted: #605b53;
+    --daily-rule: #e3d5c4;
+    --daily-accent: #fe5000;
+    container-type: inline-size;
+    margin: 1.5em 0 2em;
+    border: 1px solid var(--daily-rule);
+    background: var(--daily-paper);
+    color: var(--daily-ink);
+    font-family: Inter, system-ui, sans-serif;
+    font-size: max(0.8em, 1rem);
+    line-height: 1.5;
+    scroll-margin-top: 7rem;
+  }
+  :global(.dark) .daily-coordination {
+    --daily-paper: #232622;
+    --daily-ink: #fff8ee;
+    --daily-muted: #c5c0b5;
+    --daily-rule: #4e5147;
+    --daily-accent: #ff7635;
+  }
+  .daily-coordination * { box-sizing: border-box; }
+  .daily-coordination .daily-work-list { display: grid; grid-template-columns: minmax(0, 1fr); list-style: none; margin: 0; padding: 0 1.25em; }
+  .daily-coordination .daily-task { display: grid; grid-template-columns: 1.5em minmax(0, 1fr); align-items: start; gap: 0.9em; min-width: 0; margin: 0; padding: 1.25em 0; }
+  .daily-task + .daily-task { border-top: 1px solid var(--daily-rule); }
+  .task-icon { width: 1.5em; height: 1.5em; color: var(--daily-accent); stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .daily-coordination h3 { margin: 0; color: var(--daily-ink); font-family: 'DD-Recoleta', Georgia, serif; font-size: 1.125em; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+  .daily-coordination .task-copy p { margin: 0.5em 0 0; color: var(--daily-muted); font-size: 0.9375em; line-height: 1.5; text-wrap: pretty; }
+  @container (min-width: 600px) {
+    .daily-coordination .daily-work-list { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 1.25em 0; }
+    .daily-coordination .daily-task { display: flex; flex-direction: column; gap: 0.85em; padding: 0 1.25em; }
+    .daily-task + .daily-task { border-top: 0; border-left: 1px solid var(--daily-rule); }
+  }
+  :global(article.text-scaled) .daily-coordination :is(p, li) { font-size: inherit !important; line-height: inherit !important; }
+  :global(article.text-scaled) .daily-coordination .task-copy p { font-size: 0.9375em !important; }
+</style>

@@ -1,0 +1,359 @@
+{
+  "metadata": {
+    "title": "Warehouse Audit Working Pack",
+    "articleURL": "https://datadocks.com/posts/warehouse-audit-checklist",
+    "checkSource": "src/data/warehouse-audit-checks.json",
+    "intendedUse": "Plan a scoped warehouse review, record evidence and carry findings through to action and verification.",
+    "scopeLimit": "The 28 starter checks need the requirements, goods, activities and operating conditions of your review. They do not provide a complete legal or sector-specific audit, certification or an overall pass score.",
+    "examplesNote": "Examples are fictional and separate from blank working records."
+  },
+  "instructions": [
+    {
+      "title": "Start with the decision",
+      "text": "Record the question this review must answer, the areas to examine and who will use the findings. You can plan evidence before making observations."
+    },
+    {
+      "title": "Establish the criteria",
+      "text": "Name the applicable procedure, agreement or other requirement and its version. Assign it to the relevant check. Write 'Not yet established' where it is unknown."
+    },
+    {
+      "title": "Keep the sample visible",
+      "text": "Record the goods, locations, shifts, period and transactions examined. Keep exclusions and evidence limits with the conclusion."
+    },
+    {
+      "title": "Use evidence references",
+      "text": "Enter short observations and record references. Use roles and site aliases where sufficient; avoid copying customer details or sensitive records into the pack."
+    },
+    {
+      "title": "Leave uncertainty open",
+      "text": "A blank status means Not reviewed. Record missing criteria, conflicting accounts and unanswered questions. Label a possible cause as a hypothesis."
+    },
+    {
+      "title": "Assign the next step",
+      "text": "Give each concern an action owner, target date and verification plan. Keep the person doing the work separate from anyone who must approve resources or make a decision."
+    },
+    {
+      "title": "Separate completion from effectiveness",
+      "text": "Record what was completed, then what the follow-up check showed. Work completed without effectiveness evidence remains awaiting verification."
+    },
+    {
+      "title": "Adapt the working record",
+      "text": "Save a copy before entering your review. Keep the starter check IDs and add local checks where needed. The examples illustrate recording; they are not findings about your operation."
+    }
+  ],
+  "statuses": [
+    {
+      "value": "Not reviewed",
+      "meaning": "No assessment recorded. Plan the evidence still needed."
+    },
+    {
+      "value": "Evidence supports the stated check",
+      "meaning": "Your evidence supports the check within the stated scope. Name the criterion and supporting reference; missing support remains a gap."
+    },
+    {
+      "value": "Concern found",
+      "meaning": "Record the observation, requirement and evidence, then assign follow-up. Do not assume the cause is established."
+    },
+    {
+      "value": "Inconclusive or conflicting evidence",
+      "meaning": "The available information does not settle the question. Preserve the uncertainty and request the next evidence."
+    },
+    {
+      "value": "Not applicable — reason recorded",
+      "meaning": "Explain why the check falls outside this review. A missing reason remains an unresolved scope gap."
+    }
+  ],
+  "scopeFields": [
+    {
+      "key": "decision",
+      "label": "Decision or question",
+      "prompt": "What must this review help someone decide?"
+    },
+    {
+      "key": "site",
+      "label": "Site or area alias",
+      "prompt": "Which operation or area is in scope?"
+    },
+    {
+      "key": "period",
+      "label": "Review date or period",
+      "prompt": "Which dates and comparison points apply?"
+    },
+    {
+      "key": "operatingConditions",
+      "label": "Operating conditions",
+      "prompt": "Which shifts, workloads or relevant changes will be examined?"
+    },
+    {
+      "key": "sample",
+      "label": "Coverage and sample",
+      "prompt": "Record the selected checks, goods, locations and transactions."
+    },
+    {
+      "key": "exclusions",
+      "label": "Exclusions and limits",
+      "prompt": "What will not be examined, and why?"
+    },
+    {
+      "key": "criteria",
+      "label": "Criteria and versions",
+      "prompt": "Name each requirement, its version and the checks it applies to. Mark unknowns Not yet established."
+    },
+    {
+      "key": "reviewer",
+      "label": "Reviewer and evidence providers",
+      "prompt": "Who examines the work, who supplies evidence and what competence or independence is required?"
+    },
+    {
+      "key": "actionOwner",
+      "label": "Action responsibilities",
+      "prompt": "Who can investigate, correct the record or change the process?"
+    },
+    {
+      "key": "decisionOwner",
+      "label": "Decision owner",
+      "prompt": "Who can approve the required decision, resources or change?"
+    }
+  ],
+  "examples": [
+    {
+      "id": "EX-INV",
+      "title": "Repeated inventory discrepancy",
+      "fictional": true,
+      "label": "Fictional worked example — correction and limited verification recorded",
+      "purpose": "Follow one evidenced stock difference through correction, a process action and verification. Keep older recurrences unresolved.",
+      "scope": {
+        "decision": "What explains the recurring difference, and what action should follow?",
+        "site": "Example bin A01",
+        "period": "Count comparison: 6 October 2026, 09:00. Follow-up: 9 October 2026, 15:00.",
+        "operatingConditions": "One unit dispatched on 5 October at 16:40. Its stock issue was still pending at the count.",
+        "sample": "SKU104, bin A01. Count/recount and transaction trail; follow-up covers 20 dispatches on 7–9 October across three shifts. Checks INV01–03.",
+        "exclusions": "Older discrepancies remain unexplained. This item and limited follow-up sample do not establish performance across all stock or shifts.",
+        "criteria": "Fictional procedure INV04 v3: post each stock issue before dispatch. Compare the same item, unit, location and time.",
+        "reviewer": "Inventory lead traces C104, RC104, S104, P418, D418 and Q418. Warehouse manager verifies the follow-up in V104.",
+        "actionOwner": "Inventory lead owns the handover change and pending-issue review, due 6 October 2026, 17:00.",
+        "decisionOwner": "Inventory manager authorises posting the one missing issue on 6 October 2026, 11:00."
+      },
+      "findings": [
+        {
+          "id": "EX-INV-01",
+          "checkIds": ["INV01", "INV02", "INV03"],
+          "issue": "11 counted; 12 recorded",
+          "status": "Concern found",
+          "criterion": "Fictional site procedure INV04 v3 requires each stock issue to be posted before dispatch.",
+          "observation": "At 09:00 on 6 October 2026, C104 and independent recount RC104 show 11 each of SKU104 in bin A01. Snapshot S104 shows 12.",
+          "evidenceObtained": "P418 and D418 record one unit leaving on 5 October at 16:40. Q418 shows that issue still pending at the count.",
+          "evidenceNeeded": "Investigate the separate older recurrences. This transaction trail does not explain those earlier differences.",
+          "uncertainty": "The unposted issue explains this one-unit difference. Why it remained pending and the causes of older recurrences are not established.",
+          "possibleCause": "Evidence confirms one unposted issue. It does not establish fraud or a root cause for all recurring discrepancies.",
+          "nextAction": "Post the single missing issue with approval. Give handover a named owner and review pending issues before release. Retain older cases for investigation.",
+          "actionType": "Authorised correction, corrective action and verification",
+          "owner": "Inventory lead",
+          "targetDate": "6 October 2026, 17:00, for handover ownership and the pending-issue review.",
+          "urgency": "Inventory manager requires the record correction and control change on 6 October. No wider urgency conclusion is made.",
+          "completion": "6 October: manager approves posting at 11:00. Records then show 11. H104 records named handover ownership and pre-release pending-issue review in use by 17:00.",
+          "verificationMethod": "V104: compare 20 dispatches on 7–9 October across three shifts with INV04 v3. Check issue posting before release and recount the selected bin.",
+          "verificationOwner": "Warehouse manager",
+          "verificationDate": "9 October 2026, 15:00",
+          "verificationResult": "Effective in the examined sample: all 20 issues posted before release and the selected bin matches. Older recurrences remain unresolved.",
+          "decisionNeeded": "The manager approves posting the one missing issue. No additional balance adjustment is made, which would double-count the correction.",
+          "decisionOwner": "Inventory manager for correction authority; inventory lead for the process action and older-case investigation."
+        }
+      ],
+      "managementNote": "Close this recorded correction and sampled follow-up. Keep older recurrences open. V104 supports the result only for the examined sample."
+    },
+    {
+      "id": "EX-3PL",
+      "title": "Warehouse-provider renewal",
+      "fictional": true,
+      "label": "Fictional worked example — renewal decision remains open",
+      "purpose": "Bring service, storage and billing evidence to a renewal review. Show a verified credit alongside service and storage questions that remain open.",
+      "scope": {
+        "decision": "Renew the provider contract, request changes or seek further evidence?",
+        "site": "Example provider site",
+        "period": "Review as at 8 October 2026. Service and billed-activity period: 1–7 October 2026.",
+        "operatingConditions": "Investigate the four late orders. Product acceptability remains unresolved because the 2 October condition record is missing.",
+        "sample": "12 orders, goods affected by the 2 October record gap and one invoice line for 120 pallet-days. Checks FLOW03–04, GOODS02, GOODS04 and CONTROL03–04.",
+        "exclusions": "No conclusion on all provider qualifications or all shipments. Fictional invoice amounts exclude VAT and other lines.",
+        "criteria": "SLA12 v2: orders ready for 17:00 dispatch. CS2 v2: customer dry-storage requirement. Signed rate v2: £1.50 per pallet-day from 1 October.",
+        "reviewer": "Service lead checks order/staging/handover records. Quality lead assesses the record gap. Commercial lead reconciles billing; finance controller checks CN82.",
+        "actionOwner": "Service lead: report by 10 October. Quality lead: assessment by 9 October. Commercial lead: credit and contract timetable/options.",
+        "decisionOwner": "Logistics director requests the service plan and quality assessment on 8 October before a final renewal decision."
+      },
+      "findings": [
+        {
+          "id": "EX-3PL-01",
+          "checkIds": ["FLOW03", "FLOW04", "CONTROL03"],
+          "issue": "Late dispatches",
+          "status": "Concern found",
+          "criterion": "Fictional SLA12 v2 requires the selected orders to be ready for 17:00 dispatch.",
+          "observation": "Four of 12 selected orders from 1–7 October 2026 were late against the agreed dispatch-readiness commitment.",
+          "evidenceObtained": "Order, staging and handover records for the 12 orders establish the four exceptions against SLA12 v2.",
+          "evidenceNeeded": "Service lead to examine staffing, workload, queues and exceptions around the four late orders and propose a supported service plan.",
+          "uncertainty": "The four exceptions are established within this sample. Their cause and wider service performance remain under investigation.",
+          "possibleCause": "Not yet established. The observed lateness does not identify a particular operating cause.",
+          "nextAction": "Service lead reports the evidence, remaining cause questions and proposed plan to the director by 10 October 2026.",
+          "actionType": "Investigation",
+          "owner": "Service lead",
+          "targetDate": "10 October 2026",
+          "urgency": "Director requires the service plan before the final renewal decision.",
+          "completion": "Open as at 8 October: investigation and service plan due 10 October.",
+          "verificationMethod": "After agreeing the plan, warehouse manager checks later order/staging/handover records against SLA12 v2. Agree coverage and timing with the plan.",
+          "verificationOwner": "Warehouse manager",
+          "verificationDate": "To be agreed after the service plan",
+          "verificationResult": "Pending — no effectiveness conclusion",
+          "decisionNeeded": "Director requests a service plan before final renewal. Commercial lead checks the contract timetable and available options.",
+          "decisionOwner": "Logistics director"
+        },
+        {
+          "id": "EX-3PL-02",
+          "checkIds": ["GOODS02", "GOODS04", "CONTROL03"],
+          "issue": "Customer storage concern",
+          "status": "Inconclusive or conflicting evidence",
+          "criterion": "Fictional customer requirement CS2 v2 specifies dry storage for the affected goods.",
+          "observation": "The 2 October 2026 condition record is missing for the affected goods. The available evidence cannot establish acceptability.",
+          "evidenceObtained": "CS2 v2 and the condition-record review identify the specific 2 October gap.",
+          "evidenceNeeded": "Quality lead to assess the affected goods, remaining condition evidence and any action needed under CS2 v2.",
+          "uncertainty": "Missing evidence does not establish acceptable or unacceptable goods. Product acceptability and any disposition remain for quality assessment.",
+          "possibleCause": "Not established",
+          "nextAction": "Quality lead assesses the affected goods and evidence gap under CS2 v2 and reports to the director by 9 October 2026.",
+          "actionType": "Investigation",
+          "owner": "Quality lead",
+          "targetDate": "9 October 2026",
+          "urgency": "Director requires the quality assessment before final renewal. Quality lead determines any response needed for the goods.",
+          "completion": "Open as at 8 October: quality assessment due 9 October.",
+          "verificationMethod": "Quality lead defines any required action and evidence of its effectiveness against CS2 v2 after assessing the affected goods.",
+          "verificationOwner": "Quality lead; any additional assessor to be identified through the assessment.",
+          "verificationDate": "To be agreed after the quality assessment",
+          "verificationResult": "Pending — no acceptability or effectiveness conclusion",
+          "decisionNeeded": "Director requests the quality assessment before final renewal. Keep the condition-record gap and any product decision visible.",
+          "decisionOwner": "Logistics director for renewal; quality lead to establish the required product decision and authority."
+        },
+        {
+          "id": "EX-3PL-03",
+          "checkIds": ["CONTROL04"],
+          "issue": "Disputed charges",
+          "status": "Concern found",
+          "criterion": "Signed fictional rate v2, effective 1 October 2026: £1.50 per pallet-day for the same unit and billed period.",
+          "observation": "Invoice bills 120 pallet-days at £2 = £240. Activity records confirm 120. Rate v2 gives 120 × £1.50 = £180, a £60 difference.",
+          "evidenceObtained": "Invoice line, matching 1–7 October activity records, signed rate v2 and obsolete v1 identify the rate error. CN82 records the agreed £60 credit.",
+          "evidenceNeeded": "None for this reconciled line and credit. Other invoice lines and VAT are outside the example.",
+          "uncertainty": "The fictional calculation excludes VAT and other lines. It establishes no external contract entitlement or wider ROI.",
+          "possibleCause": "Obsolete v1 rate was used instead of signed v2. The source of that rate-selection error is not established.",
+          "nextAction": "Commercial lead agrees CN82 for £60 on 8 October. Finance controller checks the credit and net £180 on the same day.",
+          "actionType": "Agreed billing correction and verification",
+          "owner": "Commercial lead",
+          "targetDate": "8 October 2026",
+          "urgency": "Resolve this line within the 8 October commercial review. Service and storage questions remain separate.",
+          "completion": "8 October 2026: commercial lead agrees £60 credit CN82. Finance controller verifies the resulting £180 net charge.",
+          "verificationMethod": "Reconcile the 120 pallet-days to signed rate v2 and check £240 invoice less £60 credit CN82 equals £180.",
+          "verificationOwner": "Finance controller",
+          "verificationDate": "8 October 2026",
+          "verificationResult": "Verified: net £180 agrees with 120 pallet-days at £1.50. The billing correction is closed for this line.",
+          "decisionNeeded": "Accept the verified credit for this line. Commercial lead checks contract timetable/options while the director awaits service and quality evidence.",
+          "decisionOwner": "Commercial lead for the credit; logistics director for the separate final renewal decision."
+        }
+      ],
+      "managementNote": "As at 8 October, the director awaits the quality assessment due 9 October and service plan due 10 October. Commercial lead checks contract timetable/options. The verified £60 credit does not settle renewal or product acceptability."
+    }
+  ],
+  "managementPrompts": [
+    {
+      "key": "decision",
+      "label": "Decision to make",
+      "prompt": "What decision is requested, and who has authority to make it?"
+    },
+    {
+      "key": "scope",
+      "label": "Scope and limits",
+      "prompt": "Which site, period, goods and sample support this brief? What was excluded?"
+    },
+    {
+      "key": "findings",
+      "label": "Findings and consequences",
+      "prompt": "What does the evidence establish, against which requirement, and what decision or activity does it affect?"
+    },
+    {
+      "key": "uncertainty",
+      "label": "Open evidence and criteria",
+      "prompt": "What remains missing, uncertain or conflicting? What evidence could change the decision?"
+    },
+    {
+      "key": "urgentConcerns",
+      "label": "User-flagged urgent concerns",
+      "prompt": "Record any concern the reviewer has flagged as urgent and its responsible response owner. Do not average it into an overall score."
+    },
+    {
+      "key": "options",
+      "label": "Options and resources",
+      "prompt": "What options are supported, what resources or approvals are needed, and what remains undecided?"
+    },
+    {
+      "key": "commitments",
+      "label": "Decision and commitments",
+      "prompt": "Record the decision, rationale, action owners, target dates and any unresolved dependency."
+    },
+    {
+      "key": "verification",
+      "label": "Follow-through",
+      "prompt": "Who checks effectiveness, using what evidence and when? What happens if the concern remains or returns?"
+    }
+  ],
+  "findingPrompts": [
+    {
+      "key": "identity",
+      "label": "Finding and linked check",
+      "prompt": "Give the finding an ID and record the starter check ID or custom area."
+    },
+    {
+      "key": "criterion",
+      "label": "Criterion or reference",
+      "prompt": "What requirement applies? Record the relevant version or Not yet established."
+    },
+    {
+      "key": "observation",
+      "label": "Observation and evidence",
+      "prompt": "What was observed, when and where? Add the record reference and sample."
+    },
+    {
+      "key": "uncertainty",
+      "label": "Evidence limits and possible cause",
+      "prompt": "What is uncertain? Keep a possible cause labelled as a hypothesis until evidence supports it."
+    },
+    {
+      "key": "consequence",
+      "label": "Consequence or decision affected",
+      "prompt": "Why does this finding matter within the stated review?"
+    },
+    {
+      "key": "action",
+      "label": "Next action",
+      "prompt": "Specify correction, investigation, corrective action or verification; describe the next step."
+    },
+    {
+      "key": "ownerAndDate",
+      "label": "Owner and target date",
+      "prompt": "Who will do the work, by when? Leave an unassigned owner or unagreed date visible."
+    },
+    {
+      "key": "urgency",
+      "label": "Urgency assigned by reviewer",
+      "prompt": "Choose Not assessed, Routine follow-up or User-flagged urgent concern. Use the site's response process for an immediate concern."
+    },
+    {
+      "key": "decision",
+      "label": "Decision or resources needed",
+      "prompt": "What prevents progress, who can resolve it and what decision is requested?"
+    },
+    {
+      "key": "completion",
+      "label": "Completion record",
+      "prompt": "What was completed, on what date and with which evidence?"
+    },
+    {
+      "key": "verification",
+      "label": "Effectiveness verification",
+      "prompt": "Record the method, reviewer, date, result and remaining limitations. Completion alone does not verify effectiveness."
+    }
+  ]
+}

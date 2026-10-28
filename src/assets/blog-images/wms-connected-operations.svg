@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="680" viewBox="0 0 800 680" role="img" aria-labelledby="wms-title" aria-describedby="wms-desc">
+  <title id="wms-title">Keep your WMS. Connect the missing pieces.</title>
+  <desc id="wms-desc">An existing warehouse management system handles inventory, put-away and picking. An API integration connects it to specialist dock scheduling, which coordinates inbound and outbound appointments with carriers and suppliers through bookings and updates.</desc>
+  <defs>
+    <marker id="wms-desktop-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="m2 2 4 3-4 3" fill="none" stroke="var(--wms-accent, #c9410a)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="800" height="680" rx="16" fill="var(--wms-surface, #f8efdf)"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="var(--wms-ink, #302b25)">
+    <text x="40" y="43" font-size="16" font-weight="700" letter-spacing="1.4">EXTEND YOUR EXISTING SYSTEM</text>
+    <text x="40" y="96" font-family="Georgia, 'Times New Roman', serif" font-size="40" letter-spacing="-.6"><tspan x="40">Keep your WMS. </tspan><tspan x="40" dy="44">Connect the missing pieces.</tspan></text>
+
+    <!-- The warehouse stays the substantial foundation of the operation. -->
+    <path d="M40 215a30 30 0 0 1 30-30h245a30 30 0 0 1 30 30v110H40Z" fill="var(--wms-warehouse-scene, #eee2cc)"/>
+    <ellipse cx="194" cy="323" rx="136" ry="12" fill="var(--wms-warehouse-ground, #ddcfb5)"/>
+    <path d="m66 232 117-55 123 55v85H66Z" fill="var(--wms-panel, #fcfaf4)" stroke="var(--wms-structure, #51473c)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="m66 232 117-55 123 55-23 10-100-43-99 43Z" fill="var(--wms-structure, #51473c)"/>
+    <path d="M84 246h113v71H84Z" fill="var(--wms-rack-back, #e7dcca)"/>
+    <g fill="none" stroke="var(--wms-rack-line, #95816a)" stroke-width="3">
+      <path d="M91 246v71m47-71v71m51-71v71M84 279h113m-113 35h113"/>
+    </g>
+    <g fill="var(--wms-stock, #ccb595)" stroke="var(--wms-rack-line, #95816a)" stroke-width="1.5">
+      <path d="M98 253h30v21H98Zm48 0h34v21h-34Zm-48 34h30v21H98Zm48 0h34v21h-34Z"/>
+    </g>
+    <g stroke="var(--wms-tape, #f4e6d1)" stroke-width="2"><path d="M113 253v9m50-9v9m-50 25v9m50-9v9"/></g>
+    <path d="M217 247h63v70h-63Z" fill="var(--wms-structure, #51473c)"/>
+    <path d="M225 254h47v47h-47Z" fill="var(--wms-door, #a39480)"/>
+    <path d="M226 263h45m-45 10h45m-45 10h45m-45 10h45" stroke="var(--wms-fine-line, #c4b59f)" stroke-width="2"/>
+    <path d="M213 317h72" stroke="var(--wms-structure, #51473c)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M210 303v14m78-14v14" stroke="var(--wms-accent, #fd4f00)" stroke-width="5"/>
+    <text x="192" y="371" text-anchor="middle" font-size="30" font-weight="700">Existing WMS</text>
+    <text x="192" y="405" text-anchor="middle" font-size="23">Inventory, put-away</text>
+    <text x="192" y="435" text-anchor="middle" font-size="23">and picking</text>
+
+    <!-- External partners are represented by a truck and shipment cartons. -->
+    <path d="M456 215a30 30 0 0 1 30-30h244a30 30 0 0 1 30 30v110H456Z" fill="var(--wms-carrier-scene, #eee2cc)"/>
+    <path d="M686 223v-27h37v27m-50 0h50v41h-50Z" fill="var(--wms-carton, #d3bc96)" stroke="var(--wms-carton-line, #9a815e)" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M705 196v11m-6 16v14" stroke="var(--wms-surface, #f8efdf)" stroke-width="5"/>
+    <ellipse cx="608" cy="323" rx="135" ry="12" fill="var(--wms-carrier-ground, #ddcfb5)"/>
+    <rect x="479" y="230" width="147" height="71" rx="3" fill="var(--wms-panel, #fcfaf4)" stroke="var(--wms-structure, #51473c)" stroke-width="3"/>
+    <path d="M489 242h127m-127 10h127m-127 10h127m-127 10h127" stroke="var(--wms-fine-line, #c4b59f)" stroke-width="2"/>
+    <path d="M627 252h45l29 32v25h-74Z" fill="var(--wms-accent, #fd4f00)" stroke="var(--wms-accent-line, #ac3d14)" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M643 260h23l20 24h-43Z" fill="var(--wms-structure, #51473c)"/>
+    <path d="M644 292h10m41 4h9" stroke="var(--wms-light-detail, #fff5df)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M481 305h215" stroke="var(--wms-structure, #51473c)" stroke-width="6"/>
+    <g fill="var(--wms-structure, #51473c)" stroke="var(--wms-surface, #f8efdf)" stroke-width="3"><circle cx="509" cy="310" r="14"/><circle cx="598" cy="310" r="14"/><circle cx="674" cy="310" r="14"/></g>
+    <g fill="var(--wms-hub, #cec2b1)"><circle cx="509" cy="310" r="5"/><circle cx="598" cy="310" r="5"/><circle cx="674" cy="310" r="5"/></g>
+    <text x="608" y="371" text-anchor="middle" font-size="30" font-weight="700">Carriers &amp; suppliers</text>
+    <text x="608" y="405" text-anchor="middle" font-size="23">Deliveries &amp; collections</text>
+    <text x="608" y="435" text-anchor="middle" font-size="23">at your dock</text>
+
+    <!-- Arrows describe information exchange, not the movement of goods. -->
+    <g fill="none" stroke="var(--wms-accent, #c9410a)" stroke-width="3" marker-start="url(#wms-desktop-arrow)" marker-end="url(#wms-desktop-arrow)">
+      <path d="M191 462v75q0 18 18 18h23"/>
+      <path d="M609 462v75q0 18-18 18h-23"/>
+    </g>
+    <g font-size="22" fill="var(--wms-connection-label, #834a2f)">
+      <text x="166" y="498" text-anchor="end">API</text>
+      <text x="166" y="526" text-anchor="end">integration</text>
+      <text x="634" y="498">Bookings</text>
+      <text x="634" y="526">&amp; updates</text>
+    </g>
+    <rect x="249" y="477" width="302" height="166" rx="13" fill="var(--wms-scheduling-surface, #ffdfc8)" stroke="var(--wms-accent, #d44d18)" stroke-width="2"/>
+    <path d="M262 477h276a13 13 0 0 1 13 13v7H249v-7a13 13 0 0 1 13-13Z" fill="var(--wms-accent, #fd4f00)"/>
+    <text x="400" y="538" text-anchor="middle" font-size="29" font-weight="700">Dock scheduling</text>
+    <text x="400" y="576" text-anchor="middle" font-size="23">Appointments &amp;</text>
+    <text x="400" y="607" text-anchor="middle" font-size="23">dock coordination</text>
+  </g>
+</svg>
