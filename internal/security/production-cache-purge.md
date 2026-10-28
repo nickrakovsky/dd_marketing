@@ -105,10 +105,21 @@ production code. The API credential is never exposed to PR preview jobs.
    purge confirmation. A rejected verification/purge returns an error; do not
    broaden the token's permissions to work around it.
 
-The webhook body is only a wake-up signal. It cannot specify a target host or
-trusted deployment: Cloudflare's project API is authoritative. Preview, failed,
-unfinished, dirty or skipped deployments cannot purge. Duplicate/concurrent
-deliveries are coalesced; success is recorded only after Cloudflare accepts the
+The Worker checks the notification itself, not just the currently live site.
+It requires the dd-marketing project, a production environment
+(`ENVIRONMENT_PRODUCTION` or `production`), `EVENT_DEPLOYMENT_SUCCESS`, and a
+valid deployment ID. Missing or unknown event/environment values cannot purge.
+The notification's deployment ID (and commit when present) must match the
+successful live main-branch production deployment returned by Cloudflare's API.
+A staging/preview notification cannot purge an older, already-live production
+deployment, even when the coordinator has no previous success recorded.
+
+The body cannot specify a target host, API path or trusted deployment:
+Cloudflare's project API is authoritative. Preview, failed, unfinished, dirty
+or skipped deployments cannot purge. Duplicate/concurrent deliveries for the
+same identity are coalesced; different deployment identities are serialized,
+so a stale event cannot swallow the next production event. Success is recorded
+only after Cloudflare accepts the
 purge. A delivery interrupted after purge but before recording may safely
 repeat the same apex-only purge. Production rollbacks are checked against the
 actual live deployment rather than GitHub's newest commit.
@@ -117,6 +128,11 @@ actual live deployment rather than GitHub's newest commit.
 
 The helper and notification require one-time setup in Cloudflare after merge;
 creating this PR does not deploy/configure them or perform a live purge.
+GitHub PR/staging checks run tests and a `wrangler deploy --dry-run` only; they
+do not deploy the helper, access its runtime secrets, or call the purge API.
+Local Worker/runtime tests mock the Cloudflare API. After configuration, verify
+the first real production notification and log entry before treating the live
+integration as confirmed. An unexpected webhook format must fail closed.
 This replaces the earlier GitHub-secret implementation in PR #275 and the
 build-time idea in #238. No cron is used, and scheduled article publication
 rules remain unchanged. Edge purging does not erase browser caches or app data.

@@ -47,16 +47,29 @@ export async function handleNotification(request, env, coordinate) {
   try { payload = await readPayload(request); }
   catch (error) { return reply({ error: 'Invalid payload' }, error.message === 'Payload too large' ? 413 : 400); }
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return reply({ error: 'Invalid payload' }, 400);
-  // Cloudflare's Save and Test sends only a `text` field. It must not purge.
-  // Some notification types omit alert_type/account_id; authentication plus the
-  // independently verified live project, not payload URLs, establishes authority.
-  const structuredData = payload.data && typeof payload.data === 'object' && !Array.isArray(payload.data);
-  if ((payload.alert_type && payload.alert_type !== 'pages_event_alert') ||
-    (!payload.alert_type && !structuredData) ||
-    (payload.account_id && payload.account_id !== env.CF_ACCOUNT_ID)) {
+  // Save and Test sends only `text`. The alert configuration is the first
+  // filter; independently check the notification before consulting production.
+  const data = payload.data;
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return reply({ purged: false, reason: 'Test or unrelated notification' });
   }
-  try { return reply(await coordinate()); }
+  if ((payload.alert_type ?? data.alert_name) !== 'pages_event_alert' ||
+    (payload.account_id && payload.account_id !== env.CF_ACCOUNT_ID) ||
+    (data.account_tag && data.account_tag !== env.CF_ACCOUNT_ID) ||
+    data.project_name !== PROJECT ||
+    (data.branch !== undefined && data.branch !== 'main') ||
+    !['ENVIRONMENT_PRODUCTION', 'production'].includes(data.environment) ||
+    data.event !== 'EVENT_DEPLOYMENT_SUCCESS') {
+    return reply({ purged: false, reason: 'Not this project\'s production deployment success' });
+  }
+  if (!DEPLOYMENT_ID.test(data.deployment_id ?? '') ||
+    (data.commit_hash !== undefined && !SHA.test(data.commit_hash))) {
+    return reply({ error: 'Incomplete production deployment notification' }, 400);
+  }
+  // Only this identity crosses the internal boundary. It is checked against
+  // Cloudflare's live state; hostnames and API paths never come from the body.
+  const expected = { id: data.deployment_id, ...(data.commit_hash === undefined ? {} : { sha: data.commit_hash }) };
+  try { return reply(await coordinate(expected)); }
   catch { return reply({ error: 'Production verification or purge failed; inspect Worker logs and token configuration' }, 502); }
 }
 
@@ -87,13 +100,18 @@ function liveDeployment(project) {
   return { id: deployment.id, sha: metadata.commit_hash };
 }
 
-export async function purgeLiveDeployment(env, storage, fetchImpl = fetch) {
+export async function purgeLiveDeployment(env, storage, expected, fetchImpl = fetch) {
+  if (!DEPLOYMENT_ID.test(expected?.id ?? '') ||
+    (expected.sha !== undefined && !SHA.test(expected.sha))) throw new Error('Invalid notification deployment identity');
   if (!ID.test(env.CF_ACCOUNT_ID ?? '') || !ID.test(env.CF_ZONE_ID ?? '') || !env.CF_PURGE_API_TOKEN) {
     throw new Error('Configure the Cloudflare Worker variables and API token secret');
   }
   const projectPath = `/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${PROJECT}`;
   const deployment = liveDeployment(await cloudflare(projectPath, env, fetchImpl));
   if (!deployment) return { purged: false, reason: 'No successful live production deployment' };
+  if (deployment.id !== expected.id || (expected.sha !== undefined && deployment.sha !== expected.sha)) {
+    return { purged: false, reason: 'Notification does not match the live production deployment' };
+  }
   const last = await storage.get('last-purged');
   if (last?.id === deployment.id) return { purged: false, reason: 'Already purged this deployment' };
   // A second read prevents an older notification from purging during a switch.
@@ -107,6 +125,15 @@ export async function purgeLiveDeployment(env, storage, fetchImpl = fetch) {
 
 // One durable coordinator serializes concurrent deliveries, including retries.
 export function singleFlight(run) {
-  let pending;
-  return () => pending ??= Promise.resolve().then(run).finally(() => { pending = undefined; });
+  const pending = new Map();
+  let tail = Promise.resolve();
+  return expected => {
+    const key = `${expected?.id ?? ''}:${expected?.sha ?? ''}`;
+    if (pending.has(key)) return pending.get(key);
+    const operation = tail.catch(() => {}).then(() => run(expected));
+    tail = operation;
+    const result = operation.finally(() => { pending.delete(key); });
+    pending.set(key, result);
+    return result;
+  };
 }

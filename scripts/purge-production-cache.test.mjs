@@ -13,7 +13,10 @@ const project = () => ({ name: 'dd-marketing', production_branch: 'main', domain
     deployment_trigger: { metadata: { branch: 'main', commit_hash: sha, commit_dirty: false } },
     latest_stage: { name: 'deploy', status: 'success' } },
 });
-const notification = { alert_type: 'pages_event_alert', account_id: account, data: { project_name: 'dd-marketing' } };
+const identity = { id: deployment, sha };
+const notification = { alert_type: 'pages_event_alert', account_id: account, data: { alert_name: 'pages_event_alert',
+  account_tag: account, project_name: 'dd-marketing', environment: 'ENVIRONMENT_PRODUCTION',
+  event: 'EVENT_DEPLOYMENT_SUCCESS', deployment_id: deployment, commit_hash: sha } };
 function request(body = notification, { secret = env.WEBHOOK_SECRET, path = '/pages-deployed', method = 'POST' } = {}) {
   return new Request('https://purger.example.workers.dev'+path, { method,
     headers: { 'cf-webhook-auth': secret, 'Content-Type': 'application/json' },
@@ -36,7 +39,7 @@ function harness({ projects = [project()], fail = false } = {}) {
     assert.equal(url, `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/dd-marketing`);
     return Response.json({ success: true, result: projects[Math.min(reads++, projects.length - 1)] });
   };
-  return { storage, state, requests, run: () => purgeLiveDeployment(env, storage, fetchImpl),
+  return { storage, state, requests, run: (expected = identity) => purgeLiveDeployment(env, storage, expected, fetchImpl),
     posts: () => requests.filter(x => x.method === 'POST') };
 }
 
@@ -61,7 +64,7 @@ test('a new production deployment causes another purge', async () => {
   const next = project(); next.canonical_deployment.id = nextDeployment;
   const h = harness({ projects: [project(), project(), next, next] });
   assert.equal((await h.run()).purged, true);
-  assert.equal((await h.run()).purged, true);
+  assert.equal((await h.run({ id: nextDeployment, sha })).purged, true);
   assert.equal(h.posts().length, 2);
 });
 
@@ -120,14 +123,14 @@ test('a rejected purge is not recorded and can be retried', async () => {
 test('missing configuration makes no API requests', async () => {
   for (const change of [{ CF_PURGE_API_TOKEN: '' }, { CF_ZONE_ID: '../other-zone' }, { CF_ACCOUNT_ID: '' }]) {
     let calls = 0;
-    await assert.rejects(purgeLiveDeployment({ ...env, ...change }, {}, async () => { calls++; }), /Configure/);
+    await assert.rejects(purgeLiveDeployment({ ...env, ...change }, {}, identity, async () => { calls++; }), /Configure/);
     assert.equal(calls, 0);
   }
 });
 
 test('an API redirect fails without following or forwarding credentials', async () => {
   let calls = 0;
-  await assert.rejects(purgeLiveDeployment(env, {}, async (_url, options) => {
+  await assert.rejects(purgeLiveDeployment(env, {}, identity, async (_url, options) => {
     calls++;
     assert.equal(options.redirect, 'manual');
     return new Response(null, { status: 302, headers: { Location: 'https://untrusted.example/' } });
@@ -141,6 +144,60 @@ test('authenticated Pages notification invokes coordinator', async () => {
   assert.equal(response.status, 200);
   assert.equal(calls, 1);
   assert.equal(response.headers.get('cache-control'), 'no-store');
+});
+
+test('staging or preview notifications cannot purge even when an unpurged production deployment exists', async () => {
+  const variants = [
+    { environment: 'preview' }, { environment: 'staging' },
+    { environment: 'ENVIRONMENT_PREVIEW' }, { environment: 'ENVIRONMENT_STAGING' },
+    { environment: undefined }, { event: 'EVENT_DEPLOYMENT_STARTED' },
+    { event: 'EVENT_DEPLOYMENT_FAILED' }, { event: undefined },
+    { project_name: 'dd-marketing-staging' }, { branch: 'staging' },
+    { account_tag: 'e'.repeat(32) },
+  ];
+  for (const change of variants) {
+    const h = harness(); let coordinatorCalls = 0;
+    const payload = { ...notification, data: { ...notification.data, ...change } };
+    const response = await handleNotification(request(payload), env, expected => {
+      coordinatorCalls++; return h.run(expected);
+    });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).purged, false);
+    assert.equal(coordinatorCalls, 0);
+    assert.equal(h.requests.length, 0);
+    assert.equal(h.state.size, 0);
+  }
+});
+
+test('production success purges only the matching live deployment, not a different preview or stale notification', async () => {
+  for (const change of [{ deployment_id: nextDeployment }, { commit_hash: 'e'.repeat(40) }]) {
+    const h = harness();
+    const response = await handleNotification(request({ ...notification, data: { ...notification.data, ...change } }), env, h.run);
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).purged, false);
+    assert.equal(h.posts().length, 0);
+    assert.equal(h.state.size, 0);
+  }
+});
+
+test('production success without a usable deployment identity is rejected before coordination', async () => {
+  for (const change of [{ deployment_id: undefined }, { deployment_id: 'invalid' }, { commit_hash: 'invalid' }]) {
+    const response = await handleNotification(request({ ...notification, data: { ...notification.data, ...change } }), env,
+      () => { throw Error('must not coordinate'); });
+    assert.equal(response.status, 400);
+  }
+});
+
+test('an old event failing during a production switch cannot swallow the newer successful event', async () => {
+  const next = project(); next.canonical_deployment.id = nextDeployment;
+  const h = harness({ projects: [project(), next, next, next] });
+  const coordinate = singleFlight(h.run);
+  const result = await Promise.allSettled([coordinate(identity), coordinate({ id: nextDeployment, sha })]);
+  assert.equal(result[0].status, 'rejected');
+  assert.equal(result[1].status, 'fulfilled');
+  assert.equal(result[1].value.purged, true);
+  assert.equal(h.posts().length, 1);
+  assert.equal(h.state.get('last-purged').id, nextDeployment);
 });
 
 test('missing/wrong/short webhook secrets reject before any coordinator call', async () => {
@@ -160,11 +217,14 @@ test('Save and Test, unrelated alerts and another account never purge', async ()
   }
 });
 
-test('notification schema variants may omit optional account and type; live API remains authoritative', async () => {
-  const response = await handleNotification(request({ text: 'Pages update', data: { event: 'success' } }), env,
-    async () => ({ purged: false, reason: 'No successful live production deployment' }));
+test('documented optional envelope fields may be omitted without relaxing deployment checks', async () => {
+  const { alert_type: _type, account_id: _account, ...payload } = notification;
+  let seen;
+  const response = await handleNotification(request(payload), env, async expected => {
+    seen = expected; return { purged: false };
+  });
   assert.equal(response.status, 200);
-  assert.equal((await response.json()).purged, false);
+  assert.deepEqual(seen, identity);
 });
 
 test('payload cannot override hostname, zone or deployment verification', async () => {
@@ -196,6 +256,9 @@ test('GitHub has offline tests only; deployed helper has no marketing/app routes
   for (const name of fs.readdirSync(workflowRoot)) {
     assert.doesNotMatch(fs.readFileSync(new URL(name, workflowRoot), 'utf8'), /CF_PURGE_API_TOKEN|WEBHOOK_SECRET/);
   }
+  const ci = fs.readFileSync(new URL('ci.yml', workflowRoot), 'utf8');
+  assert.match(ci, /wrangler deploy --dry-run/);
+  assert.doesNotMatch(ci, /wrangler deploy (?!\-\-dry-run)/);
   const config = fs.readFileSync(new URL('./cloudflare-cache-purge/wrangler.jsonc', import.meta.url), 'utf8');
   assert.match(config, /"routes": \[\]/);
   assert.match(config, /"keep_vars": true/);
