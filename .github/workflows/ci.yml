@@ -55,6 +55,9 @@ jobs:
       - name: Comparison hero font coverage and metrics
         run: node --test scripts/comparison-hero-fonts.test.mjs
 
+      - name: Feature diagram sizing regression tests
+        run: node --test scripts/feature-diagram.test.mjs
+
       - name: YouTube importer regression tests
         run: npm run test:youtube-sync
 
