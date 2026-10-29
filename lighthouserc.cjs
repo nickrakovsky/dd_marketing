@@ -1,8 +1,8 @@
 /**
- * Lighthouse CI configuration.
+ * Lighthouse audit configuration, consumed by scripts/performance-audit.mjs.
  *
- * Local:  npx lhci autorun          (starts preview server, tests localhost)
- * CI:     PREVIEW_URL=https://xxx.pages.dev npx lhci autorun --collect.startServerCommand=""
+ * Local:  npm run perf             (starts the production Pages preview)
+ * CI:     PREVIEW_URL=https://xxx.pages.dev npm run perf
  *         (all five priority pages are checked against the same preview)
  */
 const baseURL = process.env.PREVIEW_URL || 'http://localhost:4321';
@@ -11,9 +11,6 @@ const performancePaths = ['/', '/posts', '/comparison', '/news', '/posts/best-ya
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run preview',
-      startServerReadyPattern: 'localhost',
-      startServerReadyTimeout: 30000,
       url: performancePaths.map(path => new URL(path, baseURL).href),
       numberOfRuns: 1,
       // Keep the trace behind a failed score so we can identify the cause.
@@ -26,9 +23,6 @@ module.exports = {
         // CLS > 0.01 is an error (true zero is unrealistic for CWV measurement noise)
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.01 }],
       },
-    },
-    upload: {
-      target: 'temporary-public-storage',
     },
   },
 };
