@@ -10,7 +10,7 @@ import { getAuthor } from '../data/authors';
 import { CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR } from '../lib/calendly-config.mjs';
 import { VENDOR_ASSETS, bentoScriptPath } from '../lib/vendor-assets.mjs';
 import AsyncStyles from '../components/AsyncStyles.astro';
-import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from '../lib/campaign-pages.mjs';
+import { CAMPAIGN_ROBOTS, isNoindexAdsUrl } from '../lib/campaign-pages.mjs';
 
 interface Props {
     title: string;
@@ -98,7 +98,7 @@ const pathname = Astro.url.pathname === '/'
 
 const canonicalURL = new URL(pathname, Astro.site);
 const socialImageURL = new URL(image, Astro.site);
-const isCampaignPage = isCampaignLandingPath(pathname);
+const isCampaignPage = isNoindexAdsUrl(Astro.url);
 const robots = isCampaignPage ? CAMPAIGN_ROBOTS : noindex ? 'noindex, follow' : 'index, follow';
 
 // Content pages (blog posts pass type="article", video pages pass type="video")

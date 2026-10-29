@@ -18,6 +18,71 @@ function onboardingRow(section: Locator) {
   });
 }
 
+for (const width of [390, 1280]) {
+  test(`comparison ad links land on the table and preselect both competitors at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const url = '/comparison?utm_source=google&compare=opendock,c3-solutions&utm_campaign=comparison#comparison-table';
+    await page.goto(url);
+    const section = page.locator('#comparison-table');
+    // Do not scroll in this test: the final URL must bring visitors to the table.
+    await expect(section.getByRole('heading', { level: 2 })).toBeInViewport();
+    await expect(section.locator('astro-island[ssr]')).toHaveCount(0);
+    const firstSystem = section.getByRole('combobox', { name: 'First system', exact: true });
+    const secondSystem = section.getByRole('combobox', { name: 'Second system', exact: true });
+    await expect(firstSystem).toHaveValue('opendock');
+    await expect(secondSystem).toHaveValue('c3-solutions');
+    await expect(section.getByRole('columnheader').first()).toHaveAccessibleName('Feature');
+    await expect(section.getByRole('columnheader').nth(1)).toHaveAccessibleName('DataDocks');
+    await expect(section.getByRole('columnheader').nth(2)).toHaveAccessibleName('Opendock');
+    await expect(section.getByRole('columnheader').nth(3)).toHaveAccessibleName('C3 Solutions');
+
+    await section.getByRole('button', { name: 'Carrier Self-Booking Portal', exact: true }).click();
+    await expect(onboardingRow(section).getByRole('cell')).toHaveCount(3);
+    await firstSystem.selectOption('goramp');
+    await expect(firstSystem).toHaveValue('goramp');
+    await expect(secondSystem).toHaveValue('c3-solutions');
+    // Tracking parameters survive selection; the URL remains a reusable ad link.
+    await expect(page).toHaveURL(url);
+  });
+}
+
+test('comparison link preserves requested order and safely falls back for invalid values', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const cases = [
+    { query: 'compare=c3-solutions,opendock', first: 'c3-solutions', second: 'opendock' },
+    { query: 'compare=unknown,goramp,goramp,conduit,opendock', first: 'goramp', second: 'conduit' },
+    { query: 'compare=goramp', first: 'goramp', second: '' },
+    { query: 'compare=unknown,%3Cscript%3E,constructor', first: 'c3-solutions', second: '' },
+  ];
+  for (const { query, first, second } of cases) {
+    await page.goto(`/comparison?${query}#comparison-table`);
+    const section = page.locator('#comparison-table');
+    await expect(section.locator('astro-island[ssr]')).toHaveCount(0);
+    await expect(section.getByRole('combobox', { name: 'First system', exact: true })).toHaveValue(first);
+    const secondSystem = section.getByRole('combobox', { name: 'Second system', exact: true, includeHidden: true });
+    await expect(secondSystem).toHaveValue(second);
+    if (second) await expect(secondSystem).toBeVisible();
+    else await expect(secondSystem).toBeHidden();
+  }
+});
+
+test('comparison ad variants are noindexed while the base guide remains searchable', async ({ page }) => {
+  for (const query of ['?compare=opendock,c3-solutions', '?compare=unknown', '?compare=']) {
+    const response = await page.goto(`/comparison${query}`);
+    expect(response?.status()).toBe(200);
+    expect(response?.headers()['x-robots-tag']).toMatch(/\bnoindex\b/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /\bnoindex\b/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://datadocks.com/comparison');
+  }
+  for (const query of ['', '?utm_source=google']) {
+    const response = await page.goto(`/comparison${query}`);
+    expect(response?.status()).toBe(200);
+    expect(response?.headers()['x-robots-tag'] ?? '').not.toMatch(/\bnoindex\b/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://datadocks.com/comparison');
+  }
+});
+
 async function expectRowLayout(row: Locator, layout: 'stacked' | 'paired' | 'columns', visibleProductSlots: number) {
   await expect(row).toBeVisible();
   await expect(row.getByRole('cell')).toHaveCount(visibleProductSlots);

@@ -4,11 +4,15 @@
 export const prerender = false;
 
 import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Schedule outbound loads and coordinate warehouse dispatch. Let carriers book collection slots within your rules, with one shared view of appointments and loading progress.';
 ---
 
 <HomePage
-  title="outbound dock management"
+  title="Outbound Dock Management | DataDocks"
+  description={description}
   headingLines={['OUTBOUND DOCK', 'MANAGEMENT']}
+  heroDescription={description}
   demoAttribution="page"
   noindex
 />

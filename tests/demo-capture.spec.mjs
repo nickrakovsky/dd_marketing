@@ -166,3 +166,66 @@ for (const formId of ['book-demo', 'cta-bento-form']) {
     await expect(page.locator('#demo-capture-dialog')).not.toHaveAttribute('data-standalone');
   });
 }
+
+const campaignPaths = [
+  '/yard-management-software',
+  '/dock-scheduling-software',
+  '/warehouse-optimization-software',
+  '/logistics-scheduling-software',
+];
+
+for (const path of campaignPaths) {
+  for (const formId of ['book-demo', 'cta-bento-form']) {
+    test(`${path}: ${formId} keeps campaign attribution and UTMs through capture and booking`, async ({ page, baseURL }) => {
+      const state = await prepare(page, baseURL);
+      await page.setViewportSize(formId === 'book-demo'
+        ? { width: 390, height: 844 }
+        : { width: 1280, height: 900 });
+      // A previous session landing must not replace the converting campaign URL.
+      const previousLanding = new URL('/', baseURL).href;
+      await page.addInitScript(value => sessionStorage.setItem('dd_landing_page', value), previousLanding);
+      const campaign = path.slice(1);
+      const touch = {
+        utm_source: 'google',
+        utm_medium: 'cpc',
+        utm_campaign: campaign,
+        utm_term: campaign.replaceAll('-', ' '),
+        utm_content: 'ad-a',
+      };
+      const landing = new URL(`${path}?${new URLSearchParams({ ...touch, gclid: 'test-click' })}`, baseURL).href;
+      const response = await page.goto(landing, { waitUntil: 'domcontentloaded' });
+      expect(response?.status()).toBe(200);
+      await expect(page.locator('html')).toHaveAttribute('data-demo-attribution', 'page');
+      const email = `${campaign}-${formId}@example.com`;
+      await checkForm(page, state, page.locator(`form#${formId}`), email);
+      const expectedAttribution = {
+        email,
+        source: path,
+        landingPage: landing,
+        firstTouch: { ...touch, landing: path },
+        lastTouch: { ...touch, landing: path },
+      };
+      expect(state.captures[2]).toMatchObject({ ...expectedAttribution, event: 'Demo Subscriber' });
+      const [booking] = await state.calls();
+      expect(booking.url).toContain('calendly.com/nick-rakovsky/datadocks-demo');
+      expect(booking.utm).toEqual({
+        utmSource: touch.utm_source,
+        utmMedium: touch.utm_medium,
+        utmCampaign: touch.utm_campaign,
+        utmTerm: touch.utm_term,
+        utmContent: touch.utm_content,
+      });
+
+      // Simulate the widget event locally; the resulting lead write is intercepted.
+      await page.evaluate(() => window.dispatchEvent(new MessageEvent('message', {
+        data: { event: 'calendly.event_scheduled' },
+        origin: 'https://calendly.com',
+      })));
+      await expect.poll(() => state.captures.length).toBe(4);
+      expect(state.captures[3]).toMatchObject({ ...expectedAttribution, event: 'demo_booked' });
+      expect(await page.evaluate(() => sessionStorage.getItem('dd_landing_page'))).toBe(previousLanding);
+      await expect(page).toHaveURL(landing);
+      await state.expectNoFallback();
+    });
+  }
+}

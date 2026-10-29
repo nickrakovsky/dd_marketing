@@ -1,16 +1,16 @@
 import { withPublicationStyles } from './lib/publication-styles';
 import { defineMiddleware } from 'astro:middleware';
 import { CONTENT_SECURITY_POLICY, BUILD_SCRIPT_POLICY, SCRIPT_POLICY_REPORT_ONLY } from './lib/security-policy.mjs';
-import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from './lib/campaign-pages.mjs';
+import { CAMPAIGN_ROBOTS, isNoindexAdsUrl, usesCurrentHomepage } from './lib/campaign-pages.mjs';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // All availability checks within a response use the same instant.
   context.locals.publicationDate = new Date();
   let response = await next();
   const pathname = context.url.pathname.replace(/\/$/, '') || '/';
-  const isCampaignPage = isCampaignLandingPath(pathname);
-  const usesHomePage = pathname === '/' || isCampaignPage;
-  if (usesHomePage || pathname === '/posts' || pathname.startsWith('/posts/')
+  const isCampaignPage = isNoindexAdsUrl(context.url);
+  const usesHomePage = usesCurrentHomepage(pathname);
+  if (usesHomePage || pathname === '/comparison' || pathname === '/posts' || pathname.startsWith('/posts/')
     || pathname.startsWith('/videos/') || pathname === '/sitemap-posts.xml') {
     // A publication cutoff must never be served stale for long, but a full
     // no-store defeats edge caching entirely (see the dd_marketing memory on

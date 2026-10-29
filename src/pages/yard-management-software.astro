@@ -1,12 +1,18 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
-import KeywordLandingLayout from '../layouts/KeywordLandingLayout.astro';
+import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Track trailers from gate arrival to departure. Coordinate yard moves, dock assignments and your team with one shared view of your facility.';
 ---
 
-<KeywordLandingLayout
+<HomePage
   title="Yard Management Software | DataDocks"
-  description="Know where every trailer is without walking the yard. Track gate arrivals, staging, and moves in one system your team and carriers both use."
-  lines={["YARD MANAGEMENT", "SOFTWARE"]}
-  subheadline="One effortless system for yard management and dock scheduling, backed up by a team that always goes the extra&nbsp;mile."
+  description={description}
+  headingLines={['YARD MANAGEMENT', 'SOFTWARE']}
+  headingScale={12.1}
+  heroEyebrow={null}
+  heroDescription={description}
+  demoAttribution="page"
+  noindex
 />
