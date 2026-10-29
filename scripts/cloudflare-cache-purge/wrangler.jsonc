@@ -1,0 +1,19 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "datadocks-apex-cache-purge",
+  "main": "worker.mjs",
+  "compatibility_date": "2025-04-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "routes": [],
+  "keep_vars": true,
+  "observability": { "enabled": true },
+  // Set CF_ACCOUNT_ID and CF_ZONE_ID in the Worker dashboard. keep_vars
+  // preserves them when Cloudflare's Git integration deploys new code.
+  // Set CF_PURGE_API_TOKEN and WEBHOOK_SECRET as encrypted Worker secrets.
+  // Never put their values here, in Pages build variables, or in GitHub.
+  "durable_objects": {
+    "bindings": [{ "name": "PURGE_COORDINATOR", "class_name": "ApexPurgeCoordinator" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ApexPurgeCoordinator"] }]
+}
