@@ -1,0 +1,22 @@
+# These integrations must move together during the Pages-to-Workers migration.
+# Version ranges apply to security updates too; existing alerts remain visible.
+# https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/manage-your-dependency-security/controlling-dependencies-updated
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Preserve security updates without enabling routine version-update PRs.
+    open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "astro"
+        versions: [">=6.0.0"]
+      - dependency-name: "@astrojs/cloudflare"
+        versions: [">=13.0.0"]
+      - dependency-name: "@astrojs/react"
+        versions: [">=5.0.0"]
+      - dependency-name: "@astrojs/solid-js"
+        versions: [">=6.0.0"]
+      - dependency-name: "@astrojs/mdx"
+        versions: [">=5.0.0"]

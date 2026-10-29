@@ -1,6 +1,6 @@
 # Dependency security coverage — 2026-10-28
 
-Scope: current dd_marketing main after #288 and #292, retaining Astro 5.18.2. Inventory is npm audit of package-lock.json; the connected GitHub interface does not expose the Dependabot alerts endpoint. No alerts are dismissed by this work.
+Scope: the Astro 5-compatible baseline after #288 and #292 (`8f6a1a0`), retaining Astro 5.18.2. This PR also reverses the incompatible framework versions introduced by #294. Inventory is npm audit of package-lock.json; the connected GitHub interface does not expose the Dependabot alerts endpoint. No alerts are dismissed by this work.
 
 Affected package entries: 22 before this PR, 6 after. These counts include inherited findings, not unique advisories.
 
@@ -32,3 +32,5 @@ Affected package entries: 22 before this PR, 6 after. These counts include inher
 | `zod` | [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) | Astro 5 depends on Zod 3 APIs; Zod 4 requires a consumer migration. |
 
 The audit remains nonzero for these exceptions. The six affected package entries are Astro, its Pages adapter, MDX/Tailwind integrations inheriting Astro findings, Zod, and zod-to-ts. Validation results and hosted CI status are recorded in the PR description.
+
+Dependabot ignore ranges in `.github/dependabot.yml` hold Astro and the incompatible integration majors until the coordinated Pages-to-Workers migration. Compatible updates remain eligible and existing security alerts are not dismissed.
