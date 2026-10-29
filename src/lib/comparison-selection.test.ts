@@ -21,8 +21,7 @@ describe('comparison link selection', () => {
     expect(parse('?compare=opendock,opendock')).toEqual(['opendock']);
   });
 
-  it.each(['', '?utm_source=google', '?compare=', '?compare=,,', '?compare=unknown'])
-  ('leaves the default comparison intact for absent/empty/invalid input: %s', search => {
+  it.each(['', '?utm_source=google', '?compare=', '?compare=,,', '?compare=unknown'])('leaves the default comparison intact for absent/empty/invalid input: %s', search => {
     expect(parse(search)).toEqual([]);
   });
 
