@@ -3,6 +3,7 @@ import { createSignal, createMemo, createUniqueId, onMount, onCleanup, For, Show
 import type { Component } from "solid-js";
 import "./ComparisonTable.css";
 import { cn } from "@/components/solid/lib/utils";
+import { parseComparisonSelection } from "@/lib/comparison-selection";
 import {
   comparisonCompetitors,
   comparisonFeatureGroups,
@@ -280,6 +281,18 @@ const ComparisonTable: Component = () => {
   let secondSystemSelect: HTMLSelectElement | undefined;
 
   onMount(() => {
+    // Preserve the static default through hydration, then apply a paid/shared
+    // link's allowlisted selection. DataDocks remains the fixed first column.
+    const requestedIds = parseComparisonSelection(
+      window.location.search,
+      comparisonCompetitors.map(competitor => competitor.id)
+    );
+    const firstCompetitor = comparisonCompetitors.find(competitor => competitor.id === requestedIds[0]);
+    if (firstCompetitor) {
+      setSelectedCompetitor1(firstCompetitor);
+      setSelectedCompetitor2(comparisonCompetitors.find(competitor => competitor.id === requestedIds[1]) ?? null);
+    }
+
     const wideViewport = window.matchMedia("(min-width: 900px)");
     const updateViewport = () => {
       setIsMobile(!wideViewport.matches);

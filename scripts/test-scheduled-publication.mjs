@@ -296,13 +296,24 @@ export default {
   // Paid destinations remain usable for AdsBot, but excluded from search.
   const campaignContent = {
     '/outbound-dock-management': {
-      title: 'outbound dock management',
+      title: 'Outbound Dock Management | DataDocks',
       heading: 'OUTBOUND DOCK MANAGEMENT',
+      description: 'Schedule outbound loads and coordinate warehouse dispatch. Let carriers book collection slots within your rules, with one shared view of appointments and loading progress.',
     },
     '/inbound-dock-management': {
       title: 'Inbound Dock Software',
       heading: 'INBOUND DOCK MANAGEMENT SOFTWARE',
       description: 'Schedule inbound deliveries and coordinate warehouse receiving appointments.',
+    },
+    '/logistics-scheduling-software': {
+      title: 'Logistics Scheduling Software | DataDocks',
+      heading: 'LOGISTICS SCHEDULING SOFTWARE',
+      description: 'Coordinate transportation arrivals, dock appointments and yard activity in one shared system. Give your logistics team and carriers clear schedules, load updates and digital records.',
+    },
+    '/warehouse-optimization-software': {
+      title: 'Warehouse Optimization | DataDocks',
+      heading: 'WAREHOUSE OPTIMIZATION',
+      description: 'Plan deliveries and collections around what your team can handle. Let carriers book available slots, and keep your warehouse team informed when trucks arrive or plans change.',
     },
   };
   const visibleText = value => value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -366,6 +377,43 @@ export default {
       }
       checks++;
     }
+  }
+
+  for (const [path, heading] of [
+    ['/yard-management-software', 'YARD MANAGEMENT SOFTWARE'],
+    ['/dock-scheduling-software', 'DOCK SCHEDULING SOFTWARE'],
+  ]) {
+    const { response, text } = await request(path + '?utm_source=google', Date.parse(slots[0].pubDate));
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS);
+    assert.ok(text.includes(`name="robots" content="${CAMPAIGN_ROBOTS}"`));
+    assert.equal(visibleText(text.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)[1]), heading);
+    assert.ok(text.includes('data-publication-critical'), `${path}: missing homepage critical styles`);
+    assert.ok(text.includes('data-demo-attribution="page"'));
+    assert.ok(!staticSitemap.text.includes(path));
+    checks++;
+  }
+  const warehouse = await request('/warehouse-management-software', Date.parse(slots[0].pubDate));
+  assert.equal(warehouse.response.status, 200, 'Legacy warehouse page must remain available');
+  assert.match(warehouse.text, /name="robots" content="[^"]*noindex/);
+  assert.ok(!staticSitemap.text.includes('/warehouse-management-software'));
+  checks++;
+
+  assert.ok(staticSitemap.text.includes('https://datadocks.com/comparison</loc>'));
+  assert.ok(!staticSitemap.text.includes('compare='));
+  for (const query of ['', '?compare=opendock,c3-solutions', '?compare=', '?compare=unknown', '?utm_source=google&compare=c3-solutions']) {
+    const { response, text } = await request('/comparison' + query, Date.parse(slots[0].pubDate));
+    assert.equal(response.status, 200);
+    assert.ok(text.includes('rel="canonical" href="https://datadocks.com/comparison"'));
+    assert.ok(text.includes('data-publication-critical'), 'Comparison must retain optimized styles');
+    if (query) {
+      assert.equal(response.headers.get('x-robots-tag'), CAMPAIGN_ROBOTS);
+      assert.ok(text.includes(`name="robots" content="${CAMPAIGN_ROBOTS}"`));
+    } else {
+      assert.ok(!response.headers.get('x-robots-tag')?.includes('noindex'));
+      assert.ok(text.includes('name="robots" content="index, follow"'));
+    }
+    checks++;
   }
 
   for (const path of ['/_worker.js/index.js', '/_build/publication/home', '/_build/publication/hub', `/_build/publication/posts/${slots[0].slug}`]) {

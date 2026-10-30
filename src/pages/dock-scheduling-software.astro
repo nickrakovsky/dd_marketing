@@ -1,12 +1,18 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
-import KeywordLandingLayout from '../layouts/KeywordLandingLayout.astro';
+import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Let carriers book dock appointments within your capacity and scheduling rules. Coordinate arrivals, dock assignments and your warehouse team in one shared schedule.';
 ---
 
-<KeywordLandingLayout
+<HomePage
   title="Dock Scheduling Software | DataDocks"
-  description="Replace spreadsheets and back-and-forth calls with an automated system. Dramatically improve productivity and accountability on your warehouse loading dock."
-  lines={["DOCK SCHEDULING", "SOFTWARE"]}
-  subheadline="One effortless system for dock scheduling and yard management, backed up by a team that always goes the extra&nbsp;mile."
+  description={description}
+  headingLines={['DOCK SCHEDULING', 'SOFTWARE']}
+  headingScale={12.8}
+  heroEyebrow={null}
+  heroDescription={description}
+  demoAttribution="page"
+  noindex
 />

@@ -237,6 +237,7 @@ export default defineConfig({
       customPages: [
         'https://datadocks.com/',
         'https://datadocks.com/posts',
+        'https://datadocks.com/comparison',
         'https://datadocks.com/yard-management',
         'https://datadocks.com/datadocks-features/dock-dashboard',
         'https://datadocks.com/datadocks-features/carrier-portal',

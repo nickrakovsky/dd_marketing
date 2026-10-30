@@ -42,6 +42,22 @@
   X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
 /inbound-dock-management/*
   X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
 
 # --- HTML pages: edge-cache 1 day, browser revalidates (unchanged policy) ---
 # Root-level pages (build.format:'file' serves these at clean paths)
@@ -59,12 +75,7 @@
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /yard-management
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
-# /comparison is indexable and in the sitemap but had no rule at all, so it fell
-# through to the browser default with no s-maxage — verified live as
-# `cf-cache-status: MISS` on every request, i.e. a full origin round-trip per
-# visit. Same class of miss as the landing pages below.
-/comparison
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+# /comparison is request-rendered; middleware sets caching and query-specific robots.
 # Keyword landing pages (noindexed and out of the sitemap, but still real URLs
 # we drive paid/direct traffic to — without an s-maxage they miss the edge cache
 # and every visit pays a full origin round-trip).
@@ -111,3 +122,48 @@
   X-Robots-Tag: noindex, nofollow
 /files/warehouse-audit-floor-pack.pdf
   X-Robots-Tag: noindex, nofollow
+
+/yard-management-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/yard-management-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/yard-management-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-scheduling-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-scheduling-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-scheduling-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/warehouse-management-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/warehouse-management-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/warehouse-management-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-management-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-management-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-management-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/outgrowing-opendock
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/outgrowing-opendock/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/outgrowing-opendock.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex

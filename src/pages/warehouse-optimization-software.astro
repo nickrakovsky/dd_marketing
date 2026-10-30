@@ -1,0 +1,19 @@
+---
+// Paid-only destination: keep out of menus, content links and discovery lists.
+// The shared campaign policy enforces robots metadata, headers and build checks.
+export const prerender = false;
+
+import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Plan deliveries and collections around what your team can handle. Let carriers book available slots, and keep your warehouse team informed when trucks arrive or plans change.';
+---
+
+<HomePage
+  title="Warehouse Optimization | DataDocks"
+  description={description}
+  headingLines={['WAREHOUSE', 'OPTIMIZATION']}
+  heroEyebrow="DOCK SCHEDULING + YARD MANAGEMENT SOFTWARE"
+  heroDescription={description}
+  demoAttribution="page"
+  noindex
+/>

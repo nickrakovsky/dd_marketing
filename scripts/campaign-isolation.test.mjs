@@ -4,8 +4,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { assertCampaignSources, assertCampaignOutput } from './campaign-isolation.mjs';
+import { CAMPAIGN_PATHS } from '../src/lib/campaign-pages.mjs';
 
-const campaigns = ['/outbound-dock-management', '/inbound-dock-management'];
+const campaigns = CAMPAIGN_PATHS;
 function fixture(t, files) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'dd-campaign-isolation-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
@@ -33,7 +34,7 @@ for (const campaign of campaigns) {
 
     for (const [file, contents] of Object.entries({
       'src/components/Navigation.astro': `<a href="${campaign}">Campaign</a>`,
-      'src/data/pages.ts': `const page = '${campaign.split('-')[0]}-' + 'dock-management';`,
+      'src/data/pages.ts': `const page = '${campaign.slice(0, 10)}' + '${campaign.slice(10)}';`,
       'src/layouts/Layout.astro': `<link rel="canonical" href="https://datadocks.com${campaign}" />`,
       'src/content/posts/example.mdx': `[Learn more](${campaign})`,
       'public/llms.txt': `https://datadocks.com${campaign}`,

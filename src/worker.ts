@@ -1,6 +1,6 @@
 import type { SSRManifest } from 'astro';
 import { isInternalPath } from './lib/internal-paths.mjs';
-import { CAMPAIGN_ROBOTS, isCampaignLandingPath } from './lib/campaign-pages.mjs';
+import { CAMPAIGN_ROBOTS, isNoindexAdsUrl } from './lib/campaign-pages.mjs';
 import { createExports as createAstroExports } from '@astrojs/cloudflare/entrypoints/server.js';
 
 export function createExports(manifest: SSRManifest) {
@@ -30,7 +30,7 @@ export function createExports(manifest: SSRManifest) {
           });
         }
         const response = await worker.fetch(...args);
-        if (!isCampaignLandingPath(pathname)) return response;
+        if (!isNoindexAdsUrl(url)) return response;
         // Cover redirects and adapter/static fallback responses as well as SSR.
         const headers = new Headers(response.headers);
         headers.set('X-Robots-Tag', CAMPAIGN_ROBOTS);

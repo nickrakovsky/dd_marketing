@@ -6,12 +6,13 @@ import { getImage } from 'astro:assets';
 import AuthorAvatar from '../components/home-revamp/AuthorAvatar.astro';
 import { EVERGREEN_RESOURCE_SLUGS } from '../lib/evergreen-content';
 import HomePage from '../components/pages/HomePage.astro';
+import ComparisonPage from '../components/pages/ComparisonPage.astro';
 import PostsPage from '../components/pages/PostsPage.astro';
 import ArticlePage from '../components/pages/ArticlePage.astro';
 import VideoPage from '../components/pages/VideoPage.astro';
 
 type Props =
-  | { kind: 'home' | 'hub'; asOf: Date; entry?: never }
+  | { kind: 'home' | 'hub' | 'comparison'; asOf: Date; entry?: never }
   | { kind: 'post'; asOf: Date; entry: CollectionEntry<'posts'> }
   | { kind: 'video'; asOf: Date; entry: CollectionEntry<'videos'> };
 
@@ -22,6 +23,7 @@ export async function getStaticPaths() {
   const asOf = new Date(Math.max(Date.now(), ...[...posts, ...videos].map(entry => entry.data.pubDate.getTime())));
   return [
     { params: { path: 'home' }, props: { kind: 'home', asOf } },
+    { params: { path: 'comparison' }, props: { kind: 'comparison', asOf } },
     { params: { path: 'hub' }, props: { kind: 'hub', asOf } },
     ...posts.map(entry => ({ params: { path: `posts/${entry.slug}` }, props: { kind: 'post', entry, asOf } })),
     ...videos.map(entry => ({ params: { path: `videos/${entry.slug}` }, props: { kind: 'video', entry, asOf } })),
@@ -59,3 +61,5 @@ if (kind === 'home') {
 {kind === 'hub' && <PostsPage />}
 {kind === 'post' && <ArticlePage entry={entry} />}
 {kind === 'video' && <VideoPage entry={entry} />}
+
+{kind === 'comparison' && <ComparisonPage />}
