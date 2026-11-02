@@ -23,6 +23,26 @@ const mdxImageOptions = {
 // bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
 // Astro render maps rather than imported in the MDX itself.
 const mdxComponents = {
+    AILimits: block({
+        label: 'AI delivery quantity check',
+        schema: {},
+    }),
+    ProcessOptional: block({
+        label: 'Warehouse process adoption',
+        schema: {},
+    }),
+    OperationalKnowHow: block({
+        label: 'AI receiving investigation',
+        schema: {},
+    }),
+    LogisticsGiveAndTake: block({
+        label: 'Logistics working relationship',
+        schema: {},
+    }),
+    WarehouseTravel: block({
+        label: 'Connected warehouse moves',
+        schema: {},
+    }),
     WmsConnectedOperations: block({
         label: 'Connected warehouse operations',
         schema: {},
