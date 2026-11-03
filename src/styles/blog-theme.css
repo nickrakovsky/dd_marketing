@@ -18,6 +18,20 @@ html.dark[data-blog-theme] body {
   background: var(--blog-canvas);
   color: var(--blog-ink);
 }
+/* The CTA's large, bold lettering is part of its accessible colour pairing.
+   Ship it with the initial theme so deferred CSS cannot animate it into place. */
+html.dark[data-blog-theme] [data-nav] .blog-nav-cta {
+  background: var(--blog-orange);
+  color: #fff;
+  font-family: Inter, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+html.dark[data-blog-theme] [data-nav] .blog-nav-cta:hover {
+  background: var(--blog-surface);
+  border-bottom-color: var(--blog-orange);
+  color: var(--blog-ink);
+}
 html.dark[data-blog-theme] .prose {
   --tw-prose-body: var(--blog-ink);
   --tw-prose-headings: var(--blog-ink);
