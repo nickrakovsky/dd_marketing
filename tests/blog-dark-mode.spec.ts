@@ -39,6 +39,41 @@ async function textContrast(locator: Locator) {
 }
 
 test.describe('Blog dark mode', () => {
+  test('keeps dark reading text legible before the deferred stylesheet loads', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
+    let releaseStyles!: () => void;
+    const stylesReady = new Promise<void>(resolve => { releaseStyles = resolve; });
+    let heldStyles = 0;
+    await page.route(/\/_astro\/[^/?]+\.css(?:\?.*)?$/, async route => {
+      heldStyles++;
+      await stylesReady;
+      await route.continue();
+    });
+
+    try {
+      await page.goto(ARTICLE, { waitUntil: 'domcontentloaded' });
+      await expect.poll(() => heldStyles, { message: 'The full stylesheet is still pending' }).toBeGreaterThan(0);
+      await expect(page.locator('html')).toHaveClass(/\bdark\b/);
+      await expect(page.locator('main')).toHaveCSS('background-color', CHARCOAL);
+      for (const selector of ['#content > p', '.article-author-bio', '.article-dates']) {
+        const text = page.locator(selector).first();
+        await expect(text).toBeVisible();
+        const { ratio } = await textContrast(text);
+        expect(ratio, `${selector} needs contrast before deferred CSS arrives`).toBeGreaterThanOrEqual(4.5);
+      }
+      const demo = page.locator('[data-nav] a').filter({ hasText: 'Schedule a Demo' }).filter({ visible: true });
+      await expect(demo).toBeVisible();
+      const cta = await textContrast(demo);
+      const isLargeText = cta.fontSize >= 24 || (cta.fontSize >= 18.667 && cta.fontWeight >= 700);
+      expect(cta.ratio, 'The navigation CTA needs contrast before deferred CSS arrives').toBeGreaterThanOrEqual(isLargeText ? 3 : 4.5);
+    } finally {
+      releaseStyles();
+    }
+    await page.waitForLoadState('load');
+    const { ratio } = await textContrast(page.locator('.article-author-bio'));
+    expect(ratio, 'The author bio stays legible after deferred CSS arrives').toBeGreaterThanOrEqual(4.5);
+  });
+
   test('uses charcoal for an unsaved dark preference and keeps reading text legible', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
     await page.goto(ARTICLE);

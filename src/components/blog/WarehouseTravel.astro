@@ -1,0 +1,139 @@
+---
+interface Props { id?: string; }
+const { id = 'nick35-warehouse-travel' } = Astro.props;
+const plans = [
+  {
+    key: 'separate',
+    label: 'Separate plans',
+    description: 'First, incoming stock moves from receiving to a temporary buffer because its storage location is occupied. Second, released outbound stock moves from storage to dispatch staging. Third, the incoming stock moves again, from the buffer to the available storage location.',
+  },
+  {
+    key: 'connected',
+    label: 'Connected plans',
+    description: 'First, released outbound stock moves from storage to dispatch staging before the inbound load arrives. Second, after receipt checks, incoming stock moves from receiving directly into the confirmed available storage location. The temporary buffer is not used.',
+  },
+];
+---
+
+<figure class="dd-figure warehouse-travel not-prose" aria-labelledby={`${id}-title`}>
+  <figcaption class="dd-figure-title" id={`${id}-title`}>The order of the moves matters.</figcaption>
+  <fieldset>
+    <legend class="sr-only">Compare how inbound and outbound moves are planned</legend>
+    <div class="choices">
+      {plans.map((plan, index) => (
+        <label>
+          <input type="radio" name={`${id}-plan`} value={plan.key} checked={index === 0} />
+          <span>{plan.label}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+  <div class="plans">
+    {plans.map(plan => (
+      <section class={`plan plan-${plan.key}`} aria-label={plan.label}>
+        <p class="plan-label">{plan.label}</p>
+        <svg viewBox="0 0 400 270" role="img" aria-labelledby={`${id}-${plan.key}-title ${id}-${plan.key}-description`}>
+          <title id={`${id}-${plan.key}-title`}>{plan.label}: warehouse handling sequence</title>
+          <desc id={`${id}-${plan.key}-description`}>{plan.description}</desc>
+          <defs>
+            <marker id={`${id}-${plan.key}-arrow`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M1 1 9 5 1 9" class="arrowhead" />
+            </marker>
+          </defs>
+
+          <g class="legend" aria-hidden="true">
+            <path class="route" d="M8 18H40" />
+            <text x="50" y="23">Inbound</text>
+            <path class="route outbound" d="M226 18H258" />
+            <text x="268" y="23">Outbound</text>
+          </g>
+
+          <g class="locations" aria-hidden="true">
+            <rect x="8" y="50" width="144" height="52" rx="6" />
+            <path class="arrival-accent" d="M24 50H136" />
+            <text x="80" y="82">Receiving</text>
+
+            <rect x="248" y="50" width="144" height="52" rx="6" />
+            <text x="320" y="71"><tspan x="320">Dispatch</tspan><tspan x="320" dy="20">staging</tspan></text>
+
+            <rect class={plan.key === 'connected' ? 'unused' : ''} x="8" y="208" width="144" height="52" rx="6" />
+            <text x="80" y="229"><tspan x="80">Temporary</tspan><tspan x="80" dy="20">buffer</tspan></text>
+
+            <rect x="248" y="208" width="144" height="52" rx="6" />
+            <text x="320" y="240">Storage</text>
+          </g>
+
+          <g aria-hidden="true">
+            <path class="route outbound" d="M320 202V108" marker-end={`url(#${id}-${plan.key}-arrow)`} />
+            {plan.key === 'separate' ? (
+              <>
+                <path class="route" d="M80 108V202" marker-end={`url(#${id}-${plan.key}-arrow)`} />
+                <path class="route" d="M158 234H242" marker-end={`url(#${id}-${plan.key}-arrow)`} />
+                <g class="step"><circle cx="80" cy="155" r="13" /><text x="80" y="160">1</text></g>
+                <g class="step"><circle cx="320" cy="155" r="13" /><text x="320" y="160">2</text></g>
+                <g class="step"><circle cx="200" cy="234" r="13" /><text x="200" y="239">3</text></g>
+              </>
+            ) : (
+              <>
+                <path class="route" d="M80 108V141Q80 155 94 155H261Q275 155 275 169V202" marker-end={`url(#${id}-${plan.key}-arrow)`} />
+                <g class="step"><circle cx="320" cy="155" r="13" /><text x="320" y="160">1</text></g>
+                <g class="step"><circle cx="180" cy="155" r="13" /><text x="180" y="160">2</text></g>
+              </>
+            )}
+          </g>
+        </svg>
+      </section>
+    ))}
+  </div>
+  <p class="assumption">Assumes released outbound stock, available staging and suitable storage. Receipt checks still apply.</p>
+</figure>
+
+<style>
+  .warehouse-travel,
+  .warehouse-travel * { box-sizing:border-box; }
+  .warehouse-travel { color:var(--dd-figure-ink); font-family:var(--dd-figure-font); }
+  figcaption { margin:0 0 1rem; font-size:1.25rem; line-height:1.3; font-weight:650; letter-spacing:-.02em; }
+  fieldset { margin:0; padding:0; min-width:0; border:0; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; }
+  label { display:flex; align-items:center; justify-content:center; gap:.5rem; min-height:44px; padding:.65rem .55rem; border:1px solid var(--dd-figure-line); border-radius:.35rem; color:var(--dd-figure-ink); background:var(--dd-figure-paper); font-size:.9rem; line-height:1.3; cursor:pointer; }
+  input { appearance:auto; flex:none; width:1rem; height:1rem; margin:0; accent-color:var(--dd-figure-selected-ink); }
+  label:has(input:checked) { color:var(--dd-figure-selected-ink); border-color:var(--dd-figure-selected-ink); background:var(--dd-figure-selected-surface); font-weight:650; }
+  label:has(input:focus-visible) { outline:2px solid var(--dd-figure-ink); outline-offset:3px; }
+  .plans { margin-top:1rem; }
+  .plan-label { margin:0 0 .5rem; font-size:1rem; font-weight:650; }
+  svg { display:block; width:100%; max-width:25rem; height:auto; margin-inline:auto; overflow:visible; }
+  svg text { fill:var(--dd-figure-ink); font-family:var(--dd-figure-font); font-size:16px; }
+  .legend text { font-size:16px; }
+  .route { fill:none; stroke:var(--dd-figure-ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .outbound { stroke-dasharray:7 6; }
+  .arrowhead { fill:none; stroke:var(--dd-figure-ink); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .locations rect { fill:var(--dd-figure-surface); stroke:var(--dd-figure-line); stroke-width:1.5; }
+  .locations rect.unused { fill:var(--dd-figure-paper); stroke-dasharray:4 4; }
+  .locations text { text-anchor:middle; font-weight:550; }
+  .arrival-accent { stroke:var(--dd-figure-accent); stroke-width:3; }
+  .step circle { fill:var(--dd-figure-paper); stroke:var(--dd-figure-ink); stroke-width:1.5; }
+  .step text { text-anchor:middle; font-size:16px; font-weight:600; }
+  .assumption { margin:.5rem 0 0; color:var(--dd-figure-ink); font-size:1rem; line-height:1.5; }
+  @supports selector(:has(*)) {
+    .plan { display:none; }
+    .plan-label { display:none; }
+    .warehouse-travel:has(input[value="separate"]:checked) .plan-separate,
+    .warehouse-travel:has(input[value="connected"]:checked) .plan-connected { display:block; }
+  }
+  @media (max-width:540px) {
+    svg text, .legend text, .step text { font-size:20px; }
+  }
+  @media (max-width:380px) {
+    label { gap:.35rem; }
+    svg text, .legend text, .step text { font-size:22px; }
+    figcaption { font-size:1.15rem; }
+  }
+  @media print {
+    fieldset { display:none; }
+    .warehouse-travel .plan { display:block !important; break-inside:avoid; }
+    .plan-label { display:block; }
+    .plan + .plan { margin-top:1.5rem; }
+    svg { max-width:24rem; }
+  }
+</style>

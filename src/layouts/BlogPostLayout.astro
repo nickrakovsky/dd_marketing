@@ -1,7 +1,8 @@
 ---
 // 1. Imports
 import Layout from './Layout.astro';
-import '../styles/blog-theme.css';
+import blogThemeCss from '../styles/blog-theme.css?inline';
+import '../styles/blog-illustrations.css';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
@@ -134,6 +135,10 @@ if (priorityImgMatch) {
 >
   {/* Head slot: LCP image preload + conditional lite-youtube CSS */}
   <Fragment slot="head">
+    {/* The dark class is set at runtime, so critical-CSS extraction cannot
+        infer these tokens from the server-rendered page. Keep them available
+        before the first paint, including while the full stylesheet loads. */}
+    <style is:inline set:html={blogThemeCss} />
     <script is:inline>
       // Resolve the reader's preference before the article paints. Storage may
       // be blocked, in which case the operating-system preference still works.

@@ -9,7 +9,7 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-11-11T00:00:00Z",
+  "previewAsOf": "2026-11-18T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
@@ -21,7 +21,8 @@
     "On October 19, the user approved the missing-stock video companion post and requested its addition to the daily schedule. Slot 27 uses the next available weekday, October 26, at the existing 06:30 fixed UTC-08:00 time; all earlier slots are unchanged.",
     "On October 23, the user authorized publication setup and a PR for the 12 consolidated queue articles, then directed that the warehouse setup checklist publish as evergreen outside the daily queue. The 11 daily articles occupy slots 28–38 from October 27 through November 10 at 14:30 UTC. Slots 1–27 remain unchanged. The current titles and URL slugs are retained; this authorization supersedes the former draft-only approval notes.",
     "New source provenance and rotationGroup distinguish six training-session articles (A) and five YouTube articles (B). Future Nick audio articles will use rotationGroup C; the historical group A/B/C taxonomy and rotation are preserved. The researched warehouse setup checklist has no daily slot and is eligible immediately after merge and deployment.",
-    "The consolidated queue payloads were moved from internal/blog-staging into the existing production article/component locations. For the 11 daily articles, sourceSha256 and sourceBodySha256 record the accepted pre-move MDX and unchanged article body; historical sourcePath values are provenance, not duplicate payloads to retain."
+    "The consolidated queue payloads were moved from internal/blog-staging into the existing production article/component locations. For the 11 daily articles, sourceSha256 and sourceBodySha256 record the accepted pre-move MDX and unchanged article body; historical sourcePath values are provenance, not duplicate payloads to retain.",
+    "On November 2, the user approved five Nick Rakovsky posts and requested a regular PR to add them to the existing daily queue without merging. Slots 39–43 use the next five weekdays, November 11–17, at 14:30 UTC. Slots 1–38 are unchanged. Accepted prose and interactive components are preserved; existing card artwork is reused. Release depends on merge and deployment before the scheduled time."
   ],
   "slots": [
     {
@@ -664,6 +665,101 @@
       "sourceBodySha256": "7f7543e49c001f60c694772cf5e03f90d3400a245cbe53c6e69f8ffc7501385e",
       "contentPath": "src/content/posts/missed-slot-fees.mdx",
       "cardImage": "../../assets/blog-images/truck-detention-accessorial-fees-cover.jpg"
+    },
+    {
+      "slot": 39,
+      "date": "2026-11-11",
+      "weekday": "Wednesday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 16,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Before You Put AI to Work, Learn Its Limits",
+      "slug": "learn-ai-limits-before-adoption",
+      "pubDate": "2026-11-11T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-24-learn-ai-limits-before-adoption/learn-ai-limits-before-adoption.mdx",
+      "sourceSha256": "cb1f0a8d7e1739a7256691032dc161c4dfc02d8734fb431339e1900916146977",
+      "sourceBodySha256": "d8fe2b5f1ed586961326d0d89945a941f2b38dc81140141a7c4a87d7d6ae79d5",
+      "contentPath": "src/content/posts/learn-ai-limits-before-adoption.mdx",
+      "cardImage": "../../assets/blog-images/how-to-build-your-logistics-tech-stack-cover.jpg"
+    },
+    {
+      "slot": 40,
+      "date": "2026-11-12",
+      "weekday": "Thursday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 17,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Warehouse Software Projects Fail When the New Process Is 'Optional'",
+      "slug": "warehouse-software-optional-process",
+      "pubDate": "2026-11-12T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-25-warehouse-software-optional-process/warehouse-software-optional-process.mdx",
+      "sourceSha256": "b66ae374f737a06522c62a535fd8af283e7e797c70fb791b6cc5d482c53ccf2d",
+      "sourceBodySha256": "05ba75595db40f209c655cdcc35f83f6414f183d6d746f6e1d016ee04c7de13e",
+      "contentPath": "src/content/posts/warehouse-software-optional-process.mdx",
+      "cardImage": "../../assets/blog-images/how-to-get-around-limitations-warehouse-management-system-cover.jpg"
+    },
+    {
+      "slot": 41,
+      "date": "2026-11-13",
+      "weekday": "Friday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 18,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Don’t Lose Operational Know-How in the Rush to Adopt AI",
+      "slug": "keep-operational-know-how-with-ai",
+      "pubDate": "2026-11-13T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-26-keep-operational-know-how-with-ai/keep-operational-know-how-with-ai.mdx",
+      "sourceSha256": "61c7f78d74f4c5da805fd9b30da9db1df487143128b663112e17d14e61b4906e",
+      "sourceBodySha256": "99fae5397a2a0fa9fb1da530b58d0dc63048161328b6fcc0d4d2427f43a9c5ab",
+      "contentPath": "src/content/posts/keep-operational-know-how-with-ai.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-receiving-process-cover.webp"
+    },
+    {
+      "slot": 42,
+      "date": "2026-11-16",
+      "weekday": "Monday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 19,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Don’t Try To Automate the Give-and-Take Out of Logistics",
+      "slug": "logistics-automation-give-and-take",
+      "pubDate": "2026-11-16T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-27-logistics-automation-give-and-take/logistics-automation-give-and-take.mdx",
+      "sourceSha256": "a1dfecf722bdf506824e9f8368614dacffcb2e7fcd300493a03d32b6a9513f20",
+      "sourceBodySha256": "4ab4128f1e0209821bbc43fa27195da923266ea462db93c35a7c5adb399090b2",
+      "contentPath": "src/content/posts/logistics-automation-give-and-take.mdx",
+      "cardImage": "../../assets/blog-images/negotiate-with-carriers-cover.webp"
+    },
+    {
+      "slot": 43,
+      "date": "2026-11-17",
+      "weekday": "Tuesday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 20,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Reduce Warehouse Travel by Connecting Inbound and Outbound Data",
+      "slug": "connect-inbound-outbound-warehouse-data",
+      "pubDate": "2026-11-17T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-28-connect-inbound-outbound-warehouse-data/connect-inbound-outbound-warehouse-data.mdx",
+      "sourceSha256": "c4f186a5c175f520bd712f79d27a192b9c436552c31c64ad439446909286b163",
+      "sourceBodySha256": "86654a474f716e2254f023e50b4145feea2b5c6c18dadc17ca7d1b62b6869dba",
+      "contentPath": "src/content/posts/connect-inbound-outbound-warehouse-data.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-optimization-strategies-cover.png"
     }
   ],
   "queueRotation": {
@@ -671,7 +767,7 @@
     "groups": {
       "A": "Training-derived articles",
       "B": "YouTube-derived articles",
-      "C": "Nick audio-derived articles (future)"
+      "C": "Nick audio-derived articles"
     },
     "activePattern": [
       "A",
@@ -682,6 +778,6 @@
       "B",
       "C"
     ],
-    "notes": "Separate editorial source rotation. Historical group/sequenceInGroup fields retain their original meanings. Slots 28–38 alternate A/B. The warehouse setup checklist is an evergreen article outside the daily schedule. Add C only when an approved Nick audio article is ready and scheduled."
+    "notes": "Separate editorial source rotation. Historical group/sequenceInGroup fields retain their original meanings. Slots 28–38 alternate A/B. The five approved Nick audio articles are appended as C in slots 39–43 without rescheduling earlier posts. The warehouse setup checklist remains evergreen outside the daily schedule. The future A/B/C pattern applies when articles from all three sources are available."
   }
 }

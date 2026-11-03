@@ -115,3 +115,22 @@ For future posts, after the user's approval and scheduling instruction, move the
 content through the normal site workflow, register components in the existing
 article and Keystatic maps, and assign dates using the existing schedule. Never
 import this internal queue from production code or add a new scheduler.
+
+## Nick Rakovsky posts scheduled — November 2, 2026
+
+The five reviewed Nick audio posts are integrated into the production article and
+component folders. They use source rotation C and extend the queue on the next
+five weekdays at 06:30 fixed UTC−08:00 / 14:30 UTC. The original 38 slots are
+unchanged. The user authorized a regular PR and will review automated checks
+before merge; release still depends on the existing publication gate and deployment.
+
+| Schedule slot | Date | Title | URL |
+|---|---|---|---|
+| 39 | 2026-11-11 | Before You Put AI to Work, Learn Its Limits | `/posts/learn-ai-limits-before-adoption` |
+| 40 | 2026-11-12 | Warehouse Software Projects Fail When the New Process Is 'Optional' | `/posts/warehouse-software-optional-process` |
+| 41 | 2026-11-13 | Don’t Lose Operational Know-How in the Rush to Adopt AI | `/posts/keep-operational-know-how-with-ai` |
+| 42 | 2026-11-16 | Don’t Try To Automate the Give-and-Take Out of Logistics | `/posts/logistics-automation-give-and-take` |
+| 43 | 2026-11-17 | Reduce Warehouse Travel by Connecting Inbound and Outbound Data | `/posts/connect-inbound-outbound-warehouse-data` |
+
+Source paths and hashes in the schedule preserve provenance; no duplicate staged
+payloads or private source recordings are included.

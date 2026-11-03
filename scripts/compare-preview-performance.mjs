@@ -27,7 +27,7 @@ for (const route of routes) {
         '--screenEmulation.mobile=true', '--screenEmulation.width=390',
         '--screenEmulation.height=844', '--screenEmulation.deviceScaleFactor=1',
       ], { stdio: 'inherit', timeout: 120000,
-        env: { ...process.env, CHROME_PATH: chromium.executablePath() },
+        env: { ...process.env, CHROME_PATH: process.env.CHROME_PATH || chromium.executablePath() },
       });
       if (run.status !== 0) throw new Error(`Lighthouse failed for ${url}: ${run.error?.message ?? run.status}`);
       const report = JSON.parse(fs.readFileSync(filename, 'utf8'));

@@ -221,19 +221,3 @@ const mobileDropdownLinkClass = isOrange
   initNav();
   document.addEventListener('astro:after-swap', initNav);
 </script>
-
-<style>
-  :global(html.dark[data-blog-theme]) .blog-nav-cta {
-    background: var(--blog-orange);
-    color: #fff;
-    font-family: Inter, sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  :global(html.dark[data-blog-theme]) .blog-nav-cta:hover {
-    background: var(--blog-surface);
-    border-bottom-color: var(--blog-orange);
-    color: var(--blog-ink);
-  }
-</style>
