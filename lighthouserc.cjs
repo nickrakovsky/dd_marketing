@@ -4,6 +4,8 @@
  * Local:  npm run perf             (starts the production Pages preview)
  * CI:     PREVIEW_URL=https://xxx.pages.dev npm run perf
  *         (all five priority pages are checked against the same preview)
+ * Set CHROME_PATH to a compatible Chrome when the Playwright browser is older.
+ * CI pins Chrome for Testing separately; Chromium 147 crashes during WebDX tracing.
  */
 const baseURL = process.env.PREVIEW_URL || 'http://localhost:4321';
 const performancePaths = ['/', '/posts', '/comparison', '/news', '/posts/best-yard-management-options'];
