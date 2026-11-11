@@ -76,11 +76,11 @@ const mobileDropdownLinkClass = isOrange
       <div class="hidden lg:flex items-center lg:space-x-6 xl:space-x-8 flex-1 justify-end">
 
         <div class="relative" data-dropdown>
-          <button class={`flex items-center gap-1 transition-colors font-recoleta text-base xl:text-lg ${textClass}`} data-dropdown-trigger>
+          <button type="button" aria-expanded="false" aria-controls="desktop-help-links" class={`flex items-center gap-1 transition-colors font-recoleta text-base xl:text-lg ${textClass}`} data-dropdown-trigger>
             How DataDocks Helps
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </button>
-          <div class="absolute top-full left-0 mt-0 pt-2 w-56 z-50 hidden" data-dropdown-menu>
+          <div id="desktop-help-links" class="absolute top-full left-0 mt-0 pt-2 w-56 z-50 hidden" data-dropdown-menu>
             <div class="bg-[#EFE2D2] dark:bg-[var(--blog-surface,#1f2937)] border border-border dark:border-[var(--blog-rule,#374151)] rounded-[8px] overflow-hidden py-2 transition-colors duration-300">
               {dropdownItems.map((item) => (
                 <a
@@ -167,23 +167,64 @@ const mobileDropdownLinkClass = isOrange
 
 <script>
   function initNav() {
-    const nav = document.querySelector('[data-nav]');
-    if (!nav) return;
+    const nav = document.querySelector<HTMLElement>('[data-nav]');
+    if (!nav || nav.dataset.navInitialized) return;
+    nav.dataset.navInitialized = 'true';
 
     // Desktop dropdown
-    const dropdown = nav.querySelector('[data-dropdown]');
-    const dropdownMenu = nav.querySelector('[data-dropdown-menu]');
+    const dropdown = nav.querySelector<HTMLElement>('[data-dropdown]');
+    const dropdownTrigger = nav.querySelector<HTMLButtonElement>('[data-dropdown-trigger]');
+    const dropdownMenu = nav.querySelector<HTMLElement>('[data-dropdown-menu]');
     let dropdownTimeout: ReturnType<typeof setTimeout>;
 
-    dropdown?.addEventListener('mouseenter', () => {
+    const isDropdownOpen = () => dropdownTrigger?.getAttribute('aria-expanded') === 'true';
+    const setDropdownOpen = (open: boolean) => {
       clearTimeout(dropdownTimeout);
-      dropdownMenu?.classList.remove('hidden');
+      dropdownMenu?.classList.toggle('hidden', !open);
+      dropdownTrigger?.setAttribute('aria-expanded', String(open));
+    };
+
+    dropdown?.addEventListener('mouseenter', () => {
+      setDropdownOpen(true);
     });
     dropdown?.addEventListener('mouseleave', () => {
       dropdownTimeout = setTimeout(() => {
-        dropdownMenu?.classList.add('hidden');
+        if (!dropdown.contains(document.activeElement)) setDropdownOpen(false);
       }, 300);
     });
+
+    dropdownTrigger?.addEventListener('click', (event) => {
+      // Hover already opens the pointer interaction; Enter/Space toggle it.
+      setDropdownOpen(event.detail === 0 ? !isDropdownOpen() : true);
+    });
+    dropdownTrigger?.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowDown') return;
+      event.preventDefault();
+      setDropdownOpen(true);
+      const firstLink = dropdownMenu?.querySelector<HTMLAnchorElement>('a');
+      firstLink?.focus();
+    });
+    dropdown?.addEventListener('focusout', (event) => {
+      if (!(event.relatedTarget instanceof Node) || !dropdown.contains(event.relatedTarget)) {
+        setDropdownOpen(false);
+      }
+    });
+
+    const desktopEvents = new AbortController();
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !isDropdownOpen()) return;
+      event.preventDefault();
+      setDropdownOpen(false);
+      dropdownTrigger?.focus();
+    }, { signal: desktopEvents.signal });
+    document.addEventListener('pointerdown', (event) => {
+      if (event.target instanceof Node && !dropdown?.contains(event.target)) setDropdownOpen(false);
+    }, { signal: desktopEvents.signal });
+    const desktopLayout = window.matchMedia('(min-width: 1024px)');
+    desktopLayout.addEventListener('change', () => {
+      if (!desktopLayout.matches) setDropdownOpen(false);
+    }, { signal: desktopEvents.signal });
+    document.addEventListener('astro:before-swap', () => desktopEvents.abort(), { once: true });
 
     // Mobile toggle
     const mobileToggle = nav.querySelector('[data-mobile-toggle]');
