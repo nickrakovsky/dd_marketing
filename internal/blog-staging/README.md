@@ -134,3 +134,27 @@ before merge; release still depends on the existing publication gate and deploym
 
 Source paths and hashes in the schedule preserve provenance; no duplicate staged
 payloads or private source recordings are included.
+
+
+## Recording 37 approved queue entries — November 16, 2026
+
+The four articles below have approved titles, prose and interactive examples.
+They are undated queue entries in source rotation C (Nick audio); the URL slugs
+remain proposed until the combined batch is scheduled. No production publication
+slots or component registrations are assigned by this addition.
+
+This batch is being assembled on `codex/daily-posts-queue-november`, based on
+current `main`. Additional posts from other agents can be added to the same
+branch and PR. Preview labels 30–33 are used by these four packages; label 29
+is reserved for the separate YouTube draft already being prepared.
+
+| Preview label | Title | Proposed URL |
+|---|---|---|
+| Post 30 | What to Account for Before Bringing Truck Freight In-House | `/posts/truck-freight-in-house` |
+| Post 31 | Using Agency Staffing to Find People You Want to Keep | `/posts/agency-staffing-retention` |
+| Post 32 | What Running a Recycling Plant Taught Me About Costs That Arrive With the Load | `/posts/costs-arrive-with-the-load` |
+| Post 33 | Leaner Logistics Teams Depend More on Their Providers | `/posts/provider-dependence` |
+
+Use the existing `npm run dev:staging` preview to review these packages together
+with subsequent additions. Scheduling and the final order can be set once the
+combined batch is ready.
