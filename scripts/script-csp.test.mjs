@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildScriptPolicy, inlineScriptHashes, prepareScriptPolicy } from './script-csp.mjs';
+import { buildScriptPolicy, inlineScriptHashes, prepareScriptPolicy, scriptAssetInlineLimit } from './script-csp.mjs';
 
 const hash = text => `sha256-${createHash('sha256').update(text).digest('base64')}`;
 function fixture() {
@@ -17,6 +17,17 @@ function fixture() {
   fs.writeFileSync(path.join(root, '_build/publication/home.html'), '<html><head><script type="module">window.future = true;</script></head></html>');
   return root;
 }
+
+test('keeps processed script chunks external without changing non-script inlining defaults', () => {
+  for (const file of ['/_astro/InspectionPointTrial.astro_script.CSP.js', 'widget.mjs', 'widget.cjs']) {
+    assert.equal(scriptAssetInlineLimit(file, Buffer.from('initializeApplet()')), false);
+  }
+  for (const file of ['styles.css', 'icon.svg', 'image.webp', 'font.woff2']) {
+    for (const bytes of [16, 8192]) {
+      assert.equal(scriptAssetInlineLimit(file, Buffer.alloc(bytes)), undefined);
+    }
+  }
+});
 
 test('hashes browser-parsed executable contents without trusting comments, templates, data or external tags', () => {
   const html = '<!-- <script>commentAttack()</script> --><template><script>templateAttack()</script></template>'

@@ -1,0 +1,187 @@
+---
+const weeks = Array.from({length: 6}, (_, i) => i + 1);
+const policies = [
+  { key: 'agency', title: 'Keep the agency arrangement', detail: '2 permanent staff; agency fills the remaining work.', starters: 14, hours: 42 },
+  { key: 'hire', title: 'Hire two people after week 2', detail: 'Two suitable agency workers join the permanent team.', starters: 10, hours: 30 },
+];
+---
+<figure class="dd-figure not-prose agency-continuity" data-agency-continuity>
+  <figcaption>
+    <h3 class="dd-figure-title">A filled roster can hide repeated introductions</h3>
+    <p>Six weeks of work. Start with two permanent staff and four agency positions. Compare what happens when two suitable agency workers join the team.</p>
+  </figcaption>
+  <form>
+    <fieldset disabled data-enable>
+      <legend>Change the working conditions</legend>
+      <div class="ac-controls">
+        <label>Agency continuity
+          <select name="continuity">
+            <option value="0">The same people return</option>
+            <option value="0.5" selected>Half the positions change each week</option>
+            <option value="1">All positions change each week</option>
+          </select>
+        </label>
+        <label>First-day support per new person
+          <select name="support">
+            <option value="1">1 hour</option>
+            <option value="3" selected>3 hours</option>
+            <option value="6">6 hours</option>
+          </select>
+        </label>
+        <label>Positions required from week 4
+          <select name="demand">
+            <option value="6">Stays at six positions</option>
+            <option value="3">Falls to three positions</option>
+          </select>
+        </label>
+      </div>
+    </fieldset>
+    <div class="ac-legend" aria-label="Roster key">
+      <span><b class="ac-permanent">P</b> Permanent</span>
+      <span><b class="ac-returning">R</b> Returning agency</span>
+      <span><b class="ac-new">N</b> New agency starter</span>
+      <span><b class="ac-unused">–</b> Unused permanent position</span>
+    </div>
+    <div class="ac-comparison">
+      {policies.map(policy => (
+        <section class="ac-policy" data-policy={policy.key} aria-label={policy.title}>
+          <h4>{policy.title}</h4>
+          <p class="ac-detail">{policy.detail}</p>
+          <ol class="ac-weeks" aria-label="Weekly roster">
+            {weeks.map((week) => {
+              const permanent = policy.key === 'hire' && week > 2 ? 4 : 2;
+              const agency = 6 - permanent;
+              const fresh = week === 1 ? agency : Math.ceil(agency * 0.5);
+              const types = [...Array(permanent).fill('permanent'), ...Array(agency-fresh).fill('returning'), ...Array(fresh).fill('new')];
+              return <li><span class="ac-week-label">W{week}</span><div class="ac-roster" data-week={week} aria-label={`Week ${week}: ${permanent} permanent, ${agency-fresh} returning agency, ${fresh} new agency starters.`}>
+                {types.map(type => <span class={`ac-person ac-${type}`} aria-hidden="true">{type==='permanent'?'P':type==='returning'?'R':'N'}</span>)}
+              </div></li>;
+            })}
+          </ol>
+          <dl class="ac-totals">
+            <div><dt>New starters</dt><dd data-starters>{policy.starters}</dd></div>
+            <div><dt>First-day support</dt><dd><span data-hours>{policy.hours}</span> h</dd></div>
+            <div><dt>Unused permanent capacity</dt><dd><span data-unused>0</span> position-weeks</dd></div>
+          </dl>
+        </section>
+      ))}
+    </div>
+    <p class="ac-result" data-result role="status" aria-live="polite" aria-atomic="true">Hiring two people means 4 fewer new starters and 12 fewer first-day support hours over six weeks. Neither arrangement has unused permanent capacity at this demand.</p>
+  </form>
+  <details>
+    <summary class="dd-disclosure">What this example assumes <svg class="dd-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+    <dl class="ac-assumptions">
+      <div><dt>Week 1</dt><dd>All four agency workers are new.</dd></div>
+      <div><dt>Weekly continuity</dt><dd>The selected share of agency positions gets new people, rounded up. The others return.</dd></div>
+      <div><dt>Hiring after week 2</dt><dd>Two suitable, willing agency workers become permanent, with no repeat first-day support. Their agreement permits hiring.</dd></div>
+      <div><dt>Lower demand</dt><dd>Permanent staff stay; agency positions adjust. Both rosters fill the required positions.</dd></div>
+      <div><dt>Unused capacity</dt><dd>One unused permanent position for one week equals one position-week.</dd></div>
+      <div><dt>Support time</dt><dd>First-day hours from the existing team—not a cost or productivity estimate.</dd></div>
+    </dl>
+  </details>
+  <noscript><p>The default example uses half of agency positions changing weekly, three support hours per starter and steady demand. Enable JavaScript to change these assumptions.</p></noscript>
+</figure>
+<script>
+  function initializeAgencyContinuity() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-agency-continuity]');
+    figures.forEach(figure => {
+      if (figure.dataset.ready) return;
+      const form = figure.querySelector<HTMLFormElement>('form')!;
+      const continuity = form.querySelector<HTMLSelectElement>('[name="continuity"]')!;
+      const support = form.querySelector<HTMLSelectElement>('[name="support"]')!;
+      const demandInput = form.querySelector<HTMLSelectElement>('[name="demand"]')!;
+      const calculate = (hire: boolean) => {
+        const records = Array.from({length: 6}, (_, week) => {
+          const demand = week < 3 ? 6 : Number(demandInput.value);
+          const permanent = hire && week >= 2 ? 4 : 2;
+          const working = Math.min(permanent, demand);
+          const agency = Math.max(0, demand - permanent);
+          const fresh = week === 0 ? agency : Math.ceil(agency * Number(continuity.value));
+          return { working, returning: agency - fresh, fresh, unused: permanent - working };
+        });
+        const starters = records.reduce((sum, week) => sum + week.fresh, 0);
+        return { records, starters, hours: starters * Number(support.value), unused: records.reduce((sum, week) => sum + week.unused, 0) };
+      };
+      const renderPolicy = (key: string, model: ReturnType<typeof calculate>) => {
+        const policy = figure.querySelector<HTMLElement>(`[data-policy="${key}"]`)!;
+        model.records.forEach((week, i) => {
+          const roster = policy.querySelector<HTMLElement>(`[data-week="${i+1}"]`)!;
+          roster.replaceChildren();
+          roster.setAttribute('aria-label', `Week ${i+1}: ${week.working} working permanent staff, ${week.returning} returning agency, ${week.fresh} new agency starters, ${week.unused} unused permanent positions.`);
+          const groups = [ ['permanent', week.working, 'P'], ['returning', week.returning, 'R'], ['new', week.fresh, 'N'], ['unused', week.unused, '–'] ] as const;
+          groups.forEach(([type, count, letter]) => {
+            for (let j=0; j<count; j++) {
+              const cell = document.createElement('span');
+              cell.className = `ac-person ac-${type}`;
+              cell.textContent = letter;
+              cell.setAttribute('aria-hidden', 'true');
+              roster.append(cell);
+            }
+          });
+        });
+        policy.querySelector('[data-starters]')!.textContent = String(model.starters);
+        policy.querySelector('[data-hours]')!.textContent = String(model.hours);
+        policy.querySelector('[data-unused]')!.textContent = String(model.unused);
+      };
+      const render = () => {
+        const agency = calculate(false), hire = calculate(true);
+        renderPolicy('agency', agency);
+        renderPolicy('hire', hire);
+        const saving = agency.hours - hire.hours;
+        const instruction = saving === 0
+          ? 'The same people return, so hiring two creates no first-day support saving. Both arrangements need ' + agency.hours + ' hours over six weeks.'
+          : `Hiring two people means ${agency.starters-hire.starters} fewer new starters and ${saving} fewer first-day support hours over six weeks.`;
+        const capacity = hire.unused > 0
+          ? ' Lower demand also leaves one permanent position unused for three weeks after hiring. Keeping the agency arrangement leaves no unused permanent positions.'
+          : ' Neither arrangement has unused permanent capacity at this demand.';
+        figure.querySelector('[data-result]')!.textContent = instruction + capacity;
+      };
+      form.addEventListener('change', render);
+      form.addEventListener('submit', event => event.preventDefault());
+      const controls = figure.querySelectorAll<HTMLFieldSetElement>('[data-enable]');
+      controls.forEach(control => control.disabled = false);
+      figure.dataset.ready = 'true';
+      render();
+    });
+  }
+  initializeAgencyContinuity();
+  document.addEventListener('astro:page-load', initializeAgencyContinuity);
+</script>
+<style>
+  .agency-continuity { font-family: var(--dd-figure-font); }
+  .agency-continuity :global(*) { box-sizing: border-box; }
+  .agency-continuity p { font: 400 1rem/1.6 var(--dd-figure-font); margin: .7rem 0 1rem; }
+  .agency-continuity h3 { margin: 0; }
+  .agency-continuity h4 { font: 600 1.2rem/1.35 var(--dd-figure-heading-font); margin: 0 0 .4rem; }
+  .agency-continuity fieldset { padding: 0; border: 0; margin: 1.25rem 0; min-width: 0; }
+  .agency-continuity legend { font: 600 1rem/1.4 var(--dd-figure-font); margin-bottom: .75rem; }
+  .ac-controls { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
+  .ac-controls label:first-child { grid-column: 1/-1; }
+  .ac-controls label { display: flex; flex-direction: column; gap: .4rem; font: 550 .875rem/1.4 var(--dd-figure-font); min-width: 0; }
+  .agency-continuity select { width: 100%; min-width: 0; white-space: normal; padding: .65rem .5rem; border: 1px solid var(--dd-figure-line); border-radius: .3rem; font: 400 .875rem/1.4 var(--dd-figure-font); background: var(--dd-figure-surface); color: var(--dd-figure-ink); }
+  .ac-legend { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin: 1.25rem 0; }
+  .ac-legend > span { display: inline-flex; align-items: center; gap: .4rem; font: 400 .875rem/1.4 var(--dd-figure-font); }
+  .ac-legend b { display: inline-grid; place-items: center; width: 1.55rem; height: 1.55rem; font: 600 .875rem/1 var(--dd-figure-font); border-radius: .2rem; }
+  .ac-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .ac-policy { padding: 1rem; min-width: 0; border: 1px solid var(--dd-figure-line); border-radius: .4rem; }
+  .agency-continuity .ac-detail { font-size: .875rem; line-height: 1.5; min-height: 4.2em; margin: 0 0 1rem; }
+  .ac-weeks { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: .3rem; list-style: none; padding: 0; margin: 0 0 1rem; }
+  .ac-weeks li { margin: 0; padding: 0; }
+  .ac-week-label { display: block; text-align: center; margin-bottom: .5rem; font: 500 .875rem/1.2 var(--dd-figure-font); }
+  .ac-roster { display: flex; flex-direction: column; gap: .25rem; min-height: 10.25rem; }
+  .agency-continuity :global(.ac-person) { display: grid; place-items: center; height: 1.5rem; border-radius: .15rem; font: 600 .875rem/1 var(--dd-figure-font); }
+  .agency-continuity :global(.ac-permanent) { color: var(--dd-figure-selected-ink); background: var(--dd-figure-selected-surface); }
+  .agency-continuity :global(.ac-returning) { color: var(--dd-figure-ink); background: var(--dd-figure-surface); border: 1px solid var(--dd-figure-line); }
+  .agency-continuity :global(.ac-new) { color: var(--dd-figure-ink); background: var(--dd-figure-paper); border: 2px solid var(--dd-figure-ink); }
+  .agency-continuity :global(.ac-unused) { color: var(--dd-figure-muted); background: var(--dd-figure-paper); border: 1px dashed var(--dd-figure-muted); }
+  .ac-totals { display: grid; gap: .65rem; padding-top: .8rem; border-top: 1px solid var(--dd-figure-line); margin: 0; }
+  .ac-totals dt { font: 400 .875rem/1.4 var(--dd-figure-font); }
+  .ac-totals dd { font: 650 1rem/1.4 var(--dd-figure-font); margin: .1rem 0 0; }
+  .agency-continuity .ac-result { padding: 1rem; background: var(--dd-figure-surface); border-left: 3px solid var(--dd-figure-accent); font: 400 1.125rem/1.6 var(--dd-figure-heading-font); }
+  .agency-continuity select:focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 3px; }
+  .agency-continuity details { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--dd-figure-line); }
+  .ac-assumptions { display: grid; gap: .8rem; margin: 1rem 0 0; }
+  .agency-continuity .ac-assumptions dt { font: 600 1.125rem/1.4 var(--dd-figure-heading-font); }
+  .ac-assumptions dd { font: 400 1rem/1.5 var(--dd-figure-font); margin: .15rem 0 0; }
+  @media (max-width: 640px) { .ac-comparison, .ac-controls { grid-template-columns: 1fr; } .agency-continuity .ac-detail { min-height: 0; } }
+</style>

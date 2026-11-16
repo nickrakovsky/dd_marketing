@@ -128,6 +128,11 @@ describe('scheduled blog articles in the Keystatic editor', () => {
     { slug: 'paperwork-delays', components: ['PostFourRevised'], sources: 2 },
     { slug: 'driver-wayfinding', components: ['PostFiveRevised'], sources: 2 },
     { slug: 'rollout-decisions', components: ['PostSixRevised'], sources: 2 },
+    { slug: 'test-one-warehouse-process-change', components: ['lite-youtube', 'InspectionPointTrial', 'DemoCapture'], videoId: '7okrt6nLq6c', sources: 0 },
+    { slug: 'truck-freight-in-house', components: ['FreightCoverage'], sources: 0 },
+    { slug: 'agency-staffing-retention', components: ['AgencyContinuity'], sources: 0 },
+    { slug: 'costs-arrive-with-the-load', components: ['IncomingLoadLoss'], sources: 0 },
+    { slug: 'provider-dependence', components: ['ProviderDependence'], sources: 0 },
   ])('preserves all components and source fields in $slug', async ({ slug, components, videoId, sources }) => {
     const { content } = matter(readFileSync(resolve(process.cwd(), `src/content/posts/${slug}.mdx`), 'utf8'));
     const original = await componentMetadata(content);

@@ -1,0 +1,233 @@
+<figure class="dd-figure not-prose freight-coverage" data-freight-coverage>
+  <figcaption>
+    <h3 class="dd-figure-title">Cover this run. What happens to the next?</h3>
+    <p class="fc-intro">A vehicle breakdown threatens the morning run. In this illustrative schedule, the load is ready for departure at 09:00 and must leave by 09:30 to keep the delivery commitment.</p>
+  </figcaption>
+
+  <div class="fc-conditions">
+    <p>
+      <svg class="fc-icon" viewBox="0 0 48 40" aria-hidden="true" focusable="false">
+        <circle cx="24" cy="10" r="6" />
+        <path d="M12 34v-7c0-6 5-10 12-10s12 4 12 10v7" />
+        <circle cx="24" cy="29" r="8" />
+        <path d="M17 26l7 3 7-3M24 29v8" />
+      </svg>
+      <span>The morning driver is ready at <strong>08:45</strong>. Another driver is ready for the next run at <strong>11:30</strong>.</span>
+    </p>
+    <p>
+      <svg class="fc-icon" viewBox="0 0 48 40" aria-hidden="true" focusable="false">
+        <path d="M3 10h25v21H3zM28 17h9l8 9v5H28M34 17v9h11" />
+        <circle class="fc-wheel" cx="11" cy="32" r="4" />
+        <circle class="fc-wheel" cx="36" cy="32" r="4" />
+      </svg>
+      <span>The morning trip, return and handover occupy the vehicle for <strong>three hours after departure</strong>.</span>
+    </p>
+  </div>
+
+  <form class="fc-form">
+    <fieldset disabled data-enable>
+      <legend>Choose the replacement</legend>
+      <div class="fc-controls">
+        <label class="fc-select-label">
+          Vehicle source
+          <select name="vehicle-source">
+            <option value="borrowed">Borrow the next run’s vehicle</option>
+            <option value="dedicated">Use a dedicated spare</option>
+          </select>
+        </label>
+        <label class="fc-range-label">
+          <span class="fc-range-heading">Replacement ready to depart <output data-ready-time>08:45</output></span>
+          <input name="vehicle-ready" type="range" min="510" max="630" step="15" value="525" aria-valuetext="08:45" />
+          <span class="fc-range-ends" aria-hidden="true"><span>08:30</span><span>10:30</span></span>
+        </label>
+      </div>
+    </fieldset>
+  </form>
+
+  <div class="fc-result" aria-live="polite" aria-atomic="true">
+    <h4 class="fc-status" data-status>Morning commitment held. Next run 30 minutes late.</h4>
+    <div class="fc-schedule">
+      <section class="fc-run">
+        <div class="fc-run-heading">
+          <h5>Morning run</h5>
+          <p data-morning-times>Departs 09:00. Vehicle free again at 12:00.</p>
+        </div>
+        <div class="fc-track" aria-hidden="true">
+          <span class="fc-limit fc-morning-limit"></span>
+          <span class="fc-trip" data-trip style="left: 9.0909%; width: 54.5455%;"></span>
+          <span class="fc-return fc-vehicle-marker" data-return-marker style="left: 63.6364%;">
+            <svg class="fc-icon" viewBox="0 0 48 40" focusable="false">
+              <path d="M3 10h25v21H3zM28 17h9l8 9v5H28M34 17v9h11" />
+              <circle class="fc-wheel" cx="11" cy="32" r="4" />
+              <circle class="fc-wheel" cx="36" cy="32" r="4" />
+            </svg>
+          </span>
+        </div>
+        <p class="fc-run-note" data-morning-note>Within the 09:30 departure limit.</p>
+      </section>
+
+      <section class="fc-run">
+        <div class="fc-run-heading">
+          <h5>Next run</h5>
+          <p data-next-times>Planned for 11:30. Can depart at 12:00.</p>
+        </div>
+        <div class="fc-track" aria-hidden="true">
+          <span class="fc-limit fc-next-limit"></span>
+          <span class="fc-wait" data-wait style="left: 54.5455%; width: 9.0909%;"></span>
+          <span class="fc-next fc-vehicle-marker" data-next-marker style="left: 63.6364%;">
+            <svg class="fc-icon" viewBox="0 0 48 40" focusable="false">
+              <path d="M3 10h25v21H3zM28 17h9l8 9v5H28M34 17v9h11" />
+              <circle class="fc-wheel" cx="11" cy="32" r="4" />
+              <circle class="fc-wheel" cx="36" cy="32" r="4" />
+            </svg>
+          </span>
+        </div>
+        <p class="fc-run-note" data-next-note>The driver waits 30 minutes for the borrowed vehicle to return.</p>
+      </section>
+      <div class="fc-axis" aria-hidden="true"><span>08:30</span><span>11:15</span><span>14:00</span></div>
+      <div class="fc-key" aria-hidden="true"><span><i class="fc-key-trip"></i>Vehicle in use</span><span><i class="fc-key-wait"></i>Next run waiting</span><span><i class="fc-key-limit"></i>Departure limit / plan</span></div>
+    </div>
+    <p class="fc-reason" data-reason>The borrowed vehicle is still on the morning run when the next one needs it. That departure moves with the return time.</p>
+    <p class="fc-restoration">Getting this load away still leaves the original vehicle out of service. Your team must arrange its repair and confirm cover for later work.</p>
+  </div>
+  <noscript><p>The schedule above shows a borrowed replacement ready at 08:45. It protects the morning commitment but delays the next departure by 30 minutes.</p></noscript>
+</figure>
+
+<script>
+  function initializeFreightCoverage() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-freight-coverage]');
+    figures.forEach((figure) => {
+      if (figure.dataset.ready) return;
+      const form = figure.querySelector<HTMLFormElement>('form');
+      const sourceInput = figure.querySelector<HTMLSelectElement>('[name="vehicle-source"]');
+      const readyInput = figure.querySelector<HTMLInputElement>('[name="vehicle-ready"]');
+      const readyTime = figure.querySelector<HTMLOutputElement>('[data-ready-time]');
+      const status = figure.querySelector<HTMLElement>('[data-status]');
+      const morningTimes = figure.querySelector<HTMLElement>('[data-morning-times]');
+      const morningNote = figure.querySelector<HTMLElement>('[data-morning-note]');
+      const nextTimes = figure.querySelector<HTMLElement>('[data-next-times]');
+      const nextNote = figure.querySelector<HTMLElement>('[data-next-note]');
+      const reason = figure.querySelector<HTMLElement>('[data-reason]');
+      const trip = figure.querySelector<HTMLElement>('[data-trip]');
+      const wait = figure.querySelector<HTMLElement>('[data-wait]');
+      const returnMarker = figure.querySelector<HTMLElement>('[data-return-marker]');
+      const nextMarker = figure.querySelector<HTMLElement>('[data-next-marker]');
+      if (!form || !sourceInput || !readyInput || !readyTime || !status || !morningTimes || !morningNote || !nextTimes || !nextNote || !reason || !trip || !wait || !returnMarker || !nextMarker) return;
+
+      const plannedDeparture = 540;
+      const latestDeparture = 570;
+      const driverReady = 525;
+      const occupationMinutes = 180;
+      const nextPlannedDeparture = 690;
+      const axisStart = 510;
+      const axisEnd = 840;
+      const clock = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+      const position = (minutes: number) => `${((minutes - axisStart) / (axisEnd - axisStart)) * 100}%`;
+      const duration = (minutes: number) => `${minutes} minute${minutes === 1 ? '' : 's'}`;
+
+      const render = () => {
+        const vehicleReady = Number(readyInput.value);
+        const borrowed = sourceInput.value === 'borrowed';
+        // The plan cannot leave early. Driver and replacement must both be ready.
+        const departure = Math.max(plannedDeparture, driverReady, vehicleReady);
+        const vehicleFree = departure + occupationMinutes;
+        // A dedicated spare leaves the next run's own vehicle available as planned.
+        const nextDeparture = borrowed ? Math.max(nextPlannedDeparture, vehicleFree) : nextPlannedDeparture;
+        const morningDelay = Math.max(0, departure - latestDeparture);
+        const nextDelay = nextDeparture - nextPlannedDeparture;
+
+        readyTime.textContent = clock(vehicleReady);
+        readyInput.setAttribute('aria-valuetext', clock(vehicleReady));
+        figure.dataset.departure = String(departure);
+        figure.dataset.vehicleFree = String(vehicleFree);
+        figure.dataset.nextDeparture = String(nextDeparture);
+        figure.dataset.morningDelay = String(morningDelay);
+        figure.dataset.nextDelay = String(nextDelay);
+        figure.dataset.vehicleSource = sourceInput.value;
+
+        status.textContent = morningDelay === 0
+          ? nextDelay === 0 ? 'Both departure commitments are held.' : `Morning commitment held. Next run ${duration(nextDelay)} late.`
+          : nextDelay === 0 ? `Morning run ${duration(morningDelay)} beyond its limit. Next run unchanged.` : `Morning run ${duration(morningDelay)} beyond its limit. Next run ${duration(nextDelay)} late.`;
+        morningTimes.textContent = `Departs ${clock(departure)}. Vehicle free again at ${clock(vehicleFree)}.`;
+        morningNote.textContent = morningDelay === 0
+          ? 'Within the 09:30 departure limit.'
+          : `${duration(morningDelay)} beyond the 09:30 departure limit.`;
+        nextTimes.textContent = `Planned for 11:30. Can depart at ${clock(nextDeparture)}.`;
+        nextNote.textContent = borrowed
+          ? `The driver waits ${duration(nextDelay)} for the borrowed vehicle to return.`
+          : 'Its own vehicle remains available. No delay transfers from the morning run.';
+        reason.textContent = borrowed
+          ? 'The borrowed vehicle is still on the morning run when the next one needs it. That departure moves with the return time.'
+          : 'A dedicated spare keeps the two runs independent. It avoids moving this disruption to the next departure, but it is additional capacity you must provide.';
+        trip.style.left = position(departure);
+        trip.style.width = `${(occupationMinutes / (axisEnd - axisStart)) * 100}%`;
+        returnMarker.style.left = position(vehicleFree);
+        wait.style.left = position(nextPlannedDeparture);
+        wait.style.width = `${(nextDelay / (axisEnd - axisStart)) * 100}%`;
+        wait.hidden = nextDelay === 0;
+        nextMarker.style.left = position(nextDeparture);
+      };
+
+      figure.dataset.ready = 'true';
+      const controls = figure.querySelectorAll<HTMLFieldSetElement>('[data-enable]');
+      controls.forEach((control) => { control.disabled = false; });
+      form.addEventListener('input', render);
+      form.addEventListener('change', render);
+      form.addEventListener('submit', (event) => event.preventDefault());
+      render();
+    });
+  }
+  initializeFreightCoverage();
+  document.addEventListener('astro:page-load', initializeFreightCoverage);
+</script>
+
+<style>
+  .freight-coverage { font-family: var(--dd-figure-font); }
+  .freight-coverage :where(p, label, legend, input, select, option, h4, h5, output, strong, span) { font-family: var(--dd-figure-font); }
+  .freight-coverage h3 { margin: 0 0 .65rem; }
+  .fc-intro { margin: 0; font-size: 1rem; line-height: 1.55; }
+  .fc-conditions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.1rem; margin: 1.2rem 0 1.5rem; }
+  .fc-conditions p { display: flex; align-items: flex-start; gap: .65rem; margin: 0; font-size: 1rem; line-height: 1.5; }
+  .fc-icon { display: block; flex: none; width: 2.5rem; height: 2.1rem; fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .fc-wheel { fill: var(--dd-figure-paper); }
+  .fc-form { margin: 0 0 1.5rem; }
+  .freight-coverage fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+  .freight-coverage legend { padding: 0; margin: 0 0 .8rem; font-size: 1rem; line-height: 1.4; font-weight: 600; }
+  .fc-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2rem; align-items: start; }
+  .fc-select-label, .fc-range-label { display: block; min-width: 0; font-size: .95rem; line-height: 1.5; }
+  .freight-coverage select { display: block; width: 100%; min-width: 0; max-width: 100%; margin-top: .45rem; padding: .7rem .45rem; border: 1px solid var(--dd-figure-line); border-radius: .35rem; color: var(--dd-figure-ink); background: var(--dd-figure-paper); font-family: var(--dd-figure-font); font-size: .95rem; line-height: 1.4; }
+  .fc-range-heading { display: flex; flex-wrap: wrap; gap: .25rem .6rem; align-items: baseline; justify-content: space-between; }
+  .fc-range-heading output { font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .freight-coverage input[type="range"] { display: block; width: 100%; margin: .7rem 0 .2rem; accent-color: var(--dd-figure-ink); cursor: pointer; min-height: 1.5rem; }
+  .fc-range-ends { display: flex; justify-content: space-between; font-size: .875rem; color: var(--dd-figure-muted); }
+  .freight-coverage :where(input, select):focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 3px; }
+  .fc-result { min-width: 0; padding: clamp(.85rem, 2.5vw, 1.25rem); border-radius: .5rem; background: var(--dd-figure-surface); }
+  .freight-coverage .fc-status { margin: 0 0 1.4rem; font-family: var(--dd-figure-heading-font); font-size: 1.35rem; line-height: 1.3; font-weight: 600; letter-spacing: -.015em; }
+  .fc-run + .fc-run { margin-top: 1.2rem; }
+  .fc-run-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .2rem 1rem; }
+  .fc-run-heading h5 { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.5; }
+  .fc-run-heading p { margin: 0; font-size: .9rem; line-height: 1.5; font-variant-numeric: tabular-nums; }
+  .fc-track { position: relative; height: 2.75rem; margin-top: .55rem; }
+  .fc-track::before { content: ''; position: absolute; inset: 1.65rem 0 auto; height: 1px; background: var(--dd-figure-line); }
+  .fc-trip, .fc-wait { position: absolute; top: 1.15rem; height: 1rem; border-radius: .15rem; }
+  .fc-trip { background: var(--dd-figure-ink); }
+  .fc-wait { background: var(--dd-figure-accent); }
+  .fc-limit { position: absolute; z-index: 2; top: .55rem; bottom: .2rem; border-left: 2px dashed var(--dd-figure-muted); }
+  .fc-morning-limit { left: 18.1818%; }
+  .fc-next-limit { left: 54.5455%; }
+  .fc-vehicle-marker { position: absolute; z-index: 3; top: .25rem; transform: translateX(-50%); }
+  .fc-vehicle-marker .fc-icon { width: 2.2rem; height: 1.85rem; background: var(--dd-figure-surface); }
+  .fc-vehicle-marker .fc-wheel { fill: var(--dd-figure-surface); }
+  .fc-run-note { margin: .15rem 0 0; font-size: 1rem; line-height: 1.5; }
+  .fc-axis { display: flex; justify-content: space-between; margin-top: .8rem; font-size: .875rem; color: var(--dd-figure-muted); font-variant-numeric: tabular-nums; }
+  .fc-key { display: flex; flex-wrap: wrap; gap: .45rem 1rem; margin: .9rem 0 0; font-size: .875rem; line-height: 1.5; }
+  .fc-key span { display: inline-flex; align-items: center; gap: .4rem; }
+  .fc-key i { display: inline-block; width: .9rem; height: .6rem; flex: none; }
+  .fc-key-trip { background: var(--dd-figure-ink); }
+  .fc-key-wait { background: var(--dd-figure-accent); }
+  .fc-key .fc-key-limit { width: 0; height: .9rem; margin-left: .35rem; margin-right: .4rem; border-left: 2px dashed var(--dd-figure-muted); }
+  .fc-reason, .fc-restoration { margin: 1.1rem 0 0; font-size: 1rem; line-height: 1.55; }
+  .fc-restoration { color: var(--dd-figure-muted); }
+  .freight-coverage noscript p { font-size: 1rem; line-height: 1.5; }
+  @media (max-width: 620px) { .fc-conditions, .fc-controls { grid-template-columns: minmax(0, 1fr); } }
+</style>

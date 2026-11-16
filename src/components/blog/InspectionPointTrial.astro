@@ -1,0 +1,140 @@
+---
+import './inspection-point-trial.css';
+
+interface Props { id?: string }
+const { id = 'inspection-point-trial' } = Astro.props;
+const inspections = Array.from({ length: 12 }, (_, index) => index);
+---
+
+<figure class="dd-figure ipt-figure not-prose" id={id} data-inspection-trial aria-labelledby={`${id}-title`}>
+  <header class="ipt-heading">
+    <h3 class="dd-figure-title" id={`${id}-title`}>Was the trial really an improvement?</h3>
+    <p>Suppose the checklist trial averages <strong>11 minutes instead of 14</strong>. It handled 10 routine inspections and just 2 needing extra checks.</p>
+  </header>
+
+  <table class="ipt-times">
+    <caption>Minutes per inspection in this example</caption>
+    <thead><tr><th scope="col">Inspection</th><th scope="col">Before</th><th scope="col">Trial</th></tr></thead>
+    <tbody>
+      <tr><th scope="row"><span class="ipt-key ipt-routine-key" aria-hidden="true"></span>Routine</th><td>8</td><td>9</td></tr>
+      <tr><th scope="row"><span class="ipt-key ipt-extra-key" aria-hidden="true"></span>Extra checks</th><td>20</td><td>21</td></tr>
+    </tbody>
+  </table>
+
+  <div class="ipt-comparison" id={`${id}-chart`}>
+    <p class="ipt-chart-help">Each block is one inspection. Wider blocks took longer.</p>
+    <section class="ipt-row" aria-label="Before the trial">
+      <div class="ipt-row-heading">
+        <div><h4>Before</h4><p>6 routine, 6 with extra checks</p></div>
+        <p class="ipt-average"><strong>14 <span>min</span></strong><span>per inspection</span></p>
+      </div>
+      <div class="ipt-track" role="img" aria-label="Before: six routine inspections at eight minutes and six needing extra checks at twenty minutes. Total 168 minutes for twelve inspections; average fourteen minutes.">
+        <div class="ipt-series" style="width:56%" aria-hidden="true">
+          {inspections.map(index => <span class:list={['ipt-block', { 'ipt-extra': index >= 6 }]} style={`flex-grow:${index >= 6 ? 20 : 8}`} />)}
+        </div>
+      </div>
+    </section>
+    <section class="ipt-row" aria-label="Trial comparison">
+      <div class="ipt-row-heading">
+        <div><h4 data-trial-label>Recorded trial</h4><p data-trial-mix>10 routine, 2 with extra checks</p></div>
+        <p class="ipt-average"><strong><span data-trial-average>11</span> <span>min</span></strong><span>per inspection</span></p>
+      </div>
+      <div class="ipt-track" data-trial-chart role="img" aria-label="Recorded trial: ten routine inspections at nine minutes and two needing extra checks at twenty-one minutes. Total 132 minutes for twelve inspections; average eleven minutes.">
+        <div class="ipt-series" data-trial-series style="width:44%" aria-hidden="true">
+          {inspections.map(index => <span class:list={['ipt-block', { 'ipt-extra': index >= 10 }]} style={`flex-grow:${index >= 10 ? 21 : 9}`} />)}
+        </div>
+      </div>
+    </section>
+    <div class="ipt-axis" aria-hidden="true"><span>0</span><span>Total minutes for 12 inspections</span><span>300</span></div>
+  </div>
+
+  <div class="ipt-controls" hidden>
+    <p class="ipt-control-question">What if the trial handled the original mix?</p>
+    <p class="ipt-control-help" id={`${id}-help`}>Change the mix below. Each type keeps its recorded trial time.</p>
+    <label class="ipt-range-label" for={`${id}-mix`}><span>Inspections needing extra checks</span><output for={`${id}-mix`} data-mix-count aria-live="off">2 of 12</output></label>
+    <input class="ipt-range" type="range" id={`${id}-mix`} min="0" max="12" step="1" value="2" aria-valuetext="2 inspections needing extra checks and 10 routine inspections" aria-describedby={`${id}-help`} aria-controls={`${id}-chart ${id}-result`} />
+    <div class="ipt-range-ticks" aria-hidden="true"><span>0</span><span>6 before the trial</span><span>12</span></div>
+    <button class="ipt-match" type="button">Match the original mix</button>
+  </div>
+
+  <div class="ipt-result" id={`${id}-result`} role="status" aria-live="polite" aria-atomic="true">
+    <p class="ipt-verdict" data-verdict>21% less average time. A lighter workload.</p>
+    <p data-explanation>The recorded trial had only 2 inspections needing extra checks, down from 6. Both types actually took a minute longer.</p>
+  </div>
+  <noscript><p class="ipt-static">At the original mix of 6 routine inspections and 6 needing extra checks, the trial average would be 15 minutes, versus 14 before.</p></noscript>
+</figure>
+
+<script>
+  function bindInspectionTrials() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-inspection-trial]');
+    figures.forEach(figure => {
+      if (figure.dataset.bound === 'true') return;
+      const range = figure.querySelector<HTMLInputElement>('.ipt-range');
+      const match = figure.querySelector<HTMLButtonElement>('.ipt-match');
+      const series = figure.querySelector<HTMLElement>('[data-trial-series]');
+      const chart = figure.querySelector<HTMLElement>('[data-trial-chart]');
+      const average = figure.querySelector<HTMLElement>('[data-trial-average]');
+      const count = figure.querySelector<HTMLOutputElement>('[data-mix-count]');
+      const label = figure.querySelector<HTMLElement>('[data-trial-label]');
+      const mix = figure.querySelector<HTMLElement>('[data-trial-mix]');
+      const verdict = figure.querySelector<HTMLElement>('[data-verdict]');
+      const explanation = figure.querySelector<HTMLElement>('[data-explanation]');
+      const controls = figure.querySelector<HTMLElement>('.ipt-controls');
+      if (!range || !match || !series || !chart || !average || !count || !label || !mix || !verdict || !explanation || !controls) return;
+      const blocks = Array.from(series.children) as HTMLElement[];
+      if (blocks.length !== 12) return;
+      figure.dataset.bound = 'true';
+
+      function update() {
+        const extra = Math.max(0, Math.min(12, Math.round(Number(range!.value))));
+        const routine = 12 - extra;
+        const total = routine * 9 + extra * 21;
+        const mean = total / 12;
+        const percent = Math.round(Math.abs(mean - 14) / 14 * 100);
+        range!.value = String(extra);
+        range!.setAttribute('aria-valuetext', `${extra} inspections needing extra checks and ${routine} routine inspections`);
+        count!.value = `${extra} of 12`;
+        label!.textContent = extra === 2 ? 'Recorded trial' : 'Trial, reweighted';
+        mix!.textContent = `${routine} routine, ${extra} with extra checks`;
+        average!.textContent = String(mean);
+        series!.style.width = `${total / 300 * 100}%`;
+        blocks.forEach((block, index) => {
+          const needsExtra = index >= routine;
+          block.classList.toggle('ipt-extra', needsExtra);
+          block.style.flexGrow = String(needsExtra ? 21 : 9);
+        });
+        chart!.setAttribute('aria-label', `${extra === 2 ? 'Recorded trial' : 'Reweighted comparison'}: ${routine} routine inspections at nine minutes and ${extra} needing extra checks at twenty-one minutes. Total ${total} minutes for twelve inspections; average ${mean} minutes.`);
+        match!.disabled = extra === 6;
+        match!.textContent = extra === 6 ? 'Original mix matched' : 'Match the original mix';
+        figure.dataset.mix = String(extra);
+
+        if (extra === 6) {
+          verdict!.textContent = `${percent}% more average time. The original mix.`;
+          explanation!.textContent = 'At the original 6-and-6 mix, the trial averages 15 minutes instead of 14. The apparent improvement reverses. Investigate before rolling it out.';
+        } else if (extra === 2) {
+          verdict!.textContent = `${percent}% less average time. A lighter workload.`;
+          explanation!.textContent = 'The recorded trial had only 2 inspections needing extra checks, down from 6. Both types actually took a minute longer.';
+        } else if (extra === 5) {
+          verdict!.textContent = 'The same average. Different work.';
+          explanation!.textContent = 'The trial reaches 14 minutes with 5 inspections needing extra checks. That is one fewer than before, even though the overall average matches.';
+        } else if (extra < 6) {
+          verdict!.textContent = `${percent}% less average time. A lighter workload.`;
+          explanation!.textContent = `This comparison has ${extra} inspections needing extra checks, versus 6 before. Match the original mix to see whether the gain survives.`;
+        } else {
+          verdict!.textContent = `${percent}% more average time. A heavier workload.`;
+          explanation!.textContent = `This comparison has ${extra} inspections needing extra checks, versus 6 before. Both the workload mix and the per-type times affect the result.`;
+        }
+      }
+      range.addEventListener('input', update);
+      match.addEventListener('click', () => {
+        range.value = '6';
+        update();
+        range.focus({ preventScroll: true });
+      });
+      update();
+      controls.hidden = false;
+    });
+  }
+  bindInspectionTrials();
+  document.addEventListener('astro:page-load', bindInspectionTrials);
+</script>

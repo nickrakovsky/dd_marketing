@@ -38,6 +38,13 @@ const nickBatch = [
   ['logistics-automation-give-and-take', '2026-11-16'],
   ['connect-inbound-outbound-warehouse-data', '2026-11-17'],
 ];
+const novemberBatch = [
+  ['test-one-warehouse-process-change', '2026-11-18', 'B', 'youtube-video', 'DataDocks Team'],
+  ['truck-freight-in-house', '2026-11-19', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['agency-staffing-retention', '2026-11-20', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['costs-arrive-with-the-load', '2026-11-23', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['provider-dependence', '2026-11-24', 'C', 'nick-audio', 'Nick Rakovsky'],
+];
 
 // Future previews are development-only. Enable their cases when testing Astro dev:
 // PLAYWRIGHT_FUTURE_PREVIEWS=1 playwright test tests/blog-rollout.spec.mjs
@@ -63,7 +70,7 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The schedule includes the unchanged 38 slots plus the five approved Nick articles').toHaveLength(43);
+  expect(slots, 'The schedule preserves the existing 43 slots, followed by the warehouse-process companion and D1–D4').toHaveLength(48);
   expect(slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The checklist is evergreen, outside the daily schedule').toBe(false);
   expect(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
     octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
@@ -74,12 +81,16 @@ test.beforeEach(async ({ page, baseURL }) => {
   expect(slots.slice(27, 38).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup])).toEqual(
     queueBatch.map(([slug, date, rotationGroup], index) => [28 + index, slug, `${date}T14:30:00.000Z`, rotationGroup]),
   );
-  expect(slots.slice(38).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
+  expect(slots.slice(38, 43).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
     nickBatch.map(([slug, date], index) => [39 + index, slug, `${date}T14:30:00.000Z`, 'C', 'nick-audio', 'Nick Rakovsky']),
+  );
+  expect(slots.slice(43).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
+    novemberBatch.map(([slug, date, rotationGroup, provenance, author], index) =>
+      [44 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance, author]),
   );
   expect(schedule.timezone).toBe('UTC-08:00');
   expect(schedule.localPublicationTime).toBe('06:30:00');
-  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-11-18T00:00:00Z'));
+  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-11-25T00:00:00Z'));
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);

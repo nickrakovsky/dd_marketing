@@ -1,0 +1,205 @@
+---
+const instance = `provider-dependence-${crypto.randomUUID()}`;
+const arrangements = [
+  { key: 'separate', title: 'Separate follow-up', description: 'Your team passes each completed update to the next team.' },
+  { key: 'coordinated', title: 'Provider coordinates onward', description: 'The agreed service includes passing each update to the next team.' },
+];
+const routes = [
+  { key: 'contents', title: 'Documents → border preparation', first: 'Documents revised', next: 'Preparation rechecked', firstTime: '09:20', finish: '09:50' },
+  { key: 'timing', title: 'Collection → receiving plan', first: 'Collection reconfirmed', next: 'Receiving plan updated', firstTime: '09:15', finish: '09:30' },
+];
+---
+
+<figure class="dd-figure not-prose pd-figure" data-provider-dependence>
+  <figcaption>
+    <h3 class="dd-figure-title">How far does one shipment update travel?</h3>
+    <p class="pd-intro">At 09:00, your team sends the provider a shipment change. Both arrangements include the same supporting work. Compare what happens while your team is busy elsewhere.</p>
+  </figcaption>
+
+  <form class="pd-form">
+    <div class="pd-controls">
+      <label for={`${instance}-change`}>What changed?
+        <select id={`${instance}-change`} data-change disabled>
+          <option value="contents">Shipment contents</option>
+          <option value="timing">Ready time</option>
+          <option value="both" selected>Contents and ready time</option>
+        </select>
+      </label>
+      <label for={`${instance}-return`}>Your team is free to follow up from
+        <select id={`${instance}-return`} data-return disabled>
+          <option value="0">09:00 — available throughout</option>
+          <option value="15">09:15</option>
+          <option value="20">09:20</option>
+          <option value="30">09:30</option>
+          <option value="60" selected>10:00</option>
+          <option value="90">10:30</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="pd-comparison">
+      {arrangements.map(arrangement => (
+        <section class="pd-arrangement" data-arrangement={arrangement.key} aria-labelledby={`${instance}-${arrangement.key}`}>
+          <h4 id={`${instance}-${arrangement.key}`}>{arrangement.title}</h4>
+          <p class="pd-arrangement-description">{arrangement.description}</p>
+          {routes.map(route => (
+            <div class="pd-route" data-route={route.key}>
+              <h5>{route.title}</h5>
+              <p class="pd-unchanged" data-unchanged hidden>This part of the shipment is unchanged.</p>
+              <div data-route-detail>
+                <dl class="pd-milestones">
+                  <div><dt>{route.first}</dt><dd>{route.firstTime}</dd></div>
+                  <div class="pd-handoff"><dt>Passed onward</dt><dd data-handoff>{arrangement.key === 'separate' ? '10:00' : route.firstTime}</dd></div>
+                  <div><dt>{route.next}</dt><dd data-finish>{arrangement.key === 'separate' ? (route.key === 'contents' ? '10:30' : '10:15') : route.finish}</dd></div>
+                </dl>
+                <p class="pd-wait" data-wait>{arrangement.key === 'separate' ? (route.key === 'contents' ? 'Documents wait 40 minutes before the border-preparation recheck can start.' : 'The collection plan waits 45 minutes before the receiving-plan update can begin.') : 'The completed update goes straight to the next team.'}</p>
+              </div>
+            </div>
+          ))}
+          <div class="pd-complete"><span>Affected work complete</span><strong data-complete>{arrangement.key === 'separate' ? '10:30' : '09:50'}</strong></div>
+        </section>
+      ))}
+    </div>
+
+    <div class="pd-result" role="status" aria-live="polite" aria-atomic="true">
+      <h4 data-result-title>Two follow-ups sit between the completed updates and the next teams.</h4>
+      <p data-result-body>The routes run in parallel. With separate follow-up, both are finished at 10:30; with provider coordination, at 09:50. The difference is 40 minutes, determined by the documents and border-preparation route.</p>
+      <p class="pd-result-implication" data-result-implication>Each handoff lets the next team start its update. Border preparation and the receiving plan become current only after that work is finished.</p>
+    </div>
+  </form>
+
+  <details class="pd-assumptions">
+    <summary class="dd-disclosure">How this comparison works<svg class="dd-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+    <dl>
+      <div><dt>Same starting information</dt><dd>The provider receives accurate changes at 09:00 and starts the document and/or collection update.</dd></div>
+      <div><dt>Same work times</dt><dd>Documents take 20 minutes to revise, followed by 30 minutes to recheck border preparation. Reconfirming collection takes 15 minutes, followed by 15 minutes to update the receiving plan.</dd></div>
+      <div><dt>Only the handoff changes</dt><dd>Provider coordination passes each completed update straight on. Separate follow-up waits until your team is free. Handoffs take no additional time; the next teams are ready to start. Both routes run in parallel.</dd></div>
+      <div><dt>Illustrative timing</dt><dd>These are example durations, not service benchmarks or Nick’s operating data. Completion here covers these supporting tasks, not clearance or delivery.</dd></div>
+    </dl>
+  </details>
+  <noscript><p class="pd-noscript">The example shows both changes and internal follow-up from 10:00. Enable JavaScript to compare other conditions.</p></noscript>
+</figure>
+
+<script>
+  function initializeProviderDependence() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-provider-dependence]');
+    figures.forEach(figure => {
+      if (figure.dataset.initialized) return;
+      const change = figure.querySelector<HTMLSelectElement>('[data-change]')!;
+      const returnTime = figure.querySelector<HTMLSelectElement>('[data-return]')!;
+      const form = figure.querySelector<HTMLFormElement>('form')!;
+      const routes = [
+        { key: 'contents', first: 20, next: 30, waiting: 'Documents', reason: 'the border-preparation recheck can start' },
+        { key: 'timing', first: 15, next: 15, waiting: 'The collection plan', reason: 'the receiving-plan update can begin' },
+      ];
+      const time = (minutes: number) => `${String(9 + Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+      function render() {
+        const available = Number(returnTime.value);
+        const active = routes.filter(route => change.value === 'both' || change.value === route.key);
+        const completion: Record<string, number> = {};
+        const arrangements = figure.querySelectorAll<HTMLElement>('[data-arrangement]');
+        arrangements.forEach(card => {
+          const coordinated = card.dataset.arrangement === 'coordinated';
+          const ends: number[] = [];
+          routes.forEach(route => {
+            const row = card.querySelector<HTMLElement>(`[data-route="${route.key}"]`)!;
+            const required = active.some(item => item.key === route.key);
+            row.dataset.active = String(required);
+            const unchanged = row.querySelector<HTMLElement>('[data-unchanged]')!;
+            const detail = row.querySelector<HTMLElement>('[data-route-detail]')!;
+            unchanged.hidden = required;
+            detail.hidden = !required;
+            if (!required) return;
+            const handoff = coordinated ? route.first : Math.max(available, route.first);
+            const wait = handoff - route.first;
+            const finish = handoff + route.next;
+            row.dataset.wait = String(wait);
+            row.dataset.finish = String(finish);
+            row.querySelector('[data-handoff]')!.textContent = time(handoff);
+            row.querySelector('[data-finish]')!.textContent = time(finish);
+            row.querySelector('[data-wait]')!.textContent = wait > 0
+              ? `${route.waiting} wait${route.key === 'timing' ? 's' : ''} ${wait} minutes before ${route.reason}.`
+              : 'The completed update goes straight to the next team.';
+            ends.push(finish);
+          });
+          const finish = Math.max(...ends);
+          completion[card.dataset.arrangement!] = finish;
+          card.querySelector('[data-complete]')!.textContent = time(finish);
+        });
+        const gap = completion.separate - completion.coordinated;
+        const waits = active.filter(route => available > route.first);
+        const both = active.length === 2;
+        const title = figure.querySelector<HTMLElement>('[data-result-title]')!;
+        const body = figure.querySelector<HTMLElement>('[data-result-body]')!;
+        const implication = figure.querySelector<HTMLElement>('[data-result-implication]')!;
+        if (!waits.length) {
+          title.textContent = both ? 'Both arrangements finish at the same time.' : 'This update finishes at the same time in both arrangements.';
+          body.textContent = `Your team is free before ${both ? 'either update needs' : 'the update needs'} to be passed on. ${both ? 'Both routes finish' : 'The affected work finishes'} by ${time(completion.separate)}. Provider coordination removes ${both ? 'the two follow-ups' : 'the follow-up'} from your team’s work, but saves no elapsed time here.`;
+          implication.textContent = both ? 'The two handoffs still need attention, even when they introduce no waiting.' : 'The handoff still needs attention, even when it introduces no waiting.';
+        } else if (!gap) {
+          title.textContent = 'Same overall finish, but receiving gets its update later.';
+          body.textContent = `Both arrangements finish the affected work by ${time(completion.separate)}. Separate follow-up holds the collection plan for ${available - 15} minutes; the receiving plan is updated at ${time(available + 15)} instead of 09:30. Documents and border preparation still finish last.`;
+          implication.textContent = 'The overall completion time can stay the same while one team waits longer for its update.';
+        } else {
+          title.textContent = waits.length === 2 ? 'Two follow-ups sit between the completed updates and the next teams.' : 'A completed update waits for your team’s next follow-up.';
+          body.textContent = `${both ? 'The routes run in parallel. ' : ''}With separate follow-up, ${both ? 'both are' : 'the affected work is'} finished at ${time(completion.separate)}; with provider coordination, at ${time(completion.coordinated)}. The difference is ${gap} minutes${both ? ', determined by the documents and border-preparation route' : ''}.`;
+          implication.textContent = both
+            ? 'Each handoff lets the next team start its update. Border preparation and the receiving plan become current only after that work is finished.'
+            : change.value === 'contents'
+              ? 'The revised documents already exist. The border-preparation team needs them before it can start its recheck; preparation becomes current when that work is finished.'
+              : 'Collection has a revised plan. The receiving team needs it before it can start updating its own plan; that work still takes time after the handoff.';
+        }
+        figure.dataset.change = change.value;
+        figure.dataset.gap = String(gap);
+      }
+      form.addEventListener('submit', event => event.preventDefault());
+      form.addEventListener('change', render);
+      change.disabled = false;
+      returnTime.disabled = false;
+      render();
+      figure.dataset.initialized = 'true';
+    });
+  }
+  initializeProviderDependence();
+  document.addEventListener('astro:page-load', initializeProviderDependence);
+</script>
+
+<style>
+  .pd-figure { font-family: var(--dd-figure-font); }
+  .pd-figure * { box-sizing: border-box; }
+  .pd-figure :is(p, h3, h4, h5, dl, dd) { margin: 0; }
+  .pd-figure [hidden] { display: none !important; }
+  .pd-intro { margin-top: .7rem !important; font: 400 1rem/1.55 var(--dd-figure-font); }
+  .pd-form { margin-top: 1.5rem; }
+  .pd-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  .pd-controls label { display: grid; gap: .55rem; align-content: end; min-width: 0; font: 600 1rem/1.45 var(--dd-figure-font); }
+  .pd-controls select { width: 100%; min-width: 0; border: 1px solid var(--dd-figure-line); border-radius: .3rem; padding: .7rem .5rem; background: var(--dd-figure-paper); color: var(--dd-figure-ink); font: 400 .875rem/1.4 var(--dd-figure-font); }
+  .pd-controls select:focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 3px; }
+  .pd-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .pd-arrangement { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--dd-figure-line); border-radius: .4rem; padding: 1rem; }
+  .pd-arrangement h4 { font: 600 1.25rem/1.35 var(--dd-figure-heading-font); }
+  .pd-arrangement-description { margin-top: .6rem !important; font: 400 1rem/1.5 var(--dd-figure-font); }
+  .pd-route { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--dd-figure-line); }
+  .pd-route h5 { font: 600 1rem/1.5 var(--dd-figure-font); }
+  .pd-milestones { display: grid; gap: .6rem; margin-top: .75rem !important; }
+  .pd-milestones > div { display: grid; grid-template-columns: 1fr auto; gap: .6rem; align-items: baseline; }
+  .pd-milestones dt { font: 400 .875rem/1.45 var(--dd-figure-font); }
+  .pd-milestones dd { font: 600 1rem/1.4 var(--dd-figure-font); font-variant-numeric: tabular-nums; }
+  .pd-handoff { border-left: 3px solid var(--dd-figure-line); padding-left: .6rem; }
+  .pd-route[data-active="true"][data-wait]:not([data-wait="0"]) .pd-handoff { border-left-color: var(--dd-figure-accent); }
+  .pd-wait, .pd-unchanged { margin-top: .8rem !important; font: 400 1rem/1.5 var(--dd-figure-font); }
+  .pd-unchanged { color: var(--dd-figure-muted); }
+  .pd-complete { margin-top: auto; padding-top: 1.2rem; display: flex; align-items: baseline; flex-wrap: wrap; gap: .35rem 1rem; }
+  .pd-complete > span { font: 400 1rem/1.4 var(--dd-figure-font); }
+  .pd-complete strong { font: 400 1.8rem/1.25 var(--dd-figure-heading-font); }
+  .pd-result { padding: 1.1rem; margin-top: 1.25rem; border-left: 3px solid var(--dd-figure-accent); background: var(--dd-figure-surface); }
+  .pd-result h4 { font: 600 1.25rem/1.4 var(--dd-figure-heading-font); }
+  .pd-result p { margin-top: .7rem; font: 400 1rem/1.55 var(--dd-figure-font); }
+  .pd-result .pd-result-implication { color: var(--dd-figure-muted); }
+  .pd-assumptions { border-top: 1px solid var(--dd-figure-line); padding-top: 1rem; margin-top: 1.25rem; }
+  .pd-assumptions dl { display: grid; gap: .85rem; margin-top: 1rem; }
+  .pd-assumptions dt { font: 600 1.125rem/1.4 var(--dd-figure-heading-font); }
+  .pd-assumptions dd { margin-top: .2rem; font: 400 1rem/1.5 var(--dd-figure-font); }
+  .pd-noscript { margin-top: 1rem !important; font: 400 1rem/1.5 var(--dd-figure-font); }
+  @media (max-width: 620px) { .pd-controls, .pd-comparison { grid-template-columns: 1fr; } }
+</style>

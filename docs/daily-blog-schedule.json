@@ -9,7 +9,7 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-11-18T00:00:00Z",
+  "previewAsOf": "2026-11-25T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
@@ -22,7 +22,8 @@
     "On October 23, the user authorized publication setup and a PR for the 12 consolidated queue articles, then directed that the warehouse setup checklist publish as evergreen outside the daily queue. The 11 daily articles occupy slots 28–38 from October 27 through November 10 at 14:30 UTC. Slots 1–27 remain unchanged. The current titles and URL slugs are retained; this authorization supersedes the former draft-only approval notes.",
     "New source provenance and rotationGroup distinguish six training-session articles (A) and five YouTube articles (B). Future Nick audio articles will use rotationGroup C; the historical group A/B/C taxonomy and rotation are preserved. The researched warehouse setup checklist has no daily slot and is eligible immediately after merge and deployment.",
     "The consolidated queue payloads were moved from internal/blog-staging into the existing production article/component locations. For the 11 daily articles, sourceSha256 and sourceBodySha256 record the accepted pre-move MDX and unchanged article body; historical sourcePath values are provenance, not duplicate payloads to retain.",
-    "On November 2, the user approved five Nick Rakovsky posts and requested a regular PR to add them to the existing daily queue without merging. Slots 39–43 use the next five weekdays, November 11–17, at 14:30 UTC. Slots 1–38 are unchanged. Accepted prose and interactive components are preserved; existing card artwork is reused. Release depends on merge and deployment before the scheduled time."
+    "On November 2, the user approved five Nick Rakovsky posts and requested a regular PR to add them to the existing daily queue without merging. Slots 39–43 use the next five weekdays, November 11–17, at 14:30 UTC. Slots 1–38 are unchanged. Accepted prose and interactive components are preserved; existing card artwork is reused. Release depends on merge and deployment before the scheduled time.",
+    "On November 16, the user authorized adding the reviewed warehouse-process YouTube companion to PR #299 before the four approved Recording 37 posts (D1–D4). The existing 43 slots remain unchanged through November 17. Slots 44–48 publish the YouTube article on November 18, followed by D1–D4 on November 19, 20, 23 and 24, at 14:30 UTC. Accepted prose, titles, URL slugs and interactive components are retained; production payloads replace the staged packages. Merge and deployment remain required for release."
   ],
   "slots": [
     {
@@ -760,6 +761,101 @@
       "sourceBodySha256": "86654a474f716e2254f023e50b4145feea2b5c6c18dadc17ca7d1b62b6869dba",
       "contentPath": "src/content/posts/connect-inbound-outbound-warehouse-data.mdx",
       "cardImage": "../../assets/blog-images/warehouse-optimization-strategies-cover.png"
+    },
+    {
+      "slot": 44,
+      "date": "2026-11-18",
+      "weekday": "Wednesday",
+      "group": "C",
+      "groupLabel": "DataDocks Team",
+      "sequenceInGroup": 19,
+      "rotationGroup": "B",
+      "provenance": "youtube-video",
+      "author": "DataDocks Team",
+      "title": "Test one warehouse process change before rolling it out",
+      "slug": "test-one-warehouse-process-change",
+      "pubDate": "2026-11-18T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-29-test-one-warehouse-process-change/test-one-warehouse-process-change.mdx",
+      "sourceSha256": "17c8344c64d7f57413a138be059dd9b61264e38300fd4570e8d0a51e05d14121",
+      "sourceBodySha256": "d1c657195c8de2317bee690e8174bccaa440a7e9afc29b3cafdf60f6c95dda7e",
+      "contentPath": "src/content/posts/test-one-warehouse-process-change.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-receiving-process-cover.webp"
+    },
+    {
+      "slot": 45,
+      "date": "2026-11-19",
+      "weekday": "Thursday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 21,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "What to Account for Before Bringing Truck Freight In-House",
+      "slug": "truck-freight-in-house",
+      "pubDate": "2026-11-19T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-30-truck-freight-in-house/truck-freight-in-house.mdx",
+      "sourceSha256": "cd1cfc8ba31e2da37e1bbd1858869ae96c5e180470f95849822ccfcb5bb5218b",
+      "sourceBodySha256": "278d0da3af71215abcfb9aafdd945e9255742dd91e1546f203b188d393dfae15",
+      "contentPath": "src/content/posts/truck-freight-in-house.mdx",
+      "cardImage": "../../assets/blog-images/what-is-a-freight-management-system-cover.png"
+    },
+    {
+      "slot": 46,
+      "date": "2026-11-20",
+      "weekday": "Friday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 22,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Using Agency Staffing to Find People You Want to Keep",
+      "slug": "agency-staffing-retention",
+      "pubDate": "2026-11-20T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-31-agency-staffing-retention/agency-staffing-retention.mdx",
+      "sourceSha256": "759d76587e4c9d1c8e88f682c549e9dc7b26ba395366ab66ad3d0fad9c226e8e",
+      "sourceBodySha256": "50626557add5c4a286370fd30f0f3ee7a9e1afa3aa7968b854d4f407333ec59b",
+      "contentPath": "src/content/posts/agency-staffing-retention.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-motivation-cover.webp"
+    },
+    {
+      "slot": 47,
+      "date": "2026-11-23",
+      "weekday": "Monday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 23,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "What Running a Recycling Plant Taught Me About Costs That Arrive With the Load",
+      "slug": "costs-arrive-with-the-load",
+      "pubDate": "2026-11-23T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-32-costs-arrive-with-the-load/costs-arrive-with-the-load.mdx",
+      "sourceSha256": "d91f4ce39a070a77830a8b48b44a534c6968d87f569d523f045b7f268841be9a",
+      "sourceBodySha256": "15b57f3879a63661213355e2619f16a4a82b2abc87f8930ab1adf4b31eb432a1",
+      "contentPath": "src/content/posts/costs-arrive-with-the-load.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-receiving-process-cover.webp"
+    },
+    {
+      "slot": 48,
+      "date": "2026-11-24",
+      "weekday": "Tuesday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 24,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "Leaner Logistics Teams Depend More on Their Providers",
+      "slug": "provider-dependence",
+      "pubDate": "2026-11-24T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-33-provider-dependence/provider-dependence.mdx",
+      "sourceSha256": "57785dc9b8678ac58fefebb330966d3bda6bb5146dfca2f70ce1c2500e1f5d49",
+      "sourceBodySha256": "d790499f871380e0454e8c09962bc220f97e64298ef531dff5ac357b49e126b8",
+      "contentPath": "src/content/posts/provider-dependence.mdx",
+      "cardImage": "../../assets/blog-images/negotiate-with-carriers-cover.webp"
     }
   ],
   "queueRotation": {
@@ -778,6 +874,6 @@
       "B",
       "C"
     ],
-    "notes": "Separate editorial source rotation. Historical group/sequenceInGroup fields retain their original meanings. Slots 28–38 alternate A/B. The five approved Nick audio articles are appended as C in slots 39–43 without rescheduling earlier posts. The warehouse setup checklist remains evergreen outside the daily schedule. The future A/B/C pattern applies when articles from all three sources are available."
+    "notes": "Separate editorial source rotation. Historical group/sequenceInGroup fields retain their original meanings. Slots 28–38 alternate A/B. The five approved Nick audio articles are appended as C in slots 39–43 without rescheduling earlier posts. The warehouse setup checklist remains evergreen outside the daily schedule. The future A/B/C pattern applies when articles from all three sources are available. Slots 44–48 follow the user's explicit order: the warehouse-process YouTube companion, then Recording 37 articles D1–D4, without changing slots 1–43 or the future rotation policy."
   }
 }
