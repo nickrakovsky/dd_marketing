@@ -5,15 +5,15 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The daily schedule now contains 38 articles through November 10, 2026. On October 23, the user authorized publication setup and a PR for all 12 consolidated queue articles, retaining the current titles, slugs, prose and illustrations, then directed that the warehouse setup checklist publish as evergreen outside the daily queue. Eleven daily articles occupy slots 28–38; slots 1–27 are unchanged. All 12 new payloads and their components now live in the normal production locations; no duplicate draft packages remain in `internal/blog-staging/`.
+The daily schedule now contains 48 articles through November 24, 2026. The existing 43 slots finish on November 17 and remain unchanged. On November 16, the user authorized adding the reviewed warehouse-process YouTube companion ahead of the four approved Recording 37 posts (D1–D4) in PR #299. Slots 44–48 use the next five weekdays in that order. All scheduled payloads and their components live in the normal production locations; no duplicate draft packages remain in `internal/blog-staging/`. The warehouse setup checklist remains evergreen outside the daily queue.
 
-The branch for ongoing queue management is `codex/blog-posts-queue`. Merge and deployment install the scheduled content; this preparation alone does not publish it. Any article whose timestamp has already passed becomes eligible in that deployment. Preview controls remain local-only.
+The current combined batch is in [PR #299](https://github.com/nickrakovsky/dd_marketing/pull/299), on `codex/daily-posts-queue-november`. Merge and deployment install the scheduled content; this preparation alone does not publish it. Any article whose timestamp has already passed becomes eligible in that deployment. Preview controls remain local-only.
 
 The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment article for October 9, then overtime on October 12 and food-and-beverage posts 2–10 through October 23. The approved missing-stock video companion remains scheduled for Monday, October 26 at 14:30 UTC, before the new batch begins on October 27. The redesigned homepage is `/`; the resource hub is `/posts`.
 
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 10, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 24, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
 
 The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 
@@ -55,7 +55,7 @@ The October 27–November 10 extension uses a separate **source rotation**:
 
 - A: training-derived articles.
 - B: YouTube-derived articles.
-- C: future Nick audio-derived articles, added only when approved and scheduled.
+- C: Nick audio-derived articles.
 
 Slots 28–38 alternate A/B. The independently researched warehouse setup checklist is evergreen, outside the daily schedule and source rotation, with no daily slot. Its publication timestamp is `2026-10-23T00:00:00Z`, so it is eligible immediately after merge and deployment. In the manifest, `rotationGroup` records this new source rotation and `provenance` records each source type. Historical `group`, `sequenceInGroup` and top-level `rotation` keep their original meanings; the new DataDocks Team articles continue historical group C with sequence numbers 8–18.
 
@@ -72,6 +72,18 @@ Slots 28–38 alternate A/B. The independently researched warehouse setup checkl
 | 36 | Fri 2026-11-06 | A | Receiving Keeps Falling Behind: How to Find Where the Work Gets Stuck |
 | 37 | Mon 2026-11-09 | B | Confirm pickup details before the driver arrives |
 | 38 | Tue 2026-11-10 | A | Can You Fine Carriers for Late Arrivals and No-Shows? |
+| 39 | Wed 2026-11-11 | C | Before You Put AI to Work, Learn Its Limits |
+| 40 | Thu 2026-11-12 | C | Warehouse Software Projects Fail When the New Process Is 'Optional' |
+| 41 | Fri 2026-11-13 | C | Don’t Lose Operational Know-How in the Rush to Adopt AI |
+| 42 | Mon 2026-11-16 | C | Don’t Try To Automate the Give-and-Take Out of Logistics |
+| 43 | Tue 2026-11-17 | C | Reduce Warehouse Travel by Connecting Inbound and Outbound Data |
+| 44 | Wed 2026-11-18 | B | Test one warehouse process change before rolling it out |
+| 45 | Thu 2026-11-19 | C | What to Account for Before Bringing Truck Freight In-House |
+| 46 | Fri 2026-11-20 | C | Using Agency Staffing to Find People You Want to Keep |
+| 47 | Mon 2026-11-23 | C | What Running a Recycling Plant Taught Me About Costs That Arrive With the Load |
+| 48 | Tue 2026-11-24 | C | Leaner Logistics Teams Depend More on Their Providers |
+
+The five Nick audio articles in slots 39–43 were approved on November 2. The November 16 extension in slots 44–48 follows the user’s explicit order: finish the old queue, publish the warehouse-process YouTube companion, then D1–D4. Earlier dates and the future source-rotation policy are unchanged.
 
 The machine-readable manifest is [daily-blog-schedule.json](daily-blog-schedule.json). It records titles, authors, slugs, timestamps, source paths and SHA-256 hashes. The runtime reads publication dates from article frontmatter; the manifest is the editorial audit record.
 
@@ -80,6 +92,8 @@ The machine-readable manifest is [daily-blog-schedule.json](daily-blog-schedule.
 The October 12–23 batch comes from the project’s `staging/` packages. Its ten illustrations live in `src/components/blog/` and are registered in both article render paths and Keystatic. The MDX has named tags without imports. Verified external citation titles and publication/year descriptions use `SmartLink`; the accepted prose and URLs are preserved.
 
 The October 23 publication setup comes from the consolidated `internal/blog-staging/` queue. It includes all six full training-derived articles, including the five bodies developed locally on October 22, five YouTube companions and the evergreen warehouse setup checklist from the warehouse-audit research programme. For the eleven daily articles, manifest source paths and `sourceSha256` capture the pre-move MDX; `sourceBodySha256` verifies the unchanged accepted body after adding publication metadata. The same integration check separately verifies the evergreen checklist's preserved body. Components and actual stylesheets move into the existing article/CMS system. Existing site card artwork is reused. The development staging preview loads the daily production copies through either historical `staging/` or `internal/blog-staging/` source paths, preserving local post labels without duplicate payloads.
+
+The November 16 integration moves the reviewed post 29 YouTube package and Recording 37 packages 30–33 into those same production folders and article/CMS maps. Their source and body hashes preserve the accepted versions before publication metadata was added. Existing site artwork supplies the card images; the shared illustration stylesheet supplies the figure palette and font roles.
 
 Sources were read from `/Users/work/.codex/.chatgpt-projects/g-p-6aa2d8d753748191b2b5e4161818cc5e`. The five series files are at the root; the ten standalone drafts are under `outputs/drafts`. The source folder was not changed.
 
@@ -96,14 +110,14 @@ Current pages:
 - [Homepage](http://127.0.0.1:4337/)
 - [Resource hub](http://127.0.0.1:4337/posts)
 
-Views after all 38 daily articles have been published:
+Views after all 48 daily articles have been published:
 
 - [Future homepage](http://127.0.0.1:4337/preview/daily-blog/home)
 - [Future resource hub](http://127.0.0.1:4337/preview/daily-blog/posts)
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-11-11T00:00:00Z`. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-11-25T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 
@@ -125,7 +139,7 @@ Build-only samples render the complete content set to retain optimized image var
 
 React's server import uses its edge renderer so this does not require new dashboard-only Cloudflare compatibility flags. There are no new external services, content databases, or paid image-service dependencies.
 
-Run `npm run build` followed by `npm run test:publication` to exercise all 38 daily cutoffs against a single production artifact. The test also verifies the unchanged original 27 schedule records, the new order and source rotation, publication metadata, body hashes and component registration, with separate coverage of the evergreen checklist. It copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
+Run `npm run build` followed by `npm run test:publication` to exercise all 48 daily cutoffs against a single production artifact. The test also verifies the unchanged original 43 schedule records, the new order and source rotation, publication metadata, body hashes and component registration, with separate coverage of the evergreen checklist. It copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
 
 ## Request-time publication verification
 

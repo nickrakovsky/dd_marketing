@@ -32,13 +32,16 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 43, 'Expected the unchanged 38 scheduled articles plus the five approved Nick articles');
+assert.equal(slots.length, 48, 'Expected the unchanged 43 scheduled articles, the warehouse-process YouTube companion, and Recording 37 posts D1–D4');
 assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 27))),
   'b6afdbce3a2ba8408513b556f0606f39b58246a3da8d9a5c52cac216c73cc1bd',
   'Every field of the original 27 schedule records must remain unchanged');
 assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 38))),
   '419f989b5683b4881754893a3996cdd7c39cf3e1b7f94ebbf8e2a9d679a7290a',
   'Appending the Nick articles must preserve every field of the existing 38 schedule records');
+assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 43))),
+  '8a265f2ec5c852410283486b062fe4e7307746464c4f8f9984002a8d681c02a2',
+  'Appending the November batch must preserve every field of the existing 43 schedule records');
 const octoberBatch = [
   ['cut-overtime-with-load-scheduling', '2026-10-12'],
   ['inventory-and-cash', '2026-10-13'],
@@ -59,7 +62,7 @@ assert.deepEqual(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date
   'The approved missing-stock article must use the next weekday slot at the existing publication time');
 assert.equal(manifest.timezone, 'UTC-08:00');
 assert.equal(manifest.localPublicationTime, '06:30:00');
-assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-11-18T00:00:00Z'));
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-11-25T00:00:00Z'));
 assert.deepEqual(manifest.rotation, ['A', 'B', 'C'], 'The historical rotation must retain its original meanings');
 const queueBatch = [
   ['early-arrival-patterns', '2026-10-27', 'A', 'training-session'],
@@ -85,9 +88,20 @@ const nickBatch = [
   ['logistics-automation-give-and-take', '2026-11-16'],
   ['connect-inbound-outbound-warehouse-data', '2026-11-17'],
 ];
-assert.deepEqual(slots.slice(38).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
+assert.deepEqual(slots.slice(38, 43).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
   nickBatch.map(([slug, date], index) => [39 + index, slug, `${date}T14:30:00.000Z`, 'C', 'nick-audio']),
   'The five approved Nick articles must follow the existing queue on successive weekdays at 06:30 fixed UTC-08:00');
+const novemberBatch = [
+  ['test-one-warehouse-process-change', '2026-11-18', 'B', 'youtube-video', 'DataDocks Team'],
+  ['truck-freight-in-house', '2026-11-19', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['agency-staffing-retention', '2026-11-20', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['costs-arrive-with-the-load', '2026-11-23', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['provider-dependence', '2026-11-24', 'C', 'nick-audio', 'Nick Rakovsky'],
+];
+assert.deepEqual(slots.slice(43).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance, slot.author]),
+  novemberBatch.map(([slug, date, rotationGroup, provenance, author], index) =>
+    [44 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance, author]),
+  'Finish the existing queue, then publish the warehouse-process companion before D1–D4 on successive weekdays');
 assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
 assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
 assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);
@@ -111,7 +125,7 @@ const evergreenChecklist = {
   cardImage: '../../assets/blog-images/warehouse-optimization-strategies-cover.png',
   provenance: 'warehouse-setup-research',
 };
-for (const [index, slot] of [...slots.slice(27), evergreenChecklist].entries()) {
+for (const slot of [...slots.slice(27), evergreenChecklist]) {
   const label = `Slot ${slot.slot} ${slot.slug}`;
   const source = await readFile(join(root, slot.contentPath), 'utf8');
   const { data } = matter(source);
@@ -132,7 +146,8 @@ for (const [index, slot] of [...slots.slice(27), evergreenChecklist].entries()) 
     assert.ok(![0, 6].includes(new Date(slot.pubDate).getUTCDay()), `${label}: new releases must be weekdays`);
     assert.equal(slot.weekday, new Date(slot.pubDate).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' }));
     assert.equal(slot.group, nickArticle ? 'B' : 'C', `${label}: retain historical author grouping`);
-    assert.equal(slot.sequenceInGroup, nickArticle ? slot.slot - 23 : 8 + index,
+    const priorInGroup = slots.filter(prior => prior.slot < slot.slot && prior.group === slot.group).length;
+    assert.equal(slot.sequenceInGroup, priorInGroup + 1,
       `${label}: continue the historical author's sequence without changing source rotation`);
   }
   assert.match(slot.sourcePath, /^internal\/blog-staging\/post-\d+-[^/]+\/[^/]+\.mdx$/);
