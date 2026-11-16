@@ -86,7 +86,8 @@ jobs:
   # against the live preview URL. Only runs on PRs.
   integration:
     name: E2E / A11y / Perf / Links
-    runs-on: ubuntu-latest
+    # Playwright 1.59.1 supports 24.04; avoid automatic runner OS migrations.
+    runs-on: ubuntu-24.04
     needs: fast-checks
     if: github.event_name == 'pull_request'
 
