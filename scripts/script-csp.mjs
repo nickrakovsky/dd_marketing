@@ -9,6 +9,12 @@ const JAVASCRIPT_TYPES = new Set(['', 'module', 'text/javascript', 'application/
 // Keep this exception scoped to those paths instead of trusting all YouTube scripts.
 const YOUTUBE_SCRIPT_SOURCES = ['https://www.youtube.com/iframe_api', 'https://www.youtube.com/s/player/'];
 
+// Astro otherwise inlines small processed scripts, growing the site-wide hash
+// list for every applet. Leave all non-script asset decisions at Vite's default.
+export function scriptAssetInlineLimit(filePath) {
+  return /\.[cm]?js$/i.test(filePath) ? false : undefined;
+}
+
 export function inlineScriptHashes(html) {
   const hashes = new Set();
   const visit = node => {

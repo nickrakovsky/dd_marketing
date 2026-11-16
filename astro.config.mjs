@@ -12,7 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Beasties from 'beasties';
 import { collectPublicationStyles, finishPublicationStyles, withCspSafeStylesheets } from './scripts/publication-build.mjs';
-import { prepareScriptPolicy } from './scripts/script-csp.mjs';
+import { prepareScriptPolicy, scriptAssetInlineLimit } from './scripts/script-csp.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
 import precompiledImages from './integrations/precompiled-images.mjs';
 import internalWorkspace from './integrations/internal-workspace.mjs';
@@ -54,6 +54,7 @@ export default defineConfig({
       ? [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] : [] },
     build: {
       cssCodeSplit: false,
+      assetsInlineLimit: scriptAssetInlineLimit,
     },
     optimizeDeps: {
       exclude: ['@kobalte/core', '@kobalte/core/accordion'],
