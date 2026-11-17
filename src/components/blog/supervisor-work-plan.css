@@ -1,0 +1,36 @@
+.supervisor-work-plan{font-family:var(--dd-figure-font)}
+.supervisor-work-plan *{box-sizing:border-box}
+.supervisor-work-plan .swp-heading h3{margin:0 0 12px}
+.supervisor-work-plan p{font-family:var(--dd-figure-font);font-size:16px;line-height:1.6;margin:0;color:var(--dd-figure-muted)}
+.supervisor-work-plan .swp-controls{min-width:0;margin:24px 0;padding:18px;border:1px solid var(--dd-figure-line);border-radius:6px;background:var(--dd-figure-surface);font-family:var(--dd-figure-font)}
+.supervisor-work-plan legend{padding:0 6px;font-family:var(--dd-figure-font);font-size:16px;font-weight:600;color:var(--dd-figure-ink)}
+.supervisor-work-plan .swp-selects{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.supervisor-work-plan label{display:block;min-width:0;font-family:var(--dd-figure-font);font-size:14px;font-weight:600;line-height:1.5;color:var(--dd-figure-ink)}
+.supervisor-work-plan select{display:block;width:100%;min-height:46px;margin-top:8px;padding:8px 28px 8px 10px;border:1px solid var(--dd-figure-line);border-radius:3px;background:var(--dd-figure-paper);color:var(--dd-figure-ink);font:400 16px/1.5 var(--dd-figure-font)}
+.supervisor-work-plan .swp-range-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:24px 0 10px}
+.supervisor-work-plan output{flex-shrink:0;font:500 14px/1.5 var(--dd-figure-font);font-variant-numeric:tabular-nums;color:var(--dd-figure-ink)}
+.supervisor-work-plan input[type=range]{display:block;width:100%;height:28px;margin:0;accent-color:var(--dd-figure-ink);cursor:pointer}
+.supervisor-work-plan select:focus-visible,.supervisor-work-plan input:focus-visible{outline:2px solid var(--dd-figure-ink);outline-offset:4px}
+.supervisor-work-plan .swp-range-ticks{display:flex;justify-content:space-between;font:400 14px/1.5 var(--dd-figure-font);color:var(--dd-figure-muted)}
+.supervisor-work-plan .swp-job+.swp-job{margin-top:22px}
+.supervisor-work-plan .swp-job-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.supervisor-work-plan h4{margin:0;font:600 16px/1.4 var(--dd-figure-font);color:var(--dd-figure-ink)}
+.supervisor-work-plan .swp-job-heading p{flex-shrink:0;font-size:14px;font-variant-numeric:tabular-nums;color:var(--dd-figure-ink)}
+.supervisor-work-plan .swp-track{position:relative;height:38px;background:var(--dd-figure-surface);border:1px solid var(--dd-figure-line);border-radius:3px}
+.supervisor-work-plan .swp-task{position:absolute;top:7px;height:22px;border-radius:2px}
+.supervisor-work-plan .swp-bay{background:var(--dd-figure-accent)}
+.supervisor-work-plan .swp-checks{background:var(--dd-figure-ink)}
+.supervisor-work-plan .swp-shift{position:absolute;left:80%;top:-5px;bottom:-5px;border-left:2px solid var(--dd-figure-ink)}
+.supervisor-work-plan .swp-deadline{position:absolute;top:-5px;bottom:-5px;border-left:2px dashed var(--dd-figure-ink)}
+.supervisor-work-plan .swp-job-note{margin-top:9px;font-size:14px}
+.supervisor-work-plan .swp-axis{position:relative;height:22px;margin:16px 0 6px;font:400 14px/1.5 var(--dd-figure-font);color:var(--dd-figure-muted);font-variant-numeric:tabular-nums}
+.supervisor-work-plan .swp-axis span{position:absolute;transform:translateX(-50%)}
+.supervisor-work-plan .swp-axis span:first-child{transform:none}
+.supervisor-work-plan .swp-axis span:last-child{transform:translateX(-100%)}
+.supervisor-work-plan .swp-chart-key{font-size:14px}
+.supervisor-work-plan .swp-result{margin-top:24px;padding:18px 0 0;border-top:1px solid var(--dd-figure-line)}
+.supervisor-work-plan .swp-result .swp-verdict{margin-bottom:8px;color:var(--dd-figure-ink);font-weight:600}
+.supervisor-work-plan .swp-assumptions{margin-top:24px}
+.supervisor-work-plan .swp-assumptions p{margin-top:12px}
+.supervisor-work-plan .swp-static{margin-top:18px}
+@media(max-width:600px){.supervisor-work-plan .swp-selects{grid-template-columns:1fr}.supervisor-work-plan .swp-controls{padding:14px}.supervisor-work-plan .swp-range-heading{align-items:flex-start;flex-direction:column;gap:4px}.supervisor-work-plan .swp-job-heading{display:block}.supervisor-work-plan .swp-job-heading p{margin-top:5px}.supervisor-work-plan .swp-axis{font-size:14px}}

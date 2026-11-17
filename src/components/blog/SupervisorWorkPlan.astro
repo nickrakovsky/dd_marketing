@@ -1,0 +1,132 @@
+---
+import './supervisor-work-plan.css';
+const id = `supervisor-plan-${crypto.randomUUID()}`;
+---
+
+<figure class="dd-figure not-prose supervisor-work-plan" data-supervisor-plan aria-labelledby={`${id}-title`}>
+  <header class="swp-heading">
+    <h3 class="dd-figure-title" id={`${id}-title`}>Can both jobs be finished in time?</h3>
+    <p>One operator is available from 14:00 to 16:00. Preparing the overflow bay takes 30 minutes. Stock-location checks are due by 16:00.</p>
+  </header>
+
+  <fieldset class="swp-controls" disabled data-controls>
+    <legend>Plan the afternoon</legend>
+    <div class="swp-selects">
+      <label for={`${id}-deadline`}>Bay needed for delivery
+        <select id={`${id}-deadline`} name="deadline"><option value="60" selected>15:00</option><option value="120">16:00</option></select>
+      </label>
+      <label for={`${id}-order`}>Which job goes first?
+        <select id={`${id}-order`} name="order"><option value="checks" selected>Stock-location checks</option><option value="bay">Prepare the bay</option></select>
+      </label>
+    </div>
+    <div class="swp-range-heading"><label for={`${id}-duration`}>Time needed for stock checks</label><output for={`${id}-duration`} data-duration>60 minutes</output></div>
+    <input id={`${id}-duration`} type="range" name="duration" min="30" max="120" step="15" value="60" aria-valuetext="60 minutes" aria-controls={`${id}-chart ${id}-result`} />
+    <div class="swp-range-ticks" aria-hidden="true"><span>30 min</span><span>120 min</span></div>
+  </fieldset>
+
+  <div class="swp-chart" id={`${id}-chart`}>
+    <section class="swp-job">
+      <div class="swp-job-heading"><h4>Prepare the overflow bay</h4><p data-bay-window>15:00–15:30</p></div>
+      <div class="swp-track" data-bay-chart role="img" aria-label="Prepare the bay from 15:00 to 15:30. It is needed at 15:00, so this finishes 30 minutes late.">
+        <span class="swp-task swp-bay" data-bay-bar style="left:40%;width:20%" aria-hidden="true"></span>
+        <span class="swp-shift" aria-hidden="true"></span>
+        <span class="swp-deadline" data-bay-deadline style="left:40%" aria-hidden="true"></span>
+      </div>
+      <p class="swp-job-note" data-bay-note>Needed at 15:00. Ready 30 minutes late.</p>
+    </section>
+    <section class="swp-job">
+      <div class="swp-job-heading"><h4>Stock-location checks</h4><p data-checks-window>14:00–15:00</p></div>
+      <div class="swp-track" data-checks-chart role="img" aria-label="Stock checks from 14:00 to 15:00. Finished one hour before shift end at 16:00.">
+        <span class="swp-task swp-checks" data-checks-bar style="left:0%;width:40%" aria-hidden="true"></span>
+        <span class="swp-shift" aria-hidden="true"></span>
+      </div>
+      <p class="swp-job-note" data-checks-note>Finished by shift end at 16:00.</p>
+    </section>
+    <div class="swp-axis" aria-hidden="true"><span style="left:0%">14:00</span><span style="left:40%">15:00</span><span style="left:80%">16:00</span><span style="left:100%">16:30</span></div>
+    <p class="swp-chart-key">Dashed line: bay deadline. Solid line: shift ends.</p>
+  </div>
+
+  <div class="swp-result" id={`${id}-result`} role="status" aria-live="polite" aria-atomic="true">
+    <p class="swp-verdict" data-verdict>The work fits the shift. The bay misses its deadline.</p>
+    <p data-explanation>Preparing the bay first would meet both commitments. The delivery time determines which job needs to go first.</p>
+  </div>
+  <details class="swp-assumptions">
+    <summary class="dd-disclosure">About this plan <svg class="dd-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+    <p>These are example task times, including movement and setup. One trained operator does the jobs in sequence without interruptions; both are ready to start at 14:00. The overflow bay is approved storage, with aisles and exits clear. Preparing it means moving pallets to their assigned locations; a separate receiving team handles the delivery. The plan checks finish times, not the quality of the work.</p>
+  </details>
+  <noscript><p class="swp-static">In this plan, preparing the bay first finishes it at 14:30 and the checks at 15:30, meeting both deadlines. With 120 minutes of checks, the two jobs need 150 minutes and cannot both fit before 16:00.</p></noscript>
+</figure>
+
+<script>
+  function initializeSupervisorPlans() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-supervisor-plan]');
+    figures.forEach(figure => {
+      if (figure.dataset.bound === 'true') return;
+      const controls = figure.querySelector<HTMLFieldSetElement>('[data-controls]')!;
+      const deadline = figure.querySelector<HTMLSelectElement>('[name="deadline"]')!;
+      const order = figure.querySelector<HTMLSelectElement>('[name="order"]')!;
+      const duration = figure.querySelector<HTMLInputElement>('[name="duration"]')!;
+      const time = (minutes: number) => {
+        const total = 14 * 60 + minutes;
+        return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+      };
+      const write = (selector: string, value: string) => {
+        const target = figure.querySelector<HTMLElement>(selector)!;
+        target.textContent = value;
+      };
+      function update() {
+        const checks = Number(duration.value);
+        const due = Number(deadline.value);
+        const bayFirst = order.value === 'bay';
+        const bayStart = bayFirst ? 0 : checks;
+        const checksStart = bayFirst ? 30 : 0;
+        const bayEnd = bayStart + 30;
+        const checksEnd = checksStart + checks;
+        const total = checks + 30;
+        const bayLate = Math.max(0, bayEnd - due);
+        const checksLate = Math.max(0, checksEnd - 120);
+        const bayBar = figure.querySelector<HTMLElement>('[data-bay-bar]')!;
+        const checksBar = figure.querySelector<HTMLElement>('[data-checks-bar]')!;
+        bayBar.style.left = `${bayStart / 150 * 100}%`;
+        bayBar.style.width = '20%';
+        checksBar.style.left = `${checksStart / 150 * 100}%`;
+        checksBar.style.width = `${checks / 150 * 100}%`;
+        const deadlineMarker = figure.querySelector<HTMLElement>('[data-bay-deadline]')!;
+        deadlineMarker.style.left = `${due / 150 * 100}%`;
+        const bayNote = `Needed at ${time(due)}. ${bayLate ? `Ready ${bayLate} minutes late.` : bayEnd === due ? 'Ready at the deadline.' : `Ready ${due - bayEnd} minutes early.`}`;
+        const checksNote = checksLate ? `Finished ${checksLate} minutes after shift end.` : 'Finished by shift end at 16:00.';
+        write('[data-duration]', `${checks} minutes`);
+        duration.setAttribute('aria-valuetext', `${checks} minutes`);
+        write('[data-bay-window]', `${time(bayStart)}–${time(bayEnd)}`);
+        write('[data-checks-window]', `${time(checksStart)}–${time(checksEnd)}`);
+        write('[data-bay-note]', bayNote);
+        write('[data-checks-note]', checksNote);
+        figure.querySelector('[data-bay-chart]')!.setAttribute('aria-label', `Prepare the bay from ${time(bayStart)} to ${time(bayEnd)}. ${bayNote}`);
+        figure.querySelector('[data-checks-chart]')!.setAttribute('aria-label', `Stock checks from ${time(checksStart)} to ${time(checksEnd)}. ${checksNote}`);
+        figure.dataset.bayLate = String(bayLate);
+        figure.dataset.checksLate = String(checksLate);
+        figure.dataset.totalMinutes = String(total);
+        if (total > 120) {
+          write('[data-verdict]', 'Changing the order cannot make both jobs fit.');
+          write('[data-explanation]', `The two jobs need ${total} minutes; the operator has 120. Agree cover, reduce the assigned work, or revise a commitment. ${bayFirst ? 'The bay is ready, but the checks run past shift end.' : 'The bay is not ready in time.'}`);
+        } else if (bayLate) {
+          write('[data-verdict]', 'The work fits the shift. The bay misses its deadline.');
+          write('[data-explanation]', 'Preparing the bay first would meet both commitments. The delivery time determines which job needs to go first.');
+        } else {
+          const eitherOrder = total <= due;
+          write('[data-verdict]', eitherOrder ? 'Either order meets both commitments.' : 'This order meets both commitments.');
+          write('[data-explanation]', eitherOrder
+            ? 'The supervisor can choose the sequence. These deadlines leave enough time for either job to go first.'
+            : 'Preparing the bay first protects the delivery time and leaves enough time for the checks. Doing the checks first would miss the bay deadline.');
+        }
+      }
+      controls.addEventListener('input', update);
+      controls.addEventListener('change', update);
+      figure.dataset.bound = 'true';
+      update();
+      controls.disabled = false;
+    });
+  }
+  initializeSupervisorPlans();
+  document.addEventListener('astro:page-load', initializeSupervisorPlans);
+</script>

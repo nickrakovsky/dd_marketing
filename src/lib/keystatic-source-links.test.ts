@@ -129,6 +129,7 @@ describe('scheduled blog articles in the Keystatic editor', () => {
     { slug: 'driver-wayfinding', components: ['PostFiveRevised'], sources: 2 },
     { slug: 'rollout-decisions', components: ['PostSixRevised'], sources: 2 },
     { slug: 'test-one-warehouse-process-change', components: ['lite-youtube', 'InspectionPointTrial', 'DemoCapture'], videoId: '7okrt6nLq6c', sources: 0 },
+    { slug: 'give-warehouse-supervisors-clear-deadlines', components: ['lite-youtube', 'SupervisorWorkPlan', 'DemoCapture'], videoId: 'HX9y_PrCpfQ', sources: 0 },
     { slug: 'truck-freight-in-house', components: ['FreightCoverage'], sources: 0 },
     { slug: 'agency-staffing-retention', components: ['AgencyContinuity'], sources: 0 },
     { slug: 'costs-arrive-with-the-load', components: ['IncomingLoadLoss'], sources: 0 },

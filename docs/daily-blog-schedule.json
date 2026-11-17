@@ -9,7 +9,7 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-11-25T00:00:00Z",
+  "previewAsOf": "2026-11-26T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
@@ -23,7 +23,8 @@
     "New source provenance and rotationGroup distinguish six training-session articles (A) and five YouTube articles (B). Future Nick audio articles will use rotationGroup C; the historical group A/B/C taxonomy and rotation are preserved. The researched warehouse setup checklist has no daily slot and is eligible immediately after merge and deployment.",
     "The consolidated queue payloads were moved from internal/blog-staging into the existing production article/component locations. For the 11 daily articles, sourceSha256 and sourceBodySha256 record the accepted pre-move MDX and unchanged article body; historical sourcePath values are provenance, not duplicate payloads to retain.",
     "On November 2, the user approved five Nick Rakovsky posts and requested a regular PR to add them to the existing daily queue without merging. Slots 39–43 use the next five weekdays, November 11–17, at 14:30 UTC. Slots 1–38 are unchanged. Accepted prose and interactive components are preserved; existing card artwork is reused. Release depends on merge and deployment before the scheduled time.",
-    "On November 16, the user authorized adding the reviewed warehouse-process YouTube companion to PR #299 before the four approved Recording 37 posts (D1–D4). The existing 43 slots remain unchanged through November 17. Slots 44–48 publish the YouTube article on November 18, followed by D1–D4 on November 19, 20, 23 and 24, at 14:30 UTC. Accepted prose, titles, URL slugs and interactive components are retained; production payloads replace the staged packages. Merge and deployment remain required for release."
+    "On November 16, the user authorized adding the reviewed warehouse-process YouTube companion to PR #299 before the four approved Recording 37 posts (D1–D4). The existing 43 slots remain unchanged through November 17. Slots 44–48 publish the YouTube article on November 18, followed by D1–D4 on November 19, 20, 23 and 24, at 14:30 UTC. Accepted prose, titles, URL slugs and interactive components are retained; production payloads replace the staged packages. Merge and deployment remain required for release.",
+    "On November 17, the user approved the supervisor-deadline YouTube companion and requested its addition to the schedule. Slot 49 uses the next weekday, November 25, at 14:30 UTC. Slots 1–48, the approved prose, title, URL and interaction remain unchanged. The article and component now live only in production folders; merge and deployment install this queued release."
   ],
   "slots": [
     {
@@ -856,6 +857,25 @@
       "sourceBodySha256": "d790499f871380e0454e8c09962bc220f97e64298ef531dff5ac357b49e126b8",
       "contentPath": "src/content/posts/provider-dependence.mdx",
       "cardImage": "../../assets/blog-images/negotiate-with-carriers-cover.webp"
+    },
+    {
+      "slot": 49,
+      "date": "2026-11-25",
+      "weekday": "Wednesday",
+      "group": "C",
+      "groupLabel": "DataDocks Team",
+      "sequenceInGroup": 20,
+      "rotationGroup": "B",
+      "provenance": "youtube-video",
+      "author": "DataDocks Team",
+      "title": "Give warehouse supervisors a deadline they can plan around",
+      "slug": "give-warehouse-supervisors-clear-deadlines",
+      "pubDate": "2026-11-25T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-34-give-warehouse-supervisors-clear-deadlines/give-warehouse-supervisors-clear-deadlines.mdx",
+      "sourceSha256": "1ceb494b71c28ec3e4f554cc1bf6e1ed6d12f613b76b70fe9f80f8993e51dfc5",
+      "sourceBodySha256": "0b323064f7b11da0779c59c0d6a9a5d3b0f90022dfe99b3ce0998c039b9a432e",
+      "contentPath": "src/content/posts/give-warehouse-supervisors-clear-deadlines.mdx",
+      "cardImage": "../../assets/blog-images/warehouse-motivation-cover.webp"
     }
   ],
   "queueRotation": {
