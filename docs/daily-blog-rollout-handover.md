@@ -5,15 +5,15 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The daily schedule now contains 48 articles through November 24, 2026. The existing 43 slots finish on November 17 and remain unchanged. On November 16, the user authorized adding the reviewed warehouse-process YouTube companion ahead of the four approved Recording 37 posts (D1–D4) in PR #299. Slots 44–48 use the next five weekdays in that order. All scheduled payloads and their components live in the normal production locations; no duplicate draft packages remain in `internal/blog-staging/`. The warehouse setup checklist remains evergreen outside the daily queue.
+The daily schedule now contains 49 articles through November 25, 2026. The approved supervisor-deadline YouTube companion occupies slot 49 on November 25 at 14:30 UTC. Slots 1–48 remain unchanged, including the warehouse-process YouTube companion and four Recording 37 posts (D1–D4) merged in PR #299. All scheduled payloads and their components live in the normal production locations; no duplicate draft packages remain in `internal/blog-staging/`. The warehouse setup checklist remains evergreen outside the daily queue.
 
-The current combined batch is in [PR #299](https://github.com/nickrakovsky/dd_marketing/pull/299), on `codex/daily-posts-queue-november`. Merge and deployment install the scheduled content; this preparation alone does not publish it. Any article whose timestamp has already passed becomes eligible in that deployment. Preview controls remain local-only.
+The next approved post is prepared on `codex/youtube-supervisor-deadlines`, based on main after [PR #299](https://github.com/nickrakovsky/dd_marketing/pull/299) merged. Merge and deployment install this extension to the queue; the existing publication gate releases it at its timestamp. Preview controls remain local-only.
 
 The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment article for October 9, then overtime on October 12 and food-and-beverage posts 2–10 through October 23. The approved missing-stock video companion remains scheduled for Monday, October 26 at 14:30 UTC, before the new batch begins on October 27. The redesigned homepage is `/`; the resource hub is `/posts`.
 
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 24, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 25, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
 
 The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 
@@ -82,6 +82,7 @@ Slots 28–38 alternate A/B. The independently researched warehouse setup checkl
 | 46 | Fri 2026-11-20 | C | Using Agency Staffing to Find People You Want to Keep |
 | 47 | Mon 2026-11-23 | C | What Running a Recycling Plant Taught Me About Costs That Arrive With the Load |
 | 48 | Tue 2026-11-24 | C | Leaner Logistics Teams Depend More on Their Providers |
+| 49 | Wed 2026-11-25 | B | Give warehouse supervisors a deadline they can plan around |
 
 The five Nick audio articles in slots 39–43 were approved on November 2. The November 16 extension in slots 44–48 follows the user’s explicit order: finish the old queue, publish the warehouse-process YouTube companion, then D1–D4. Earlier dates and the future source-rotation policy are unchanged.
 
@@ -110,14 +111,14 @@ Current pages:
 - [Homepage](http://127.0.0.1:4337/)
 - [Resource hub](http://127.0.0.1:4337/posts)
 
-Views after all 48 daily articles have been published:
+Views after all 49 daily articles have been published:
 
 - [Future homepage](http://127.0.0.1:4337/preview/daily-blog/home)
 - [Future resource hub](http://127.0.0.1:4337/preview/daily-blog/posts)
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-11-25T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-11-26T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 
@@ -139,7 +140,7 @@ Build-only samples render the complete content set to retain optimized image var
 
 React's server import uses its edge renderer so this does not require new dashboard-only Cloudflare compatibility flags. There are no new external services, content databases, or paid image-service dependencies.
 
-Run `npm run build` followed by `npm run test:publication` to exercise all 48 daily cutoffs against a single production artifact. The test also verifies the unchanged original 43 schedule records, the new order and source rotation, publication metadata, body hashes and component registration, with separate coverage of the evergreen checklist. It copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
+Run `npm run build` followed by `npm run test:publication` to exercise all 49 daily cutoffs against a single production artifact. The test also verifies the unchanged original 48 schedule records, the new order and source rotation, publication metadata, body hashes and component registration, with separate coverage of the evergreen checklist. It copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
 
 ## Request-time publication verification
 

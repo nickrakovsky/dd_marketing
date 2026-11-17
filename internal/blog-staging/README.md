@@ -159,3 +159,18 @@ in `src/content/posts/` and `src/components/blog/`, registered in the existing
 article renderer and CMS. No duplicate packages remain here. The historical
 source paths in the schedule preserve preview labels 29–33 and provenance.
 Merge, deployment and the existing publication gate control release.
+
+## Supervisor-deadline companion scheduled — November 17, 2026
+
+The user approved post 34, “Give warehouse supervisors a deadline they can plan
+around,” and requested its addition to the schedule. It occupies slot 49 on
+**November 25, 2026 at 14:30 UTC**, at
+`/posts/give-warehouse-supervisors-clear-deadlines`. Slots 1–48 are unchanged.
+
+The article, `SupervisorWorkPlan.astro` and its stylesheet now live in the normal
+production folders. Its accepted prose and interaction are preserved, with the
+component registered in the existing article renderer and Keystatic. The local
+preview continues at `/preview/staging/give-warehouse-supervisors-clear-deadlines`
+using the production payload; no staged duplicate remains. The change is prepared
+on `codex/youtube-supervisor-deadlines`, based on remote main after PR #299.
+Merge and deployment install the queued release.
