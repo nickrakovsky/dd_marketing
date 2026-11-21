@@ -34,6 +34,15 @@ jobs:
       - name: External audit regression tests (offline)
         run: npm run test:outlinks
 
+      - name: Production cache purge safety tests (offline)
+        run: node --test scripts/purge-production-cache.test.mjs
+
+      - name: Validate Cloudflare cache-purge helper bundle (no deployment)
+        run: npx wrangler deploy --dry-run --config scripts/cloudflare-cache-purge/wrangler.jsonc --outdir "$RUNNER_TEMP/cache-purge-worker"
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+          CLOUDFLARE_CF_FETCH_ENABLED: 'false'
+
       - name: Vendor asset integrity regression tests
         run: npm run test:vendor-assets
 
