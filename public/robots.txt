@@ -28,6 +28,8 @@ User-agent: Google-Extended
 Allow: /
 
 # Default
+# Paid pages stay crawlable so search bots can read their noindex directives.
+# Blocking them here would hide those directives and also hinder ad validation.
 User-agent: *
 Disallow: /admin/
 Allow: /

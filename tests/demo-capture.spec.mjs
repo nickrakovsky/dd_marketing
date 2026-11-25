@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+// Form readiness is asserted below; unrelated images need not finish loading.
 // All lead writes and third-party requests are intercepted, including analytics.
 // Calendly's real launcher runs against a stub, so its email prefill is checked.
 test.use({ serviceWorkers: 'block' });
@@ -33,6 +34,8 @@ async function prepare(page, baseURL) {
       return route.fulfill({status:mode === 'httpFailure' ? 503 : 200,contentType:'application/json',body:JSON.stringify({ok:mode === 'success'})});
     }
     if(url.hostname === 'assets.calendly.com') return route.fulfill({contentType:url.pathname.endsWith('.css')?'text/css':'application/javascript',body:''});
+    // The pinned local widget must not replace the booking stub either.
+    if(url.origin === origin && url.pathname.startsWith('/_astro/vendor/calendly')) return route.abort();
     if(url.origin === origin && ['GET','HEAD'].includes(request.method())) return route.continue();
     return route.abort();
   });
@@ -47,43 +50,44 @@ async function prepare(page, baseURL) {
 }
 
 async function checkForm(page, state, form, email) {
-  const input=form.locator('input[name="email"]'),button=form.locator('button[type="submit"]');
-  await expect(form).toHaveAttribute('data-demo-capture');
-  await expect(input).toHaveAttribute('aria-describedby', /demo-capture-status-/);
+  const input = form.locator('input[name="email"]'), button = form.locator('button[type="submit"]');
+  await expect(form).toHaveAttribute('data-lead-capture');
   await input.fill(email);
-  for(const mode of ['httpFailure','bodyFailure']) {
-    state.setMode(mode);
-    await button.click();
-    await expect(page.locator(`#${await input.getAttribute('aria-describedby')}`)).toContainText('Please try again');
-    await expect(input).toBeFocused();
-    await expect(button).toBeEnabled();
-    expect(await state.calls()).toEqual([]);
-  }
   state.setMode('pending');
   await button.click();
   await state.waitPending();
-  await expect(button).toBeDisabled();
-  await expect(form).toHaveAttribute('aria-busy','true');
-  expect(await state.calls()).toEqual([]);
-  await form.evaluate(form => form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
-  await page.waitForTimeout(100);
-  expect(state.captures).toHaveLength(3);
-  state.release();
-  await expect.poll(async () => (await state.calls()).length).toBe(1);
-  await expect(button).toBeEnabled();
-  const [booking]=await state.calls();
-  expect(new URL(booking.url).searchParams.get('email')).toBe(email);
-  expect(booking.prefill.email).toBe(email);
-  expect(state.captures[2]).toMatchObject({email,event:'Demo Subscriber'});
-  await expect(page.locator('#demo-capture-dialog')).toBeHidden();
-  await state.expectNoFallback();
+  try {
+    // Booking stays available while the independent CRM request is unresolved.
+    await expect.poll(async () => (await state.calls()).length).toBe(1);
+    await expect(button).toBeEnabled();
+    await expect(form).not.toHaveAttribute('aria-busy', 'true');
+    const status = page.locator(`#${await input.getAttribute('aria-describedby')}`);
+    await expect(status).toContainText('Choose a time');
+    await expect(status).not.toContainText('saved');
+    const [booking] = await state.calls();
+    expect(new URL(booking.url).searchParams.has('email')).toBe(false);
+    expect(booking.prefill.email).toBe(email);
+    const submissions = state.captures.filter(capture => capture.event === 'Demo Subscriber');
+    expect(submissions).toHaveLength(1);
+    expect(submissions[0]).toMatchObject({
+      email,
+      ctaId: await form.getAttribute('data-cta-id'),
+      ctaPlacement: await form.getAttribute('data-cta-placement'),
+    });
+    await expect(page.locator('#demo-capture-dialog')).toBeHidden();
+    await state.expectNoFallback();
+    return submissions[0];
+  } finally {
+    state.release();
+  }
 }
 
 for(const path of ['/news','/posts']) {
   test(`${path}: mobile navigation closes and dialog dismissal restores hamburger focus`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
     await page.setViewportSize({width:390,height:844});
-    await page.goto(path);
+    const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     const menu=page.locator('[data-mobile-menu]'),toggle=page.locator('[data-mobile-toggle]'),dialog=page.locator('#demo-capture-dialog');
     for(const closeMethod of ['Escape','button']) {
       await toggle.click();
@@ -106,7 +110,8 @@ for(const path of ['/news','/posts']) {
   test(`${path}: desktop dialog dismissal restores trigger focus`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
     await page.setViewportSize({width:1280,height:900});
-    await page.goto(path);
+    const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     const link=page.locator('nav').getByRole('link',{name:'Schedule a Demo',exact:true});
     await expect(link).toHaveAttribute('href','#book-demo');
     await link.click();
@@ -119,7 +124,8 @@ for(const path of ['/news','/posts']) {
 
   test(`${path}: direct booking anchor and hash change open standalone capture`,async ({page,baseURL}) => {
     const state=await prepare(page,baseURL);
-    await page.goto(`${path}#book-demo`);
+    const response = await page.goto(`${path}#book-demo`, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     await expect(page.locator('#demo-capture-dialog')).toBeVisible();
     await page.keyboard.press('Escape');
     await page.evaluate(() => location.hash='');
@@ -130,10 +136,11 @@ for(const path of ['/news','/posts']) {
   });
 
   for(const formId of ['dialog','cta-bento-form',...(path === '/posts'?['demo-banner-form']:[])]) {
-    test(`${path}: ${formId} waits for confirmed save and books once with email`,async ({page,baseURL}) => {
+    test(`${path}: ${formId} opens booking with email while CRM capture is pending`,async ({page,baseURL}) => {
       const state=await prepare(page,baseURL);
       await page.setViewportSize({width:1280,height:900});
-      await page.goto(path);
+      const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+      expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
       if(formId==='dialog') await page.locator('nav').getByRole('link',{name:'Schedule a Demo',exact:true}).click();
       const form=page.locator(formId==='dialog'?'#demo-capture-dialog form':`#${formId}`);
       await checkForm(page,state,form,`${formId}@example.com`);
@@ -142,14 +149,15 @@ for(const path of ['/news','/posts']) {
 }
 
 for (const formId of ['book-demo', 'cta-bento-form']) {
-  test(`/: ${formId} captures email before booking and keeps homepage attribution`, async ({ page, baseURL }) => {
+  test(`/: ${formId} opens booking without waiting and keeps homepage attribution`, async ({ page, baseURL }) => {
     const state = await prepare(page, baseURL);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Page response: ${response?.url() ?? page.url()}`).toBe(200);
     const form = page.locator(`form#${formId}`);
     const email = `home-${formId}@example.com`;
-    await checkForm(page, state, form, email);
-    expect(state.captures[2]).toMatchObject({
+    const capture = await checkForm(page, state, form, email);
+    expect(capture).toMatchObject({
       email,
       source: '/',
       landingPage: new URL('/', baseURL).href,
@@ -157,4 +165,94 @@ for (const formId of ['book-demo', 'cta-bento-form']) {
     await expect(page).toHaveURL(new URL('/', baseURL).href);
     await expect(page.locator('#demo-capture-dialog')).not.toHaveAttribute('data-standalone');
   });
+}
+
+for (const mode of ['httpFailure', 'bodyFailure']) {
+  test(`homepage booking remains available after ${mode}`, async ({ page, baseURL }) => {
+    const state = await prepare(page, baseURL);
+    state.setMode(mode);
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status()).toBe(200);
+    const form = page.locator('form#book-demo');
+    const input = form.locator('input[name="email"]');
+    await input.fill('failed-capture@example.com');
+    const [captureResponse] = await Promise.all([
+      page.waitForResponse(response => new URL(response.url()).pathname === '/api/bento-track'),
+      form.locator('button[type="submit"]').click(),
+    ]);
+    expect(await captureResponse.json()).toEqual({ ok: false });
+    await expect.poll(async () => (await state.calls()).length).toBe(1);
+    const [booking] = await state.calls();
+    expect(booking.prefill.email).toBe('failed-capture@example.com');
+    expect(new URL(booking.url).searchParams.has('email')).toBe(false);
+    await expect(form.locator('button[type="submit"]')).toBeEnabled();
+    const status = page.locator(`#${await input.getAttribute('aria-describedby')}`);
+    await expect(status).toContainText('Choose a time');
+    await expect(status).not.toContainText('saved');
+    expect(state.captures).toHaveLength(1);
+    await state.expectNoFallback();
+  });
+}
+
+const campaignPaths = [
+  '/yard-management-software',
+  '/dock-scheduling-software',
+  '/warehouse-optimization-software',
+  '/logistics-scheduling-software',
+];
+
+for (const path of campaignPaths) {
+  for (const formId of ['book-demo', 'cta-bento-form']) {
+    test(`${path}: ${formId} keeps campaign attribution and UTMs through capture and booking`, async ({ page, baseURL }) => {
+      const state = await prepare(page, baseURL);
+      await page.setViewportSize(formId === 'book-demo'
+        ? { width: 390, height: 844 }
+        : { width: 1280, height: 900 });
+      // A previous session landing must not replace the converting campaign URL.
+      const previousLanding = new URL('/', baseURL).href;
+      await page.addInitScript(value => sessionStorage.setItem('dd_landing_page', value), previousLanding);
+      const campaign = path.slice(1);
+      const touch = {
+        utm_source: 'google',
+        utm_medium: 'cpc',
+        utm_campaign: campaign,
+        utm_term: campaign.replaceAll('-', ' '),
+        utm_content: 'ad-a',
+      };
+      const landing = new URL(`${path}?${new URLSearchParams({ ...touch, gclid: 'test-click' })}`, baseURL).href;
+      const response = await page.goto(landing, { waitUntil: 'domcontentloaded' });
+      expect(response?.status()).toBe(200);
+      await expect(page.locator('html')).toHaveAttribute('data-demo-attribution', 'page');
+      const email = `${campaign}-${formId}@example.com`;
+      const capture = await checkForm(page, state, page.locator(`form#${formId}`), email);
+      const expectedAttribution = {
+        email,
+        source: path,
+        landingPage: landing,
+        firstTouch: { ...touch, landing: path },
+        lastTouch: { ...touch, landing: path },
+      };
+      expect(capture).toMatchObject({ ...expectedAttribution, event: 'Demo Subscriber', landingPageMode: 'page', sessionLandingPage: previousLanding, currentTouch: { ...touch, gclid: 'test-click' } });
+      const [booking] = await state.calls();
+      expect(booking.url).toContain('calendly.com/nick-rakovsky/datadocks-demo');
+      expect(booking.utm).toEqual({
+        utmSource: touch.utm_source,
+        utmMedium: touch.utm_medium,
+        utmCampaign: touch.utm_campaign,
+        utmTerm: touch.utm_term,
+        utmContent: touch.utm_content,
+      });
+
+      // Simulate the widget event locally; the resulting lead write is intercepted.
+      await page.evaluate(() => window.dispatchEvent(new MessageEvent('message', {
+        data: { event: 'calendly.event_scheduled' },
+        origin: 'https://calendly.com',
+      })));
+      await expect.poll(() => state.captures.filter(capture => capture.event === 'demo_booked').length).toBe(1);
+      expect(state.captures.find(capture => capture.event === 'demo_booked')).toMatchObject({ ...expectedAttribution, event: 'demo_booked' });
+      expect(await page.evaluate(() => sessionStorage.getItem('dd_landing_page'))).toBe(previousLanding);
+      await expect(page).toHaveURL(landing);
+      await state.expectNoFallback();
+    });
+  }
 }

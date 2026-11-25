@@ -1,0 +1,19 @@
+---
+// Paid-only destination: keep out of menus, content links and discovery lists.
+// The shared campaign policy enforces robots metadata, headers and build checks.
+export const prerender = false;
+
+import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Coordinate transportation arrivals, dock appointments and yard activity in one shared system. Give your logistics team and carriers clear schedules, load updates and digital records.';
+---
+
+<HomePage
+  title="Logistics Scheduling Software | DataDocks"
+  description={description}
+  headingLines={['LOGISTICS', 'SCHEDULING', 'SOFTWARE']}
+  headingScale={14.5}
+  heroDescription={description}
+  demoAttribution="page"
+  noindex
+/>

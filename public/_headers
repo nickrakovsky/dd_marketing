@@ -14,11 +14,53 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src-attr 'none'; upgrade-insecure-requests
+  Content-Security-Policy-Report-Only: script-src 'self' https://fast.bentonow.com https://app.bentonow.com https://assets.calendly.com https://sc.lfeeder.com; script-src-attr 'none'; object-src 'none'; base-uri 'self'
+
+# Publication-sensitive routes /, /posts, /posts/*, /videos/* and
+# /sitemap-posts.xml use Worker middleware headers, not this static policy.
+
+# Keep the interview guide downloadable and crawlable so bots can read noindex.
+/files/Acing-Your-Logistics-Coordinator-Interview.pdf
+  X-Robots-Tag: noindex
+
+# Defense in depth if a paid landing page ever becomes a static artifact.
+# Runtime responses carry the same rule in Worker middleware and the adapter wrapper.
+/outbound-dock-management
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/outbound-dock-management/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/inbound-dock-management/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/logistics-scheduling-software/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+/warehouse-optimization-software/*
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
 
 # --- HTML pages: edge-cache 1 day, browser revalidates (unchanged policy) ---
 # Root-level pages (build.format:'file' serves these at clean paths)
-/
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /about
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /datadocks-vs-opendock
@@ -27,20 +69,13 @@
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /mobile-app
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
-/posts
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /privacy-policy
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /support
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /yard-management
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
-# /comparison is indexable and in the sitemap but had no rule at all, so it fell
-# through to the browser default with no s-maxage — verified live as
-# `cf-cache-status: MISS` on every request, i.e. a full origin round-trip per
-# visit. Same class of miss as the landing pages below.
-/comparison
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
+# /comparison is request-rendered; middleware sets caching and query-specific robots.
 # Keyword landing pages (noindexed and out of the sitemap, but still real URLs
 # we drive paid/direct traffic to — without an s-maxage they miss the edge cache
 # and every visit pays a full origin round-trip).
@@ -55,10 +90,6 @@
 /outgrowing-opendock
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 # Section directories
-/posts/*
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
-/videos/*
-  Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /benefits/*
   Cache-Control: public, max-age=0, must-revalidate, s-maxage=86400, stale-while-revalidate=604800
 /datadocks-features/*
@@ -83,3 +114,56 @@
 
 /api/*
   Cache-Control: private, no-cache, no-store, must-revalidate
+
+# Audit pack files and browser previews are shared resources, not search landing pages.
+/files/warehouse-audit-working-pack-preview*
+  X-Robots-Tag: noindex, nofollow
+/files/warehouse-audit-working-pack.xlsx
+  X-Robots-Tag: noindex, nofollow
+/files/warehouse-audit-floor-pack.pdf
+  X-Robots-Tag: noindex, nofollow
+
+/yard-management-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/yard-management-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/yard-management-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-scheduling-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-scheduling-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-scheduling-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/warehouse-management-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/warehouse-management-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/warehouse-management-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-management-software
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-management-software/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/dock-management-software.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/outgrowing-opendock
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/outgrowing-opendock/
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex
+
+/outgrowing-opendock.html
+  X-Robots-Tag: noindex, nofollow, nosnippet, noimageindex

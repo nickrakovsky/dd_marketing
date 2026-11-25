@@ -1,0 +1,41 @@
+---
+const destinations = [
+  { number: '01', title: 'Plan the setup', detail: '18 checks across six areas', href: '#warehouse-setup-checklist-six-readiness-areas', path: 'M5 4h14v17H5zM8 8h8M8 12h8M8 16h5' },
+  { number: '02', title: 'Test the handoffs', detail: 'Follow goods and their records', href: '#rehearse-the-handoffs', path: 'M3 5h7v7H3zm11 7h7v7h-7zM10 8h7v4m-7 3H6v5h8' },
+  { number: '03', title: 'Record the decision', detail: 'Capture gaps, owners and next steps', href: '#copy-a-launch-decision-record', path: 'M5 3h10l4 4v14H5zM15 3v5h4M8 12h8m-8 4h5' },
+];
+---
+
+<nav class="not-prose setup-article-navigation" aria-label="In this guide">
+  {destinations.map(destination => (
+    <a href={destination.href}>
+      <span class="setup-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d={destination.path} /></svg></span>
+      <span class="setup-nav-copy"><span class="setup-nav-number">{destination.number}</span><span class="setup-nav-title">{destination.title}</span><span class="setup-nav-detail">{destination.detail}</span></span>
+      <svg class="setup-nav-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v15m-6-6 6 6 6-6" /></svg>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .setup-article-navigation { --nav-ink: #292929; --nav-muted: #626262; --nav-paper: #fffdf8; --nav-panel: #f5f1e8; --nav-line: #d8d1c5; --nav-orange: #fd4f00; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .75rem; margin: 1.75rem 0 2rem; font-family: Inter, Arial, sans-serif; }
+  a { display: grid; grid-template-columns: 1.75rem minmax(0,1fr) 1rem; align-items: start; gap: .625rem; min-width: 0; padding: 1rem .875rem; border: 1px solid var(--nav-line); border-radius: .5rem; background: var(--nav-panel); color: var(--nav-ink); text-decoration: none; }
+  .setup-nav-icon { grid-column: 1; margin-top: 1.25rem; }
+  .setup-nav-icon svg { display: block; width: 1.75rem; height: 1.75rem; }
+  svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .setup-nav-copy { display: flex; flex-direction: column; gap: .375rem; min-width: 0; }
+  .setup-nav-number { color: var(--nav-muted); font-size: .6875rem; line-height: 1; letter-spacing: .07em; }
+  .setup-nav-title { color: var(--nav-ink); font-size: .875rem; font-weight: 600; line-height: 1.4; }
+  .setup-nav-detail { color: var(--nav-muted); font-size: .75rem; line-height: 1.5; }
+  .setup-nav-arrow { width: 1rem; height: 1rem; margin-top: 1.5rem; color: var(--nav-orange); }
+  a:hover { border-color: var(--nav-orange); background: var(--nav-paper); }
+  a:focus-visible { outline: 3px solid var(--nav-orange); outline-offset: 3px; }
+  :global(.dark) .setup-article-navigation { --nav-ink: #f5f1e8; --nav-muted: #c4c0b8; --nav-paper: #303030; --nav-panel: #252525; --nav-line: #575757; }
+  @media (max-width: 700px) {
+    .setup-article-navigation { grid-template-columns: minmax(0,1fr); gap: .5rem; }
+    a { align-items: center; padding: .875rem 1rem; }
+    .setup-nav-icon, .setup-nav-arrow { margin-top: 0; }
+    .setup-nav-copy { display: grid; grid-template-columns: 1.5rem minmax(0,1fr); gap: .25rem .375rem; align-items: baseline; }
+    .setup-nav-detail { grid-column: 2; }
+  }
+  @media print { .setup-article-navigation { display: none; } }
+</style>

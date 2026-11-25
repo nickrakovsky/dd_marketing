@@ -168,6 +168,9 @@ export function buildBentoEvent(body: unknown, receivedAt = new Date()) {
   const current = touch(body.currentTouch, 'currentTouch');
   const source = pagePath(body.source, 'source');
   const landingPage = landingUrl(body.landingPage);
+  if (body.landingPageMode !== undefined && !['page', 'session'].includes(String(body.landingPageMode))) throw new BentoInputError('Invalid landingPageMode');
+  const pageMode = body.landingPageMode === 'page';
+  const sessionLandingPage = pageMode ? landingUrl(body.sessionLandingPage) : landingPage;
   const visitorUuid = optionalString(body.visitorUuid, 'visitorUuid');
   const metadataInput = optionalRecord(body.metadata, 'metadata');
   const metadata: Record<string, unknown> = {};
@@ -230,7 +233,9 @@ export function buildBentoEvent(body: unknown, receivedAt = new Date()) {
       occurred_at: occurredAt,
       ...context,
       source,
-      session_landing_url: landingPage,
+      session_landing_url: sessionLandingPage,
+      landing_page_mode: body.landingPageMode,
+      conversion_page_url: pageMode ? landingPage : undefined,
       first_touch: first,
       last_touch: last,
       current_touch: current,
@@ -239,7 +244,7 @@ export function buildBentoEvent(body: unknown, receivedAt = new Date()) {
       attribution_availability: body.currentTouch === undefined ? undefined : {
         first_touch: Object.keys(first).length ? 'recorded' : 'unknown',
         last_touch: Object.keys(last).length ? 'recorded' : 'unknown',
-        session_landing: landingPage ? 'recorded' : 'unknown',
+        session_landing: sessionLandingPage ? 'recorded' : 'unknown',
       },
       metadata,
     }),

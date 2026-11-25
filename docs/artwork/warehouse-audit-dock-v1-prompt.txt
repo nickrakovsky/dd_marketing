@@ -1,0 +1,16 @@
+Use case: infographic-diagram.
+Asset type: v1 raster editorial illustration for a warehouse audit article, replacing an older dock-flow infographic. This is a draft for human comparison.
+
+Primary request: create a polished, readable semi-infographic titled "Compare the plan with the work". Show the same small loading-dock setting in two matched views: "Arrival plan" and "Observed work". The reader should see why an auditor compares appointment records with the actual arrival and handling activity.
+
+Composition: landscape 3:2 canvas. A short title across the top, then two equally sized side-by-side illustrations with generous separation. Use a consistent slightly elevated cutaway view of a two-bay warehouse dock, a short approach lane, and the staging floor inside. Repeat the same physical layout, trucks, pallets and crew in both views so the operational difference is comprehensible. Keep the whole scene compact enough to read at article width.
+
+Left, "Arrival plan": the expected sequence, with three small truck arrival tokens visibly separated along a short horizontal planning strip. In the matched dock scene, show a load being handled at one bay, a clear route into staging, and the next load approaching its assigned bay. A light dashed route can identify the intended handoff. The strip is schematic, with no axis, time values, scores or numerical claims.
+
+Right, "Observed work": the same arrival tokens are grouped closer together on a corresponding strip. Show two arrivals bunching near the dock while a crew continues handling a load, with pallet handling and staging activity overlapping in the shared area. Make the work and coordination visible, not exaggerated chaos. Workers are competently handling goods and checking a record; nobody is caricatured, blamed or shown panicking. Do not portray a perfect-versus-disastrous before/after transformation.
+
+Along the bottom, one restrained row of four small record illustrations with these exact labels, one under each icon: "Appointments", "Actual arrivals", "Handling times", "Staff coverage". Use simple angular editorial icons: appointment sheet, arrival log with clock, pallet handling record, and shift roster. This row connects the scene comparison to the evidence a reader can examine. No explanatory paragraphs.
+
+Text verbatim and only: "Compare the plan with the work"; "Arrival plan"; "Observed work"; "Appointments"; "Actual arrivals"; "Handling times"; "Staff coverage". Use a warm editorial serif similar to Recoleta for the main title, and crisp semibold sans serif similar to Inter for the six labels. Keep every label generous and readable, neatly aligned with its subject.
+
+Style and palette: refined industrial editorial illustration with fine deep-navy ink contours, restrained subtle shading, warm cream background #FFF8E9, kraft-tan cartons, muted slate and blue-green trucks, and selective orange #FD4F00 on equipment and activity accents. Match the tone of a carefully drawn warehouse rack and pallet-truck illustration. Physically plausible dock doors, trailers, pallets and warehouse handling equipment. Calm, professional and engaging. No glossy toy-like 3D, stock clip-art people, comic-book expressions, rainbow colours, red/green good/bad badges, oversized arrows, branding, logos, watermarks, made-up data, performance guarantees or decorative filler.

@@ -1,0 +1,208 @@
+---
+interface Props {
+  id?: string;
+}
+const { id = 'audit-discrepancy-iceberg' } = Astro.props;
+const layers = [
+  {
+    name: 'Immediate explanations',
+    className: 'iceberg-immediate',
+    labels: [['Count or', 'comparison error'], ['Recording', 'error']],
+    face: 'M260 0H740C784 23 836 61 878 100H137C165 62 214 22 260 0Z',
+    edges: 'M260 0C214 22 165 62 137 100M740 0C784 23 836 61 878 100',
+    divider: null,
+  },
+  {
+    name: 'Working conditions',
+    className: 'iceberg-conditions',
+    labels: [['Time pressure'], ['Handover gaps'], ['Uncaught errors']],
+    face: 'M137 0H878C901 34 919 64 926 100H90C99 56 115 28 137 0Z',
+    edges: 'M137 0C115 28 99 56 90 100M878 0C901 34 919 64 926 100',
+    divider: 'M137 1H878',
+  },
+  {
+    name: 'Ownership and coordination',
+    className: 'iceberg-ownership',
+    labels: [['No one owns', 'the outcome'], ['Information doesn’t', 'reach other crews']],
+    face: 'M90 0H926C919 34 849 82 800 100H210C165 76 113 33 90 0Z',
+    edges: 'M90 0C113 33 165 76 210 100M926 0C919 34 849 82 800 100',
+    divider: 'M90 1H926',
+  },
+];
+---
+
+<figure id={id} class="not-prose audit-discrepancy-iceberg" aria-labelledby={`${id}-title`} aria-describedby={`${id}-caption`}>
+  <h4 id={`${id}-title`} class="iceberg-sr-only">Beneath a stock discrepancy</h4>
+
+  <div class="iceberg-tip">
+    <svg viewBox="0 0 1000 140" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="iceberg-tip-face" d="M260 140 298 103 334 80 349 48 398 32 420 14 480 8 524 35 572 24 641 46 667 84 704 118 740 140Z" />
+      <path class="iceberg-tip-fold" d="M480 8 524 35 572 24 592 140H507Z" />
+      <path class="iceberg-edge" d="M260 140 298 103 334 80 349 48 398 32 420 14 480 8 524 35 572 24 641 46 667 84 704 118 740 140" />
+    </svg>
+    <p class="iceberg-discrepancy">
+      <span><strong>12</strong> <span class="iceberg-system-label">recorded</span></span>
+      <span><strong class="iceberg-counted">11</strong> <span class="iceberg-system-label">counted</span></span>
+    </p>
+  </div>
+
+  <div class="iceberg-submerged">
+    {layers.map(({ name, className, labels, face, edges, divider }) => (
+      <div class:list={['iceberg-band', className]} role="group" aria-label={name}>
+        <svg class="iceberg-band-art" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="iceberg-band-face" d={face} />
+          <path class="iceberg-edge" d={edges} />
+          {divider && <path class="iceberg-divider" d={divider} />}
+        </svg>
+        <div class="iceberg-labels">
+          {labels.map((lines) => <p>{lines.map((line, index) => <span>{line}{index < lines.length - 1 ? ' ' : ''}</span>)}</p>)}
+        </div>
+      </div>
+    ))}
+    <div class="iceberg-band iceberg-assumption" role="group" aria-label="A normalised assumption">
+      <svg class="iceberg-band-art" viewBox="0 0 1000 108" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path class="iceberg-band-face" d="M210 0H800C792 25 759 49 717 60C675 81 589 98 529 100C439 102 386 86 338 65C295 52 241 26 210 0Z" />
+        <path class="iceberg-edge" d="M210 0C241 26 295 52 338 65C386 86 439 102 529 100C589 98 675 81 717 60C759 49 792 25 800 0" />
+        <path class="iceberg-divider" d="M210 1H800" />
+      </svg>
+      <div class="iceberg-labels">
+        <p>
+          <span class="iceberg-system-label iceberg-assumption-name">Normalised assumption:</span>
+          <span class="iceberg-assumption-example"><span>goods out the door</span> <span>= job done</span></span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <figcaption id={`${id}-caption`}>
+    Possible causes at different depths
+    <span class="iceberg-sr-only">. These are illustrative possibilities, not a diagnosis of this discrepancy. Deeper causes are less visible and shape the conditions above them; depth does not determine where to act. The assumption shown can become normal under workload pressure and management priorities that keep goods moving.</span>
+  </figcaption>
+</figure>
+
+<style>
+  .audit-discrepancy-iceberg {
+    --iceberg-ink: #293e48;
+    --iceberg-label-secondary: #4a626a;
+    --iceberg-caption: #5b6472;
+    --iceberg-tip: #fffcf3;
+    --iceberg-tip-fold: #e1eae5;
+    --iceberg-shallow: #edf4f1;
+    --iceberg-middle: #e5eeeb;
+    --iceberg-ownership: #dce8e4;
+    --iceberg-deep: #d2e1dd;
+    --iceberg-outline: #95aaa5;
+    --iceberg-waterline: #859994;
+    --iceberg-divider: #9aafaa;
+    --iceberg-editorial: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif;
+    --iceberg-label-size: .9375rem;
+    margin: 2rem 0;
+    overflow: visible;
+    color: var(--iceberg-ink);
+    font-family: Inter, Arial, sans-serif;
+    container-type: inline-size;
+  }
+  .iceberg-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .iceberg-tip { position: relative; height: 6.5rem; }
+  .iceberg-tip svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .iceberg-tip-face { fill: var(--iceberg-tip); }
+  .iceberg-tip-fold { fill: var(--iceberg-tip-fold); opacity: .45; }
+  .iceberg-edge,
+  .iceberg-divider {
+    fill: none;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+  .iceberg-edge { stroke: var(--iceberg-outline); }
+  .iceberg-divider { stroke: var(--iceberg-divider); opacity: .65; }
+  .iceberg-discrepancy {
+    position: absolute;
+    inset-inline: 34%;
+    bottom: .625rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .625rem;
+    margin: 0;
+    text-align: center;
+    color: var(--iceberg-label-secondary);
+    font-size: .75rem;
+    line-height: 1.35;
+  }
+  .iceberg-discrepancy > span { display: grid; gap: .25rem; }
+  .iceberg-system-label { color: var(--iceberg-label-secondary); font-family: Inter, Arial, sans-serif; font-size: .75rem; font-weight: 600; line-height: 1.4; letter-spacing: .02em; }
+  .iceberg-discrepancy strong { color: var(--iceberg-ink); font-family: var(--iceberg-editorial); font-size: 1.75rem; font-weight: 600; line-height: 1; letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; }
+  .iceberg-discrepancy .iceberg-counted { color: #fd4f00; }
+  .iceberg-submerged { border-top: 1px solid var(--iceberg-waterline); }
+  .iceberg-band { position: relative; }
+  .iceberg-band-art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .iceberg-band-face { fill: var(--iceberg-shallow); }
+  .iceberg-conditions .iceberg-band-face { fill: var(--iceberg-middle); }
+  .iceberg-ownership .iceberg-band-face { fill: var(--iceberg-ownership); }
+  .iceberg-assumption .iceberg-band-face { fill: var(--iceberg-deep); }
+  .iceberg-labels {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 1rem;
+    width: 61%;
+    padding: 1.5rem 0;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .iceberg-labels p { margin: 0; font-family: var(--iceberg-editorial); font-size: var(--iceberg-label-size); font-weight: 500; line-height: 1.3; letter-spacing: 0; text-wrap: balance; }
+  .iceberg-labels span { display: block; }
+  .iceberg-conditions .iceberg-labels { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 75%; padding-block: 1.75rem; }
+  .iceberg-conditions p { font-weight: 500; }
+  .iceberg-ownership .iceberg-labels { width: 66%; padding-block: 1.625rem; }
+  .iceberg-assumption .iceberg-labels { grid-template-columns: minmax(0, 1fr); width: 51%; padding: 1.25rem 0 3.25rem; }
+  .iceberg-assumption p { font-weight: 400; }
+  .iceberg-assumption-name { margin-bottom: .375rem; }
+  .iceberg-assumption-example { inline-size: fit-content; max-inline-size: 100%; margin-inline: auto; }
+  .audit-discrepancy-iceberg figcaption { margin: .75rem 0 0; font-size: .75rem; line-height: 1.4; letter-spacing: .01em; color: var(--iceberg-caption); }
+  @container (max-width: 24rem) {
+    .iceberg-discrepancy { inset-inline: 31%; gap: .5rem; }
+    .iceberg-discrepancy strong { font-size: 1.5rem; }
+    .iceberg-labels { --iceberg-label-size: .875rem; gap: .625rem; width: 64%; padding-block: 1.25rem; }
+    .iceberg-conditions .iceberg-labels { width: 79%; gap: .5rem; padding-block: 1.5rem; }
+    .iceberg-ownership .iceberg-labels { width: 68%; padding-block: 1.375rem; }
+    .iceberg-assumption .iceberg-labels { width: 52%; padding: 1.125rem 0 3rem; }
+  }
+  :global(.dark) .audit-discrepancy-iceberg {
+    --iceberg-caption: #c0cad5;
+    --iceberg-tip: #f7faf5;
+    --iceberg-tip-fold: #cddeda;
+    --iceberg-shallow: #e0eeeb;
+    --iceberg-middle: #cbdedc;
+    --iceberg-ownership: #bfd4d1;
+    --iceberg-deep: #b4ccc9;
+    --iceberg-outline: #9ab5b2;
+    --iceberg-waterline: #6e858e;
+    --iceberg-divider: #8faeaa;
+  }
+  @media print {
+    .audit-discrepancy-iceberg {
+      break-inside: avoid;
+      --iceberg-caption: #5b6472;
+      --iceberg-tip: #fffcf3;
+      --iceberg-tip-fold: #e1eae5;
+      --iceberg-shallow: #edf4f1;
+      --iceberg-middle: #e5eeeb;
+      --iceberg-ownership: #dce8e4;
+      --iceberg-deep: #d2e1dd;
+      --iceberg-outline: #95aaa5;
+      --iceberg-waterline: #859994;
+      --iceberg-divider: #9aafaa;
+    }
+  }
+</style>

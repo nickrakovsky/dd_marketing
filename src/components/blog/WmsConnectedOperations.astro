@@ -1,0 +1,63 @@
+---
+import desktopIllustration from '../../assets/blog-images/wms-connected-operations.svg?raw';
+import mobileIllustration from '../../assets/blog-images/wms-connected-operations-mobile.svg?raw';
+---
+
+<figure class="wms-connected-operations not-prose">
+  {/* Keep the labels and accessible descriptions in the page's DOM. */}
+  <div class="desktop-illustration" set:html={desktopIllustration} />
+  <div class="mobile-illustration" set:html={mobileIllustration} />
+</figure>
+
+<style>
+  .wms-connected-operations {
+    container-type: inline-size;
+    margin: 0 0 2rem;
+  }
+
+  /* Match the article's theme toggle. SVG fallbacks retain the light palette. */
+  :global(.dark) .wms-connected-operations {
+    --wms-surface: #1e1c19;
+    --wms-ink: #fff3df;
+    --wms-accent: #ff8752;
+    --wms-warehouse-scene: #302b24;
+    --wms-warehouse-ground: #3f352a;
+    --wms-panel: #51473b;
+    --wms-structure: #c4b399;
+    --wms-rack-back: #322c24;
+    --wms-rack-line: #a38c6d;
+    --wms-stock: #8a6f4d;
+    --wms-tape: #e5ceb0;
+    --wms-door: #6b5942;
+    --wms-fine-line: #aa967a;
+    --wms-carrier-scene: #302b24;
+    --wms-carton: #9e7950;
+    --wms-carton-line: #d4b48e;
+    --wms-carrier-ground: #3f352a;
+    --wms-accent-line: #ffad72;
+    --wms-light-detail: #fff5df;
+    --wms-hub: #40362c;
+    --wms-connection-label: #ffc49a;
+    --wms-scheduling-surface: #452e24;
+  }
+
+  .wms-connected-operations :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .mobile-illustration {
+    display: none;
+  }
+
+  @container (max-width: 480px) {
+    .desktop-illustration {
+      display: none;
+    }
+
+    .mobile-illustration {
+      display: block;
+    }
+  }
+</style>

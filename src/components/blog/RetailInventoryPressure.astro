@@ -1,0 +1,290 @@
+<figure id="retail-inventory-pressure" class="inventory-pressure not-prose" aria-labelledby="inventory-pressure-title">
+  <div class="figure-body">
+    <header class="figure-heading">
+      <h3 id="inventory-pressure-title">The backroom problem starts upstream.</h3>
+    </header>
+
+    {/* eslint-disable-next-line astro/jsx-a11y/no-redundant-roles -- Preserve VoiceOver list semantics when list-style is none. */}
+    <ol class="pressure-flow" role="list">
+      <li class="flow-stage">
+        <svg class="scene" width="256" height="184" viewBox="0 0 256 184" aria-hidden="true" focusable="false">
+          <!-- An open distribution center, with stock spilling beyond its racks. -->
+          <path class="ground" d="M10 149 127 174 248 149 131 124Z" />
+          <path class="wall" d="M25 145V58L128 26 231 58V145Z" />
+          <path class="structure" d="M15 61 128 24 241 61M27 57V145M229 57V145" />
+          <path class="roof" d="M33 57 128 27 223 57 128 47Z" />
+          <path class="structure" d="M39 72H159M39 107H159M39 144H159M42 67V147M156 67V147" />
+          <path class="shelf" d="M39 103H159V109H39ZM39 140H159V146H39Z" />
+          <rect class="carton" x="49" y="79" width="29" height="23" rx="1" />
+          <path class="tape" d="M63.5 79V87M57 96H64" />
+          <rect class="carton-pale" x="83" y="78" width="29" height="24" rx="1" />
+          <path class="tape" d="M97.5 78V86M90 96H97" />
+          <rect class="carton" x="117" y="82" width="30" height="20" rx="1" />
+          <path class="tape" d="M132 82V89" />
+          <rect class="carton-pale" x="49" y="116" width="42" height="23" rx="1" />
+          <path class="tape" d="M70 116V125M57 133H66" />
+          <rect class="carton" x="97" y="114" width="50" height="25" rx="1" />
+          <path class="tape" d="M122 114V124M104 133H114" />
+          <path class="door" d="M176 82H216V143H176Z" />
+          <path class="fine-line" d="M179 89H213M179 97H213M179 105H213" />
+          <path class="pallet" d="M157 151H236M163 151V156M194 151V156M231 151V156" />
+          <rect class="carton" x="160" y="122" width="34" height="26" rx="1" />
+          <rect class="carton-pale" x="198" y="128" width="35" height="20" rx="1" />
+          <rect class="carton" x="172" y="99" width="33" height="22" rx="1" transform="rotate(-7 188 110)" />
+          <path class="tape" d="M177 123V131M215 128V135M188 101V108" />
+          <path class="pressure-mark" d="M218 114 225 107M222 121H232" />
+        </svg>
+        <div class="stage-copy">
+          <h4>Stock builds up</h4>
+          <p>Excess inventory crowds distribution centers.</p>
+        </div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+      </li>
+
+      <li class="flow-stage">
+        <svg class="scene" width="256" height="184" viewBox="0 0 256 184" aria-hidden="true" focusable="false">
+          <!-- A conventional US tractor-trailer with tandem trailer and drive axles. -->
+          <ellipse class="ground" cx="128" cy="153" rx="118" ry="8" />
+          <rect class="shelf" x="20" y="128" width="223" height="8" rx="2" />
+          <rect class="wall structure" x="16" y="66" width="148" height="64" rx="2" />
+          <rect class="carton-pale" x="25" y="77" width="40" height="22" rx="1" />
+          <rect class="carton" x="70" y="77" width="40" height="22" rx="1" />
+          <rect class="carton-pale" x="115" y="77" width="40" height="22" rx="1" />
+          <rect class="carton" x="25" y="103" width="40" height="22" rx="1" />
+          <rect class="carton-pale" x="70" y="103" width="40" height="22" rx="1" />
+          <rect class="carton" x="115" y="103" width="40" height="22" rx="1" />
+          <path class="tape" d="M45 77V84M90 77V84M135 77V84M45 103V110M90 103V110M135 103V110" />
+          <path class="cab" d="M179 133V91Q179 82 188 82H201L214 106H234Q243 106 243 115V133Z" />
+          <path class="window" d="M191 90H202L210 104H191Z" />
+          <path class="fine-line" d="M190 111V126M196 112H202" />
+          <path class="structure" d="M237 115V125M240 133H246" />
+          <rect class="roof" x="185" y="129" width="23" height="6" rx="2" />
+          <circle class="wheel" cx="38" cy="142" r="10" />
+          <circle class="hub" cx="38" cy="142" r="4" />
+          <circle class="wheel" cx="61" cy="142" r="10" />
+          <circle class="hub" cx="61" cy="142" r="4" />
+          <circle class="wheel" cx="152" cy="142" r="10" />
+          <circle class="hub" cx="152" cy="142" r="4" />
+          <circle class="wheel" cx="175" cy="142" r="10" />
+          <circle class="hub" cx="175" cy="142" r="4" />
+          <circle class="wheel" cx="228" cy="142" r="10" />
+          <circle class="hub" cx="228" cy="142" r="4" />
+        </svg>
+        <div class="stage-copy">
+          <h4>Pressure moves out</h4>
+          <p>Unplanned deliveries shift the load to stores.</p>
+        </div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+      </li>
+
+      <li class="flow-stage">
+        <svg class="scene" width="256" height="184" viewBox="0 0 256 184" aria-hidden="true" focusable="false">
+          <!-- A small store backroom with cartons encroaching on the aisle. -->
+          <path class="ground" d="M10 149 127 174 248 149 131 124Z" />
+          <path class="wall" d="M29 145V38H229V145Z" />
+          <path class="roof" d="M29 38 41 29H240L229 38Z" />
+          <path class="structure" d="M29 145V38H229V145M229 38 240 29V135" />
+          <path class="door" d="M171 62H213V144H171Z" />
+          <path class="fine-line" d="M180 72H204V107H180ZM201 117H205" />
+          <path class="aisle" d="M172 145 160 164H211L204 145" />
+          <path class="structure" d="M43 63V145M136 63V145M41 99H139M41 142H139" />
+          <path class="shelf" d="M41 96H139V101H41Z" />
+          <rect class="carton-pale" x="50" y="68" width="35" height="27" rx="1" />
+          <rect class="carton" x="90" y="73" width="37" height="22" rx="1" />
+          <rect class="carton" x="50" y="114" width="46" height="26" rx="1" />
+          <path class="tape" d="M67 68V77M108 73V80M73 114V123" />
+          <path class="pallet" d="M96 156H164M102 156V160M157 156V160" />
+          <rect class="carton" x="100" y="127" width="33" height="26" rx="1" />
+          <rect class="carton-pale" x="136" y="130" width="26" height="23" rx="1" />
+          <rect class="carton" x="111" y="104" width="37" height="22" rx="1" />
+          <rect class="carton-pale" x="116" y="81" width="28" height="22" rx="1" transform="rotate(6 130 92)" />
+          <rect class="carton" x="168" y="127" width="32" height="25" rx="1" transform="rotate(-8 184 139)" />
+          <path class="tape" d="M116 128V136M149 131V138M129 104V112M130 84V91M182 128V135" />
+          <path class="pressure-mark" d="M153 90 160 83M157 99H166M147 81V73" />
+        </svg>
+        <div class="stage-copy">
+          <h4>Backrooms overflow</h4>
+          <p>Store teams run out of space to receive goods.</p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="consequences"><strong>The risks:</strong> receiving backlogs, damaged goods and blocked exits.</p>
+  </div>
+  <figcaption>Conceptual illustration of the case study, not a depiction of a specific facility.</figcaption>
+</figure>
+
+<style>
+  .inventory-pressure {
+    --paper: #fff8e9;
+    --ink: #302b25;
+    --muted-ink: #6b5a48;
+    --rule: #e5d3b3;
+    --wall: #f8edd9;
+    --ground: #efe1c9;
+    --roof: #e4d1af;
+    --shelf: #bba88d;
+    --door: #e9ddc8;
+    --orange: #fd4f00;
+    --carton: #fa8952;
+    --carton-pale: #f8bc8d;
+    --carton-line: #a44015;
+    --glass: #d9e3df;
+    --aisle: #f7cfad;
+    container-type: inline-size;
+    margin: 2rem 0;
+    scroll-margin-top: 7rem;
+    color: var(--ink);
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  :global(.dark) .inventory-pressure {
+    --paper: #1e1c19;
+    --ink: #fff3df;
+    --muted-ink: #c8baa7;
+    --rule: #504638;
+    --wall: #302b24;
+    --ground: #373026;
+    --roof: #574938;
+    --shelf: #8e7b62;
+    --door: #443b30;
+    --orange: #ff8752;
+    --carton: #e98048;
+    --carton-pale: #c89468;
+    --carton-line: #5b2a14;
+    --glass: #566a67;
+    --aisle: #554032;
+  }
+
+  .figure-body {
+    padding: clamp(0.875rem, 3cqi, 1.25rem);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--orange);
+    border-radius: 0;
+  }
+
+  .figure-heading { margin-bottom: 1rem; }
+
+  .figure-heading h3 {
+    max-width: 25ch;
+    margin: 0;
+    color: var(--ink);
+    font-family: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif;
+    font-size: clamp(1.25rem, 4.5cqi, 1.625rem);
+    font-weight: 500;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .pressure-flow {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .flow-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: min(34%, 8rem) minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .scene {
+    display: block;
+    width: 100%;
+    max-width: 11rem;
+    height: auto;
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ground { fill: var(--ground); }
+  .wall { fill: var(--wall); }
+  .roof { fill: var(--roof); }
+  .structure { stroke: var(--ink); stroke-width: 2.5; }
+  .shelf { fill: var(--shelf); }
+  .door { fill: var(--door); stroke: var(--ink); stroke-width: 2; }
+  .fine-line { stroke: var(--muted-ink); stroke-width: 1.5; }
+  .carton { fill: var(--carton); stroke: var(--carton-line); stroke-width: 1.5; }
+  .carton-pale { fill: var(--carton-pale); stroke: var(--carton-line); stroke-width: 1.5; }
+  .tape { stroke: var(--carton-line); stroke-width: 2; }
+  .pallet { stroke: var(--ink); stroke-width: 3; }
+  .pressure-mark { stroke: var(--orange); stroke-width: 3; }
+  .cab { fill: var(--roof); stroke: var(--ink); stroke-width: 2.5; }
+  .window { fill: var(--glass); stroke: var(--ink); stroke-width: 2; }
+  .wheel { fill: var(--ink); }
+  .hub { fill: var(--paper); }
+  .aisle { fill: var(--aisle); }
+
+  .stage-copy h4 {
+    margin: 0 0 0.4rem;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 650;
+    line-height: 1.3;
+  }
+
+  .stage-copy p {
+    margin: 0;
+    color: var(--muted-ink);
+    font-family: inherit;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .flow-arrow {
+    position: absolute;
+    bottom: -1.4rem;
+    left: min(17%, 4rem);
+    color: var(--orange);
+    font-size: 1.25rem;
+    line-height: 1;
+    transform: rotate(90deg);
+  }
+
+  .consequences {
+    margin: 1.25rem 0 0;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--rule);
+    color: var(--muted-ink);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .consequences strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Keep the article's larger-text setting useful without blowing up this figure. */
+  :global(article.text-scaled) .stage-copy p,
+  :global(article.text-scaled) .consequences {
+    font-size: 0.9375rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .inventory-pressure figcaption {
+    margin-top: 0.65rem;
+    color: var(--muted-ink);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  @container (min-width: 34rem) {
+    .figure-body { padding: 1.5rem; }
+    .figure-heading { margin-bottom: 1.25rem; }
+    .figure-heading h3 { font-size: 1.75rem; }
+    .pressure-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+    .flow-stage { display: flex; flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .scene { align-self: center; }
+    .flow-arrow { top: 3.5rem; right: -1.25rem; bottom: auto; left: auto; transform: none; }
+  }
+</style>

@@ -1,0 +1,8 @@
+{
+  "siteUrl": "https://datadocks.com",
+  "cloudflareProject": "dd-marketing",
+  "seedUrls": ["/", "/posts"],
+  "sitemapUrls": ["/sitemap-index.xml"],
+  "firstPartyHosts": ["datadocks.com", "www.datadocks.com"],
+  "excludeUrls": []
+}

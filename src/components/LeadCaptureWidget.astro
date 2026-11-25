@@ -3,6 +3,7 @@ export interface Props {
   headline: string;
   buttonText?: string;
   eventName: string;
+  ctaId?: string;
   redirectUrl: string;
 }
 
@@ -10,6 +11,7 @@ const {
   headline,
   buttonText = "Download",
   eventName,
+  ctaId = "resource-sidebar",
   redirectUrl,
 } = Astro.props;
 
@@ -17,7 +19,7 @@ const BENTO_UUID = "b4cb9a34a989bcc643714151df7b7154";
 const uid = Math.random().toString(36).slice(2, 9);
 ---
 
-<div class="sidebar-card mb-4 group/lmf lead-magnet-container !p-5" id={`lmf-${uid}`}>
+<div class="blog-lead-widget sidebar-card mb-4 group/lmf lead-magnet-container !p-5" id={`lmf-${uid}`}>
   <div class="success-message hidden w-full text-center py-2">
     <div class="flex items-center justify-center gap-1 text-green-700 font-bold font-recoleta text-sm">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,10 +38,12 @@ const uid = Math.random().toString(36).slice(2, 9);
   <form
     class="lead-magnet-form block w-full"
     data-event={eventName}
+    data-lead-capture data-capture-kind="resource"
+    data-lead-event={eventName} data-cta-id={ctaId} data-cta-placement="sidebar"
     data-redirect={redirectUrl}
     data-uuid={BENTO_UUID}
   >
-    <div class="sidebar-card-title font-bold text-gray-900 dark:text-white leading-snug mb-3">
+    <div class="sidebar-card-title font-bold text-gray-900 dark:text-[color:var(--blog-ink,#fff)] leading-snug mb-3">
       {headline}
     </div>
 
@@ -49,7 +53,7 @@ const uid = Math.random().toString(36).slice(2, 9);
         name="email"
         placeholder="Enter your email"
         required
-        class="w-full h-10 px-3 bg-[#FFF8EE] dark:bg-gray-900 border border-[#E5D3B3] dark:border-gray-600 border-b-0 rounded-none text-sm font-sans placeholder:text-gray-400 focus:border-[#fd4f00] focus:outline-none transition-colors relative z-10 focus:border-b"
+        class="w-full h-10 px-3 bg-[#FFF8EE] dark:bg-[var(--blog-canvas,#111827)] border border-[#E5D3B3] dark:border-[var(--blog-control,#4b5563)] border-b-0 rounded-none text-sm font-sans placeholder:text-gray-400 focus:border-[#fd4f00] focus:outline-none transition-colors relative z-10 focus:border-b"
       />
       <button
         type="submit"
@@ -65,78 +69,28 @@ const uid = Math.random().toString(36).slice(2, 9);
   </p>
 </div>
 
-{/* 
-  We don't need to duplicate the Bento tracking script here because 
-  LeadMagnetForm.astro already attaches a global script that binds 
-  to any form with the .lead-magnet-form class. However, if this page 
-  doesn't have an inline LeadMagnetForm, the script won't exist. 
-  Let's add a scoped script just for this widget's logic, using a 
-  data-bound check to prevent double-binding.
-*/}
-<script is:inline>
-  (function() {
-    function attachSidebarLeadMagnetForms() {
-      document.querySelectorAll('.lead-magnet-form:not([data-sidebar-bound])').forEach(function(form) {
-        // If it was already bound by the global script, don't bind again
-        if (form.getAttribute('data-bound') === 'true') return;
-        
-        form.setAttribute('data-sidebar-bound', 'true');
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
+<style>
+  :global(html.dark[data-blog-theme]) .blog-lead-widget input {
+    color: var(--blog-ink);
+  }
 
-          var emailInput = form.querySelector('input[name="email"]');
-          var email = emailInput ? emailInput.value : '';
-          var eventName = form.getAttribute('data-event');
-          var redirectUrl = form.getAttribute('data-redirect');
+  :global(html.dark[data-blog-theme]) .blog-lead-widget input::placeholder,
+  :global(html.dark[data-blog-theme]) .blog-lead-widget .disclaimer-message {
+    color: var(--blog-muted);
+  }
 
-          if (email) {
-            if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
-              window.bento.identify(email);
-              window.bento.track(eventName, { source: window.location.pathname });
-            }
+  :global(html.dark[data-blog-theme]) .blog-lead-widget button[type="submit"] {
+    background: var(--blog-canvas);
+    border: 1px solid var(--blog-orange);
+    color: var(--blog-ink);
+  }
 
-            fetch('/api/bento-track', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: email,
-                event: eventName,
-                source: window.location.pathname,
-                landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-                visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
-              }),
-              keepalive: true
-            }).catch(function() {});
-          }
+  :global(html.dark[data-blog-theme]) .blog-lead-widget button[type="submit"]:hover {
+    background: var(--blog-surface);
+    border-color: var(--blog-link);
+  }
 
-          form.reset();
-
-          var container = form.closest('.lead-magnet-container');
-          if (container) {
-            form.classList.remove('block');
-            form.classList.add('hidden');
-
-            var disclaimer = container.querySelector('.disclaimer-message');
-            if (disclaimer) {
-              disclaimer.classList.remove('block');
-              disclaimer.classList.add('hidden');
-            }
-
-            var success = container.querySelector('.success-message');
-            if (success) {
-              success.classList.remove('hidden');
-              success.classList.add('block');
-            }
-          }
-
-          if (redirectUrl) {
-            window.open(redirectUrl, '_blank', 'noopener');
-          }
-        });
-      });
-    }
-
-    attachSidebarLeadMagnetForms();
-    document.addEventListener('astro:page-load', attachSidebarLeadMagnetForms);
-  })();
-</script>
+  :global(html.dark[data-blog-theme]) .blog-lead-widget .success-message > div {
+    color: var(--blog-ink);
+  }
+</style>

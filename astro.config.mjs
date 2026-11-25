@@ -10,40 +10,36 @@ import partytown from '@astrojs/partytown';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import matter from 'gray-matter';
 import Beasties from 'beasties';
+import { collectPublicationStyles, finishPublicationStyles, withCspSafeStylesheets } from './scripts/publication-build.mjs';
+import { prepareScriptPolicy, scriptAssetInlineLimit } from './scripts/script-csp.mjs';
 import { BENTO_PARTYTOWN_FORWARD } from './src/lib/bento-config.mjs';
+import precompiledImages from './integrations/precompiled-images.mjs';
+import internalWorkspace from './integrations/internal-workspace.mjs';
+import publicationBoundary from './integrations/publication-boundary.mjs';
+import verifiedVendorAssets from './integrations/verified-vendor-assets.mjs';
+import { isInternalPath, internalPrefixes } from './src/lib/internal-paths.mjs';
+import { isCampaignLandingPath } from './src/lib/campaign-pages.mjs';
+import { assertCampaignSources, assertCampaignOutput } from './scripts/campaign-isolation.mjs';
 
-// Build a map of post slugs to their most recent date (updatedDate or pubDate)
-const postsDir = path.resolve('./src/content/posts');
-const postDateMap = new Map();
-const unpublishedPostPaths = new Set();
-const now = new Date();
-if (fs.existsSync(postsDir)) {
-  for (const file of fs.readdirSync(postsDir)) {
-    if (!file.endsWith('.mdx') && !file.endsWith('.md')) continue;
-    const content = fs.readFileSync(path.join(postsDir, file), 'utf-8');
-    const { data } = matter(content);
-    const pubDate = data.pubDate ? new Date(data.pubDate) : null;
-    const slug = file.replace(/\.mdx?$/, '');
-    // Protect the sitemap independently of route generation, in every mode.
-    if (pubDate && (isNaN(pubDate.getTime()) || pubDate > now)) {
-      unpublishedPostPaths.add(`/posts/${slug.toLowerCase()}`);
-      continue;
-    }
-    const date = data.updatedDate ? new Date(data.updatedDate) : pubDate;
-    if (date && !isNaN(date.getTime())) {
-      postDateMap.set(`https://datadocks.com/posts/${slug.toLowerCase()}`, date);
-    }
-  }
-}
+const analyticsWorkers = partytown({ config: { forward: BENTO_PARTYTOWN_FORWARD } });
+const configureAnalyticsWorkers = analyticsWorkers.hooks['astro:config:setup'];
+analyticsWorkers.hooks['astro:config:setup'] = (context) => {
+  // Local analytics are inactive; their worker crashes the embedded preview.
+  if (context.command !== 'dev') return configureAnalyticsWorkers(context);
+};
 
 // https://astro.build/config
 export default defineConfig({
+  // Local previews are reviewed by the editor; omit the automatic dev audits.
+  devToolbar: { enabled: false },
   output: 'server',
   adapter: cloudflare({
-    imageService: 'compile',
+    imageService: 'custom',
+    workerEntryPoint: { path: 'src/worker.ts' },
   }),
+
+  image: { service: { entrypoint: './src/lib/images/service.ts' } },
 
   site: 'https://datadocks.com',
   base: '/',
@@ -53,8 +49,12 @@ export default defineConfig({
     inlineStylesheets: 'auto',
   },
   vite: {
+    // The deployed Worker needs React's edge renderer; local development runs in Node.
+    resolve: { alias: process.env.NODE_ENV === 'production'
+      ? [{ find: /^react-dom\/server$/, replacement: 'react-dom/server.edge' }] : [] },
     build: {
       cssCodeSplit: false,
+      assetsInlineLimit: scriptAssetInlineLimit,
     },
     optimizeDeps: {
       exclude: ['@kobalte/core', '@kobalte/core/accordion'],
@@ -66,6 +66,8 @@ export default defineConfig({
   redirects: {
     '/compare/opendock': '/datadocks-vs-opendock',
     '/datadocks-vs/opendock': '/datadocks-vs-opendock',
+    '/posts/datadocks-vs-opendock': '/datadocks-vs-opendock',
+    '/posts/comparison': '/comparison',
     '/privacy-policy-datadocks': '/privacy-policy',
     '/posts/yt-:id': '/videos/yt-:id',
     '/datadocks-features/live-editing': '/datadocks-features/access-anywhere',
@@ -76,50 +78,25 @@ export default defineConfig({
   },
 
   integrations: [
+    internalWorkspace(),
     {
-      name: 'dev-only-pages',
+      name: 'publication-build-artifacts',
       hooks: {
         'astro:config:setup': ({ injectRoute, command }) => {
-          if (command === 'dev') {
-            injectRoute({
-              pattern: '/preview/demo-qualification',
-              entrypoint: './src/offline-pages/demo-qualification-preview.astro'
-            });
-            injectRoute({
-              pattern: '/preview/daily-blog/home',
-              entrypoint: './src/offline-pages/daily-blog-home-preview.astro'
-            });
-            injectRoute({
-              pattern: '/preview/daily-blog/posts',
-              entrypoint: './src/offline-pages/daily-blog-posts-preview.astro'
-            });
-            injectRoute({
-              pattern: '/sales-one-pager',
-              entrypoint: './src/offline-pages/sales-one-pager.astro'
-            });
-            injectRoute({
-              pattern: '/internal/marketing-pdf',
-              entrypoint: './src/offline-pages/marketing-pdf.astro'
-            });
-            injectRoute({
-              pattern: '/brand-book',
-              entrypoint: './src/offline-pages/brand-book.astro'
-            });
+          if (command === 'build') {
+            assertCampaignSources();
+            injectRoute({ pattern: '/_build/publication/[...path]', entrypoint: './src/build-pages/publication-artifacts.astro', prerender: true });
           }
         },
         'astro:build:done': async ({ dir }) => {
-          const offlinePath = fileURLToPath(new URL('_offline_print', dir));
-          if (fs.existsSync(offlinePath)) {
-            fs.rmSync(offlinePath, { recursive: true, force: true });
-          }
-
           // Cloudflare _routes.json has a 100-entry limit.
-          // Collapse individual /posts/*, /integrations/*, /datadocks-features/* into wildcards.
+          // Collapse static sections only. Runtime publication routes must reach the Worker.
           const routesPath = fileURLToPath(new URL('_routes.json', dir));
           if (fs.existsSync(routesPath)) {
             const routes = JSON.parse(fs.readFileSync(routesPath, 'utf-8'));
-            const wildcardPrefixes = ['/posts/', '/news/', '/integrations/', '/datadocks-features/', '/benefits/'];
+            const wildcardPrefixes = ['/news/', '/integrations/', '/datadocks-features/', '/benefits/'];
             routes.exclude = routes.exclude.filter(rule => {
+              if (rule === '/*.html' || isInternalPath(rule) || rule.startsWith('/posts/') || rule.startsWith('/videos/')) return false;
               return !wildcardPrefixes.some(prefix => rule.startsWith(prefix));
             });
             wildcardPrefixes.forEach(prefix => {
@@ -128,6 +105,10 @@ export default defineConfig({
                 routes.exclude.push(wildcard);
               }
             });
+            // A directory wildcard does not cover the hub's slashless URL.
+            for (const route of ['/', '/posts', '/posts/*', '/videos/*', '/sitemap-posts.xml', ...internalPrefixes.map(prefix => prefix + '*'), '/brand-assets/*']) {
+              if (!routes.include.includes(route)) routes.include.push(route);
+            }
             fs.writeFileSync(routesPath, JSON.stringify(routes, null, 2));
           }
 
@@ -185,7 +166,14 @@ export default defineConfig({
             return out;
           };
 
+          const publicationStyles = {};
           const htmlFiles = collectHtml(distDir);
+          // Include runtime/future render samples before their normal cleanup.
+          // Fail the build if a paid-only page leaks into organic discovery.
+          assertCampaignOutput(distDir);
+          // Include the private render samples before their normal cleanup so
+          // future publication states share the reviewed script allowlist.
+          prepareScriptPolicy(distDir);
           let processed = 0;
           let alreadyAsync = 0;
           let missingRealFaces = 0;
@@ -199,7 +187,8 @@ export default defineConfig({
                 alreadyAsync++;
                 continue;
               }
-              const inlined = await beasties.process(html);
+              const inlined = withCspSafeStylesheets(await beasties.process(html));
+              collectPublicationStyles(filePath, distDir, html, inlined, publicationStyles);
               // Guard the font regression described above: the real webfont
               // faces must survive into the output. If they ever stop doing so,
               // fail the build instead of silently shipping Georgia/Impact to
@@ -211,21 +200,20 @@ export default defineConfig({
               fs.writeFileSync(filePath, inlined);
               processed++;
             } catch (err) {
+              if (rel.startsWith('_build/publication/')) throw err;
               console.warn(`[critical-css] skipped ${rel}: ${err.message}`);
             }
           }
           console.log(`[critical-css] inlined critical CSS for ${processed}/${htmlFiles.length} pages (${alreadyAsync} had no blocking stylesheet)`);
+          finishPublicationStyles(distDir, publicationStyles);
           if (missingRealFaces > 0) {
             throw new Error(`[critical-css] ${missingRealFaces} page(s) lost their real @font-face url() — check the Layout.astro font block and reduceInlineStyles`);
           }
         }
       }
     },
-    partytown({
-      config: {
-        forward: BENTO_PARTYTOWN_FORWARD,
-      },
-    }),
+    verifiedVendorAssets(),
+    analyticsWorkers,
     tailwind(),
     react({
       include: ['**/components/ui/**', '**/micro-apps/LTL*', '**/components/FAQ*', '**/components/CTA*', '**/components/Contact*', '**/components/Integrations*', '**/components/Nav*', '**/benefits/**', '**/home/Testimonials*', '**/hooks/**', '**/lib/utils*'],
@@ -234,22 +222,23 @@ export default defineConfig({
       include: ['**/solid/**', '**/node_modules/@kobalte/core/**'],
     }),
     keystatic(), sitemap({
-      // Keyword landing pages are noindexed, so keep them out of the sitemap too.
-      filter: (page) => new URL(page).pathname.replace(/\/$/, '') !== '/demo/verification' && !new URL(page).pathname.startsWith('/preview/') && !unpublishedPostPaths.has(new URL(page).pathname.replace(/\/$/, '').toLowerCase()) && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      // This child sitemap evaluates publication dates on every request.
+      customSitemaps: ['https://datadocks.com/sitemap-posts.xml'],
+      // All article URLs belong to the runtime sitemap, including those already published.
+      // Internal namespaces are never published; document previews and paid landing pages are noindexed.
+      filter: (page) => new URL(page).pathname.replace(/\/$/, '') !== '/demo/verification' && !new URL(page).pathname.startsWith('/files/') && !isInternalPath(new URL(page).pathname) && !isCampaignLandingPath(new URL(page).pathname) && !new URL(page).pathname.startsWith('/posts/') && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {
           item.url = item.url.replace(/\/$/, '');
         }
-        // Add lastmod from post frontmatter if available
-        const postDate = postDateMap.get(item.url) || postDateMap.get(item.url + '/');
-        if (postDate) {
-          item.lastmod = postDate.toISOString();
-        }
-        // Non-blog pages: omit lastmod entirely (absent is better than a build-date lie)
+        // Static pages omit lastmod; post dates are served by the runtime sitemap.
         return item;
       },
       customPages: [
+        'https://datadocks.com/',
+        'https://datadocks.com/posts',
+        'https://datadocks.com/comparison',
         'https://datadocks.com/yard-management',
         'https://datadocks.com/datadocks-features/dock-dashboard',
         'https://datadocks.com/datadocks-features/carrier-portal',
@@ -259,7 +248,6 @@ export default defineConfig({
         'https://datadocks.com/datadocks-features/custom-rules',
         'https://datadocks.com/datadocks-features/data-validation',
         'https://datadocks.com/datadocks-features/notifications',
-        'https://datadocks.com/datadocks-features/live-editing',
         'https://datadocks.com/datadocks-features/access-anywhere',
         'https://datadocks.com/datadocks-features/integration',
         'https://datadocks.com/datadocks-features/documentation',
@@ -272,6 +260,16 @@ export default defineConfig({
     // are now pre-rendered to static SVG by `npm run diagrams`. If mermaid
     // fences are ever needed in MDX, pre-render them the same way rather than
     // re-adding a global integration.
-    mdx()],
+    mdx(),
+    precompiledImages(),
+    {
+      name: 'campaign-discovery-output',
+      hooks: {
+        // Sitemap generators have finished; the earlier check also covered
+        // runtime/future HTML samples before they were removed.
+        'astro:build:done': ({ dir }) => assertCampaignOutput(fileURLToPath(dir)),
+      },
+    },
+    publicationBoundary()],
 
 });

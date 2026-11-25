@@ -1,0 +1,161 @@
+---
+const titleId = `receiving-order-to-receipt-${crypto.randomUUID()}`;
+const orderFields = ['PO reference', 'Product details', 'Quantity ordered'];
+---
+
+<figure id="receiving-order-to-receipt" class="order-receipt not-prose" aria-labelledby={titleId}>
+  <figcaption class="receipt-heading">
+    <h3 id={titleId}>Reuse the order details.<br />Record the actual receipt.</h3>
+  </figcaption>
+
+  <div class="receipt-diagram">
+    <section class="receipt-source" aria-label="Details from the purchase order">
+      <div class="receipt-document receipt-document--order">
+        <h4>
+          <svg viewBox="0 0 28 32" width="28" height="32" aria-hidden="true" focusable="false">
+            <path d="M5 2H18L25 9V30H5Z M18 2V9H25 M10 15H20 M10 20H20 M10 25H16" />
+          </svg>
+          Purchase order
+        </h4>
+        <ul class="receipt-fields">
+          {orderFields.map(field => <li>{field}</li>)}
+        </ul>
+      </div>
+
+      <div class="receipt-observation-source">
+        <svg class="receipt-observation-up" viewBox="0 0 28 36" width="28" height="36" aria-hidden="true" focusable="false">
+          <path d="M14 33V3M6 11L14 3L22 11" />
+        </svg>
+        <svg class="receipt-goods" viewBox="0 0 160 92" width="160" height="92" aria-hidden="true" focusable="false">
+          <path class="receipt-carton-side" d="M19 37L49 24L79 37V69L49 82L19 69Z" />
+          <path d="M19 37L49 50L79 37M49 50V82" />
+          <path class="receipt-carton-top" d="M37 29L67 42L59 46L29 33Z" />
+          <path class="receipt-carton-mark" d="M58 59L69 54M58 65L69 60" />
+          <path class="receipt-clipboard" d="M99 14H141V76H99Z" />
+          <path class="receipt-clip" d="M111 10H129V19H111Z" />
+          <path d="M107 30H133M107 39H125M107 48H119" />
+          <path class="receipt-pencil" d="M118 65L122 53L142 33L150 41L130 61Z M122 53L130 61M139 36L147 44" />
+          <path class="receipt-ground" d="M11 83H151" />
+        </svg>
+        <p>Delivery checks</p>
+      </div>
+    </section>
+
+    <div class="receipt-connectors" aria-hidden="true">
+      <svg class="receipt-reference-arrow" viewBox="0 0 44 28" width="44" height="28">
+        <path d="M3 14H39M31 6L39 14L31 22" />
+      </svg>
+      <svg class="receipt-observation-arrow" viewBox="0 0 44 28" width="44" height="28">
+        <path d="M3 14H39M31 6L39 14L31 22" />
+      </svg>
+    </div>
+
+    <section class="receipt-document receipt-document--result" aria-label="Receiving record with reused order details and new receiving results">
+      <h4>
+        <svg viewBox="0 0 28 32" width="28" height="32" aria-hidden="true" focusable="false">
+          <path d="M4 5H24V30H4Z M10 2H18V8H10Z M9 14H19 M9 19H19 M9 24H15" />
+        </svg>
+        Receiving record
+      </h4>
+      <div class="receipt-inherited">
+        <p class="receipt-group-label">Reused from the order</p>
+        <ul class="receipt-fields">
+          {orderFields.map(field => <li>{field}</li>)}
+        </ul>
+      </div>
+      <div class="receipt-observed">
+        <p class="receipt-group-label">Recorded at receiving</p>
+        <ul class="receipt-results">
+          <li>Quantity received</li>
+          <li>Condition &amp; discrepancies</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</figure>
+
+<style>
+  .order-receipt {
+    --receipt-paper: #fff8ee;
+    --receipt-sheet: #fffcf6;
+    --receipt-surface: #f1e7d6;
+    --receipt-ink: #302b25;
+    --receipt-muted: #695d4f;
+    --receipt-line: #d9cbb8;
+    --receipt-box: #e3cba8;
+    --receipt-accent: #FE5000;
+    --receipt-accent-wash: #ffeadc;
+    container-type: inline-size;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px solid var(--receipt-line);
+    border-radius: 4px;
+    background: var(--receipt-paper);
+    color: var(--receipt-ink);
+    font-family: Inter, Arial, sans-serif;
+    scroll-margin-top: 2rem;
+  }
+
+  :global(.dark) .order-receipt {
+    --receipt-paper: #241f19;
+    --receipt-sheet: #2c251e;
+    --receipt-surface: #342c23;
+    --receipt-ink: #fff2dd;
+    --receipt-muted: #cabba5;
+    --receipt-line: #655640;
+    --receipt-box: #b5a082;
+    --receipt-accent-wash: #3d2d22;
+  }
+
+  .receipt-heading { margin: 0 0 1.5rem; }
+  .receipt-heading h3 { margin: 0; color: var(--receipt-ink); font: 500 clamp(1.5rem, 5cqi, 1.875rem)/1.22 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif; }
+  .receipt-diagram { display: grid; grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1.18fr); align-items: start; }
+  .receipt-source { min-width: 0; }
+  .receipt-document { min-width: 0; border: 1px solid var(--receipt-line); background: var(--receipt-sheet); }
+  .receipt-document h4 { display: flex; align-items: center; gap: 0.625rem; margin: 0; padding: 0.875rem; border-bottom: 1px solid var(--receipt-line); color: var(--receipt-ink); font-size: 0.9375rem; font-weight: 600; line-height: 1.4; }
+  .receipt-document h4 svg { flex-shrink: 0; width: 24px; height: 28px; fill: none; stroke: var(--receipt-muted); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .receipt-fields { display: grid; gap: 0; margin: 0; padding: 0 0.875rem; list-style: none; }
+  .receipt-fields li { padding: 0.625rem 0; color: var(--receipt-muted); font-size: 0.8125rem; line-height: 1.4; }
+  .receipt-fields li + li { border-top: 1px solid var(--receipt-line); }
+  .receipt-group-label { margin: 0; color: var(--receipt-ink); font-size: 0.75rem; font-weight: 600; line-height: 1.5; }
+  .receipt-inherited { padding-top: 0.75rem; }
+  .receipt-inherited .receipt-group-label { padding: 0 0.875rem 0.125rem; }
+  .receipt-observed { margin-top: 0.25rem; padding: 0.875rem; border-top: 2px solid var(--receipt-accent); background: var(--receipt-accent-wash); }
+  .receipt-results { display: grid; gap: 0.5rem; margin: 0.625rem 0 0; padding: 0; list-style: none; }
+  .receipt-results li { color: var(--receipt-ink); font-size: 0.875rem; line-height: 1.4; }
+  .receipt-observation-source { display: grid; justify-items: center; gap: 0.25rem; margin-top: 1.25rem; }
+  .receipt-observation-up { display: none; }
+  .receipt-goods { display: block; width: min(160px, 100%); height: auto; fill: none; stroke: var(--receipt-muted); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+  .receipt-carton-side { fill: var(--receipt-box); }
+  .receipt-carton-top { fill: var(--receipt-surface); stroke-width: 1; }
+  .receipt-clipboard { fill: var(--receipt-sheet); }
+  .receipt-clip { fill: var(--receipt-surface); }
+  .receipt-pencil { fill: var(--receipt-accent-wash); stroke: var(--receipt-accent); stroke-width: 2; }
+  .receipt-carton-mark { stroke-width: 2; }
+  .receipt-ground { stroke: var(--receipt-line); }
+  .receipt-observation-source p { margin: 0; color: var(--receipt-muted); font-size: 0.75rem; line-height: 1.5; }
+  .receipt-connectors { position: relative; align-self: stretch; }
+  .receipt-connectors svg { position: absolute; left: 0; width: 100%; height: auto; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .receipt-reference-arrow { top: 7rem; stroke: var(--receipt-muted); }
+  .receipt-observation-arrow { bottom: 2.75rem; stroke: var(--receipt-accent); }
+
+  @container (max-width: 430px) {
+    .receipt-heading { margin-bottom: 1.125rem; }
+    .receipt-heading h3 { font-size: 1.5rem; }
+    .receipt-diagram { grid-template-columns: minmax(0, 1fr); }
+    .receipt-source { display: contents; }
+    .receipt-document--order { grid-row: 1; }
+    .receipt-connectors { grid-row: 2; height: 2.5rem; }
+    .receipt-connectors .receipt-reference-arrow { top: 0.375rem; left: calc(50% - 1.375rem); width: 2.75rem; transform: rotate(90deg); }
+    .receipt-observation-arrow { display: none; }
+    .receipt-document--result { grid-row: 3; }
+    .receipt-observation-source { grid-row: 4; grid-template-columns: 96px minmax(0, 8rem); align-items: center; justify-content: center; column-gap: 0.75rem; margin-top: 0; }
+    .receipt-observation-up { display: block; grid-column: 1 / -1; width: 28px; height: 36px; fill: none; stroke: var(--receipt-accent); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .receipt-goods { width: 96px; }
+    .receipt-observation-source p { max-width: 8rem; }
+  }
+
+  @media (max-width: 480px) {
+    .order-receipt { padding: 1.125rem; }
+  }
+</style>

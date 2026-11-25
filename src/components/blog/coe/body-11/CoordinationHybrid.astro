@@ -1,0 +1,59 @@
+---
+import { coordinationCompact } from './coordination-compact';
+import CoordinationIcon from './CoordinationIcon.astro';
+---
+<figure class="coordination-hybrid" aria-label="The facility and carrier plan, compare and improve each visit together">
+  <div class="shared-process">
+    <div class="partners">
+      <div class="partner"><CoordinationIcon kind="facility" /><span>Facility</span></div>
+      <div class="partner"><CoordinationIcon kind="carrier" /><span>Carrier</span></div>
+    </div>
+    <svg class="connection" viewBox="0 0 600 26" preserveAspectRatio="none" fill="none" aria-hidden="true">
+      <path d="M150 1v5q0 7 7 7h286q7 0 7-7V1M300 13v12" />
+    </svg>
+    <div class="cycle">
+      <div class="steps">
+        {coordinationCompact.map(step => <section class="step">
+          <div class="illustration"><CoordinationIcon kind={step.icon} /></div>
+          <div><h3>{step.title}</h3><p set:html={step.copy} /></div>
+        </section>)}
+      </div>
+      <div class="return-path" aria-hidden="true"><span>Apply it to the next visit</span></div>
+    </div>
+  </div>
+</figure>
+<style>
+  .coordination-hybrid { container-type:inline-size; max-width:580px; margin:0 auto; color:var(--ink,#24211d); font:400 14px/1.55 Inter,Arial,sans-serif; }
+  * { box-sizing:border-box; }
+  .shared-process { padding-right:22px; }
+  .partners { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .partner { display:flex; align-items:center; justify-content:center; gap:8px; font-weight:500; }
+  .partner :global(svg) { display:block; width:68px; height:auto; flex:none; }
+  .connection { display:block; width:100%; height:23px; margin:4px 0 0; stroke:var(--line,#9f8d78); stroke-width:1.2; stroke-linecap:round; }
+  .connection path { vector-effect:non-scaling-stroke; }
+  .cycle { position:relative; }
+  .steps { display:grid; gap:16px; }
+  .step { position:relative; display:grid; grid-template-columns:70px minmax(0,1fr); align-items:center; gap:14px; padding:16px 18px; border-radius:7px; background:color-mix(in srgb,var(--paper,#fff8ee) 68%,var(--soft,#e3d5c4)); }
+  .step:not(:last-child)::after { content:''; position:absolute; width:6px; height:6px; bottom:-10px; left:calc(50% - 3px); border-right:1.2px solid var(--line,#9f8d78); border-bottom:1.2px solid var(--line,#9f8d78); transform:rotate(45deg); }
+  .illustration :global(svg) { display:block; width:100%; height:auto; }
+  h3 { margin:0 0 6px; font:400 21px/1.2 DD-Recoleta,Georgia,serif; text-wrap:pretty; }
+  p { margin:0; }
+  p :global(a) { color:inherit; text-decoration-color:var(--accent,#fe5000); text-underline-offset:3px; }
+  p :global(a:focus-visible) { outline:2px solid var(--accent,#fe5000); outline-offset:3px; }
+  .return-path { height:29px; margin-right:-20px; border-right:1px solid var(--line,#9f8d78); border-bottom:1px solid var(--line,#9f8d78); border-bottom-right-radius:12px; position:relative; text-align:center; color:var(--muted,#686054); }
+  .return-path span { display:inline-block; padding:0 9px; position:relative; top:19px; background:var(--paper,#fff8ee); font-size:12px; }
+  .cycle::before { content:''; position:absolute; width:20px; right:-20px; top:30px; bottom:29px; border-top:1px solid var(--line,#9f8d78); border-right:1px solid var(--line,#9f8d78); border-top-right-radius:12px; }
+  .cycle::after { content:''; position:absolute; width:6px; height:6px; right:-7px; top:27px; border-left:1.2px solid var(--line,#9f8d78); border-bottom:1.2px solid var(--line,#9f8d78); transform:rotate(45deg); }
+  @container(max-width:440px) {
+    .partner { gap:5px; font-size:13px; }
+    .partner :global(svg) { width:48px; }
+    .step { grid-template-columns:44px minmax(0,1fr); gap:10px; padding:14px 12px; align-items:start; }
+    .illustration { margin-top:1px; }
+    h3 { font-size:20px; }
+  }
+  @container(max-width:300px) {
+    .step { grid-template-columns:32px minmax(0,1fr); gap:8px; }
+    .partner :global(svg) { width:40px; }
+    h3 { font-size:19px; }
+  }
+</style>

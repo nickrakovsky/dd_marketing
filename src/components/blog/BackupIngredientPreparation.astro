@@ -1,0 +1,64 @@
+---
+import './backup-preparation.css';
+---
+
+<figure class="dd-backup-prep not-prose" id="dd-p5-backup-prep" aria-labelledby="dd-p5-title" aria-describedby="dd-p5-assumptions">
+  <div class="p5-inner">
+    <header class="p5-heading">
+      <p class="p5-eyebrow">One backup source, three preparation states</p>
+      <h2 id="dd-p5-title">A supplier name is only the start</h2>
+      <p class="p5-intro">See what is left when the backup is needed. The supplier stays the same.</p>
+    </header>
+
+    <fieldset class="p5-controls">
+      <legend>Choose the work already completed</legend>
+      <div class="p5-choices">
+        <label><input id="dd-p5-listed" type="radio" name="dd-p5-preparation" value="listed" checked aria-describedby="dd-p5-listed-description"><span>Source identified</span></label>
+        <label><input id="dd-p5-sampled" type="radio" name="dd-p5-preparation" value="sampled" aria-describedby="dd-p5-sampled-description"><span>Batch and sampling complete</span></label>
+        <label><input id="dd-p5-accepted" type="radio" name="dd-p5-preparation" value="accepted" aria-describedby="dd-p5-accepted-description"><span>Customer process complete</span></label>
+      </div>
+      <span id="dd-p5-listed-description" class="p5-sr-only">Seven illustrative preparation days remain: two for the small batch, two for sampling and three for the customer's process.</span>
+      <span id="dd-p5-sampled-description" class="p5-sr-only">Three illustrative preparation days remain for the customer's process. The four batch and sampling days are already complete.</span>
+      <span id="dd-p5-accepted-description" class="p5-sr-only">Zero days remain for the preparation shown. All seven illustrated days of work are complete. This does not establish supply availability or delivery timing.</span>
+    </fieldset>
+
+    <div class="p5-comparison">
+      <div class="p5-metric" aria-live="polite" aria-atomic="true">
+        <p class="p5-metric-label">Preparation left<br>in this example</p>
+        <p class="p5-value"><strong class="p5-state p5-listed">7</strong><strong class="p5-state p5-sampled">3</strong><strong class="p5-state p5-accepted">0</strong><span>days</span></p>
+        <p class="p5-metric-note p5-state p5-listed">The source is known.<br>The preparation is still to do.</p>
+        <p class="p5-metric-note p5-state p5-sampled">The customer’s process<br>is still to complete.</p>
+        <p class="p5-metric-note p5-state p5-accepted">Shown preparation<br>complete.</p>
+      </div>
+
+      <div class="p5-plot">
+        <div class="p5-plot-heading"><p>Seven days of work in this example</p><span>1 block = 1 day</span></div>
+        <svg class="p5-days" viewBox="0 0 700 72" role="img" aria-labelledby="dd-p5-chart-title dd-p5-chart-desc">
+          <title id="dd-p5-chart-title">Seven illustrative days of backup ingredient preparation</title>
+          <desc id="dd-p5-chart-desc">Two equal blocks represent a small batch, two customer sampling, and three the customer's process. The chosen state marks completed work with a check. The numeric result and task statuses are also shown as text.</desc>
+          <g class="p5-day-group p5-batch-days">
+            <rect x="0" y="0" width="94" height="72" rx="4"/><rect x="101" y="0" width="94" height="72" rx="4"/>
+            <path class="p5-check" d="M34 36l9 9 18-20 M135 36l9 9 18-20"/>
+          </g>
+          <g class="p5-day-group p5-sampling-days">
+            <rect x="202" y="0" width="94" height="72" rx="4"/><rect x="303" y="0" width="94" height="72" rx="4"/>
+            <path class="p5-check" d="M236 36l9 9 18-20 M337 36l9 9 18-20"/>
+          </g>
+          <g class="p5-day-group p5-customer-days">
+            <rect x="404" y="0" width="94" height="72" rx="4"/><rect x="505" y="0" width="94" height="72" rx="4"/><rect x="606" y="0" width="94" height="72" rx="4"/>
+            <path class="p5-check" d="M438 36l9 9 18-20 M539 36l9 9 18-20 M640 36l9 9 18-20"/>
+          </g>
+        </svg>
+        <div class="p5-task-labels">
+          <div class="p5-task p5-batch-task"><p>Small batch</p><strong>2 days</strong><span class="p5-todo">Still to do</span><span class="p5-done">Complete</span></div>
+          <div class="p5-task p5-sampling-task"><p>Customer sampling</p><strong>2 days</strong><span class="p5-todo">Still to do</span><span class="p5-done">Complete</span></div>
+          <div class="p5-task p5-customer-task"><p>Customer’s process</p><strong>3 days</strong><span class="p5-todo">Still to do</span><span class="p5-done">Complete</span></div>
+        </div>
+        <div class="p5-legend" aria-hidden="true"><span><i class="p5-legend-done"></i>Already complete</span><span><i class="p5-legend-todo"></i>Still to do</span></div>
+      </div>
+    </div>
+
+    <p class="p5-takeaway">Work through the customer’s acceptance process before you need the alternative.</p>
+  </div>
+  <figcaption id="dd-p5-assumptions"><strong>Illustrative timings:</strong> 2 + 2 + 3 days, assumed sequential. Actual work may overlap, take longer or need repeating. Zero covers only the preparation shown; supply availability and delivery are separate.</figcaption>
+</figure>

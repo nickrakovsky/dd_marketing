@@ -1,0 +1,61 @@
+---
+import WorldLand from './WorldLand.astro';
+import MapFacility from './MapFacility.astro';
+import locationData from './map-data/locations.json';
+interface Props { variant: 'a' | 'b' | 'c'; }
+const { variant } = Astro.props;
+const locations = locationData;
+const coe=locations[5];
+const prefix=`regional-${variant}`;
+---
+<figure class:list={['regional-map',variant]}>
+  <svg class="world" viewBox={variant==='c'?'0 0 800 620':'0 0 800 440'} xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby={`${prefix}-title`} aria-describedby={`${prefix}-description`}>
+    <title id={`${prefix}-title`}>A regional center of excellence within a geographically distributed company</title>
+    <desc id={`${prefix}-description`}>World map showing six geographically distributed company facilities. One facility in South Asia is highlighted as the regional center of excellence, located in a new market. The adjacent paragraph explains its role supporting local customers or suppliers. Locations are illustrative, following the original diagram.</desc>
+    <defs>
+      <pattern id={`${prefix}-dots`} width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.6" fill="var(--line,#9f8d78)" /></pattern>
+      <clipPath id={`${prefix}-inset`}><rect x="444" y="403" width="328" height="190" rx="8" /></clipPath>
+    </defs>
+    {variant==='b' && <rect class="map-ground" x="0.75" y="0.75" width="798.5" height="438.5" rx="8" />}
+    <g class="land" fill={variant==='b'?`url(#${prefix}-dots)`:'var(--map-land)'}><WorldLand /></g>
+    {variant==='c' && <ellipse class="region-ring" cx={coe.x} cy={coe.y} rx="42" ry="39" />}
+    <g class="locations">{locations.map(({id,x,y})=><MapFacility x={x} y={y} highlighted={id==='regional-coe'} shape={variant==='b'?'circle':'pin'} scale={variant==='b'?.78:.85} />)}</g>
+    {variant==='a' ? <>
+      <path class="label-leader" d={`M${coe.x} ${coe.y+8}v153`} />
+      <text class="map-label" x={coe.x} y="390" text-anchor="middle"><tspan x={coe.x}>Regional center</tspan><tspan x={coe.x} dy="27">of excellence</tspan></text>
+    </> : variant==='b' ? <>
+      <path class="label-leader" d={`M${coe.x} ${coe.y+14}v147`} />
+      <text class="map-label" x={coe.x} y="390" text-anchor="middle"><tspan x={coe.x}>Regional center</tspan><tspan x={coe.x} dy="27">of excellence</tspan></text>
+    </> : <>
+      <path class="zoom-leader" d="M594 227 622 403" />
+      <rect class="inset-ground" x="444" y="403" width="328" height="190" rx="8" />
+      <g clip-path={`url(#${prefix}-inset)`}>
+        <g transform="translate(-691 70) scale(2.3)">
+          <g fill="var(--map-land)"><WorldLand /></g>
+          <MapFacility x={coe.x} y={coe.y} highlighted shape="pin" scale={.66} />
+        </g>
+      </g>
+      <rect class="inset-border" x="444" y="403" width="328" height="190" rx="8" />
+      <text class="map-label" x="30" y="472"><tspan x="30">Regional center</tspan><tspan x="30" dy="29">of excellence</tspan></text>
+      <path class="label-leader" d="M305 490h120" />
+    </>}
+  </svg>
+</figure>
+<style>
+  .regional-map { --map-land:color-mix(in srgb,var(--soft,#e3d5c4) 85%,var(--ink,#24211d)); margin:0; color:var(--ink,#24211d); container-type:inline-size; }
+  .world { display:block; width:100%; height:auto; overflow:visible; }
+  .map-ground { fill:color-mix(in srgb,var(--soft,#e3d5c4) 12%,var(--paper,#fff8ee)); stroke:var(--soft,#e3d5c4); stroke-width:1; }
+  .a .land { stroke:color-mix(in srgb,var(--line,#9f8d78) 55%,transparent); stroke-width:.65; stroke-linejoin:round; }
+  .c .land { opacity:.9; }
+  .label-leader { fill:none; stroke:var(--accent,#fe5000); stroke-width:1.5; stroke-linecap:round; }
+  .map-label { fill:var(--ink,#24211d); font:400 24px/1.2 DD-Recoleta,Georgia,serif; }
+  .region-ring { stroke:var(--accent,#fe5000); stroke-width:1.2; fill:none; }
+  .zoom-leader { fill:none; stroke:var(--line,#9f8d78); stroke-width:1; }
+  .inset-ground { fill:color-mix(in srgb,var(--soft,#e3d5c4) 14%,var(--paper,#fff8ee)); }
+  .inset-border { fill:none; stroke:var(--line,#9f8d78); stroke-width:1; }
+  .c .map-label { font-size:26px; }
+  @container(max-width:480px) {
+    .map-label { font-family:Inter,Arial,sans-serif; font-size:28px; font-weight:500; }
+    .c .map-label { font-size:28px; }
+  }
+</style>

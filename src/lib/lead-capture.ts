@@ -70,11 +70,17 @@ function submitUngatedDemo(form: HTMLFormElement) {
     void captureLead(email, context, form.dataset.leadEvent || 'Demo Subscriber')
       .then(() => optional(() => marketing.bento?.identify?.(email))).catch(() => undefined);
   }
-  let status = statuses.get(form);
+  let status = statuses.get(form)
+    || form.querySelector<HTMLElement>('[data-capture-status]')
+    || (form.dataset.captureStatusId ? document.getElementById(form.dataset.captureStatusId) : null);
   if (!status) {
-    status = document.createElement('p'); status.className = 'lead-capture-status'; status.setAttribute('role', 'status');
-    form.after(status); statuses.set(form, status);
+    status = document.createElement('p'); status.className = 'lead-capture-status';
+    form.after(status);
   }
+  statuses.set(form, status);
+  status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
+  if (!status.id) status.id = `capture-${newId()}`;
+  input.setAttribute('aria-describedby', status.id);
   status.textContent = 'Choose a time for your software demo.';
   appendBookingLink(status, form.dataset.bookingParams);
   const dialog = form.closest('dialog');

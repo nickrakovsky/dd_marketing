@@ -1,0 +1,38 @@
+[
+  {
+    "id": "west-us",
+    "x": 157.02,
+    "y": 158.55,
+    "highlighted": false
+  },
+  {
+    "id": "south-central-north-america",
+    "x": 184.14,
+    "y": 186.21,
+    "highlighted": false
+  },
+  {
+    "id": "northeast-us",
+    "x": 258.01,
+    "y": 136.13,
+    "highlighted": false
+  },
+  {
+    "id": "europe",
+    "x": 422.43,
+    "y": 119.11,
+    "highlighted": false
+  },
+  {
+    "id": "east-asia",
+    "x": 642.49,
+    "y": 183.69,
+    "highlighted": false
+  },
+  {
+    "id": "regional-coe",
+    "x": 564.95,
+    "y": 196.26,
+    "highlighted": true
+  }
+]

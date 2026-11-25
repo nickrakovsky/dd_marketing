@@ -7,8 +7,8 @@ export interface Props {
 const { videoId, title = "Related Short" } = Astro.props;
 ---
 
-<div class="sidebar-card mb-4 !p-0 overflow-hidden border border-[#E5D3B3] dark:border-gray-700">
-  <div class="p-3 border-b border-[#E5D3B3] dark:border-gray-700 bg-white dark:bg-gray-800">
+<div class="sidebar-card mb-4 !p-0 overflow-hidden border border-[#E5D3B3] dark:border-[var(--blog-rule,#374151)]">
+  <div class="p-3 border-b border-[#E5D3B3] dark:border-[var(--blog-rule,#374151)] bg-white dark:bg-[var(--blog-surface,#1f2937)]">
     <div class="sidebar-card-title">{title}</div>
   </div>
   

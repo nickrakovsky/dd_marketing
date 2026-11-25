@@ -1,6 +1,8 @@
 export interface LeadContext {
   source: string;
   landingPage?: string;
+  landingPageMode?: 'page' | 'session';
+  sessionLandingPage?: string;
   visitorUuid?: string | null;
   attribution?: { first?: Record<string, unknown>; last?: Record<string, unknown> };
   currentTouch?: Record<string, unknown>;

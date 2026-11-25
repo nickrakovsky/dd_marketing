@@ -48,16 +48,18 @@ export function captureContext(ctaId: string, ctaPlacement: string): LeadContext
   const referrer = optional(() => document.referrer ? new URL(document.referrer).hostname : '');
   if (referrer) currentTouch.referrer = referrer;
   const attribution = optional(() => marketing.ddGetAttribution?.());
-  const landingPage = optional(() => {
+  const sessionLandingPage = optional(() => {
     const stored = sessionStorage.getItem('dd_landing_page');
     if (!stored || stored.length > 8192) return undefined;
     const url = new URL(stored);
     return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password ? url.href : undefined;
   });
+  const pageMode = document.documentElement.dataset.demoAttribution === 'page';
   const visitorUuid = optional(() => marketing.getBentoVisitorUuid?.());
   return {
     source: window.location.pathname,
-    landingPage, // Unknown session history must not become the current page.
+    landingPage: pageMode ? window.location.href : sessionLandingPage,
+    ...(pageMode ? { landingPageMode: 'page' as const, sessionLandingPage } : {}), // Keep original session history separate from a campaign conversion.
     visitorUuid: typeof visitorUuid === 'string' && visitorUuid.length <= 2048 ? visitorUuid : undefined,
     attribution: { first: safeTouch(attribution?.first ?? storedTouch('dd_first_touch')), last: safeTouch(attribution?.last ?? storedTouch('dd_last_touch')) },
     currentTouch,

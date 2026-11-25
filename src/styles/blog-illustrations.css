@@ -1,0 +1,85 @@
+/* DataDocks article illustrations. Agency palette: COLORS.md.
+   Opt in with .dd-figure; do not inherit the article's editorial serif. */
+.dd-figure {
+  --dd-figure-font: 'Inter', system-ui, sans-serif;
+  --dd-figure-heading-font: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif;
+  --dd-figure-ink: #000000;
+  --dd-figure-muted: rgb(0 0 0 / .72);
+  --dd-figure-paper: #FFF5E1;
+  --dd-figure-surface: #EFE2D2;
+  --dd-figure-line: rgb(0 0 0 / .24);
+  --dd-figure-accent: #FD4F00;
+  --dd-figure-selected-ink: #FFF5E1;
+  --dd-figure-selected-surface: #000000;
+  margin: 2rem 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 1px solid var(--dd-figure-line);
+  border-radius: .75rem;
+  background: var(--dd-figure-paper);
+  box-sizing: border-box;
+  font-family: var(--dd-figure-font);
+  color: var(--dd-figure-ink);
+  color-scheme: light;
+}
+.dd-figure :where(h2, h3, h4, p, span, strong, label, legend, button, input, summary, dt, dd, text) {
+  font-family: var(--dd-figure-font);
+}
+/* One editorial title per figure; UI, data and supporting text stay in Inter. */
+.dd-figure .dd-figure-title {
+  font-family: var(--dd-figure-heading-font);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.015em;
+}
+.dd-figure .dd-disclosure {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.dd-figure .dd-disclosure::-webkit-details-marker { display: none; }
+.dd-figure .dd-disclosure::marker { content: ''; }
+.dd-figure .dd-chevron {
+  display: block;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .15s ease;
+}
+.dd-figure details[open] > .dd-disclosure .dd-chevron { transform: rotate(180deg); }
+.dd-figure .dd-disclosure:focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 4px; }
+/* Reuse the existing approved charcoal blog theme, not new brown fallbacks. */
+html.dark .dd-figure {
+  --dd-figure-ink: #FFF5E1;
+  --dd-figure-muted: rgb(255 245 225 / .76);
+  --dd-figure-paper: #181818;
+  --dd-figure-surface: #262626;
+  --dd-figure-line: rgb(255 245 225 / .35);
+  --dd-figure-selected-ink: #000000;
+  --dd-figure-selected-surface: #FFF5E1;
+  color-scheme: dark;
+}
+@media (prefers-reduced-motion: reduce) { .dd-figure .dd-chevron { transition: none; } }
+@media print {
+  .dd-figure, html.dark .dd-figure {
+    --dd-figure-ink: #000000;
+    --dd-figure-muted: rgb(0 0 0 / .72);
+    --dd-figure-paper: #FFF5E1;
+    --dd-figure-surface: #EFE2D2;
+    --dd-figure-line: rgb(0 0 0 / .24);
+    --dd-figure-selected-ink: #FFF5E1;
+    --dd-figure-selected-surface: #000000;
+    color-scheme: light;
+  }
+}

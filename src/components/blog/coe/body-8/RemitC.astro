@@ -1,0 +1,61 @@
+---
+import { scenarios } from './scenarios';
+---
+<figure class="remit-map" aria-label="Three connected ambitions: logistics expertise, partner relationships and a consultative role. Each pairing raises a different organizational tension.">
+  <div class="map">
+    <svg viewBox="0 0 600 520" aria-hidden="true">
+      <path class="triangle" d="M95 90H505L300 445.0704Z" />
+      <path class="ownership" d="M95 90H505" />
+      <path class="planning" d="M505 90 300 445.0704" />
+      <path class="data" d="M300 445.0704 95 90" />
+      <circle cx="95" cy="90" r="6" /><circle cx="505" cy="90" r="6" /><circle cx="300" cy="445.0704" r="6" />
+    </svg>
+    <div class="ambition logistics">Logistics<br />expertise</div>
+    <div class="ambition partners">Partner<br />relationships</div>
+    <div class="ambition advice">A consultative role</div>
+    <span class="edge ownership">Ownership</span>
+    <span class="edge data">Data alignment</span>
+    <span class="edge planning">Planning scope</span>
+  </div>
+  <div class="explanations">
+    {scenarios.map(scenario=><section class={scenario.link}>
+      <h4>{scenario.tension}</h4>
+      <p>{scenario.context} {scenario.explanation}</p>
+    </section>)}
+  </div>
+</figure>
+<style>
+  .remit-map { margin:0; container-type:inline-size; color:var(--ink,#24211d); }
+  * { box-sizing:border-box; }
+  .map { position:relative; aspect-ratio:600/520; margin:0 0 22px; }
+  svg { display:block; width:100%; height:auto; overflow:visible; }
+  svg path { fill:none; stroke-width:2; }
+  .triangle { fill:color-mix(in srgb,var(--soft) 18%,var(--paper)); stroke:none; }
+  svg .ownership { stroke:var(--accent); }
+  svg .planning { stroke:var(--ink); stroke-dasharray:7 5; }
+  svg .data { stroke:var(--line); stroke-dasharray:2 5; stroke-linecap:round; }
+  circle { fill:var(--paper); stroke:var(--line); stroke-width:2; }
+  .ambition { position:absolute; font:400 24px/1.2 DD-Recoleta,Georgia,serif; text-align:center; }
+  .logistics { left:0; top:0; width:31.6%; }
+  .partners { right:0; top:0; width:31.6%; }
+  .advice { left:20%; top:90.3846%; width:60%; }
+  .edge { position:absolute; font:400 13px/1.5 Inter,Arial,sans-serif; background:var(--paper); padding:3px 8px; border-radius:3px; color:var(--muted); }
+  .edge.ownership { left:50%; top:17.3077%; transform:translate(-50%,-50%); }
+  .edge.data { left:32.9167%; top:51.4491%; transform:translate(-50%,-50%) rotate(60deg); }
+  .edge.planning { right:32.9167%; top:51.4491%; transform:translate(50%,-50%) rotate(-60deg); }
+  .explanations { border-top:1px solid var(--soft); }
+  section { position:relative; padding:23px 22px 23px 29px; border-bottom:1px solid var(--soft); }
+  section::before { content:''; position:absolute; left:0; top:29px; height:23px; border-left:3px solid; }
+  section.ownership::before { border-color:var(--accent); }
+  section.planning::before { border-color:var(--ink); border-left-style:dashed; }
+  section.data::before { border-color:var(--line); border-left-style:dotted; }
+  h4 { margin:0 0 10px; font:400 24px/1.2 DD-Recoleta,Georgia,serif; text-wrap:pretty; }
+  p { margin:0; font:400 14px/1.65 Inter,Arial,sans-serif; color:var(--muted); }
+  @container(max-width:460px) {
+    .ambition { font-size:19px; }
+    .edge { font-size:11px; padding:1px 5px; }
+    .map { margin-bottom:25px; }
+    section { padding:21px 12px 21px 23px; }
+    h4 { font-size:22px; }
+  }
+</style>

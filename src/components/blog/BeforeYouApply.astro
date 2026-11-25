@@ -1,0 +1,125 @@
+---
+import applicant from '../../assets/blog-images/logistics-coordinator-career-path-2.webp';
+
+const questions = [
+  { title: 'Daily work', question: 'How much involves calls, paperwork and resolving changes?' },
+  { title: 'Working conditions', question: 'What location, shifts and availability does the role require?' },
+  { title: 'Support', question: 'What training, systems and backup will you have?' },
+];
+---
+
+<figure id="before-you-apply" class="before-you-apply not-prose" aria-labelledby="before-you-apply-title">
+  <div class="apply-layout">
+    <div class="apply-art">
+    <img
+      class="applicant-image"
+      src={applicant.src}
+      width={applicant.width}
+      height={applicant.height}
+      alt="Candidate at home reviewing job applications, with a laptop and handwritten notes"
+      loading="lazy"
+      decoding="async"
+    />
+    </div>
+    <div class="apply-copy">
+      <h3 id="before-you-apply-title">Before you apply</h3>
+      <dl class="apply-questions">
+        {questions.map(({ title, question }) => (
+          <div class="apply-question">
+            <dt>{title}</dt>
+            <dd>{question}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .before-you-apply {
+    --apply-paper: #fff8ee;
+    --apply-ink: #302b25;
+    --apply-muted: #61564a;
+    --apply-rule: #e3d5c4;
+    container-type: inline-size;
+    margin: 1.5em 0 2em;
+    border: 1px solid var(--apply-rule);
+    border-radius: 3px;
+    background: var(--apply-paper);
+    color: var(--apply-ink);
+    font-family: Inter, system-ui, sans-serif;
+    font-size: max(0.8em, 1rem);
+    line-height: 1.5;
+    scroll-margin-top: 7rem;
+  }
+
+  :global(.dark) .before-you-apply {
+    --apply-paper: #232622;
+    --apply-ink: #fff8ee;
+    --apply-muted: #c5c0b5;
+    --apply-rule: #4e5147;
+  }
+
+  .before-you-apply * { box-sizing: border-box; }
+
+  .apply-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .apply-art { position: relative; min-height: 18rem; overflow: hidden; }
+
+  .applicant-image {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 54% 50%;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .apply-copy { min-width: 0; padding: clamp(1rem, 3cqi, 1.5rem); align-self: center; }
+
+  .before-you-apply h3 {
+    margin: 0 0 0.8em;
+    color: var(--apply-ink);
+    font-family: 'DD-Recoleta', Georgia, serif;
+    font-size: min(1.6em, 1.65rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-transform: none;
+  }
+
+  .apply-questions { margin: 0; padding: 0; }
+  .apply-question + .apply-question {
+    margin-top: 0.85em;
+    padding-top: 0.85em;
+    border-top: 1px solid var(--apply-rule);
+  }
+
+  .apply-question dt {
+    margin: 0;
+    color: var(--apply-ink);
+    font-size: 0.9em;
+    font-weight: 650;
+    line-height: 1.4;
+  }
+
+  .apply-question dd {
+    margin: 0.25em 0 0;
+    color: var(--apply-muted);
+    font-size: 0.9375em;
+    line-height: 1.5;
+  }
+
+  @container (max-width: 479px) {
+    .apply-layout { grid-template-columns: minmax(0, 1fr); }
+    .apply-art { min-height: 0; aspect-ratio: 2 / 1; }
+  }
+</style>

@@ -1,0 +1,199 @@
+---
+interface Props { id?: string; }
+const { id = 'post-three-work-plan' } = Astro.props;
+---
+<figure class="workplan not-prose" aria-labelledby={`${id}-title`}>
+  <header>
+    <h3 id={`${id}-title`}>One crew. Two jobs.</h3>
+    <p>The inbound truck is unloaded, but its pallets are still on the receiving floor. In this example, putaway and outbound loading need the same crew and forklift.</p>
+  </header>
+
+  <fieldset class="controls">
+    <legend>Compare three work plans</legend>
+    <label><input class="overlap" type="radio" name={`${id}-plan`} value="overlap" checked /><span>Putaway left unscheduled</span></label>
+    <label><input class="separate" type="radio" name={`${id}-plan`} value="separate" /><span>Putaway before loading</span></label>
+    <label><input class="loading-first" type="radio" name={`${id}-plan`} value="loading-first" /><span>Loading before putaway</span></label>
+  </fieldset>
+
+  <div class="schedule-legend">
+    <span><i class="putaway-key" aria-hidden="true"></i>Putaway into storage</span>
+    <span><i class="loading-key" aria-hidden="true"></i>Outbound loading</span>
+  </div>
+  <div class="schedule">
+    <svg viewBox="0 0 640 210" fill="none" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id={`${id}-hatch`} patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(35)"><path d="M0 0V9" class="hatch" /></pattern>
+        <symbol id={`${id}-operator-ren`} viewBox="0 0 48 62">
+          <path class="operator-shirt" d="M7 54V40c0-9 7-14 17-14s17 5 17 14v14Z" />
+          <path class="operator-vest operator-vest-lead" d="m16 28 8 12 8-12 5 5v22H11V33Z" />
+          <path class="operator-seam" d="M24 40v15M14 45h20" />
+          <rect class="operator-face" x="19" y="22" width="10" height="10" rx="4" />
+          <ellipse class="operator-face" cx="24" cy="17" rx="11" ry="12" />
+          <path class="operator-hair" d="M13 20C10 9 14 4 20 4l-2 5-3 3v8Zm22 0c3-10-1-15-7-16l2 5 3 3v8Z" />
+          <path class="operator-hair" d="m14 21 4 2 2 3h8l2-3 4-2c-1 6-5 9-10 9s-9-3-10-9Z" />
+          <path class="operator-features" d="M20 18h.1M28 18h.1m-6 5q2 1 4 0" />
+        </symbol>
+        <symbol id={`${id}-operator-mo`} viewBox="0 0 48 62">
+          <path class="operator-shirt" d="M7 54V40c0-9 7-14 17-14s17 5 17 14v14Z" />
+          <path class="operator-vest" d="m16 28 8 12 8-12 5 5v22H11V33Z" />
+          <path class="operator-seam" d="M24 40v15M14 45h20" />
+          <rect class="operator-face" x="19" y="22" width="10" height="10" rx="4" />
+          <circle class="operator-hair" cx="35" cy="8" r="5.5" />
+          <ellipse class="operator-face" cx="24" cy="17" rx="11" ry="12" />
+          <path class="operator-hair" d="M13 20C9 12 12 3 23 3s15 7 12 17l-3-4-2-7c-3 5-8 6-14 6l-1 5Z" />
+          <path class="operator-hair-tie" d="m32 7 3 5" />
+          <path class="operator-features" d="M20 18h.1M28 18h.1m-6 5q2 1 4 0" />
+        </symbol>
+      </defs>
+      <path class="rule" d="M25 49H614M25 113H614" />
+      <path class="flow" d="M25 193H613M604 186L613 193L604 200" />
+      <g class="unplanned-work">
+        <rect x="75" y="30" width="460" height="39" rx="3" />
+        <text x="305" y="55" text-anchor="middle">No time allocated</text>
+      </g>
+      <g class="putaway-block">
+        <rect class="soft accent" x="75" y="30" width="194" height="39" rx="3" />
+        <path class="accent" d="M88 39H104V59H88ZM96 39V45M118 45H250M118 54H224" />
+      </g>
+      <g class="outbound-block">
+        <rect class="paper line" x="75" y="94" width="194" height="39" rx="3" />
+        <rect x="76" y="95" width="192" height="37" rx="2" fill={`url(#${id}-hatch)`} />
+        <path class="paper line" d="M87 103H141V116H87ZM145 107H155L164 115V120H145Z" />
+        <path class="line" d="M87 119H146M150 111H154L159 116H150Z" />
+        <circle class="paper line" cx="94" cy="121" r="3" /><circle class="paper line" cx="103" cy="121" r="3" /><circle class="paper line" cx="147" cy="122" r="3" /><circle class="paper line" cx="159" cy="122" r="3" />
+      </g>
+      <g class="separated-mark">
+        <path class="flow route-putaway" d="M280 49H303V112H333M324 105L333 112L324 119" />
+        <path class="flow route-loading" d="M280 113H303V49H333M324 42L333 49L324 56" />
+        <use href={`#${id}-operator-ren`} x="279" y="148" width="24" height="31" />
+        <use href={`#${id}-operator-mo`} x="303" y="148" width="24" height="31" />
+        <path class="crew-link route-unplanned" d="M269 153H239V133" />
+        <path class="crew-link route-putaway" d="M269 153H239V69M341 153H372V133" />
+        <path class="crew-link route-loading" d="M269 153H239V133M341 153H372V69" />
+      </g>
+    </svg>
+    <div class="axis"><span>Earlier in the shift</span><span>Later</span></div>
+  </div>
+
+  <div class="floor-scene">
+    <div class="scene-headings"><strong>Receiving floor</strong><strong>Storage racks</strong><strong>Outbound truck</strong></div>
+    <svg viewBox="0 0 640 145" fill="none" aria-hidden="true" focusable="false">
+      <path class="rule" d="M14 123H638" />
+      <path class="floor-bays" d="M18 106V119H80V106M84 106V119H146V106" />
+      <path class="rack-back" d="M234 18L352 110M352 18L234 110" />
+      <path class="rack-line" d="M224 12V121M362 12V121M224 16H362M224 52H362M224 110H362M218 121H231M355 121H369" />
+      <g class="received-pallets">
+        <g>
+          <rect class="pallet-box" x="27" y="62" width="46" height="40" rx="2" />
+          <path class="accent" d="M50 62V75M39 88L44 93L54 82" />
+          <path class="pallet-base" d="M22 105H78V111H22ZM29 111V116M50 111V116M71 111V116" />
+        </g>
+        <g>
+          <rect class="pallet-box" x="89" y="62" width="46" height="40" rx="2" />
+          <path class="accent" d="M112 62V75M101 88L106 93L116 82" />
+          <path class="pallet-base" d="M84 105H140V111H84ZM91 111V116M112 111V116M133 111V116" />
+        </g>
+      </g>
+      <path class="clear-floor" d="M61 85L76 100L105 69" />
+      <g class="outbound-truck">
+        <rect class="paper line" x="444" y="71" width="146" height="34" rx="2" />
+        <g class="loaded-freight">
+          <path class="freight-box" d="M464 82H493V101H464ZM504 82H533V101H504ZM544 82H573V101H544Z" />
+          <path class="freight-detail" d="M478.5 82V89M518.5 82V89M558.5 82V89M461 103H496M501 103H536M541 103H576" />
+        </g>
+        <path class="paper line" d="M599 106V78H620L637 96V106H599Z" />
+        <path class="line" d="M444 109H609M451 76V100M606 84H617L628 96H606ZM575 109V119H582" />
+        <path class="rule" d="M475 76V100M508 76V100M541 76V100M574 76V100" />
+        <circle class="paper line" cx="460" cy="115" r="7" /><circle class="paper line" cx="479" cy="115" r="7" /><circle class="paper line" cx="603" cy="115" r="7" /><circle class="paper line" cx="628" cy="115" r="7" />
+        <path class="rule" d="M457 115H463M476 115H482M600 115H606M625 115H631" />
+      </g>
+      <g class="crew-forklift">
+        <path class="paper line" d="M0 31H31L41 38V45H0Z" />
+        <path class="line" d="M7 31V3H39V35M3 3H44M50 4V43H77M55 4V39H77" />
+        <use href={`#${id}-operator-ren`} x="12" y="6" width="20" height="26" />
+        <path class="line" d="M33 29L39 23" />
+        <circle class="paper line" cx="10" cy="47" r="6" /><circle class="paper line" cx="38" cy="47" r="6" />
+      </g>
+      <path class="putaway-direction" d="M153 132H214M206 125L214 132L206 139" />
+    </svg>
+    <div class="scene-status" aria-live="polite" aria-atomic="true">
+      <p><span class="state-overlap">Unloaded pallets waiting</span><span class="state-separate">Receiving space cleared first</span><span class="state-loading-first">Pallets wait until loading ends</span></p>
+      <p><span class="state-overlap">Putaway unscheduled</span><span class="state-separate">Pallets put into storage</span><span class="state-loading-first">Putaway is next</span></p>
+      <p><span class="state-overlap">Crew busy loading</span><span class="state-separate">Loading is next</span><span class="state-loading-first">Outbound load completed first</span></p>
+    </div>
+  </div>
+  <p class="action">Reserve a work period for putaway. Choose whether it comes before or after loading based on receiving space and the outbound departure time.</p>
+</figure>
+<style>
+  .workplan {--paper:#faf8f5;--ink:#000000;--muted:#5f483a;--rule:#ad9686;--soft:#efe2d2;--accent:#fe5000;--orange:#fe5000;box-sizing:border-box;width:100%;max-width:760px;margin:28px auto;padding:24px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);font:14px/1.55 Inter,Arial,sans-serif;text-align:left;color-scheme:light;}
+  .workplan *,.workplan *::before,.workplan *::after{box-sizing:border-box;}
+  .workplan h3{margin:0 0 13px;font:800 clamp(27px,4vw,35px)/1.08 Bruta,Impact,sans-serif;text-transform:uppercase;color:var(--ink);}
+  .workplan header p{margin:0 0 18px;}
+  .workplan strong{font-weight:650;}
+  .workplan .controls{display:flex;flex-wrap:wrap;gap:8px;min-width:0;border:0;padding:0;margin:0 0 20px;}
+  .workplan .controls legend{padding:0;margin-bottom:8px;font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif;font-size:16px;font-weight:600;}
+  .workplan .controls label{display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 11px;border:1px solid var(--rule);border-radius:3px;cursor:pointer;}
+  .workplan .controls label:has(:checked){background:var(--soft);color:var(--ink);border-color:var(--accent);}
+  .workplan .controls label:has(:focus-visible){outline:2px solid var(--orange);outline-offset:3px;}
+  .workplan input{appearance:auto;width:17px;height:17px;flex:0 0 17px;margin:0;accent-color:var(--orange);cursor:pointer;}
+  .workplan .schedule-legend{display:flex;flex-wrap:wrap;gap:8px 24px;}
+  .workplan .schedule-legend span{display:flex;align-items:center;gap:8px;}
+  .workplan .schedule-legend i{display:block;width:17px;height:14px;border-radius:2px;}
+  .workplan .putaway-key{background:var(--soft);border:1.5px solid var(--accent);}
+  .workplan .loading-key{border:1.5px solid var(--ink);background:repeating-linear-gradient(125deg,transparent 0 4px,var(--rule) 4px 5px);}
+  .workplan .schedule{margin:8px 0 16px;}
+  .workplan svg{display:block;width:100%;height:auto;}
+  .workplan svg *{vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round;}
+  .workplan .line{stroke:var(--ink);stroke-width:1.5;}
+  .workplan .rule,.workplan .hatch{stroke:var(--rule);stroke-width:1;}
+  .workplan .paper{fill:var(--paper);}
+  .workplan .soft{fill:var(--soft);}
+  .workplan .operator-shirt{fill:var(--paper);stroke:var(--ink);stroke-width:1.1;}
+  .workplan .operator-vest{fill:var(--soft);stroke:var(--ink);stroke-width:1.1;}
+  .workplan .operator-vest-lead{fill:var(--orange);}
+  .workplan .operator-face{fill:#efe2d2;stroke:#5f483a;stroke-width:1;}
+  .workplan .operator-hair{fill:#5f483a;stroke:none;}
+  .workplan .operator-seam{fill:none;stroke:#fff8ee;stroke-width:1.2;}
+  .workplan .operator-hair-tie{fill:none;stroke:#ad9686;stroke-width:1.1;}
+  .workplan .operator-features{fill:none;stroke:#000000;stroke-width:.8;}
+  .workplan .accent{stroke:var(--accent);stroke-width:1.7;}
+  .workplan .flow,.workplan .crew-link{stroke:var(--muted);stroke-width:1.4;}
+  .workplan .unplanned-work rect{fill:var(--paper);stroke:var(--accent);stroke-width:1.5;stroke-dasharray:5 5;}
+  .workplan .unplanned-work text{fill:var(--ink);font:400 17px 'DD-Recoleta',Recoleta-Fallback,Georgia,serif;}
+  .workplan .axis{display:flex;justify-content:space-between;gap:20px;color:var(--muted);}
+  .workplan .floor-scene{border-top:1px solid var(--rule);padding-top:16px;}
+  .workplan .scene-headings,.workplan .scene-status{display:grid;grid-template-columns:minmax(0,180fr) minmax(0,220fr) minmax(0,240fr);gap:12px;text-align:center;}
+  .workplan .scene-headings{align-items:end;}
+  .workplan .scene-headings strong{font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif;font-size:16px;font-weight:600;}
+  .workplan .scene-status p{display:grid;align-items:start;margin:0;}
+  .workplan .scene-status span{display:block;grid-area:1/1;visibility:hidden;}
+  .workplan .scene-status .state-overlap{visibility:visible;}
+  .workplan .floor-bays{stroke:var(--accent);stroke-width:1.7;}
+  .workplan .rack-back{stroke:var(--rule);stroke-width:1.2;}
+  .workplan .rack-line{stroke:var(--ink);stroke-width:1.7;}
+  .workplan .pallet-box{fill:var(--soft);stroke:var(--accent);stroke-width:1.7;}
+  .workplan .pallet-base{stroke:var(--accent);stroke-width:1.5;}
+  .workplan .crew-forklift{transform:translate(364px,69px);}
+  .workplan .clear-floor,.workplan .putaway-direction{display:none;stroke:var(--accent);stroke-width:1.7;}
+  .workplan .action{border-top:1px solid var(--rule);padding-top:15px;margin:16px 0 0;}
+  .workplan .putaway-block,.workplan .route-putaway,.workplan .route-loading,.workplan .loaded-freight{display:none;}
+  .workplan .freight-box{fill:var(--soft);stroke:var(--muted);stroke-width:1.2;}
+  .workplan .freight-detail{stroke:var(--muted);stroke-width:1.2;}
+  .workplan:has(.separate:checked) .outbound-block{transform:translateX(266px);}
+  .workplan:has(.separate:checked) .unplanned-work,.workplan:has(.separate:checked) .route-unplanned{display:none;}
+  .workplan:has(.separate:checked) .putaway-block,.workplan:has(.separate:checked) .route-putaway{display:block;}
+  .workplan:has(.separate:checked) .scene-status .state-overlap{visibility:hidden;}
+  .workplan:has(.separate:checked) .scene-status .state-separate{visibility:visible;}
+  .workplan:has(.separate:checked) .received-pallets{transform:translate(210px,-7px);}
+  .workplan:has(.separate:checked) .crew-forklift{transform:translate(152px,69px);}
+  .workplan:has(.separate:checked) .clear-floor,.workplan:has(.separate:checked) .putaway-direction{display:block;}
+  .workplan:has(.separate:checked) .floor-bays{stroke:var(--muted);}
+  .workplan:has(.loading-first:checked) .putaway-block{transform:translateX(266px);}
+  .workplan:has(.loading-first:checked) .unplanned-work,.workplan:has(.loading-first:checked) .route-unplanned{display:none;}
+  .workplan:has(.loading-first:checked) .putaway-block,.workplan:has(.loading-first:checked) .route-loading,.workplan:has(.loading-first:checked) .loaded-freight{display:block;}
+  .workplan:has(.loading-first:checked) .scene-status .state-overlap{visibility:hidden;}
+  .workplan:has(.loading-first:checked) .scene-status .state-loading-first{visibility:visible;}
+  :global(html.dark) .workplan,:global(html[data-theme='dark']) .workplan{--paper:#000000;--ink:#fff8ee;--muted:#efe2d2;--rule:#9c806d;--soft:#5f483a;--accent:#fe5000;color-scheme:dark;}
+  @media(max-width:520px){.workplan{padding:19px 15px;margin:24px auto;}.workplan .controls label{flex:1 1 100%;}.workplan .schedule-legend{gap:8px 16px;}.workplan .unplanned-work text{font-size:28px;}}
+  @media print{.workplan{break-inside:avoid;}.workplan .controls{display:none;}}
+</style>

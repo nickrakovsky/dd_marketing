@@ -8,13 +8,15 @@ import { BENTO_FORWARDED_METHODS } from '../src/lib/bento-config.mjs';
  *   - src/components/pages/HomePage.astro  (homepage hero, id="book-demo")
  */
 
+// Form readiness is asserted below; unrelated images need not finish loading.
 test.describe('Bento SDK via Partytown', () => {
   // Validates that the Partytown forward list in astro.config.mjs covers every method
   // we care about. If the SDK fails to load (e.g. blocked by CSP, Partytown misconfig,
   // or forward list drift), the `window.bento.<method>` proxy stubs won't exist and
   // this test fails — the only automated signal we have that Bento is wired up.
   test('forwarded methods are available on window.bento', async ({ page }) => {
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
     // Partytown creates proxy stubs on window.bento for every forwarded method,
     // queuing calls until the worker-side SDK is ready. Wait up to 10s — the
@@ -41,11 +43,13 @@ test.describe('Bento SDK via Partytown', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' })
     );
     await page.route('https://assets.calendly.com/**', route => route.abort());
+    await page.route('**/_astro/vendor/calendly*', route => route.abort());
     await page.addInitScript(() => {
       window.open = () => null;
       window.Calendly = { initPopupWidget() {} };
     });
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
     const heroForm = page.locator('form#book-demo');
     await expect(heroForm).toBeVisible();
@@ -95,7 +99,8 @@ test.describe('LeadMagnetForm (Blog Posts)', () => {
       };
     });
 
-    await page.goto(TEST_POST);
+    const response = await page.goto(TEST_POST, { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Article response: ${response?.url() ?? page.url()}`).toBe(200);
 
     // LeadMagnetForm renders <form class="lead-magnet-form"> inside
     // <div class="lead-magnet-container">. The post has multiple — target the first visible one.
@@ -149,6 +154,7 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
     // Block the real Calendly widget assets and stub initPopupWidget so we
     // can capture the call without depending on Calendly's CDN.
     await page.route('https://assets.calendly.com/**', (route) => route.abort());
+    await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
     await page.addInitScript(() => {
       (window as any).__calendlyCalls = [];
       (window as any).Calendly = {
@@ -158,7 +164,8 @@ test.describe('CTA Form (Homepage — bottom section)', () => {
       };
     });
 
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
     const ctaForm = page.locator('#cta-bento-form');
     await ctaForm.scrollIntoViewIfNeeded();
@@ -203,6 +210,7 @@ test.describe('Hero Form (Homepage — above the fold)', () => {
     });
 
     await page.route('https://assets.calendly.com/**', (route) => route.abort());
+    await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
     await page.addInitScript(() => {
       (window as any).__calendlyCalls = [];
       (window as any).Calendly = {
@@ -212,7 +220,8 @@ test.describe('Hero Form (Homepage — above the fold)', () => {
       };
     });
 
-    await page.goto('/');
+    const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
+    expect(response?.status(), `Homepage response: ${response?.url() ?? page.url()}`).toBe(200);
 
     const heroForm = page.locator('form#book-demo');
     await expect(heroForm).toBeVisible();

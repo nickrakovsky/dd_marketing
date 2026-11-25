@@ -1,0 +1,18 @@
+Use case: illustration-story.
+Asset type: text-free raster base for an article illustration with editable SVG route overlays.
+
+Input image 1 is the original slotting diagram to rework: retain the recognisable front-facing rack and emphasis on one middle pick face, but replace all its text and universal storage-zone instructions. Input image 2 is the approved drift illustration, used ONLY as a style reference for crisp warehouse objects, cartons, steel, sand fills and orange accents. Do not reproduce its graph, text or icons as a row.
+
+Make a fresh compact warehouse scene on a genuinely transparent background, landscape approximately 3:2. The scene must leave clear floor space for later SVG goods-flow arrows, and have no text or route lines baked into the artwork.
+
+Composition, relative positions within the entire canvas:
+- One front-facing three-level steel rack bay is centred. Its upright frame runs approximately from x33% to x67%, and from y12% to y74%. Show several reserve cartons on the upper shelf, cartons or bins at the middle shelf and a few cartons on the lower shelf.
+- One selected pick bin on the middle shelf has its front-face centre at approximately x50%, y48%. Give only that bin a restrained pale-orange fill or orange lip, to distinguish a single location. Do not highlight a universal whole-body 'golden zone' band.
+- A reserve pallet of the same type of cartons, with a manual pallet truck, is at the left, approximately x17%, y76%.
+- A small warehouse picking cart with a tray and two cartons is at the right, approximately x84%, y76%.
+- Leave the floor between these objects, especially x40%–60% around y77%, visually open. This is the shared access area that the SVG overlay will identify.
+- Keep the selected pick bin, reserve pallet and picking cart distinct, completely visible and within generous margins. No perspective that obscures their connections. Small, lightly tinted local contact shadows are acceptable; no full painted warehouse backdrop or floor rectangle.
+
+Style: compact polished editorial warehouse illustration matching input image2's objects, with coherent charcoal outlines #1f2937, sand carton fills #efe2d2, warm pale sand #f8edd9 and restrained vivid orange #fd4f00. Steel uprights charcoal, selected bin and equipment details orange. Clean simple planar shapes with modest illustration depth, not a photorealistic rendering. No people, dramatic lighting or detailed warehouse panorama. The scene is illustrative, not a technical rack drawing or ergonomic prescription.
+
+Critical exclusions: absolutely NO letters, words, numbers, titles, labels, graphs, arrows, route paths, callout lines, legends, badges or watermark. No 'Golden Zone', 'Optimized Slotting Logic', heavy-item rules or upper-shelf rules. No hard rectangular background. The final PNG must have real alpha transparency around the rack, cartons and equipment. This is the clean artwork layer only; SVG labels and arrows will be added separately.

@@ -1,0 +1,245 @@
+---
+interface Props { id?: string; }
+const { id = 'nr-knowhow' } = Astro.props;
+---
+
+<figure class="dd-figure nr-knowhow not-prose" data-receipt-investigation aria-labelledby={`${id}-title`}>
+  <figcaption class="dd-figure-title" id={`${id}-title`}>Is this load really 20 cases short?</figcaption>
+
+  <div class="kh-fallback">
+    <p><strong>AI check at 09:46: 20 cases short.</strong></p>
+    <p>Order: 100 cases. Receiving record: 80 cases, still open.</p>
+    <p>At 09:51, the final 20 cases were recorded and the receipt closed.</p>
+    <p><strong>The load wasn’t short. Receiving was still in progress when the check ran.</strong> With access to the records, the team can spot the cause and change the check to wait until receiving is complete.</p>
+  </div>
+
+  <div class="kh-interactive" hidden>
+    <section class="kh-panel kh-surface" data-panel="alert" aria-label="AI result">
+      <p class="kh-orientation">An AI check flags a shortage. Open the alert to see what it used.</p>
+      <button class="kh-result-object" type="button" data-action="open-result" aria-label="Inspect the AI result: 20 cases short at 09:46">
+        <span class="kh-object-top"><span>AI check · 09:46</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></svg></span>
+        <span class="kh-shortage"><strong>20</strong><span>cases short</span></span>
+        <span class="kh-object-action">Inspect this alert <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></span>
+      </button>
+    </section>
+
+    <section class="kh-panel" data-panel="inputs" aria-label="Records behind the AI result" hidden>
+      <button class="kh-back" type="button" data-action="back-result"><span aria-hidden="true">←</span> Back to alert</button>
+      <p class="kh-orientation">The check compared these records. Follow the 80 cases back to receiving.</p>
+      <div class="kh-inputs">
+        <div class="kh-record-object kh-order">
+          <span class="kh-record-name"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h9l4 4v14H6zM15 3v5h4M10 12h5M10 16h5" /></svg>Order</span>
+          <span class="kh-record-count"><strong>100</strong> cases</span>
+          <span class="kh-mini-track" aria-hidden="true"><span class="kh-order-fill"></span></span>
+        </div>
+        <button class="kh-record-object kh-receipt-button" type="button" data-action="open-receipt" aria-label="Inspect the receiving record: 80 cases at 09:46">
+          <span class="kh-record-name"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="16" rx="2" /><path d="M9 3h6v4H9zM9 12h6M9 16h4" /></svg>Receiving</span>
+          <span class="kh-record-count"><strong>80</strong> cases</span>
+          <span class="kh-mini-track" aria-hidden="true"><span class="kh-received-fill"></span><span class="kh-mini-gap"></span></span>
+          <span class="kh-record-open">Open record <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></span>
+        </button>
+      </div>
+      <svg class="kh-input-links" viewBox="0 0 400 48" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M100 0v20h100m100-20v20H200v23m-6-6 6 6 6-6" /></svg>
+      <div class="kh-linked-result"><span>AI check · 09:46</span><strong>20 cases short</strong></div>
+    </section>
+
+    <section class="kh-panel kh-receipt-panel" data-panel="receipt" data-complete="false" aria-label="Receiving record history" hidden>
+      <button class="kh-back" type="button" data-action="back-inputs"><span aria-hidden="true">←</span> Back to comparison</button>
+      <p class="kh-orientation" data-receipt-orientation>This was the receiving record when the AI check ran.</p>
+      <div class="kh-open-record">
+        <div class="kh-record-heading"><span>Receiving record</span><strong class="kh-status" data-record-status>Open</strong></div>
+        <div class="kh-total"><span><strong data-record-count>80</strong> / 100 cases</span><time data-record-time datetime="09:46">09:46</time></div>
+        <div class="kh-quantity-track" aria-hidden="true"><span class="kh-received-portion"></span><span class="kh-last-portion"></span><span class="kh-gap-count">20</span></div>
+        <div class="kh-history">
+          <div class="kh-history-rail" aria-hidden="true"></div>
+          <div class="kh-history-slot" data-history-slot="check" data-current="true">
+            <span class="kh-entry-dot" aria-hidden="true"></span>
+            <div class="kh-entry kh-current-entry" data-current-entry="check" tabindex="-1" aria-label="Currently showing the receipt at the AI check, 09:46">
+              <span>Viewing <time datetime="09:46">09:46</time></span><span>At the AI check</span>
+            </div>
+            <button class="kh-entry kh-entry-button kh-check-entry" type="button" data-action="entry-check" aria-label="Revisit the receipt at the AI check, 09:46" hidden>
+              <time datetime="09:46">09:46</time><span class="kh-entry-action">Revisit the AI check <span aria-hidden="true">←</span></span>
+            </button>
+          </div>
+          <div class="kh-history-slot" data-history-slot="next" data-current="false">
+            <span class="kh-entry-dot" aria-hidden="true"></span>
+            <div class="kh-entry kh-current-entry" data-current-entry="next" tabindex="-1" aria-label="Currently showing the completed receipt, 09:51" hidden>
+              <span>Viewing <time datetime="09:51">09:51</time></span><span>Receipt complete</span>
+            </div>
+            <button class="kh-entry kh-entry-button kh-next-entry" type="button" data-action="entry-next" aria-label="View the next receipt update at 09:51">
+              <time datetime="09:51">09:51</time><span class="kh-entry-action">View next update <span aria-hidden="true">→</span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="kh-conclusion" data-conclusion hidden>
+        <p><strong>The load wasn’t short. Receiving was still in progress when the check ran.</strong></p>
+        <p>With access to the records, the team can spot the cause and change the check to wait until receiving is complete.</p>
+      </div>
+    </section>
+    <p class="kh-sr-only" role="status" aria-live="polite" aria-atomic="true" data-announcement></p>
+  </div>
+</figure>
+
+<script>
+  function initializeReceiptInvestigations() {
+    const investigations = document.querySelectorAll<HTMLElement>('[data-receipt-investigation]');
+    investigations.forEach(root => {
+      if (root.dataset.ready) return;
+      const interactive = root.querySelector<HTMLElement>('.kh-interactive');
+      const fallback = root.querySelector<HTMLElement>('.kh-fallback');
+      const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+      const receipt = root.querySelector<HTMLElement>('[data-panel="receipt"]');
+      const status = root.querySelector<HTMLElement>('[data-record-status]');
+      const count = root.querySelector<HTMLElement>('[data-record-count]');
+      const time = root.querySelector<HTMLTimeElement>('[data-record-time]');
+      const check = root.querySelector<HTMLButtonElement>('[data-action="entry-check"]');
+      const next = root.querySelector<HTMLButtonElement>('[data-action="entry-next"]');
+      const currentCheck = root.querySelector<HTMLElement>('[data-current-entry="check"]');
+      const currentNext = root.querySelector<HTMLElement>('[data-current-entry="next"]');
+      const orientation = root.querySelector<HTMLElement>('[data-receipt-orientation]');
+      const conclusion = root.querySelector<HTMLElement>('[data-conclusion]');
+      const announcement = root.querySelector<HTMLElement>('[data-announcement]');
+      if (!interactive || !fallback || !receipt || !status || !count || !time || !check || !next || !currentCheck || !currentNext || !orientation || !conclusion || !announcement) return;
+      root.dataset.ready = 'true';
+      interactive.hidden = false;
+      fallback.hidden = true;
+
+      const show = (name: string, focusAction: string) => {
+        panels.forEach(panel => { panel.hidden = panel.dataset.panel !== name; });
+        const focusTarget = root.querySelector<HTMLButtonElement>(`[data-action="${focusAction}"]`);
+        focusTarget?.focus({ preventScroll: true });
+      };
+      const setEntry = (complete: boolean, announce = true) => {
+        receipt.dataset.complete = String(complete);
+        status.textContent = complete ? 'Complete' : 'Open';
+        count.textContent = complete ? '100' : '80';
+        time.textContent = complete ? '09:51' : '09:46';
+        time.dateTime = complete ? '09:51' : '09:46';
+        check.hidden = !complete;
+        next.hidden = complete;
+        currentCheck.hidden = complete;
+        currentNext.hidden = !complete;
+        const historySlots = root.querySelectorAll<HTMLElement>('[data-history-slot]');
+        historySlots.forEach(slot => {
+          slot.dataset.current = String(slot.dataset.historySlot === (complete ? 'next' : 'check'));
+        });
+        orientation.textContent = complete ? 'Five minutes later, receiving is complete.' : 'This was the receiving record when the AI check ran.';
+        conclusion.hidden = !complete;
+        if (announce) announcement.textContent = complete
+          ? '09:51. All 100 cases received. There was no shortage. The check ran too soon. Tracing the alert lets the team change the check to wait until receiving is complete.'
+          : '09:46. 80 of 100 cases recorded. Receipt still open when the AI check ran.';
+      };
+      root.addEventListener('click', event => {
+        const button = (event.target as Element).closest<HTMLButtonElement>('button[data-action]');
+        if (!button || !root.contains(button)) return;
+        switch (button.dataset.action) {
+          case 'open-result':
+            show('inputs', 'open-receipt');
+            announcement.textContent = 'The result compares an order for 100 cases with a receiving record showing 80 cases.';
+            break;
+          case 'open-receipt':
+            setEntry(false, false);
+            show('receipt', 'entry-next');
+            announcement.textContent = 'Receiving record at 09:46. 80 of 100 cases recorded. Status: open.';
+            break;
+          case 'entry-next': setEntry(true); currentNext.focus({ preventScroll: true }); break;
+          case 'entry-check': setEntry(false); currentCheck.focus({ preventScroll: true }); break;
+          case 'back-inputs': show('inputs', 'open-receipt'); announcement.textContent = 'Original comparison at 09:46.'; break;
+          case 'back-result': show('alert', 'open-result'); announcement.textContent = 'Original AI alert: 20 cases short.'; break;
+        }
+      });
+    });
+  }
+  initializeReceiptInvestigations();
+  document.addEventListener('astro:page-load', initializeReceiptInvestigations);
+</script>
+
+<style>
+  .nr-knowhow [hidden] { display: none !important; }
+  .nr-knowhow button { font: inherit; color: var(--dd-figure-ink); cursor: pointer; }
+  .nr-knowhow .kh-history { cursor: default; }
+  .nr-knowhow button:focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 4px; }
+  .nr-knowhow .kh-interactive { margin-top: 1.25rem; }
+  .nr-knowhow .kh-panel { min-height: 18.5rem; animation: kh-enter .22s ease-out; }
+  .nr-knowhow .kh-surface { display: grid; align-content: start; }
+  .nr-knowhow .kh-orientation { margin: 0 0 1rem; font-size: 1rem; line-height: 1.5; }
+  .nr-knowhow .kh-result-object { display: block; width: min(100%, 25rem); margin: .5rem auto; padding: 1.1rem 1.2rem; border: 1px solid var(--dd-figure-ink); border-top: 4px solid var(--dd-figure-accent); border-radius: .5rem; background: var(--dd-figure-surface); text-align: left; box-shadow: .3rem .3rem 0 var(--dd-figure-paper), .3rem .3rem 0 1px var(--dd-figure-line); transition: transform .18s ease, box-shadow .18s ease; }
+  .nr-knowhow .kh-result-object:hover { transform: translateY(-2px); box-shadow: .3rem .45rem 0 var(--dd-figure-paper), .3rem .45rem 0 1px var(--dd-figure-line); }
+  .nr-knowhow .kh-object-top, .nr-knowhow .kh-object-action { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: .875rem; line-height: 1.4; }
+  .nr-knowhow .kh-object-top svg, .nr-knowhow .kh-object-action svg { width: 1.4rem; height: 1.4rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .nr-knowhow .kh-shortage { display: flex; align-items: baseline; gap: .65rem; margin: 1rem 0; }
+  .nr-knowhow .kh-shortage strong { font-size: 3.5rem; line-height: 1; letter-spacing: -.05em; font-weight: 600; }
+  .nr-knowhow .kh-shortage > span { font-size: 1.125rem; }
+  .nr-knowhow .kh-object-action { padding: .65rem .75rem; background: var(--dd-figure-selected-surface); color: var(--dd-figure-selected-ink); border-radius: .25rem; font-weight: 600; }
+  .nr-knowhow .kh-back { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.75rem; padding: .4rem .6rem; margin-bottom: .8rem; border: 1px solid var(--dd-figure-line); border-radius: .25rem; background: var(--dd-figure-paper); font-size: .875rem; line-height: 1.5; }
+  .nr-knowhow .kh-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: stretch; }
+  .nr-knowhow .kh-record-object { display: flex; flex-direction: column; min-width: 0; padding: .9rem; border: 1px solid var(--dd-figure-line); border-radius: .4rem; background: var(--dd-figure-paper); text-align: left; }
+  .nr-knowhow .kh-receipt-button { border-color: var(--dd-figure-ink); background: var(--dd-figure-surface); transition: transform .18s ease; }
+  .nr-knowhow .kh-receipt-button:hover { transform: translateY(-2px); }
+  .nr-knowhow .kh-record-name { display: flex; align-items: center; gap: .4rem; font-size: .875rem; line-height: 1.4; }
+  .nr-knowhow .kh-record-name svg { width: 1.5rem; height: 1.5rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; }
+  .nr-knowhow .kh-record-count { margin: .8rem 0; font-size: .875rem; }
+  .nr-knowhow .kh-record-count strong { font-size: 2rem; font-weight: 600; line-height: 1.15; letter-spacing: -.04em; }
+  .nr-knowhow .kh-mini-track { display: block; position: relative; height: .6rem; width: 100%; border: 1px solid var(--dd-figure-ink); }
+  .nr-knowhow .kh-order-fill, .nr-knowhow .kh-received-fill { position: absolute; inset: 0 auto 0 0; background: var(--dd-figure-ink); }
+  .nr-knowhow .kh-order-fill { width: 100%; }
+  .nr-knowhow .kh-received-fill { width: 80%; }
+  .nr-knowhow .kh-mini-gap { position: absolute; inset: 0 0 0 80%; border-left: 1px dashed var(--dd-figure-ink); }
+  .nr-knowhow .kh-record-open { display: flex; align-items: center; justify-content: space-between; gap: .35rem; margin-top: .8rem; padding: .55rem .5rem; background: var(--dd-figure-selected-surface); color: var(--dd-figure-selected-ink); border-radius: .25rem; font-size: .875rem; line-height: 1.4; font-weight: 600; }
+  .nr-knowhow .kh-record-open svg { width: 1.2rem; height: 1.2rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  .nr-knowhow .kh-input-links { display: block; width: 100%; height: 2.5rem; fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.5; }
+  .nr-knowhow .kh-input-links path { vector-effect: non-scaling-stroke; }
+  .nr-knowhow .kh-linked-result { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; padding: .75rem .9rem; border-left: 3px solid var(--dd-figure-accent); background: var(--dd-figure-surface); font-size: .875rem; line-height: 1.4; }
+  .nr-knowhow .kh-linked-result strong { font-size: 1rem; }
+  .nr-knowhow .kh-open-record { border: 1px solid var(--dd-figure-ink); border-radius: .4rem; padding: 1rem; }
+  .nr-knowhow .kh-record-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .875rem; line-height: 1.4; }
+  .nr-knowhow .kh-status { padding: .25rem .5rem; border: 1px dashed var(--dd-figure-ink); border-radius: .2rem; font-size: .875rem; font-weight: 600; }
+  .nr-knowhow [data-complete="true"] .kh-status { border-style: solid; background: var(--dd-figure-surface); }
+  .nr-knowhow .kh-total { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .3rem .8rem; margin: 1.15rem 0 .65rem; font-size: .875rem; }
+  .nr-knowhow .kh-total strong { font-size: 2.5rem; line-height: 1.1; font-weight: 600; letter-spacing: -.04em; }
+  .nr-knowhow time { font-family: var(--dd-figure-font); font-size: .875rem; font-variant-numeric: tabular-nums; }
+  .nr-knowhow .kh-quantity-track { position: relative; height: 2.5rem; border: 1px solid var(--dd-figure-ink); }
+  .nr-knowhow .kh-received-portion { position: absolute; inset: 0 20% 0 0; background: var(--dd-figure-surface); border-right: 1px dashed var(--dd-figure-ink); }
+  .nr-knowhow .kh-last-portion { position: absolute; inset: 0 0 0 80%; background: var(--dd-figure-accent); transform: scaleX(0); transform-origin: left center; transition: transform .45s ease; }
+  .nr-knowhow [data-complete="true"] .kh-last-portion { transform: scaleX(1); }
+  .nr-knowhow .kh-gap-count { position: absolute; inset: 0 0 0 80%; display: grid; place-items: center; font-size: 1rem; line-height: 1; transition: opacity .15s ease; }
+  .nr-knowhow [data-complete="true"] .kh-gap-count { opacity: 0; }
+  .nr-knowhow .kh-history { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; position: relative; margin-top: 1.15rem; padding-top: 1rem; }
+  .nr-knowhow .kh-history-rail { position: absolute; top: .4rem; left: 25%; right: 25%; border-top: 1px solid var(--dd-figure-line); pointer-events: none; }
+  .nr-knowhow .kh-history-slot { position: relative; min-width: 0; }
+  .nr-knowhow .kh-entry { display: grid; align-content: start; gap: .3rem; width: 100%; min-height: 4.75rem; height: 100%; padding: .65rem .6rem; border: 1px solid transparent; border-radius: .3rem; text-align: left; font-size: .875rem; line-height: 1.4; }
+  .nr-knowhow .kh-current-entry { cursor: default; background: none; color: var(--dd-figure-muted); }
+  .nr-knowhow .kh-current-entry:focus { outline: none; }
+  .nr-knowhow .kh-current-entry > span:first-child { font-weight: 600; color: var(--dd-figure-ink); }
+  .nr-knowhow .kh-entry-button { position: relative; border-color: var(--dd-figure-ink); background: var(--dd-figure-selected-surface); color: var(--dd-figure-selected-ink); transition: transform .18s ease, box-shadow .18s ease; }
+  .nr-knowhow .kh-entry-button:is(:hover, :focus-visible) { transform: translateY(-2px); box-shadow: 0 3px 0 var(--dd-figure-line); }
+  .nr-knowhow .kh-entry-button:is(:hover, :focus-visible) .kh-entry-action { text-decoration: underline; text-underline-offset: .2em; }
+  .nr-knowhow .kh-entry-button:active { transform: translateY(0); box-shadow: none; }
+  .nr-knowhow .kh-entry-dot { position: absolute; top: -1rem; left: 50%; transform: translateX(-50%); width: .85rem; height: .85rem; border: 1.5px solid var(--dd-figure-ink); border-radius: 50%; background: var(--dd-figure-paper); pointer-events: none; }
+  .nr-knowhow [data-current="true"] > .kh-entry-dot { background: var(--dd-figure-ink); }
+  .nr-knowhow .kh-entry time { font-weight: 600; }
+  .nr-knowhow .kh-conclusion { margin: 1rem 0 0; padding-top: .85rem; border-top: 1px solid var(--dd-figure-line); }
+  .nr-knowhow .kh-conclusion p { margin: .5rem 0 0; font-size: 1rem; line-height: 1.5; }
+  .nr-knowhow .kh-conclusion p:first-child { margin-top: 0; }
+  .nr-knowhow .kh-fallback p { margin: .7rem 0; font-size: 1rem; line-height: 1.5; }
+  .nr-knowhow .kh-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  @keyframes kh-enter { from { opacity: 0; transform: translateY(.35rem); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 420px) {
+    .nr-knowhow .kh-inputs { gap: .65rem; }
+    .nr-knowhow .kh-record-object { padding: .7rem .6rem; }
+    .nr-knowhow .kh-record-name { gap: .25rem; }
+    .nr-knowhow .kh-record-name svg { width: 1.2rem; height: 1.2rem; }
+    .nr-knowhow .kh-open-record { padding: .8rem; }
+    .nr-knowhow .kh-result-object { padding: 1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nr-knowhow .kh-panel { animation: none; }
+    .nr-knowhow .kh-result-object, .nr-knowhow .kh-receipt-button, .nr-knowhow .kh-entry-button, .nr-knowhow .kh-last-portion, .nr-knowhow .kh-gap-count { transition: none; }
+    .nr-knowhow .kh-result-object:hover, .nr-knowhow .kh-receipt-button:hover, .nr-knowhow .kh-entry-button:is(:hover, :focus-visible) { transform: none; }
+  }
+  @media print {
+    .nr-knowhow .kh-interactive { display: none !important; }
+    .nr-knowhow .kh-fallback[hidden] { display: block !important; }
+  }
+</style>

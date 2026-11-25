@@ -1,0 +1,388 @@
+---
+interface Props {
+  format: 'palletized-ftl' | 'ltl' | 'floor-loaded' | 'reefer' | 'flatbed' | 'container';
+  idPrefix: string;
+}
+
+const { format, idPrefix } = Astro.props;
+const isFlatbed = format === 'flatbed';
+const isContainer = format === 'container';
+const isReefer = format === 'reefer';
+const trailerRear = isContainer ? 736 : 900;
+const receivingOffset = isContainer ? -164 : 0;
+const palletPositions = Array.from({ length: 11 }, (_, index) => 270 + index * 55);
+const floorCartons = Array.from({ length: 4 }, (_, row) =>
+  Array.from({ length: 22 }, (_, column) => ({ x: 292 + column * 25.5, y: 122.75 + row * 21 })),
+).flat();
+const descriptions = {
+  'palletized-ftl': {
+    title: 'A palletized truckload at the receiving dock',
+    detail: 'A conventional North American tractor with a long hood and sleeper pulls a dry van backed against a level receiving dock. A side cutaway shows a row of wooden pallets carrying cartons with different markings, including mixed cartons on individual pallets. The receiving platform has a clear pallet route.',
+  },
+  ltl: {
+    title: 'One delivery within a shared LTL trailer',
+    detail: 'A long-hood tractor and full dry van are backed against the receiving dock. The two rear pallets are grouped as PO 1 for your facility. The next three pallets are grouped separately as PO 2 for your facility. Both groups have orange outlines and labeled brackets. The remaining six pallets have a neutral bracket labeled Goods for other facilities and stay on board.',
+  },
+  'floor-loaded': {
+    title: 'Loose cartons in a floor-loaded trailer',
+    detail: 'A long-hood tractor and dry van are backed against the receiving dock. A side cutaway shows cartons loaded without pallets, with the bottom row directly on the trailer floor. Empty wooden pallets stand in the receiving preparation area.',
+  },
+  reefer: {
+    title: 'A refrigerated trailer arriving with palletized fresh produce',
+    detail: 'A long-hood tractor pulls an insulated refrigerated trailer with a prominent refrigeration unit on its front wall. A side cutaway shows stacked ventilated produce cartons on wooden pallets, with leafy green vegetables visible in the open top cartons. The trailer is backed against the receiving dock. The illustration does not display a temperature reading.',
+  },
+  flatbed: {
+    title: 'Crated equipment on an open flatbed in the yard',
+    detail: 'A long-hood tractor pulls an open flatbed trailer carrying a large braced wooden crate and a piece of industrial equipment. Visible straps secure the loads to the deck. The truck stands in an open yard beside a clear ground-level preparation area, rather than against a raised receiving dock.',
+  },
+  container: {
+    title: 'A shipping container on a road chassis at receiving',
+    detail: 'A long-hood tractor pulls a forty-foot high-cube shipping container on a separate chassis. Steel corner fittings and the corrugated perimeter remain visible around a side cutaway revealing floor-loaded cartons. The container rear meets the receiving platform at floor level.',
+  },
+};
+const description = descriptions[format];
+---
+
+<svg
+  class="receiving-load-scene"
+  viewBox={format === 'ltl' ? '0 10 1000 268' : '0 40 1000 238'}
+  width="1000"
+  height={format === 'ltl' ? 268 : 238}
+  role="img"
+  aria-labelledby={`${idPrefix}-title`}
+  aria-describedby={`${idPrefix}-description`}
+>
+  <title id={`${idPrefix}-title`}>{description.title}</title>
+  <desc id={`${idPrefix}-description`}>{description.detail}</desc>
+
+  <defs>
+    <g id={`${idPrefix}-carton`}>
+      <rect class="load-scene-carton" width="32" height="27" rx="1" />
+      <path class="load-scene-tape" d="M13 1H19V9L16 7L13 9Z" />
+      <path class="load-scene-case-mark" d="M5 20H13" />
+    </g>
+    <g id={`${idPrefix}-produce-carton`}>
+      <rect class="load-scene-produce-carton" y="3" width="66" height="24" rx="1" />
+      <path class="load-scene-produce-rim" d="M1 7H65M5 8V25M61 8V25" />
+      <rect class="load-scene-produce-vent" x="11" y="12" width="10" height="5" rx="2" />
+      <rect class="load-scene-produce-vent" x="28" y="12" width="10" height="5" rx="2" />
+      <rect class="load-scene-produce-vent" x="45" y="12" width="10" height="5" rx="2" />
+      <path class="load-scene-produce-rim" d="M11 22H55" />
+    </g>
+    <g id={`${idPrefix}-open-produce-carton`}>
+      <path class="load-scene-leafy-produce" d="M8 7C4 3 6-3 11-3C8-9 16-12 21-7C26-12 34-8 32-2C38-1 39 5 32 8Z" />
+      <path class="load-scene-leafy-produce load-scene-produce-light" d="M35 8C29 4 31-2 37-3C35-9 44-12 48-7C53-10 60-7 58-1C65 0 65 6 60 9Z" />
+      <path class="load-scene-produce-leaf-vein" d="M21-4L23 7M16 0L22 3M27-1L23 4M47-4L46 7M41 0L46 3M53 0L46 4" />
+      <use href={`#${idPrefix}-produce-carton`} />
+    </g>
+    <g id={`${idPrefix}-pallet`}>
+      <rect class="load-scene-wood" width="78" height="4" rx="0.5" />
+      <path class="load-scene-wood" d="M3 4H13V12H3ZM34 4H44V12H34ZM65 4H75V12H65Z" />
+      <rect class="load-scene-wood" y="12" width="78" height="4" rx="0.5" />
+    </g>
+    <g id={`${idPrefix}-wheel`}>
+      <circle class="load-scene-tire" r="20.5" />
+      <circle class="load-scene-hub" r="10" />
+      <circle class="load-scene-hub-center" r="4" />
+    </g>
+  </defs>
+
+  <path class="load-scene-ground" d="M19 254H981" />
+
+  <g transform={isContainer ? 'translate(82 0)' : undefined}>
+
+  {!isFlatbed && (
+    <g class="load-scene-dock" transform={`translate(${receivingOffset} 0)`}>
+      <path class="load-scene-wall" d="M912 94H981V206H912Z" />
+      <path class="load-scene-wall-seam" d="M923 94V116M970 94V116" />
+      <path class="load-scene-platform" d="M908 206H981V254H908Z" />
+      <path class="load-scene-deck-edge" d="M908 206H981" />
+      <path class="load-scene-wall-seam" d="M920 230H970M920 242H970" />
+      <path class="load-scene-dock-bumper" d="M901 214H908V236H901Z" />
+    </g>
+  )}
+
+  <!-- Proportions follow a conventional sleeper tractor and a full-length highway van. -->
+  <g class="load-scene-chassis">
+    <path class="load-scene-structure" d={`M69 214H338V225H69ZM256 206H${trailerRear}V218H256Z`} />
+    <path class="load-scene-fifth-wheel" d="M275 207H327V214H275Z" />
+    <path class="load-scene-underbody" d={`M389 218V246H398V218M383 247H404M${793 + receivingOffset} 221H${887 + receivingOffset}`} />
+    <path class="load-scene-fuel-tank" d="M168 215H230V238H168Q159 226 168 215Z" />
+    <path class="load-scene-tank-band" d="M180 216V237M216 216V237" />
+    <path class="load-scene-rear-fender" d="M245 229V222Q248 212 263 212H315Q330 212 335 222V229" />
+  </g>
+
+  <g class="load-scene-tractor">
+    <path class="load-scene-sleeper" d="M157 130L176 111H228Q239 111 239 122V213H157Z" />
+    <path class="load-scene-sleeper-panel" d="M181 127H225V170H181ZM181 184H225M181 193H225" />
+    <path class="load-scene-cab" d="M104 177L110 145Q111 136 121 136H161V213H104Z" />
+    <path class="load-scene-window" d="M119 144H150V166H114Z" />
+    <path class="load-scene-door" d="M115 174H151V208H114M137 178H146" />
+    <path class="load-scene-hood" d="M35 179L104 175V214H32V186Q32 181 35 179Z" />
+    <path class="load-scene-hood-seam" d="M45 187H94M47 195H68" />
+    <path class="load-scene-grille" d="M32 182H40V211H31Z" />
+    <path class="load-scene-grille-detail" d="M34 186V207M37 185V207" />
+    <path class="load-scene-headlamp" d="M43 201H55V207H43Z" />
+    <path class="load-scene-bumper" d="M26 213H48V223H26Z" />
+    <path class="load-scene-front-fender" d="M51 232V231A25 25 0 0 1 101 231V232" />
+    <path class="load-scene-step" d="M110 214H151V222H108M111 229H151V235H109" />
+    <path class="load-scene-mirror" d="M112 151H102V166M98 151H103V166H98Z" />
+    <path class="load-scene-exhaust" d="M163 210V131Q163 124 168 124V117" />
+    <path class="load-scene-exhaust-shield" d="M160 158H167V202H160Z" />
+    <path class="load-scene-cab-accent" d="M49 178L101 175M117 190H149" />
+    <path class="load-scene-roof-light" d="M121 132H128M143 132H150" />
+  </g>
+
+  <g class="load-scene-wheel-group">
+    {[76, 269, 312, 817 + receivingOffset, 860 + receivingOffset].map((x) => <use href={`#${idPrefix}-wheel`} x={x} y="233.5" />)}
+  </g>
+
+  {!isFlatbed && !isContainer && (
+    <g class="load-scene-box-trailer">
+      <path class="load-scene-trailer-interior" d="M261 95H896V206H261Z" />
+      {isReefer ? (
+        <path class="load-scene-insulated-liner" d="M268 102H890V203H268Z" />
+      ) : (
+        <path class="load-scene-interior-seam" d="M265 103H891M267 111V201" />
+      )}
+      {(format === 'palletized-ftl' || isReefer) && (
+        <g class="load-scene-palletized-cargo">
+          {palletPositions.map((x, palletIndex) => (
+            <g transform={`translate(${x} 206) scale(.6) translate(0 -220)`}>
+              {isReefer ? (
+                [92, 120, 148, 176].map((y, row) => (
+                  <use href={`#${idPrefix}-${row === 0 ? 'open-produce-carton' : 'produce-carton'}`} x="6" y={y} />
+                ))
+              ) : (
+                [92, 120, 148, 176].map((y, row) => (
+                  <g>
+                    <use href={`#${idPrefix}-carton`} x="6" y={y} class:list={{ 'load-scene-mixed-case': (palletIndex + row) % 2 === 0 }} />
+                    <use href={`#${idPrefix}-carton`} x="40" y={y} class:list={{ 'load-scene-marked-case': row === palletIndex % 4 }} />
+                  </g>
+                ))
+              )}
+              <use href={`#${idPrefix}-pallet`} y="204" />
+            </g>
+          ))}
+        </g>
+      )}
+      {format === 'ltl' && (
+        <g class="load-scene-shared-cargo">
+          <rect class="load-scene-stop-highlight" x="596" y="108" width="162" height="99" rx="4" />
+          <rect class="load-scene-stop-highlight" x="764" y="108" width="108" height="99" rx="4" />
+          {palletPositions.map((x, palletIndex) => (
+            <g
+              class:list={{ 'load-scene-selected-consignment': palletIndex >= 6 }}
+              transform={`translate(${x} 206) scale(.6) translate(0 -220)`}
+            >
+              {palletIndex < 9 && palletIndex % 3 === 0 ? (
+                <g>
+                  <rect class="load-scene-crate" x="3" y="94" width="72" height="110" />
+                  <path class="load-scene-crate-brace" d="M9 100H69V198H9ZM9 100L69 198M69 100L9 198" />
+                </g>
+              ) : palletIndex < 9 && palletIndex % 3 === 1 ? (
+                <g>
+                  <rect class="load-scene-wrapped-load" x="6" y="65" width="66" height="139" rx="2" />
+                  <path class="load-scene-wrap-line" d="M6 91H72M6 119H72M6 147H72M6 175H72M12 65L65 204M35 65L72 168" />
+                </g>
+              ) : (
+                (palletIndex % 2 === 0 ? [64, 92, 120, 148, 176] : [92, 120, 148, 176]).map((y) => (
+                  <g><use href={`#${idPrefix}-carton`} x="6" y={y} /><use href={`#${idPrefix}-carton`} x="40" y={y} /></g>
+                ))
+              )}
+              <use href={`#${idPrefix}-pallet`} y="204" />
+            </g>
+          ))}
+          <path class="load-scene-other-bracket" d="M266 78V63H594V78M430 63V48L240 22V10" />
+          <path class="load-scene-selected-bracket" d="M596 78V63H758V78M677 63V48L550 22V10" />
+          <path class="load-scene-selected-bracket" d="M764 78V63H872V78M818 63V10" />
+        </g>
+      )}
+      {format === 'floor-loaded' && (
+        <g class="load-scene-floor-cargo">
+          {floorCartons.map(({ x, y }, index) => (
+            <use href={`#${idPrefix}-carton`} transform={`translate(${x} ${y}) scale(.75)`} class:list={{ 'load-scene-mixed-case': index % 4 === 0 }} />
+          ))}
+        </g>
+      )}
+      <path class="load-scene-trailer-rail" d={isReefer ? 'M256 90H900V99H256ZM256 206H900V215H256Z' : 'M256 90H900V96H256ZM256 206H900V213H256Z'} />
+      <path class="load-scene-trailer-post" d={isReefer ? 'M256 99H265V206H256ZM891 99H900V206H891Z' : 'M256 96H262V206H256ZM894 96H900V206H894Z'} />
+      <path class="load-scene-reflector" d="M272 210H289M872 210H889" />
+      <path class="load-scene-leveler" d="M900 206H918" />
+    </g>
+  )}
+
+  {isReefer && (
+    <g class="load-scene-refrigeration-unit">
+      <path class="load-scene-unit-casing" d="M248 101H266V174H245V110Q245 104 248 101Z" />
+      <circle class="load-scene-unit-fan" cx="255" cy="117" r="6" />
+      <path class="load-scene-unit-fan-detail" d="M255 111V123M249 117H261M251 113L259 121M259 113L251 121" />
+      <path class="load-scene-unit-vents" d="M249 132H260M249 139H260M249 146H260M249 153H260M249 160H260" />
+      <path class="load-scene-unit-accent" d="M249 168H260" />
+    </g>
+  )}
+
+  {isContainer && (
+    <g class="load-scene-container">
+      <path class="load-scene-container-shell" d="M256 91H736V206H256Z" />
+      {Array.from({ length: 32 }, (_, index) => <path class="load-scene-container-rib" d={`M${264 + index * 15} 98V201`} />)}
+      <path class="load-scene-container-cutaway" d="M286 116H711V206H286Z" />
+      {floorCartons.filter(({ x }) => x < 690).map(({ x, y }) => <use href={`#${idPrefix}-carton`} transform={`translate(${x} ${y}) scale(.75)`} />)}
+      <path class="load-scene-cutaway-edge" d="M286 201V116H711V201" />
+      <path class="load-scene-container-rail" d="M256 90H736V97H256ZM256 202H736V210H256Z" />
+      {[[256, 90], [725, 90], [256, 199], [725, 199]].map(([x, y]) => (
+        <g transform={`translate(${x} ${y})`}>
+          <rect class="load-scene-corner-fitting" width="11" height="11" rx="1" />
+          <rect class="load-scene-fitting-aperture" x="3" y="3" width="5" height="5" rx="1" />
+        </g>
+      ))}
+      <path class="load-scene-twist-lock" d="M264 211V217M729 211V217" />
+      <path class="load-scene-reflector" d="M278 215H295M708 215H725" />
+      <path class="load-scene-leveler" d="M736 206H754" />
+    </g>
+  )}
+
+  {isFlatbed && (
+    <g class="load-scene-flatbed">
+      <path class="load-scene-flatbed-deck" d="M256 202H900V213H256Z" />
+      <path class="load-scene-flatbed-edge" d="M256 205H900" />
+      <g class="load-scene-flatbed-crate" transform="translate(360 202) translate(-272 -215)">
+        <rect class="load-scene-crate" x="272" y="119" width="150" height="96" />
+        <path class="load-scene-crate-board" d="M297 120V214M322 120V214M347 120V214M372 120V214M397 120V214" />
+        <path class="load-scene-crate-brace" d="M280 127H414V207H280ZM280 127L414 207M414 127L280 207" />
+        <path class="load-scene-tie-down" d="M292 118V226M403 118V226" />
+      </g>
+      <g class="load-scene-industrial-load" transform="translate(650 202) translate(-454 -215)">
+        <path class="load-scene-machine-base" d="M454 205H587V215H454Z" />
+        <path class="load-scene-machine-body" d="M487 145H576V205H487Z" />
+        <path class="load-scene-machine-top" d="M496 135H566V145H496Z" />
+        <path class="load-scene-machine-motor" d="M460 163H486V197H460Q449 180 460 163Z" />
+        <path class="load-scene-machine-detail" d="M462 170H480M462 177H480M462 184H480M462 191H480M507 162H556V190H507Z" />
+        <path class="load-scene-tie-down" d="M525 135V226M567 145L588 226" />
+      </g>
+      <path class="load-scene-flatbed-stake" d="M265 209V218M384 209V218M503 209V218M622 209V218M741 209V218M888 209V218" />
+      <path class="load-scene-reflector" d="M278 210H295M872 210H889" />
+      <path class="load-scene-yard-space" d="M922 221V208H936M967 208H981V221M922 241V253H936M967 253H981V241" />
+      <path class="load-scene-yard-marking" d="M936 230H968" />
+    </g>
+  )}
+
+  {(format === 'palletized-ftl' || format === 'ltl' || isReefer) && (
+    <g class="load-scene-pallet-preparation">
+      <path class="load-scene-route" d="M922 165H968M958 155L968 165L958 175" />
+      <path class="load-scene-destination" d="M921 194H973V203H921Z" />
+    </g>
+  )}
+  {(format === 'floor-loaded' || isContainer) && (
+    <g class="load-scene-floor-preparation" transform={`translate(${receivingOffset} 0)`}>
+      <path class="load-scene-prep-corners" d="M917 160V149H929M969 149H980V160" />
+      <g transform="translate(921 206) scale(.7) translate(0 -32)">
+        <use href={`#${idPrefix}-pallet`} y="16" /><use href={`#${idPrefix}-pallet`} />
+      </g>
+    </g>
+  )}
+  </g>
+</svg>
+
+<style>
+  .receiving-load-scene {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    fill: none;
+    stroke: var(--load-ink, #302b25);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  .load-scene-ground,
+  .load-scene-wall-seam,
+  .load-scene-interior-seam { stroke: var(--load-line, #d7c8b5); }
+  .load-scene-wall { fill: var(--load-paper, #fff8ee); stroke: var(--load-line, #d7c8b5); }
+  .load-scene-platform { fill: var(--load-surface, #f1e6d6); stroke: var(--load-line, #d7c8b5); }
+  .load-scene-deck-edge { stroke: var(--load-muted, #756652); stroke-width: 2; }
+  .load-scene-structure,
+  .load-scene-fifth-wheel,
+  .load-scene-underbody,
+  .load-scene-dock-bumper { fill: var(--load-muted, #756652); }
+  .load-scene-trailer-interior,
+  .load-scene-container-cutaway { fill: var(--load-paper, #fff8ee); stroke: none; }
+  .load-scene-trailer-rail,
+  .load-scene-trailer-post,
+  .load-scene-cab,
+  .load-scene-hood,
+  .load-scene-sleeper,
+  .load-scene-fuel-tank,
+  .load-scene-unit-casing { fill: var(--load-surface, #f1e6d6); }
+  .load-scene-sleeper-panel,
+  .load-scene-door,
+  .load-scene-hood-seam,
+  .load-scene-tank-band,
+  .load-scene-mirror,
+  .load-scene-unit-vents { stroke: var(--load-muted, #756652); }
+  .load-scene-window { fill: var(--load-box-side, #c9b297); }
+  .load-scene-bumper,
+  .load-scene-grille,
+  .load-scene-front-fender,
+  .load-scene-rear-fender,
+  .load-scene-machine-base { fill: var(--load-muted, #756652); }
+  .load-scene-grille-detail { stroke: var(--load-paper, #fff8ee); stroke-width: 1; }
+  .load-scene-headlamp { fill: var(--load-paper, #fff8ee); stroke: var(--load-muted, #756652); }
+  .load-scene-exhaust { stroke-width: 4; stroke: var(--load-muted, #756652); }
+  .load-scene-exhaust-shield { fill: var(--load-surface, #f1e6d6); stroke: var(--load-muted, #756652); }
+  .load-scene-tire { fill: #27241f; stroke: var(--load-muted, #756652); }
+  .load-scene-hub { fill: var(--load-paper, #fff8ee); stroke: var(--load-muted, #756652); }
+  .load-scene-hub-center { fill: var(--load-muted, #756652); stroke: none; }
+  .load-scene-carton { fill: var(--case-fill, var(--load-box, #e5cfaf)); stroke: var(--case-stroke, var(--load-muted, #756652)); stroke-width: 1.25; }
+  .load-scene-tape { fill: var(--case-mark, var(--load-box-side, #c9b297)); stroke: none; }
+  .load-scene-case-mark { stroke: var(--case-mark, var(--load-muted, #756652)); stroke-width: 2; }
+  .load-scene-produce-carton { fill: var(--load-box, #e5cfaf); stroke: var(--load-muted, #756652); stroke-width: 1.5; }
+  .load-scene-produce-rim { stroke: var(--load-muted, #756652); stroke-width: 1.4; }
+  .load-scene-produce-vent { fill: #64734e; stroke: none; }
+  .load-scene-leafy-produce { fill: #7b8e60; stroke: #586b43; stroke-width: 1.25; }
+  .load-scene-produce-light { fill: #99a87c; }
+  .load-scene-produce-leaf-vein { stroke: #586b43; stroke-width: 1.2; }
+  .load-scene-mixed-case { --case-fill: var(--load-box-side, #c9b297); --case-mark: var(--load-paper, #fff8ee); }
+  .load-scene-marked-case { --case-mark: var(--load-accent, #FE5000); }
+  .load-scene-selected-consignment { --case-fill: var(--load-accent-wash, #ffeadc); --case-stroke: var(--load-accent, #FE5000); --case-mark: var(--load-accent, #FE5000); }
+  .load-scene-selected-consignment .load-scene-crate,
+  .load-scene-selected-consignment .load-scene-wrapped-load { fill: var(--load-accent-wash, #ffeadc); stroke: var(--load-accent, #FE5000); }
+  .load-scene-stop-highlight { fill: var(--load-accent-wash, #ffeadc); stroke: var(--load-accent, #FE5000); stroke-width: 2.5; }
+  .load-scene-other-bracket { stroke: var(--load-muted, #756652); stroke-width: 2.5; }
+  .load-scene-wood,
+  .load-scene-crate { fill: var(--load-wood, #c9ad86); stroke: var(--load-muted, #756652); stroke-width: 1.25; }
+  .load-scene-crate-brace { stroke: var(--load-muted, #756652); stroke-width: 3; }
+  .load-scene-crate-board { stroke: var(--load-muted, #756652); stroke-width: 1; opacity: 0.6; }
+  .load-scene-wrapped-load { fill: var(--load-surface, #f1e6d6); stroke: var(--load-muted, #756652); }
+  .load-scene-wrap-line { stroke: var(--load-line, #d7c8b5); }
+  .load-scene-insulated-liner { fill: none; stroke: var(--load-line, #d7c8b5); stroke-width: 6; }
+  .load-scene-unit-fan { fill: var(--load-paper, #fff8ee); stroke: var(--load-muted, #756652); }
+  .load-scene-unit-fan-detail { stroke: var(--load-muted, #756652); stroke-width: 1; }
+  .load-scene-container-shell { fill: var(--load-box-side, #c9b297); }
+  .load-scene-container-rib { stroke: var(--load-muted, #756652); stroke-width: 2; }
+  .load-scene-container-rail,
+  .load-scene-corner-fitting { fill: var(--load-surface, #f1e6d6); }
+  .load-scene-fitting-aperture { fill: var(--load-muted, #756652); stroke: none; }
+  .load-scene-cutaway-edge { stroke: var(--load-muted, #756652); stroke-width: 1.25; stroke-dasharray: 5 5; }
+  .load-scene-twist-lock { stroke: var(--load-ink, #302b25); stroke-width: 3; }
+  .load-scene-flatbed-deck { fill: var(--load-wood, #c9ad86); }
+  .load-scene-flatbed-edge { stroke: var(--load-paper, #fff8ee); }
+  .load-scene-machine-body,
+  .load-scene-machine-top,
+  .load-scene-machine-motor { fill: var(--load-surface, #f1e6d6); }
+  .load-scene-machine-detail { stroke: var(--load-muted, #756652); }
+  .load-scene-cab-accent,
+  .load-scene-roof-light,
+  .load-scene-reflector,
+  .load-scene-route,
+  .load-scene-prep-corners,
+  .load-scene-selected-bracket,
+  .load-scene-unit-accent,
+  .load-scene-tie-down,
+  .load-scene-yard-space { stroke: var(--load-accent, #FE5000); stroke-width: 2.5; }
+  .load-scene-yard-marking { stroke: var(--load-line, #d7c8b5); stroke-width: 2; }
+  .load-scene-destination { fill: var(--load-accent-wash, #fe50000a); stroke: var(--load-accent, #FE5000); stroke-dasharray: 5 5; }
+  .load-scene-leveler { stroke: var(--load-ink, #302b25); stroke-width: 3; }
+</style>

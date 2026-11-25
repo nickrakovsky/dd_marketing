@@ -1,0 +1,170 @@
+---
+import Facility from '../body-3/Facility.astro';
+import TeamIcon from './TeamIcon.astro';
+
+const units = [1, 2, 3];
+const remits = [
+  { kind: 'measure' as const, label: 'Measuring performance' },
+  { kind: 'improve' as const, label: 'Driving continuous improvement' },
+  { kind: 'practice' as const, label: 'Defining best practice' },
+];
+---
+
+<figure class="change-team" aria-label="A center of excellence change team working across three business units. The temporary or permanent team is reinforced by high-performing experts or managers. Its remit may include measuring performance, driving continuous improvement, or defining best practice across the company.">
+  <div class="company-panel">
+    <div class="company-network">
+      <section class="team" aria-labelledby="team-b-title">
+        <div class="team-symbol"><TeamIcon kind="team" /></div>
+        <h3 id="team-b-title">Center of excellence</h3>
+        <p class="team-description">A change team reinforced by high-performing experts or managers.</p>
+      </section>
+
+      <div class="connections" role="img" aria-label="The CoE works across all three business units">
+        <span class="branch branch-one"></span>
+        <span class="branch branch-two"></span>
+        <span class="branch branch-three"></span>
+      </div>
+
+      <div class="business-units">
+        {units.map(unit => (
+          <div class="business-unit">
+            <div class="facility"><Facility /></div>
+            <span>Business unit {unit}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <section class="remit" aria-labelledby="team-b-remit">
+      <h4 id="team-b-remit">The team’s remit may include:</h4>
+      <ul>
+        {remits.map(({ kind, label }) => (
+          <li>
+            <span class="remit-icon"><TeamIcon kind={kind} /></span>
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</figure>
+
+<style>
+  .change-team {
+    --team-paper: var(--paper, #fff8ee);
+    --team-ink: var(--ink, #24211d);
+    --team-muted: var(--muted, #686054);
+    --team-soft: var(--soft, #e3d5c4);
+    --team-line: var(--line, #9f8d78);
+    --team-accent: var(--accent, #fe5000);
+    margin: 0;
+    color: var(--team-ink);
+    container-type: inline-size;
+  }
+  .change-team *, .change-team *::before, .change-team *::after { box-sizing: border-box; }
+  .company-panel {
+    padding: 0 22px 23px;
+    border: 1px solid color-mix(in srgb, var(--team-line) 60%, transparent);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--team-soft) 13%, var(--team-paper));
+    overflow: hidden;
+  }
+  .company-network {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) 58px minmax(0, 1fr);
+    align-items: stretch;
+    margin: 24px 0;
+  }
+  .team {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 12px;
+    border: 1px solid color-mix(in srgb, var(--team-line) 45%, transparent);
+    border-radius: 5px;
+    background: var(--team-paper);
+    text-align: center;
+  }
+  .team-symbol { width: 108px; max-width: 100%; margin-bottom: 10px; }
+  .team-symbol :global(svg) { display: block; width: 100%; height: auto; }
+  h3 { margin: 0; font: 400 25px/1.15 'DD-Recoleta', Georgia, serif; text-wrap: balance; }
+  .team-description { margin: 12px 0 0; color: var(--team-muted); font: 400 14px/1.5 'Inter', Arial, sans-serif; text-wrap: pretty; }
+  .connections { position: relative; min-width: 0; }
+  .connections::before {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 36%;
+    height: 1.5px;
+    background: var(--team-accent);
+    content: '';
+  }
+  .connections::after {
+    position: absolute;
+    top: 16.6667%;
+    bottom: 16.6667%;
+    left: 36%;
+    width: 1.5px;
+    background: var(--team-accent);
+    content: '';
+  }
+  .branch {
+    position: absolute;
+    left: 36%;
+    right: 9px;
+    height: 1.5px;
+    background: var(--team-accent);
+  }
+  .branch::after {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 7px;
+    height: 7px;
+    border-top: 1.5px solid var(--team-accent);
+    border-right: 1.5px solid var(--team-accent);
+    transform: translateY(-50%) rotate(45deg);
+    content: '';
+  }
+  .branch-one { top: 16.6667%; }
+  .branch-two { top: 50%; }
+  .branch-three { top: 83.3333%; }
+  .business-units { display: grid; grid-template-rows: repeat(3, minmax(92px, 1fr)); }
+  .business-unit { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .facility { width: 78px; flex: 0 0 78px; }
+  .facility :global(svg) { display: block; }
+  .business-unit > span { font: 500 15px/1.45 'Inter', Arial, sans-serif; }
+  .remit {
+    padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--team-line) 45%, transparent);
+  }
+  h4 { margin: 0 0 10px; color: var(--team-muted); font: 400 15px/1.45 'Inter', Arial, sans-serif; }
+  .remit ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+  .remit li { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 7px; font: 500 14px/1.45 'Inter', Arial, sans-serif; text-wrap: pretty; }
+  .remit-icon { display: block; width: 36px; height: 36px; color: var(--team-ink); }
+  .remit-icon :global(svg) { display: block; width: 100%; height: 100%; }
+
+  @container (max-width: 560px) {
+    .remit ul { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .remit li { grid-template-columns: 36px minmax(0, 1fr); gap: 9px; font-size: 15px; }
+  }
+
+  @container (max-width: 480px) {
+    .company-panel { padding: 0 15px 20px; }
+    .company-network { grid-template-columns: minmax(0, 1.15fr) 38px minmax(0, 1fr); margin: 20px 0; }
+    .team { padding: 15px 10px; }
+    .team-symbol { width: 87px; }
+    h3 { font-size: 22px; }
+    .team-description { font-size: 13px; }
+    .business-unit { flex-direction: column; justify-content: center; gap: 5px; text-align: center; }
+    .facility { width: 65px; flex: 0 0 auto; }
+    .business-unit > span { font-size: 13px; line-height: 1.35; }
+    .branch { right: 6px; }
+    .remit { padding-top: 18px; }
+    h4 { margin-bottom: 8px; }
+    .remit ul { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .remit li { grid-template-columns: 36px minmax(0, 1fr); gap: 9px; font-size: 15px; }
+  }
+</style>

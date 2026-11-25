@@ -6,6 +6,45 @@ const slots = schedule.slots;
 const pageErrors = new WeakMap();
 const hubCards = '.latest-insight, resource-archive [data-resource-card]';
 const homeCards = '.feed-link, .featured-post';
+const octoberBatch = [
+  ['cut-overtime-with-load-scheduling', '2026-10-12'],
+  ['inventory-and-cash', '2026-10-13'],
+  ['speculative-produce-buying', '2026-10-14'],
+  ['major-customer-demand-spikes', '2026-10-15'],
+  ['backup-suppliers', '2026-10-16'],
+  ['products-and-channels-readiness', '2026-10-19'],
+  ['expiry-and-missed-orders', '2026-10-20'],
+  ['frozen-food-network-fit', '2026-10-21'],
+  ['ingredient-traceability', '2026-10-22'],
+  ['food-production-runs', '2026-10-23'],
+];
+const queueBatch = [
+  ['early-arrival-patterns', '2026-10-27', 'A'],
+  ['find-where-freight-slows-down', '2026-10-28', 'B'],
+  ['paperwork-delays', '2026-10-29', 'A'],
+  ['set-appointment-limits-by-load-type', '2026-10-30', 'B'],
+  ['rollout-decisions', '2026-11-02', 'A'],
+  ['get-detention-warnings-in-time-to-act', '2026-11-03', 'B'],
+  ['driver-wayfinding', '2026-11-04', 'A'],
+  ['set-response-expectations-for-warehouse-messages', '2026-11-05', 'B'],
+  ['receiving-backlogs', '2026-11-06', 'A'],
+  ['confirm-pickup-details-before-the-driver-arrives', '2026-11-09', 'B'],
+  ['missed-slot-fees', '2026-11-10', 'A'],
+];
+const nickBatch = [
+  ['learn-ai-limits-before-adoption', '2026-11-11'],
+  ['warehouse-software-optional-process', '2026-11-12'],
+  ['keep-operational-know-how-with-ai', '2026-11-13'],
+  ['logistics-automation-give-and-take', '2026-11-16'],
+  ['connect-inbound-outbound-warehouse-data', '2026-11-17'],
+];
+const novemberBatch = [
+  ['test-one-warehouse-process-change', '2026-11-18', 'B', 'youtube-video', 'DataDocks Team'],
+  ['truck-freight-in-house', '2026-11-19', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['agency-staffing-retention', '2026-11-20', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['costs-arrive-with-the-load', '2026-11-23', 'C', 'nick-audio', 'Nick Rakovsky'],
+  ['provider-dependence', '2026-11-24', 'C', 'nick-audio', 'Nick Rakovsky'],
+];
 
 // Future previews are development-only. Enable their cases when testing Astro dev:
 // PLAYWRIGHT_FUTURE_PREVIEWS=1 playwright test tests/blog-rollout.spec.mjs
@@ -31,7 +70,30 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The imported rollout has fifteen scheduled posts').toHaveLength(15);
+  expect(slots, 'The schedule preserves the existing 48 slots, followed by the supervisor-deadline companion').toHaveLength(49);
+  expect(slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The checklist is evergreen, outside the daily schedule').toBe(false);
+  expect(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
+    octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
+  );
+  expect(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
+    [[27, 'stop-hiding-missing-stock', '2026-10-26T14:30:00.000Z']],
+  );
+  expect(slots.slice(27, 38).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup])).toEqual(
+    queueBatch.map(([slug, date, rotationGroup], index) => [28 + index, slug, `${date}T14:30:00.000Z`, rotationGroup]),
+  );
+  expect(slots.slice(38, 43).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
+    nickBatch.map(([slug, date], index) => [39 + index, slug, `${date}T14:30:00.000Z`, 'C', 'nick-audio', 'Nick Rakovsky']),
+  );
+  expect(slots.slice(43, 48).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
+    novemberBatch.map(([slug, date, rotationGroup, provenance, author], index) =>
+      [44 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance, author]),
+  );
+  expect(slots.slice(48).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
+    [[49, 'give-warehouse-supervisors-clear-deadlines', '2026-11-25T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team']],
+  );
+  expect(schedule.timezone).toBe('UTC-08:00');
+  expect(schedule.localPublicationTime).toBe('06:30:00');
+  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-11-26T00:00:00Z'));
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);
@@ -99,10 +161,52 @@ test('an unpublished article cannot be opened through its public URL', async ({ 
   await expect(page.getByRole('heading', { name: future.title, exact: true })).toHaveCount(0);
 });
 
+test('missing-stock article preserves its video, stock toggle, and email-capture CTA', async ({ page }) => {
+  const slot = slots.find(slot => slot.slug === 'stop-hiding-missing-stock');
+  // Before publication, run against npm run dev:staging with this explicit opt-in.
+  // Normal deployment tests still honor the public article's publication date.
+  const useStaging = process.env.PLAYWRIGHT_STAGING_PREVIEWS === '1';
+  test.skip(!useStaging && Date.parse(slot.pubDate) > Date.now(), 'The article has not reached its publication date.');
+  const path = `${useStaging ? '/preview/staging' : '/posts'}/${slot.slug}`;
+  const response = await page.goto(path);
+  expect(response.status()).toBe(200);
+  await expect(page.locator('lite-youtube[videoid="EBz5ZOUYNZY"]')).toHaveCount(1);
+
+  const figure = page.locator('.dd-stock-record');
+  const toggle = figure.getByRole('checkbox', { name: /Record the damaged pallet/ });
+  const result = figure.locator('#ddsr-result');
+  const recordCount = figure.locator('.ddsr-count').first().locator('.ddsr-total');
+  await expect(toggle).not.toBeChecked();
+  await expect(result.locator('.ddsr-before')).toBeVisible();
+  await expect(result.locator('.ddsr-after')).toBeHidden();
+  await expect(recordCount.locator('.ddsr-before')).toHaveText('12');
+  await toggle.focus();
+  await page.keyboard.press('Space');
+  await expect(toggle).toBeChecked();
+  await expect(result.locator('.ddsr-before')).toBeHidden();
+  await expect(result.locator('.ddsr-after')).toHaveText(/The record now matches: 11 available/);
+  await expect(result.locator('.ddsr-after')).toBeVisible();
+  await expect(recordCount.locator('.ddsr-after')).toHaveText('11');
+  await toggle.uncheck();
+  await expect(result.locator('.ddsr-before')).toBeVisible();
+
+  const cta = page.getByRole('link', { name: 'See how DataDocks could work at your warehouse', exact: true });
+  const dialog = page.locator('#demo-capture-dialog');
+  await expect(cta).toHaveAttribute('href', '#book-demo');
+  await expect(dialog).toHaveCount(1);
+  await expect(dialog).toHaveAttribute('data-standalone');
+  await cta.click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('textbox', { name: 'Email address' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(cta).toBeFocused();
+});
+
 test.describe('development publication previews', () => {
   test.skip(process.env.PLAYWRIGHT_FUTURE_PREVIEWS !== '1', 'Requires the development-only preview routes.');
 
-  test('future hub includes all fifteen exactly once, split between latest five and older resources', async ({ page }) => {
+  test('future hub includes every queued post exactly once, split between latest five and older resources', async ({ page }) => {
     const response = await page.goto('/preview/daily-blog/posts');
     expect(response.status()).toBe(200);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
@@ -119,7 +223,7 @@ test.describe('development publication previews', () => {
       await expect(card.locator('.latest-insight-topic')).not.toBeEmpty();
       await expect(card.locator('.latest-insight-type')).toHaveText('Article');
     }
-    expect(archive.slice(0, 10)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
+    expect(archive.slice(0, slots.length - 5)).toEqual(newestFirst.slice(5).map(slot => `/posts/${slot.slug}`));
     for (const slot of slots) {
       expect([...latest, ...archive].filter(path => path === `/posts/${slot.slug}`), slot.title).toHaveLength(1);
     }
@@ -136,8 +240,7 @@ test.describe('development publication previews', () => {
     expect(featuredPath).toBeTruthy();
     expect(slots.map(slot => `/posts/${slot.slug}`)).not.toContain(featuredPath);
     const authors = await page.locator('.feed-author').allTextContents();
-    expect(authors).toContain('Nick Rakovsky');
-    expect(authors).toContain('DataDocks Team');
+    expect(authors.map(author => author.trim())).toEqual(newestFirst.slice(0, 5).map(slot => slot.author));
     await expect(page.locator('.all-resources')).toHaveAttribute('href', '/preview/daily-blog/posts');
 
     // Neither visiting a future view nor adding an arbitrary cutoff query can publish content.

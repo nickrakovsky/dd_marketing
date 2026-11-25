@@ -1,0 +1,28 @@
+---
+import Layout from '../../src/layouts/Layout.astro';
+import { posts } from './posts';
+
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+Astro.response.headers.set('Cache-Control', 'no-store');
+---
+<Layout title="Staged blog posts | DataDocks" noindex>
+  <main class="min-h-screen bg-[#FFF8E9] text-gray-900 px-6 py-12 sm:px-12">
+    <div class="max-w-5xl mx-auto">
+      <p class="font-sans text-sm uppercase tracking-widest text-[#a33300]">Local preview · {posts.length} posts</p>
+      <h1 class="font-bruta uppercase text-5xl sm:text-7xl text-[#fd4f00] my-4">Blog posts for review</h1>
+      <p class="font-recoleta text-xl mb-8">Open a post to review its title, illustration and source links in the website layout. Scheduled publication dates appear below in fixed UTC−08:00.</p>
+      <ol class="grid gap-4 sm:grid-cols-2">
+        {posts.map(post => (
+          <li>
+            <a class="block h-full p-6 border border-[#E5D3B3] bg-white/60 hover:bg-white focus-visible:outline-[#fd4f00]" href={'/preview/staging/' + post.slug}>
+              <span class="font-sans text-sm text-gray-600">{post.label} · {post.document.frontmatter.author}</span>
+              <h2 class="font-recoleta font-bold text-2xl leading-snug mt-2 mb-4">{post.document.frontmatter.title}</h2>
+              <span class="font-sans text-xs text-gray-600 break-all">/posts/{post.slug}</span>
+              <span class="block mt-2 font-sans text-xs text-gray-600">{post.pubDate ? <time datetime={post.pubDate}>{post.publicationLabel}</time> : post.publicationLabel}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </main>
+</Layout>

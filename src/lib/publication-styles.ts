@@ -1,0 +1,21 @@
+/** Replaced with build-only sample results; source and development need no map. */
+const serialized: string = '__PUBLICATION_CRITICAL_CSS__';
+const criticalStyles: { styles: string[]; byPath: Record<string, number> } = serialized.startsWith('{')
+  ? JSON.parse(serialized)
+  : { styles: [], byPath: {} };
+
+export async function withPublicationStyles(response: Response, pathname: string): Promise<Response> {
+  const css = criticalStyles.styles[criticalStyles.byPath[pathname.toLowerCase()]];
+  if (!css || response.status !== 200 || !response.headers.get('Content-Type')?.includes('text/html')) return response;
+
+  let inserted = false;
+  const html = (await response.text()).replace(/<link\b[^>]*rel="stylesheet"[^>]*href="\/_astro\/[^"<>]+\.css"[^>]*>/g, link => {
+    const critical = inserted ? '' : `<style data-publication-critical>${css}</style>`;
+    inserted = true;
+    return `${critical}${link.replace('rel="stylesheet"', 'rel="stylesheet" media="print" data-dd-async-css')}<noscript>${link}</noscript>`;
+  });
+  const headers = new Headers(response.headers);
+  headers.delete('Content-Length');
+  headers.delete('ETag');
+  return new Response(html, { status: response.status, statusText: response.statusText, headers });
+}

@@ -1,0 +1,18 @@
+---
+// Paid-only destination: keep out of menus, content links and discovery lists.
+// The shared campaign policy enforces robots metadata, headers and build checks.
+export const prerender = false;
+
+import HomePage from '../components/pages/HomePage.astro';
+
+const description = 'Schedule outbound loads and coordinate warehouse dispatch. Let carriers book collection slots within your rules, with one shared view of appointments and loading progress.';
+---
+
+<HomePage
+  title="Outbound Dock Management | DataDocks"
+  description={description}
+  headingLines={['OUTBOUND DOCK', 'MANAGEMENT']}
+  heroDescription={description}
+  demoAttribution="page"
+  noindex
+/>

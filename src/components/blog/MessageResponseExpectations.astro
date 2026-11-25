@@ -1,0 +1,46 @@
+---
+import './message-response-expectations.css';
+const teams = ['Receiving', 'Inventory', 'Shipping', 'Yard', 'Next shift'];
+---
+
+<figure class="dd-notification-route not-prose" aria-labelledby="ddnr-title">
+  <header class="ddnr-heading">
+    <h3 id="ddnr-title">One decision.<br />Who gets notified?</h3>
+  </header>
+
+  <fieldset class="ddnr-controls">
+    <legend class="ddnr-sr-only">Choose who receives the notification</legend>
+    <label><input type="radio" name="ddnr-audience" value="group" checked aria-controls="ddnr-diagram ddnr-result" /><span>Notify the group</span></label>
+    <label><input type="radio" name="ddnr-audience" value="owner" aria-controls="ddnr-diagram ddnr-result" /><span>Notify the owner</span></label>
+  </fieldset>
+
+  <div class="ddnr-diagram" id="ddnr-diagram" role="group" aria-label="One load update and five teams. Shipping is responsible for the decision.">
+    <div class="ddnr-source">
+      <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" focusable="false"><path d="M8 10h32v25H8zM8 12l16 12 16-12M8 35l12-13m20 13L28 22" /></svg>
+      <strong>Load update</strong>
+      <p>Shipping needs to confirm the next step.</p>
+    </div>
+
+    <ul class="ddnr-teams" aria-label="Teams with access to the shared load record">
+      {teams.map(team => (
+        <li class:list={['ddnr-team', { 'ddnr-owner': team === 'Shipping' }]}>
+          <div class="ddnr-person" aria-hidden="true">
+            <svg viewBox="0 0 36 36" width="36" height="36" focusable="false"><circle cx="18" cy="12" r="5" /><path d="M7 29c0-7 4-10 11-10s11 3 11 10" /></svg>
+            <span class="ddnr-dot"></span>
+          </div>
+          <div class="ddnr-team-name"><strong>{team}</strong>{team === 'Shipping' && <span>Owns the response</span>}</div>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="ddnr-result" id="ddnr-result" aria-live="polite" aria-atomic="true">
+    <p class="ddnr-broadcast"><strong>5 teams notified.</strong> Shipping owns the response.</p>
+    <p class="ddnr-targeted"><strong>1 team notified.</strong> Shipping owns the response.</p>
+  </div>
+
+  <div class="ddnr-shared">
+    <svg viewBox="0 0 22 24" width="22" height="24" aria-hidden="true" focusable="false"><path d="M4 2h10l5 5v15H4zM14 2v6h5M8 12h7M8 16h7" /></svg>
+    <p><strong>The shared record stays visible to everyone.</strong><span>Other teams can check the load’s status without receiving this notification.</span></p>
+  </div>
+</figure>

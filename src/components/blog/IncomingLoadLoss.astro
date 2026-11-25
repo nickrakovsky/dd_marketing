@@ -1,0 +1,235 @@
+---
+const figureId = `incoming-load-${Math.random().toString(36).slice(2, 10)}`;
+const contaminationId = `${figureId}-contamination`;
+const processingId = `${figureId}-processing`;
+const patternId = `${figureId}-processing-hatch`;
+---
+
+<figure class="dd-figure incoming-load not-prose" data-incoming-load>
+  <header class="il-header">
+    <h2 class="dd-figure-title" id={`${figureId}-title`}>What can this load produce?</h2>
+    <p>Try a hypothetical 1,000 kg load. Change what is unusable on arrival, then compare a change in processing.</p>
+  </header>
+
+  <div class="il-control">
+    <div class="il-control-heading">
+      <label for={contaminationId}>Unusable material on arrival</label>
+      <output for={contaminationId} data-contamination-value>20%</output>
+    </div>
+    <input id={contaminationId} data-contamination type="range" min="0" max="40" step="1" value="20" aria-valuetext="20 percent, 200 kilograms unusable on arrival" />
+    <div class="il-range-ends" aria-hidden="true"><span>0%</span><span>40%</span></div>
+  </div>
+
+  <div class="il-load-result" aria-live="polite" aria-atomic="true">
+    <p><strong><span data-usable>800</span> kg usable input</strong><span class="il-result-arrow" aria-hidden="true"> → </span><strong><span data-recovered>720</span> kg recovered</strong></p>
+    <span class="il-sr-only" data-live-detail>200 kg was unusable on arrival. 80 kg of usable material was lost in processing. Recovery is 72% of the whole arriving load and 90% of usable input.</span>
+  </div>
+
+  <div class="il-load-chart">
+    <div class="il-chart-heading"><span>Whole arriving load</span><span>1,000 kg</span></div>
+    <div class="il-bar-wrap">
+    <svg class="il-bar" viewBox="0 0 1000 92" preserveAspectRatio="none" role="img" aria-labelledby={`${figureId}-chart-title ${figureId}-chart-description`}>
+      <title id={`${figureId}-chart-title`}>Where the arriving load ends up</title>
+      <desc id={`${figureId}-chart-description`} data-chart-description>Of the 1,000 kg load, 720 kg was recovered, 200 kg was unusable on arrival, and 80 kg was lost in processing.</desc>
+      <defs>
+        <pattern id={patternId} width="14" height="14" patternUnits="userSpaceOnUse">
+          <rect width="14" height="14" class="il-process-surface" />
+          <path d="M-3 3L3-3M0 14L14 0M11 17L17 11" class="il-process-stripe" />
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="720" height="92" class="il-recovered-fill" data-bar-recovered />
+      <rect x="720" y="0" width="200" height="92" class="il-unusable-fill" data-bar-unusable />
+      <rect x="920" y="0" width="80" height="92" fill={`url(#${patternId})`} data-bar-processing />
+    </svg>
+    <div class="il-bar-amounts" aria-hidden="true">
+      <span class="il-amount-slot" style="width: 72%" data-amount-slot="recovered"><span class="il-amount-plate"><span data-recovered>720</span> kg</span></span>
+      <span class="il-amount-slot" style="width: 20%" data-amount-slot="unusable"><span class="il-amount-plate"><span data-unusable>200</span> kg</span></span>
+      <span class="il-amount-slot" style="width: 8%" data-amount-slot="processing"><span class="il-amount-plate"><span data-processing-loss>80</span> kg</span></span>
+    </div>
+    </div>
+    <dl class="il-legend" aria-hidden="true">
+      <div><dt><span class="il-swatch il-swatch-recovered" aria-hidden="true"></span>Recovered</dt><dd data-fallback="recovered"><span data-recovered>720</span> kg</dd></div>
+      <div><dt><span class="il-swatch il-swatch-unusable" aria-hidden="true"></span>Unusable on arrival</dt><dd data-fallback="unusable"><span data-unusable>200</span> kg</dd></div>
+      <div><dt><span class="il-swatch il-swatch-processing" aria-hidden="true"></span>Lost in processing</dt><dd data-fallback="processing"><span data-processing-loss>80</span> kg</dd></div>
+    </dl>
+  </div>
+
+  <div class="il-recovery-comparison">
+    <p><strong><span data-gross-rate>72</span>%</strong><span>of the whole arriving load recovered</span></p>
+    <p><strong><span data-usable-rate>90</span>%</strong><span>of usable input recovered</span></p>
+  </div>
+
+  <details class="il-processing-details">
+    <summary class="dd-disclosure">
+      Compare a change in processing
+      <svg class="dd-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+    </summary>
+    <div class="il-control il-processing-control">
+      <div class="il-control-heading">
+        <label for={processingId}>Usable input recovered by processing</label>
+        <output for={processingId} data-processing-value>90%</output>
+      </div>
+      <input id={processingId} data-processing type="range" min="70" max="100" step="1" value="90" aria-valuetext="90 percent of usable input recovered by processing" />
+      <div class="il-range-ends" aria-hidden="true"><span>70%</span><span>100% (no processing loss)</span></div>
+    </div>
+    <p>Change processing independently to compare the two effects. The 100% setting assumes no processing loss; it is an ideal scenario, not a typical operating rate.</p>
+  </details>
+
+  <noscript><p>This shows the starting example: 20% unusable on arrival and 90% processing recovery. Enable JavaScript to adjust it.</p></noscript>
+</figure>
+
+<script>
+  function initializeIncomingLoadFigures() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-incoming-load]');
+    figures.forEach((figure) => {
+      if (figure.dataset.initialized === 'true') return;
+      const contamination = figure.querySelector<HTMLInputElement>('[data-contamination]');
+      const processing = figure.querySelector<HTMLInputElement>('[data-processing]');
+      const unusableBar = figure.querySelector<SVGRectElement>('[data-bar-unusable]');
+      const recoveredBar = figure.querySelector<SVGRectElement>('[data-bar-recovered]');
+      const processingBar = figure.querySelector<SVGRectElement>('[data-bar-processing]');
+      const recoveredAmount = figure.querySelector<HTMLElement>('[data-amount-slot="recovered"]');
+      const unusableAmount = figure.querySelector<HTMLElement>('[data-amount-slot="unusable"]');
+      const processingAmount = figure.querySelector<HTMLElement>('[data-amount-slot="processing"]');
+      const barFrame = figure.querySelector<HTMLElement>('.il-bar-wrap');
+      if (!contamination || !processing || !unusableBar || !recoveredBar || !processingBar || !recoveredAmount || !unusableAmount || !processingAmount || !barFrame) return;
+      figure.dataset.initialized = 'true';
+
+      const format = (value: number) => value.toLocaleString('en-GB', { maximumFractionDigits: 1 });
+      const write = (selector: string, value: string) => {
+        const nodes = figure.querySelectorAll<HTMLElement>(selector);
+        nodes.forEach((node) => { node.textContent = value; });
+      };
+      const updateLabelPlacement = () => {
+        [recoveredAmount, unusableAmount, processingAmount].forEach((slot) => {
+          const plate = slot.querySelector<HTMLElement>('.il-amount-plate');
+          const fallback = figure.querySelector<HTMLElement>(`[data-fallback="${slot.dataset.amountSlot}"]`);
+          if (!plate || !fallback) return;
+          const fits = slot.getBoundingClientRect().width >= plate.getBoundingClientRect().width + 12;
+          plate.dataset.visible = String(fits);
+          fallback.hidden = fits;
+        });
+      };
+
+      const update = () => {
+        const gross = 1000;
+        const contaminationPercent = Math.min(40, Math.max(0, Number(contamination.value)));
+        const processingPercent = Math.min(100, Math.max(70, Number(processing.value)));
+        const unusable = gross * contaminationPercent / 100;
+        const usable = gross - unusable;
+        const recovered = usable * processingPercent / 100;
+        const processingLoss = usable - recovered;
+        const grossRecovery = (100 - contaminationPercent) * processingPercent / 100;
+
+        write('[data-contamination-value]', `${format(contaminationPercent)}%`);
+        write('[data-processing-value]', `${format(processingPercent)}%`);
+        write('[data-unusable]', format(unusable));
+        write('[data-usable]', format(usable));
+        write('[data-recovered]', format(recovered));
+        write('[data-processing-loss]', format(processingLoss));
+        write('[data-gross-rate]', format(grossRecovery));
+        write('[data-usable-rate]', format(processingPercent));
+        contamination.setAttribute('aria-valuetext', `${format(contaminationPercent)} percent, ${format(unusable)} kilograms unusable on arrival`);
+        processing.setAttribute('aria-valuetext', `${format(processingPercent)} percent of usable input recovered by processing`);
+
+        recoveredBar.setAttribute('x', '0');
+        recoveredBar.setAttribute('width', String(recovered));
+        unusableBar.setAttribute('x', String(recovered));
+        unusableBar.setAttribute('width', String(unusable));
+        processingBar.setAttribute('x', String(recovered + unusable));
+        processingBar.setAttribute('width', String(processingLoss));
+        recoveredAmount.style.width = `${recovered / 10}%`;
+        unusableAmount.style.width = `${unusable / 10}%`;
+        processingAmount.style.width = `${processingLoss / 10}%`;
+        write('[data-chart-description]', `Of the 1,000 kg load, ${format(recovered)} kg was recovered, ${format(unusable)} kg was unusable on arrival, and ${format(processingLoss)} kg was lost in processing.`);
+        write('[data-live-detail]', `${format(unusable)} kg was unusable on arrival. ${format(processingLoss)} kg of usable material was lost in processing. Recovery is ${format(grossRecovery)}% of the whole arriving load and ${format(processingPercent)}% of usable input.`);
+        updateLabelPlacement();
+      };
+
+      contamination.addEventListener('input', update);
+      processing.addEventListener('input', update);
+      update();
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(updateLabelPlacement);
+        observer.observe(barFrame);
+      } else {
+        window.addEventListener('resize', updateLabelPlacement);
+      }
+      document.fonts?.ready.then(updateLabelPlacement);
+    });
+  }
+
+  initializeIncomingLoadFigures();
+  document.addEventListener('astro:page-load', initializeIncomingLoadFigures);
+</script>
+
+<style>
+  .incoming-load {
+    font-family: var(--dd-figure-font);
+    overflow-wrap: anywhere;
+  }
+  .incoming-load * { box-sizing: border-box; }
+  .incoming-load :where(p, h2, dl, dd) { margin: 0; }
+  .incoming-load :where(p, label, output, dt, dd, span, input) { font-family: var(--dd-figure-font); }
+  .il-header p, .il-processing-details p, .incoming-load noscript p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--dd-figure-muted);
+  }
+  .il-header p { margin-top: .65rem; }
+  .il-control { margin-top: 1.5rem; }
+  .il-control-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
+  .il-control-heading label { font-size: 1rem; line-height: 1.45; font-weight: 600; }
+  .il-control-heading output { flex: none; font-size: 1rem; line-height: 1.45; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .il-control input { display: block; width: 100%; height: 2rem; margin: .45rem 0 0; padding: 0; accent-color: var(--dd-figure-ink); cursor: pointer; }
+  .il-control input:focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 4px; }
+  .il-range-ends { display: flex; justify-content: space-between; gap: 1rem; color: var(--dd-figure-muted); font-size: .875rem; }
+  .il-processing-control .il-range-ends span:last-child { max-width: 75%; text-align: right; }
+  .il-load-result { margin: 1.6rem 0 1rem; }
+  .il-load-result p { font-size: 1.125rem; line-height: 1.65; }
+  .incoming-load .il-load-result strong span,
+  .incoming-load .il-recovery-comparison strong,
+  .incoming-load .il-recovery-comparison strong span {
+    font-family: var(--dd-figure-heading-font);
+    font-weight: 500;
+  }
+  .incoming-load .il-load-result strong span { font-size: 1.4rem; }
+  .il-result-arrow { padding: 0 .55rem; }
+  .il-chart-heading { display: flex; justify-content: space-between; gap: 1rem; font-size: .875rem; line-height: 1.45; margin-bottom: .5rem; }
+  .il-bar-wrap { position: relative; border: 1px solid var(--dd-figure-line); }
+  .il-bar { display: block; width: 100%; height: 5.75rem; }
+  .il-recovered-fill { fill: var(--dd-figure-accent); }
+  .il-unusable-fill { fill: var(--dd-figure-surface); }
+  .il-process-surface { fill: var(--dd-figure-surface); }
+  .il-process-stripe { stroke: var(--dd-figure-ink); stroke-width: 2; fill: none; }
+  .il-bar-amounts { position: absolute; inset: 0; display: flex; pointer-events: none; }
+  .il-amount-slot { position: relative; flex: none; min-width: 0; overflow: hidden; }
+  .il-amount-plate { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); visibility: hidden; display: block; width: max-content; padding: .45rem .5rem; border-radius: .2rem; background: var(--dd-figure-paper); color: var(--dd-figure-ink); white-space: nowrap; font-size: 1rem; line-height: 1.2; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .il-amount-plate[data-visible="true"] { visibility: visible; }
+  .il-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: .9rem; }
+  .il-legend dt { display: flex; align-items: start; gap: .45rem; font-size: .875rem; line-height: 1.45; }
+  .il-legend dd { margin: .35rem 0 0 1.2rem; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .il-legend dd[hidden] { display: none; }
+  .il-swatch { display: inline-block; flex: none; width: .75rem; height: .75rem; margin-top: .2rem; }
+  .il-swatch-recovered { background: var(--dd-figure-accent); }
+  .il-swatch-unusable { border: 1px solid var(--dd-figure-line); background: var(--dd-figure-surface); }
+  .il-swatch-processing { border: 1px solid var(--dd-figure-ink); background: repeating-linear-gradient(135deg, var(--dd-figure-surface) 0, var(--dd-figure-surface) 3px, var(--dd-figure-ink) 3px, var(--dd-figure-ink) 4px); }
+  .il-recovery-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; border-top: 1px solid var(--dd-figure-line); margin-top: 1.5rem; padding-top: 1.1rem; }
+  .il-recovery-comparison p { display: flex; flex-direction: column; gap: .2rem; }
+  .il-recovery-comparison strong { font-size: 1.65rem; line-height: 1.2; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .il-recovery-comparison span { font-size: 1rem; line-height: 1.45; }
+  .il-recovery-comparison strong span { font-size: inherit; line-height: inherit; }
+  .il-processing-details { margin-top: 1.5rem; border-top: 1px solid var(--dd-figure-line); padding: 1rem 0 0; }
+  .il-processing-control { margin-top: 1rem; }
+  .il-processing-details p { margin-top: .8rem; }
+  .il-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  @media (max-width: 480px) {
+    .il-load-result strong { display: block; }
+    .il-result-arrow { display: none; }
+    .il-legend { grid-template-columns: 1fr; gap: .55rem; }
+    .il-legend > div { display: flex; justify-content: space-between; gap: 1rem; }
+    .il-legend dd { flex: none; margin: 0; }
+    .il-recovery-comparison { gap: 1rem; }
+    .il-recovery-comparison strong { font-size: 1.5rem; }
+  }
+</style>

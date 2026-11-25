@@ -1,0 +1,46 @@
+---
+interface Props {
+  name: 'marketing' | 'operations' | 'technology' | 'factory' | 'warehouse' | 'retail';
+}
+const { name } = Astro.props;
+const facility = ['factory', 'warehouse', 'retail'].includes(name);
+---
+<svg class:list={['company-icon', { facility }]} viewBox={facility ? '0 0 40 32' : '0 0 24 24'} width={facility ? 40 : 24} height={facility ? 32 : 24} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {name === 'marketing' && <>
+    <path class="tint" d="M8 9 19 5v14L8 15Z" />
+    <path d="M8 9 19 5v14L8 15H4V9Zm0 0v6m-2 0 1.5 5H11l-2-4.6M21 10v4" />
+  </>}
+  {name === 'operations' && <>
+    <rect class="tint" x="3" y="3" width="6" height="6" rx="1" />
+    <rect x="3" y="3" width="6" height="6" rx="1" />
+    <rect x="15" y="15" width="6" height="6" rx="1" />
+    <path d="M13 6h3a2 2 0 0 1 2 2v3m-2-2 2 2 2-2M11 18H8a2 2 0 0 1-2-2v-3m-2 2 2-2 2 2" />
+  </>}
+  {name === 'technology' && <>
+    <rect class="tint" x="6" y="6" width="12" height="12" rx="2" />
+    <rect x="6" y="6" width="12" height="12" rx="2" />
+    <path d="M9 3v3m6-3v3m-6 12v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3" />
+    <rect x="10" y="10" width="4" height="4" rx=".5" />
+  </>}
+  {name === 'factory' && <>
+    <path class="tint" d="M5 27V14l10-6v6l10-6v6h10v13Z" />
+    <path d="M5 27V14l10-6v6l10-6v6h10v13M9 19h3m5 0h3m5 0h5M9 23h3m5 0h3m6 4v-4h5v4M3 27h34" />
+  </>}
+  {name === 'warehouse' && <>
+    <path class="tint" d="m3 13 17-8 17 8Z" />
+    <path d="m3 13 17-8 17 8M6 12v15m28-15v15M3 27h34" />
+    <path d="M11 27V17h18v10m-18-7h18m-18 3h18" />
+  </>}
+  {name === 'retail' && <>
+    <path class="tint" d="M7 7h26l3 9H4Z" />
+    <path d="M7 7h26l3 9H4Zm7 0-1 9m13-9 1 9M6 18v9m28-9v9M3 27h34" />
+    <rect x="10" y="20" width="9" height="4" rx=".5" />
+    <path d="M24 27v-7h6v7" />
+  </>}
+</svg>
+
+<style>
+  .company-icon { display: block; width: 24px; height: 24px; flex: 0 0 24px; color: var(--diagram-ink, #24211d); }
+  .company-icon.facility { width: 40px; height: 32px; flex-basis: 32px; }
+  .tint { fill: var(--diagram-accent, #fe5000); fill-opacity: .18; stroke: none; }
+</style>

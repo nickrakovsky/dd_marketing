@@ -102,11 +102,30 @@ describe('one handler and acknowledged outcomes', () => {
     installLeadCapture(); installLeadCapture();
     fetchMock.mockImplementationOnce(() => new Promise(() => {}));
     const form = makeForm();
+    form.insertAdjacentHTML('beforeend', '<p class="capture-status" data-capture-status role="status" aria-live="polite"></p>');
+    const status = form.querySelector<HTMLElement>('[data-capture-status]')!;
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalled();
     expect(form.querySelector('button')).not.toBeDisabled();
+    expect(status).toHaveTextContent('Choose a time');
+    expect(status).not.toHaveTextContent('saved');
+    expect(form.querySelector('input')).toHaveAttribute('aria-describedby', status.id);
+    expect(document.querySelectorAll('[role="status"]')).toHaveLength(1);
+  });
+  it('leaves shared demo forms exclusively to qualification when the rollout is active', () => {
+    document.body.dataset.demoQualification = 'true';
+    try {
+      installLeadCapture();
+      const form = makeForm();
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(window.open).not.toHaveBeenCalled();
+      expect(document.querySelector('[role="status"]')).toBeNull();
+    } finally {
+      delete document.body.dataset.demoQualification;
+    }
   });
   it.each([200, 503])('keeps booking available after HTTP %s without replaying capture', async status => {
     fetchMock.mockResolvedValueOnce(new Response('{"ok":false}', { status }));
@@ -114,6 +133,15 @@ describe('one handler and acknowledged outcomes', () => {
     expect(window.open).toHaveBeenCalledTimes(1);
     expect(document.body.textContent).not.toContain('Email saved');
     await submitLeadForm(form); expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(document.querySelectorAll('[role="status"]')).toHaveLength(1);
+  });
+
+  it('uses an existing external CTA status without duplicating feedback', async () => {
+    const form = makeForm('data-capture-status-id="bottom-status"');
+    form.insertAdjacentHTML('afterend', '<p id="bottom-status" class="capture-status capture-status-banner" role="status"></p>');
+    await submitLeadForm(form);
+    expect(document.getElementById('bottom-status')).toHaveTextContent('Choose a time');
+    expect(form.querySelector('input')).toHaveAttribute('aria-describedby', 'bottom-status');
     expect(document.querySelectorAll('[role="status"]')).toHaveLength(1);
   });
 

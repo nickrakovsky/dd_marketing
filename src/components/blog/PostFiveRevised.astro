@@ -1,0 +1,113 @@
+---
+interface Props { id?: string; }
+const { id = 'post-five-arrival-audit' } = Astro.props;
+const decisions = [
+  {
+    key: 'entrance', question: 'Which entrance?',
+    instruction: 'Send before the journey: approach via Gate 2, marked Goods In. Gate 1 leads to the office.'
+  },
+  {
+    key: 'waiting', question: 'Where do I stop?',
+    instruction: 'Send with the site directions: use W1–W3 for waiting and check in from the truck using the link.'
+  },
+  {
+    key: 'doors', question: 'When do I go to a door?',
+    instruction: 'Send when the door is ready: the assigned door number and the instruction to leave the waiting bay.'
+  }
+];
+---
+<figure class="p5r not-prose" aria-labelledby={`${id}-title`}>
+  <h3 id={`${id}-title`}>Directions first. Door assignment later.</h3>
+  <p class="p5r-premise">In this example, gate and check-in instructions are known before the journey. The receiving team confirms the door after check-in, once it knows which one is ready.</p>
+  <div class="p5r-map">
+    <svg viewBox="0 -32 660 262" fill="none" aria-hidden="true" focusable="false">
+      <path class="p5r-road" d="M27 155H256L343 73H622M256 155H447" />
+      <path class="p5r-centerline" d="M27 155H256L343 73H622M256 155H447" />
+      <path class="p5r-known-route" d="M46 155H253L341 73H563" />
+      <path class="p5r-route-arrow" d="M551 65L563 73L551 81" />
+
+      <g class="p5r-location p5r-location-entrance"><circle cx="256" cy="155" r="35" /></g>
+      <g class="p5r-location p5r-location-waiting"><rect x="371" y="20" width="116" height="69" rx="8" /></g>
+      <g class="p5r-location p5r-location-doors"><rect x="542" y="2" width="98" height="87" rx="8" /></g>
+
+      <g class="p5r-truck">
+        <rect class="p5r-paper p5r-line" x="31" y="121" width="119" height="32" rx="2" />
+        <path class="p5r-line" d="M150 150H158" />
+        <path class="p5r-paper p5r-line" d="M158 133H178L191 146V153H158V133ZM166 137H176L183 144H166V137Z" />
+        <circle class="p5r-paper p5r-line" cx="48" cy="157" r="6" />
+        <circle class="p5r-paper p5r-line" cx="63" cy="157" r="6" />
+        <circle class="p5r-paper p5r-line" cx="158" cy="157" r="6" />
+        <circle class="p5r-paper p5r-line" cx="182" cy="157" r="6" />
+      </g>
+
+      <path class="p5r-line" d="M283 103L303 123M265 125L285 145" />
+      <g class="p5r-office">
+        <path class="p5r-paper p5r-line" d="M418 155V121H466V155M436 155V137H448V155M427 130H433M451 130H457" />
+      </g>
+      <g class="p5r-waiting-bays">
+        <path class="p5r-line" d="M379 76V28H407V76M415 76V28H443V76M451 76V28H479V76" />
+        <path class="p5r-line" d="M389 36H397M425 36H433M461 36H469" />
+      </g>
+      <g class="p5r-receiving-doors">
+        <path class="p5r-paper p5r-line" d="M550 73V26L591 10L632 26V73H550Z" />
+        <path class="p5r-line" d="M559 73V37H577V73M582 73V37H600V73M605 73V37H623V73M559 48H577M582 48H600M605 48H623M559 59H577M582 59H600M605 59H623" />
+      </g>
+
+      <g class="p5r-marker p5r-marker-entrance">
+        <path class="p5r-guide" d="M256 179V193" />
+        <circle cx="256" cy="207" r="14" />
+        <text x="256" y="213" text-anchor="middle">1</text>
+      </g>
+      <g class="p5r-marker p5r-marker-waiting">
+        <path class="p5r-guide" d="M429 4V20" />
+        <circle cx="429" cy="-10" r="14" />
+        <text x="429" y="-4" text-anchor="middle">2</text>
+      </g>
+      <g class="p5r-marker p5r-marker-doors">
+        <path class="p5r-guide" d="M591 82V98" />
+        <circle cx="591" cy="112" r="14" />
+        <text x="591" y="118" text-anchor="middle">3</text>
+      </g>
+    </svg>
+  </div>
+  <fieldset class="p5r-controls">
+    <legend>Choose a driver’s question to locate it on the route</legend>
+    {decisions.map((decision,index) => <label>
+      <input type="radio" name={`${id}-step`} value={decision.key} checked={index===0} aria-labelledby={`${id}-${decision.key}-question`} aria-describedby={`${id}-${decision.key}-instruction`} />
+      <span><strong id={`${id}-${decision.key}-question`}>{index+1}. {decision.question}</strong><span id={`${id}-${decision.key}-instruction`}>{decision.instruction}</span></span>
+    </label>)}
+  </fieldset>
+  <p class="p5r-recipient">Ask the booking contact to pass the site directions and check-in link to the driver assigned to the load.</p>
+</figure>
+<style>
+  .p5r { --paper:#faf8f5; --ink:#000000; --muted:#5f483a; --rule:#ad9686; --soft:#efe2d2; --accent:#fe5000; --road:#ece6de; box-sizing:border-box; width:100%; max-width:760px; margin:28px auto; padding:24px; border:1px solid var(--rule); border-radius:4px; background:var(--paper); color:var(--ink); font:14px/1.6 Inter,Arial,sans-serif; color-scheme:light; text-align:left; }
+  .p5r *, .p5r *::before, .p5r *::after { box-sizing:border-box; }
+  .p5r h3 { margin:0; color:var(--ink); font:800 clamp(25px,3.8vw,32px)/1.15 Bruta,Inter,Arial,sans-serif; text-transform:uppercase; }
+  .p5r-premise { margin:12px 0 8px; }
+  .p5r-map svg { display:block; width:100%; height:auto; aspect-ratio:660 / 262; }
+  .p5r svg path, .p5r svg rect, .p5r svg circle { stroke-linecap:round; stroke-linejoin:round; }
+  .p5r-line { stroke:var(--ink); stroke-width:1.8; }
+  .p5r-paper { fill:var(--paper); }
+  .p5r-road { stroke:var(--road); stroke-width:30; }
+  .p5r-centerline { stroke:var(--paper); stroke-width:2; stroke-dasharray:8 7; }
+  .p5r-known-route { stroke:var(--ink); stroke-width:2; stroke-dasharray:4 7; }
+  .p5r-route-arrow { stroke:var(--ink); stroke-width:2; }
+  .p5r-location { fill:transparent; fill-opacity:.45; stroke:transparent; stroke-width:2; }
+  .p5r-guide { stroke:var(--muted); stroke-width:1.5; }
+  .p5r-marker circle { fill:var(--paper); stroke:var(--rule); stroke-width:1.5; }
+  .p5r-marker text { fill:var(--ink); font:650 19px Inter,Arial,sans-serif; }
+  .p5r-controls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; min-width:0; margin:0; padding:0; border:0; }
+  .p5r-controls legend { position:absolute; width:1px; height:1px; padding:0; margin:-1px; clip-path:inset(50%); overflow:hidden; }
+  .p5r-controls label { display:grid; grid-template-columns:17px minmax(0,1fr); align-content:start; align-items:start; gap:9px; min-height:44px; margin:0; padding:12px 10px; border:1px solid var(--rule); border-radius:3px; cursor:pointer; font:inherit; }
+  .p5r-controls input { appearance:auto; width:17px; height:17px; margin:3px 0 0; accent-color:var(--accent); }
+  .p5r-controls strong { display:block; margin:0 0 6px; font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif; font-size:16px; font-weight:600; }
+  .p5r-controls label:has(:checked) { border-color:var(--accent); background:var(--soft); }
+  .p5r-controls label:has(:focus-visible) { outline:2px solid var(--accent); outline-offset:3px; }
+  .p5r:has(input[value='entrance']:checked) .p5r-location-entrance, .p5r:has(input[value='waiting']:checked) .p5r-location-waiting, .p5r:has(input[value='doors']:checked) .p5r-location-doors { fill:var(--soft); stroke:var(--accent); }
+  .p5r:has(input[value='entrance']:checked) .p5r-marker-entrance circle, .p5r:has(input[value='waiting']:checked) .p5r-marker-waiting circle, .p5r:has(input[value='doors']:checked) .p5r-marker-doors circle { fill:var(--soft); stroke:var(--accent); stroke-width:2; }
+  .p5r-recipient { margin:16px 0 0; color:var(--ink); font:inherit; }
+  :global(html.dark) .p5r, :global(html[data-theme='dark']) .p5r { --paper:#000000; --ink:#fff8ee; --muted:#efe2d2; --rule:#9c806d; --soft:#5f483a; --accent:#fe5000; --road:#5f483a; color-scheme:dark; }
+  @media(max-width:600px) { .p5r-controls { grid-template-columns:1fr; } .p5r-controls label { padding:10px; } .p5r-controls strong { margin-bottom:3px; } }
+  @media(max-width:520px) { .p5r { padding:19px 15px; margin:24px auto; } }
+  @media print { .p5r { break-inside:avoid; } .p5r-controls input { display:none; } .p5r-controls label { display:block; background:none; border-color:var(--rule); } }
+</style>

@@ -1,0 +1,67 @@
+---
+const { articleContext = false } = Astro.props;
+import Facility from '../body-3/Facility.astro';
+---
+
+<figure class="pilot-organization" aria-label="Leadership oversees business units 1, 2 and 3, plus a center of excellence that duplicates business unit 3. The existing units use ordinary performance metrics. The CoE replaces those metrics with experimental goals to pilot new ways of working.">
+  <div class="organization">
+    <h3>Leadership</h3>
+    <div class="units" role="group" aria-label="Four units under the same leadership">
+      {[1, 2, 3].map(unit => <section class="unit">
+        <div class="facility"><Facility /></div>
+        <h4>Business unit {unit}</h4>
+      </section>)}
+      <section class="unit coe">
+        <div class="facility"><Facility highlighted /></div>
+        <h4>Center of excellence</h4>
+      </section>
+    </div>
+    <div class="briefs">
+      <section class="ordinary">
+        <h4>Ordinary performance metrics</h4>
+        <p>The existing business units keep their operating goals.</p>
+      </section>
+      <section class="experimental">
+        <h4>Experimental goals</h4>
+        <p>Replace ordinary performance metrics to pilot new ways of working.</p>
+      </section>
+    </div>
+  </div>
+  {!articleContext && <figcaption>An existing line of business, duplicated to test new ways of working.</figcaption>}
+</figure>
+
+<style>
+  .pilot-organization { margin: 0; padding-top: 8px; color: var(--ink, #24211d); container-type: inline-size; }
+  .organization { padding: 24px 22px; border: 1px solid var(--line, #9f8d78); border-radius: 8px; background: color-mix(in srgb, var(--soft, #e3d5c4) 16%, var(--paper, #fff8ee)); }
+  h3 { position: relative; margin: 0 auto; width: fit-content; padding: 10px 25px; border: 1px solid var(--line, #9f8d78); border-radius: 4px; background: var(--paper, #fff8ee); font: 400 24px/1.2 DD-Recoleta, Georgia, serif; }
+  h3::after { position: absolute; top: 100%; left: 50%; height: 23px; border-left: 1px solid var(--line, #9f8d78); content: ''; }
+  .units { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.7fr); gap: 12px; margin-top: 23px; padding-top: 25px; }
+  .units::before { position: absolute; top: 0; left: calc((100% - 36px) / 9.4); right: calc((100% - 36px) * 1.7 / 9.4); border-top: 1px solid var(--line, #9f8d78); content: ''; }
+  .unit { position: relative; text-align: center; min-width: 0; }
+  .unit::before { position: absolute; bottom: 100%; left: 50%; height: 25px; border-left: 1px solid var(--line, #9f8d78); content: ''; }
+  .facility { width: 66px; max-width: 100%; margin: 0 auto 13px; }
+  .unit h4 { margin: 0; font: 500 14px/1.45 Inter, Arial, sans-serif; text-wrap: balance; }
+  .coe h4 { font: 400 22px/1.15 DD-Recoleta, Georgia, serif; }
+  .briefs { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1.7fr); gap: 24px; margin-top: 26px; }
+  .briefs section { padding-top: 15px; border-top: 2px solid var(--line, #9f8d78); }
+  .briefs .experimental { border-color: var(--accent, #fe5000); }
+  .briefs h4 { margin: 0 0 10px; font: 400 22px/1.2 DD-Recoleta, Georgia, serif; text-wrap: balance; }
+  .briefs p { margin: 0; color: var(--muted, #686054); font: 400 14px/1.55 Inter, Arial, sans-serif; }
+  figcaption { margin-top: 20px; text-align: center; text-wrap: balance; color: var(--muted, #686054); font: 400 14px/1.5 Inter, Arial, sans-serif; }
+  @container (max-width: 480px) {
+    .organization { padding: 22px 16px; }
+    h3 { width: 100%; text-align: center; }
+    h3::after { left: 10px; }
+    .units { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 15px; padding: 0 0 0 26px; margin-left: 10px; }
+    .units::before { top: -12px; bottom: 0; left: 0; right: auto; border: 0; border-left: 1px solid var(--line, #9f8d78); }
+    .unit::before { top: -12px; bottom: auto; height: 12px; }
+    .unit:nth-child(odd)::after { position: absolute; top: -12px; left: -26px; width: calc(150% + 41px); border-top: 1px solid var(--line, #9f8d78); content: ''; }
+    .coe h4 { font-size: 20px; }
+    .briefs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .briefs h4 { font-size: 21px; }
+  }
+  @container (max-width: 320px) {
+    .organization { padding-inline: 12px; }
+    .briefs { grid-template-columns: 1fr; }
+  }
+</style>

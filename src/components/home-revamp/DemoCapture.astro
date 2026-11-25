@@ -10,7 +10,7 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
   <button class="dialog-close" type="button" aria-label="Close email form" data-close-demo>×</button>
   <h2 id="demo-capture-title">LET’S LOOK AT YOUR OPERATION.</h2>
   <p>Enter your email, then choose a time for your demo.</p>
-  <form data-demo-capture>
+  <form data-lead-capture data-cta-id="navigation-dialog" data-cta-placement="dialog">
     <label for="demo-dialog-email">Email address</label>
     <div class="dialog-fields">
       <input id="demo-dialog-email" type="email" name="email" autocomplete="email" placeholder="Enter your email" required />
@@ -30,17 +30,12 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
 </Fragment>}
 
 <script>
-  import { captureDemoLead } from '../../lib/home-demo-capture';
+  import { demoQualificationActive } from '../../lib/demo-rollout';
 
   const dialog = document.querySelector<HTMLDialogElement>('#demo-capture-dialog');
-  if (dialog) {
+  if (dialog && !demoQualificationActive()) {
     const marketing = window as typeof window & {
       ddGetEmail?: () => string;
-      ddSetEmail?: (email: string) => void;
-      ddGetAttribution?: () => { first: Record<string, unknown>; last: Record<string, unknown> };
-      getBentoVisitorUuid?: () => string | null;
-      ddOpenCalendly?: (params: string) => void;
-      bento?: { identify?: (email: string) => void };
     };
     let trigger: HTMLElement | null = null;
     const close = () => {
@@ -84,61 +79,6 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
       if (typeof dialog.showModal !== 'function') return;
       event.preventDefault();
       openDialog(link);
-    });
-
-    const captureForms = document.querySelectorAll<HTMLFormElement>('form[data-demo-capture]');
-    captureForms.forEach((form, index) => {
-      const input = form.querySelector<HTMLInputElement>('input[name="email"]');
-      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-      if (!input || !button) return;
-      input.setAttribute('aria-label', 'Email address');
-      input.autocomplete = 'email';
-      // Banners can place status text below their heading and form group.
-      let status = form.querySelector<HTMLElement>('[data-capture-status]')
-        || (form.dataset.captureStatusId ? document.getElementById(form.dataset.captureStatusId) : null);
-      if (!status) {
-        status = document.createElement('p');
-        status.className = 'capture-status capture-status-banner';
-        status.setAttribute('role', 'status');
-        status.setAttribute('aria-live', 'polite');
-        form.after(status);
-      }
-      status.id = `demo-capture-status-${index}`;
-      input.setAttribute('aria-describedby', status.id);
-      const statusNode = status;
-      const originalLabel = button.textContent;
-      form.addEventListener('submit', async event => {
-        event.preventDefault();
-        if (button.disabled || !form.reportValidity()) return;
-        button.disabled = true;
-        form.setAttribute('aria-busy', 'true');
-        button.textContent = 'One moment…';
-        statusNode.textContent = '';
-        let landingPage = window.location.href;
-        try { landingPage = sessionStorage.getItem('dd_landing_page') || landingPage; } catch { /* Storage is optional. */ }
-        try {
-          const email = await captureDemoLead(input.value, {
-            source: window.location.pathname,
-            landingPage,
-            visitorUuid: marketing.getBentoVisitorUuid?.(),
-            attribution: marketing.ddGetAttribution?.(),
-          });
-          // Analytics availability must not block a successfully saved lead.
-          try { marketing.ddSetEmail?.(email); marketing.bento?.identify?.(email); } catch { /* The server has saved this lead. */ }
-          if (dialog.open) dialog.close();
-          const params = new URLSearchParams(dialog.dataset.bookingParams);
-          params.set('email', email);
-          if (marketing.ddOpenCalendly) marketing.ddOpenCalendly(params.toString());
-          else window.location.assign(`${dialog.dataset.bookingUrl}?${params}`);
-        } catch {
-          statusNode.textContent = 'We couldn’t save your email. Please try again.';
-          input.focus();
-        } finally {
-          button.disabled = false;
-          button.textContent = originalLabel;
-          form.removeAttribute('aria-busy');
-        }
-      });
     });
   }
 </script>

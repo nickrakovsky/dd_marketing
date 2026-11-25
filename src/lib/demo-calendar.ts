@@ -1,5 +1,6 @@
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from './calendly-config.mjs';
 import { needsWorkEmail, normalizeDemoEmail } from './demo-qualification';
+import { VENDOR_ASSETS } from './vendor-assets.mjs';
 import type { DemoCaptureFlow } from './demo-qualification';
 import { captureLead } from './home-demo-capture';
 import type { BookingService, BookingSnapshot } from './demo-booking-service';
@@ -18,11 +19,12 @@ function loadAssets(): Promise<void> {
   assets = new Promise<void>((resolve, reject) => {
     if (!document.querySelector('[data-demo-calendar-css]')) {
       const css = document.createElement('link');
-      css.rel = 'stylesheet'; css.href = 'https://assets.calendly.com/assets/external/widget.css';
+      css.rel = 'stylesheet'; css.href = VENDOR_ASSETS.calendlyCss.path;
       css.dataset.demoCalendarCss = ''; document.head.append(css);
     }
     const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js'; script.async = true;
+    script.src = VENDOR_ASSETS.calendlyJs.path;
+    script.integrity = VENDOR_ASSETS.calendlyJs.integrity; script.crossOrigin = 'anonymous'; script.async = true;
     const timeout = setTimeout(() => finish(false), 10000);
     function finish(ok: boolean) {
       clearTimeout(timeout); script.onload = null; script.onerror = null;

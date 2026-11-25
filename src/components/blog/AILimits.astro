@@ -1,0 +1,143 @@
+---
+const transfers = [
+  {
+    id: 'matching',
+    label: 'Correct conversion',
+    sourceUnit: 'Cases (12 each)',
+    destinationQuantity: '288',
+    destinationUnit: 'Each',
+    heading: 'The quantity carries through.',
+    explanation: '24 cases of 12 becomes 288 individual items. The number changes; the delivery quantity stays the same.',
+  },
+  {
+    id: 'conflicting',
+    label: 'Wrong conversion',
+    sourceUnit: 'Cases (12 each)',
+    destinationQuantity: '24',
+    destinationUnit: 'Each',
+    heading: 'Cases were entered as individual items.',
+    explanation: 'The expected receipt would be understated by 264 items. Resolve the unit conversion before updating the record.',
+  },
+  {
+    id: 'missing',
+    label: 'Unit missing',
+    sourceUnit: 'Not supplied',
+    destinationQuantity: '24',
+    destinationUnit: 'Each',
+    heading: 'The output fills a gap the source cannot answer.',
+    explanation: 'Does 24 mean cases or individual items? Confirm the missing unit before using the proposed quantity.',
+  },
+];
+---
+
+<figure class="dd-figure nr-limits not-prose" aria-labelledby="nr-limits-title">
+  <figcaption><h2 class="dd-figure-title" id="nr-limits-title">Did the delivery quantity make it across?</h2></figcaption>
+
+  <fieldset>
+    <legend class="sr-only">Choose a proposed transfer to review</legend>
+    {transfers.map((transfer, index) => (
+      <input
+        class="scenario-input"
+        type="radio"
+        name="nr-limits-scenario"
+        id={`nr-limits-${transfer.id}`}
+        value={transfer.id}
+        checked={index === 0}
+      />
+    ))}
+
+    <div class="choices">
+      {transfers.map((transfer) => (
+        <label for={`nr-limits-${transfer.id}`}>{transfer.label}</label>
+      ))}
+    </div>
+
+    {transfers.map((transfer) => (
+      <div class={`transfer transfer-${transfer.id}`}>
+        <div class="comparison">
+          <section class="record source" aria-label="Source delivery record">
+            <h3><svg class="record-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M7 3h12l6 6v20H7zM19 3v7h6M12 16h8M12 21h8" /><path class="icon-accent" d="M12 8h3" /></svg><span>Delivery record</span></h3>
+            <dl>
+              <div class="quantity"><dt>Quantity</dt><dd>24</dd></div>
+              <div class="unit"><dt>Unit</dt><dd class:list={{ 'missing-unit': transfer.id === 'missing' }}>{transfer.sourceUnit}</dd></div>
+            </dl>
+          </section>
+
+          <svg class="transfer-arrow" viewBox="0 0 32 24" aria-hidden="true">
+            <path d="M3 12h25m-8-8 8 8-8 8" />
+          </svg>
+
+          <section class="record destination" aria-label="Proposed receipt record">
+            <h3><svg class="record-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect x="6" y="6" width="20" height="23" rx="2" /><path d="M12 3h8v6h-8zM12 16h8M12 22h8" /><path class="icon-accent" d="M12 16h3" /></svg><span>Proposed receipt</span></h3>
+            <dl>
+              <div class="quantity"><dt>Quantity</dt><dd>{transfer.destinationQuantity}</dd></div>
+              <div class="unit"><dt>Unit</dt><dd>{transfer.destinationUnit}</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <div class="review">
+          <h3><svg class="review-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" />{transfer.id === 'matching' ? <path d="m7.5 12 3 3 6-6" /> : transfer.id === 'conflicting' ? <path d="M12 6.5v7m0 3v.5" /> : <path d="M9.2 8.5a2.8 2.8 0 0 1 5.5.7c0 2-2.7 2.2-2.7 4.3m0 3v.5" />}</svg><span>{transfer.heading}</span></h3>
+          <p>{transfer.explanation}</p>
+        </div>
+      </div>
+    ))}
+  </fieldset>
+</figure>
+
+<style>
+  .nr-limits {
+    margin: 2rem 0;
+    padding: clamp(1rem, 3vw, 1.75rem);
+    border: 1px solid var(--dd-figure-line);
+    border-radius: .75rem;
+    background: var(--dd-figure-paper);
+    color: var(--dd-figure-ink);
+    font-family: var(--dd-figure-font);
+  }
+  .nr-limits :where(p, h3, label, legend, dt, dd) { font-family: var(--dd-figure-font); }
+  .nr-limits h2 { margin: 0; }
+  .nr-limits fieldset { min-width: 0; margin: 1.25rem 0 0; padding: 0; border: 0; }
+  .nr-limits .sr-only,
+  .nr-limits .scenario-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .nr-limits .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; padding: .3rem; background: var(--dd-figure-surface); border-radius: .55rem; margin: 0 0 1.35rem; }
+  .nr-limits .choices label { display: flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: .55rem .4rem; border-radius: .35rem; text-align: center; cursor: pointer; font-size: .875rem; font-weight: 600; line-height: 1.3; }
+  #nr-limits-matching:checked ~ .choices label[for='nr-limits-matching'],
+  #nr-limits-conflicting:checked ~ .choices label[for='nr-limits-conflicting'],
+  #nr-limits-missing:checked ~ .choices label[for='nr-limits-missing'] { color: var(--dd-figure-selected-ink); background: var(--dd-figure-selected-surface); }
+  #nr-limits-matching:focus-visible ~ .choices label[for='nr-limits-matching'],
+  #nr-limits-conflicting:focus-visible ~ .choices label[for='nr-limits-conflicting'],
+  #nr-limits-missing:focus-visible ~ .choices label[for='nr-limits-missing'] { outline: 2px solid var(--dd-figure-ink); outline-offset: 3px; }
+  .nr-limits .transfer { display: none; }
+  #nr-limits-matching:checked ~ .transfer-matching,
+  #nr-limits-conflicting:checked ~ .transfer-conflicting,
+  #nr-limits-missing:checked ~ .transfer-missing { display: block; }
+  .nr-limits .comparison { display: grid; grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr); align-items: center; gap: .65rem; }
+  .nr-limits .record { align-self: stretch; min-width: 0; border: 1px solid var(--dd-figure-line); border-radius: .4rem; overflow: hidden; background: var(--dd-figure-paper); }
+  .nr-limits .record h3 { display: flex; align-items: center; gap: .45rem; margin: 0; padding: .7rem .85rem; background: var(--dd-figure-surface); font-size: .875rem; font-weight: 600; line-height: 1.4; }
+  .nr-limits dl { margin: 0; padding: 1rem .85rem .9rem; }
+  .nr-limits dt { color: var(--dd-figure-muted); font-size: .875rem; line-height: 1.4; }
+  .nr-limits dd { margin: .15rem 0 0; font-size: 1rem; line-height: 1.4; font-weight: 500; }
+  .nr-limits .quantity dd { font-size: clamp(2rem, 6vw, 2.8rem); letter-spacing: -.05em; line-height: 1.15; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .nr-limits .unit { margin-top: .85rem; }
+  .nr-limits .missing-unit { text-decoration: underline dotted; text-underline-offset: .3em; }
+  .nr-limits .transfer-arrow { width: 2rem; height: 1.5rem; stroke: var(--dd-figure-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .nr-limits .review { margin-top: 1.15rem; padding: .15rem 0 .1rem .9rem; border-left: 3px solid var(--dd-figure-accent); }
+  .nr-limits .review h3 { display: flex; align-items: flex-start; gap: .5rem; margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.45; }
+  .nr-limits .review p { margin: .4rem 0 0; font-size: 1rem; line-height: 1.55; color: var(--dd-figure-muted); }
+  .nr-limits .record-icon, .nr-limits .review-icon { display: block; flex: none; fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .nr-limits .record-icon { width: 1.75rem; height: 1.75rem; }
+  .nr-limits .review-icon { width: 1.4rem; height: 1.4rem; }
+  .nr-limits .icon-accent { stroke: var(--dd-figure-accent); stroke-width: 3; }
+  @media (max-width: 420px) {
+    .nr-limits .comparison { grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1fr); gap: .35rem; }
+    .nr-limits .transfer-arrow { width: 1.25rem; }
+    .nr-limits .record h3 { padding: .6rem; }
+    .nr-limits dl { padding: .8rem .6rem; }
+    .nr-limits .choices label { padding-inline: .25rem; }
+  }
+  @media print {
+    .nr-limits .choices { display: none; }
+    .nr-limits .transfer { display: block; margin-top: 1rem; break-inside: avoid; }
+  }
+</style>

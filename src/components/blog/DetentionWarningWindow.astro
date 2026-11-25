@@ -1,0 +1,41 @@
+---
+import './warning-window.css';
+---
+
+<figure class="dd-warning-window not-prose" aria-labelledby="ddww-title" aria-describedby="ddww-context">
+  <header class="ddww-heading">
+    <h3 id="ddww-title">When does your team find out?</h3>
+    <p id="ddww-context">A truck is waiting for paperwork. Free time runs from 09:00 to 11:00; the truck leaves at 11:30 in both cases.</p>
+  </header>
+
+  <label class="ddww-control">
+    <input class="ddww-toggle" type="checkbox" aria-controls="ddww-result" />
+    <strong>Send the warning 30 minutes earlier</strong>
+  </label>
+
+  <div class="ddww-chart" aria-hidden="true">
+    <div class="ddww-axis">
+      <span style="--tick:0%">09:00</span><span style="--tick:40%">10:00</span><span style="--tick:80%">11:00</span><span style="--tick:100%">11:30</span>
+    </div>
+    <div class="ddww-warning-label"><span class="ddww-late">11:00 warning</span><span class="ddww-early">10:30 warning</span></div>
+    <svg class="ddww-svg" width="100%" height="120" focusable="false" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="ddww-hatch" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M-2 2L2-2 M0 8L8 0 M6 10L10 6" /></pattern></defs>
+      <rect class="ddww-track" x="0" y="58" width="100%" height="22" rx="2" />
+      <rect class="ddww-overrun" x="80%" y="58" width="20%" height="22" />
+      <rect class="ddww-hatch" x="80%" y="58" width="20%" height="22" fill="url(#ddww-hatch)" />
+      <rect class="ddww-window" x="60%" y="58" width="20%" height="22" />
+      <line class="ddww-threshold" x1="80%" x2="80%" y1="16" y2="105" />
+    </svg>
+    <div class="ddww-warning-marker"></div>
+  </div>
+
+  <div class="ddww-key" aria-hidden="true">
+    <span><span class="ddww-key-window"></span>Time to respond</span>
+    <span><span class="ddww-key-overrun"></span>Beyond free time</span>
+  </div>
+
+  <div class="ddww-result" id="ddww-result" aria-live="polite" aria-atomic="true">
+    <p class="ddww-number"><span class="ddww-value"><span class="ddww-late">0</span><span class="ddww-early">30</span></span><span class="ddww-number-label">minutes before free time ends</span></p>
+    <p class="ddww-explanation"><span class="ddww-late">The alert arrives as free time runs out. The coordinator still has to chase the paperwork, with no advance warning to help resolve the delay.</span><span class="ddww-early">The coordinator has half an hour to request the missing paperwork and escalate if it is not supplied before 11:00.</span></p>
+  </div>
+</figure>

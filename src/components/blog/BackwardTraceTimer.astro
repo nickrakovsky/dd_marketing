@@ -1,0 +1,51 @@
+---
+import './trace-timer.css';
+---
+
+<figure class="ddp9-trace not-prose" id="ddp9-trace" aria-labelledby="ddp9-title" aria-describedby="ddp9-assumption">
+  <h2 class="ddp9-title" id="ddp9-title">What did the trace actually establish?</h2>
+  <fieldset>
+    <legend>Compare three separate hypothetical exercises</legend>
+    <div class="ddp9-choices">
+      <label class="ddp9-choice"><input type="radio" name="ddp9-outcome" value="unconfirmed" aria-describedby="ddp9-result-unconfirmed" checked><span>Source not found</span></label>
+      <label class="ddp9-choice"><input type="radio" name="ddp9-outcome" value="internal" aria-describedby="ddp9-result-internal"><span>More time internally</span></label>
+      <label class="ddp9-choice"><input type="radio" name="ddp9-outcome" value="partner" aria-describedby="ddp9-result-partner"><span>More time with partner</span></label>
+    </div>
+    <span class="ddp9-sr" id="ddp9-result-unconfirmed">At 20 minutes, source still unconfirmed. Internal steps took 5 and 7 minutes; 8 more minutes obtaining partner information have not established the source link. Ask the partner to demonstrate the link from supplier lot B-62 to its source.</span>
+    <span class="ddp9-sr" id="ddp9-result-internal">Source confirmed in 40 minutes. Internal steps took 25 and 10 minutes; obtaining partner information took 5. Review why finding and matching internal records took 35 of the 40 minutes.</span>
+    <span class="ddp9-sr" id="ddp9-result-partner">Source confirmed in 60 minutes. Internal steps took 5 and 7 minutes; obtaining partner information took 48. Ask the partner how the source link for this lot was retrieved.</span>
+  </fieldset>
+  <div class="ddp9-summary">
+    <p class="ddp9-clock"><strong><span class="ddp9-case ddp9-unconfirmed ddp9-total-number">20</span><span class="ddp9-case ddp9-internal ddp9-total-number">40</span><span class="ddp9-case ddp9-partner ddp9-total-number">60</span><span> min</span></strong><span class="ddp9-case ddp9-unconfirmed">observed so far</span><span class="ddp9-case ddp9-internal ddp9-partner">to confirm the source</span></p>
+    <p class="ddp9-outcome"><span class="ddp9-case ddp9-unconfirmed">Source still unconfirmed</span><span class="ddp9-case ddp9-internal">35 min in internal lookup</span><span class="ddp9-case ddp9-partner">48 min obtaining partner information</span></p>
+  </div>
+  <div class="ddp9-timeline" role="group" aria-label="Sequential evidence retrieval for example ingredient lot L-217">
+    <div class="ddp9-stage ddp9-stage-one">
+      <div class="ddp9-step"><p>Find delivery record <strong><span class="ddp9-case ddp9-unconfirmed ddp9-partner">5</span><span class="ddp9-case ddp9-internal">25</span> min</strong></p><p class="ddp9-connection">Lot L-217 linked to delivery R-84</p></div>
+      <svg class="ddp9-row-chart" viewBox="0 0 600 38" preserveAspectRatio="none" aria-hidden="true"><path class="ddp9-grid" d="M0 0v38 M200 0v38 M400 0v38 M600 0v38"/><rect class="ddp9-bar ddp9-first" x="0" y="8" width="50" height="22"/></svg>
+    </div>
+    <div class="ddp9-stage ddp9-stage-two">
+      <div class="ddp9-step"><p>Match supplier lot <strong><span class="ddp9-case ddp9-unconfirmed ddp9-partner">7</span><span class="ddp9-case ddp9-internal">10</span> min</strong></p><p class="ddp9-connection">Delivery R-84 linked to lot B-62</p></div>
+      <svg class="ddp9-row-chart" viewBox="0 0 600 38" preserveAspectRatio="none" aria-hidden="true"><path class="ddp9-grid" d="M0 0v38 M200 0v38 M400 0v38 M600 0v38"/><rect class="ddp9-bar ddp9-second" x="50" y="8" width="70" height="22"/></svg>
+    </div>
+    <div class="ddp9-stage ddp9-stage-three">
+      <div class="ddp9-step"><p>Get source link <strong><span class="ddp9-case ddp9-unconfirmed">8 min so far</span><span class="ddp9-case ddp9-internal">5 min</span><span class="ddp9-case ddp9-partner">48 min</span></strong></p><p class="ddp9-connection"><span class="ddp9-case ddp9-unconfirmed">Lot B-62 to source: unconfirmed</span><span class="ddp9-case ddp9-internal ddp9-partner">Lot B-62 linked to source S-09</span></p></div>
+      <svg class="ddp9-row-chart" viewBox="0 0 600 38" preserveAspectRatio="none" aria-hidden="true">
+        <defs><pattern id="ddp9-unresolved-pattern" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M-2 2L2-2 M0 10L10 0 M8 12L12 8" class="ddp9-hatch"/></pattern></defs>
+        <path class="ddp9-grid" d="M0 0v38 M200 0v38 M400 0v38 M600 0v38"/>
+        <rect class="ddp9-partner-bar" x="120" y="8" width="80" height="22"/>
+        <rect class="ddp9-unresolved" x="120" y="8" width="80" height="22" fill="url(#ddp9-unresolved-pattern)"/>
+        <path class="ddp9-open-edge" d="M586 4L599 19L586 34"/>
+      </svg>
+    </div>
+    <div class="ddp9-axis-row"><div></div><div><div class="ddp9-axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span></div><p>Elapsed minutes</p></div></div>
+  </div>
+  <div class="ddp9-key" aria-hidden="true"><span><i></i>Internal lookup</span><span><i class="ddp9-key-partner"></i>Getting partner information</span></div>
+  <div class="ddp9-finding">
+    <p class="ddp9-finding-label">What to follow up</p>
+    <p class="ddp9-case ddp9-unconfirmed">The supplier lot was found in 12 minutes. Ask the partner to demonstrate the still-unconfirmed connection from lot B-62 to its source.</p>
+    <p class="ddp9-case ddp9-internal">Internal lookup took 35 of the 40 minutes. Review how the team found the delivery record and matched it to the supplier lot.</p>
+    <p class="ddp9-case ddp9-partner">Getting partner information took 48 of the 60 minutes. Ask how that source link was retrieved and whether finding it was difficult.</p>
+  </div>
+  <figcaption id="ddp9-assumption">Hypothetical records and times, not targets. Steps are sequential with no overlap; this is one part of recall preparation.</figcaption>
+</figure>

@@ -1,0 +1,133 @@
+---
+/* eslint-disable astro/jsx-a11y/no-redundant-roles -- Preserve list semantics when CSS removes list markers. */
+const { articleContext = false } = Astro.props;
+import Facility from './Facility.astro';
+const companySites = Array.from({ length: 5 });
+---
+
+<figure class="site-network" aria-label="One high-performing center of excellence and five other company sites share expertise. Managers and staff can make short visits to the CoE to learn best practice, or CoE staff can visit other locations as coaches.">
+  <div class="network-panel">
+    {!articleContext && <h3>Sharing best practice between sites</h3>}
+
+    <div class="network" role="group" aria-label="A center of excellence within the company’s network of physical sites">
+      <svg class="connections" viewBox="0 0 600 450" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <defs>
+          <marker id="site-a-arrowhead" viewBox="0 0 10 10" markerWidth="10" markerHeight="10" refX="5" refY="5" markerUnits="userSpaceOnUse" orient="auto">
+            <path d="M1 1 5 5 1 9" fill="none" stroke="context-stroke" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+        </defs>
+        <path class="learning-arrow" d="M294 75V185" />
+        <path class="coaching-arrow" d="M306 185V75" />
+        <path class="learning-arrow" d="M126 238H240" />
+        <path class="coaching-arrow" d="M240 226H126" />
+        <path class="learning-arrow" d="M474 226H360" />
+        <path class="coaching-arrow" d="M360 238H474" />
+        <path class="learning-arrow" d="M176 389 232 350" />
+        <path class="coaching-arrow" d="M224 341 168 380" />
+        <path class="learning-arrow" d="M432 380 376 341" />
+        <path class="coaching-arrow" d="M368 350 424 389" />
+      </svg>
+
+      <section class="coe-site" aria-labelledby="site-a-coe">
+        <div class="coe-illustration"><Facility highlighted /></div>
+        <div class="coe-copy">
+          <h4 id="site-a-coe">Center of excellence</h4>
+          <p>A high-performing site</p>
+        </div>
+      </section>
+
+      <ul class="other-sites" role="list" aria-label="Five other company sites">
+        {companySites.map(() => <li class="company-site"><Facility /></li>)}
+      </ul>
+      <p class="sites-label">Other company sites</p>
+    </div>
+
+    <div class="exchanges" aria-label="Two alternative ways to share best practice">
+      <section class="exchange learning" aria-labelledby="site-a-learning">
+        <svg class="visit-arrow" viewBox="0 0 32 16" fill="none" aria-hidden="true" focusable="false"><path d="M2 8h27m-6-6 6 6-6 6" /></svg>
+        <h4 id="site-a-learning">Visit the CoE</h4>
+        <p>Managers and staff make short visits to learn best practice.</p>
+      </section>
+      <span class="alternative">or</span>
+      <section class="exchange coaching" aria-labelledby="site-a-coaching">
+        <svg class="visit-arrow" viewBox="0 0 32 16" fill="none" aria-hidden="true" focusable="false"><path d="M30 8H3m6-6-6 6 6 6" /></svg>
+        <h4 id="site-a-coaching">Bring the coaches to you</h4>
+        <p>CoE staff visit other locations to coach their teams.</p>
+      </section>
+    </div>
+  </div>
+  {!articleContext && <figcaption>Learn at the CoE, or bring its expertise to another site.</figcaption>}
+</figure>
+
+<style>
+  .site-network {
+    --network-paper: var(--paper, #fff8ee);
+    --network-ink: var(--ink, #24211d);
+    --network-muted: var(--muted, #686054);
+    --network-line: var(--line, #9f8d78);
+    --network-soft: var(--soft, #e3d5c4);
+    --network-accent: var(--accent, #fe5000);
+    --network-ground: color-mix(in srgb, var(--network-soft) 19%, var(--network-paper));
+    margin: 0;
+    padding-top: 8px;
+    color: var(--network-ink);
+    container-type: inline-size;
+  }
+  .site-network *, .site-network *::before, .site-network *::after { box-sizing: border-box; }
+  .network-panel { padding: 24px 22px 22px; border: 1px solid var(--network-line); border-radius: 8px; background: var(--network-ground); }
+  h3 { margin: 0; text-align: center; text-wrap: balance; font: 400 27px/1.2 'DD-Recoleta', Georgia, serif; }
+  .network { position: relative; height: 468px; margin-top: 10px; }
+  .connections { position: absolute; inset: 0 0 18px; width: 100%; height: 450px; overflow: visible; }
+  .connections > path { marker-end: url(#site-a-arrowhead); }
+  .learning-arrow, .coaching-arrow { fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .learning-arrow { stroke: var(--network-accent); }
+  .coaching-arrow { stroke: var(--network-muted); }
+  .coe-site { position: absolute; z-index: 1; top: 188px; left: 50%; display: grid; justify-items: center; gap: 9px; width: clamp(180px, 33cqi, 200px); text-align: center; transform: translateX(-50%); }
+  .coe-illustration { width: 84px; }
+  .coe-copy h4 { margin: 0; text-wrap: balance; font: 400 25px/1.15 'DD-Recoleta', Georgia, serif; }
+  .coe-copy p { margin: 9px 0 0; color: var(--network-muted); text-wrap: balance; font: 400 14px/1.4 'Inter', Arial, sans-serif; }
+  .other-sites { display: contents; margin: 0; padding: 0; list-style: none; }
+  .company-site { position: absolute; width: 84px; background: var(--network-ground); }
+  .company-site:nth-child(1) { top: 8px; left: calc(50% - 42px); }
+  .company-site:nth-child(2) { top: 199px; left: calc(10.5% - 42px); }
+  .company-site:nth-child(3) { top: 199px; right: calc(10.5% - 42px); }
+  .company-site:nth-child(4) { top: 373px; left: calc(25% - 42px); }
+  .company-site:nth-child(5) { top: 373px; right: calc(25% - 42px); }
+  .sites-label { position: absolute; bottom: 0; width: 100%; margin: 0; color: var(--network-muted); text-align: center; font: 400 14px/1.4 'Inter', Arial, sans-serif; }
+  .exchanges { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; gap: 17px; margin-top: 24px; padding-top: 22px; border-top: 1px solid color-mix(in srgb, var(--network-line) 45%, transparent); }
+  .exchange h4 { margin: 10px 0 8px; text-wrap: balance; font: 400 22px/1.2 'DD-Recoleta', Georgia, serif; }
+  .exchange p { margin: 0; color: var(--network-muted); font: 400 14px/1.55 'Inter', Arial, sans-serif; }
+  .visit-arrow { display: block; width: 32px; height: 16px; stroke: var(--network-accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .coaching .visit-arrow { stroke: var(--network-muted); }
+  .alternative { align-self: center; color: var(--network-muted); font: 400 15px/1.4 'Inter', Arial, sans-serif; }
+  figcaption { margin-top: 20px; color: var(--network-muted); text-align: center; text-wrap: balance; font: 400 14px/1.5 'Inter', Arial, sans-serif; }
+  @container (max-width: 480px) {
+    .network-panel { padding: 21px 16px 20px; }
+    h3 { font-size: 25px; }
+    .network { height: 400px; }
+    .connections { height: 382px; }
+    .coe-site { top: 160px; width: 154px; gap: 7px; }
+    .coe-illustration { width: 64px; }
+    .coe-copy h4 { font-size: 20px; }
+    .coe-copy p { margin-top: 7px; font-size: 12.5px; }
+    .company-site { width: 64px; }
+    .company-site:nth-child(1) { left: calc(50% - 32px); }
+    .company-site:nth-child(2) { top: 169px; left: calc(10.5% - 32px); }
+    .company-site:nth-child(3) { top: 169px; right: calc(10.5% - 32px); }
+    .company-site:nth-child(4) { top: 317px; left: calc(25% - 32px); }
+    .company-site:nth-child(5) { top: 317px; right: calc(25% - 32px); }
+    .exchanges { gap: 12px; margin-top: 21px; padding-top: 19px; }
+    .exchange h4 { font-size: 21px; }
+    .exchange p { font-size: 14px; line-height: 1.45; }
+  }
+  @container (max-width: 340px) {
+    .coe-site { width: 136px; }
+    .coe-copy h4 { font-size: 18px; }
+    .exchanges { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .alternative { text-align: center; }
+    .exchange { display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; }
+    .visit-arrow { margin-top: 5px; }
+    .exchange h4 { margin-top: 0; }
+    .exchange p { grid-column: 2; }
+  }
+</style>

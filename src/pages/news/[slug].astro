@@ -78,7 +78,7 @@ const related = (await getNewsEntries())
           <h2>See DataDocks<br />at work</h2>
           <p>See how dock scheduling and yard management work together at your facility.</p>
           <ul>{data.relatedLinks.map(link => <li><a href={link.url}>{link.label} <LinkIcon /></a></li>)}</ul>
-          <a class="story-demo" href="#book-demo">Book a demo <LinkIcon /></a>
+          <a class="story-demo" data-cta-id="news-story-demo" href="#book-demo">Book a demo <LinkIcon /></a>
         </section>
       </aside>
     </div>

@@ -34,6 +34,15 @@ describe('homepage evergreen highlight', () => {
     expect(getFeaturedEvergreenPost([updated, neverUpdated], asOf)).toBe(neverUpdated);
   });
 
+  it('treats the warehouse setup checklist as evergreen at its publication cutoff', () => {
+    const previous = article('warehouse-audit-checklist', '2024-02-06', '2026-10-19');
+    const setup = article('warehouse-setup-checklist', '2026-10-23T00:00:00Z');
+    const daily = article('early-arrival-patterns', '2026-10-27T14:30:00Z');
+    expect(getFeaturedEvergreenPost([previous, setup, daily], new Date('2026-10-22T23:59:59Z'))).toBe(previous);
+    expect(getFeaturedEvergreenPost([previous, setup, daily], new Date('2026-10-23T00:00:00Z'))).toBe(setup);
+    expect(getFeaturedEvergreenPost([previous, setup, daily], new Date('2026-10-28T00:00:00Z'))).toBe(setup);
+  });
+
   it('excludes scheduled, hidden, imageless and non-article resources', () => {
     const future = article('best-yard-management-options', '2026-10-09');
     const hidden = article('retail-case-studies', '2025-01-01');

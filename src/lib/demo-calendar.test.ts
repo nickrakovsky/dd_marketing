@@ -3,6 +3,7 @@ import { createDemoCaptureFlow } from './demo-qualification';
 import { createDemoCalendar } from './demo-calendar';
 import { mountDemoCapture } from './demo-capture-ui';
 import { captureContext } from './lead-context';
+import { VENDOR_ASSETS } from './vendor-assets.mjs';
 
 type Browser = Window & { Calendly?: { initPopupWidget: ReturnType<typeof vi.fn> }; ddHandleDemoCalendarMessage?: (event: MessageEvent) => void };
 const browser = window as Browser;
@@ -11,7 +12,45 @@ beforeEach(() => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{"ok":true}')));
   browser.Calendly = { initPopupWidget: vi.fn() };
 });
-afterEach(() => { delete browser.Calendly; delete browser.ddHandleDemoCalendarMessage; vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+afterEach(() => {
+  delete browser.Calendly; delete browser.ddHandleDemoCalendarMessage;
+  document.head.querySelectorAll('[data-demo-calendar-css], script[src^="/_astro/vendor/calendlyJs."]').forEach(asset => asset.remove());
+  vi.unstubAllGlobals(); vi.restoreAllMocks();
+});
+it('loads reviewed first-party Calendly assets only on demand and retries a failed load', async () => {
+  vi.resetModules();
+  const { createDemoCalendar: freshCalendar } = await import('./demo-calendar');
+  delete browser.Calendly;
+  const calendar = freshCalendar();
+  const flow = createDemoCaptureFlow({ capture: vi.fn(), useWorkEmail: vi.fn() }, { source: '/' });
+  const form = document.createElement('form');
+  expect(document.querySelector('[data-demo-calendar-css]')).toBeNull();
+  expect(document.querySelector('script[src*=calendly]')).toBeNull();
+
+  const firstOpen = calendar('buyer@company.com', flow, form);
+  const script = document.querySelector<HTMLScriptElement>('script[src*=calendly]')!;
+  const css = document.querySelector<HTMLLinkElement>('[data-demo-calendar-css]')!;
+  expect(script.getAttribute('src')).toBe(VENDOR_ASSETS.calendlyJs.path);
+  expect(script.integrity).toBe(VENDOR_ASSETS.calendlyJs.integrity);
+  expect(script.crossOrigin).toBe('anonymous');
+  expect(css.getAttribute('href')).toBe(VENDOR_ASSETS.calendlyCss.path);
+  script.dispatchEvent(new Event('error'));
+  await firstOpen;
+  expect(script.isConnected).toBe(false);
+  expect(document.querySelector<HTMLElement>('[data-demo-calendar-fallback]')!.hidden).toBe(false);
+  expect(document.querySelector('script[src^="https://assets.calendly.com"]')).toBeNull();
+
+  const retry = calendar('buyer@company.com', flow, form);
+  const retryScript = document.querySelector<HTMLScriptElement>('script[src*=calendly]')!;
+  expect(retryScript.getAttribute('src')).toBe(VENDOR_ASSETS.calendlyJs.path);
+  expect(document.querySelectorAll('[data-demo-calendar-css]')).toHaveLength(1);
+  browser.Calendly = { initPopupWidget: vi.fn() };
+  retryScript.dispatchEvent(new Event('load'));
+  await retry;
+  expect(browser.Calendly.initPopupWidget).toHaveBeenCalledWith(expect.objectContaining({ prefill: { email: 'buyer@company.com' } }));
+  expect(document.querySelector<HTMLElement>('[data-demo-calendar-fallback]')!.hidden).toBe(true);
+  expect(fetch).not.toHaveBeenCalled();
+});
 it('uses the submitted qualifying email and starts Calendly while capture is still unresolved', async () => {
   const capture = vi.fn(() => new Promise<never>(() => {}));
   const flow = createDemoCaptureFlow({ capture, useWorkEmail: vi.fn() }, { source: '/' });

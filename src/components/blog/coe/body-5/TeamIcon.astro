@@ -1,0 +1,30 @@
+---
+interface Props { kind?: 'team' | 'measure' | 'improve' | 'practice'; }
+const { kind = 'team' } = Astro.props;
+---
+<svg class="team-icon" viewBox="0 0 96 96" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {kind === 'team' ? <>
+    <path class="accent" d="M17 27a37 37 0 0 1 63-2m-2-9 2 9-9-1M79 69a37 37 0 0 1-63 2m2 9-2-9 9 1" />
+    <circle class="paper" cx="27" cy="42" r="7" /><circle class="paper" cx="69" cy="42" r="7" />
+    <path class="paper" d="M16 65v-8c0-6 5-10 11-10s11 4 11 10v8m20 0v-8c0-6 5-10 11-10s11 4 11 10v8" />
+    <circle class="paper" cx="48" cy="34" r="9" />
+    <path class="paper" d="M33 71V58c0-8 6-14 15-14s15 6 15 14v13M40 71V59m16 12V59" />
+    <path class="accent" d="m43 46 5 7 5-7" />
+  </> : kind === 'measure' ? <>
+    <path d="M17 75V24m0 51h64M29 64V49h10v15m9 0V37h10v27m9 0V22h10v42" />
+    <path class="accent" d="m28 33 18-9 13 3 18-13m-8 0h8v8" />
+  </> : kind === 'improve' ? <>
+    <path d="M23 33a28 28 0 0 1 49-5m-1-14 1 14-14-1M73 63a28 28 0 0 1-49 5m1 14-1-14 14 1" />
+    <path class="accent" d="m36 49 8 8 17-19" />
+  </> : <>
+    <rect class="paper" x="25" y="20" width="47" height="63" rx="4" />
+    <rect class="paper" x="37" y="14" width="23" height="12" rx="3" />
+    <path class="accent" d="m35 42 4 4 8-9" />
+    <path d="M54 42h9M35 59h28M35 70h21" />
+  </>}
+</svg>
+<style>
+  .team-icon { display: block; width: 100%; height: auto; }
+  .paper { fill: var(--paper, #fff8ee); }
+  .accent { stroke: var(--accent, #fe5000); }
+</style>

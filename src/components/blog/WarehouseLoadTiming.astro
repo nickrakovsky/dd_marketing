@@ -1,0 +1,48 @@
+---
+import './load-timing.css';
+---
+
+<figure class="dd-load-timing not-prose" aria-labelledby="ddlt-title" aria-describedby="ddlt-assumptions">
+  <header class="ddlt-heading">
+    <h3 id="ddlt-title">Two trucks.<br>Different workloads.</h3>
+    <p>30 + 90 = <strong>120 minutes</strong><br>of handling in either schedule.</p>
+  </header>
+
+  <label class="ddlt-control" for="ddlt-earlier" aria-label="Start the long load 30 minutes earlier">
+    <input id="ddlt-earlier" class="ddlt-toggle" type="checkbox" aria-controls="ddlt-result" aria-describedby="ddlt-control-help">
+    <span><strong>Start the long load 30 minutes earlier</strong><span id="ddlt-control-help">Use the available 15:30 slot.</span></span>
+  </label>
+
+  <div class="ddlt-chart" role="group" aria-label="Two loading doors on a shared timeline from 15:30 to 17:30">
+    <div class="ddlt-axis" aria-hidden="true">
+      <span style="--tick:0%">15:30</span><span style="--tick:25%">16:00</span><span style="--tick:50%">16:30</span><span class="ddlt-shift-tick" style="--tick:75%">17:00</span><span style="--tick:100%">17:30</span>
+    </div>
+    <svg class="ddlt-svg" width="100%" height="190" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+      <defs><pattern id="ddlt-hatch" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M-2 2L2-2 M0 8L8 0 M6 10L10 6" class="ddlt-hatch-line"/></pattern></defs>
+      <rect class="ddlt-after-shift" x="75%" y="0" width="25%" height="190"/>
+      <path class="ddlt-grid" d="M0 0V190"/>
+      <line class="ddlt-grid" x1="25%" x2="25%" y1="0" y2="190"/>
+      <line class="ddlt-grid" x1="50%" x2="50%" y1="0" y2="190"/>
+      <line class="ddlt-deadline" x1="75%" x2="75%" y1="0" y2="190"/>
+      <line class="ddlt-grid" x1="100%" x2="100%" y1="0" y2="190"/>
+      <rect class="ddlt-short-bar" x="25%" y="42" width="25%" height="34" rx="2"/>
+      <rect class="ddlt-long-bar" x="25%" y="128" width="75%" height="34" rx="2"/>
+      <rect class="ddlt-overrun-hatch" x="75%" y="128" width="25%" height="34" fill="url(#ddlt-hatch)"/>
+    </svg>
+    <div class="ddlt-lane ddlt-short-label"><strong>Door A <span>(30 min)</span></strong><span>16:00–16:30</span></div>
+    <div class="ddlt-lane ddlt-long-label"><strong>Door B <span>(90 min)</span></strong><span class="ddlt-late">16:00–17:30</span><span class="ddlt-early">15:30–17:00</span></div>
+    <div class="ddlt-shift-label" aria-hidden="true">Shift ends</div>
+  </div>
+
+  <div id="ddlt-result" class="ddlt-result" aria-live="polite" aria-atomic="true">
+    <div class="ddlt-late">
+      <p class="ddlt-number">30 <span>min past shift end</span></p>
+      <p>Both trucks start at 16:00. The 90-minute load finishes at 17:30.</p>
+    </div>
+    <div class="ddlt-early">
+      <p class="ddlt-number">0 <span>min past shift end</span></p>
+      <p>The long load starts at 15:30 and finishes at 17:00. Same work, doors and crews.</p>
+    </div>
+  </div>
+  <figcaption id="ddlt-assumptions"><strong>Illustrative example.</strong> Both doors, crews and equipment are available from 15:30. The carrier can meet the earlier start. Handling times stay fixed; this shows finish time, not paid overtime hours.</figcaption>
+</figure>

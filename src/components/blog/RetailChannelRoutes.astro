@@ -1,0 +1,120 @@
+---
+import RetailChannelArtwork from './RetailChannelArtwork.astro';
+---
+
+<figure id="retail-channel-routes" class="channel-routes not-prose" aria-labelledby="channel-routes-title">
+  <div class="figure-body">
+    <h3 id="channel-routes-title">Foot Locker depended on Nike. Nike had other buyers.</h3>
+    <div class="comparison">
+      <div class="measure">
+        <div class="bar-label">
+          <span>Foot Locker’s merchandise purchases from Nike</span>
+          <strong>71%</strong>
+        </div>
+        <svg viewBox="0 0 100 4" preserveAspectRatio="none" role="img" aria-label="Nike supplied approximately 71 percent of Foot Locker’s total merchandise purchases in fiscal 2019." focusable="false">
+          <rect class="track" width="100" height="4" />
+          <rect class="share" width="71" height="4" />
+        </svg>
+      </div>
+      <div class="measure">
+        <div class="bar-label">
+          <span>Nike’s revenue from any single customer</span>
+          <strong>&lt;10%</strong>
+        </div>
+        <svg viewBox="0 0 100 4" preserveAspectRatio="none" role="img" aria-label="In Nike’s fiscal 2019, every individual customer accounted for less than 10 percent of total revenue. The outlined range is an upper bound, not Foot Locker’s exact share." focusable="false">
+          <rect class="track" width="100" height="4" />
+          <rect class="upper-bound" width="10" height="4" vector-effect="non-scaling-stroke" />
+        </svg>
+      </div>
+      <div class="scale" aria-hidden="true"><span>0%</span><span>100%</span></div>
+    </div>
+    <div class="route-strip" role="img" aria-label="Nike can sell shoes to shoppers through Foot Locker or directly through its own website, bypassing Foot Locker.">
+      <svg class="connections" viewBox="0 0 600 116" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path class="retail-route" d="M100 70H500M242 65l8 5-8 5M442 65l8 5-8 5" />
+        <path class="direct-route" d="M100 70V30Q100 18 112 18H488Q500 18 500 30V70M392 13l8 5-8 5M494 36l6 6 6-6" />
+      </svg>
+      <div class="direct-channel" aria-hidden="true">
+        <div class="phone"><RetailChannelArtwork kind="direct" /></div>
+        <span>Direct sales</span>
+      </div>
+      <div class="route-actors" aria-hidden="true">
+        <div class="actor">
+          <div class="artwork"><RetailChannelArtwork kind="brand" /></div>
+          <span>Nike</span>
+        </div>
+        <div class="actor">
+          <div class="artwork"><RetailChannelArtwork kind="retailer" /></div>
+          <span>Foot Locker</span>
+        </div>
+        <div class="actor">
+          <div class="artwork"><RetailChannelArtwork kind="shopper" /></div>
+          <span>Shoppers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <figcaption>
+    Fiscal 2019 reports:
+    <a href="https://www.sec.gov/Archives/edgar/data/850209/000085020920000007/fl-20200201x10k.htm">Foot Locker</a> (year ended Feb. 1, 2020) and
+    <a href="https://www.sec.gov/Archives/edgar/data/320187/000032018719000051/nke-531201910k.htm">Nike</a> (May 31, 2019). Nike did not disclose Foot Locker’s exact share.
+  </figcaption>
+</figure>
+
+<style>
+  .channel-routes {
+    --chart-paper: #fff8e9;
+    --chart-ink: #302b25;
+    --chart-muted: #6b5a48;
+    --chart-rule: #e5d3b3;
+    --chart-accent: #fd4f00;
+    --chart-soft: #f8bc8d;
+    --chart-glass: #d9e3df;
+    container-type: inline-size;
+    margin: 2rem 0;
+    scroll-margin-top: 7rem;
+    color: var(--chart-ink);
+    font-family: Inter, system-ui, sans-serif;
+  }
+  :global(.dark) .channel-routes {
+    --chart-paper: #1e1c19;
+    --chart-ink: #fff3df;
+    --chart-muted: #c8baa7;
+    --chart-rule: #504638;
+    --chart-accent: #ff8752;
+    --chart-soft: #c89468;
+    --chart-glass: #566a67;
+  }
+  .figure-body {
+    padding: clamp(0.875rem, 3cqi, 1.25rem);
+    border-top: 3px solid var(--chart-accent);
+    background: var(--chart-paper);
+  }
+  h3 {
+    margin: 0 0 1.25rem;
+    font-family: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif;
+    font-size: clamp(1.125rem, 3.5cqi, 1.5rem);
+    font-weight: 500;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  .comparison { display: grid; gap: 1rem; }
+  .bar-label { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; font-size: 0.875rem; line-height: 1.4; }
+  .bar-label strong { flex-shrink: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .measure svg { display: block; width: 100%; height: 1.25rem; }
+  .track { fill: var(--chart-rule); }
+  .share { fill: var(--chart-accent); }
+  .upper-bound { fill: var(--chart-paper); stroke: var(--chart-ink); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .scale { display: flex; justify-content: space-between; margin-top: -0.625rem; color: var(--chart-muted); font-size: 0.6875rem; line-height: 1.4; }
+  .route-strip { position: relative; height: 7.25rem; margin-top: 1.25rem; font-size: 0.75rem; line-height: 1.4; }
+  .connections { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; }
+  .connections path { stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .retail-route { stroke: var(--chart-muted); }
+  .direct-route { stroke: var(--chart-accent); }
+  .direct-channel { position: absolute; top: 0.375rem; left: 50%; display: flex; align-items: center; gap: 0.375rem; padding-inline: 0.375rem; transform: translateX(-50%); background: var(--chart-paper); white-space: nowrap; }
+  .phone { width: 0.875rem; }
+  .route-actors { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding-top: 3rem; }
+  .actor { display: grid; justify-items: center; gap: 0.25rem; }
+  .artwork { display: flex; align-items: center; width: clamp(2.5rem, 10cqi, 3.5rem); height: 2.75rem; background: var(--chart-paper); }
+  figcaption { margin-top: 0.65rem; color: var(--chart-muted); font-size: 0.75rem; line-height: 1.5; }
+  figcaption a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+</style>

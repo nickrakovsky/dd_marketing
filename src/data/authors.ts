@@ -24,7 +24,7 @@ export const authors: Record<string, Author> = {
     name: "Nick Rakovsky",
     slug: "nick-rakovsky",
     role: "CEO, DataDocks",
-    shortBio: "Nick is the CEO of DataDocks, the dock scheduling and yard management platform he co-founded in 2013. He leads product strategy and works directly with enterprise warehouse and distribution operations across North America.",
+    shortBio: "Nick is the creator and CEO of DataDocks, a dock scheduling and yard management platform serving customers internationally. He leads product strategy and works directly with warehouse and distribution teams.",
     linkedIn: "https://www.linkedin.com/in/nickrakovsky",
   },
   "Tim Branch": {

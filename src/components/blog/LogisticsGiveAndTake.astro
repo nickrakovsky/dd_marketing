@@ -1,0 +1,266 @@
+---
+interface Props { id?: string; }
+const { id = 'give-and-take' } = Astro.props;
+const regularDeliveries = [-200, -100, 0, 100, 200, 400, 630];
+---
+
+<figure class="dd-figure give-and-take not-prose" data-give-take-zoom aria-labelledby={`${id}-title`}>
+  <figcaption class="dd-figure-title" id={`${id}-title`}>One delivery. A longer relationship.</figcaption>
+
+  <div class="relationship-scene">
+    <svg class="relationship-art" viewBox="0 0 640 260" role="img" aria-label="Regular deliveries continue through earlier exceptions: the customer worked around our delay and we accommodated their late change. Today, a damage charge is proposed." focusable="false">
+      <g class="delivery-world" data-camera transform="translate(565 114) scale(.6) translate(-740 0)">
+        <path class="delivery-band" d="M-340 0H790" />
+        <path class="band-edges" data-band-edges d="M-340-56.7H790V56.7H-340" />
+        <g class="relationship-milestone" transform="translate(300 0)">
+          <path class="milestone-tick" data-milestone-tick d="M0-66.7V66.7" />
+        </g>
+        <g class="relationship-milestone" transform="translate(530 0)">
+          <path class="milestone-tick" data-milestone-tick d="M0-66.7V66.7" />
+        </g>
+        <g class="current-delivery" transform="translate(740 0)">
+          <g class="current-carton" transform="translate(0 49)">
+            <path class="carton-top-face" d="M-30-70L-10-82L30-70L10-58Z" />
+            <path class="carton-front-face" d="M-30-70L10-58V-16L-30-28Z" />
+            <path class="carton-side-face" d="M10-58L30-70V-59L23-54L26-48L21-44L30-39V-28L10-16Z" />
+          
+            <path class="carton-packing-tape" d="M6-77.2L14-74.8L-6-62.8V-51.8L-14-54.2V-65.2Z" />
+          
+            <path class="carton-rupture" d="M-3-58L4-55L9-58L14-53L23-54L26-48L21-44L16-45L12-38L7-42L2-39L1-46L-5-49L0-52Z" />
+            <path class="carton-torn-flap" d="M-5-49L1-46L2-39L7-42L12-38L5-33L-2-40Z" />
+          
+            <path class="carton-edge" d="M-30-70L-10-82L30-70V-59L23-54L26-48L21-44L30-39V-28L10-16L-30-28Z" />
+            <path class="carton-seams" d="M-30-70L10-58L30-70M10-58V-56M10-36V-16" />
+          
+            <g class="carton-shipping-label" transform="matrix(1 .3 0 1 -25 -49)">
+              <rect class="carton-label-paper" x="0" y="0" width="19" height="15" rx=".6" />
+              <path class="carton-label-copy" d="M3 3.5h11M3 6.5h7" />
+              <path class="carton-label-barcode" d="M3 10v2M5 10v2M7 10v2M8.5 10v2M11 10v2M14 10v2M16 10v2" />
+            </g>
+          </g>
+          <path class="current-stem" data-current-stem d="M0 30V0" opacity="0" />
+          <circle class="today-point" data-today-point r="8" opacity="0" />
+        </g>
+      </g>
+      <g class="regular-deliveries" data-regular-deliveries aria-hidden="true">
+        {regularDeliveries.map(x => <g class="regular-delivery" data-history-x={x} transform={`translate(${565 + (x - 740) * .6} 114)`}>
+          <g transform="translate(-2.5 -1)">
+            <path class="healthy-box" d="M-12-8L0-14L12-8V6L0 12L-12 6Z" />
+            <path class="healthy-seams" d="M-12-8L0-2L12-8M0-2V12M-6-11L6-5" />
+            <circle class="healthy-badge" cx="10" cy="9" r="7" />
+            <path class="healthy-check" d="m6.5 9 2.4 2.4 4.5-5" />
+          </g>
+        </g>)}
+      </g>
+      <g class="context-connections" data-context-connections>
+        <path class="context-leader" data-customer-leader d="M301 74V52H0" />
+        <path class="context-leader" data-operation-leader d="M439 154V208H640" />
+      </g>
+    </svg>
+    <p class="context-note customer-context" data-customer-context><span>Our delay</span><strong>Customer worked around it</strong></p>
+    <p class="context-note operation-context" data-operation-context><span>Their late change</span><strong>We accommodated it</strong></p>
+    <span class="regular-label" data-regular-label><strong>Regular deliveries</strong><span>Few problems</span></span>
+    <span class="carton-label" data-carton-label hidden>Damaged carton</span>
+    <span class="today-label" data-today-label>Today</span>
+  </div>
+
+  <div class="zoom-controls" hidden>
+    <label for={`${id}-zoom`}>Zoom out to see earlier deliveries</label>
+    <div class="zoom-track">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6" /><path d="m14.5 14.5 5 5M7 10h6m-3-3v6" /></svg>
+      <input id={`${id}-zoom`} data-zoom type="range" min="0" max="100" step="1" value="0" aria-valuetext="This delivery" />
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6" /><path d="m14.5 14.5 5 5M7 10h6" /></svg>
+    </div>
+  </div>
+</figure>
+
+<script>
+  function initializeRelationshipZoom() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-give-take-zoom]');
+    figures.forEach(figure => {
+      if (figure.dataset.zoomReady) return;
+      const scene = figure.querySelector<HTMLElement>('.relationship-scene');
+      const art = figure.querySelector<SVGSVGElement>('.relationship-art');
+      const camera = figure.querySelector<SVGGElement>('[data-camera]');
+      const range = figure.querySelector<HTMLInputElement>('[data-zoom]');
+      const controls = figure.querySelector<HTMLElement>('.zoom-controls');
+      const customer = figure.querySelector<HTMLElement>('[data-customer-context]');
+      const operation = figure.querySelector<HTMLElement>('[data-operation-context]');
+      const connections = figure.querySelector<SVGGElement>('[data-context-connections]');
+      const today = figure.querySelector<HTMLElement>('[data-today-label]');
+      const regular = figure.querySelector<HTMLElement>('[data-regular-label]');
+      const cartonLabel = figure.querySelector<HTMLElement>('[data-carton-label]');
+      if (!scene || !art || !camera || !range || !controls || !customer || !operation || !connections || !today || !regular || !cartonLabel) return;
+      figure.dataset.zoomReady = 'true';
+      controls.hidden = false;
+      let printView = false;
+      const smoothstep = (start: number, end: number, value: number) => {
+        const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
+        return t * t * (3 - 2 * t);
+      };
+      const paint = () => {
+        const width = scene.clientWidth || 640;
+        const height = scene.clientHeight || 260;
+        const progress = printView ? 1 : Number(range.value) / 100;
+        // Measure the fixed-size captions before placing the moving drawing.
+        customer.hidden = false;
+        operation.hidden = false;
+        regular.hidden = false;
+        cartonLabel.hidden = false;
+        const customerBottom = customer.offsetTop + customer.offsetHeight + 8;
+        const operationTop = operation.offsetTop - 8;
+        const todayHeight = today.offsetHeight;
+        const bandHeight = 4 + 64 * progress;
+        const halfBand = bandHeight / 2;
+        const closeScale = Math.min(2.6, Math.max(2.35, width / 180));
+        const wideScale = (width - 52) / 940;
+        const scale = closeScale * Math.pow(wideScale / closeScale, progress);
+        const anchor = width * (.5 + .38 * progress);
+        const customerX = anchor + (300 - 740) * scale;
+        const operationX = anchor + (530 - 740) * scale;
+        const showCustomer = customerX > 25 && scale < 1.1;
+        const showOperation = operationX > 25 && scale < 1.1;
+        const minWideBaseline = customerBottom + 34 + 12;
+        const maxWideBaseline = operationTop - 12 - todayHeight - 10 - 34;
+        const wideBaseline = Math.max(minWideBaseline, Math.min(height * .44, maxWideBaseline));
+        // Make room for context before it enters, rather than moving labels across each other.
+        let baseline = height - 40 + (wideBaseline - (height - 40)) * smoothstep(0, .6, progress);
+        if (showOperation) baseline = Math.min(baseline, operationTop - 12 - todayHeight - 10 - halfBand);
+        art.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        camera.setAttribute('transform', `translate(${anchor} ${baseline}) scale(${scale}) translate(-740 0)`);
+        figure.dataset.zoom = String(Math.round(progress * 100));
+        figure.dataset.contextVisible = String(showCustomer && showOperation);
+        const cartonScale = Math.max(scale, .55);
+        const cartonSizeFactor = cartonScale / scale;
+        figure.dataset.cartonDetail = String(cartonScale >= .65);
+        art.setAttribute('aria-label', progress < .05
+          ? 'A damaged carton from today’s delivery. A charge is proposed.'
+          : showCustomer && showOperation
+            ? 'Regular deliveries with few problems. Earlier, the customer worked around our delay and we accommodated their late change. Today’s damage charge remains proposed.'
+            : 'Earlier deliveries come into view, with today’s damaged carton still visible.');
+        customer.hidden = !showCustomer;
+        operation.hidden = !showOperation;
+        connections.style.display = showCustomer || showOperation ? '' : 'none';
+        const customerLeader = figure.querySelector<SVGPathElement>('[data-customer-leader]');
+        const operationLeader = figure.querySelector<SVGPathElement>('[data-operation-leader]');
+        customerLeader?.setAttribute('d', `M${customerX} ${baseline - halfBand - 6}V${customerBottom}H0`);
+        operationLeader?.setAttribute('d', `M${operationX} ${baseline + halfBand + 6}V${operationTop}H${width}`);
+        if (customerLeader) customerLeader.style.display = showCustomer ? '' : 'none';
+        if (operationLeader) operationLeader.style.display = showOperation ? '' : 'none';
+        const deliveryBand = figure.querySelector<SVGPathElement>('.delivery-band');
+        deliveryBand?.style.setProperty('stroke-width', String(bandHeight));
+        figure.querySelectorAll('[data-milestone-tick]').forEach(node => node.setAttribute('d', `M0 ${-(halfBand + 6) / scale}V${(halfBand + 6) / scale}`));
+        const labelOpacity = 1 - smoothstep(.06, .22, progress);
+        // Keep space for the close caption until it has disappeared, then relax the gap.
+        const cartonGap = 8 + 26 * (1 - smoothstep(.22, .38, progress));
+        const liftedPosition = Math.min(0, (16 * cartonScale - halfBand - cartonGap) / scale);
+        // Once the drawing fits, join the same row as the other deliveries.
+        const seated = smoothstep(0, 14, bandHeight - 66 * cartonScale);
+        const cartonLift = liftedPosition + (49 * cartonSizeFactor - liftedPosition) * seated;
+        figure.dataset.cartonSeated = String(seated);
+        figure.querySelector('.current-carton')?.setAttribute('transform', `translate(0 ${cartonLift}) scale(${cartonSizeFactor})`);
+        const stem = figure.querySelector('[data-current-stem]');
+        const point = figure.querySelector('[data-today-point]');
+        const pinOpacity = 1 - smoothstep(0, .4, seated);
+        stem?.setAttribute('d', `M0 ${-19 * cartonSizeFactor + cartonLift}V0`);
+        stem?.setAttribute('opacity', String(pinOpacity));
+        point?.setAttribute('r', String(5 / scale));
+        point?.setAttribute('opacity', String(pinOpacity));
+        const endX = Math.min(width - 1, anchor + (30 * cartonScale + 12) * seated);
+        const bandEnd = 740 + (endX - anchor) / scale;
+        figure.querySelector('.delivery-band')?.setAttribute('d', `M-340 0H${bandEnd}`);
+        figure.querySelector('[data-band-edges]')?.setAttribute('d', `M-340 ${-halfBand / scale}H${bandEnd}V${halfBand / scale}H-340`);
+        const cartonBottom = baseline + (-16 * cartonSizeFactor + cartonLift) * scale;
+        cartonLabel.style.left = `${Math.max(0, anchor - cartonLabel.offsetWidth - 12)}px`;
+        cartonLabel.style.top = `${cartonBottom + 7}px`;
+        cartonLabel.style.opacity = String(labelOpacity);
+        cartonLabel.hidden = labelOpacity === 0;
+        const roomBeforeFirstEvent = customerX - 20;
+        regular.style.maxWidth = `${Math.max(0, roomBeforeFirstEvent - 12)}px`;
+        regular.style.top = `${baseline + halfBand + 10}px`;
+        const showRegular = showCustomer && roomBeforeFirstEvent >= 96
+          && regular.scrollWidth <= regular.offsetWidth + 1;
+        regular.hidden = !showRegular;
+        figure.dataset.regularVisible = String(showRegular);
+        // Keep the latest icons stable and reveal earlier ones as space opens up.
+        const iconSize = Math.min(32, Math.max(24, width / 18));
+        const iconOpacity = smoothstep(.45, .65, progress);
+        let previousIconX = Infinity;
+        const currentClearance = 9 + (30 * cartonScale + 8 - 9) * seated;
+        const deliveryIcons = [...figure.querySelectorAll<SVGGElement>('[data-history-x]')].reverse();
+        deliveryIcons.forEach(icon => {
+          const x = anchor + (Number(icon.dataset.historyX) - 740) * scale;
+          const clearOfEvents = [customerX, operationX].every(eventX => Math.abs(x - eventX) >= iconSize / 2 + 9);
+          const visible = iconOpacity > 0 && bandHeight >= iconSize + 10
+            && x >= iconSize / 2 + 3 && x <= anchor - iconSize / 2 - currentClearance
+            && previousIconX - x >= iconSize + 10 && clearOfEvents;
+          icon.style.display = visible ? '' : 'none';
+          if (visible) previousIconX = x;
+          icon.style.opacity = String(iconOpacity);
+          icon.setAttribute('transform', `translate(${x} ${baseline}) scale(${iconSize / 30})`);
+        });
+        today.style.left = `${anchor}px`;
+        today.style.top = `${baseline + halfBand + 10}px`;
+        range.setAttribute('aria-valuetext', progress < .05 ? 'This delivery' : showCustomer && showOperation ? 'The working relationship, including flexibility on both sides' : 'Zooming out to earlier deliveries');
+      };
+      range.addEventListener('input', paint);
+      const observer = new ResizeObserver(paint);
+      observer.observe(scene);
+      window.addEventListener('beforeprint', () => { printView = true; paint(); });
+      window.addEventListener('afterprint', () => { printView = false; paint(); });
+      const printMedia = window.matchMedia('print');
+      printMedia.addEventListener('change', event => { printView = event.matches; paint(); });
+      paint();
+    });
+  }
+  initializeRelationshipZoom();
+  document.addEventListener('astro:page-load', initializeRelationshipZoom);
+</script>
+
+<style>
+  .give-and-take .relationship-scene { position: relative; height: 260px; margin-top: .85rem; overflow: hidden; }
+  .give-and-take .relationship-art { display: block; width: 100%; height: 100%; }
+  .give-and-take .delivery-band { fill: none; stroke: var(--dd-figure-surface); stroke-width: 68; vector-effect: non-scaling-stroke; }
+
+  .give-and-take .band-edges { fill: none; stroke: var(--dd-figure-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .give-and-take .healthy-box, .give-and-take .healthy-badge { fill: var(--dd-figure-paper); stroke: var(--dd-figure-ink); stroke-width: 1.1; stroke-linejoin: round; }
+  .give-and-take .healthy-seams { fill: none; stroke: var(--dd-figure-ink); stroke-width: 1; stroke-linejoin: round; }
+  .give-and-take .healthy-check { fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+  .give-and-take .milestone-tick { fill: none; stroke: var(--dd-figure-ink); stroke-width: 2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .give-and-take .carton-top-face { fill: var(--dd-figure-paper); }
+  .give-and-take .carton-front-face { fill: var(--dd-figure-surface); }
+  .give-and-take .carton-side-face { fill: var(--dd-figure-surface); }
+  .give-and-take .carton-edge,
+  .give-and-take .carton-seams { fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+  .give-and-take .carton-rupture { fill: var(--dd-figure-ink); }
+  .give-and-take .carton-torn-flap { fill: var(--dd-figure-paper); stroke: var(--dd-figure-ink); stroke-width: .85; stroke-linejoin: round; }
+  .give-and-take .carton-packing-tape { fill: var(--dd-figure-accent); }
+  .give-and-take .carton-label-paper { fill: var(--dd-figure-paper); stroke: var(--dd-figure-ink); stroke-width: .45; }
+  .give-and-take .carton-label-copy { fill: none; stroke: var(--dd-figure-ink); stroke-width: .7; stroke-linecap: round; }
+  .give-and-take .carton-label-barcode { fill: none; stroke: var(--dd-figure-ink); stroke-width: .65; }
+  .give-and-take[data-carton-detail="false"] :is(.carton-label-copy, .carton-label-barcode) { display: none; }
+  .give-and-take .current-stem { stroke: var(--dd-figure-ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .give-and-take .today-point { fill: var(--dd-figure-accent); stroke: var(--dd-figure-ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .give-and-take .context-leader { fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .give-and-take .context-note { position: absolute; max-width: 16rem; width: 48%; margin: 0; font-size: .875rem; line-height: 1.45; font-weight: 600; }
+  .give-and-take .context-note span, .give-and-take .context-note strong { display: block; }
+  .give-and-take .context-note span { color: var(--dd-figure-muted); font-weight: 400; margin-bottom: .15rem; }
+  .give-and-take .context-note strong { font-weight: 600; }
+  .give-and-take .regular-label { position: absolute; left: 12px; top: 158px; width: max-content; max-width: 35%; color: var(--dd-figure-muted); font-size: .875rem; line-height: 1.4; white-space: normal; }
+  .give-and-take .regular-label > * { display: block; }
+  .give-and-take .regular-label strong { font-weight: 500; color: var(--dd-figure-ink); }
+  .give-and-take .regular-label > span { margin-top: .15rem; }
+  .give-and-take .carton-label { position: absolute; font-size: .875rem; line-height: 1.4; color: var(--dd-figure-muted); white-space: nowrap; }
+  .give-and-take .customer-context { top: .15rem; left: 0; }
+  .give-and-take .operation-context { bottom: .1rem; right: 0; text-align: right; }
+  .give-and-take .today-label { position: absolute; left: 88%; top: 158px; transform: translateX(-50%); font-size: .875rem; line-height: 1.4; font-weight: 600; }
+  .give-and-take .zoom-controls { margin-top: .65rem; }
+  .give-and-take .zoom-controls label { display: block; font-size: .875rem; line-height: 1.4; margin-bottom: .3rem; }
+  .give-and-take .zoom-track { display: flex; align-items: center; gap: .65rem; min-height: 2.75rem; }
+  .give-and-take .zoom-track svg { flex: none; width: 1.25rem; height: 1.25rem; fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .give-and-take input[type='range'] { display: block; min-width: 0; width: 100%; margin: 0; height: 2.75rem; cursor: ew-resize; accent-color: var(--dd-figure-ink); }
+  .give-and-take input[type='range']:focus-visible { outline: 2px solid var(--dd-figure-ink); outline-offset: 3px; border-radius: .2rem; }
+  .give-and-take [hidden] { display: none !important; }
+  @media (max-width: 420px) { .give-and-take .relationship-scene { height: 300px; } }
+  @media print { .give-and-take .zoom-controls { display: none; } .give-and-take .relationship-scene { break-inside: avoid; } }
+</style>

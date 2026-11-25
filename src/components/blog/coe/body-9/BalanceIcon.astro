@@ -1,0 +1,28 @@
+---
+interface Props { kind: 'vision' | 'operations'; }
+const { kind } = Astro.props;
+---
+<svg viewBox="0 0 144 112" width="144" height="112" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  {kind === 'vision' ? <>
+    <path class="quiet" d="M12 94h120M24 84h12m72 0h12" />
+    <path class="wash" d="M38 74V63l15 7V57l16 8V49h30v25" />
+    <path d="M38 93V74h61v19M49 93V80h13v13m14-13h13v13M76 58h5m7 0h4M76 66h5m7 0h4" />
+    <path class="accent" d="M43 37a12 12 0 0 1 0-24 16 16 0 0 1 30-3 13 13 0 0 1 17 16 9 9 0 0 1-1 17H55" />
+    <path class="quiet" d="m60 48 3-3m-9 9 2-2" />
+  </> : <>
+    <path class="quiet" d="M10 94h124" />
+    <path class="wash" d="M39 92V30h64v62" />
+    <path d="M33 30h76l-7-9H40l-7 9M47 38h48v54M47 47h48M47 54h48M47 61h48" />
+    <path class="accent" d="M17 61h12m-5-5 5 5-5 5M115 43h14m-5-5 5 5-5 5M17 40h12m-5-5 5 5-5 5" />
+    <path class="paper" d="M19 75h21v19H19zM69 73h21v21H69zM91 78h22v16H91z" />
+    <path d="M29 75v7m50-9v8m23-3v6" />
+    <path class="quiet" d="M115 65h12m-5-5 5 5-5 5" />
+  </>}
+</svg>
+<style>
+  svg { display:block; width:100%; height:auto; }
+  .wash { fill:color-mix(in srgb,var(--soft,#e3d5c4) 32%,var(--paper,#fff8ee)); }
+  .paper { fill:var(--paper,#fff8ee); }
+  .accent { stroke:var(--accent,#fe5000); }
+  .quiet { stroke:var(--line,#9f8d78); }
+</style>

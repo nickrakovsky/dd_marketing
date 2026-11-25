@@ -1,0 +1,40 @@
+---
+interface Step {
+  title: string;
+  text: string;
+  paths: string[];
+  accent: string;
+}
+interface Props {
+  steps: Step[];
+  caption: string;
+  title?: string;
+  label?: string;
+}
+const { steps, caption, title, label } = Astro.props;
+---
+
+<figure class="not-prose audit-record-trail font-recoleta" aria-label={label}>
+  {title && <p class="audit-trail-title">{title}</p>}
+  <ol>
+    {steps.map(({ title: stepTitle, text, paths, accent }) => <li>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true" focusable="false">{paths.map(d => <path d={d} />)}<path d={accent} stroke="#fd4f00" /></svg>
+      <div><strong>{stepTitle}</strong><span>{text}</span></div>
+    </li>)}
+  </ol>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .audit-record-trail { margin: 2rem 0; padding: 1rem 0; }
+  .audit-trail-title { margin: 0 0 1rem; font-size: 1rem; font-weight: 600; line-height: 1.5; }
+  ol { display: grid; gap: 1.25rem; list-style: none; margin: 0; padding: 0; }
+  li { position: relative; display: grid; grid-template-columns: 1.5rem minmax(0,1fr); gap: .75rem; margin: 0; padding: 0; font-size: 1rem; line-height: 1.6; }
+  li:not(:last-child)::after { content: ''; position: absolute; left: .75rem; top: 2rem; bottom: -.875rem; border-left: 1px solid #e5d3b3; }
+  svg { width: 1.5rem; height: 1.5rem; margin-top: .2rem; }
+  strong, span { display: block; }
+  strong { font-weight: 600; }
+  figcaption { margin: 1rem 0 0; padding-left: 2.25rem; font-family: Inter, Arial, sans-serif; font-size: .875rem; line-height: 1.6; }
+  :global(.dark) li::after { border-color: #4b5563; }
+  @media print { li { break-inside: avoid; } }
+</style>

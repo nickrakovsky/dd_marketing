@@ -1,0 +1,136 @@
+---
+interface Props { id?: string; }
+const { id = 'post-four-paperwork-check' } = Astro.props;
+const steps = [
+  { title: 'Booking', detail: 'State document requirements' },
+  { title: 'Document issued', detail: 'Upload bill of lading' },
+  { title: 'Before arrival', detail: 'Receiving team matches shipment to order' },
+  { title: 'On arrival', detail: 'Receiving team checks the load' },
+];
+---
+<figure class="doccheck not-prose" aria-labelledby={`${id}-title`}>
+  <header>
+    <h3 id={`${id}-title`}>Get the right paperwork to receiving.</h3>
+    <p>In this example, the receiving team needs the bill of lading to match a shipment to its purchase order before the truck arrives.</p>
+  </header>
+
+  <fieldset class="controls">
+    <legend>Choose the paperwork problem</legend>
+    <label><input class="early" type="radio" name={`${id}-issue`} value="early" checked /><span>Booking blocked</span></label>
+    <label><input class="missing" type="radio" name={`${id}-issue`} value="missing" /><span>Missing reference</span></label>
+    <label><input class="access" type="radio" name={`${id}-issue`} value="access" /><span>No access</span></label>
+    <label><input class="wrong" type="radio" name={`${id}-issue`} value="wrong" /><span>Wrong shipment</span></label>
+  </fieldset>
+
+  <p class="intervention-label" id={`${id}-intervention`}>Where you need to intervene:</p>
+  <ol class="events" aria-labelledby={`${id}-intervention`}>
+    {steps.map((step, index) => <li class:list={['event', `event-${index}`]}>
+      <svg viewBox="0 0 66 66" fill="none" aria-hidden="true" focusable="false">
+        <circle class="event-circle" cx="33" cy="33" r="27" />
+        {index === 0 && <g class="event-icon">
+          <rect class="line" x="19" y="20" width="28" height="28" rx="3" />
+          <path class="line" d="M19 28H47M26 16V23M40 16V23" />
+          <path class="icon-detail" d="M25 34H28M33 34H36M41 34H42M25 41H28M41 41H42" />
+          <rect class="icon-date" x="32" y="38" width="5" height="5" rx="1" />
+        </g>}
+        {index === 1 && <g class="event-icon">
+          <path class="icon-paper line" d="M21 17H35L43 25V48H21ZM35 17V25H43" />
+          <path class="icon-detail" d="M26 30H37M26 34H33" />
+          <path class="icon-arrow" d="M29 41H49M44 36L49 41L44 46" />
+        </g>}
+        {index === 2 && <g class="event-icon">
+          <path class="icon-paper line" d="M19 17H33L40 24V45H19ZM33 17V24H40" />
+          <path class="icon-detail" d="M24 28H31M24 33H28M24 38H28" />
+          <circle class="icon-paper line" cx="39" cy="37" r="9" />
+          <path class="line" d="M45.5 43.5L51 49" />
+          <path class="icon-arrow" d="M35 37L38 40L43 34" />
+        </g>}
+        {index === 3 && <g class="event-icon">
+          <path class="icon-paper line" d="M18 25L30 20L42 25V43L30 48L18 43ZM18 25L30 30L42 25M30 30V48" />
+          <path class="icon-detail" d="M24 22.5L36 27.5V34" />
+          <rect class="icon-paper line" x="37" y="31" width="14" height="19" rx="2" />
+          <path class="icon-arrow" d="M40 41L43 44L48 37" />
+        </g>}
+      </svg>
+      <strong>{step.title}</strong><span>{step.detail}</span>
+    </li>)}
+  </ol>
+
+  <div class="review" aria-live="polite" aria-atomic="true">
+    <section class="state-early">
+      <h4>The upload requirement blocks the booking.</h4>
+      <dl class="comparison">
+        <div><dt>Needed</dt><dd><span>Bill of lading required to book</span><span>Purchase order <strong>PO-583</strong></span></dd></div>
+        <div><dt>Available</dt><dd><span>Booking details for <strong>PO-583</strong></span><span class="mismatch">Bill of lading not yet issued</span></dd></div>
+      </dl>
+      <p>The bill of lading will only be available later. Allow booking with the order details, then set a document deadline that leaves time for the receiving team’s check.</p>
+    </section>
+    <section class="state-missing">
+      <h4>Check the order reference before arrival.</h4>
+      <dl class="comparison">
+        <div><dt>Needed</dt><dd><span>Shipment <strong>DL-204</strong></span><span>Purchase order <strong>PO-583</strong></span></dd></div>
+        <div><dt>Available</dt><dd><span>Shipment <strong>DL-204</strong></span><span class="mismatch">Purchase order <strong>not supplied</strong></span></dd></div>
+      </dl>
+      <p>Request the missing purchase order number from the document sender so the receiving team can identify the order.</p>
+    </section>
+    <section class="state-access">
+      <h4>Check access before arrival.</h4>
+      <dl class="comparison">
+        <div><dt>Needed</dt><dd><span>A copy the receiving team can open</span><span>Shipment <strong>DL-204</strong> · Order <strong>PO-583</strong></span></dd></div>
+        <div><dt>Available</dt><dd><span>A link to the bill of lading</span><span class="mismatch">Receiving team cannot open it</span></dd></div>
+      </dl>
+      <p>The document exists, but the team cannot use it. Ask the sender for an accessible copy.</p>
+    </section>
+    <section class="state-wrong">
+      <h4>Check the shipment reference before arrival.</h4>
+      <dl class="comparison">
+        <div><dt>Needed</dt><dd><span>Shipment <strong>DL-204</strong></span><span>Purchase order <strong>PO-583</strong></span></dd></div>
+        <div><dt>Available</dt><dd><span class="mismatch">Shipment <strong>DL-219</strong></span><span>Purchase order <strong>PO-583</strong></span></dd></div>
+      </dl>
+      <p>The purchase order matches, but the shipment number does not. Request the bill of lading for DL-204.</p>
+    </section>
+  </div>
+</figure>
+<style>
+  .doccheck{--paper:#faf8f5;--ink:#000000;--muted:#5f483a;--rule:#ad9686;--soft:#efe2d2;--accent:#fe5000;--orange:#fe5000;box-sizing:border-box;width:100%;max-width:760px;margin:28px auto;padding:24px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);color:var(--ink);font:14px/1.55 Inter,Arial,sans-serif;text-align:left;color-scheme:light;}
+  .doccheck *,.doccheck *::before,.doccheck *::after{box-sizing:border-box;}
+  .doccheck h3{margin:0 0 13px;font:800 clamp(27px,4vw,35px)/1.08 Bruta,Impact,sans-serif;text-transform:uppercase;color:var(--ink);}
+  .doccheck header p{margin:0 0 18px;}
+  .doccheck strong{font-weight:650;}
+  .doccheck .intervention-label{margin:0 0 8px;font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif;font-size:16px;font-weight:600;}
+  .doccheck .events{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;list-style:none;padding:0;margin:0 0 22px;}
+  .doccheck .event{position:relative;min-width:0;margin:0;padding:0 6px;text-align:center;}
+  .doccheck .event::before{content:"";position:absolute;top:33px;left:0;right:0;border-top:1px solid var(--rule);}
+  .doccheck .event svg{position:relative;display:block;width:66px;height:66px;max-width:100%;margin:0 auto 7px;}
+  .doccheck svg *{vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;}
+  .doccheck .event-circle{fill:var(--paper);stroke:var(--rule);stroke-width:1.5;}
+  .doccheck .line{stroke:var(--ink);stroke-width:1.5;}
+  .doccheck .icon-paper{fill:var(--paper);}
+  .doccheck .icon-detail{stroke:var(--muted);stroke-width:1.3;}
+  .doccheck .icon-date{fill:var(--ink);}
+  .doccheck .icon-arrow{stroke:var(--ink);stroke-width:1.7;}
+  .doccheck .event strong,.doccheck .event span{display:block;}
+  .doccheck .event strong{font:600 16px/1.35 'DD-Recoleta',Recoleta-Fallback,Georgia,serif;}
+  .doccheck .event span{margin-top:3px;color:var(--muted);}
+  .doccheck .controls{display:flex;flex-wrap:wrap;gap:8px;min-width:0;border:0;padding:0;margin:0 0 20px;}
+  .doccheck .controls legend{padding:0;margin-bottom:8px;font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif;font-size:16px;font-weight:600;}
+  .doccheck .controls label{display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 11px;border:1px solid var(--rule);border-radius:3px;cursor:pointer;}
+  .doccheck .controls label:has(:checked){background:var(--soft);color:var(--ink);border-color:var(--accent);}
+  .doccheck .controls label:has(:focus-visible){outline:2px solid var(--orange);outline-offset:3px;}
+  .doccheck input{appearance:auto;width:17px;height:17px;flex:0 0 17px;margin:0;accent-color:var(--orange);cursor:pointer;}
+  .doccheck h4{margin:0 0 12px;font:600 18px/1.35 'DD-Recoleta',Recoleta-Fallback,Georgia,serif;color:var(--ink);}
+  .doccheck .review{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto;}
+  .doccheck .review section{display:grid;grid-column:1;grid-row:1/5;grid-template-rows:subgrid;visibility:hidden;min-width:0;}
+  .doccheck .comparison{display:grid;grid-row:2/4;grid-template-rows:subgrid;margin:0;border-top:1px solid var(--rule);}
+  .doccheck .comparison div{display:grid;grid-template-columns:85px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid var(--rule);}
+  .doccheck dt{color:var(--muted);}
+  .doccheck dd{margin:0;min-width:0;overflow-wrap:anywhere;}
+  .doccheck dd span{display:block;}
+  .doccheck .mismatch{color:var(--ink);font-weight:600;}
+  .doccheck .review p{margin:14px 0 0;}
+  .doccheck:has(.early:checked) .state-early,.doccheck:has(.missing:checked) .state-missing,.doccheck:has(.access:checked) .state-access,.doccheck:has(.wrong:checked) .state-wrong{visibility:visible;}
+  .doccheck:has(.early:checked) .event-0 .event-circle,.doccheck:has(.missing:checked) .event-2 .event-circle,.doccheck:has(.access:checked) .event-2 .event-circle,.doccheck:has(.wrong:checked) .event-2 .event-circle{fill:var(--soft);stroke:var(--accent);stroke-width:1.8;}
+  :global(html.dark) .doccheck,:global(html[data-theme='dark']) .doccheck{--paper:#000000;--ink:#fff8ee;--muted:#efe2d2;--rule:#9c806d;--soft:#5f483a;--accent:#fe5000;color-scheme:dark;}
+  @media(max-width:520px){.doccheck{padding:19px 15px;margin:24px auto;}.doccheck .events{grid-template-columns:minmax(0,1fr);gap:0;}.doccheck .event{display:grid;grid-template-columns:60px minmax(0,1fr);column-gap:12px;padding:0;text-align:left;}.doccheck .event::before{top:0;bottom:0;left:30px;right:auto;border-top:0;border-left:1px solid var(--rule);}.doccheck .event svg{grid-row:1/3;width:60px;height:60px;margin:0;}.doccheck .event strong{align-self:end;}.doccheck .event span{margin:0;align-self:start;}.doccheck .controls label{flex:1 1 calc(50% - 8px);}.doccheck .comparison div{grid-template-columns:72px minmax(0,1fr);gap:10px;}}
+  @media print{.doccheck{break-inside:avoid;}.doccheck .controls{display:none;}}
+</style>

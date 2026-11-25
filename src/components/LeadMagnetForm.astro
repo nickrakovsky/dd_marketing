@@ -3,6 +3,7 @@ export interface Props {
   headline: string;
   buttonText?: string;
   eventName: string;
+  ctaId?: string;
   redirectUrl: string;
 }
 
@@ -10,6 +11,7 @@ const {
   headline,
   buttonText = "Download",
   eventName,
+  ctaId = "resource-inline",
   redirectUrl,
 } = Astro.props;
 
@@ -17,7 +19,7 @@ const BENTO_UUID = "b4cb9a34a989bcc643714151df7b7154";
 const uid = Math.random().toString(36).slice(2, 9);
 ---
 
-<div class="my-8 not-prose lead-magnet-container" id={`lmf-${uid}`}>
+<div class="blog-inline-lead my-8 not-prose lead-magnet-container" id={`lmf-${uid}`}>
   <div class="success-message hidden w-full bg-[#FFF8EE] border-2 border-black/15 p-6 text-center">
     <div class="flex items-center justify-center gap-2 text-green-700 font-bold font-recoleta text-lg">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,6 +38,8 @@ const uid = Math.random().toString(36).slice(2, 9);
   <form
     class="lead-magnet-form block w-full bg-[#FFF8EE] border-2 border-black/15 shadow-sm p-5 sm:p-6"
     data-event={eventName}
+    data-lead-capture data-capture-kind="resource"
+    data-lead-event={eventName} data-cta-id={ctaId} data-cta-placement="inline"
     data-redirect={redirectUrl}
     data-uuid={BENTO_UUID}
   >
@@ -65,77 +69,47 @@ const uid = Math.random().toString(36).slice(2, 9);
   </p>
 </div>
 
-<script is:inline>
-  (function() {
-    function attachLeadMagnetForms() {
-      document.querySelectorAll('.lead-magnet-form:not([data-bound])').forEach(function(form) {
-        form.setAttribute('data-bound', 'true');
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
+<style>
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .lead-magnet-form,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message {
+    background: var(--blog-surface);
+    border-color: var(--blog-rule);
+    color: var(--blog-ink);
+  }
 
-          var emailInput = form.querySelector('input[name="email"]');
-          var email = emailInput ? emailInput.value : '';
-          var eventName = form.getAttribute('data-event');
-          var redirectUrl = form.getAttribute('data-redirect');
-          var uuid = form.getAttribute('data-uuid');
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .lead-magnet-form > div:first-child,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message > div {
+    color: var(--blog-ink);
+  }
 
-          var formData = new FormData();
-          formData.append('email', email);
-          if (redirectUrl) formData.append('redirect', redirectUrl);
-          formData.append('fields[source]', window.location.pathname);
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .disclaimer-message,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message p,
+  :global(html.dark[data-blog-theme]) .blog-inline-lead input::placeholder {
+    color: var(--blog-muted);
+  }
 
-          if (email) {
-            // Client-side identify
-            if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
-              window.bento.identify(email);
-              window.bento.track(eventName, { source: window.location.pathname });
-            }
+  :global(html.dark[data-blog-theme]) .blog-inline-lead .success-message a {
+    color: var(--blog-link);
+  }
 
-            fetch('/api/bento-track', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: email,
-                event: eventName,
-                source: window.location.pathname,
-                landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-                visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null
-              }),
-              keepalive: true
-            }).catch(function() {});
-          }
+  :global(html.dark[data-blog-theme]) .blog-inline-lead input {
+    background: var(--blog-canvas);
+    border-color: var(--blog-control);
+    color: var(--blog-ink);
+  }
 
-          form.reset();
+  :global(html.dark[data-blog-theme]) .blog-inline-lead input:focus {
+    border-color: var(--blog-link);
+  }
 
-          var container = form.closest('.lead-magnet-container');
-          if (container) {
-            form.classList.remove('block');
-            form.classList.add('hidden');
+  :global(html.dark[data-blog-theme]) .blog-inline-lead button[type="submit"] {
+    background: var(--blog-canvas);
+    border: 1px solid var(--blog-orange);
+    color: var(--blog-ink);
+  }
 
-            var disclaimer = container.querySelector('.disclaimer-message');
-            if (disclaimer) {
-              disclaimer.classList.remove('block');
-              disclaimer.classList.add('hidden');
-            }
-
-            var success = container.querySelector('.success-message');
-            if (success) {
-              success.classList.remove('hidden');
-              success.classList.add('block');
-            }
-          }
-
-          if (redirectUrl) {
-            window.open(redirectUrl, '_blank', 'noopener');
-          }
-        });
-      });
-    }
-
-    // Run immediately (handles direct page loads)
-    attachLeadMagnetForms();
-
-    // Re-run after Astro View Transition swaps
-    document.addEventListener('astro:page-load', attachLeadMagnetForms);
-  })();
-</script>
+  :global(html.dark[data-blog-theme]) .blog-inline-lead button[type="submit"]:hover {
+    background: var(--blog-surface);
+    border-color: var(--blog-link);
+  }
+</style>

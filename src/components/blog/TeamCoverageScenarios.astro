@@ -1,0 +1,322 @@
+---
+import WarehouseColleague from './WarehouseColleague.astro';
+
+const instanceId = `team-coverage-${crypto.randomUUID()}`;
+const assignments = [
+  { id: 'packing', label: 'Keep Ren at packing' },
+  { id: 'receiving', label: 'Move Ren to receiving' },
+];
+const scenarios = [
+  {
+    id: 'covered',
+    label: 'Mo packs independently',
+    responses: [
+      {
+        assignment: 'packing',
+        description: 'Ren and Mo both pack; Jo handles the inbound surge alone.',
+        movement: 'Ren stays alongside Mo at packing',
+        renNote: 'Packing',
+        moNote: 'Independent',
+        packingStatus: 'Spare capacity',
+        packingDetail: '2 trained / 1 needed',
+        packingGap: false,
+        title: 'Extra packing capacity leaves receiving short.',
+        explanation: 'Mo can handle the current packing workload independently. Keeping Ren alongside Mo may clear that queue faster, but orders waiting for inbound stock can still be delayed. The team has enough people and skills; their allocation leaves the bottleneck unresolved.',
+        consequences: ['Arrivals wait', 'Stock released later', 'Dependent orders delayed'],
+      },
+      {
+        assignment: 'receiving',
+        description: 'Mo runs packing independently while Ren helps Jo receive.',
+        movement: 'Ren moves from packing to receiving',
+        renNote: 'Receiving',
+        moNote: 'Independent',
+        packingStatus: 'Covered',
+        packingDetail: '1 trained / 1 needed',
+        packingGap: false,
+        title: 'Receiving gains help. Packing keeps moving.',
+        explanation: 'Jo gains support with arrivals while Mo keeps packing orders for dispatch. Cross-training gives the team a useful option because someone capable remains behind. The same four people can respond to this surge without opening a gap at another station.',
+        consequences: ['Arrivals move', 'Stock reaches picking', 'Packing continues'],
+      },
+    ],
+  },
+  {
+    id: 'learning',
+    label: 'Mo is still learning',
+    responses: [
+      {
+        assignment: 'packing',
+        description: 'Ren coaches Mo as they work through the packing queue.',
+        movement: 'Ren stays at packing to train Mo',
+        renNote: 'Coaching Mo',
+        moNote: 'With coaching',
+        packingStatus: 'Supported training',
+        packingDetail: '1 trained + 1 learner',
+        packingGap: false,
+        title: 'Coaching builds the cover future surges will need.',
+        explanation: 'Ren checks Mo’s work and explains corrections, catching small errors and building independence. Coaching takes time, and receiving still needs help during this surge. Protecting that learning time requires a plan for today’s queue; repeatedly cancelling it keeps the team dependent on Ren.',
+        consequences: ['Mistakes caught early', 'Corrections explained', 'Future cover improves'],
+      },
+      {
+        assignment: 'receiving',
+        description: 'Mo packs alone, without an experienced colleague alongside.',
+        movement: 'Ren leaves Mo at packing to help receiving',
+        renNote: 'Receiving',
+        moNote: 'Learning alone',
+        packingStatus: 'Limited support',
+        packingDetail: '1 learner working alone',
+        packingGap: true,
+        title: 'Packing continues with less guidance and more risk.',
+        explanation: 'Mo can complete familiar packs, but unfamiliar orders and small mistakes still need checks. Calling Ren back interrupts receiving; guessing can cause rework or customer errors. The team gains less capacity than the headcount suggests, while patchy feedback gives Mo less opportunity to learn.',
+        consequences: ['Questions need help', 'Interruptions or rework', 'Less reliable dispatch'],
+      },
+    ],
+  },
+  {
+    id: 'absent',
+    label: 'Mo is absent',
+    responses: [
+      {
+        assignment: 'packing',
+        description: 'Ren runs packing alone; Jo handles the inbound surge.',
+        movement: 'Ren stays at packing to cover Mo’s absence',
+        renNote: 'Covering Mo',
+        moNote: '',
+        packingStatus: 'Covered',
+        packingDetail: '1 trained / 1 needed',
+        packingGap: false,
+        title: 'Protect picked orders; delay incoming stock.',
+        explanation: 'Ren keeps already-picked orders moving towards dispatch while Jo handles arrivals alone. That may protect the next collection, but delayed receiving can leave later orders waiting for stock. With three people covering work that needs four, priorities and temporary cover matter as much as individual flexibility.',
+        consequences: ['Picked orders packed', 'Arrivals accumulate', 'Later orders risk delays'],
+      },
+      {
+        assignment: 'receiving',
+        description: 'Ren helps Jo receive; nobody remains at the packing station.',
+        movement: 'Ren moves to receiving; packing is unattended',
+        renNote: 'Receiving',
+        moNote: '',
+        packingStatus: 'Unstaffed',
+        packingDetail: '0 people / 1 needed',
+        packingGap: true,
+        title: 'Clear arrivals; leave picked orders waiting.',
+        explanation: 'Ren helps release incoming stock, but picked orders now wait for a packer. Prioritising receiving may make sense when arrivals cannot wait, yet it puts dispatch deadlines under pressure. The shift needs a plan for when packing resumes or who provides cover; reassignment alone cannot replace the missing person.',
+        consequences: ['Arrivals received', 'Picked orders accumulate', 'Dispatch deadlines tighten'],
+      },
+    ],
+  },
+];
+---
+
+<figure id="team-coverage-scenarios" class="team-coverage not-prose" aria-label="Compare how team coverage changes the response to the same receiving surge">
+  <div class="team-heading">
+    <span class="team-eyebrow">Same surge. Different team coverage.</span>
+    <h3>Can your experienced colleague move?</h3>
+    <p>During this surge, receiving needs two people; picking and packing need one each. Ren can work at either receiving or packing.</p>
+  </div>
+
+  <fieldset class="team-comparison">
+    <legend class="team-sr-only">Compare packing cover during the same inbound surge</legend>
+    <div class="team-controls">
+      {scenarios.map((scenario, index) => (
+        <div class="team-option">
+          <input type="radio" name={instanceId} id={`${instanceId}-${scenario.id}`} value={scenario.id} checked={index === 0} aria-controls={`${instanceId}-${scenario.id}-panel`} />
+          <label id={`${instanceId}-${scenario.id}-label`} for={`${instanceId}-${scenario.id}`}>{scenario.label}</label>
+        </div>
+      ))}
+    </div>
+
+    <fieldset class="team-reassignment">
+      <legend>During this inbound surge, where should Ren work?</legend>
+      <div class="team-assignment-controls">
+        {assignments.map(assignment => (
+          <div class="team-option">
+            <input type="radio" name={`${instanceId}-assignment`} id={`${instanceId}-assignment-${assignment.id}`} value={assignment.id} checked={assignment.id === 'receiving'} aria-controls={scenarios.map(scenario => `${instanceId}-${scenario.id}-${assignment.id}-response`).join(' ')} />
+            <label for={`${instanceId}-assignment-${assignment.id}`}>{assignment.label}</label>
+          </div>
+        ))}
+      </div>
+    </fieldset>
+
+    {scenarios.map(scenario => (
+      <section class={`team-scenario team-scenario-${scenario.id}`} id={`${instanceId}-${scenario.id}-panel`} aria-labelledby={`${instanceId}-${scenario.id}-label`}>
+        {scenario.responses.map(response => (
+          <div class="team-response" data-assignment={response.assignment} id={`${instanceId}-${scenario.id}-${response.assignment}-response`}>
+            <p class="team-variable">{response.description}</p>
+            <div class:list={['team-floor', { 'team-floor-stay': response.assignment === 'packing' }]}>
+              <div class="team-movement" aria-hidden="true">
+                {response.assignment === 'receiving' && <svg viewBox="0 0 600 42" preserveAspectRatio="none"><path d="M506 38V18Q506 8 496 8H105Q95 8 95 18V38m-5-7 5 7 5-7" /></svg>}
+                <span>{response.movement}</span>
+              </div>
+
+              <div class:list={['team-station', { 'team-station-gap': response.assignment === 'packing' }]}>
+                <div class="team-station-heading"><h4>Receiving</h4></div>
+                <svg class="team-station-art" viewBox="0 0 170 84" aria-hidden="true">
+                  <path class="team-art-floor" d="M8 77h154" />
+                  <path class="team-art-structure" d="M18 75V8h81v67M25 8v58h66V8M26 18h64M26 28h64M26 38h64M26 48h64" />
+                  <path class="team-art-box" d="M111 45h34v27h-34Zm-8-27h27v24h-27ZM76 53h30v20H76Z" />
+                  <path class="team-art-detail" d="M128 46v10m-13-37v8m-26 27v8M108 76h43m-39 0v4m35-4v4" />
+                  <path class="team-art-pressure" d="M145 17v18m-4-6 4 6 4-6" />
+                </svg>
+                <div class="team-people">
+                  <WarehouseColleague name="Jo" />
+                  {response.assignment === 'receiving' ? <WarehouseColleague name="Ren" note={response.renNote} /> : <span class="team-empty"><span aria-hidden="true">+</span>Help needed</span>}
+                </div>
+                <p class="team-coverage-count"><strong>{response.assignment === 'receiving' ? 'Covered' : 'One person short'}</strong><span>{response.assignment === 'receiving' ? 2 : 1} present / 2 needed</span></p>
+              </div>
+
+              <div class="team-station">
+                <div class="team-station-heading"><h4>Picking</h4></div>
+                <svg class="team-station-art" viewBox="0 0 170 84" aria-hidden="true">
+                  <path class="team-art-floor" d="M8 77h154" />
+                  <path class="team-art-structure" d="M27 75V8h113v67M27 35h113M27 67h113M83 8v59" />
+                  <path class="team-art-box" d="M35 14h19v19H35Zm24 7h16v12H59Zm32-6h16v18H91Zm20 4h20v14h-20ZM35 43h28v22H35Zm60 0h32v22H95Z" />
+                  <path class="team-art-detail" d="M44 15v6m-9 49h17m39 0h17M49 44v8m62-8v8" />
+                </svg>
+                <div class="team-people"><WarehouseColleague name="Dev" /></div>
+                <p class="team-coverage-count"><strong>Covered</strong><span>1 present / 1 needed</span></p>
+              </div>
+
+              <div class:list={['team-station', { 'team-station-gap': response.packingGap }]}>
+                <div class="team-station-heading"><h4>Packing</h4></div>
+                <svg class="team-station-art" viewBox="0 0 170 84" aria-hidden="true">
+                  <path class="team-art-floor" d="M8 77h154" />
+                  <path class="team-art-structure" d="M26 43h98v7H26ZM32 50v25m85-25v25M37 63h75M111 11h17v28h-17Z" />
+                  <path class="team-art-box" d="M45 20h37v22H45Zm38 38h22v17H83Z" />
+                  <path class="team-art-detail" d="M63 21v9m-8-10-9-8h19l16 8m30 9h17m-34 31v7" />
+                  <path class="team-art-pressure" d="M135 47h21m-6-4 6 4-6 4" />
+                </svg>
+                <div class="team-people">
+                  {response.assignment === 'packing' && <WarehouseColleague name="Ren" note={response.renNote} />}
+                  {scenario.id !== 'absent' ? <WarehouseColleague name="Mo" note={response.moNote} learning={scenario.id === 'learning'} /> : <span class="team-empty"><span aria-hidden="true">–</span>Mo is absent</span>}
+                </div>
+                <p class="team-coverage-count"><strong>{response.packingStatus}</strong><span>{response.packingDetail}</span></p>
+              </div>
+            </div>
+
+            <div class="team-outcome">
+              <h4>{response.title}</h4>
+              <p>{response.explanation}</p>
+              <ol class="team-chain" aria-label="How the effect travels through the work">
+                {response.consequences.map((step, index) => (
+                  <li>
+                    <span>{step}</span>
+                    {index < response.consequences.length - 1 && (
+                      <svg class="team-chain-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 12h17m-6-6 6 6-6 6" />
+                      </svg>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        ))}
+      </section>
+    ))}
+  </fieldset>
+</figure>
+
+<style>
+  .team-coverage {
+    --team-paper: #fff8e9;
+    --team-ink: #211e18;
+    --team-muted: #6d6050;
+    --team-rule: #e3d5c4;
+    --team-neutral: #dfd1b9;
+    --team-orange: #d74609;
+    --team-brand-orange: #fd4f00;
+    --team-peach: #ffe1ca;
+    --team-panel: #fffcf5;
+    container-type: inline-size;
+    margin: 1.75rem 0 2rem;
+    border: 1px solid var(--team-rule);
+    border-top: 3px solid var(--team-brand-orange);
+    border-radius: 4px;
+    background: var(--team-paper);
+    color: var(--team-ink);
+    font-family: Inter, system-ui, sans-serif;
+    scroll-margin-top: 7rem;
+  }
+  :global(.dark) .team-coverage {
+    --team-paper: #1e1c19;
+    --team-ink: #fff3df;
+    --team-muted: #c8baa7;
+    --team-rule: #504638;
+    --team-neutral: #665844;
+    --team-orange: #ff986c;
+    --team-peach: #4a3125;
+    --team-panel: #29251f;
+  }
+  .team-coverage p, .team-coverage h3, .team-coverage h4 { margin: 0; }
+  .team-heading { padding: 1.5rem 1.5rem 1.125rem; }
+  .team-eyebrow { display: block; margin-bottom: .625rem; color: var(--team-muted); font-size: .6875rem; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; font-weight: 650; }
+  .team-heading h3 { font-family: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif; font-size: clamp(1.375rem, 4cqi, 1.75rem); line-height: 1.2; font-weight: 600; text-wrap: balance; }
+  .team-heading p { margin-top: .75rem; max-width: 35rem; font-size: .875rem; line-height: 1.6; color: var(--team-muted); }
+  .team-comparison { min-width: 0; padding: 0; border: 0; margin: 0; }
+  .team-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .375rem; padding: 0 1.5rem; }
+  .team-reassignment { min-width: 0; border: 0; margin: 1rem 1.5rem 0; padding: 0; }
+  .team-reassignment legend { margin-bottom: .5rem; padding: 0; color: var(--team-muted); font-size: .75rem; line-height: 1.5; }
+  .team-assignment-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .375rem; }
+  .team-option { position: relative; display: flex; min-width: 0; }
+  .team-option input, .team-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; clip: rect(0, 0, 0, 0); overflow: hidden; white-space: nowrap; }
+  .team-option label { display: flex; justify-content: center; align-items: center; width: 100%; min-height: 44px; padding: .5rem .375rem; border: 1px solid var(--team-rule); border-radius: 3px; background: var(--team-panel); font-size: .75rem; font-weight: 600; line-height: 1.4; text-align: center; cursor: pointer; }
+  .team-option label:hover { border-color: var(--team-muted); }
+  .team-option input:checked + label { background: var(--team-ink); color: var(--team-paper); border-color: var(--team-ink); }
+  .team-option input:focus-visible + label { outline: 2px solid var(--team-brand-orange); outline-offset: 3px; }
+  .team-scenario { display: none; }
+  .team-comparison:has(input[value='covered']:checked) .team-scenario-covered,
+  .team-comparison:has(input[value='learning']:checked) .team-scenario-learning,
+  .team-comparison:has(input[value='absent']:checked) .team-scenario-absent { display: block; }
+  .team-response { display: none; }
+  .team-comparison:has(input[value='packing']:checked) .team-response[data-assignment='packing'],
+  .team-comparison:has(input[value='receiving']:checked) .team-response[data-assignment='receiving'] { display: block; }
+  .team-variable { padding: 1.125rem 1.5rem .375rem; color: var(--team-muted); font-size: .8125rem; line-height: 1.5; }
+  .team-floor { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0 1.25rem 1.25rem; gap: 0 .875rem; }
+  .team-movement { grid-column: 1 / -1; position: relative; height: 55px; margin-top: .25rem; }
+  .team-movement svg { display: block; width: 100%; height: 42px; position: absolute; bottom: 0; overflow: visible; }
+  .team-movement path { fill: none; stroke: var(--team-brand-orange); stroke-width: 1.5; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+  .team-movement span { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); padding: 0 .5rem; background: var(--team-paper); color: var(--team-orange); font-size: .6875rem; line-height: 1.5; white-space: nowrap; }
+  .team-floor-stay .team-movement span { color: var(--team-muted); }
+  .team-station { min-width: 0; }
+  .team-station h4 { font-size: .8125rem; font-weight: 650; line-height: 1.5; }
+  .team-station-art { display: block; width: 100%; height: 86px; margin: .25rem 0; }
+  .team-art-floor { fill: none; stroke: var(--team-rule); stroke-width: 1.2; }
+  .team-art-structure, .team-art-detail { fill: none; stroke: var(--team-muted); stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+  .team-art-box { fill: var(--team-neutral); stroke: var(--team-muted); stroke-width: 1.1; stroke-linejoin: round; }
+  .team-art-pressure { fill: none; stroke: var(--team-brand-orange); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .team-people { display: flex; justify-content: center; align-items: start; min-height: 108px; gap: 0; }
+  .team-empty { display: flex; align-items: center; flex-direction: column; justify-content: center; width: 64px; min-height: 87px; color: var(--team-muted); font-size: .6875rem; line-height: 1.5; text-align: center; }
+  .team-empty > span { display: flex; align-items: center; justify-content: center; width: 34px; height: 43px; margin: 5px 0 8px; border: 1px dashed var(--team-muted); border-radius: 15px 15px 4px 4px; font-size: 1.125rem; }
+  .team-coverage-count { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: .25rem; padding: .5rem .25rem; border-top: 1px solid var(--team-rule); font-size: .6875rem; line-height: 1.4; text-align: center; }
+  .team-coverage-count strong { font-weight: 650; }
+  .team-coverage-count > span { color: var(--team-muted); }
+  .team-station-gap .team-coverage-count { color: var(--team-orange); border-color: var(--team-brand-orange); background: var(--team-peach); }
+  .team-outcome { padding: 1.125rem 1.5rem 1.25rem; border-top: 1px solid var(--team-rule); background: var(--team-panel); }
+  .team-outcome h4 { font-family: 'DD-Recoleta', 'Recoleta-Fallback', Georgia, serif; font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+  .team-outcome > p { margin-top: .375rem; color: var(--team-muted); font-size: .8125rem; line-height: 1.6; }
+  .team-chain { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; padding: 0; margin: 1.125rem 0 0; gap: 1.75rem; }
+  .team-chain li { position: relative; display: flex; align-items: center; margin: 0; padding: 0; font-size: .75rem; line-height: 1.5; }
+  .team-chain-arrow { position: absolute; left: calc(100% + .375rem); top: 50%; width: 1rem; height: 1rem; transform: translateY(-50%); fill: none; stroke: var(--team-brand-orange); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  @container (max-width: 450px) {
+    .team-heading { padding: 1.125rem 1rem 1rem; }
+    .team-controls { padding: 0 1rem; gap: .25rem; }
+    .team-reassignment { margin: .875rem 1rem 0; }
+    .team-option label { font-size: .6875rem; }
+    .team-variable { padding: 1rem 1rem .375rem; }
+    .team-floor { grid-template-columns: 1fr; gap: 0; padding: 0 1rem 1rem; }
+    .team-movement { height: auto; margin: .375rem 0 .75rem; }
+    .team-movement svg { display: none; }
+    .team-movement span { display: block; position: static; transform: none; padding: 0; white-space: normal; }
+    .team-station { display: grid; grid-template-columns: minmax(0, 1fr) 138px; column-gap: .75rem; padding: .75rem 0 .375rem; border-top: 1px solid var(--team-rule); }
+    .team-station-heading { grid-column: 1; align-self: start; }
+    .team-station-art { grid-column: 1; width: 100%; max-width: 150px; height: 65px; margin: 0; }
+    .team-people { grid-column: 2; grid-row: 1 / 3; min-height: 92px; align-self: center; }
+    .team-coverage-count { grid-column: 1 / -1; border-top: 0; padding: .375rem; }
+    .team-outcome { padding: 1rem; }
+    .team-chain { grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1rem; }
+    .team-chain-arrow { left: 0; top: calc(100% + .125rem); transform: rotate(90deg); }
+  }
+  @supports not selector(:has(input:checked)) {
+    .team-controls, .team-reassignment { display: none; }
+    .team-scenario, .team-response { display: block; }
+  }
+</style>

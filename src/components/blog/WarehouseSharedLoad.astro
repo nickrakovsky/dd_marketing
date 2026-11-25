@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import WarehouseColleague from './WarehouseColleague.astro';
+import arrivalRaster from '../../assets/blog-images/warehouse-shared-load-truck.png';
+const id = `load-ownership-${crypto.randomUUID()}`;
+const stages = [
+  { key: 'prepare', label: '1. Prepare', role: 'Receiving team member', name: 'Jo' as const, action: 'Prepare for 18 pallets', instruction: 'Check the space and equipment at Door 2 before the 10:00 delivery.', count: 'Not yet received', status: 'Expected load', heading: 'Jo can prepare without waiting for Ren.', explanation: 'The booking already has the arrival time, assigned door and expected quantity. Jo can prepare for unloading, leaving Ren fewer routine details to relay.' },
+  { key: 'check', label: '2. Check', role: 'Receiving team member', name: 'Jo' as const, action: 'Record the pallet count', instruction: 'Jo counts 17 pallets. Record that quantity against the 18 expected on booking A104.', count: '17 pallets', status: 'Count differs', heading: 'Ren has the details needed for the carrier call.', explanation: 'The expected and received quantities sit alongside the booking details. Ren can investigate the difference without first asking Jo which delivery it was or how many pallets arrived.' },
+  { key: 'resolve', label: '3. Follow up', role: 'Coordinator', name: 'Ren' as const, action: 'Check with the carrier', instruction: 'Establish why the counts differ and agree the next step under the site’s receiving procedure.', count: '17 pallets', status: 'Follow-up needed', heading: 'Keep the receiving team informed of the outcome.', explanation: 'Ren records the agreed action on the booking so Jo knows whether further receiving work is needed. Keeping that update with the original count also gives the next shift a record of what has been checked.' },
+];
+---
+<figure id="warehouse-shared-load" class="shared-load not-prose" aria-label="How Jo and Ren handle a delivery that arrives one pallet short">
+  <header><h3>When a delivery arrives one pallet short</h3></header>
+  <fieldset>
+    <legend class="sr-only">Choose a stage of the load</legend>
+    <div class="controls">{stages.map((stage, i) => <label><input type="radio" name={id} value={stage.key} checked={i === 0} /><span>{stage.label}</span></label>)}</div>
+    {stages.map(stage => <section class={`stage stage-${stage.key}`} aria-label={stage.label}>
+      <div class="load-work">
+        <div class="record">
+          <div class="record-heading"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6Zm9 0v5h4M9 12h7M9 16h7" /></svg><span>Booking record</span></div>
+          <div class="load-id"><strong>A104</strong><span>{stage.status}</span></div>
+          <dl><div><dt>Appointment</dt><dd>10:00</dd></div><div><dt>Dock door</dt><dd>Door 2</dd></div><div><dt>Expected</dt><dd>18 pallets</dd></div><div class:list={{ 'count-changed': stage.key !== 'prepare' }}><dt>Received</dt><dd>{stage.count}</dd></div></dl>
+          <Image class="arrival" src={arrivalRaster} alt="" width={810} format="webp" quality={90} loading="lazy" decoding="async" />
+        </div>
+        <div class="responsibility">
+          <div class="person"><WarehouseColleague name={stage.name} /><span>{stage.role}</span></div>
+          <h4>{stage.action}</h4><p>{stage.instruction}</p>
+        </div>
+      </div>
+      <div class="conclusion"><h4>{stage.heading}</h4><p>{stage.explanation}</p></div>
+    </section>)}
+  </fieldset>
+</figure>
+<style>
+  .shared-load { --tech-paper:#fff8e9; --tech-ink:#211e18; --tech-muted:#6d6050; --tech-rule:#e3d5c4; --tech-accent:#d74609; --tech-soft:#dfd1b9; --tech-panel:#fffcf5; --tech-brand-orange:#fd4f00; margin:1.75rem 0 2rem; scroll-margin-top:7rem; border:1px solid var(--tech-rule); border-top:3px solid var(--tech-brand-orange); border-radius:4px; container-type:inline-size; background:var(--tech-paper); color:var(--tech-ink); font-family:Inter,sans-serif; }
+  .shared-load, .shared-load :global(*) { box-sizing:border-box; }
+  :global(.dark) .shared-load { --tech-paper:#1e1c19; --tech-ink:#fff3df; --tech-muted:#c8baa7; --tech-rule:#504638; --tech-accent:#ff986c; --tech-soft:#665844; --tech-panel:#29251f; }
+  header { padding:24px 24px 18px; }
+  h3 { margin:0; font:600 27px/1.18 'DD-Recoleta',Georgia,serif; text-wrap:balance; }
+  fieldset { border:0; padding:0; margin:0; min-width:0; } .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+  .controls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; padding:0 24px 20px; } .controls label { position:relative; }
+  .controls input { position:absolute; width:1px; height:1px; clip:rect(0,0,0,0); overflow:hidden; }
+  .controls span { display:flex; justify-content:center; align-items:center; min-height:44px; padding:6px; font-size:12px; font-weight:600; border:1px solid var(--tech-rule); border-radius:3px; background:var(--tech-panel); cursor:pointer; }
+  .controls input:checked + span { background:var(--tech-ink); color:var(--tech-paper); border-color:var(--tech-ink); } .controls input:focus-visible + span { outline:2px solid var(--tech-brand-orange); outline-offset:3px; }
+  .stage { display:none; } fieldset:has(input[value='prepare']:checked) .stage-prepare, fieldset:has(input[value='check']:checked) .stage-check, fieldset:has(input[value='resolve']:checked) .stage-resolve { display:block; }
+  .load-work { display:grid; grid-template-columns:1.12fr 1fr; gap:24px; padding:0 24px 24px; align-items:center; } .record { padding:16px; border:1px solid var(--tech-rule); background:var(--tech-panel); box-shadow:4px 4px 0 var(--tech-soft); }
+  .record-heading { display:flex; align-items:center; gap:6px; color:var(--tech-muted); font-size:11px; } .record-heading svg { width:20px; height:20px; fill:none; stroke:var(--tech-muted); stroke-width:1.2; }
+  .load-id { display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:14px; } .load-id strong { font-size:21px; font-weight:650; letter-spacing:.04em; } .load-id span { font-size:9px; border:1px solid var(--tech-rule); padding:4px 5px; color:var(--tech-muted); }
+  dl { margin:16px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:14px 8px; } dt { color:var(--tech-muted); font-size:10px; margin-bottom:4px; } dd { margin:0; font-size:12px; font-weight:600; } .count-changed dd { color:var(--tech-accent); }
+  .arrival { display:block; width:100%; height:auto; aspect-ratio:3/1; object-fit:contain; margin:16px 0 -2px; }
+  .person { display:flex; align-items:center; gap:10px; margin-bottom:14px; --team-paper:var(--tech-paper); --team-ink:var(--tech-ink); --team-neutral:var(--tech-soft); --team-rule:var(--tech-rule); --team-orange:var(--tech-accent); --team-muted:var(--tech-muted); } .person > span { font-size:12px; color:var(--tech-muted); } .person :global(.colleague) { width:48px; } .person :global(.colleague-portrait) { width:43px; }
+  h4 { margin:0; font-size:15px; line-height:1.4; font-weight:650; } .responsibility p { font-size:12px; line-height:1.65; color:var(--tech-muted); margin:9px 0 0; }
+  .conclusion { border-top:1px solid var(--tech-rule); background:var(--tech-panel); padding:20px 24px; } .conclusion h4 { font:600 19px/1.3 'DD-Recoleta',Georgia,serif; } .conclusion p { color:var(--tech-muted); font-size:12px; line-height:1.65; margin:9px 0 0; }
+  @container(max-width:430px) { header { padding:20px 16px 16px; } h3 { font-size:23px; } .controls { padding:0 16px 18px; } .load-work { grid-template-columns:1fr; gap:22px; padding:0 16px 20px; } .record { max-width:310px; width:100%; box-sizing:border-box; margin:auto; } .responsibility { display:grid; grid-template-columns:65px minmax(0,1fr); gap:0 12px; } .person { grid-row:1 / 3; display:flex; flex-direction:column; gap:6px; text-align:center; margin:0; } .person > span { font-size:10px; } .responsibility p { margin:6px 0 0; } .conclusion { padding:18px 16px; } }
+  @supports not selector(:has(input:checked)) { .controls { display:none; } .stage { display:block; } }
+</style>

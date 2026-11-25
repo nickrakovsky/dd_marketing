@@ -23,6 +23,277 @@ const mdxImageOptions = {
 // bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
 // Astro render maps rather than imported in the MDX itself.
 const mdxComponents = {
+    SupervisorWorkPlan: block({
+        label: 'Supervisor task order and deadlines',
+        schema: {},
+    }),
+    InspectionPointTrial: block({
+        label: 'Warehouse process trial comparison',
+        schema: {},
+    }),
+    FreightCoverage: block({
+        label: 'Freight run cover and commitments',
+        schema: {},
+    }),
+    AgencyContinuity: block({
+        label: 'Agency staffing continuity',
+        schema: {},
+    }),
+    IncomingLoadLoss: block({
+        label: 'Costs arriving with an incoming load',
+        schema: {},
+    }),
+    ProviderDependence: block({
+        label: 'Logistics provider dependence',
+        schema: {},
+    }),
+    AILimits: block({
+        label: 'AI delivery quantity check',
+        schema: {},
+    }),
+    ProcessOptional: block({
+        label: 'Warehouse process adoption',
+        schema: {},
+    }),
+    OperationalKnowHow: block({
+        label: 'AI receiving investigation',
+        schema: {},
+    }),
+    LogisticsGiveAndTake: block({
+        label: 'Logistics working relationship',
+        schema: {},
+    }),
+    WarehouseTravel: block({
+        label: 'Connected warehouse moves',
+        schema: {},
+    }),
+    WmsConnectedOperations: block({
+        label: 'Connected warehouse operations',
+        schema: {},
+    }),
+    WarehouseProcessComparison: block({
+        label: 'Warehouse Process Comparison',
+        schema: {},
+    }),
+    DynamicSlottingRefill: block({
+        label: 'Dynamic Slotting Refill',
+        schema: {},
+    }),
+    TeamCoverageScenarios: block({
+        label: 'Team Coverage Scenarios',
+        schema: {},
+    }),
+    DwellTimeJourney: block({
+        label: 'Dwell Time Journey',
+        schema: {},
+    }),
+    ReceivingDamageRecord: block({
+        label: 'Receiving Damage Record',
+        schema: {},
+    }),
+    ReceivingLoadFormat: block({
+        label: 'Receiving Load Format',
+        schema: {},
+    }),
+    ReceivingOrderToReceipt: block({
+        label: 'Receiving Order To Receipt',
+        schema: {},
+    }),
+    RetailInventoryPressure: block({
+        label: 'Retail Inventory Pressure',
+        schema: {},
+    }),
+    RetailChannelRoutes: block({
+        label: 'Retail Channel Routes',
+        schema: {},
+    }),
+    WarehouseSharedLoad: block({
+        label: 'Warehouse delivery handoff',
+        schema: {},
+    }),
+    BeforeYouApply: block({
+        label: 'Before You Apply',
+        schema: {},
+    }),
+    EarningPotential: block({
+        label: 'Earning Potential',
+        schema: {},
+    }),
+    DailyCoordination: block({
+        label: 'Daily Coordination',
+        schema: {},
+    }),
+    CarrierCheckInPhoto: block({
+        label: 'Carrier Check In Photo',
+        schema: {},
+    }),
+    LogisticsInterviewGuide: block({
+        label: 'Logistics interview guide signup',
+        schema: {
+            headline: fields.text({ label: 'Headline' }),
+            eventName: fields.text({ label: 'Event Name' }),
+            redirectUrl: fields.text({ label: 'Redirect URL' }),
+            buttonText: fields.text({ label: 'Button Text' }),
+        },
+    }),
+    ResponsibilityAreas: wrapper({
+        label: 'Responsibility areas',
+        schema: {},
+    }),
+    CoEOpening: block({
+        label: 'CoE opening illustration',
+        schema: {},
+    }),
+    CoECompany: block({
+        label: 'CoE company structure',
+        schema: {},
+    }),
+    CoEFacilityNetwork: block({
+        label: 'CoE facility learning network',
+        schema: {},
+    }),
+    CoEExperimentalUnit: block({
+        label: 'CoE experimental business unit',
+        schema: {},
+    }),
+    CoEChangeTeam: block({
+        label: 'CoE change team',
+        schema: {},
+    }),
+    CoERegional: block({
+        label: 'CoE regional map',
+        schema: {},
+    }),
+    CoERoleEvolution: block({
+        label: 'CoE role explorer',
+        schema: {},
+    }),
+    CoERemit: block({
+        label: 'CoE remit and trade-offs',
+        schema: {},
+    }),
+    CoEValueBalance: block({
+        label: 'CoE short- and long-term value',
+        schema: {},
+    }),
+    CoELocalized: block({
+        label: 'CoE close to operations',
+        schema: {},
+    }),
+    CoESharedImprovement: block({
+        label: 'CoE shared improvement',
+        schema: {},
+    }),
+    WarehouseAuditArticle: block({
+        label: 'Warehouse audit checklist and templates',
+        schema: {},
+    }),
+    WarehouseStockRecord: block({
+        label: 'Warehouse Stock Record',
+        schema: {},
+    }),
+    DemoCapture: block({
+        label: 'Demo email capture popover',
+        schema: {
+            standalone: fields.checkbox({ label: 'Open from the book-demo link', defaultValue: true }),
+        },
+    }),
+    WarehouseLoadTiming: block({
+        label: 'Warehouse Load Timing',
+        schema: {},
+    }),
+    Post02InventoryCash: block({
+        label: 'Inventory and Cash',
+        schema: {},
+    }),
+    ProduceSellingWindow: block({
+        label: 'Produce Selling Window',
+        schema: {},
+    }),
+    Post04OrderAllocation: block({
+        label: 'Order Allocation',
+        schema: {},
+    }),
+    BackupIngredientPreparation: block({
+        label: 'Backup Ingredient Preparation',
+        schema: {},
+    }),
+    ExpansionCosts: block({
+        label: 'Expansion Costs',
+        schema: {},
+    }),
+    Post07Timing: block({
+        label: 'Expiry and Order Timing',
+        schema: {},
+    }),
+    FrozenNetworkTradeoff: block({
+        label: 'Frozen Food Network Tradeoff',
+        schema: {},
+    }),
+    BackwardTraceTimer: block({
+        label: 'Backward Ingredient Trace',
+        schema: {},
+    }),
+    ProductionRunTradeoff: block({
+        label: 'Production Run Tradeoff',
+        schema: {},
+    }),
+    DetentionWarningWindow: block({
+        label: 'Detention warning window',
+        schema: {},
+    }),
+    WarehouseFlowBreakdown: block({
+        label: 'Warehouse flow breakdown',
+        schema: {},
+    }),
+    SetupArticleNavigation: block({
+        label: 'Warehouse setup guide navigation',
+        schema: {},
+    }),
+    SetupHandoffRehearsal: block({
+        label: 'Warehouse setup handoff rehearsal',
+        schema: {},
+    }),
+    SetupReadinessStages: block({
+        label: 'Warehouse setup readiness checks',
+        schema: {},
+    }),
+    LoadTypeAvailability: block({
+        label: 'Load type availability',
+        schema: {},
+    }),
+    PickupDetailsHandoff: block({
+        label: 'Pickup details handoff',
+        schema: {},
+    }),
+    MessageResponseExpectations: block({
+        label: 'Warehouse message response expectations',
+        schema: {},
+    }),
+    PostOneRevised: block({
+        label: 'Early arrival patterns',
+        schema: {},
+    }),
+    PostTwoRevised: block({
+        label: 'Missed appointment communication',
+        schema: {},
+    }),
+    PostThreeRevised: block({
+        label: 'Receiving work plan',
+        schema: {},
+    }),
+    PostFourRevised: block({
+        label: 'Receiving paperwork check',
+        schema: {},
+    }),
+    PostFiveRevised: block({
+        label: 'Driver arrival instructions',
+        schema: {},
+    }),
+    PostSixRevised: block({
+        label: 'Technology rollout decisions',
+        schema: {},
+    }),
     LeadMagnetForm: block({
         label: 'Lead Magnet Form',
         schema: {
@@ -48,13 +319,15 @@ const mdxComponents = {
         }
     }),
     SmartLink: inline({
-        label: 'Glossary SmartLink',
+        label: 'Smart Link',
         schema: {
             id: fields.relationship({
                 label: 'Glossary Term',
                 collection: 'glossary',
-                validation: { isRequired: true }
             }),
+            href: fields.url({ label: 'Source URL' }),
+            title: fields.text({ label: 'Source title', description: 'The standalone source title shown on the citation card.' }),
+            snippet: fields.text({ label: 'Source description', multiline: true }),
             anchorText: fields.text({ label: 'Anchor Text' }),
         }
     }),
@@ -228,6 +501,15 @@ export default config({
                     defaultValue: 'Medium',
                 }),
                 showToc: fields.checkbox({ label: 'Show Table of Contents', defaultValue: true }),
+                headerLayout: fields.select({
+                    label: 'Article Header Layout',
+                    description: 'Use Rich content first screen for articles that open with a substantial interactive tool or visual. The title and author details fill the first screen on phones and tablets.',
+                    options: [
+                        { label: 'Standard', value: 'standard' },
+                        { label: 'Rich content first screen', value: 'rich-content' },
+                    ],
+                    defaultValue: 'standard',
+                }),
                 faq: fields.array(
                     fields.object({
                         question: fields.text({ label: 'Question' }),

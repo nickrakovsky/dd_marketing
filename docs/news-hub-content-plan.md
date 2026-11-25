@@ -56,3 +56,9 @@ Verified desktop and mobile prompts, mobile menu closure, tablet award artwork a
 ## Research
 
 Detailed source checks and date distinctions: [awards](news-research-awards.md) and [media and government announcement](news-research-media.md).
+
+### 22 September 2026 addition
+
+Added Bloomberg's 31 March 2025 tariff report at `/news/bloomberg-tariffs-freight-bookings-march-2025`, with the original coverage date and a separate 22 September 2026 recap publication date. The collection now contains ten entries: seven original story pages and three external destinations. See the [bounded coverage scan](news-coverage-scan-2026-09-22.md) for verification and additional media candidates.
+
+Following the syndication check, added World Finance (28 July 2025), TechRadar (4 April 2025) and TechRound (12 February 2025) as external press entries with original summaries and publication dates. The collection now contains thirteen entries: seven original story pages and six external destinations. Republishing sites are not counted as additional stories.

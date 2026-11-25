@@ -44,12 +44,13 @@ declare global {
 
 /**
  * Replaces the real Calendly widget with a stub that records every
- * `initPopupWidget` invocation, and blocks all assets.calendly.com requests
- * so the test is offline-safe. Also tracks window.open calls so we can
+ * `initPopupWidget` invocation, and blocks CDN and pinned local widget assets
+ * so the real widget cannot replace the stub. Also tracks window.open so we can
  * detect when interception fails and a click falls through to a new tab.
  */
 async function stubCalendly(page: Page) {
   await page.route('https://assets.calendly.com/**', (route) => route.abort());
+  await page.route('**/_astro/vendor/calendly*', (route) => route.abort());
   await page.addInitScript(() => {
     window.__calendlyCalls = [];
     window.__openCount = 0;

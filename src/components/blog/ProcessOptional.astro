@@ -1,0 +1,86 @@
+---
+interface Props { id?: string; }
+const { id = 'nick35-process-optional' } = Astro.props;
+const cases = [
+  { key: 'agreed', label: 'Agreed process', record: 'Work and record agree', description: 'The task is completed through the agreed workflow. The shared record reflects what happened.', manager: 'Make the process usable, train the team and reinforce it consistently.', next: 'The next shift can work from the record.' },
+  { key: 'exception', label: 'Approved exception', record: 'The deviation is recorded', description: 'A real exception needs a different route. The reason, owner and follow-up are recorded.', manager: 'Authorize the exception and address any recurring problem with the process.', next: 'The next shift can see what changed and why.' },
+  { key: 'bypass', label: 'Informal bypass', record: 'Work and record diverge', description: 'The task gets done outside the agreed workflow. The shared record no longer tells the full story.', manager: 'Address the bypass and its cause before the shortcut becomes normal practice.', next: 'The next shift has to reconstruct what happened.' },
+];
+---
+
+<figure class="dd-figure process-optional not-prose" aria-labelledby={`${id}-title`}>
+  <figcaption>
+    <h2 class="dd-figure-title" id={`${id}-title`}>What does the next shift inherit?</h2>
+    <p>Completing the task is only part of adopting a new workflow. Compare what remains in the shared record.</p>
+  </figcaption>
+  <fieldset>
+    <legend class="sr-only">Choose how the task was handled</legend>
+    <div class="choices">
+      {cases.map((item, index) => <label>
+        <input type="radio" name={`${id}-route`} value={item.key} checked={index === 0} />
+        <span>{item.label}</span>
+      </label>)}
+    </div>
+  </fieldset>
+  <div class="outcomes">
+    {cases.map(item => <section class={`outcome outcome-${item.key}`} aria-label={item.label}>
+      <div class="record-heading">
+        <svg class="process-record-icon" viewBox="0 0 80 80" width="64" height="64" aria-hidden="true" focusable="false">
+          <rect class="process-record-sheet" x="14" y="10" width="44" height="58" rx="4" />
+          <rect class="process-record-clip" x="26" y="6" width="20" height="10" rx="3" />
+          <path class="process-record-line" d="M24 28h24M24 38h24M24 48h12" />
+          <circle class="process-record-badge" cx="57" cy="58" r="16" />
+          {item.key === 'agreed' && <path class="process-record-status" d="m49 58 5 5 11-12" />}
+          {item.key === 'exception' && <><path class="process-record-status" d="m49 65 2-7 11-11 5 5-11 11-7 2M59 50l5 5" /></>}
+          {item.key === 'bypass' && <path class="process-record-status" d="m51 52 12 12m0-12L51 64" />}
+        </svg>
+        <div><h3>{item.record}</h3></div>
+      </div>
+      <p>{item.description}</p>
+      <p class="next-shift">{item.next}</p>
+      <div class="responsibility"><strong>Management’s part</strong><p>{item.manager}</p></div>
+    </section>)}
+  </div>
+</figure>
+
+<style>
+  .process-optional { --ink:var(--dd-figure-ink); --muted:var(--dd-figure-muted); --paper:var(--dd-figure-paper); --surface:var(--dd-figure-surface); --rule:var(--dd-figure-line); --accent:var(--dd-figure-accent); margin:2rem 0; padding:clamp(1rem,3vw,1.75rem); border:1px solid var(--rule); border-radius:.75rem; background:var(--paper); color:var(--ink); font-family:var(--dd-figure-font); font-size:1rem; line-height:1.5; }
+  .process-optional * { box-sizing:border-box; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+  h2,h3,p { margin:0; color:inherit; }
+
+  figcaption p { margin-top:.6rem; }
+  fieldset { border:0; padding:0; margin:1.25rem 0 0; min-width:0; }
+  legend { padding:0; margin-bottom:.55rem; font-size:.9rem; color:var(--muted); }
+  .choices { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; }
+  label { display:flex; align-items:center; gap:.5rem; padding:.65rem; border:1px solid var(--rule); border-radius:.35rem; cursor:pointer; font-size:.95rem; }
+  input { flex:none; width:1rem; height:1rem; margin:0; accent-color:var(--ink); }
+  label:has(input:checked) { background:var(--surface); border-color:var(--ink); font-weight:600; }
+  label:has(input:focus-visible) { outline:2px solid var(--ink); outline-offset:3px; }
+  .outcome { padding-top:1.25rem; }
+  .outcome + .outcome { border-top:1px solid var(--rule); margin-top:1.25rem; }
+  .record-heading { display:flex; align-items:center; gap:1rem; margin-bottom:.8rem; }
+  .process-record-icon { flex:none; display:block; }
+  .process-record-sheet { fill:var(--surface); stroke:var(--ink); stroke-width:2; }
+  .process-record-clip { fill:var(--accent); }
+  .process-record-line, .process-record-status { fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .process-record-badge { fill:var(--paper); stroke:var(--ink); stroke-width:2; }
+  .process-record-status { stroke-width:2.5; }
+  h3 { font:inherit; font-size:1.125rem; font-weight:700; line-height:1.25; }
+  .next-shift { margin-top:.8rem; font-weight:700; }
+  .responsibility { margin-top:1rem; padding:.8rem 1rem; background:var(--surface); border-left:3px solid var(--accent); }
+  .responsibility strong { display:block; margin-bottom:.2rem; }
+  @supports selector(:has(*)) {
+    .outcome { display:none; }
+    .outcome + .outcome { margin-top:0; border-top:0; }
+    .process-optional:has(input[value="agreed"]:checked) .outcome-agreed,
+    .process-optional:has(input[value="exception"]:checked) .outcome-exception,
+    .process-optional:has(input[value="bypass"]:checked) .outcome-bypass { display:block; }
+  }
+  @media (max-width:540px) { .process-optional { padding:1rem; } .choices { grid-template-columns:1fr; } }
+  @media print {
+    fieldset { display:none; }
+    .process-optional .outcome { display:block !important; break-inside:avoid; }
+    .process-optional .outcome + .outcome { border-top:1px solid var(--rule); margin-top:1rem; }
+  }
+</style>

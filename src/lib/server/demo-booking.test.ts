@@ -114,3 +114,42 @@ it('requires same-origin signed-session ownership, a scoped receipt and an expli
   await expect(auth.leadId(token, session)).rejects.toMatchObject({ code: 'invalid_receipt' });
   expect(cancel).not.toHaveBeenCalled();
 });
+
+it('retires unverified external cancellations so the bounded queue can process later bookings', async () => {
+  evidence.eventStatus = 'canceled'; evidence.inviteeStatus = 'canceled'; evidence.activeInvitees = 0;
+  await complete();
+  const secondId = 'b'.repeat(64), laterId = 'c'.repeat(64);
+  const create = (bookingId: string, attemptKey: string) => store.create({
+    id: bookingId, sessionHash: 'session', attemptKey, email: 'buyer@company.com', context,
+    createdAt: now, updatedAt: now, nextAttemptAt: 0, phase: 'prepared',
+  });
+  await create(secondId, 'second-12345678'); evidence.nonce = 'ddbs.second-12345678';
+  await processor.advance(secondId, { eventUri: `${eventUri}-second`, inviteeUri: `${eventUri}-second/invitees/invitee-second` });
+  for (const cancelledId of [id, secondId]) {
+    const cancelled = await store.get(cancelledId);
+    expect(cancelled).toMatchObject({ phase: 'cancelled', outcome: 'already_cancelled', evidence: { eventStatus: 'canceled' } });
+    expect(cancelled!.verifiedAt).toBeUndefined();
+    expect(db.sqlite.prepare("SELECT count(*) AS n FROM demo_booking_audit WHERE booking_id=? AND phase='cancelled'").get(cancelledId)?.n).toBeGreaterThan(0);
+  }
+  // A later booking needs a retry. Two terminal rows must not consume its batch.
+  now += 1000;
+  await create(laterId, 'later-12345678');
+  evidence.nonce = 'ddbs.later-12345678'; evidence.eventStatus = 'active'; evidence.inviteeStatus = 'active'; evidence.activeInvitees = 1;
+  inspect.mockRejectedValueOnce(new Error('Temporary read failure'));
+  await processor.advance(laterId, { eventUri: `${eventUri}-later`, inviteeUri: `${eventUri}-later/invitees/invitee-later` });
+  now += 300001;
+  expect(await store.due(now, 2)).toEqual([laterId]);
+  await processor.reconcile(2);
+  expect(await store.get(laterId)).toMatchObject({ phase: 'verified' });
+  expect(cancel).not.toHaveBeenCalled();
+});
+it('keeps verified cancellations scheduled until their booking and cancellation reports are attempted', async () => {
+  await complete(); await processor.advance(id, { correction: 'facility' });
+  now += 300001;
+  expect(await store.due(now, 2)).toEqual([id]);
+  const request = vi.fn().mockImplementation(async () => new Response('{"results":1}'));
+  await reportBooking(store, db.store, id, { siteUuid: 'site', publishableKey: 'pub', secretKey: 'secret' }, request, () => now);
+  expect(request).toHaveBeenCalledTimes(2);
+  expect(await store.get(id)).toMatchObject({ phase: 'cancelled', report: 'accepted', cancellationReport: 'accepted' });
+  expect(await store.due(now, 2)).toEqual([]);
+});

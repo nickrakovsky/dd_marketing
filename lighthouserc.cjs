@@ -1,18 +1,22 @@
 /**
- * Lighthouse CI configuration.
+ * Lighthouse audit configuration, consumed by scripts/performance-audit.mjs.
  *
- * Local:  npx lhci autorun          (starts preview server, tests localhost)
- * CI:     npx lhci autorun --collect.url="https://xxx.pages.dev/" --collect.startServerCommand=""
- *         (CLI flags override these defaults so the Cloudflare preview is tested directly)
+ * Local:  npm run perf             (starts the production Pages preview)
+ * CI:     PREVIEW_URL=https://xxx.pages.dev npm run perf
+ *         (all five priority pages are checked against the same preview)
+ * Set CHROME_PATH to a compatible Chrome when the Playwright browser is older.
+ * CI pins Chrome for Testing separately; Chromium 147 crashes during WebDX tracing.
  */
+const baseURL = process.env.PREVIEW_URL || 'http://localhost:4321';
+const performancePaths = ['/', '/posts', '/comparison', '/news', '/posts/best-yard-management-options'];
+
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run preview',
-      startServerReadyPattern: 'localhost',
-      startServerReadyTimeout: 30000,
-      url: ['http://localhost:4321/'],
+      url: performancePaths.map(path => new URL(path, baseURL).href),
       numberOfRuns: 1,
+      // Keep the trace behind a failed score so we can identify the cause.
+      settings: { saveAssets: true },
     },
     assert: {
       assertions: {
@@ -21,9 +25,6 @@ module.exports = {
         // CLS > 0.01 is an error (true zero is unrealistic for CWV measurement noise)
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.01 }],
       },
-    },
-    upload: {
-      target: 'temporary-public-storage',
     },
   },
 };

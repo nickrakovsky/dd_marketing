@@ -89,6 +89,9 @@ export class BookingProcessor {
       if (evidence.eventStatus === 'canceled' && evidence.inviteeStatus === 'canceled') {
         booking.phase = 'cancelled'; booking.cancelObservedAt = now;
         booking.outcome = booking.confirmedAt && evidence.cancellationReason === correctionText(booking.correction!) ? 'confirmed' : 'already_cancelled';
+        // No verified booking event exists to report. Keep the evidence/audit,
+        // but free the scheduled queue for bookings that still need work.
+        if (!booking.verifiedAt) booking.nextAttemptAt = Number.MAX_SAFE_INTEGER;
         booking.reason = undefined; await save(); return booking;
       }
       if (evidence.eventStatus !== 'active' || evidence.inviteeStatus !== 'active' || evidence.activeInvitees !== 1 || evidence.startAt <= now) {

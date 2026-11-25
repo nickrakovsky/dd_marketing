@@ -1,0 +1,43 @@
+---
+import { risks } from './risks';
+import BalanceIcon from './BalanceIcon.astro';
+---
+<figure class="balance-span" aria-label="Two risks when evaluating a center of excellence: idealistic long-term vision and getting stuck in day-to-day demands.">
+  <div class="cards">
+    {risks.map(risk => <section class={risk.id}>
+      <span class="scene"><BalanceIcon kind={risk.id} /></span>
+      <h4>{risk.title}</h4>
+      <p>{risk.description}</p>
+    </section>)}
+    <span class="connection" aria-hidden="true">
+      <span class="shaft"></span>
+      <svg class="arrowhead left" viewBox="0 0 10 16"><path d="M8 2 2 8l6 6" /></svg>
+      <svg class="arrowhead right" viewBox="0 0 10 16"><path d="M8 2 2 8l6 6" /></svg>
+    </span>
+  </div>
+</figure>
+<style>
+  .balance-span { margin:0; color:var(--ink,#24211d); container-type:inline-size; }
+  * { box-sizing:border-box; }
+  .cards { --card-gap:48px; --card-padding:24px; --scene-height:100px; position:relative; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--card-gap); }
+  section { min-width:0; padding:var(--card-padding); border-radius:7px; background:color-mix(in srgb,var(--soft,#e3d5c4) 30%,var(--paper,#fff8ee)); }
+  .operations { background:color-mix(in srgb,var(--accent,#fe5000) 5%,var(--paper,#fff8ee)); }
+  .scene { display:grid; place-items:center; width:128px; max-width:100%; height:var(--scene-height); margin:0 auto 22px; }
+  .connection { position:absolute; left:calc(50% - var(--card-gap) / 2); top:calc(var(--card-padding) + var(--scene-height) / 2); width:var(--card-gap); height:16px; transform:translateY(-50%); color:var(--accent,#fe5000); pointer-events:none; }
+  .shaft { position:absolute; inset:50% 0 auto; border-top:1.5px solid currentColor; transform:translateY(-50%); }
+  .arrowhead { position:absolute; top:0; width:10px; height:16px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+  .left { left:-2px; }
+  .right { right:-2px; transform:rotate(180deg); }
+  h4 { margin:0 0 12px; font:400 28px/1.15 DD-Recoleta,Georgia,serif; text-wrap:pretty; }
+  p { margin:0; color:var(--muted,#686054); font:400 14px/1.65 Inter,Arial,sans-serif; text-wrap:pretty; }
+  @container(max-width:460px) {
+    .cards { --card-gap:30px; --card-padding:16px; --scene-height:80px; }
+    .scene { width:100px; margin-bottom:18px; }
+    h4 { font-size:24px; }
+    p { font-size:13px; }
+  }
+  @container(max-width:340px) {
+    .cards { --card-gap:24px; --card-padding:12px; }
+    h4 { font-size:22px; }
+  }
+</style>

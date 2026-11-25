@@ -1,0 +1,96 @@
+---
+import './revised-timelines.css';
+interface Props { id?: string }
+const { id = 'arrival-history' } = Astro.props;
+const histories = [
+  {
+    key: 'unchanged',
+    label: '14:00 booking unchanged',
+    events: [
+      { position: 1, time: '14:00', label: 'Original appointment', kind: 'booking' },
+      { position: 3, time: '09:00', label: 'Truck arrives', kind: 'arrival' },
+    ],
+    agreed: '14:00',
+    outcome: 'Five hours early.',
+    point: 'The facility was expecting this delivery at 14:00. The truck arrived at 09:00 without an earlier appointment.',
+  },
+  {
+    key: 'approved',
+    label: '09:00 confirmed before arrival',
+    events: [
+      { position: 1, time: '14:00', label: 'Original appointment', kind: 'booking' },
+      { position: 2, time: '09:00', label: 'Appointment moved to', kind: 'change' },
+      { position: 3, time: '09:00', label: 'Truck arrives', kind: 'arrival' },
+    ],
+    agreed: '09:00',
+    outcome: 'On time for the revised appointment.',
+    point: 'The facility confirmed 09:00 before the truck arrived. Comparing the arrival with the original 14:00 booking would wrongly count this visit as early.',
+  },
+  {
+    key: 'edited',
+    label: 'Changed to 09:00 after arrival',
+    events: [
+      { position: 1, time: '14:00', label: 'Original appointment', kind: 'booking' },
+      { position: 2, time: '09:00', label: 'Truck arrives', kind: 'arrival' },
+      { position: 3, time: '09:00', label: 'Appointment moved to', kind: 'change' },
+    ],
+    agreed: '14:00',
+    outcome: 'Still five hours early.',
+    point: 'The appointment was for 14:00 when the truck arrived. Changing it to 09:00 afterward hides that difference unless the original booking remains visible.',
+  },
+];
+---
+<figure class="drev arrival-history not-prose" aria-labelledby={`${id}-title`}>
+  <h3 id={`${id}-title`}>Was this truck five hours early?</h3>
+  <p class="premise">The truck arrives at 09:00 in all three cases. What changes is whether its 14:00 appointment was moved before or after arrival.</p>
+  <fieldset>
+    <legend>Compare three appointment histories</legend>
+    {histories.map((history, index) => <label><input type="radio" name={`${id}-history`} value={history.key} checked={index === 0} /><span>{history.label}</span></label>)}
+  </fieldset>
+  <div class="history-views" aria-live="polite" aria-atomic="true">
+    {histories.map(history => <div class={`history history-${history.key}`}>
+      <div class="history-diagram">
+        <svg class="history-line" viewBox="0 0 600 20" fill="none" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="sequence-line" d="M100 10H500"/>
+          {history.events.length === 2 ? <path class="sequence-arrow" d="M292 5L300 10L292 15"/> : <path class="sequence-arrow" d="M192 5L200 10L192 15M392 5L400 10L392 15"/>}
+        </svg>
+        <ol class="history-path">
+          {history.events.map(event => <li class={`event event-${event.kind}`} style={`grid-column:${event.position}`}>
+            <span class="event-mark" aria-hidden="true"></span>
+            <span class="event-label">{event.label}</span>
+            <strong class="event-time">{event.time}</strong>
+          </li>)}
+        </ol>
+      </div>
+      <p class="history-basis"><span>Expected arrival:</span> <strong>{history.agreed}</strong></p>
+      <p class="history-point"><strong>{history.outcome}</strong> {history.point}</p>
+    </div>)}
+  </div>
+</figure>
+<style>
+  .arrival-history legend{font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif;font-size:16px;font-weight:600}
+  .arrival-history fieldset{gap:8px}.arrival-history fieldset label{flex:1 1 170px}
+  .arrival-history .history-views{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto}
+  .arrival-history .history{grid-column:1;grid-row:1/4;display:grid;grid-template-rows:subgrid;visibility:hidden;pointer-events:none}
+  .arrival-history .history-unchanged{visibility:visible;pointer-events:auto}
+  .arrival-history:has(input[value='approved']:checked) .history-unchanged,.arrival-history:has(input[value='edited']:checked) .history-unchanged{visibility:hidden;pointer-events:none}
+  .arrival-history:has(input[value='approved']:checked) .history-approved,.arrival-history:has(input[value='edited']:checked) .history-edited{visibility:visible;pointer-events:auto}
+  .arrival-history .history-diagram{position:relative;padding:0 0 24px;margin-top:5px}
+  .arrival-history .history-line{position:absolute;top:0;left:0;width:100%;height:20px;overflow:visible}
+  .arrival-history .history-line path{vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+  .arrival-history .sequence-line{stroke:var(--rule);stroke-width:1.4}.arrival-history .sequence-arrow{stroke:var(--muted);stroke-width:1.4}
+  .arrival-history .history-path{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));list-style:none;margin:0;padding:0;gap:0}
+  .arrival-history .event{display:flex;flex-direction:column;align-items:center;min-width:0;padding:0 8px;text-align:center}
+  .arrival-history .event-mark{display:block;flex:0 0 12px;width:12px;height:12px;margin:4px 0 12px;border:1.5px solid var(--ink);border-radius:50%;background:var(--paper)}
+  .arrival-history .event-arrival .event-mark{background:var(--ink)}
+  .arrival-history .event-change .event-mark{border-color:var(--accent);background:var(--soft)}
+  .arrival-history .event-time{margin-top:6px;font-size:22px;line-height:1.3;font-variant-numeric:tabular-nums}
+  .arrival-history .event-label{display:block;min-height:1.5em;line-height:1.5;font-family:'DD-Recoleta',Recoleta-Fallback,Georgia,serif}
+  .arrival-history .history-basis{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0;padding-top:14px;border-top:1px solid var(--rule)}
+  .arrival-history .history-basis strong{font-variant-numeric:tabular-nums}
+  .arrival-history .history-point{margin:0;padding-top:10px}
+  @media(max-width:600px){
+    .arrival-history fieldset{display:grid;grid-template-columns:1fr}.arrival-history fieldset label{width:100%}
+    .arrival-history .event{padding:0 5px}.arrival-history .event-time{font-size:21px}.arrival-history .event-label{min-height:3em}
+  }
+</style>

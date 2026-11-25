@@ -32,10 +32,13 @@ export function leadContext(value: unknown, origin: string): DemoLeadContext {
     const details = event.details as Record<string, unknown>;
     if (typeof details.source !== 'string') throw new Error('Missing source');
     if (event.landing_page_url && new URL(String(event.landing_page_url)).origin !== origin) throw new Error('Invalid landing origin');
+    if (details.session_landing_url && new URL(String(details.session_landing_url)).origin !== origin) throw new Error('Invalid session landing origin');
     // Reuse the canonical validator/mapping rather than keeping a narrower schema.
     return {
       source: details.source,
       ...(event.landing_page_url ? { landingPage: String(event.landing_page_url) } : {}),
+      ...(details.landing_page_mode ? { landingPageMode: details.landing_page_mode as 'page' | 'session' } : {}),
+      ...(input.landingPageMode === 'page' && details.session_landing_url ? { sessionLandingPage: String(details.session_landing_url) } : {}),
       ...(event.visitor_id ? { visitorUuid: String(event.visitor_id) } : {}),
       ...(details.first_touch ? { firstTouch: details.first_touch as Record<string, unknown> } : {}),
       ...(details.last_touch ? { lastTouch: details.last_touch as Record<string, unknown> } : {}),

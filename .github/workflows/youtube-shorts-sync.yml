@@ -1,0 +1,91 @@
+name: Refresh YouTube Shorts
+
+on:
+  schedule:
+    # Daily after the channel's usual 11:45 UTC publication time.
+    - cron: '17 13 * * *'
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Commit new Shorts to main after validation (false runs a dry run)
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: youtube-shorts-sync
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Require main for publication
+        if: github.event_name == 'schedule' || inputs.publish
+        env:
+          WORKFLOW_REF: ${{ github.ref }}
+        run: test "$WORKFLOW_REF" = refs/heads/main
+
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test importer failure handling
+        run: npm run test:youtube-sync
+
+      - name: Import published Shorts
+        run: npm run sync:youtube -- --shorts-only
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: UCwJE5ABaemfSGzk1DBSMGBQ
+
+      - name: Detect new Shorts
+        id: changes
+        run: |
+          git add -- src/content/videos
+          if git diff --cached --quiet; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'No new published Shorts found.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+            echo 'New Shorts:' >> "$GITHUB_STEP_SUMMARY"
+            git diff --cached --name-only >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # GITHUB_TOKEN commits do not trigger another GitHub Actions workflow.
+      # Validate generated content here before the normal Cloudflare Git deploy.
+      - name: Build and verify publication
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          npm run check:publication-boundary
+          npm run build
+          npm run test:publication
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+          WRANGLER_SEND_METRICS: 'false'
+
+      - name: Publish updated collection
+        if: steps.changes.outputs.changed == 'true' && (github.event_name == 'schedule' || inputs.publish)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'content: refresh published YouTube Shorts'
+          # A concurrent main update causes a visible failure, never a force push.
+          git push origin HEAD:main
+          echo 'Committed new Shorts to main; the existing Cloudflare Git integration will deploy this commit.' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Report dry run
+        if: steps.changes.outputs.changed == 'true' && github.event_name == 'workflow_dispatch' && !inputs.publish
+        run: echo 'Dry run passed; no changes were pushed.' >> "$GITHUB_STEP_SUMMARY"
