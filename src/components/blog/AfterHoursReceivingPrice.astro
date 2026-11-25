@@ -1,0 +1,69 @@
+---
+import "./controls.css";
+---
+<figure id="pricing" class="dd-figure t2-applet not-prose a4-figure" aria-labelledby="a4-title">
+  <h2 class="dd-figure-title" id="a4-title">Price an after-hours receipt</h2>
+  <p>After closing, the crew costs $88/hour. Site costs add $24.</p>
+  <div class="a4-controls">
+    <fieldset>
+      <legend>Extra crew time</legend>
+      <label><input type="radio" name="a4-end" id="a4-45" checked> 45 min</label>
+      <label><input type="radio" name="a4-end" id="a4-60"> 60 min</label>
+    </fieldset>
+    <fieldset>
+      <legend>Handling already billed</legend>
+      <label><input type="radio" name="a4-base" id="a4-70" checked> $70</label>
+      <label><input type="radio" name="a4-base" id="a4-130"> $130</label>
+    </fieldset>
+  </div>
+  <div class="a4-ledger" aria-live="polite" aria-atomic="true">
+    <div class="a4-row">
+      <p class="a4-caption"><strong>Target price at 25% margin</strong><b><span class="a4-short">$120</span><span class="a4-long">$150</span></b></p>
+      <div class="a4-track" aria-hidden="true"><span class="a4-cost"></span><span class="a4-margin"></span></div>
+      <p class="a4-key"><span><i class="a4-solid" aria-hidden="true"></i> Crew and site costs <b class="a4-short">$90</b><b class="a4-long">$112</b></span><span><i class="a4-hatch" aria-hidden="true"></i> Margin <b class="a4-short">$30</b><b class="a4-long">$38</b></span></p>
+    </div>
+    <div class="a4-row">
+      <p class="a4-caption"><strong>Client invoice</strong><b><span class="a4-s70">$120</span><span class="a4-s130">$130</span><span class="a4-long">$150</span></b></p>
+      <div class="a4-track" aria-hidden="true"><span class="a4-ordinary"></span><span class="a4-extra"></span></div>
+      <p class="a4-key"><span><i class="a4-solid" aria-hidden="true"></i> Ordinary handling <b class="a4-low">$70</b><b class="a4-high">$130</b></span><span><i class="a4-hatch" aria-hidden="true"></i> After-hours supplement <b class="a4-s70">$50</b><b class="a4-s130">$0</b><b class="a4-l70">$80</b><b class="a4-l130">$20</b></span></p>
+    </div>
+  </div>
+  <p class="a4-method">Target price = cost ÷ 0.75, rounded up to a multiple of $5.</p>
+</figure>
+
+<style>
+.a4-figure {
+  --a4-cost: 90;
+  --a4-target: 120;
+  --a4-ordinary: 70;
+  --a4-hatch: repeating-linear-gradient(125deg, var(--dd-figure-ink) 0 1.5px, var(--dd-figure-surface) 1.5px 6px);
+}
+.a4-figure:has(#a4-60:checked) { --a4-cost: 112; --a4-target: 150; }
+.a4-figure:has(#a4-130:checked) { --a4-ordinary: 130; }
+.a4-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
+.a4-ledger { display: grid; gap: 1.15rem; margin: 1.25rem 0 .75rem; }
+.a4-figure .a4-caption, .a4-figure .a4-key { margin: 0; }
+.a4-caption, .a4-key { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; }
+.a4-caption { justify-content: space-between; font-size: 1rem; line-height: 1.4; }
+.a4-caption > b { font-size: 1.2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.a4-key { color: var(--dd-figure-muted); font-size: .875rem; line-height: 1.5; }
+.a4-key b { color: var(--dd-figure-ink); white-space: nowrap; }
+.a4-key i { display: inline-block; width: .75rem; height: .75rem; margin-right: .18rem; vertical-align: -.03rem; border: 1px solid var(--dd-figure-ink); box-sizing: border-box; }
+.a4-track { display: flex; height: 1.4rem; box-sizing: border-box; width: 100%; margin: .32rem 0; border: 1px solid var(--dd-figure-line); background: var(--dd-figure-surface); }
+.a4-cost,.a4-ordinary,.a4-solid { background: var(--dd-figure-ink); }
+.a4-margin,.a4-extra,.a4-hatch { background: var(--a4-hatch); }
+.a4-cost { width: calc(100% * var(--a4-cost) / 150); }
+.a4-margin { width: calc(100% * (var(--a4-target) - var(--a4-cost)) / 150); }
+.a4-ordinary { width: calc(100% * var(--a4-ordinary) / 150); }
+.a4-extra { width: max(0%, calc(100% * (var(--a4-target) - var(--a4-ordinary)) / 150)); }
+.a4-figure .a4-method { color: var(--dd-figure-muted); margin-bottom: 0; font-size: 1rem; line-height: 1.5; }
+.a4-figure :is(.a4-short, .a4-long, .a4-low, .a4-high, .a4-s70, .a4-s130, .a4-l70, .a4-l130) { display: none; }
+.a4-figure:has(#a4-45:checked) .a4-short,
+.a4-figure:has(#a4-60:checked) .a4-long,
+.a4-figure:has(#a4-70:checked) .a4-low,
+.a4-figure:has(#a4-130:checked) .a4-high,
+.a4-figure:has(#a4-45:checked):has(#a4-70:checked) .a4-s70,
+.a4-figure:has(#a4-45:checked):has(#a4-130:checked) .a4-s130,
+.a4-figure:has(#a4-60:checked):has(#a4-70:checked) .a4-l70,
+.a4-figure:has(#a4-60:checked):has(#a4-130:checked) .a4-l130 { display: inline; }
+</style>

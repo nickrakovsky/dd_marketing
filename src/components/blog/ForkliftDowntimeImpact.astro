@@ -55,12 +55,19 @@ const id = `forklift-impact-${crypto.randomUUID()}`;
 
 <script>
   function initializeForkliftImpacts() {
-    document.querySelectorAll<HTMLElement>('[data-forklift-impact]').forEach(figure => {
+    const figures = document.querySelectorAll<HTMLElement>('[data-forklift-impact]');
+    figures.forEach(figure => {
       if (figure.dataset.bound === 'true') return;
       const controls = figure.querySelector<HTMLFieldSetElement>('[data-controls]')!;
       const demandInput = figure.querySelector<HTMLInputElement>('[name="demand"]')!;
       const durationInput = figure.querySelector<HTMLInputElement>('[name="duration"]')!;
-      const write = (selector: string, value: string) => { figure.querySelector<HTMLElement>(selector)!.textContent = value; };
+      const demandSlider = demandInput.closest<HTMLElement>('.fdi-slider')!;
+      const durationSlider = durationInput.closest<HTMLElement>('.fdi-slider')!;
+      const demandText = figure.querySelector<HTMLOutputElement>('[data-demand-output]')!.firstChild!;
+      const write = (selector: string, value: string) => {
+        const target = figure.querySelector<HTMLElement>(selector)!;
+        target.textContent = value;
+      };
       const number = (value: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(value);
       const duration = (minutes: number) => {
         const hours = Math.floor(minutes / 60);
@@ -85,9 +92,9 @@ const id = `forklift-impact-${crypto.randomUUID()}`;
         write('[data-duration]', repairTime);
         durationInput.setAttribute('aria-valuetext', repairTime);
         demandInput.setAttribute('aria-valuetext', `${demand} pallets per hour`);
-        figure.querySelector<HTMLOutputElement>('[data-demand-output]')!.firstChild!.textContent = `${demand} `;
-        demandInput.closest<HTMLElement>('.fdi-slider')!.style.setProperty('--fdi-progress', `${(demand - 15) / 15 * 100}%`);
-        durationInput.closest<HTMLElement>('.fdi-slider')!.style.setProperty('--fdi-progress', `${(minutes - 30) / 210 * 100}%`);
+        demandText.textContent = `${demand} `;
+        demandSlider.style.setProperty('--fdi-progress', `${(demand - 15) / 15 * 100}%`);
+        durationSlider.style.setProperty('--fdi-progress', `${(minutes - 30) / 210 * 100}%`);
         write('[data-waiting]', `${number(waiting)} ${waiting === 1 ? 'pallet' : 'pallets'}`);
         write('[data-catchup-label]', 'catch-up time');
         if (waiting === 0) {

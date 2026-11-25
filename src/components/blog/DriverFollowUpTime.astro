@@ -1,0 +1,85 @@
+---
+import "./controls.css";
+---
+<figure id="driver-time" class="dd-figure t2-applet not-prose a7-figure" aria-labelledby="a7-title">
+  <h2 id="a7-title" class="dd-figure-title">When does texting drivers save time?</h2>
+  <p>Giving 40 drivers directions takes a minute each. Ten need another call or a yard trip. Texting everyone and checking replies adds 20 minutes.</p>
+  <div class="a7-controls"><fieldset><legend>Minutes per follow-up</legend>
+<label><input type="radio" name="a7-duration" id="a7-duration3"> 3</label>
+<label><input type="radio" name="a7-duration" id="a7-duration5" checked> 5</label>
+<label><input type="radio" name="a7-duration" id="a7-duration7"> 7</label>
+</fieldset><fieldset><legend>Follow-ups avoided by texting</legend>
+<label><input type="radio" name="a7-avoided" id="a7-avoided2"> 2</label>
+<label><input type="radio" name="a7-avoided" id="a7-avoided4" checked> 4</label>
+<label><input type="radio" name="a7-avoided" id="a7-avoided6"> 6</label>
+</fieldset></div>
+  <div class="a7-chart" aria-hidden="true">
+    <p class="a7-chart-header">Crew minutes saved per shift</p>
+    <div class="a7-plot">
+      <div class="a7-axis"><span>+50</span><span>0</span><span>−20</span></div>
+      <div class="a7-field a7-d3 a7-n0"><i class="a7-bar a7-loss" style="height:28.5714%"></i></div><div class="a7-field a7-d3 a7-n2"><i class="a7-bar a7-loss" style="height:20.0000%"></i></div><div class="a7-field a7-d3 a7-n4"><i class="a7-bar a7-loss" style="height:11.4286%"></i></div><div class="a7-field a7-d3 a7-n6"><i class="a7-bar a7-loss" style="height:2.8571%"></i></div><div class="a7-field a7-d3 a7-n8"><i class="a7-bar a7-gain" style="height:5.7143%"></i></div><div class="a7-field a7-d3 a7-n10"><i class="a7-bar a7-gain" style="height:14.2857%"></i></div><div class="a7-field a7-d5 a7-n0"><i class="a7-bar a7-loss" style="height:28.5714%"></i></div><div class="a7-field a7-d5 a7-n2"><i class="a7-bar a7-loss" style="height:14.2857%"></i></div><div class="a7-field a7-d5 a7-n4"><i class="a7-bar a7-even"></i></div><div class="a7-field a7-d5 a7-n6"><i class="a7-bar a7-gain" style="height:14.2857%"></i></div><div class="a7-field a7-d5 a7-n8"><i class="a7-bar a7-gain" style="height:28.5714%"></i></div><div class="a7-field a7-d5 a7-n10"><i class="a7-bar a7-gain" style="height:42.8571%"></i></div><div class="a7-field a7-d7 a7-n0"><i class="a7-bar a7-loss" style="height:28.5714%"></i></div><div class="a7-field a7-d7 a7-n2"><i class="a7-bar a7-loss" style="height:8.5714%"></i></div><div class="a7-field a7-d7 a7-n4"><i class="a7-bar a7-gain" style="height:11.4286%"></i></div><div class="a7-field a7-d7 a7-n6"><i class="a7-bar a7-gain" style="height:31.4286%"></i></div><div class="a7-field a7-d7 a7-n8"><i class="a7-bar a7-gain" style="height:51.4286%"></i></div><div class="a7-field a7-d7 a7-n10"><i class="a7-bar a7-gain" style="height:71.4286%"></i></div>
+      <span></span>
+      <span class="a7-tick a7-n0">0</span><span class="a7-tick a7-n2">2</span><span class="a7-tick a7-n4">4</span><span class="a7-tick a7-n6">6</span><span class="a7-tick a7-n8">8</span><span class="a7-tick a7-n10">10</span>
+    </div>
+    <p class="a7-horizontal">Follow-ups avoided</p>
+  </div>
+  <div class="a7-readout" role="status" aria-atomic="true">
+    <div class="a7-outcome a7-d3n2"><strong>14 extra minutes</strong><p>Crew time rises from 70 to 84 minutes.</p></div>
+    <div class="a7-outcome a7-d3n4"><strong>8 extra minutes</strong><p>Crew time rises from 70 to 78 minutes.</p></div>
+    <div class="a7-outcome a7-d3n6"><strong>2 extra minutes</strong><p>Crew time rises from 70 to 72 minutes.</p></div>
+    <div class="a7-outcome a7-d5n2"><strong>10 extra minutes</strong><p>Crew time rises from 90 to 100 minutes.</p></div>
+    <div class="a7-outcome a7-d5n4"><strong>Break-even</strong><p>The crew spends 90 minutes either way.</p></div>
+    <div class="a7-outcome a7-d5n6"><strong>10 minutes saved</strong><p>Crew time falls from 90 to 80 minutes.</p></div>
+    <div class="a7-outcome a7-d7n2"><strong>6 extra minutes</strong><p>Crew time rises from 110 to 116 minutes.</p></div>
+    <div class="a7-outcome a7-d7n4"><strong>8 minutes saved</strong><p>Crew time falls from 110 to 102 minutes.</p></div>
+    <div class="a7-outcome a7-d7n6"><strong>22 minutes saved</strong><p>Crew time falls from 110 to 88 minutes.</p></div>
+    <p style="margin:.35rem 0 0"><span class="a7-threshold a7-threshold3">Avoid 7 or more follow-ups to cover texting time.</span><span class="a7-threshold a7-threshold5">Avoid 4 or more follow-ups to cover texting time.</span><span class="a7-threshold a7-threshold7">Avoid 3 or more follow-ups to cover texting time.</span></p></div>
+</figure>
+
+<style>
+.a7-controls { display:grid; gap:.85rem; }
+.a7-chart { margin:1.3rem 0; }
+.a7-chart-header { margin:0 0 .6rem; font-size:.875rem; font-weight:650; }
+.a7-plot { display:grid; grid-template-columns:3rem repeat(6,minmax(0,1fr)); }
+.a7-axis, .a7-field { position:relative; box-sizing:border-box; height:9rem; }
+.a7-axis { color:var(--dd-figure-muted); font-size:.875rem; font-variant-numeric:tabular-nums; }
+.a7-axis span { position:absolute; right:.5rem; }
+.a7-axis span:nth-child(1) { top:0; }
+.a7-axis span:nth-child(2) { top:71.42857%; transform:translateY(-50%); }
+.a7-axis span:nth-child(3) { bottom:0; }
+.a7-field { background:var(--dd-figure-surface); border-block:1px solid var(--dd-figure-line); }
+.a7-field::before { content:''; position:absolute; top:71.42857%; inset-inline:0; border-top:1px solid var(--dd-figure-muted); }
+.a7-bar { display:block; position:absolute; left:26%; width:48%; border:1px solid var(--dd-figure-ink); box-sizing:border-box; }
+.a7-gain { background:var(--dd-figure-accent); bottom:28.57143%; }
+.a7-loss { background:repeating-linear-gradient(135deg,var(--dd-figure-paper) 0 4px,var(--dd-figure-muted) 4px 5px); top:71.42857%; }
+.a7-even { top:71.42857%; height:3px; transform:translateY(-1px); background:var(--dd-figure-ink); }
+.a7-field { display:none; }
+.a7-tick { display:block; text-align:center; font-size:.875rem; line-height:1.6; font-variant-numeric:tabular-nums; margin-top:.22rem; }
+.a7-horizontal { margin:.4rem 0 0; text-align:center; font-size:.875rem; color:var(--dd-figure-muted); }
+.a7-readout { padding-top:.85rem; border-top:1px solid var(--dd-figure-line); }
+.a7-outcome { display:none; }
+.a7-outcome strong { display:block; font-size:1.12rem; }
+.a7-outcome p { margin:.3rem 0 0; }
+.a7-figure:has(#a7-duration3:checked) .a7-d3 { display:block; }
+.a7-figure:has(#a7-duration5:checked) .a7-d5 { display:block; }
+.a7-figure:has(#a7-duration7:checked) .a7-d7 { display:block; }
+.a7-figure:has(#a7-avoided2:checked) .a7-field.a7-n2 { outline:2px solid var(--dd-figure-ink); outline-offset:-2px; }
+.a7-figure:has(#a7-avoided2:checked) .a7-tick.a7-n2 { background:var(--dd-figure-selected-surface); color:var(--dd-figure-selected-ink); font-weight:700; border-radius:.18rem; }
+.a7-figure:has(#a7-avoided4:checked) .a7-field.a7-n4 { outline:2px solid var(--dd-figure-ink); outline-offset:-2px; }
+.a7-figure:has(#a7-avoided4:checked) .a7-tick.a7-n4 { background:var(--dd-figure-selected-surface); color:var(--dd-figure-selected-ink); font-weight:700; border-radius:.18rem; }
+.a7-figure:has(#a7-avoided6:checked) .a7-field.a7-n6 { outline:2px solid var(--dd-figure-ink); outline-offset:-2px; }
+.a7-figure:has(#a7-avoided6:checked) .a7-tick.a7-n6 { background:var(--dd-figure-selected-surface); color:var(--dd-figure-selected-ink); font-weight:700; border-radius:.18rem; }
+.a7-threshold { display:none; }
+.a7-figure:has(#a7-duration3:checked) .a7-threshold3 { display:inline; }
+.a7-figure:has(#a7-duration5:checked) .a7-threshold5 { display:inline; }
+.a7-figure:has(#a7-duration7:checked) .a7-threshold7 { display:inline; }
+.a7-figure:has(#a7-duration3:checked):has(#a7-avoided2:checked) .a7-d3n2 { display:block; }
+.a7-figure:has(#a7-duration3:checked):has(#a7-avoided4:checked) .a7-d3n4 { display:block; }
+.a7-figure:has(#a7-duration3:checked):has(#a7-avoided6:checked) .a7-d3n6 { display:block; }
+.a7-figure:has(#a7-duration5:checked):has(#a7-avoided2:checked) .a7-d5n2 { display:block; }
+.a7-figure:has(#a7-duration5:checked):has(#a7-avoided4:checked) .a7-d5n4 { display:block; }
+.a7-figure:has(#a7-duration5:checked):has(#a7-avoided6:checked) .a7-d5n6 { display:block; }
+.a7-figure:has(#a7-duration7:checked):has(#a7-avoided2:checked) .a7-d7n2 { display:block; }
+.a7-figure:has(#a7-duration7:checked):has(#a7-avoided4:checked) .a7-d7n4 { display:block; }
+.a7-figure:has(#a7-duration7:checked):has(#a7-avoided6:checked) .a7-d7n6 { display:block; }
+</style>

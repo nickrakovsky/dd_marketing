@@ -5,7 +5,7 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The schedule contains 52 articles through December 4, 2026. The forklift-maintenance companion occupies November 26. Nick Rakovsky’s just-in-time delivery and WMS outage posts publish on consecutive Fridays at 14:30 UTC. Their articles and applets live in the production folders. The warehouse setup checklist remains evergreen outside the daily queue.
+The schedule contains 59 articles through December 14, 2026. The seven 3PL articles run in pairs around the forklift video and Nick Rakovsky’s two Friday articles. December 3, 9 and 10 are open. The warehouse setup checklist remains evergreen outside the daily queue.
 
 The next approved posts are prepared on the shared branch `codex/daily-posts-queue-november-26`, refreshed from remote main after PR #301. Other drafting agents can append approved posts to this branch and PR using the existing queue workflow. Merge and deployment install this extension; the existing publication gate releases each article at its timestamp. Preview controls remain local-only.
 
@@ -13,7 +13,7 @@ The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment
 
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 26, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through December 14, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
 
 The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 
@@ -83,9 +83,16 @@ Slots 28–38 alternate A/B. The independently researched warehouse setup checkl
 | 47 | Mon 2026-11-23 | C | What Running a Recycling Plant Taught Me About Costs That Arrive With the Load |
 | 48 | Tue 2026-11-24 | C | Leaner Logistics Teams Depend More on Their Providers |
 | 49 | Wed 2026-11-25 | B | Give warehouse supervisors a deadline they can plan around |
-| 50 | Thu 2026-11-26 | B | Look beyond the repair bill when a forklift keeps breaking down |
-| 51 | Fri 2026-11-27 | C | What does it cost to keep a just-in-time delivery promise? |
-| 52 | Fri 2026-12-04 | C | What can your warehouse ship while the WMS is down? |
+| 50 | Thu 2026-11-26 | A | Reporting carrier no-shows before they become client disputes |
+| 51 | Fri 2026-11-27 | A | Scheduling overlapping loads in a multi-client warehouse |
+| 52 | Mon 2026-11-30 | B | Look beyond the repair bill when a forklift keeps breaking down |
+| 53 | Tue 2026-12-01 | A | Resolving damage claims with consistent receiving inspection records |
+| 54 | Wed 2026-12-02 | A | How to price after-hours receiving at a 3PL |
+| 55 | Fri 2026-12-04 | C | What does it cost to keep a just-in-time delivery promise? |
+| 56 | Mon 2026-12-07 | A | How 3PLs can use receiving records to bill for extra handling |
+| 57 | Tue 2026-12-08 | A | When a 3PL should manage a client’s pickup bookings |
+| 58 | Fri 2026-12-11 | C | What can your warehouse ship while the WMS is down? |
+| 59 | Mon 2026-12-14 | A | Reclaiming receiving time from repeat driver calls and yard trips |
 
 The five Nick audio articles in slots 39–43 were approved on November 2. The November 16 extension in slots 44–48 follows the user’s explicit order: finish the old queue, publish the warehouse-process YouTube companion, then D1–D4. Earlier dates and the future source-rotation policy are unchanged.
 
@@ -121,7 +128,7 @@ Views after all 49 daily articles have been published:
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-12-05T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-12-15T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 
@@ -143,7 +150,7 @@ Build-only samples render the complete content set to retain optimized image var
 
 React's server import uses its edge renderer so this does not require new dashboard-only Cloudflare compatibility flags. There are no new external services, content databases, or paid image-service dependencies.
 
-Run `npm run build` followed by `npm run test:publication` to exercise all 52 daily cutoffs against a single production artifact. The test also verifies the unchanged first 50 schedule records, the new order and source rotation, publication metadata, body hashes and component registration, with separate coverage of the evergreen checklist. It copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
+Run `npm run build` followed by `npm run test:publication` to exercise all 59 daily cutoffs against a single production artifact. The test also verifies the unchanged first 49 schedule records, the new order and source rotation, publication metadata, body hashes and component registration, with separate coverage of the evergreen checklist. It copies the artifact to a temporary directory and controls time only in that copied Worker; it adds no production clock override.
 
 ## Request-time publication verification
 

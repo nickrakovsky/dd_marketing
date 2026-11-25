@@ -18,6 +18,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
 import matter from 'gray-matter';
+import { JSDOM } from 'jsdom';
 import { CAMPAIGN_PATHS, CAMPAIGN_ROBOTS } from '../src/lib/campaign-pages.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -32,13 +33,10 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 52, 'Expected the first 50 slots and two spaced Nick audio articles');
-assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 50))),
-  '494b7bdce14e43a1cbc4c4a48f342b1527eaf1efa90808b78ab98e32c52a41b6',
-  'The first 50 schedule records must retain every field');
+assert.equal(slots.length, 59, 'Expected seven 3PL articles interleaved with the three existing queue entries');
 assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 49))),
   '041eaeb62e77bfeeac873c85a5193e5fa18d48fee2df2923797b1fe210ce27ad',
-  'Appending the forklift-breakdown article must preserve every field of the existing 49 schedule records');
+  'The first 49 scheduled articles must retain every field');
 assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 48))),
   'e749b124a5ccca475b2743ccb9f9d0a9c7073d316d52f4e07d0f626bc187b59b',
   'The existing 48 schedule records before the supervisor-deadline article must remain unchanged');
@@ -71,7 +69,7 @@ assert.deepEqual(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date
   'The approved missing-stock article must use the next weekday slot at the existing publication time');
 assert.equal(manifest.timezone, 'UTC-08:00');
 assert.equal(manifest.localPublicationTime, '06:30:00');
-assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-12-05T00:00:00Z'));
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-12-15T00:00:00Z'));
 assert.deepEqual(manifest.rotation, ['A', 'B', 'C'], 'The historical rotation must retain its original meanings');
 const queueBatch = [
   ['early-arrival-patterns', '2026-10-27', 'A', 'training-session'],
@@ -114,13 +112,22 @@ assert.deepEqual(slots.slice(43, 48).map(slot => [slot.slot, slot.slug, slot.pub
 assert.deepEqual(slots.slice(48, 49).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance, slot.author]),
   [[49, 'give-warehouse-supervisors-clear-deadlines', '2026-11-25T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team']],
   'The approved supervisor-deadline companion must use the next weekday at the existing publication time');
-assert.deepEqual(slots.slice(49, 50).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance, slot.author]),
-  [[50, 'forklift-breakdowns-beyond-repair-bill', '2026-11-26T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team']],
-  'The approved forklift-breakdown companion must use the next weekday at the existing publication time');
-assert.deepEqual(slots.slice(50).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]), [
-  [51, 'pricing-just-in-time-delivery', '2026-11-27T14:30:00.000Z', 'C', 'nick-audio'],
-  [52, 'shipping-during-a-wms-outage', '2026-12-04T14:30:00.000Z', 'C', 'nick-audio'],
-], 'The two November 24 audio articles publish a week apart at the usual time');
+const mixedQueue = [
+  ['3pl-carrier-no-shows', '2026-11-26', 'A', 'training-session'],
+  ['multi-client-receiving-capacity', '2026-11-27', 'A', 'training-session'],
+  ['forklift-breakdowns-beyond-repair-bill', '2026-11-30', 'B', 'youtube-video'],
+  ['receiving-inspection-records', '2026-12-01', 'A', 'training-session'],
+  ['after-hours-receiving-pricing', '2026-12-02', 'A', 'training-session'],
+  ['pricing-just-in-time-delivery', '2026-12-04', 'C', 'nick-audio'],
+  ['billing-extra-handling', '2026-12-07', 'A', 'training-session'],
+  ['client-pickup-bookings', '2026-12-08', 'A', 'training-session'],
+  ['shipping-during-a-wms-outage', '2026-12-11', 'C', 'nick-audio'],
+  ['driver-calls-yard-trips', '2026-12-14', 'A', 'training-session'],
+];
+assert.deepEqual(slots.slice(49).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
+  mixedQueue.map(([slug, date, rotationGroup, provenance], index) =>
+    [50 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance]),
+  'Publish the 3PL posts in pairs separated by the forklift and Nick articles at the regular weekday cutoff');
 assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
 assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
 assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);
@@ -176,7 +183,7 @@ for (const slot of [...slots.slice(27), evergreenChecklist]) {
   await assert.rejects(access(join(root, slot.sourcePath)), `${label}: do not retain a duplicate staged article`);
 
   const components = [...new Set([...body.matchAll(/<([A-Z][A-Za-z\d]*)\b/g)].map(match => match[1]))]
-    .filter(name => !['SmartLink', 'DemoCapture'].includes(name));
+    .filter(name => !['SmartLink', 'DemoCapture', 'Cite', 'BibliographyItem'].includes(name));
   assert.ok(components.length, `${label}: the accepted illustration must remain in the body`);
   const markers = [];
   for (const name of components) {
@@ -191,14 +198,43 @@ for (const slot of [...slots.slice(27), evergreenChecklist]) {
   const videoIds = [...body.matchAll(/<lite-youtube\b[^>]*videoid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(videoIds.length, slot.provenance === 'youtube-video' ? 1 : 0,
     `${label}: video embeds must agree with the source provenance`);
-  queueRenderExpectations.set(slot.slug, { markers, videoIds });
+  const checkReferences = slot.slot >= 50 && slot.provenance === 'training-session';
+  queueRenderExpectations.set(slot.slug, { markers, videoIds, checkReferences });
 }
 function assertIntegratedContent(text, slot, label) {
   const expected = queueRenderExpectations.get(slot.slug);
   if (!expected) return;
+  const document = JSDOM.fragment(text);
   for (const { tag, classes } of expected.markers) {
-    assert.ok(text.includes(`<${tag} class="${classes}`),
+    const requiredClasses = classes.split(/\s+/);
+    const matches = [...document.querySelectorAll(tag)].some(element =>
+      requiredClasses.every(className => element.classList.contains(className)));
+    assert.ok(matches,
       `${label}: the accepted illustration/navigation must render from its registered component`);
+  }
+  if (expected.checkReferences) {
+    const article = document.querySelector('article#content');
+    assert.ok(article, `${label}: the post must render in the article layout`);
+    const references = [...article.querySelectorAll('a[data-smartlink-bibref]')];
+    const entries = [...article.querySelectorAll('li.blog-bibliography-item')];
+    assert.equal(references.length, 4, `${label}: render four citation cards`);
+    assert.equal(entries.length, 4, `${label}: render four bibliography entries`);
+    const destinations = new Set();
+    for (const [index, reference] of references.entries()) {
+      const number = index + 1;
+      const entry = entries[index];
+      assert.equal(reference.id, `cite-${number}`);
+      assert.equal(entry.id, `ref-${number}`);
+      assert.equal(reference.getAttribute('href'), '#' + entry.id);
+      assert.equal(reference.dataset.smartlinkBibref, '#' + entry.id);
+      assert.ok(reference.dataset.smartlinkTitleOverride?.trim(), `${label}: citation ${number} needs a title`);
+      assert.ok(reference.dataset.smartlinkCitationOverride?.trim(), `${label}: citation ${number} needs an attribution`);
+      assert.equal(entry.querySelector('[data-bib-jumpback]')?.getAttribute('href'), '#' + reference.id);
+      const source = entry.querySelector('[data-bib-content] a[href^="https://"]');
+      assert.ok(source, `${label}: citation ${number} must link to its external source`);
+      destinations.add(source.href);
+    }
+    assert.equal(destinations.size, 4, `${label}: the bibliography must cite four distinct sources`);
   }
   for (const videoId of expected.videoIds) {
     assert.ok(text.includes(`videoid="${videoId}"`), `${label}: the source YouTube video must render`);

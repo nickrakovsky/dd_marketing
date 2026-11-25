@@ -70,7 +70,7 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The schedule includes the existing 50 slots and both November 24 audio articles').toHaveLength(52);
+  expect(slots, 'The shared daily queue includes seven 3PL articles').toHaveLength(59);
   expect(slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The checklist is evergreen, outside the daily schedule').toBe(false);
   expect(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
     octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
@@ -88,17 +88,19 @@ test.beforeEach(async ({ page, baseURL }) => {
     novemberBatch.map(([slug, date, rotationGroup, provenance, author], index) =>
       [44 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance, author]),
   );
-  expect(slots.slice(48).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
+  expect(slots.slice(49).map(slot => slot.rotationGroup)).toEqual(['A', 'A', 'B', 'A', 'A', 'C', 'A', 'A', 'C', 'A']);
+  expect(slots.slice(48).filter(slot => slot.provenance !== 'training-session')
+    .map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
     [
       [49, 'give-warehouse-supervisors-clear-deadlines', '2026-11-25T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
-      [50, 'forklift-breakdowns-beyond-repair-bill', '2026-11-26T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
-      [51, 'pricing-just-in-time-delivery', '2026-11-27T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
-      [52, 'shipping-during-a-wms-outage', '2026-12-04T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
+      [52, 'forklift-breakdowns-beyond-repair-bill', '2026-11-30T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
+      [55, 'pricing-just-in-time-delivery', '2026-12-04T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
+      [58, 'shipping-during-a-wms-outage', '2026-12-11T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
     ],
   );
   expect(schedule.timezone).toBe('UTC-08:00');
   expect(schedule.localPublicationTime).toBe('06:30:00');
-  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-12-05T00:00:00Z'));
+  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-12-15T00:00:00Z'));
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);

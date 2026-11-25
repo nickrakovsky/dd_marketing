@@ -1,0 +1,11 @@
+.dd-figure.t2-applet { scroll-margin-top:.8rem; line-height:1.5; }
+.dd-figure.t2-applet .dd-figure-title { margin:0; font-size:clamp(1.4rem,2.9vw,1.8rem); }
+.dd-figure.t2-applet > p:first-of-type { margin:.65rem 0 1.1rem; max-width:74ch; }
+.dd-figure.t2-applet fieldset { border:0; min-width:0; margin:0; padding:0; }
+.dd-figure.t2-applet legend { margin-bottom:.35rem; padding:0; font-size:.9375rem; font-weight:650; }
+.dd-figure.t2-applet fieldset label { display:inline-flex; align-items:baseline; gap:.4rem; padding:.38rem .53rem; min-height:2.25rem; margin:0 .12rem .23rem 0; border:1px solid var(--dd-figure-line); border-radius:.3rem; font:400 .9375rem/1.4 var(--dd-figure-font); cursor:pointer; }
+.dd-figure.t2-applet fieldset label:has(input:checked) { border-color:var(--dd-figure-selected-surface); background:var(--dd-figure-selected-surface); color:var(--dd-figure-selected-ink); }
+.dd-figure.t2-applet fieldset label:has(input:focus-visible) { outline:2px solid var(--dd-figure-ink); outline-offset:2px; }
+.dd-figure.t2-applet fieldset input { flex:none; width:.95rem; height:.95rem; align-self:baseline; margin:0; accent-color:var(--dd-figure-accent); transform:translateY(.09rem); }
+.dd-figure.t2-applet { font-size: 1rem; font-weight: 400; }
+.dd-figure.t2-applet :where(label, legend) { letter-spacing: normal; }

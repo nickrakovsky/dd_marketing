@@ -10,27 +10,22 @@ must stay outside production imports and output.
 
 ## Shared queue extension — November 25, 2026
 
-Continue the next batch on `codex/daily-posts-queue-november-26`, based on main
-after PR #301. The approved forklift-maintenance YouTube companion occupies
-slot 50 on November 26 at 14:30 UTC, at
-`/posts/forklift-breakdowns-beyond-repair-bill`. Slots 1–49 are unchanged.
-Its article, component and required icons live in the production folders;
-the local preview reads those same files.
+The shared branch for [PR #302](https://github.com/nickrakovsky/dd_marketing/pull/302) carries the following weekday releases at **14:30 UTC**. The training posts (A) run in pairs separated by the forklift video (B) and the two Nick Rakovsky articles (C). Nick’s articles run one week apart. December 3, 9 and 10 are open for future posts.
 
-Other post-drafting agents should append approved posts to this shared branch
-and PR. Read `docs/daily-blog-schedule.json` before assigning the next weekday
-slot; preserve existing dates and the fixed 14:30 UTC publication time. Follow
-the package, editorial approval and integration workflow below. Merge and
-deployment remain required for release.
+| Schedule slot | Date | Source | Article |
+|---|---|---|---|
+| 50 | Thu 2026-11-26 | A | [Reporting carrier no-shows before they become client disputes](../../src/content/posts/3pl-carrier-no-shows.mdx) |
+| 51 | Fri 2026-11-27 | A | [Scheduling overlapping loads in a multi-client warehouse](../../src/content/posts/multi-client-receiving-capacity.mdx) |
+| 52 | Mon 2026-11-30 | B | [Look beyond the repair bill when a forklift keeps breaking down](../../src/content/posts/forklift-breakdowns-beyond-repair-bill.mdx) |
+| 53 | Tue 2026-12-01 | A | [Resolving damage claims with consistent receiving inspection records](../../src/content/posts/receiving-inspection-records.mdx) |
+| 54 | Wed 2026-12-02 | A | [How to price after-hours receiving at a 3PL](../../src/content/posts/after-hours-receiving-pricing.mdx) |
+| 55 | Fri 2026-12-04 | C | [What does it cost to keep a just-in-time delivery promise?](../../src/content/posts/pricing-just-in-time-delivery.mdx) |
+| 56 | Mon 2026-12-07 | A | [How 3PLs can use receiving records to bill for extra handling](../../src/content/posts/billing-extra-handling.mdx) |
+| 57 | Tue 2026-12-08 | A | [When a 3PL should manage a client’s pickup bookings](../../src/content/posts/client-pickup-bookings.mdx) |
+| 58 | Fri 2026-12-11 | C | [What can your warehouse ship while the WMS is down?](../../src/content/posts/shipping-during-a-wms-outage.mdx) |
+| 59 | Mon 2026-12-14 | A | [Reclaiming receiving time from repeat driver calls and yard trips](../../src/content/posts/driver-calls-yard-trips.mdx) |
 
-The two posts from Nick’s November 24 recording are scheduled one week apart at
-14:30 UTC. The local staging preview reads each article and applet from its
-production location.
-
-| Schedule slot | Date | Article |
-|---|---|---|
-| 51 | Fri 2026-11-27 | [What does it cost to keep a just-in-time delivery promise?](../../src/content/posts/pricing-just-in-time-delivery.mdx) |
-| 52 | Fri 2026-12-04 | [What can your warehouse ship while the WMS is down?](../../src/content/posts/shipping-during-a-wms-outage.mdx) |
+Read the [schedule](../../docs/daily-blog-schedule.json) before assigning a new date. The staging preview reads the scheduled production articles and components. Merge and deployment install this queue.
 
 ## Consolidated queue scheduled — October 23, 2026
 

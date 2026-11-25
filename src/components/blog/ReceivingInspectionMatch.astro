@@ -1,0 +1,131 @@
+---
+import "./controls.css";
+---
+<figure id="inspection" class="dd-figure t2-applet not-prose a3-figure" aria-labelledby="a3-title">
+  <h2 class="dd-figure-title" id="a3-title">Does the claimed carton match the receiving record?</h2>
+  <p>At unloading, three cartons on pallet B had crushed edges.</p>
+  <div class="a3-controls">
+    <fieldset>
+      <legend>Receiving record</legend>
+      <label><input type="radio" name="a3-record" id="a3-initials"> Receiver’s initials only</label>
+      <label><input type="radio" name="a3-record" id="a3-pallet" checked> Damage count and pallet ID</label>
+      <label><input type="radio" name="a3-record" id="a3-photo"> Carton IDs and photos</label>
+    </fieldset>
+    <fieldset>
+      <legend>Carton in the claim</legend>
+      <label><input type="radio" name="a3-claim" id="a3-b4" checked> B4</label>
+      <label><input type="radio" name="a3-claim" id="a3-b9"> B9</label>
+      <label><input type="radio" name="a3-claim" id="a3-c4"> C4</label>
+    </fieldset>
+  </div>
+  <div class="a3-map" aria-hidden="true">
+    <div class="a3-map-head"><span>Pallet</span><span>Carton number</span></div>
+    <div class="a3-row"><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+    <div class="a3-row"><b>A</b><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span></div>
+    <div class="a3-row"><b>B</b><span class="a3-cell a3-on-b"></span><span class="a3-cell a3-on-b a3-documented"></span><span class="a3-cell a3-on-b"></span><span class="a3-cell a3-on-b a3-documented a3-unit-b4"></span><span class="a3-cell a3-on-b"></span><span class="a3-cell a3-on-b"></span><span class="a3-cell a3-on-b a3-documented"></span><span class="a3-cell a3-on-b"></span><span class="a3-cell a3-on-b a3-unit-b9"></span><span class="a3-cell a3-on-b"></span></div>
+    <div class="a3-row"><b>C</b><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell a3-unit-c4"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span></div>
+    <div class="a3-row"><b>D</b><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span><span class="a3-cell"></span></div>
+  </div>
+  <div class="a3-key" aria-hidden="true">
+    <span class="a3-key-unmarked"><i></i> No location recorded</span>
+    <span class="a3-key-possible"><i></i> Possible match</span>
+    <span class="a3-key-found"><i></i> Photographed damage</span>
+    <span class="a3-key-claim"><i></i> Carton in claim</span>
+  </div>
+  <div class="a3-outcome" aria-live="polite" aria-atomic="true">
+    <p class="a3-result a3-untraced">The receiver signed. <strong>No carton condition was recorded.</strong></p>
+    <p class="a3-result a3-possible"><strong>Possible match.</strong> The receipt identifies pallet B but omits the carton IDs.</p>
+    <p class="a3-result a3-other"><strong>Different pallet.</strong> The receipt identifies pallet B. The claim names C4.</p>
+    <p class="a3-result a3-matched"><strong>B4 matches.</strong> Its receiving photo shows crushed edges.</p>
+    <p class="a3-result a3-missing"><strong>No photo match.</strong> The receiving photos show damage on B2, B4 and B7.</p>
+  </div>
+</figure>
+
+<style>
+.a3-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: .8rem;
+}
+.a3-map {
+  margin: 1.1rem 0 .75rem;
+  color: var(--dd-figure-ink);
+  font-family: var(--dd-figure-font);
+  font-size: .875rem;
+}
+.a3-map-head {
+  display: grid;
+  grid-template-columns: 2.7rem 1fr;
+  gap: .25rem;
+  text-align: center;
+  color: var(--dd-figure-muted);
+}
+.a3-map-head span:first-child { text-align: left; }
+.a3-row {
+  display: grid;
+  grid-template-columns: 2.7rem repeat(10, minmax(0, 1fr));
+  gap: clamp(3px, .5vw, 6px);
+  align-items: center;
+  margin-top: .45rem;
+  text-align: center;
+}
+.a3-row b { text-align: left; }
+.a3-cell,
+.a3-key i {
+  position: relative;
+  box-sizing: border-box;
+  display: block;
+  height: clamp(1.1rem, 2.7vw, 1.65rem);
+  border: 1px solid var(--dd-figure-line);
+  background-color: var(--dd-figure-surface);
+  border-radius: 2px;
+}
+.a3-figure:has(#a3-pallet:checked) .a3-on-b,
+.a3-key-possible i {
+  background: repeating-linear-gradient(125deg, var(--dd-figure-paper) 0 3px, var(--dd-figure-muted) 3px 4px);
+}
+.a3-figure:has(#a3-photo:checked) .a3-documented,
+.a3-key-found i {
+  background-color: var(--dd-figure-selected-surface);
+}
+.a3-figure:has(#a3-b4:checked) .a3-unit-b4::after,
+.a3-figure:has(#a3-b9:checked) .a3-unit-b9::after,
+.a3-figure:has(#a3-c4:checked) .a3-unit-c4::after,
+.a3-key-claim i::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--dd-figure-ink);
+  box-shadow: inset 0 0 0 2px var(--dd-figure-paper);
+  border-radius: 2px;
+}
+.a3-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem 1.1rem;
+  font-size: .875rem;
+}
+.a3-key > span { display: none; align-items: center; gap: .45rem; }
+.a3-key i { width: 1.2rem; height: 1rem; }
+.a3-key .a3-key-claim,
+.a3-figure:has(#a3-initials:checked) .a3-key-unmarked,
+.a3-figure:has(#a3-pallet:checked) .a3-key-possible,
+.a3-figure:has(#a3-photo:checked) .a3-key-found { display: inline-flex; }
+.a3-outcome {
+  margin-top: 1rem;
+  padding: .75rem 0 0;
+  border-top: 1px solid var(--dd-figure-line);
+}
+.a3-outcome p { margin: 0; line-height: 1.5; }
+.a3-result { display: none; }
+.a3-figure:has(#a3-initials:checked) .a3-untraced,
+.a3-figure:has(#a3-pallet:checked):has(#a3-b4:checked, #a3-b9:checked) .a3-possible,
+.a3-figure:has(#a3-pallet:checked):has(#a3-c4:checked) .a3-other,
+.a3-figure:has(#a3-photo:checked):has(#a3-b4:checked) .a3-matched,
+.a3-figure:has(#a3-photo:checked):has(#a3-b9:checked, #a3-c4:checked) .a3-missing { display: block; }
+@media (max-width: 620px) {
+  .a3-controls { grid-template-columns: minmax(0, 1fr); }
+  .a3-map-head { grid-template-columns: 2.3rem 1fr; }
+  .a3-row { grid-template-columns: 2.3rem repeat(10, minmax(0, 1fr)); }
+}
+</style>

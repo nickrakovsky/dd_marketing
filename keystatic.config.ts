@@ -23,6 +23,34 @@ const mdxImageOptions = {
 // bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
 // Astro render maps rather than imported in the MDX itself.
 const mdxComponents = {
+    NoShowRecoveryWindow: block({
+        label: 'Replacement booking window after a no-show',
+        schema: {},
+    }),
+    SharedReceivingCapacity: block({
+        label: 'Receiving capacity for overlapping loads',
+        schema: {},
+    }),
+    ReceivingInspectionMatch: block({
+        label: 'Match a damage claim to its receiving record',
+        schema: {},
+    }),
+    AfterHoursReceivingPrice: block({
+        label: 'After-hours receiving price',
+        schema: {},
+    }),
+    ExtraHandlingReceipt: block({
+        label: 'Extra handling on a warehouse receipt',
+        schema: {},
+    }),
+    PickupBookingWorkload: block({
+        label: 'Staff time for pickup booking changes',
+        schema: {},
+    }),
+    DriverFollowUpTime: block({
+        label: 'Time spent following up with drivers',
+        schema: {},
+    }),
     DeliveryPromiseCost: block({
         label: 'Just-in-time delivery costs',
         schema: {},
@@ -354,6 +382,9 @@ const mdxComponents = {
         label: 'Citation Marker',
         schema: {
             id: fields.text({ label: 'Reference Number' }),
+            anchorId: fields.text({ label: 'Marker anchor (for repeated citations)' }),
+            title: fields.text({ label: 'Source card title' }),
+            citation: fields.text({ label: 'Source card author and year' }),
         }
     }),
     // A bibliography entry. Declared as a `mark` rather than `wrapper`/`block`
@@ -381,6 +412,20 @@ const mdxComponents = {
         schema: {
             className: fields.text({ label: 'CSS classes' }),
         }
+    }),
+    ul: wrapper({
+        label: 'Unordered List (raw HTML)',
+        schema: {},
+    }),
+    a: mark({
+        label: 'Link (raw HTML)',
+        schema: { href: fields.url({ label: 'Link URL' }) },
+        tag: 'a',
+    }),
+    em: mark({
+        label: 'Emphasis (raw HTML)',
+        schema: {},
+        tag: 'em',
     }),
     div: wrapper({
         label: 'Div (raw HTML)',

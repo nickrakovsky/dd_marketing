@@ -1,0 +1,57 @@
+---
+title: "How 3PLs can use receiving records to bill for extra handling"
+author: "DataDocks Team"
+category: "Facility Operations"
+description: "Match the pallets your crew built or the cartons it unloaded to the client’s rate card so extra handling reaches the invoice."
+pubDate: "2026-12-07T06:30:00-08:00"
+cardImage: "../../assets/blog-images/lumper-services-cover.webp"
+cardAlt: "Worker unloading freight from a truck trailer using a pallet jack."
+postType:
+  discriminant: article
+  value: {}
+---
+
+Imagine two receipts on the same client’s invoice. Each shows 18 pallets received. On the first truck, the lift operator took every pallet straight off the trailer. On the second, the crew built most of the pallets from loose cartons on the container floor. By the time billing sees the two receipts, both loads are wrapped, labeled and sitting in storage.
+
+The inventory count is right on both receipts. What billing needs to know is how those pallets got there. If the client pays separately for hand unloading and palletizing, the second receipt could be missing a charge. The person with the answer is likely back on the dock working someone else’s load.
+
+## Keep the booking description when the doors open
+
+A booking tells receiving what to prepare for. The client or carrier may be able to give you the container size, whether the goods are palletized and the packing list. Those details help the supervisor decide whether the job calls for a lift operator or a crew to unload and sort cartons. In *Inbound Logistics*, Jeff McCorstin of UPS Global Freight Forwarding described transload operators charging extra when a container held more than a set number of cartons. <Cite id="1" title="Transloading to Maximize Cost Savings" citation="Inbound Logistics, 2012" /> If your client has that kind of rate, the packing list gives the crew a count to expect. The receiver’s tally tells billing whether the load crossed the threshold.
+
+If the dispatcher only has the delivery order and cannot see how the container was packed, let them mark the loading method as unconfirmed. The receiving lead can ask the supplier for a packing list or allow time to check it at arrival. Forcing a dispatcher to pick one of two answers can turn a guess into a labor plan.
+
+There’s a good reason to keep that original description after the receiver opens the doors. If someone changes the only entry from “palletized” to “floor-loaded,” the supervisor loses the explanation for why one lift operator was standing there when the truck needed more hands. Leave the declaration in place. Give the receiver a separate place on the same receipt to record what arrived and what the crew did. Keep the order reference with that entry so anyone investigating a charge can find the shipment.
+
+## Count the units the client pays for
+
+ANEX Warehouse describes a common reason to quote extra handling separately. The standard handling rate can cover movements into and out of storage. Jobs such as unloading loose freight from a container and palletizing it arise on particular shipments. <Cite id="2" title="ANEX FAQs · How do you charge for your services?" citation="ANEX Warehouse, n.d." /> A client whose loads arrive ready for the lift may never need that work.
+
+<ExtraHandlingReceipt />
+
+On a shared container, record how many pallets the crew built for each client order. A single note copied onto two receipts could produce two charges for the same work.
+
+The unit matters as much as the description. If another account pays by the labor hour, the receiver also needs to record how many people did the job and for how long. If the account pays a flat, inclusive container rate, those same hours help the commercial team review the price at renewal. Start with the signed rate sheet and work backward to the observation each line requires.
+
+## Let receiving and billing use words they recognize
+
+In a study at a Danish 3PL, researchers compared how people sold, performed and invoiced warehouse services. One system called an activity “Inbound.” Another described the same operations as “Receiving + Putaway.” <Cite id="3" title="Proposing a Multi-domain and Life-Cycle Based Analysis Process for Service Architecture Design" citation="Hermann, Nielsen and Mortensen, 2026" /> A billing clerk looking for the exact words on a receipt could miss the corresponding invoice line. The warehouse can make the connection explicit when it sets up the client’s rate card.
+
+Try the example with the account manager who negotiated the rate. When the floor writes “built 12 pallets,” which invoice line does that support? Does that line include the hand unloading? Are empty pallets supplied by the warehouse included? If the agreement requires client authorization for extra work, where is the approval? Settle those questions once for the account. Then the weekend receiver can record the count in the same terms as the weekday crew, and billing knows exactly which charge and approval to look up.
+
+Two columns on a shared sheet can preserve the booking and the actual work. In DataDocks, a site can <SmartLink href="https://docs.datadocks.com/locations/current/advanced/location-settings/custom-fields/" anchorText="make an external booking field mandatory" title="Custom Fields" snippet="DataDocks Docs" /> when the customer or carrier has the information, and use a separate staff-only field for the receiving observation. For a client paying by pallets built, that internal entry can ask for the count at receiving. Both answers stay with the appointment, ready to reconcile against the receipt and the invoice.
+
+## Rebuild one invoice from the receipts
+
+In its 2024 warehouse survey, Extensiv, now a DataDocks integration partner, found that 56% of respondents identified uncaptured charges as a billing challenge. <Cite id="4" title="2024 Third-Party Logistics Warehouse Benchmark Report" citation="Extensiv, 2024" /> To find out what this costs at your warehouse, pick one client and one billing period. Start with the receiving records, including the shifts when the account manager was away. Starting from the issued invoice makes it easy to miss the jobs that never got a line.
+
+Match each instance of extra work to the agreement and the invoice. For an apparent omission, check for bundled work, an existing charge under a different description, or a credit the account manager authorized. What remains is a short list of work the warehouse can substantiate and a separate list of receipts that need better information. The first list gives billing something concrete to resolve with the client. The second tells the supervisor which detail to collect while the next container is still at the door.
+
+## Bibliography
+
+<ul>
+  <BibliographyItem id="1">Inbound Logistics. November 2012. “Transloading to Maximize Cost Savings.” Ten Tips, with Jeff McCorstin of UPS Global Freight Forwarding. <a href="https://www.inboundlogistics.com/articles/transloading-to-maximize-cost-savings/">View source</a></BibliographyItem>
+  <BibliographyItem id="2">ANEX Warehouse. n.d. “FAQs.” See “How do you charge for your services?” and the questions on handling charges and surcharges. <a href="https://anexwarehouse.com/about-anex/faqs/">View source</a></BibliographyItem>
+  <BibliographyItem id="3">Anton Seistrup Hermann, Frederik Holm Nielsen and Niels Henrik Mortensen. 2026. “Proposing a Multi-domain and Life-Cycle Based Analysis Process for Service Architecture Design: A Case Study from a Danish Third-Party Logistics Company.” In <em>New Paradigms for Anticipated Uncertainty</em>, pp. 479–491. Springer. <a href="https://link.springer.com/chapter/10.1007/978-3-032-16889-4_45">View source</a></BibliographyItem>
+  <BibliographyItem id="4">Extensiv. 2024. “2024 Third-Party Logistics Warehouse Benchmark Report.” Billing and invoicing, p. 22. <a href="https://www.extensiv.com/hubfs/2024%20Benchmark%20Report.pdf#page=22">View source</a></BibliographyItem>
+</ul>

@@ -1,0 +1,99 @@
+---
+import "./controls.css";
+---
+<figure id="overlap" class="dd-figure t2-applet not-prose a2-figure" aria-labelledby="a2-title">
+  <h2 id="a2-title" class="dd-figure-title">When can the second client unload?</h2>
+  <p>Door B is free. The second load needs a lift and an operator for half an hour.</p>
+  <div class="a2-controls">
+    <fieldset>
+      <legend>Requested start</legend>
+      <label><input id="a2-nine" name="a2-start" type="radio" checked> 9:00 a.m.</label>
+      <label><input id="a2-nine-thirty" name="a2-start" type="radio"> 9:30 a.m.</label>
+    </fieldset>
+    <fieldset>
+      <legend>Competing jobs</legend>
+      <label><input id="a2-lift" type="checkbox" checked> Lift clears finished pallets, 9–10 a.m.</label>
+      <label><input id="a2-crew" type="checkbox" checked> Operator stages freight, 9:30–10:30 a.m.</label>
+    </fieldset>
+  </div>
+  <div class="a2-board" aria-hidden="true">
+    <div class="a2-legend"><span><i class="a2-key-busy"></i> Existing job</span><span><i class="a2-key-request"></i> Requested</span><span><i class="a2-key-offer"></i> Can book</span></div>
+    <div class="a2-times"><span>8 a.m.</span><span>9</span><span>10</span><span>11</span></div>
+    <div class="a2-row">
+      <div class="a2-meta"><strong>Door A</strong><span>Container unload</span></div>
+      <div class="a2-track"><i class="a2-busy a2-container"></i></div>
+    </div>
+    <div class="a2-row">
+      <div class="a2-meta"><strong>Client request</strong></div>
+      <div class="a2-track"><i class="a2-request"></i></div>
+    </div>
+    <div class="a2-row">
+      <div class="a2-meta"><strong>Door B</strong></div>
+      <div class="a2-track"><i class="a2-offer"></i></div>
+    </div>
+    <div class="a2-row">
+      <div class="a2-meta"><strong>Lift</strong></div>
+      <div class="a2-track"><i class="a2-busy a2-lift-job"></i><i class="a2-offer"></i></div>
+    </div>
+    <div class="a2-row">
+      <div class="a2-meta"><strong>Operator</strong></div>
+      <div class="a2-track"><i class="a2-busy a2-crew-job"></i><i class="a2-offer"></i></div>
+    </div>
+  </div>
+  <div class="a2-readout" aria-live="polite" aria-atomic="true">
+    <strong>Offer <span class="a2-slot a2-slot-9">9:00–9:30</span><span class="a2-slot a2-slot-930">9:30–10:00</span><span class="a2-slot a2-slot-10">10:00–10:30</span><span class="a2-slot a2-slot-1030">10:30–11:00</span> a.m.</strong>
+    <p class="a2-verdict a2-clear">Door, lift and operator are available.</p>
+    <p class="a2-verdict a2-before">The load finishes before outbound staging starts.</p>
+    <p class="a2-verdict a2-lift-only">The lift is busy until 10.</p>
+    <p class="a2-verdict a2-crew-only">The operator is busy until 10:30.</p>
+    <p class="a2-verdict a2-both">The lift is free at 10. Outbound needs the operator until 10:30.</p>
+  </div>
+</figure>
+
+<style>
+.a2-figure {
+  --a2-request-column: 3;
+  --a2-offer-column: var(--a2-request-column);
+}
+.a2-figure:has(#a2-nine-thirty:checked) { --a2-request-column: 4; }
+.a2-figure:has(#a2-lift:checked) { --a2-offer-column: 5; }
+.a2-figure:has(#a2-crew:checked):has(#a2-nine-thirty:checked),
+.a2-figure:has(#a2-crew:checked):has(#a2-lift:checked) { --a2-offer-column: 6; }
+.a2-controls { display: grid; gap: .85rem; }
+.a2-board { margin: 1.25rem 0 1rem; }
+.a2-legend { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1rem; margin-bottom: 1rem; font-size: .875rem; }
+.a2-legend span { display: inline-flex; gap: .35rem; align-items: center; }
+.a2-legend i { display: inline-block; width: 1.25rem; height: .7rem; box-sizing: border-box; }
+.a2-times { display: flex; justify-content: space-between; margin-bottom: .35rem; font-variant-numeric: tabular-nums; font-size: .875rem; color: var(--dd-figure-muted); }
+.a2-times span { width: 0; display: flex; justify-content: center; white-space: nowrap; }
+.a2-times span:first-child { justify-content: start; }
+.a2-times span:last-child { justify-content: end; }
+.a2-row + .a2-row { margin-top: .45rem; }
+.a2-meta { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; column-gap: .6rem; font-size: .875rem; line-height: 1.4; margin-bottom: .12rem; }
+.a2-meta span { color: var(--dd-figure-muted); }
+.a2-track { position: relative; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); height: 1rem; box-sizing: border-box; border: 1px solid var(--dd-figure-line); background-color: var(--dd-figure-surface); background-image: repeating-linear-gradient(to right, transparent 0 calc(16.6666667% - 1px), var(--dd-figure-line) calc(16.6666667% - 1px) 16.6666667%); }
+.a2-track > i { display: block; grid-row: 1; min-width: 0; z-index: 1; box-sizing: border-box; }
+.a2-busy, .a2-key-busy { border: 1px solid var(--dd-figure-muted); background: repeating-linear-gradient(135deg, var(--dd-figure-paper) 0 4px, var(--dd-figure-muted) 4px 5px); }
+.a2-container { grid-column: 1 / 7; }
+.a2-lift-job { grid-column: 3 / 5; }
+.a2-crew-job { grid-column: 4 / 6; }
+.a2-figure:not(:has(#a2-lift:checked)) .a2-lift-job,
+.a2-figure:not(:has(#a2-crew:checked)) .a2-crew-job { display: none; }
+.a2-request, .a2-key-request { border: 2px dashed var(--dd-figure-ink); background: var(--dd-figure-paper); }
+.a2-request { grid-column: var(--a2-request-column) / span 1; }
+.a2-offer, .a2-key-offer { border: 1px solid var(--dd-figure-ink); background: var(--dd-figure-accent); }
+.a2-offer { grid-column: var(--a2-offer-column) / span 1; }
+.a2-readout { display: grid; gap: .3rem; padding-top: .65rem; border-top: 1px solid var(--dd-figure-line); }
+.a2-readout > strong { font-size: 1.12rem; }
+.a2-readout p { margin: 0; }
+.a2-slot, .a2-verdict { display: none; }
+.a2-figure:has(#a2-nine:checked):not(:has(#a2-lift:checked)) .a2-slot-9,
+.a2-figure:has(#a2-nine-thirty:checked):not(:has(#a2-lift:checked,#a2-crew:checked)) .a2-slot-930,
+.a2-figure:has(#a2-lift:checked):not(:has(#a2-crew:checked)) .a2-slot-10,
+.a2-figure:has(#a2-crew:checked):has(#a2-lift:checked,#a2-nine-thirty:checked) .a2-slot-1030 { display: inline; }
+.a2-figure:not(:has(#a2-lift:checked,#a2-crew:checked)) .a2-clear,
+.a2-figure:has(#a2-nine:checked):has(#a2-crew:checked):not(:has(#a2-lift:checked)) .a2-before,
+.a2-figure:has(#a2-lift:checked):not(:has(#a2-crew:checked)) .a2-lift-only,
+.a2-figure:has(#a2-nine-thirty:checked):has(#a2-crew:checked):not(:has(#a2-lift:checked)) .a2-crew-only,
+.a2-figure:has(#a2-crew:checked):has(#a2-lift:checked) .a2-both { display: block; }
+</style>
