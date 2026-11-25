@@ -5,9 +5,7 @@ import Layout from "../layouts/Layout.astro";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 import CTA from "../components/home/CTA.astro";
-import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "../lib/calendly-config.mjs";
 
-const CALENDLY_FALLBACK_URL = `${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`;
 
 const comparisonFaqs = [
   {
@@ -147,6 +145,7 @@ const sections = [
             <!-- Hero CTA — matches homepage CTA component style -->
             <form
               id="vs-hero-form"
+              data-lead-capture data-cta-id="comparison-hero" data-cta-placement="hero"
               class="vs-hero__form"
               method="get"
               action="/demo"
@@ -660,53 +659,4 @@ const sections = [
   gauges.forEach((el) => observer.observe(el));
   reveals.forEach((el) => observer.observe(el));
 
-  // Hero form — open Calendly — moved to is:inline below
 </script>
-
-<script is:inline define:vars={{ CALENDLY_FALLBACK_URL, CALENDLY_BRAND_PARAMS }}>
-  (function() {
-    function attachVsForm() {
-      var form = document.getElementById('vs-hero-form');
-      if (!form || form.dataset.bound) return;
-      form.dataset.bound = 'true';
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        var emailInput = form.querySelector('input[name="email"]');
-        var email = emailInput ? emailInput.value : '';
-        if (email) {
-          if (typeof window.ddSetEmail === 'function') {
-            window.ddSetEmail(email);
-          }
-          if (typeof window.bento !== 'undefined' && typeof window.bento.identify === 'function') {
-            window.bento.identify(email);
-          }
-
-          fetch('/api/bento-track', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: email,
-              event: 'Demo Subscriber',
-              source: window.location.pathname,
-              landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-              visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
-              attribution: (typeof window.ddGetAttribution === 'function') ? window.ddGetAttribution() : null
-            }),
-            keepalive: true
-          }).catch(function() {});
-        }
-        if (typeof window.ddOpenCalendly === 'function') {
-          window.ddOpenCalendly(CALENDLY_BRAND_PARAMS);
-        } else {
-          window.open(CALENDLY_FALLBACK_URL, '_blank', 'noopener');
-        }
-        form.reset();
-      });
-    }
-
-    attachVsForm();
-    document.addEventListener('astro:page-load', attachVsForm);
-  })();
-</script>
-
-

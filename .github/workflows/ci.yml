@@ -28,6 +28,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Demo deployment package checks (offline)
+        run: |
+          node --test scripts/demo-deployment.test.mjs
+          node scripts/demo-deployment.mjs package --output internal/demo-deployment/ci-package --instructions docs/demo-qualification-nick-setup.md
+        env:
+          WRANGLER_SEND_METRICS: "false"
+
+      - name: Upload disabled demo Worker package
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-deployment-${{ github.sha }}
+          path: internal/demo-deployment/ci-package/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Publication boundary regression tests
         run: npm run test:publication-boundary
 

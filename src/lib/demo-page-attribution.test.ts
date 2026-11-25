@@ -59,6 +59,7 @@ function setup({
     document: {
       referrer: '',
       cookie: '',
+      body: { dataset: {} },
       documentElement: { dataset: { demoAttribution: mode } },
       addEventListener: vi.fn(),
     },

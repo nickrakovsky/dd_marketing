@@ -9,6 +9,9 @@
 !/tests/
 !/docs/
 !/integrations/
+!/config/
+!/migrations/
+!/workers/
 !/internal/
 !/content-revamps/
 
@@ -19,7 +22,7 @@ dist/
 .astro/
 
 # dependencies
-node_modules/
+node_modules
 
 # logs
 npm-debug.log*
@@ -85,6 +88,9 @@ temp-import/
 /*-audit-report.md
 /technical-seo-audit-datadocks.md
 
+# Private demo deployment copies and customer review exports
+/config/*.local.toml
+/demo-private/
 # Local reference material, experiments, repairs, and generated artifacts
 /General Image Bank/
 /[Uu][Ii] [Ee]xperiments/
@@ -99,3 +105,6 @@ temp-import/
 /check_output*.txt
 /lhci_output.txt
 /report.html
+
+# Generated private deployment artifacts
+/internal/demo-deployment/

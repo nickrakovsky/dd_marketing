@@ -1,8 +1,6 @@
 /** @jsxImportSource solid-js */
-import { Show, createSignal } from "solid-js";
+import { Show } from "solid-js";
 import type { SubCategory, SystemMatch } from "./YardTypeEngine";
-import { bentoCall } from "@/lib/bento";
-import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
 
 /* ── Next Steps CTA Card Component ── */
 
@@ -12,46 +10,6 @@ function NextStepsCard(props: {
   subCategoryTitle: string;
   integrationEcosystem?: string;
 }) {
-  const [email, setEmail] = createSignal("");
-  const [isSubmitted, setIsSubmitted] = createSignal(false);
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    const mail = email().trim();
-    if (!mail) return;
-
-    const w = window as any;
-    if (typeof w.ddSetEmail === "function") w.ddSetEmail(mail);
-    bentoCall("identify", mail);
-
-    fetch("/api/bento-track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: mail,
-        event: props.isDataDocks ? "DataDocks Demo Request" : "YMS Shortlist Request",
-        source: window.location.pathname,
-        landingPage: sessionStorage.getItem("dd_landing_page") || window.location.href,
-        visitorUuid: typeof w.getBentoVisitorUuid === "function" ? w.getBentoVisitorUuid() : null,
-        attribution: typeof w.ddGetAttribution === "function" ? w.ddGetAttribution() : null,
-        metadata: {
-          selectedSystem: props.selectedSystemName,
-          subCategory: props.subCategoryTitle,
-        }
-      }),
-      keepalive: true,
-    }).catch(() => {});
-
-    setIsSubmitted(true);
-
-    const ddOpen = w.ddOpenCalendly;
-    if (typeof ddOpen === "function") {
-      ddOpen(CALENDLY_BRAND_PARAMS);
-    } else {
-      window.open(`${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`, "_blank", "noopener");
-    }
-  };
-
   return (
     <div
       class={`yard-nextsteps p-5 sm:p-6 rounded-2xl border transition-all duration-200 ${
@@ -95,37 +53,37 @@ function NextStepsCard(props: {
       {/* ACTIONS */}
       <Show when={props.isDataDocks}>
         <div class="pt-1">
-          <Show
-            when={!isSubmitted()}
-            fallback={
-              <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-                <svg class="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-                <span>Opening calendar...</span>
-              </div>
-            }
+          <form
+            data-lead-capture
+            data-cta-id="yard-selector-result"
+            data-cta-placement="micro-app"
+            data-lead-event={props.isDataDocks ? "DataDocks Demo Request" : "YMS Shortlist Request"}
+            data-lead-metadata={JSON.stringify({
+              selectedSystem: props.selectedSystemName,
+              subCategory: props.subCategoryTitle,
+              integrationEcosystem: props.integrationEcosystem,
+            })}
+            class="flex flex-col sm:flex-row gap-2"
           >
-            <form onSubmit={handleSubmit} class="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder="Enter your work email"
-                value={email()}
-                onInput={(e) => setEmail(e.currentTarget.value)}
-                required
-                class="yard-email-input flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-[var(--blog-canvas,#0a0a0a)] text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] border-neutral-300 dark:border-[var(--blog-rule,#404040)] focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-[color:var(--blog-muted,#737373)]"
-              />
-              <button
-                type="submit"
-                class="yard-demo-cta px-4 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap bg-[#fd4f00] hover:bg-[#e04600] text-white shadow-xs"
-              >
-                <span>Book a Demo</span>
-                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </button>
-            </form>
-          </Show>
+            <input
+              type="email"
+              placeholder="Enter your work email"
+              name="email"
+              aria-label="Email address"
+              autocomplete="email"
+              required
+              class="yard-email-input flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-[var(--blog-canvas,#0a0a0a)] text-neutral-900 dark:text-[color:var(--blog-ink,#f5f5f5)] border-neutral-300 dark:border-[var(--blog-rule,#404040)] focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-[color:var(--blog-muted,#737373)]"
+            />
+            <button
+              type="submit"
+              class="yard-demo-cta px-4 py-2.5 text-xs sm:text-sm font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors whitespace-nowrap bg-[#fd4f00] hover:bg-[#e04600] text-white shadow-xs"
+            >
+              <span>Book a Demo</span>
+              <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </button>
+          </form>
         </div>
       </Show>
     </div>

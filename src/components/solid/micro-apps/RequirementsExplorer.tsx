@@ -2,7 +2,7 @@
 import { For, Show, createSignal, createMemo } from "solid-js";
 import type { Component } from "solid-js";
 import { cn } from "@/components/solid/lib/utils";
-import { requirementsState, updateRequirementsState, recommendedOutcome, completionScore } from "./RequirementsEngine";
+import { requirementsState, declaredRequirements, updateRequirementsState, recommendedOutcome, completionScore } from "./RequirementsEngine";
 import { CarrierTriangle } from "./CarrierTriangle";
 
 // --- UI Primitives ---
@@ -256,6 +256,7 @@ const SelectGroup: Component<{
       <Show when={props.value === "other" && props.onOtherChange !== undefined}>
         <input
           type="text"
+          maxLength={512}
           placeholder="Please specify..."
           value={props.otherValue || ""}
           onInput={(e) => props.onOtherChange!(e.currentTarget.value)}
@@ -881,34 +882,9 @@ const RequirementsExplorer: Component = () => {
               onMouseLeave={() => setHoverDD(false)}
             >
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const email = (e.currentTarget.querySelector('input[name="email"]') as HTMLInputElement)?.value;
-                  if (email) {
-                    const w = window as any;
-                    if (typeof w.ddSetEmail === 'function') w.ddSetEmail(email);
-                    if (typeof w.bentoCall === 'function') w.bentoCall('identify', email);
-                    fetch('/api/bento-track', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        email,
-                        event: 'Demo Subscriber',
-                        source: window.location.pathname,
-                        landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
-                        visitorUuid: typeof w.getBentoVisitorUuid === 'function' ? w.getBentoVisitorUuid() : null,
-                        attribution: typeof w.ddGetAttribution === 'function' ? w.ddGetAttribution() : null,
-                      }),
-                      keepalive: true,
-                    }).catch(() => {});
-                  }
-                  const ddOpen = (window as any).ddOpenCalendly;
-                  if (typeof ddOpen === 'function') {
-                    ddOpen("hide_gdpr_banner=1");
-                  } else {
-                    window.open("https://calendly.com/nick-rakovsky/datadocks-demo?hide_gdpr_banner=1", "_blank", "noopener");
-                  }
-                }}
+                data-lead-capture data-cta-id="requirements-result" data-cta-placement="micro-app"
+                data-booking-params="hide_gdpr_banner=1"
+                data-lead-metadata={JSON.stringify({ requirements: declaredRequirements() })}
                 class="flex flex-row items-stretch gap-0 w-full rounded-none shadow-none"
               >
                 <input

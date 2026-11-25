@@ -21,6 +21,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.astro",
     "crawl": "linkinator http://localhost:4321 --recurse --skip \"^https?://(?!(?:[a-zA-Z0-9-]+\\.)*pages\\.dev|(?:[a-zA-Z0-9-]+\\.)*datadocks\\.com|localhost)\"",
     "test": "vitest run",
+    "test:demo-deployment": "node --test scripts/demo-deployment.test.mjs",
+    "package:demo-deployment": "node scripts/demo-deployment.mjs package",
     "test:vendor-assets": "node --test scripts/verified-vendor-assets.test.mjs",
     "test:script-csp": "node --test scripts/script-csp.test.mjs",
     "test:preview-links": "node --test scripts/check-preview-links.test.mjs",

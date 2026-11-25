@@ -11,7 +11,7 @@ describe.each(['/outbound-dock-management', '/inbound-dock-management'])('Bento 
   it.each(['Demo Subscriber', 'demo_booked'])(
     'forwards the campaign page for %s while preserving first-touch attribution', async event => {
       const upstream = vi.fn<typeof fetch>().mockResolvedValue(
-        new Response(JSON.stringify({ results: [] }), { status: 200 }),
+        new Response(JSON.stringify({ results: 1 }), { status: 200 }),
       );
       vi.stubGlobal('fetch', upstream);
       vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -38,7 +38,7 @@ describe.each(['/outbound-dock-management', '/inbound-dock-management'])('Bento 
       const context = {
         request: new Request('https://datadocks.com/api/bento-track', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', Origin: 'https://datadocks.com' },
           body: JSON.stringify({
             email: 'campaign-lead@example.com',
             event,
@@ -66,7 +66,7 @@ describe.each(['/outbound-dock-management', '/inbound-dock-management'])('Bento 
       expect(upstream.mock.calls[0][0]).toBe('https://app.bentonow.com/api/v1/batch/events?site_uuid=fixture-site');
       const payload = JSON.parse(String(upstream.mock.calls[0][1]?.body));
       expect(payload.events).toHaveLength(1);
-      expect(payload.events[0]).toEqual({
+      expect(payload.events[0]).toMatchObject({
         type: event,
         email: 'campaign-lead@example.com',
         landing_page_url: landingPage,

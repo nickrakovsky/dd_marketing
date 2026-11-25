@@ -1,16 +1,16 @@
 ---
-import guideScriptURL from '../../lib/logistics-interview-guide.mjs?url&no-inline';
-
 export interface Props {
   headline: string;
   buttonText?: string;
   eventName: string;
+  ctaId?: string;
   redirectUrl: string;
 }
 
 const {
   headline,
   eventName,
+  ctaId = "resource-inline",
   redirectUrl,
 } = Astro.props;
 
@@ -37,6 +37,8 @@ const uid = Math.random().toString(36).slice(2, 9);
   <form
     class="lead-magnet-form block w-full bg-[#FFF8EE] border-2 border-black/15 shadow-sm p-5 sm:p-6"
     data-event={eventName}
+    data-lead-capture data-capture-kind="resource"
+    data-lead-event={eventName} data-cta-id={ctaId} data-cta-placement="inline"
     data-redirect={redirectUrl}
     data-uuid={BENTO_UUID}
   >
@@ -69,8 +71,6 @@ const uid = Math.random().toString(36).slice(2, 9);
 
 
 </div>
-
-<script is:inline type="module" src={guideScriptURL}></script>
 
 <style>
   .signup-disclosure { color: #605b53; font-family: Inter, Arial, sans-serif; text-wrap: pretty; }

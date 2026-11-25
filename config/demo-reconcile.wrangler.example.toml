@@ -1,0 +1,25 @@
+# EXAMPLE ONLY. Do not deploy until stage 5 setup is authorized.
+name = "datadocks-demo-reconcile"
+main = "../workers/demo-reconcile.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = false
+
+[vars]
+DEMO_RECONCILE_ENABLED = "false"
+DEMO_BOOKING_ENABLED = "false"
+# CALENDLY_EVENT_TYPE = "https://api.calendly.com/event_types/APPROVED_ID"
+# CALENDLY_HOSTS = "https://api.calendly.com/users/APPROVED_HOST_ID"
+DEMO_ALLOWED_ORIGIN = "https://datadocks.com"
+# Set PUBLIC_BENTO_SITE_UUID for the approved live Bento site.
+# Set BENTO_PUBLISHABLE_KEY, BENTO_SECRET_KEY, DEMO_SIGNING_SECRET and CALENDLY_TOKEN as secrets.
+
+[[d1_databases]]
+binding = "DEMO_DB"
+database_name = "datadocks-demo"
+database_id = "REPLACE_WITH_APPROVED_DATABASE_ID"
+migrations_dir = "../migrations/demo"
+
+[triggers]
+crons = ["*/5 * * * *"]

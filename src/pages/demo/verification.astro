@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import DemoCaptureForm from '../../components/demo/DemoCaptureForm.astro';
+import type { DemoEnvironment } from '../../lib/server/demo-runtime';
+export const prerender = false;
+const env = (Astro.locals as { runtime?: { env?: DemoEnvironment } }).runtime?.env;
+// This is an intentional, short-lived live verification surface, not an internal preview.
+if (env?.DEMO_VERIFICATION_PAGE_ENABLED !== 'true') return new Response('Not found', { status: 404 });
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+Astro.response.headers.set('Cache-Control', 'no-store');
+---
+<Layout title="Demo safeguards verification" noindex demoSafeguards>
+  <Navigation demoHref="#book-demo" />
+  <main class="mx-auto max-w-2xl px-6 py-32">
+    <h1 class="text-4xl mb-6">Demo safeguards verification</h1>
+    <p class="mb-8">This page uses the live Bento and Calendly connections. Use the agreed test inboxes. Completing Calendly creates a real demo booking.</p>
+    <DemoCaptureForm id="verification-inline" />
+  </main>
+</Layout>

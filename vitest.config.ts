@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 export default defineConfig({
   plugins: [react()],
   test: {
+    // The pinned Node 22 runtime gates the SQLite test harness on this flag.
+    execArgv: ['--experimental-sqlite'],
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],

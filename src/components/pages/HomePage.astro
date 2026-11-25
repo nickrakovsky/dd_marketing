@@ -148,7 +148,7 @@ const faqs = [
           <h1 id="hero-title" style={headingScale ? `font-size: min(104px, ${headingScale}cqw); white-space: nowrap;` : undefined}>{headingLines.slice(0, -1).map(line => <Fragment>{line}<br />{' '}</Fragment>)}<span>{headingLines[headingLines.length - 1]}</span></h1>
           <p class="hero-description">{heroDescription}</p>
           <div class="hero-actions">
-            <form id="book-demo" class="hero-form" data-demo-capture>
+            <form id="book-demo" class="hero-form" data-lead-capture data-cta-id="homepage-hero" data-cta-placement="hero">
               <label class="sr-only" for="hero-email">Email address</label>
               <div class="hero-form-fields"><input id="hero-email" type="email" name="email" autocomplete="email" placeholder="Enter your email" required /><button type="submit">Book a Demo</button></div>
               <p class="capture-status" data-capture-status role="status" aria-live="polite"></p>

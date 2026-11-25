@@ -1,0 +1,30 @@
+---
+interface Props { id: string; appearance?: 'inline' | 'dialog' }
+const { id, appearance = 'inline' } = Astro.props;
+---
+<form data-demo-form class:list={['demo-form', appearance]}>
+  <label for={`${id}-email`} data-demo-label>Email address</label>
+  <div class="fields">
+    <input id={`${id}-email`} name="email" type="email" autocomplete="email" placeholder="Enter your email" aria-describedby={`${id}-status`} required />
+    <button type="submit"><span data-demo-button-label>Book a demo</span><span aria-hidden="true">↗</span></button>
+  </div>
+  <p id={`${id}-status`} data-demo-status role="status" aria-live="polite" aria-atomic="true"></p>
+</form>
+<style>
+  .demo-form { margin: 0; }
+  label { display: block; font: 500 14px/1.5 Inter, sans-serif; margin-bottom: 8px; }
+  .fields { display: flex; }
+  input { min-width: 0; flex: 1; height: 56px; border: 1px solid currentColor; border-right: 0; border-radius: 0; background: #fff8e9; color: #151515; padding: 12px 16px; font: 17px/1.5 'DD-Recoleta', Recoleta, Georgia, serif; }
+  button { display: flex; align-items: center; justify-content: center; gap: 18px; border: 1px solid #151515; background: #151515; color: white; padding: 12px 22px; cursor: pointer; font: 17px/1.4 'DD-Recoleta', Recoleta, Georgia, serif; }
+  button:hover { background: #333; }
+  button:disabled { opacity: .7; cursor: progress; }
+  input:focus-visible, button:focus-visible { outline: 3px solid #ad3200; outline-offset: 3px; }
+  p { min-height: 2.8em; margin: 12px 0 0; font: 14px/1.4 Inter, sans-serif; }
+  .dialog .fields { flex-direction: column; gap: 12px; }
+  .dialog input { flex: auto; border-right: 1px solid currentColor; }
+  .dialog button { width: 100%; }
+  @media (max-width: 640px) {
+    .inline .fields { flex-direction: column; gap: 10px; }
+    .inline input { flex: auto; border-right: 1px solid currentColor; }
+  }
+</style>

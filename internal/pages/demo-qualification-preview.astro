@@ -1,0 +1,179 @@
+---
+// Dev-only route injected by astro.config.mjs. No production analytics/layout.
+import DemoBookingDialog from '../../src/components/demo/DemoBookingDialog.astro';
+import DemoCaptureForm from '../../src/components/demo/DemoCaptureForm.astro';
+import inter from '../../src/assets/fonts/Inter-Latin-Variable.woff2?url';
+import recoleta from '../../src/assets/fonts/Recoleta-Regular.woff2?url';
+import bruta from '../../src/assets/fonts/BrutaGlbCompressed-ExtraBold.woff2?url';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Demo qualification · local review</title>
+    <style is:inline set:html={`
+      @font-face { font-family: Inter; src: url('${inter}') format('woff2'); font-weight: 100 900; font-display: swap; }
+      @font-face { font-family: Recoleta; src: url('${recoleta}') format('woff2'); font-display: swap; }
+      @font-face { font-family: Bruta; src: url('${bruta}') format('woff2'); font-weight: 800; font-display: swap; }
+    `} />
+  </head>
+  <body>
+    <div class="review-notice">LOCAL REVIEW · Simulated saves and calendar · No data sent to Bento or Calendly</div>
+    <div data-demo-root>
+      <header>
+        <a class="brand" href="#main">DataDocks<span>®</span></a>
+        <button data-demo-open class="nav-button">Schedule a demo <span aria-hidden="true">↗</span></button>
+      </header>
+      <main id="main">
+        <section class="hero">
+          <p class="eyebrow">SEE DATADOCKS IN ACTION</p>
+          <h1>LET’S LOOK AT<br />YOUR OPERATION.</h1>
+          <p class="intro">Book a software demo with our team.<br />See how DataDocks could work at your facility.</p>
+          <div class="inline-capture"><DemoCaptureForm id="inline-demo" /></div>
+          <a data-demo-facility class="facility-link" href="https://booking.datadocks.com/sessions/new">Trying to book an appointment at a facility? Go here <span aria-hidden="true">→</span></a>
+        </section>
+        <section class="calendar-preview" data-calendar-preview hidden aria-live="polite" tabindex="-1">
+          <p class="eyebrow">SIMULATED CALENDAR HANDOFF</p>
+          <h2>Ready to choose a demo time.</h2>
+          <p>Calendly would open with <strong data-calendar-email></strong> prefilled. No appointment has been booked.</p>
+        </section>
+      </main>
+      <dialog data-demo-dialog aria-labelledby="demo-dialog-title">
+        <button data-demo-close class="dialog-close" aria-label="Close email form">×</button>
+        <p class="eyebrow">YOUR DATADOCKS SOFTWARE DEMO</p>
+        <h2 id="demo-dialog-title">LET’S LOOK AT<br />YOUR OPERATION.</h2>
+        <p class="dialog-intro">Enter your email, then choose a time with our team.</p>
+        <DemoCaptureForm id="dialog-demo" appearance="dialog" />
+        <a data-demo-facility class="facility-link" href="https://booking.datadocks.com/sessions/new">Need a facility appointment? Go here →</a>
+      </dialog>
+    </div>
+    <DemoBookingDialog />
+    <section class="review-controls" aria-label="Booking confirmation review">
+      <h2>After booking</h2>
+      <p>Review the confirmation and correction flow without contacting Calendly or Bento.</p>
+      <label for="booking-review-outcome">Cancellation response</label>
+      <select id="booking-review-outcome"><option value="cancelled">Confirmed cancellation</option><option value="cancel_sent">Uncertain result</option><option value="error">Connection error</option></select>
+      <button id="review-booking-result" type="button">Simulate completed software demo booking</button>
+    </section>
+    <aside class="review-controls" aria-labelledby="review-title">
+      <div>
+        <h2 id="review-title">Review controls</h2>
+        <p>Try Gmail, Yahoo or iCloud, then a work email. Both forms share the same progress. Reload to start a new lead.</p>
+      </div>
+      <label for="service-mode">Simulated response</label>
+      <select id="service-mode">
+        <option value="success">Success</option>
+        <option value="capture-error">Initial save fails</option>
+        <option value="capture-pending">Initial capture pending</option>
+        <option value="update-error">Work-email update fails</option>
+        <option value="pending">Work-email update pending</option>
+        <option value="review">Record needs review</option>
+      </select>
+      <details><summary>Simulated requests (this page only)</summary><ol data-request-log></ol></details>
+    </aside>
+    <script>
+      import { showDemoBookingResult } from '../../src/lib/demo-booking-result';
+      import type { BookingSnapshot } from '../../src/lib/demo-booking-service';
+      import { createDemoCaptureFlow } from '../../src/lib/demo-qualification';
+      import type { DemoLeadService } from '../../src/lib/demo-qualification';
+      import { mountDemoCapture } from '../../src/lib/demo-capture-ui';
+
+      document.querySelector('#review-booking-result')?.addEventListener('click', () => {
+        const booked: BookingSnapshot = { token: 'local-only', phase: 'verified', supportAvailable: true, startAt: Date.now() + 86400000 };
+        const result = () => {
+          const outcome = (document.querySelector('#booking-review-outcome') as HTMLSelectElement).value;
+          if (outcome === 'error') return Promise.reject(new Error('Simulated failure'));
+          return Promise.resolve({ ...booked, phase: outcome as 'cancelled' | 'cancel_sent', destination: '#simulated-destination' });
+        };
+        showDemoBookingResult(Promise.resolve(booked), { prepare: async () => booked, complete: async () => booked, cancel: result, status: result }, () => {
+          const status = document.querySelector('[data-demo-result] [role="status"]');
+          if (status) status.textContent = 'Simulation complete: the live flow would redirect now.';
+        });
+      });
+
+      const root = document.querySelector<HTMLElement>('[data-demo-root]');
+      const mode = document.querySelector<HTMLSelectElement>('#service-mode');
+      const log = document.querySelector<HTMLOListElement>('[data-request-log]');
+      const pause = () => new Promise(resolve => setTimeout(resolve, 500));
+      const record = (text: string) => {
+        const item = document.createElement('li');
+        item.textContent = text;
+        log?.append(item);
+      };
+      // In-memory simulation only: no fetch, SDK, storage, or live credentials.
+      const service: DemoLeadService = {
+        async capture({ email, requestId }) {
+          record(`Capture: ${email} · request ${requestId}`);
+          await pause();
+          if (mode?.value === 'capture-error') throw new Error('Simulated save failure');
+          return { leadToken: 'preview-only-receipt', ...(mode?.value === 'capture-pending' ? { status: 'pending' as const } : {}) };
+        },
+        async useWorkEmail({ email, originalPersonalEmail, requestId }) {
+          record(`Update: ${originalPersonalEmail} → ${email} · request ${requestId}`);
+          await pause();
+          if (mode?.value === 'update-error') throw new Error('Simulated update failure');
+          if (mode?.value === 'review') return { status: 'review_required' };
+          return mode?.value === 'pending' ? { status: 'pending' } : { status: 'ready', email };
+        },
+      };
+      if (root) {
+        const flow = createDemoCaptureFlow(service, { source: location.pathname, landingPage: location.href });
+        mountDemoCapture(root, flow, email => {
+          const preview = document.querySelector<HTMLElement>('[data-calendar-preview]');
+          const address = document.querySelector('[data-calendar-email]');
+          if (address) address.textContent = email;
+          if (preview) { preview.hidden = false; preview.focus(); }
+        });
+      }
+    </script>
+  </body>
+</html>
+<style>
+  :global(*) { box-sizing: border-box; }
+  :global(body) { margin: 0; background: #fff8e9; color: #151515; font-family: Inter, Arial, sans-serif; }
+  :global(button), :global(select) { font: inherit; }
+  :global([hidden]) { display: none !important; }
+  :global(a) { color: inherit; text-underline-offset: 4px; }
+  .review-notice { padding: 10px 24px; text-align: center; background: #e8dfce; font-size: 12px; line-height: 1.5; letter-spacing: .035em; }
+  header { max-width: 1240px; margin: auto; padding: 26px 32px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 1px solid #15151530; }
+  .brand { font-size: 30px; font-weight: 800; letter-spacing: -1.5px; text-decoration: none; }
+  .brand span { font-size: 13px; vertical-align: top; }
+  .nav-button { background: #ff5722; color: #151515; border: 0; padding: 15px 22px; cursor: pointer; }
+  .nav-button span { margin-left: 20px; }
+  main { max-width: 1240px; padding: 0 32px; margin: auto; }
+  .hero { padding: 78px 0 60px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .09em; line-height: 1.5; }
+  h1 { font: 800 clamp(64px, 9vw, 112px)/.9 Bruta, Impact, sans-serif; margin: 26px 0; letter-spacing: -.01em; }
+  .intro { font: 22px/1.6 Recoleta, Georgia, serif; margin: 24px 0 30px; }
+  .inline-capture { max-width: 700px; }
+  .facility-link { display: inline-block; font-size: 14px; line-height: 1.6; margin-top: 12px; }
+  dialog { width: min(540px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; background: #fff8e9; border: 1px solid #151515; padding: 40px 34px 30px; color: #151515; }
+  dialog::backdrop { background: #15151599; }
+  dialog h2 { font: 800 54px/.95 Bruta, Impact, sans-serif; margin: 22px 0; }
+  .dialog-intro { font: 18px/1.5 Recoleta, Georgia, serif; margin-bottom: 26px; }
+  .dialog-close { position: absolute; top: 10px; right: 10px; border: 0; background: transparent; font-size: 30px; width: 40px; height: 40px; cursor: pointer; }
+  .calendar-preview { margin-bottom: 40px; padding: 28px; border: 1px solid #151515; background: #e7efdd; }
+  .calendar-preview h2 { font: 30px/1.2 Recoleta, Georgia, serif; }
+  .calendar-preview p { line-height: 1.6; overflow-wrap: anywhere; }
+  .review-controls { max-width: 1176px; margin: 0 auto 48px; border-top: 1px solid #15151530; padding: 28px 0; font-size: 14px; line-height: 1.6; }
+  .review-controls h2 { font-size: 16px; margin: 0; }
+  .review-controls p { max-width: 700px; color: #555; }
+  .review-controls label { display: block; margin-top: 20px; }
+  select { max-width: 100%; padding: 10px; margin: 6px 0 20px; background: #fff8e9; border: 1px solid #151515; }
+  details { max-width: 100%; overflow-wrap: anywhere; }
+  summary { cursor: pointer; }
+  @media(max-width: 640px) {
+    header { padding: 20px; }
+    .brand { font-size: 25px; }
+    .nav-button { padding: 12px; font-size: 13px; }
+    .nav-button span { margin-left: 6px; }
+    main { padding: 0 20px; }
+    .hero { padding-top: 42px; }
+    .intro { font-size: 19px; }
+    .review-controls { margin: 0 20px 32px; }
+    dialog { padding: 34px 24px 24px; }
+    dialog h2 { font-size: 48px; }
+  }
+</style>

@@ -130,7 +130,7 @@ test('canonical homepage and resource hub use the promoted designs and real publ
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://datadocks.com/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
   await expect(page.locator('#hero-title')).toContainText('YOUR OPERATIONS.');
-  await expect(page.locator('#book-demo[data-demo-capture]')).toBeVisible();
+  await expect(page.locator('form#book-demo[data-lead-capture]')).toBeVisible();
   const homePaths = await paths(page.locator(homeCards));
   const now = Date.now();
   for (const slot of slots.filter(slot => Date.parse(slot.pubDate) > now)) {
