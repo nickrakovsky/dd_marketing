@@ -23,6 +23,13 @@ slot; preserve existing dates and the fixed 14:30 UTC publication time. Follow
 the package, editorial approval and integration workflow below. Merge and
 deployment remain required for release.
 
+Two undated drafts from Nick’s November 24 recording are queued for review.
+
+| Preview | Draft | Intended URL |
+|---|---|---|
+| 36 | [What does it cost to keep a just-in-time delivery promise?](post-36-pricing-just-in-time-delivery/pricing-just-in-time-delivery.mdx) | `/posts/pricing-just-in-time-delivery` |
+| 37 | [What can your warehouse ship while the WMS is down?](post-37-shipping-during-a-wms-outage/shipping-during-a-wms-outage.mdx) | `/posts/shipping-during-a-wms-outage` |
+
 ## Consolidated queue scheduled — October 23, 2026
 
 Continue queue management on `codex/blog-posts-queue`, based on current `main`.
