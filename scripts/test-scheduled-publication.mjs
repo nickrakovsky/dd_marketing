@@ -32,7 +32,10 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 50, 'Expected the unchanged 49 scheduled articles and the approved forklift-breakdown YouTube companion');
+assert.equal(slots.length, 52, 'Expected the first 50 slots and two spaced Nick audio articles');
+assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 50))),
+  '494b7bdce14e43a1cbc4c4a48f342b1527eaf1efa90808b78ab98e32c52a41b6',
+  'The first 50 schedule records must retain every field');
 assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 49))),
   '041eaeb62e77bfeeac873c85a5193e5fa18d48fee2df2923797b1fe210ce27ad',
   'Appending the forklift-breakdown article must preserve every field of the existing 49 schedule records');
@@ -68,7 +71,7 @@ assert.deepEqual(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date
   'The approved missing-stock article must use the next weekday slot at the existing publication time');
 assert.equal(manifest.timezone, 'UTC-08:00');
 assert.equal(manifest.localPublicationTime, '06:30:00');
-assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-11-27T00:00:00Z'));
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-12-05T00:00:00Z'));
 assert.deepEqual(manifest.rotation, ['A', 'B', 'C'], 'The historical rotation must retain its original meanings');
 const queueBatch = [
   ['early-arrival-patterns', '2026-10-27', 'A', 'training-session'],
@@ -111,9 +114,13 @@ assert.deepEqual(slots.slice(43, 48).map(slot => [slot.slot, slot.slug, slot.pub
 assert.deepEqual(slots.slice(48, 49).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance, slot.author]),
   [[49, 'give-warehouse-supervisors-clear-deadlines', '2026-11-25T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team']],
   'The approved supervisor-deadline companion must use the next weekday at the existing publication time');
-assert.deepEqual(slots.slice(49).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance, slot.author]),
+assert.deepEqual(slots.slice(49, 50).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance, slot.author]),
   [[50, 'forklift-breakdowns-beyond-repair-bill', '2026-11-26T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team']],
   'The approved forklift-breakdown companion must use the next weekday at the existing publication time');
+assert.deepEqual(slots.slice(50).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]), [
+  [51, 'pricing-just-in-time-delivery', '2026-11-27T14:30:00.000Z', 'C', 'nick-audio'],
+  [52, 'shipping-during-a-wms-outage', '2026-12-04T14:30:00.000Z', 'C', 'nick-audio'],
+], 'The two November 24 audio articles publish a week apart at the usual time');
 assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
 assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
 assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);

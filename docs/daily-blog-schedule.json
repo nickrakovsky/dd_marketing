@@ -9,7 +9,7 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-11-27T00:00:00Z",
+  "previewAsOf": "2026-12-05T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
@@ -25,7 +25,8 @@
     "On November 2, the user approved five Nick Rakovsky posts and requested a regular PR to add them to the existing daily queue without merging. Slots 39–43 use the next five weekdays, November 11–17, at 14:30 UTC. Slots 1–38 are unchanged. Accepted prose and interactive components are preserved; existing card artwork is reused. Release depends on merge and deployment before the scheduled time.",
     "On November 16, the user authorized adding the reviewed warehouse-process YouTube companion to PR #299 before the four approved Recording 37 posts (D1–D4). The existing 43 slots remain unchanged through November 17. Slots 44–48 publish the YouTube article on November 18, followed by D1–D4 on November 19, 20, 23 and 24, at 14:30 UTC. Accepted prose, titles, URL slugs and interactive components are retained; production payloads replace the staged packages. Merge and deployment remain required for release.",
     "On November 17, the user approved the supervisor-deadline YouTube companion and requested its addition to the schedule. Slot 49 uses the next weekday, November 25, at 14:30 UTC. Slots 1–48, the approved prose, title, URL and interaction remain unchanged. The article and component now live only in production folders; merge and deployment install this queued release.",
-    "On November 25, the user approved the forklift-maintenance YouTube companion and requested a shared PR for the daily posts queue. Slot 50 uses November 26 at 14:30 UTC. Slots 1–49, the accepted prose, title, URL and interaction are preserved. The article, illustration and required icon assets live in production folders; the existing publication gate controls release after merge and deployment."
+    "On November 25, the user approved the forklift-maintenance YouTube companion and requested a shared PR for the daily posts queue. Slot 50 uses November 26 at 14:30 UTC. Slots 1–49, the accepted prose, title, URL and interaction are preserved. The article, illustration and required icon assets live in production folders; the existing publication gate controls release after merge and deployment.",
+    "The two posts from Nick’s November 24 recording are scheduled one week apart at 14:30 UTC. The just-in-time delivery article occupies November 27 and the WMS outage article occupies December 4."
   ],
   "slots": [
     {
@@ -896,6 +897,44 @@
       "sourceBodySha256": "0b90ed6ccaeb95915aec363634b394ffd683c5af0a3f003c9cef28143bd7c1b0",
       "contentPath": "src/content/posts/forklift-breakdowns-beyond-repair-bill.mdx",
       "cardImage": "../../assets/blog-images/warehouse-optimization-strategies-cover.png"
+    },
+    {
+      "slot": 51,
+      "date": "2026-11-27",
+      "weekday": "Friday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 25,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "What does it cost to keep a just-in-time delivery promise?",
+      "slug": "pricing-just-in-time-delivery",
+      "pubDate": "2026-11-27T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-36-pricing-just-in-time-delivery/pricing-just-in-time-delivery.mdx",
+      "sourceSha256": "7023a0502ff0d98d6906df014dba196f43443636277ac91c6703678b374dbe56",
+      "sourceBodySha256": "13919259f3326d758bc4dbd62cf4283f623199e7f185715daa3bebe4b83e7bf7",
+      "contentPath": "src/content/posts/pricing-just-in-time-delivery.mdx",
+      "cardImage": "../../assets/blog-images/negotiate-with-carriers-cover.webp"
+    },
+    {
+      "slot": 52,
+      "date": "2026-12-04",
+      "weekday": "Friday",
+      "group": "B",
+      "groupLabel": "Nick Rakovsky",
+      "sequenceInGroup": 26,
+      "rotationGroup": "C",
+      "provenance": "nick-audio",
+      "author": "Nick Rakovsky",
+      "title": "What can your warehouse ship while the WMS is down?",
+      "slug": "shipping-during-a-wms-outage",
+      "pubDate": "2026-12-04T14:30:00.000Z",
+      "sourcePath": "internal/blog-staging/post-37-shipping-during-a-wms-outage/shipping-during-a-wms-outage.mdx",
+      "sourceSha256": "fa9482c6a1a4fb3848d687dda984a7f92542fd6dda86fdbcac827111a5664e60",
+      "sourceBodySha256": "660dbb4f7f54eff075af7e7b98ea742d1c705055b9bec42e2a469ee12641e9c0",
+      "contentPath": "src/content/posts/shipping-during-a-wms-outage.mdx",
+      "cardImage": "../../assets/blog-images/how-to-get-around-limitations-warehouse-management-system-cover.jpg"
     }
   ],
   "queueRotation": {

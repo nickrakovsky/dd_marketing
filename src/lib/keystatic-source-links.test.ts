@@ -135,6 +135,8 @@ describe('scheduled blog articles in the Keystatic editor', () => {
     { slug: 'agency-staffing-retention', components: ['AgencyContinuity'], sources: 0 },
     { slug: 'costs-arrive-with-the-load', components: ['IncomingLoadLoss'], sources: 0 },
     { slug: 'provider-dependence', components: ['ProviderDependence'], sources: 0 },
+    { slug: 'pricing-just-in-time-delivery', components: ['DeliveryPromiseCost'], sources: 0 },
+    { slug: 'shipping-during-a-wms-outage', components: ['OutageHandoff'], sources: 0 },
   ])('preserves all components and source fields in $slug', async ({ slug, components, videoId, sources }) => {
     const { content } = matter(readFileSync(resolve(process.cwd(), `src/content/posts/${slug}.mdx`), 'utf8'));
     const original = await componentMetadata(content);
