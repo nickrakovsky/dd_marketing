@@ -8,6 +8,21 @@ This folder is the queue for future drafts. New posts remain undated until
 scheduling is authorized. Placing files here does not publish them. `internal/`
 must stay outside production imports and output.
 
+## Shared queue extension — November 25, 2026
+
+Continue the next batch on `codex/daily-posts-queue-november-26`, based on main
+after PR #301. The approved forklift-maintenance YouTube companion occupies
+slot 50 on November 26 at 14:30 UTC, at
+`/posts/forklift-breakdowns-beyond-repair-bill`. Slots 1–49 are unchanged.
+Its article, component and required icons live in the production folders;
+the local preview reads those same files.
+
+Other post-drafting agents should append approved posts to this shared branch
+and PR. Read `docs/daily-blog-schedule.json` before assigning the next weekday
+slot; preserve existing dates and the fixed 14:30 UTC publication time. Follow
+the package, editorial approval and integration workflow below. Merge and
+deployment remain required for release.
+
 ## Consolidated queue scheduled — October 23, 2026
 
 Continue queue management on `codex/blog-posts-queue`, based on current `main`.

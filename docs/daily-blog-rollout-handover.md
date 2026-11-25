@@ -5,15 +5,15 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The daily schedule now contains 49 articles through November 25, 2026. The approved supervisor-deadline YouTube companion occupies slot 49 on November 25 at 14:30 UTC. Slots 1–48 remain unchanged, including the warehouse-process YouTube companion and four Recording 37 posts (D1–D4) merged in PR #299. All scheduled payloads and their components live in the normal production locations; no duplicate draft packages remain in `internal/blog-staging/`. The warehouse setup checklist remains evergreen outside the daily queue.
+The daily schedule now contains 50 articles through November 26, 2026. The approved forklift-maintenance YouTube companion occupies slot 50 on November 26 at 14:30 UTC, at `/posts/forklift-breakdowns-beyond-repair-bill`. Slots 1–49 remain unchanged. All scheduled payloads and their components live in the normal production locations; no duplicate draft packages remain in `internal/blog-staging/`. The warehouse setup checklist remains evergreen outside the daily queue.
 
-The next approved post is prepared on `codex/youtube-supervisor-deadlines`, based on main after [PR #299](https://github.com/nickrakovsky/dd_marketing/pull/299) merged. Merge and deployment install this extension to the queue; the existing publication gate releases it at its timestamp. Preview controls remain local-only.
+The next approved post is prepared on the shared branch `codex/daily-posts-queue-november-26`, refreshed from remote main after PR #301. Other drafting agents can append approved posts to this branch and PR using the existing queue workflow. Merge and deployment install this extension; the existing publication gate releases each article at its timestamp. Preview controls remain local-only.
 
 The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment article for October 9, then overtime on October 12 and food-and-beverage posts 2–10 through October 23. The approved missing-stock video companion remains scheduled for Monday, October 26 at 14:30 UTC, before the new batch begins on October 27. The redesigned homepage is `/`; the resource hub is `/posts`.
 
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 25, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through November 26, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
 
 The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 

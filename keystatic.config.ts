@@ -23,6 +23,10 @@ const mdxImageOptions = {
 // bodies ("Unhandled type mdxjsEsm"), so components must be supplied via those
 // Astro render maps rather than imported in the MDX itself.
 const mdxComponents = {
+    ForkliftDowntimeImpact: block({
+        label: 'Forklift downtime and loading capacity',
+        schema: {},
+    }),
     SupervisorWorkPlan: block({
         label: 'Supervisor task order and deadlines',
         schema: {},
