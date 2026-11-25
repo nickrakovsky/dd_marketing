@@ -73,8 +73,25 @@ const initialState: RequirementsState = {
 
 export const [requirementsState, setRequirementsState] = createSignal<RequirementsState>(initialState);
 
+// Defaults drive the recommendation UI but are not declared customer answers.
+const [answeredKeys, setAnsweredKeys] = createSignal<ReadonlySet<keyof RequirementsState>>(new Set());
+export const declaredRequirements = () => {
+  const state = requirementsState();
+  const answers: Partial<RequirementsState> = Object.fromEntries([...answeredKeys()].map(key => [key, state[key]]));
+  // Do not retain hidden dependent answers after a parent selection changes.
+  for (const key of ['wms', 'tms', 'erp', 'dedicatedProduct'] as const) {
+    if (state[key] !== 'other') delete answers[`${key}Other`];
+  }
+  if (state.primaryFreight !== 'other-freight') {
+    delete answers.primaryFreightOtherSpec;
+    delete answers.additionalFreight;
+  }
+  return answers;
+};
+
 export const updateRequirementsState = <K extends keyof RequirementsState>(key: K, value: RequirementsState[K]) => {
   setRequirementsState((prev) => ({ ...prev, [key]: value }));
+  setAnsweredKeys(prev => new Set([...prev, key]));
 };
 
 // --- Engine Logic ---

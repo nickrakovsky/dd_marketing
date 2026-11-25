@@ -3,8 +3,6 @@ import { For, Switch, Match, Show, createSignal, onCleanup, createMemo } from "s
 import { createYardTypeEngine } from "./YardTypeEngine";
 import type { SubCategory, SystemMatch } from "./YardTypeEngine";
 import type { JSX } from "solid-js";
-import { bentoCall } from "@/lib/bento";
-import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from "@/lib/calendly-config.mjs";
 
 /* ── Responsive sources for the primary category cards ── */
 
@@ -177,46 +175,6 @@ function NextStepsCard(props: {
   subCategoryTitle: string;
   integrationEcosystem?: string;
 }) {
-  const [email, setEmail] = createSignal("");
-  const [isSubmitted, setIsSubmitted] = createSignal(false);
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    const mail = email().trim();
-    if (!mail) return;
-
-    const w = window as any;
-    if (typeof w.ddSetEmail === "function") w.ddSetEmail(mail);
-    bentoCall("identify", mail);
-
-    fetch("/api/bento-track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: mail,
-        event: props.isDataDocks ? "DataDocks Demo Request" : "YMS Shortlist Request",
-        source: window.location.pathname,
-        landingPage: sessionStorage.getItem("dd_landing_page") || window.location.href,
-        visitorUuid: typeof w.getBentoVisitorUuid === "function" ? w.getBentoVisitorUuid() : null,
-        attribution: typeof w.ddGetAttribution === "function" ? w.ddGetAttribution() : null,
-        metadata: {
-          selectedSystem: props.selectedSystemName,
-          subCategory: props.subCategoryTitle,
-        }
-      }),
-      keepalive: true,
-    }).catch(() => {});
-
-    setIsSubmitted(true);
-
-    const ddOpen = w.ddOpenCalendly;
-    if (typeof ddOpen === "function") {
-      ddOpen(CALENDLY_BRAND_PARAMS);
-    } else {
-      window.open(`${CALENDLY_BOOKING_URL}?${CALENDLY_BRAND_PARAMS}`, "_blank", "noopener");
-    }
-  };
-
   return (
     <div
       class={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 ${
@@ -260,23 +218,16 @@ function NextStepsCard(props: {
       {/* ACTIONS */}
       <Show when={props.isDataDocks}>
         <div class="pt-1">
-          <Show
-            when={!isSubmitted()}
-            fallback={
-              <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-                <svg class="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-                <span>Opening calendar...</span>
-              </div>
-            }
-          >
-            <form onSubmit={handleSubmit} class="flex flex-col sm:flex-row gap-2">
+            <form data-lead-capture data-cta-id="yard-selector-result" data-cta-placement="micro-app"
+              data-lead-event={props.isDataDocks ? "DataDocks Demo Request" : "YMS Shortlist Request"}
+              data-lead-metadata={JSON.stringify({ selectedSystem: props.selectedSystemName, subCategory: props.subCategoryTitle, integrationEcosystem: props.integrationEcosystem })}
+              class="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 placeholder="Enter your work email"
-                value={email()}
-                onInput={(e) => setEmail(e.currentTarget.value)}
+                name="email"
+                aria-label="Email address"
+                autocomplete="email"
                 required
                 class="flex-1 px-3.5 py-2.5 text-xs sm:text-sm rounded-lg border focus:outline-none focus:ring-2 bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 border-neutral-300 dark:border-neutral-700 focus:ring-[#fd4f00] placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
               />
@@ -290,7 +241,6 @@ function NextStepsCard(props: {
                 </svg>
               </button>
             </form>
-          </Show>
         </div>
       </Show>
     </div>

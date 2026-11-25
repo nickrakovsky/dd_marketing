@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 export default defineConfig({
   plugins: [react()],
   test: {
+    // CI is pinned to Node 22.12, which gates the SQLite test harness on this flag.
+    execArgv: ['--experimental-sqlite'],
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],

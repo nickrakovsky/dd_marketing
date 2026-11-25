@@ -5,7 +5,7 @@ dist/
 .astro/
 
 # dependencies
-node_modules/
+node_modules
 
 # logs
 npm-debug.log*
@@ -66,3 +66,7 @@ temp-import/
 /*-audit.md
 /*-audit-report.md
 /technical-seo-audit-datadocks.md
+
+# Private demo deployment copies and customer review exports
+/config/*.local.toml
+/demo-private/

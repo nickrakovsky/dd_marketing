@@ -1,0 +1,34 @@
+---
+import DemoCaptureForm from './DemoCaptureForm.astro';
+---
+<dialog id="site-demo-dialog" data-demo-dialog aria-labelledby="demo-booking-title">
+  <button data-demo-close type="button" class="dialog-close" aria-label="Close demo form">×</button>
+  <p class="eyebrow">YOUR DATADOCKS SOFTWARE DEMO</p>
+  <h2 id="demo-booking-title">LET’S LOOK AT YOUR OPERATION.</h2>
+  <p>Enter your email, then choose a time with our team.</p>
+  <DemoCaptureForm id="site-demo" appearance="dialog" />
+  <a data-demo-facility href="https://booking.datadocks.com/sessions/new">Trying to make an appointment at a facility? Go here →</a>
+</dialog>
+<noscript><p class="no-script-demo"><a href="mailto:info@datadocks.com?subject=DataDocks%20demo">Email us to arrange a software demo.</a></p></noscript>
+<style>
+  dialog { width: min(540px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto; background: #fff8e9; border: 1px solid #151515; padding: 40px 34px 30px; color: #151515; }
+  dialog::backdrop { background: #15151599; }
+  h2 { font: 800 54px/.95 Bruta, Impact, sans-serif; margin: 22px 0; }
+  p { font: 18px/1.5 'DD-Recoleta', Georgia, serif; margin-bottom: 24px; }
+  .eyebrow { font: 600 12px/1.5 Inter, sans-serif; letter-spacing: .08em; }
+  .dialog-close { position: absolute; top: 10px; right: 10px; border: 0; background: transparent; font: 30px Inter, sans-serif; width: 40px; height: 40px; cursor: pointer; }
+  a { display: inline-block; font: 14px/1.6 Inter, sans-serif; margin-top: 12px; text-decoration: underline; text-underline-offset: 4px; }
+  .no-script-demo { text-align: center; padding: 24px; }
+  @media(max-width:640px) { dialog { padding: 34px 24px 24px; } h2 { font-size: 48px; } }
+</style>
+
+<style is:global>
+  .demo-booking-result { width: min(36rem, calc(100% - 2rem)); border: 1px solid #cbd5e1; border-radius: 1rem; padding: 2rem; color: #172534; background: white; max-height: 90dvh; overflow-y: auto; }
+  .demo-booking-result::backdrop { background: rgb(15 23 42 / 65%); }
+  .demo-booking-result h2 { font-size: 1.75rem; line-height: 1.2; font-weight: 700; margin: 0 0 1rem; }
+  .demo-booking-result p { margin: .8rem 0; line-height: 1.5; }
+  .demo-result-actions { display: grid; gap: .75rem; margin-top: 1.5rem; }
+  .demo-result-actions button, .demo-result-actions a { display: block; text-align: center; border: 1px solid #466e67; border-radius: .5rem; padding: .75rem 1rem; background: #f1f7f5; color: #173e35; cursor: pointer; }
+  .demo-result-actions :focus-visible { outline: 3px solid #1e6b56; outline-offset: 3px; }
+  .demo-result-actions button:disabled { opacity: .6; cursor: wait; }
+</style>

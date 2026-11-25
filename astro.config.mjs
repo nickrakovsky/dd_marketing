@@ -82,6 +82,10 @@ export default defineConfig({
         'astro:config:setup': ({ injectRoute, command }) => {
           if (command === 'dev') {
             injectRoute({
+              pattern: '/preview/demo-qualification',
+              entrypoint: './src/offline-pages/demo-qualification-preview.astro'
+            });
+            injectRoute({
               pattern: '/preview/daily-blog/home',
               entrypoint: './src/offline-pages/daily-blog-home-preview.astro'
             });
@@ -231,7 +235,7 @@ export default defineConfig({
     }),
     keystatic(), sitemap({
       // Keyword landing pages are noindexed, so keep them out of the sitemap too.
-      filter: (page) => !new URL(page).pathname.startsWith('/preview/') && !unpublishedPostPaths.has(new URL(page).pathname.replace(/\/$/, '').toLowerCase()) && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
+      filter: (page) => new URL(page).pathname.replace(/\/$/, '') !== '/demo/verification' && !new URL(page).pathname.startsWith('/preview/') && !unpublishedPostPaths.has(new URL(page).pathname.replace(/\/$/, '').toLowerCase()) && !page.includes('/compare/opendock') && !page.includes('/videos/') && !page.includes('/micro-apps/') && !/\/(dock-scheduling|yard-management|warehouse-management|dock-management)-software/.test(page) && !page.includes('/outgrowing-opendock') && !page.endsWith('/404') && !page.endsWith('/404/'),
       serialize(item) {
         // Strip trailing slash from sitemap URLs (except homepage)
         if (item.url !== 'https://datadocks.com/' && item.url.endsWith('/')) {

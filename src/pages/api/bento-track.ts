@@ -1,156 +1,120 @@
 /**
- * Server-side Bento tracking proxy.
- *
- * Ad blockers block all requests to *.bentonow.com.
- * This endpoint lives on datadocks.com (same origin) so it is never blocked.
- *
- * Client sends:  POST /api/bento-track  { email, event, source, landingPage, visitorUuid }
- * Server calls:  POST https://app.bentonow.com/api/v1/batch/events
- *
- * Env vars required in Cloudflare Pages:
- *   PUBLIC_BENTO_SITE_UUID  — site UUID (also readable at build time)
- *   BENTO_PUBLISHABLE_KEY   — publishable API key (runtime secret)
- *   BENTO_SECRET_KEY        — secret API key (runtime secret)
- *
- * NOTE: On Cloudflare Pages, runtime secrets are only available via
- * locals.runtime.env, NOT import.meta.env. We fall back to import.meta.env
- * for local dev (where locals.runtime is undefined).
+ * Same-origin Bento proxy; explicit submissions do not require the Bento SDK.
+ * Runtime Cloudflare secrets: PUBLIC_BENTO_SITE_UUID, BENTO_PUBLISHABLE_KEY,
+ * BENTO_SECRET_KEY. import.meta.env is the fallback for local development.
  */
-
 import type { APIRoute } from 'astro';
+import { BentoInputError, buildBentoEvent, isRecord } from '../../lib/bento-track-payload';
 
 export const prerender = false;
+const MAX_BODY_BYTES = 16 * 1024;
+
+function json(body: Record<string, unknown>, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+  });
+}
+
+async function readBody(request: Request): Promise<unknown> {
+  if (Number(request.headers.get('content-length')) > MAX_BODY_BYTES) {
+    throw new BentoInputError('Request too large', 413);
+  }
+  const reader = request.body?.getReader();
+  if (!reader) throw new BentoInputError('Invalid JSON');
+  const decoder = new TextDecoder();
+  let bytes = 0;
+  let text = '';
+  try {
+    for (let chunk = await reader.read(); !chunk.done; chunk = await reader.read()) {
+      const { value } = chunk;
+      bytes += value.byteLength;
+      if (bytes > MAX_BODY_BYTES) {
+        await reader.cancel();
+        throw new BentoInputError('Request too large', 413);
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    return JSON.parse(text + decoder.decode());
+  } finally {
+    reader.releaseLock();
+  }
+}
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // ---------- 1. Parse request body ----------
-  type Touch = {
-    utm_source?: string;
-    utm_medium?: string;
-    utm_campaign?: string;
-    utm_term?: string;
-    utm_content?: string;
-    gclid?: string;
-    referrer?: string;
-    landing?: string;
-  };
-  let body: {
-    email?: string;
-    event?: string;
-    source?: string;
-    landingPage?: string;
-    visitorUuid?: string;
-    firstTouch?: Touch;
-    lastTouch?: Touch;
-  };
+  // A basic cross-site guard, not authentication or a substitute for edge rate limits.
+  const origin = request.headers.get('origin');
+  if ((origin && origin !== new URL(request.url).origin)
+    || request.headers.get('sec-fetch-site') === 'cross-site') {
+    return json({ ok: false, error: 'Cross-site request rejected', delivery: 'not_sent' }, 403);
+  }
+
+  let event: ReturnType<typeof buildBentoEvent>;
   try {
-    body = await request.json();
-  } catch {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    event = buildBentoEvent(await readBody(request));
+  } catch (error) {
+    const inputError = error instanceof BentoInputError;
+    console.warn('[bento-track] invalid_request');
+    return json({
+      ok: false,
+      error: inputError ? error.message : 'Invalid JSON',
+      delivery: 'not_sent',
+    }, inputError ? error.status : 400);
   }
 
-  const { email, event, source, landingPage, visitorUuid, firstTouch, lastTouch } = body;
-  if (!email || !event) {
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Missing email or event' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    );
+  const cfEnv = (locals as { runtime?: { env?: Record<string, unknown> } }).runtime?.env;
+  const siteUuid = cfEnv?.PUBLIC_BENTO_SITE_UUID ?? import.meta.env.PUBLIC_BENTO_SITE_UUID;
+  const pubKey = cfEnv?.BENTO_PUBLISHABLE_KEY ?? import.meta.env.BENTO_PUBLISHABLE_KEY;
+  const secretKey = cfEnv?.BENTO_SECRET_KEY ?? import.meta.env.BENTO_SECRET_KEY;
+  if (![siteUuid, pubKey, secretKey].every(value => typeof value === 'string' && value.length > 0)) {
+    console.error('[bento-track] missing_configuration');
+    return json({ ok: false, error: 'Server misconfigured', delivery: 'not_sent' });
   }
 
-  // ---------- 2. Read env vars ----------
-  // On Cloudflare Pages SSR, runtime secrets must come from locals.runtime.env.
-  const cfEnv = (locals as any)?.runtime?.env;
-  const siteUuid  = cfEnv?.PUBLIC_BENTO_SITE_UUID  ?? import.meta.env.PUBLIC_BENTO_SITE_UUID;
-  const pubKey    = cfEnv?.BENTO_PUBLISHABLE_KEY    ?? import.meta.env.BENTO_PUBLISHABLE_KEY;
-  const secretKey = cfEnv?.BENTO_SECRET_KEY         ?? import.meta.env.BENTO_SECRET_KEY;
-
-  if (!siteUuid || !pubKey || !secretKey) {
-    console.error('[bento-track] Missing env vars in Cloudflare runtime.');
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Server misconfigured' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
-  }
-
-  // ---------- 3. Build Bento Payload ----------
-  // Per Bento Tanuki & Docs:
-  // - 'landing_page_url' is a reserved person attribute and should be top-level.
-  // - 'visitor_id' is the root key used to stitch events to the anonymous session.
-  // Strip empty/undefined values so we never overwrite a populated
-  // attribute with a blank one on a subsequent event.
-  const compact = (obj: Record<string, unknown>) => {
-    const out: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(obj)) {
-      if (v !== undefined && v !== null && v !== '') out[k] = v;
-    }
-    return out;
-  };
-  const fields = compact({
-    source: source || "/",
-    utm_source: firstTouch?.utm_source,
-    utm_medium: firstTouch?.utm_medium,
-    utm_campaign: firstTouch?.utm_campaign,
-    utm_term: firstTouch?.utm_term,
-    utm_content: firstTouch?.utm_content,
-    gclid: firstTouch?.gclid,
-    referrer: firstTouch?.referrer,
-    first_landing: firstTouch?.landing,
-    last_utm_source: lastTouch?.utm_source,
-    last_utm_medium: lastTouch?.utm_medium,
-    last_utm_campaign: lastTouch?.utm_campaign,
-  });
-
-  const bentoPayload = {
-    events: [
-      {
-        type: event,
-        email: email,
-        // Top-level person attributes for built-in mapping and identity stitching
-        landing_page_url: landingPage,
-        visitor_id: visitorUuid,
-        fields,
-      },
-    ],
-  };
-
-  // ---------- 4. Call Bento API ----------
-  const basicAuth = btoa(`${pubKey}:${secretKey}`);
-  const bentoUrl = `https://app.bentonow.com/api/v1/batch/events?site_uuid=${siteUuid}`;
-
+  // Preserve HTTP 200 + ok:false for upstream/configuration failures: callers must
+  // check the JSON flag (as captureDemoLead does). Do not silently change that contract.
   try {
-    const res = await fetch(bentoUrl, {
+    const response = await fetch(`https://app.bentonow.com/api/v1/batch/events?site_uuid=${encodeURIComponent(String(siteUuid))}`, {
       method: 'POST',
       headers: {
-        Authorization: `Basic ${basicAuth}`,
+        Authorization: `Basic ${btoa(`${pubKey}:${secretKey}`)}`,
         'Content-Type': 'application/json',
-        'User-Agent': 'DataDocks-Proxy/1.2',
+        'User-Agent': 'DataDocks-Proxy/1.3',
       },
-      body: JSON.stringify(bentoPayload),
+      body: JSON.stringify({ events: [event] }),
+      signal: AbortSignal.timeout(10_000),
     });
 
-    const responseText = await res.text();
-
-    if (!res.ok) {
-      console.error(`[bento-track] Bento API ${res.status}: ${responseText}`);
-      return new Response(
-        JSON.stringify({ ok: false, error: `Bento API ${res.status}` }),
-        { status: 200, headers: { 'Content-Type': 'application/json' } },
-      );
+    if (!response.ok) {
+      console.error('[bento-track] upstream_http_error', { event: event.type, status: response.status });
+      return json({
+        ok: false,
+        error: `Bento API ${response.status}`,
+        delivery: response.status >= 500 || response.status === 408 ? 'unknown' : 'rejected',
+      });
     }
 
-    console.log(`[bento-track] OK for ${email}: ${responseText}`);
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error(`[bento-track] Fetch error: ${message}`);
-    return new Response(
-      JSON.stringify({ ok: false, error: 'Upstream error' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
-    );
+    const result: unknown = await response.json();
+    // The older SDK documents results alone; newer responses also include failed.
+    // One submitted event must be explicitly accepted, with no reported rejection.
+    if (!isRecord(result) || result.results !== 1
+      || (result.failed !== undefined && result.failed !== 0)) {
+      const rejected = isRecord(result) && result.results === 0;
+      console.error('[bento-track] upstream_unaccepted', { event: event.type });
+      return json({
+        ok: false,
+        error: 'Bento did not confirm acceptance',
+        delivery: rejected ? 'rejected' : 'unknown',
+      });
+    }
+
+    console.info('[bento-track] accepted', { event: event.type });
+    return json({ ok: true });
+  } catch {
+    // Never log raw response bodies, emails, credentials or fetch error messages.
+    // A timeout/malformed response can follow acceptance: do not automatically retry
+    // until durable deduplication exists. Client IDs in details alone do not provide it.
+    console.error('[bento-track] upstream_uncertain', { event: event.type });
+    return json({ ok: false, error: 'Upstream response unavailable', delivery: 'unknown' });
   }
 };

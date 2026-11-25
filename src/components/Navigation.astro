@@ -3,13 +3,16 @@ import datadocksLogo from "../assets/datadocks-logo.svg";
 import datadocksLogoWhite from "../assets/datadocks-logo-white.svg";
 import { CALENDLY_BOOKING_URL } from "../lib/calendly-config.mjs";
 
+import { demoQualificationEnabled } from '../lib/demo-rollout';
+
 interface Props {
   isOrange?: boolean;
   demoHref?: string;
   featuresHref?: string;
 }
 
-const { isOrange = false, demoHref = CALENDLY_BOOKING_URL, featuresHref = '/#features' } = Astro.props;
+const { isOrange = false, demoHref: originalDemoHref = CALENDLY_BOOKING_URL, featuresHref = '/#features' } = Astro.props;
+const demoHref = demoQualificationEnabled ? '#book-demo' : originalDemoHref;
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -100,7 +103,7 @@ const mobileDropdownLinkClass = isOrange
         <a href="https://booking.datadocks.com/sessions/new" class={`transition-colors font-recoleta text-base xl:text-lg ${textClass}`}>Login</a>
 
         <a
-          href={demoHref}
+          data-cta-id="navigation-desktop" href={demoHref}
           target={demoHref.startsWith('#') ? undefined : '_blank'}
           rel={demoHref.startsWith('#') ? undefined : 'noopener noreferrer'}
           class={`inline-flex items-center justify-center whitespace-nowrap h-10 px-6 font-recoleta font-normal rounded-none text-[1.2rem] xl:text-[1.2rem] border-b-4 transition-all shadow-none ${desktopBtnClass}`}
@@ -151,7 +154,7 @@ const mobileDropdownLinkClass = isOrange
 
         <div class="p-0">
           <a
-            href={demoHref}
+            data-cta-id="navigation-mobile" href={demoHref}
             target={demoHref.startsWith('#') ? undefined : '_blank'}
             rel={demoHref.startsWith('#') ? undefined : 'noopener noreferrer'}
             data-mobile-link

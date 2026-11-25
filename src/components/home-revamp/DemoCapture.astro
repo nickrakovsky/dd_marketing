@@ -1,8 +1,10 @@
 ---
 import { CALENDLY_BOOKING_URL, CALENDLY_BRAND_PARAMS } from '../../lib/calendly-config.mjs';
+import { demoQualificationEnabled } from '../../lib/demo-rollout';
 interface Props { standalone?: boolean; microcopyFont?: 'inter' | 'recoleta' }
 const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
 ---
+{!demoQualificationEnabled && <Fragment>
 <div id={standalone ? 'book-demo' : undefined} data-microcopy-font={microcopyFont}>
 <dialog id="demo-capture-dialog" aria-labelledby="demo-capture-title" data-standalone={standalone || undefined} data-booking-url={CALENDLY_BOOKING_URL} data-booking-params={CALENDLY_BRAND_PARAMS}>
   <button class="dialog-close" type="button" aria-label="Close email form" data-close-demo>×</button>
@@ -24,6 +26,8 @@ const { standalone = false, microcopyFont = 'recoleta' } = Astro.props;
   </section>
 </noscript>}
 </div>
+
+</Fragment>}
 
 <script>
   import { captureDemoLead } from '../../lib/home-demo-capture';

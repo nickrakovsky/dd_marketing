@@ -1,6 +1,8 @@
 ---
 
 import '../styles/global.css';
+import DemoBookingDialog from '../components/demo/DemoBookingDialog.astro';
+import { demoQualificationEnabled as globalDemoQualification } from '../lib/demo-rollout';
 import brutaFont from '../assets/fonts/BrutaGlbCompressed-ExtraBold.woff2';
 import recoletaReg from '../assets/fonts/Recoleta-Regular.woff2';
 import recoletaSemi from '../assets/fonts/Recoleta-SemiBold.woff2';
@@ -13,6 +15,7 @@ interface Props {
     image?: string;
     type?: "website" | "article" | "video";
     noindex?: boolean;
+    demoSafeguards?: boolean;
 
     schemaData?: {
         faq?: { question: string; answer: string }[];
@@ -63,6 +66,8 @@ const {
   videoData,
   preloadImages
 } = Astro.props;
+
+const demoQualificationEnabled = globalDemoQualification || Astro.props.demoSafeguards === true;
 
 const PUBLIC_BENTO_UUID = import.meta.env.PUBLIC_BENTO_SITE_UUID;
 
@@ -377,7 +382,7 @@ const jsonLd = {
 
         {/* A page's own LCP image, preloaded here (immediately after the Bruta preload,
              before Beasties' inlined critical CSS) rather than left to the preload scanner
-             to discover deep in <body>. Opt-in per page via the preloadImages prop. */}
+             to discover deep in <body data-demo-qualification={demoQualificationEnabled ? 'true' : undefined}>. Opt-in per page via the preloadImages prop. */}
         {preloadImages?.map((p) => (
           <link rel="preload" as="image" fetchpriority="high" href={p.href} imagesrcset={p.imagesrcset} imagesizes={p.imagesizes} media={p.media} />
         ))}
@@ -432,10 +437,11 @@ const jsonLd = {
         `}></style>
 
     </head>
-    <body>
+    <body data-demo-qualification={demoQualificationEnabled ? 'true' : undefined}>
         {/* Force Beasties to preserve brand fonts by referencing them in an inline style */}
         <div class="beasties-font-preserve" style="display: none;" aria-hidden="true"></div>
         <slot />
+        {demoQualificationEnabled && <DemoBookingDialog />}
         {/* GA4 is now implemented via Cloudflare Zaraz
         <script is:inline>
             window.dataLayer = window.dataLayer || [];
@@ -467,7 +473,7 @@ const jsonLd = {
              event_scheduled postMessage and forward to Zaraz/GA4 only on real
              completed bookings — links to calendly.com/* are intercepted and
              reopened in the popup. */}
-        <script is:inline define:vars={{ CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR }}>
+        <script is:inline define:vars={{ CALENDLY_BOOKING_URL, CALENDLY_BOOKING_FRAGMENT, CALENDLY_BRAND_COLOR, demoQualificationEnabled }}>
           (function() {
             // --- Telemetry helper ----------------------------------------
             // We swallow most errors silently so the script doesn't halt and
@@ -491,9 +497,11 @@ const jsonLd = {
             }
 
             // --- Landing page (session-scoped, kept for Bento) -----------
-            if (!sessionStorage.getItem('dd_landing_page')) {
-              sessionStorage.setItem('dd_landing_page', window.location.href);
-            }
+            try {
+              if (!sessionStorage.getItem('dd_landing_page')) {
+                sessionStorage.setItem('dd_landing_page', window.location.href);
+              }
+            } catch { /* Historical context is optional; current-page capture still works. */ }
 
             // --- Attribution: first-touch and last-touch -----------------
             var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
@@ -511,6 +519,7 @@ const jsonLd = {
               utm_term: params.get('utm_term') || '',
               utm_content: params.get('utm_content') || '',
               gclid: params.get('gclid') || '',
+              msclkid: params.get('msclkid') || '',
               referrer: ref,
               landing: window.location.pathname,
               ts: new Date().toISOString()
@@ -521,12 +530,12 @@ const jsonLd = {
                 localStorage.setItem('dd_first_touch', JSON.stringify(touch));
               }
               // Update last-touch only when the visit carries a real source signal
-              if (hasUtm || (ref && !sameHost)) {
+              if (hasUtm || params.get('gclid') || params.get('msclkid') || (ref && !sameHost)) {
                 localStorage.setItem('dd_last_touch', JSON.stringify(touch));
               }
             } catch (err) {
-              // Most likely Safari private mode quota or storage full. Means
-              // attribution is degraded for this user — they'll show as direct.
+              // Historical context is unavailable; submission capture still
+              // records current-page evidence without requiring storage.
               ddReportError('storage_write', err && err.message);
             }
 
@@ -543,9 +552,11 @@ const jsonLd = {
             // with the specific person who abandoned.
             window.ddSetEmail = function(email) {
               if (!email || typeof email !== 'string') return;
+              window.ddCurrentEmail = email;
               try { localStorage.setItem('dd_known_email', email); } catch { /* noop */ }
             };
             window.ddGetEmail = function() {
+              if (window.ddCurrentEmail) return window.ddCurrentEmail;
               try { return localStorage.getItem('dd_known_email') || ''; } catch { return ''; }
             };
 
@@ -571,6 +582,7 @@ const jsonLd = {
             // rel="prefetch"> warms the HTTP cache without parsing or
             // executing anything. Skipped on Save-Data and 2G connections.
             window.addEventListener('load', function() {
+              if (demoQualificationEnabled) return;
               setTimeout(function() {
                 var c = navigator.connection;
                 if (c && (c.saveData || /2g/.test(c.effectiveType || ''))) return;
@@ -621,6 +633,7 @@ const jsonLd = {
             }
 
             window.ddOpenCalendly = function(extraUrlParams) {
+              if (demoQualificationEnabled) { window.dispatchEvent(new CustomEvent('dd:demo-open')); return; }
               loadCalendlyAssets().then(function() {
                 var utm = buildUtm();
                 // Always inject primary_color into the URL itself. pageSettings
@@ -672,6 +685,7 @@ const jsonLd = {
             // cache and the popup opens near-instantly instead of waiting on
             // a cold ~6s fetch. loadCalendlyAssets is idempotent.
             function warmOnIntent(e) {
+              if (demoQualificationEnabled) return;
               var a = e.target && e.target.closest && e.target.closest(INTERCEPT_SELECTOR);
               if (a) loadCalendlyAssets();
             }
@@ -680,7 +694,7 @@ const jsonLd = {
 
             document.addEventListener('click', function(e) {
               var a = e.target && e.target.closest && e.target.closest(INTERCEPT_SELECTOR);
-              if (!a) return;
+              if (demoQualificationEnabled || !a || a.hasAttribute('data-direct-booking')) return;
               if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return; // let user open in new tab
               e.preventDefault();
               var href = a.getAttribute('href') || '';
@@ -713,6 +727,7 @@ const jsonLd = {
             var firedStages = {};
 
             window.addEventListener('message', function(e) {
+              if (demoQualificationEnabled) { window.ddHandleDemoCalendarMessage?.(e); return; }
               if (!e.data || typeof e.data !== 'object') return;
               if (!ALLOWED_ORIGINS[e.origin]) return;
               var calendlyEvent = e.data.event;
@@ -762,7 +777,7 @@ const jsonLd = {
                     email: knownEmail,
                     event: ddEvent,
                     source: window.location.pathname,
-                    landingPage: sessionStorage.getItem('dd_landing_page') || window.location.href,
+                    landingPage: (function() { try { return sessionStorage.getItem('dd_landing_page') || undefined; } catch { return undefined; } })(),
                     visitorUuid: (typeof window.getBentoVisitorUuid === 'function') ? window.getBentoVisitorUuid() : null,
                     firstTouch: attribution.first,
                     lastTouch: attribution.last
@@ -839,9 +854,21 @@ const jsonLd = {
             }
           })();
         </script>
+        <script>
+          import { installLeadCapture } from '../lib/lead-capture';
+          import { demoQualificationActive } from '../lib/demo-rollout';
+          import { installDemoSite } from '../lib/demo-site';
+          installLeadCapture();
+          if (demoQualificationActive()) installDemoSite();
+        </script>
     </body>
 </html>
 
 <style>
+    :global(.demo-calendar-fallback) { position: fixed; z-index: 9999; bottom: 16px; left: 16px; right: 16px; margin: auto; padding: 20px; max-width: 680px; border: 1px solid #151515; background: #fff8e9; color: #151515; font: 16px/1.6 Inter, sans-serif; }
+    :global(.demo-calendar-fallback a) { text-decoration: underline; }
     html, body { margin: 0; width: 100%; overflow-x: clip; }
+    :global(.lead-capture-status) { margin: 12px 0; font: 14px/1.5 Inter, sans-serif; text-transform: none; letter-spacing: normal; }
+    :global(.lead-capture-status:empty) { display: none; }
+    :global([data-lead-capture][aria-busy="true"] button[type="submit"]) { cursor: wait; opacity: .7; }
 </style>
