@@ -88,13 +88,13 @@ test.beforeEach(async ({ page, baseURL }) => {
     novemberBatch.map(([slug, date, rotationGroup, provenance, author], index) =>
       [44 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance, author]),
   );
-  expect(slots.slice(49).map(slot => slot.rotationGroup)).toEqual(['A', 'A', 'B', 'A', 'A', 'C', 'A', 'A', 'C', 'A']);
+  expect(slots.slice(49).map(slot => slot.rotationGroup)).toEqual(['A', 'A', 'C', 'A', 'A', 'B', 'A', 'A', 'C', 'A']);
   expect(slots.slice(48).filter(slot => slot.provenance !== 'training-session')
     .map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
     [
       [49, 'give-warehouse-supervisors-clear-deadlines', '2026-11-25T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
-      [52, 'forklift-breakdowns-beyond-repair-bill', '2026-11-30T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
-      [55, 'pricing-just-in-time-delivery', '2026-12-04T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
+      [52, 'pricing-just-in-time-delivery', '2026-11-30T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
+      [55, 'forklift-breakdowns-beyond-repair-bill', '2026-12-04T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
       [58, 'shipping-during-a-wms-outage', '2026-12-11T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
     ],
   );

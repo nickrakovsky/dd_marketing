@@ -115,10 +115,10 @@ assert.deepEqual(slots.slice(48, 49).map(slot => [slot.slot, slot.slug, slot.pub
 const mixedQueue = [
   ['3pl-carrier-no-shows', '2026-11-26', 'A', 'training-session'],
   ['multi-client-receiving-capacity', '2026-11-27', 'A', 'training-session'],
-  ['forklift-breakdowns-beyond-repair-bill', '2026-11-30', 'B', 'youtube-video'],
+  ['pricing-just-in-time-delivery', '2026-11-30', 'C', 'nick-audio'],
   ['receiving-inspection-records', '2026-12-01', 'A', 'training-session'],
   ['after-hours-receiving-pricing', '2026-12-02', 'A', 'training-session'],
-  ['pricing-just-in-time-delivery', '2026-12-04', 'C', 'nick-audio'],
+  ['forklift-breakdowns-beyond-repair-bill', '2026-12-04', 'B', 'youtube-video'],
   ['billing-extra-handling', '2026-12-07', 'A', 'training-session'],
   ['client-pickup-bookings', '2026-12-08', 'A', 'training-session'],
   ['shipping-during-a-wms-outage', '2026-12-11', 'C', 'nick-audio'],

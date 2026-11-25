@@ -5,7 +5,7 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The schedule contains 59 articles through December 14, 2026. The seven 3PL articles run in pairs around the forklift video and Nick Rakovsky’s two Friday articles. December 3, 9 and 10 are open. The warehouse setup checklist remains evergreen outside the daily queue.
+The schedule contains 59 articles through December 14, 2026. Nick Rakovsky’s just-in-time delivery article, the forklift video and Nick’s WMS outage article each follow a pair of 3PL posts, in that order. The seventh 3PL post closes the batch. December 3, 9 and 10 are open. The warehouse setup checklist remains evergreen outside the daily queue.
 
 The next approved posts are prepared on the shared branch `codex/daily-posts-queue-november-26`, refreshed from remote main after PR #301. Other drafting agents can append approved posts to this branch and PR using the existing queue workflow. Merge and deployment install this extension; the existing publication gate releases each article at its timestamp. Preview controls remain local-only.
 
@@ -85,10 +85,10 @@ Slots 28–38 alternate A/B. The independently researched warehouse setup checkl
 | 49 | Wed 2026-11-25 | B | Give warehouse supervisors a deadline they can plan around |
 | 50 | Thu 2026-11-26 | A | Reporting carrier no-shows before they become client disputes |
 | 51 | Fri 2026-11-27 | A | Scheduling overlapping loads in a multi-client warehouse |
-| 52 | Mon 2026-11-30 | B | Look beyond the repair bill when a forklift keeps breaking down |
+| 52 | Mon 2026-11-30 | C | What does it cost to keep a just-in-time delivery promise? |
 | 53 | Tue 2026-12-01 | A | Resolving damage claims with consistent receiving inspection records |
 | 54 | Wed 2026-12-02 | A | How to price after-hours receiving at a 3PL |
-| 55 | Fri 2026-12-04 | C | What does it cost to keep a just-in-time delivery promise? |
+| 55 | Fri 2026-12-04 | B | Look beyond the repair bill when a forklift keeps breaking down |
 | 56 | Mon 2026-12-07 | A | How 3PLs can use receiving records to bill for extra handling |
 | 57 | Tue 2026-12-08 | A | When a 3PL should manage a client’s pickup bookings |
 | 58 | Fri 2026-12-11 | C | What can your warehouse ship while the WMS is down? |
