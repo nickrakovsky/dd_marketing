@@ -69,7 +69,7 @@ assert.deepEqual(slots.slice(26, 27).map(slot => [slot.slot, slot.slug, new Date
   'The approved missing-stock article must use the next weekday slot at the existing publication time');
 assert.equal(manifest.timezone, 'UTC-08:00');
 assert.equal(manifest.localPublicationTime, '06:30:00');
-assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-12-15T00:00:00Z'));
+assert.equal(Date.parse(manifest.previewAsOf), Date.parse('2026-12-11T00:00:00Z'));
 assert.deepEqual(manifest.rotation, ['A', 'B', 'C'], 'The historical rotation must retain its original meanings');
 const queueBatch = [
   ['early-arrival-patterns', '2026-10-27', 'A', 'training-session'],
@@ -118,16 +118,16 @@ const mixedQueue = [
   ['pricing-just-in-time-delivery', '2026-11-30', 'C', 'nick-audio'],
   ['receiving-inspection-records', '2026-12-01', 'A', 'training-session'],
   ['after-hours-receiving-pricing', '2026-12-02', 'A', 'training-session'],
-  ['forklift-breakdowns-beyond-repair-bill', '2026-12-04', 'B', 'youtube-video'],
-  ['billing-extra-handling', '2026-12-07', 'A', 'training-session'],
-  ['client-pickup-bookings', '2026-12-08', 'A', 'training-session'],
-  ['shipping-during-a-wms-outage', '2026-12-11', 'C', 'nick-audio'],
-  ['driver-calls-yard-trips', '2026-12-14', 'A', 'training-session'],
+  ['forklift-breakdowns-beyond-repair-bill', '2026-12-03', 'B', 'youtube-video'],
+  ['billing-extra-handling', '2026-12-04', 'A', 'training-session'],
+  ['client-pickup-bookings', '2026-12-07', 'A', 'training-session'],
+  ['shipping-during-a-wms-outage', '2026-12-08', 'C', 'nick-audio'],
+  ['driver-calls-yard-trips', '2026-12-09', 'A', 'training-session'],
 ];
 assert.deepEqual(slots.slice(49).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
   mixedQueue.map(([slug, date, rotationGroup, provenance], index) =>
     [50 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance]),
-  'Publish the 3PL posts in pairs separated by the forklift and Nick articles at the regular weekday cutoff');
+  'Publish the seven 3PL posts around the forklift and Nick articles on consecutive weekdays at the regular cutoff');
 assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
 assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
 assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);

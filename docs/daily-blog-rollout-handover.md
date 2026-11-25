@@ -5,7 +5,7 @@ This supersedes the earlier preparation-only handover. The user subsequently aut
 
 ## Status
 
-The schedule contains 59 articles through December 14, 2026. Nick Rakovsky’s just-in-time delivery article, the forklift video and Nick’s WMS outage article each follow a pair of 3PL posts, in that order. The seventh 3PL post closes the batch. December 3, 9 and 10 are open. The warehouse setup checklist remains evergreen outside the daily queue.
+The schedule contains 59 articles through December 9, 2026. Nick Rakovsky’s just-in-time delivery article, the forklift video and Nick’s WMS outage article each follow a pair of 3PL posts, in that order. The seventh 3PL post closes the batch. Thursday, December 10 at 14:30 UTC is reserved for Nick’s third article. A subsequent PR will add it to the publication schedule once the draft is ready. The warehouse setup checklist remains evergreen outside the daily queue.
 
 The next approved posts are prepared on the shared branch `codex/daily-posts-queue-november-26`, refreshed from remote main after PR #301. Other drafting agents can append approved posts to this branch and PR using the existing queue workflow. Merge and deployment install this extension; the existing publication gate releases each article at its timestamp. Preview controls remain local-only.
 
@@ -13,7 +13,7 @@ The original 15-post rollout was extended with Nick Rakovsky’s food fulfilment
 
 ## Publication schedule
 
-Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through December 14, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
+Weekdays at **06:30 fixed PST (UTC−08:00), or 14:30 UTC**, from September 17 through December 9, 2026. This follows the user's literal “PST” instruction; it does not switch to daylight-adjusted Pacific time.
 
 The original 15-post rotation is A → B → C, repeated five times. Slot 16 continues with a sixth Nick Rakovsky post; slots 17–26 add the approved overtime and food-and-beverage batch:
 
@@ -88,11 +88,11 @@ Slots 28–38 alternate A/B. The independently researched warehouse setup checkl
 | 52 | Mon 2026-11-30 | C | What does it cost to keep a just-in-time delivery promise? |
 | 53 | Tue 2026-12-01 | A | Resolving damage claims with consistent receiving inspection records |
 | 54 | Wed 2026-12-02 | A | How to price after-hours receiving at a 3PL |
-| 55 | Fri 2026-12-04 | B | Look beyond the repair bill when a forklift keeps breaking down |
-| 56 | Mon 2026-12-07 | A | How 3PLs can use receiving records to bill for extra handling |
-| 57 | Tue 2026-12-08 | A | When a 3PL should manage a client’s pickup bookings |
-| 58 | Fri 2026-12-11 | C | What can your warehouse ship while the WMS is down? |
-| 59 | Mon 2026-12-14 | A | Reclaiming receiving time from repeat driver calls and yard trips |
+| 55 | Thu 2026-12-03 | B | Look beyond the repair bill when a forklift keeps breaking down |
+| 56 | Fri 2026-12-04 | A | How 3PLs can use receiving records to bill for extra handling |
+| 57 | Mon 2026-12-07 | A | When a 3PL should manage a client’s pickup bookings |
+| 58 | Tue 2026-12-08 | C | What can your warehouse ship while the WMS is down? |
+| 59 | Wed 2026-12-09 | A | Reclaiming receiving time from repeat driver calls and yard trips |
 
 The five Nick audio articles in slots 39–43 were approved on November 2. The November 16 extension in slots 44–48 follows the user’s explicit order: finish the old queue, publish the warehouse-process YouTube companion, then D1–D4. Earlier dates and the future source-rotation policy are unchanged.
 
@@ -128,7 +128,7 @@ Views after all 49 daily articles have been published:
 
 The homepage highlight selects the most recently updated eligible article from the hub’s curated evergreen list (falling back to publication date when no update date exists). Daily posts populate the five-item feed and cannot replace this highlight.
 
-Both previews reuse the canonical page components with a scoped cutoff of `2026-12-15T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
+Both previews reuse the canonical page components with a scoped cutoff of `2026-12-11T00:00:00Z` from the schedule manifest. They preserve the articles' actual dates and are labeled as previews. Preview routes exist only in development, carry `noindex`, and are absent from the production build and sitemap. Query parameters cannot override publication dates on ordinary pages.
 
 The previews show the two requested overview pages. Article links retain their canonical URLs: unpublished article detail pages remain unavailable until due. No future-content override is exposed on production routes.
 

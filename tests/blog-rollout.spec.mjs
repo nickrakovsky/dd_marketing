@@ -94,13 +94,13 @@ test.beforeEach(async ({ page, baseURL }) => {
     [
       [49, 'give-warehouse-supervisors-clear-deadlines', '2026-11-25T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
       [52, 'pricing-just-in-time-delivery', '2026-11-30T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
-      [55, 'forklift-breakdowns-beyond-repair-bill', '2026-12-04T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
-      [58, 'shipping-during-a-wms-outage', '2026-12-11T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
+      [55, 'forklift-breakdowns-beyond-repair-bill', '2026-12-03T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
+      [58, 'shipping-during-a-wms-outage', '2026-12-08T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
     ],
   );
   expect(schedule.timezone).toBe('UTC-08:00');
   expect(schedule.localPublicationTime).toBe('06:30:00');
-  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-12-15T00:00:00Z'));
+  expect(Date.parse(schedule.previewAsOf)).toBe(Date.parse('2026-12-11T00:00:00Z'));
   for (const slot of slots) {
     expect(slot.slug, `Slot ${slot.slot} has a final slug`).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
     expect(Number.isFinite(Date.parse(slot.pubDate)), `Slot ${slot.slot} has a publication timestamp`).toBe(true);

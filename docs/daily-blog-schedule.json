@@ -9,7 +9,7 @@
     "B",
     "C"
   ],
-  "previewAsOf": "2026-12-15T00:00:00Z",
+  "previewAsOf": "2026-12-11T00:00:00Z",
   "notes": [
     "Series drafts have no byline; attributed to DataDocks Team because they quote Nick in third person.",
     "Source files left unchanged. All ten standalone bodies and citation URLs preserved; series export artifacts normalized into lists/tables.",
@@ -27,7 +27,7 @@
     "On November 17, the user approved the supervisor-deadline YouTube companion and requested its addition to the schedule. Slot 49 uses the next weekday, November 25, at 14:30 UTC. Slots 1–48, the approved prose, title, URL and interaction remain unchanged. The article and component now live only in production folders; merge and deployment install this queued release.",
     "On November 25, the user approved the forklift-maintenance YouTube companion and requested a shared PR for the daily posts queue. Slot 50 uses November 26 at 14:30 UTC. Slots 1–49, the accepted prose, title, URL and interaction are preserved. The article, illustration and required icon assets live in production folders; the existing publication gate controls release after merge and deployment.",
     "The original schedule for Nick’s November 24 recording placed the two articles one week apart. The revised dates are in slots 52 and 58.",
-    "November 25 schedule revision for PR #302. Slots 50–59 run on weekdays from November 26 through December 14 at 14:30 UTC. Between the three pairs of 3PL posts, Nick’s just-in-time article runs November 30, the forklift video December 4 and Nick’s WMS outage article December 11. The seventh 3PL post runs December 14. December 3, 9 and 10 are open."
+    "November 25 schedule revision for PR #302. Slots 50–59 fill every weekday from November 26 through December 9 at 14:30 UTC. Nick’s just-in-time delivery article runs November 30, the forklift video December 3, and Nick’s WMS outage article December 8. Thursday, December 10 is reserved for Nick’s third article in a subsequent PR."
   ],
   "slots": [
     {
@@ -977,8 +977,8 @@
     },
     {
       "slot": 55,
-      "date": "2026-12-04",
-      "weekday": "Friday",
+      "date": "2026-12-03",
+      "weekday": "Thursday",
       "group": "C",
       "groupLabel": "DataDocks Team",
       "sequenceInGroup": 25,
@@ -987,7 +987,7 @@
       "author": "DataDocks Team",
       "title": "Look beyond the repair bill when a forklift keeps breaking down",
       "slug": "forklift-breakdowns-beyond-repair-bill",
-      "pubDate": "2026-12-04T14:30:00.000Z",
+      "pubDate": "2026-12-03T14:30:00.000Z",
       "sourcePath": "internal/blog-staging/post-35-forklift-breakdowns/forklift-breakdowns-beyond-repair-bill.mdx",
       "sourceSha256": "231b53cd5ce585c3117be53f469226c0b82c345534fb8d4362f61cc07f0dddd6",
       "sourceBodySha256": "0b90ed6ccaeb95915aec363634b394ffd683c5af0a3f003c9cef28143bd7c1b0",
@@ -996,8 +996,8 @@
     },
     {
       "slot": 56,
-      "date": "2026-12-07",
-      "weekday": "Monday",
+      "date": "2026-12-04",
+      "weekday": "Friday",
       "group": "C",
       "groupLabel": "DataDocks Team",
       "sequenceInGroup": 26,
@@ -1006,7 +1006,7 @@
       "author": "DataDocks Team",
       "title": "How 3PLs can use receiving records to bill for extra handling",
       "slug": "billing-extra-handling",
-      "pubDate": "2026-12-07T14:30:00.000Z",
+      "pubDate": "2026-12-04T14:30:00.000Z",
       "sourcePath": "internal/blog-staging/post-42-billing-extra-handling/billing-extra-handling.mdx",
       "sourceSha256": "3bfe048a09042d410c3a8f217bbd43419562ebd422e65e6efb05ebb6b1b30f0f",
       "sourceBodySha256": "4aa693a4f60e23adaaee51ca03907e1fe74bc9fc6d668b828c51e6752e1382aa",
@@ -1015,8 +1015,8 @@
     },
     {
       "slot": 57,
-      "date": "2026-12-08",
-      "weekday": "Tuesday",
+      "date": "2026-12-07",
+      "weekday": "Monday",
       "group": "C",
       "groupLabel": "DataDocks Team",
       "sequenceInGroup": 27,
@@ -1025,7 +1025,7 @@
       "author": "DataDocks Team",
       "title": "When a 3PL should manage a client’s pickup bookings",
       "slug": "client-pickup-bookings",
-      "pubDate": "2026-12-08T14:30:00.000Z",
+      "pubDate": "2026-12-07T14:30:00.000Z",
       "sourcePath": "internal/blog-staging/post-43-client-pickup-bookings/client-pickup-bookings.mdx",
       "sourceSha256": "3b930f56a08cac3566c8c242dfeb0d16adc2533f0346838df030674c4f4eb160",
       "sourceBodySha256": "eb2e3361a77e390e42fc65fa6df37fd8d7495eaef03a3afb90f2c671f0d2a666",
@@ -1034,8 +1034,8 @@
     },
     {
       "slot": 58,
-      "date": "2026-12-11",
-      "weekday": "Friday",
+      "date": "2026-12-08",
+      "weekday": "Tuesday",
       "group": "B",
       "groupLabel": "Nick Rakovsky",
       "sequenceInGroup": 26,
@@ -1044,7 +1044,7 @@
       "author": "Nick Rakovsky",
       "title": "What can your warehouse ship while the WMS is down?",
       "slug": "shipping-during-a-wms-outage",
-      "pubDate": "2026-12-11T14:30:00.000Z",
+      "pubDate": "2026-12-08T14:30:00.000Z",
       "sourcePath": "internal/blog-staging/post-37-shipping-during-a-wms-outage/shipping-during-a-wms-outage.mdx",
       "sourceSha256": "fa9482c6a1a4fb3848d687dda984a7f92542fd6dda86fdbcac827111a5664e60",
       "sourceBodySha256": "660dbb4f7f54eff075af7e7b98ea742d1c705055b9bec42e2a469ee12641e9c0",
@@ -1053,8 +1053,8 @@
     },
     {
       "slot": 59,
-      "date": "2026-12-14",
-      "weekday": "Monday",
+      "date": "2026-12-09",
+      "weekday": "Wednesday",
       "group": "C",
       "groupLabel": "DataDocks Team",
       "sequenceInGroup": 28,
@@ -1063,7 +1063,7 @@
       "author": "DataDocks Team",
       "title": "Reclaiming receiving time from repeat driver calls and yard trips",
       "slug": "driver-calls-yard-trips",
-      "pubDate": "2026-12-14T14:30:00.000Z",
+      "pubDate": "2026-12-09T14:30:00.000Z",
       "sourcePath": "internal/blog-staging/post-44-driver-calls-yard-trips/driver-calls-yard-trips.mdx",
       "sourceSha256": "0dbc49e0bb8648ba16b3eca1d5c30f2741879a82e0b877f5b3d007415651301e",
       "sourceBodySha256": "e594b0546819876ce5ff2f938391c7b0617b21a782fa35922eb6c78cd20936b6",
