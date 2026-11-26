@@ -1,6 +1,7 @@
 ---
-import "./controls.css";
+import controlsCss from "./controls.css?inline";
 ---
+<style is:inline set:html={controlsCss} />
 <figure id="driver-time" class="dd-figure t2-applet not-prose a7-figure" aria-labelledby="a7-title">
   <h2 id="a7-title" class="dd-figure-title">When does texting drivers save time?</h2>
   <p>Giving 40 drivers directions takes a minute each. Ten need another call or a yard trip. Texting everyone and checking replies adds 20 minutes.</p>
@@ -36,10 +37,10 @@ import "./controls.css";
     <p style="margin:.35rem 0 0"><span class="a7-threshold a7-threshold3">Avoid 7 or more follow-ups to cover texting time.</span><span class="a7-threshold a7-threshold5">Avoid 4 or more follow-ups to cover texting time.</span><span class="a7-threshold a7-threshold7">Avoid 3 or more follow-ups to cover texting time.</span></p></div>
 </figure>
 
-<style>
+<style is:inline>
 .a7-controls { display:grid; gap:.85rem; }
 .a7-chart { margin:1.3rem 0; }
-.a7-chart-header { margin:0 0 .6rem; font-size:.875rem; font-weight:650; }
+.a7-figure .a7-chart-header { margin:0 0 .6rem; font-size:.875rem; font-weight:650; }
 .a7-plot { display:grid; grid-template-columns:3rem repeat(6,minmax(0,1fr)); }
 .a7-axis, .a7-field { position:relative; box-sizing:border-box; height:9rem; }
 .a7-axis { color:var(--dd-figure-muted); font-size:.875rem; font-variant-numeric:tabular-nums; }
@@ -55,7 +56,7 @@ import "./controls.css";
 .a7-even { top:71.42857%; height:3px; transform:translateY(-1px); background:var(--dd-figure-ink); }
 .a7-field { display:none; }
 .a7-tick { display:block; text-align:center; font-size:.875rem; line-height:1.6; font-variant-numeric:tabular-nums; margin-top:.22rem; }
-.a7-horizontal { margin:.4rem 0 0; text-align:center; font-size:.875rem; color:var(--dd-figure-muted); }
+.a7-figure .a7-horizontal { margin:.4rem 0 0; text-align:center; font-size:.875rem; color:var(--dd-figure-muted); }
 .a7-readout { padding-top:.85rem; border-top:1px solid var(--dd-figure-line); }
 .a7-outcome { display:none; }
 .a7-outcome strong { display:block; font-size:1.12rem; }

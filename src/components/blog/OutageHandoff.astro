@@ -126,11 +126,12 @@ for (const time of recoveryTimes) {
   </div>
 </figure>
 <style is:inline set:html={viewRules.join('\n')} />
-<style>
-  .outage-handoff { font-family: var(--dd-figure-font); container-type: inline-size; min-inline-size: 0; }
-  .outage-handoff :where(h3, p, fieldset) { margin: 0; }
-  .outage-handoff figcaption p, .oh-wms { font-size: 1rem; line-height: 1.5; }
-  .outage-handoff figcaption p { margin-top: .45rem; max-width: 65ch; }
+<style is:inline>
+.dd-figure.outage-handoff {
+  font-family: var(--dd-figure-font); container-type: inline-size; min-inline-size: 0;
+  & :where(h3, p, fieldset) { margin: 0; }
+  & figcaption p, .oh-wms { font-size: 1rem; line-height: 1.5; }
+  & figcaption p { margin-top: .45rem; max-width: 65ch; }
   .oh-controls { display: grid; gap: .8rem; margin: 1.2rem 0; }
   .oh-controls fieldset { min-inline-size: 0; padding: 0; border: 0; }
   .oh-controls legend { font-size: .9375rem; font-weight: 650; padding: 0; margin-bottom: .25rem; }
@@ -141,7 +142,6 @@ for (const time of recoveryTimes) {
     padding: .45rem .65rem; font-size: .9375rem; font-weight: 550; line-height: 1.35; }
   .oh-options input:checked + span { background: var(--dd-figure-selected-surface); color: var(--dd-figure-selected-ink); border-color: var(--dd-figure-selected-surface); }
   .oh-options input:focus-visible + span { outline: 2px solid var(--dd-figure-ink); outline-offset: 2px; }
-  .oh-wms { margin: .8rem 0 .6rem; }
   .oh-ledger { width: 100%; margin: 0; border-collapse: collapse; table-layout: fixed; font-size: .9375rem; line-height: 1.35; }
   .oh-ledger th, .oh-ledger td { text-align: start; padding: .5rem .6rem; border: 0; border-bottom: 1px solid var(--dd-figure-line); vertical-align: middle; }
   .oh-ledger thead th { font-weight: 650; background: var(--dd-figure-surface); }
@@ -149,7 +149,7 @@ for (const time of recoveryTimes) {
   .oh-ledger tbody th { font-weight: 400; }
   .oh-ledger time, .oh-document, .oh-gap small { color: var(--dd-figure-muted); font-size: .875rem; font-variant-numeric: tabular-nums; }
   .oh-document, .oh-gap small { display: block; }
-  .oh-ledger [data-release="list"], .outage-handoff:has(.oh-release-changes:checked) [data-release="change"] { --oh-bay-offset: 35px; --oh-sent: inline; --oh-held: none; }
+  .oh-ledger [data-release="list"], &:has(.oh-release-changes:checked) [data-release="change"] { --oh-bay-offset: 35px; --oh-sent: inline; --oh-held: none; }
   .oh-movement { max-width: 5.5rem; }
   .oh-movement svg { display: block; width: 100%; height: auto; }
   .oh-bay, .oh-vehicle, .oh-trailer { fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.5; }
@@ -179,4 +179,5 @@ for (const time of recoveryTimes) {
   @media (forced-colors: active) {
     .oh-options input:checked + span { outline: 2px solid Highlight; }
   }
+}
 </style>

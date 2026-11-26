@@ -1,6 +1,7 @@
 ---
-import "./controls.css";
+import controlsCss from "./controls.css?inline";
 ---
+<style is:inline set:html={controlsCss} />
 <figure id="pickup" class="dd-figure t2-applet not-prose a6-figure" aria-labelledby="a6-title">
   <h2 id="a6-title" class="dd-figure-title">Who handles carrier changes?</h2>
   <p>Ten pickups move 100 pallets a week. The warehouse spends 2 minutes confirming each booking. A carrier change adds 8 minutes.</p>
@@ -32,7 +33,7 @@ import "./controls.css";
   <p class="a6-release">Booking time excludes the warehouse’s check of the release reference at pickup.</p>
 </figure>
 
-<style>
+<style is:inline>
 .a6-figure { --a6-change-width: 0%; }
 .a6-figure:has(#a6-three:checked) { --a6-change-width: 30%; }
 .a6-figure:has(#a6-six:checked) { --a6-change-width: 60%; }

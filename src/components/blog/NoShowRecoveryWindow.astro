@@ -1,6 +1,7 @@
 ---
-import "./controls.css";
+import controlsCss from "./controls.css?inline";
 ---
+<style is:inline set:html={controlsCss} />
 <figure id="no-shows" class="dd-figure t2-applet not-prose a1-figure" aria-labelledby="a1-title">
   <h2 id="a1-title" class="dd-figure-title">Can the client still book a replacement?</h2>
   <p>The truck is due at 2 p.m. Replacement bookings close at 3 p.m.</p>
@@ -41,7 +42,7 @@ import "./controls.css";
   </div>
 </figure>
 
-<style>
+<style is:inline>
 .a1-figure {
   --a1-report: 0%;
   --a1-notice: 8.333333%;
@@ -53,7 +54,7 @@ import "./controls.css";
 .a1-figure:has(#a1-late:checked):has(#a1-slow:checked) { --a1-notice: 83.333333%; --a1-recovery: 0%; }
 .a1-controls { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
 .a1-controls fieldset { min-width: 0; }
-.a1-controls label { display: flex; align-items: baseline; gap: .4rem; }
+.dd-figure.a1-figure .a1-controls label { display: flex; align-items: baseline; gap: .4rem; }
 .a1-controls input { flex: none; }
 .a1-plot { margin: 1.2rem .55rem .75rem; padding: .1rem 0 .2rem; }
 .a1-axis { position: relative; height: 3.1rem; font-size: .875rem; font-weight: 650; font-variant-numeric: tabular-nums; }

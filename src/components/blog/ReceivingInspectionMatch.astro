@@ -1,6 +1,7 @@
 ---
-import "./controls.css";
+import controlsCss from "./controls.css?inline";
 ---
+<style is:inline set:html={controlsCss} />
 <figure id="inspection" class="dd-figure t2-applet not-prose a3-figure" aria-labelledby="a3-title">
   <h2 class="dd-figure-title" id="a3-title">Does the claimed carton match the receiving record?</h2>
   <p>At unloading, three cartons on pallet B had crushed edges.</p>
@@ -41,7 +42,7 @@ import "./controls.css";
   </div>
 </figure>
 
-<style>
+<style is:inline>
 .a3-controls {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);

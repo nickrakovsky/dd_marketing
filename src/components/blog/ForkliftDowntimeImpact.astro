@@ -1,10 +1,11 @@
 ---
-import './forklift-downtime-impact.css';
+import forkliftStyles from './forklift-downtime-impact.css?inline';
 import workingForklift from '../../assets/blog-images/forklift-downtime-working.webp';
 import repairForklift from '../../assets/blog-images/forklift-downtime-repair.webp';
 const id = `forklift-impact-${crypto.randomUUID()}`;
 ---
 
+<style is:inline set:html={forkliftStyles} />
 <figure class="dd-figure not-prose forklift-downtime-impact" data-forklift-impact aria-labelledby={`${id}-title`}>
   <header class="fdi-heading">
     <h3 class="dd-figure-title" id={`${id}-title`}>The repair ends.<br />Does the queue?</h3>

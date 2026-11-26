@@ -1,6 +1,7 @@
 ---
-import "./controls.css";
+import controlsCss from "./controls.css?inline";
 ---
+<style is:inline set:html={controlsCss} />
 <figure id="overlap" class="dd-figure t2-applet not-prose a2-figure" aria-labelledby="a2-title">
   <h2 id="a2-title" class="dd-figure-title">When can the second client unload?</h2>
   <p>Door B is free. The second load needs a lift and an operator for half an hour.</p>
@@ -50,7 +51,7 @@ import "./controls.css";
   </div>
 </figure>
 
-<style>
+<style is:inline>
 .a2-figure {
   --a2-request-column: 3;
   --a2-offer-column: var(--a2-request-column);

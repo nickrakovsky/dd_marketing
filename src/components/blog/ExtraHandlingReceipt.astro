@@ -1,6 +1,7 @@
 ---
-import "./controls.css";
+import controlsCss from "./controls.css?inline";
 ---
+<style is:inline set:html={controlsCss} />
 <figure id="handling" class="dd-figure t2-applet not-prose a5-figure" aria-labelledby="a5-title">
   <h2 class="dd-figure-title" id="a5-title">What can you bill for 18 pallets?</h2>
   <p>The client pays $8 per pallet received, plus $12 per pallet built from loose cartons.</p>
@@ -47,7 +48,7 @@ import "./controls.css";
   </div>
 </figure>
 
-<style>
+<style is:inline>
 .a5-figure {
   --a5-pattern: repeating-linear-gradient(135deg, var(--dd-figure-ink) 0 1.5px, var(--dd-figure-surface) 1.5px 5.5px);
 }

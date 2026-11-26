@@ -365,6 +365,21 @@ export default {
   }
   assert.ok(ready, 'Cloudflare production Worker did not start within 60 seconds');
 
+  // Importing a figure in the article renderer must not ship its CSS to other articles.
+  const yardGuide = await request('/posts/best-yard-management-options', Date.parse(manifest.previewAsOf));
+  assert.equal(yardGuide.response.status, 200);
+  const yardPage = JSDOM.fragment(yardGuide.text);
+  const articleOnlyStyles = /\.(?:t2-applet|a[1-7]-figure|delivery-cost|outage-handoff|forklift-downtime-impact)\b/;
+  const sheets = new Set([...yardPage.querySelectorAll('link[rel="stylesheet"], link[as="style"]')]
+    .map(link => link.getAttribute('href')).filter(href => href?.startsWith('/_astro/')));
+  for (const style of yardPage.querySelectorAll('style')) assert.doesNotMatch(style.textContent, articleOnlyStyles);
+  for (const href of sheets) {
+    const sheet = await fetch(new URL(href, origin));
+    assert.equal(sheet.status, 200, href);
+    assert.doesNotMatch(await sheet.text(), articleOnlyStyles, `Scheduled illustration styles leaked into ${href}`);
+  }
+  checks++;
+
   // Both public sitemap entry points must point at the request-time post sitemap.
   for (const path of ['/sitemap.xml', '/sitemap-index.xml']) {
     const { response, text } = await request(path, Date.parse(slots[0].pubDate) - 1);
