@@ -1,0 +1,124 @@
+---
+import forkliftStyles from './forklift-downtime-impact.css?inline';
+import workingForklift from '../../assets/blog-images/forklift-downtime-working.webp';
+import repairForklift from '../../assets/blog-images/forklift-downtime-repair.webp';
+const id = `forklift-impact-${crypto.randomUUID()}`;
+---
+
+<style is:inline set:html={forkliftStyles} />
+<figure class="dd-figure not-prose forklift-downtime-impact" data-forklift-impact aria-labelledby={`${id}-title`}>
+  <header class="fdi-heading">
+    <h3 class="dd-figure-title" id={`${id}-title`}>The repair ends.<br />Does the queue?</h3>
+  </header>
+
+  <div class="fdi-fleet" aria-label="Two working forklifts each handle 10 pallets per hour. A third forklift is under repair.">
+    {[0, 1, 2].map(index => (
+      <div class="fdi-truck">
+        <img src={index === 2 ? repairForklift.src : workingForklift.src} width={workingForklift.width} height={workingForklift.height} alt="" loading="lazy" decoding="async" />
+        <p>{index === 2 ? 'Under repair' : <>10 pallets<br />per hour</>}</p>
+      </div>
+    ))}
+  </div>
+
+  <fieldset class="fdi-controls" disabled data-controls aria-label="Adjust workload and repair time">
+    <div class="fdi-slider-control">
+      <div class="fdi-range-heading"><label for={`${id}-demand`}>Incoming work</label><output for={`${id}-demand`} data-demand-output>25 <span class="fdi-units-full">pallets per hour</span><span class="fdi-units-short">pallets/h</span></output></div>
+      <div class="fdi-slider" style="--fdi-progress:66.666667%">
+        <input id={`${id}-demand`} name="demand" type="range" min="15" max="30" step="1" value="25" aria-valuetext="25 pallets per hour" aria-controls={`${id}-result`} />
+        <div class="fdi-ticks" aria-hidden="true">{Array.from({ length: 16 }, (_, index) => <span class:list={{ 'fdi-tick-threshold': index === 5 || index === 15 }} />)}</div>
+      </div>
+      <div class="fdi-range-labels fdi-demand-labels" aria-hidden="true"><span>15</span><span>20</span><span>30</span></div>
+    </div>
+    <div class="fdi-slider-control">
+      <div class="fdi-range-heading"><label for={`${id}-duration`}>Repair time</label><output for={`${id}-duration`} data-duration>2 hours</output></div>
+      <div class="fdi-slider" style="--fdi-progress:42.857143%">
+        <input id={`${id}-duration`} name="duration" type="range" min="30" max="240" step="15" value="120" aria-valuetext="2 hours" aria-controls={`${id}-result`} />
+        <div class="fdi-ticks" aria-hidden="true">{Array.from({ length: 15 }, () => <span />)}</div>
+      </div>
+      <div class="fdi-range-labels" aria-hidden="true"><span>30 min</span><span>4 hours</span></div>
+    </div>
+  </fieldset>
+
+  <div class="fdi-result" id={`${id}-result`} role="status" aria-live="polite" aria-atomic="true">
+    <div class="fdi-metrics">
+      <p><strong data-waiting>10 pallets</strong><span>waiting at return</span></p>
+      <p><strong data-catchup>2h</strong><span data-catchup-label>catch-up time</span></p>
+    </div>
+    <p class="fdi-explanation" data-explanation>5 pallets per hour build up. After repair, 5 extra pallets per hour can be handled.</p>
+  </div>
+
+  <details class="fdi-assumptions">
+    <summary class="dd-disclosure">How this works <svg class="dd-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></summary>
+    <p>Each forklift handles 10 pallets per hour. Incoming work stays steady; after the repair, any spare capacity is used to clear the queue.</p>
+  </details>
+  <noscript><p class="fdi-static">At 25 pallets per hour and a 2-hour repair, 10 pallets of work wait. Clearing them takes another 2 hours.</p></noscript>
+</figure>
+
+<script>
+  function initializeForkliftImpacts() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-forklift-impact]');
+    figures.forEach(figure => {
+      if (figure.dataset.bound === 'true') return;
+      const controls = figure.querySelector<HTMLFieldSetElement>('[data-controls]')!;
+      const demandInput = figure.querySelector<HTMLInputElement>('[name="demand"]')!;
+      const durationInput = figure.querySelector<HTMLInputElement>('[name="duration"]')!;
+      const demandSlider = demandInput.closest<HTMLElement>('.fdi-slider')!;
+      const durationSlider = durationInput.closest<HTMLElement>('.fdi-slider')!;
+      const demandText = figure.querySelector<HTMLOutputElement>('[data-demand-output]')!.firstChild!;
+      const write = (selector: string, value: string) => {
+        const target = figure.querySelector<HTMLElement>(selector)!;
+        target.textContent = value;
+      };
+      const number = (value: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(value);
+      const duration = (minutes: number) => {
+        const hours = Math.floor(minutes / 60);
+        const remaining = minutes % 60;
+        return [hours ? `${hours} ${hours === 1 ? 'hour' : 'hours'}` : '', remaining ? `${remaining} min` : ''].filter(Boolean).join(' ');
+      };
+      const shortDuration = (minutes: number) => {
+        const hours = Math.floor(minutes / 60);
+        const remaining = minutes % 60;
+        return [hours ? `${hours}h` : '', remaining ? `${remaining}m` : ''].filter(Boolean).join(' ');
+      };
+      function update() {
+        const demand = Number(demandInput.value);
+        const minutes = Number(durationInput.value);
+        const hourlyQueue = Math.max(0, demand - 20);
+        const waiting = hourlyQueue * minutes / 60;
+        const catchupCapacity = 30 - demand;
+        const catchupMinutes = waiting > 0 && catchupCapacity > 0 ? waiting / catchupCapacity * 60 : 0;
+        const roundedCatchup = Math.round(catchupMinutes);
+        const approximate = Math.abs(catchupMinutes - roundedCatchup) > 0.000001;
+        const repairTime = duration(minutes);
+        write('[data-duration]', repairTime);
+        durationInput.setAttribute('aria-valuetext', repairTime);
+        demandInput.setAttribute('aria-valuetext', `${demand} pallets per hour`);
+        demandText.textContent = `${demand} `;
+        demandSlider.style.setProperty('--fdi-progress', `${(demand - 15) / 15 * 100}%`);
+        durationSlider.style.setProperty('--fdi-progress', `${(minutes - 30) / 210 * 100}%`);
+        write('[data-waiting]', `${number(waiting)} ${waiting === 1 ? 'pallet' : 'pallets'}`);
+        write('[data-catchup-label]', 'catch-up time');
+        if (waiting === 0) {
+          write('[data-catchup]', 'None');
+          write('[data-explanation]', demand < 20
+            ? `The two working forklifts have ${20 - demand} pallets per hour of spare capacity. No queue builds.`
+            : 'The two working forklifts exactly keep up. No queue builds.');
+        } else if (catchupCapacity === 0) {
+          write('[data-catchup]', 'Won’t clear');
+          write('[data-catchup-label]', 'at 30 pallets per hour');
+          write('[data-explanation]', 'After repair, new work uses all 30 pallets per hour. The queue cannot clear.');
+        } else {
+          write('[data-catchup]', catchupMinutes < 1 ? '<1m' : `${approximate ? '≈ ' : ''}${shortDuration(roundedCatchup)}`);
+          write('[data-explanation]', `${hourlyQueue} pallets per hour build up. After repair, ${catchupCapacity} extra pallets per hour can be handled.`);
+        }
+      }
+      controls.addEventListener('input', update);
+      controls.addEventListener('change', update);
+      update();
+      figure.dataset.bound = 'true';
+      controls.disabled = false;
+    });
+  }
+  initializeForkliftImpacts();
+  document.addEventListener('astro:page-load', initializeForkliftImpacts);
+</script>

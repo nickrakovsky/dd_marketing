@@ -1,0 +1,85 @@
+---
+import controlsCss from "./controls.css?inline";
+---
+<style is:inline set:html={controlsCss} />
+<figure id="handling" class="dd-figure t2-applet not-prose a5-figure" aria-labelledby="a5-title">
+  <h2 class="dd-figure-title" id="a5-title">What can you bill for 18 pallets?</h2>
+  <p>The client pays $8 per pallet received, plus $12 per pallet built from loose cartons.</p>
+  <div class="a5-controls">
+    <fieldset>
+      <legend>Pallets the crew built</legend>
+      <label><input id="a5-0" type="radio" name="a5-built"> 0</label>
+      <label><input id="a5-6" type="radio" name="a5-built"> 6</label>
+      <label><input id="a5-12" type="radio" name="a5-built" checked> 12</label>
+    </fieldset>
+    <fieldset>
+      <legend>Receipt records</legend>
+      <label><input id="a5-only" type="radio" name="a5-receipt" checked> Total only</label>
+      <label><input id="a5-detail" type="radio" name="a5-receipt"> Total and build count</label>
+    </fieldset>
+  </div>
+  <div class="a5-result" aria-live="polite" aria-atomic="true">
+    <div class="a5-panels">
+      <div>
+        <p class="a5-caption"><strong>On the dock</strong></p>
+        <div class="a5-grid a5-dock" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <p class="a5-key"><span><i class="a5-intact" aria-hidden="true"></i><b class="a5-n0">18</b><b class="a5-n6">12</b><b class="a5-n12">6</b> intact</span> <span><i class="a5-built" aria-hidden="true"></i><b class="a5-n0">0</b><b class="a5-n6">6</b><b class="a5-n12">12</b> crew-built</span></p>
+      </div>
+      <div>
+        <p class="a5-caption"><strong>On the receipt</strong></p>
+        <div class="a5-grid a5-record" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <p class="a5-key"><span class="a5-unknown"><i class="a5-blank" aria-hidden="true"></i>18 pallets, build count missing</span><span class="a5-known"><span><i class="a5-intact" aria-hidden="true"></i><b class="a5-n0">18</b><b class="a5-n6">12</b><b class="a5-n12">6</b> intact</span> <span><i class="a5-built" aria-hidden="true"></i><b class="a5-n0">0</b><b class="a5-n6">6</b><b class="a5-n12">12</b> crew-built</span></span></p>
+      </div>
+    </div>
+    <div class="a5-invoice">
+      <p><span>Receiving · 18 × $8</span><b>$144</b></p>
+      <p><span>Pallet building<span class="a5-known"> · <span class="a5-n0">0</span><span class="a5-n6">6</span><span class="a5-n12">12</span> × $12</span></span><b><span class="a5-unknown">$0</span><span class="a5-known"><span class="a5-n0">$0</span><span class="a5-n6">$72</span><span class="a5-n12">$144</span></span></b></p>
+      <p class="a5-total"><strong>Supported invoice</strong><b><span class="a5-unknown">$144</span><span class="a5-known"><span class="a5-n0">$144</span><span class="a5-n6">$216</span><span class="a5-n12">$288</span></span></b></p>
+    </div>
+    <p class="a5-readout"><span class="a5-unknown"><span class="a5-n0">A blank count could mean zero or an omission.</span><span class="a5-n6">The missing count leaves $72 unbilled.</span><span class="a5-n12">The missing count leaves $144 unbilled.</span></span><span class="a5-known"><span class="a5-n0">All 18 arrived as pallets. No build charge applies.</span><span class="a5-n6">Charging for all 18 would overbill by $144.</span><span class="a5-n12">Charging for all 18 would overbill by $72.</span></span></p>
+  </div>
+</figure>
+
+<style is:inline>
+.a5-figure {
+  --a5-pattern: repeating-linear-gradient(135deg, var(--dd-figure-ink) 0 1.5px, var(--dd-figure-surface) 1.5px 5.5px);
+}
+.a5-controls, .a5-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
+.a5-result { margin-top: 1.25rem; }
+.a5-figure .a5-caption { margin: 0 0 .55rem; font-size: 1rem; line-height: 1.35; }
+.a5-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .35rem; }
+.a5-grid i {
+  display: block; box-sizing: border-box; aspect-ratio: 1.75; max-height: 2rem;
+  background: var(--dd-figure-paper); border: 1.5px solid var(--dd-figure-ink);
+  border-bottom-width: 3px; border-radius: 2px;
+}
+.a5-figure:has(#a5-6:checked) .a5-dock i:nth-last-child(-n+6),
+.a5-figure:has(#a5-12:checked) .a5-dock i:nth-last-child(-n+12),
+.a5-figure:has(#a5-detail:checked):has(#a5-6:checked) .a5-record i:nth-last-child(-n+6),
+.a5-figure:has(#a5-detail:checked):has(#a5-12:checked) .a5-record i:nth-last-child(-n+12),
+.a5-key i.a5-built { background: var(--a5-pattern); }
+.a5-figure:has(#a5-only:checked) .a5-record i, .a5-key i.a5-blank { border: 1.5px dashed var(--dd-figure-muted); background: var(--dd-figure-surface); }
+.a5-figure .a5-key { margin: .5rem 0 0; font-size: .875rem; color: var(--dd-figure-muted); line-height: 1.55; }
+.a5-key > span, .a5-known > span { display: inline-block; }
+.a5-key i { display: inline-block; width: .75rem; height: .75rem; margin-right: .27rem; vertical-align: -.03rem; border: 1px solid var(--dd-figure-ink); box-sizing: border-box; }
+.a5-key span + span i { margin-left: .32rem; }
+.a5-invoice { max-width: 35rem; margin: 1rem 0 .65rem; padding: .7rem .9rem; border: 1px solid var(--dd-figure-line); background: var(--dd-figure-surface); }
+.a5-invoice p { display: flex; justify-content: space-between; gap: .5rem; margin: .2rem 0; font-size: .925rem; line-height: 1.5; }
+.a5-invoice p b { align-self: end; color: var(--dd-figure-ink); font-variant-numeric: tabular-nums; }
+.a5-invoice .a5-total { margin-top: .5rem; padding-top: .35rem; border-top: 1px solid var(--dd-figure-line); font-size: 1rem; }
+.a5-figure .a5-readout { margin: 0; font-size: 1rem; line-height: 1.5; }
+.a5-figure :is(.a5-known, .a5-unknown, .a5-n0, .a5-n6, .a5-n12) { display: none; }
+.a5-figure:has(#a5-only:checked) .a5-unknown,
+.a5-figure:has(#a5-detail:checked) .a5-known,
+.a5-figure:has(#a5-0:checked) .a5-n0,
+.a5-figure:has(#a5-6:checked) .a5-n6,
+.a5-figure:has(#a5-12:checked) .a5-n12 { display: inline; }
+</style>

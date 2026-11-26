@@ -1,0 +1,91 @@
+---
+import controlsCss from "./controls.css?inline";
+---
+<style is:inline set:html={controlsCss} />
+<figure id="no-shows" class="dd-figure t2-applet not-prose a1-figure" aria-labelledby="a1-title">
+  <h2 id="a1-title" class="dd-figure-title">Can the client still book a replacement?</h2>
+  <p>The truck is due at 2 p.m. Replacement bookings close at 3 p.m.</p>
+  <div class="a1-controls">
+    <fieldset>
+      <legend>First warning</legend>
+      <label><input type="radio" name="a1-evidence" id="a1-early" checked> 1 p.m. — Dispatch says the truck will miss its slot</label>
+      <label><input type="radio" name="a1-evidence" id="a1-late"> 2:15 p.m. — No gate entry or dispatch confirmation</label>
+    </fieldset>
+    <fieldset>
+      <legend>Time to notify the client</legend>
+      <label><input type="radio" name="a1-notice" id="a1-fast" checked> 15 minutes</label>
+      <label><input type="radio" name="a1-notice" id="a1-slow"> 75 minutes</label>
+    </fieldset>
+  </div>
+  <div class="a1-plot" aria-hidden="true">
+    <div class="a1-axis">
+      <span>1 p.m.</span><span>2 p.m.<small>Booked</small></span><span>3 p.m.<small>Cutoff</small></span><span>4 p.m.</span>
+    </div>
+    <div class="a1-lane">
+      <div class="a1-bar a1-notice-bar"></div>
+    </div>
+    <div class="a1-lane">
+      <div class="a1-bar a1-recovery-bar"></div>
+    </div>
+  </div>
+  <div class="a1-key">
+    <div><i class="a1-swatch a1-handling" aria-hidden="true"></i><span>Time to notify client</span><strong class="a1-delay15">15 min</strong><strong class="a1-delay75">75 min</strong></div>
+    <div><i class="a1-swatch a1-window" aria-hidden="true"></i><span>Time left to book</span>
+      <strong class="a1-state a1-ef">105 min</strong><strong class="a1-state a1-es">45 min</strong><strong class="a1-state a1-lf">30 min</strong><strong class="a1-state a1-ls">0 min</strong>
+    </div>
+  </div>
+  <div class="a1-reading" aria-live="polite" aria-atomic="true">
+    <p class="a1-state a1-ef">Client notified at <strong>1:15 p.m.</strong></p>
+    <p class="a1-state a1-es">Client notified at <strong>2:15 p.m.</strong></p>
+    <p class="a1-state a1-lf">Client notified at <strong>2:30 p.m.</strong></p>
+    <p class="a1-state a1-ls">Client notified at <strong>3:30 p.m.</strong>, half an hour past cutoff.</p>
+  </div>
+</figure>
+
+<style is:inline>
+.a1-figure {
+  --a1-report: 0%;
+  --a1-notice: 8.333333%;
+  --a1-recovery: 58.333334%;
+}
+.a1-figure:has(#a1-early:checked):has(#a1-slow:checked) { --a1-notice: 41.666667%; --a1-recovery: 25%; }
+.a1-figure:has(#a1-late:checked) { --a1-report: 41.666667%; }
+.a1-figure:has(#a1-late:checked):has(#a1-fast:checked) { --a1-notice: 50%; --a1-recovery: 16.666667%; }
+.a1-figure:has(#a1-late:checked):has(#a1-slow:checked) { --a1-notice: 83.333333%; --a1-recovery: 0%; }
+.a1-controls { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.a1-controls fieldset { min-width: 0; }
+.dd-figure.a1-figure .a1-controls label { display: flex; align-items: baseline; gap: .4rem; }
+.a1-controls input { flex: none; }
+.a1-plot { margin: 1.2rem .55rem .75rem; padding: .1rem 0 .2rem; }
+.a1-axis { position: relative; height: 3.1rem; font-size: .875rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.a1-axis > span { position: absolute; top: 0; }
+.a1-axis > span:nth-child(1) { left: 0; }
+.a1-axis > span:nth-child(2) { left: 33.333333%; transform: translateX(-50%); }
+.a1-axis > span:nth-child(3) { left: 66.666667%; transform: translateX(-50%); }
+.a1-axis > span:nth-child(4) { right: 0; }
+.a1-axis small { display: block; font-size: .875rem; font-weight: 400; color: var(--dd-figure-muted); text-align: center; line-height: 1.2; }
+.a1-lane { position: relative; height: 1.6rem; box-shadow: inset 0 -1px var(--dd-figure-line); background: var(--dd-figure-surface); }
+.a1-lane + .a1-lane { margin-top: .28rem; }
+.a1-lane::before, .a1-lane::after { content: ""; position: absolute; z-index: 1; top: 0; bottom: 0; border-left: 1px dashed var(--dd-figure-muted); }
+.a1-lane::before { left: 33.333333%; }
+.a1-lane::after { left: 66.666667%; border-left-style: solid; }
+.a1-bar { position: absolute; top: .28rem; bottom: .28rem; box-sizing: border-box; }
+.a1-notice-bar { left: var(--a1-report); width: calc(var(--a1-notice) - var(--a1-report)); background: var(--dd-figure-selected-surface); }
+.a1-recovery-bar { left: var(--a1-notice); width: var(--a1-recovery); }
+.a1-recovery-bar, .a1-window { background: repeating-linear-gradient(135deg,var(--dd-figure-surface) 0 4px,var(--dd-figure-ink) 4px 5px); outline: 1px solid var(--dd-figure-ink); outline-offset: -1px; }
+.a1-figure:has(#a1-late:checked):has(#a1-slow:checked) .a1-recovery-bar { display: none; }
+.a1-key { margin: .6rem 0; display: grid; gap: .3rem; }
+.a1-key > div { display: grid; grid-template-columns: .95rem minmax(0,1fr) auto; align-items: baseline; gap: .55rem; font-size: 1rem; }
+.a1-key strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.a1-swatch { height: .67rem; display: inline-block; align-self: center; }
+.a1-handling { background: var(--dd-figure-selected-surface); }
+.a1-reading { border-top: 1px solid var(--dd-figure-line); margin-top: .75rem; padding-top: .65rem; }
+.a1-reading p { margin: 0; font-size: 1rem; line-height: 1.55; }
+.a1-state, .a1-delay75, .a1-figure:has(#a1-slow:checked) .a1-delay15 { display: none; }
+.a1-figure:has(#a1-slow:checked) .a1-delay75,
+.a1-figure:has(#a1-early:checked):has(#a1-fast:checked) .a1-ef,
+.a1-figure:has(#a1-early:checked):has(#a1-slow:checked) .a1-es,
+.a1-figure:has(#a1-late:checked):has(#a1-fast:checked) .a1-lf,
+.a1-figure:has(#a1-late:checked):has(#a1-slow:checked) .a1-ls { display: block; }
+@media (max-width: 42rem) { .a1-controls { grid-template-columns: 1fr; } }
+</style>

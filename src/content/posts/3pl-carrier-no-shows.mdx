@@ -1,0 +1,59 @@
+---
+title: "Reporting carrier no-shows before they become client disputes"
+author: "DataDocks Team"
+category: "Facility Operations"
+description: "Decide when to alert a 3PL client about a missed carrier appointment, what to verify at the dock and what to record if the handling charge is disputed."
+pubDate: "2026-11-26T06:30:00-08:00"
+cardImage: "../../assets/blog-images/carrier-scorecards-cover.webp"
+cardAlt: "Carrier performance scorecard tracking logistics measures."
+postType:
+  discriminant: article
+  value: {}
+---
+
+It’s Monday morning. A client calls your 3PL about stock they expected on Friday. They’ve already told their sales team the stock is at your warehouse. On Friday’s receiving sheet, the carrier has a 2 p.m. appointment and the arrival time is blank. The client now wants answers to two questions. Where is the load? And when did anyone at your warehouse know it hadn’t arrived?
+
+The carrier may be the only party able to locate the truck. By now the account manager has to arrange the next receipt and explain Friday’s silence. There was a chance to keep this a conversation about the freight while receiving was still open, when the shift could tell the client what it knew and someone still had time to do something about it.
+
+## Give the client the information it can act on
+
+If dispatch reports a breakdown, the warehouse can identify the affected appointment and offer another receiving window. A blank arrival cell takes more care. The shift lead can check the gate sign-in and ask whether a driver checked in under a different reference. In either case, the client may still have a chance to send another truck.
+
+<NoShowRecoveryWindow />
+
+At 2:30 the account desk can write, “We have no arrival recorded for the 2 p.m. delivery on PO 4186. Receiving checked both entrances. We’ve asked dispatch for an ETA. Replacement bookings close at 3 p.m. We’ll call you again by 2:45.” The PO tells the client which stock to flag to sales. The promised call leaves time to act.
+
+Mastio president Kevin Huntsman described the same information gap to *Transport Topics*. A carrier already knows it will miss the stop while the receiver is still standing on the dock expecting it. Among 1,647 less-than-truckload shippers in Mastio’s 2026 survey, timely customer-service responses moved from tenth to eighth among the attributes they valued.<Cite id="1" title="LTL shippers increasingly want timely responses, proactiveness" citation="Greenhalgh, 2026" /> The receiver in that example could have used an update as soon as the carrier knew.
+
+## Read the client agreement before setting the cutoff
+
+A 3PL selling transportation may have accepted a specific obligation to report delays. Under its agreement with McCain Foods USA, Leeway Global Logistics had to promptly notify both McCain’s logistics coordinator and its logistics department and give the reason for a delay or missed appointment. The agreement specified an EDI 214, an electronic shipment-status message.<Cite id="2" title="Food Transportation Services Agreement (Carrier or Broker)" citation="McCain Foods USA and Leeway Global Logistics, 2019" /> On that account, an email at the end of the shift would leave the contracted transmission outstanding.
+
+In a multi-client warehouse, put the agreed recipient, channel and timing where the person handling the exception can find them. If dispatch tells the transport team about the breakdown, name who will send the notice. If receiving discovers the gap at closing, name who carries the open booking into the next shift. Both teams can have accurate records and still leave the client waiting if each expects the other to make contact.
+
+A useful service measure is the time between the first credible indication of a problem and the outbound notice. Start with a few missed stops and compare that interval with the account’s terms. Flores and Primo documented a Brazilian 3PL that set separate response targets for customer information requests and complaints.<Cite id="3" title="Failure Recovery Management in Performance of Logistics Services in a B2B Context" citation="Flores and Primo, 2008" /> A warehouse can apply that distinction to its own review. How many exceptions did the team report while the client could still act, and how many first came to account management as complaints?
+
+When dispatch gets a call before the appointment, measuring from the booked time hides part of the delay. Check how long the news stayed with dispatch while receiving still expected the truck. That is a handoff the two teams can fix together.
+
+## Settle the appointment status before billing the account
+
+Suppose dispatch later produces a signed gate ticket. The driver did arrive on Friday, more than an hour after the appointment, and receiving had already closed the row. The warehouse can update the client with the arrival time, correct its performance record and check which charge the account terms allow. Keep Friday’s message alongside the correction. It explains what the warehouse could establish when it first raised the alarm.
+
+GoBolt’s published receiving policy illustrates the distinction. It lists a $100 charge for a booked delivery whose carrier fails to appear. A truck arriving more than an hour early or late falls under a separate category, with a possible $100 charge or rejection.<Cite id="4" title="Warehouse receiving non-compliance fees" citation="GoBolt, 2024" /> Even where two charges have the same dollar value, calling an arrival a no-show gives the client grounds to challenge both the invoice and its carrier’s performance record.
+
+## Close the shift with a named owner
+
+With a spreadsheet and a shared inbox, give one person the remaining open rows before the shift ends. Beside each booking, enter the last check, who was contacted, when the next update is due and who will send it. Link the outgoing message to the booking. If an account requires acknowledgement and none comes back, the open row tells the next person exactly what needs chasing.
+
+For accounts that want no-shows emailed at closing, DataDocks can use a <SmartLink href="https://docs.datadocks.com/locations/current/advanced/location-settings/" anchorText="fixed daily cutoff" title="Location Settings" snippet="DataDocks documentation" /> and send notifications for appointments that still have no arrival recorded. The appointment’s audit log lets staff see the recipient and send time. A daily cutoff is a useful backstop on a busy Friday. A breakdown that dispatch reported hours earlier still gets the notice its account requires.
+
+Come Monday, the account manager can open one booking, explain what the team knew on Friday and move straight to the next delivery plan. If the warehouse missed a promised update, it can own that part of the recovery. Either way, the client gets someone who knows the history and can do something about the freight.
+
+## Bibliography
+
+<ul>
+  <BibliographyItem id="1">Keiron Greenhalgh. October 26, 2026. “LTL shippers increasingly want timely responses, proactiveness.” Transport Topics. <a href="https://www.ttnews.com/articles/ltl-shippers-timely-responses">View source</a></BibliographyItem>
+  <BibliographyItem id="2">McCain Foods USA, Inc., and Leeway Global Logistics. May 17, 2019. “Food Transportation Services Agreement (Carrier or Broker),” § 4(i)(ii). Exhibit 10.1, U.S. Securities and Exchange Commission. <a href="https://www.sec.gov/Archives/edgar/data/1888780/000157587222000528/cm102_ex10-1.htm">View source</a></BibliographyItem>
+  <BibliographyItem id="3">Luis Antonio Figueira Sanches Flores and Marcos André Mendes Primo. 2008. “Failure Recovery Management in Performance of Logistics Services in a B2B Context: A Case Study Using the 3PL Perspective.” Journal of Operations and Supply Chain Management 1(1), 29–40, especially p. 36. <a href="https://ageconsearch.umn.edu/record/289306/files/11644.pdf#page=8">View source</a></BibliographyItem>
+  <BibliographyItem id="4">GoBolt. August 27, 2024. “I’d like to inquire about warehouse receving non-compliance fees.” Merchant Help Centre. <a href="https://merchant.help.gobolt.com/en/articles/2652289">View source</a></BibliographyItem>
+</ul>

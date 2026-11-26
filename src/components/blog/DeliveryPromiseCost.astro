@@ -1,0 +1,184 @@
+---
+const deadlines = [12, 14, 16];
+const misses = [1, 2, 4];
+const deliveries = 10;
+const plans = [
+  { name: 'Next regular run', terms: 'Usual freight rate', hour: 16, booking: 0, rescue: 0 },
+  { name: 'Spot truck', terms: '$160 per rescue', hour: 13, booking: 0, rescue: 160 },
+  { name: 'Reserved truck', terms: '$240 for the batch + $40 per rescue', hour: 11, booking: 240, rescue: 40 },
+];
+const batchCost = (plan: typeof plans[number], count: number) => plan.booking + count * plan.rescue;
+const costScale = Math.max(...plans.map(plan => batchCost(plan, Math.max(...misses))));
+function recommendation(deadline: number, count: number) {
+  const feasible = plans.filter(plan => plan.hour <= deadline);
+  const cost = Math.min(...feasible.map(plan => batchCost(plan, count)));
+  return { plans: feasible.filter(plan => batchCost(plan, count) === cost), cost };
+}
+const quotes = deadlines.flatMap(hour => misses.map(count => ({
+  hour, count, key: `${hour}-${count}`, ...recommendation(hour, count),
+})));
+const highlightRules = quotes.map(({ hour, count, key }) =>
+  `.delivery-cost:has([name="delivery-deadline"][value="${hour}"]:checked):has([name="delivery-misses"][value="${count}"]:checked) [data-best-at~="${key}"]`
+).join(',\n') + ' { --dc-choice-mark: currentColor; --dc-choice-fill: var(--dd-figure-surface); }';
+function timing(arrival: number, deadline: number) {
+  const hours = Math.abs(arrival - deadline);
+  return hours === 0 ? 'At deadline' : hours + 'h ' + (arrival < deadline ? 'early' : 'late');
+}
+---
+<figure class="dd-figure not-prose delivery-cost">
+  <figcaption class="dd-figure-title">Which recovery plan should the quote cover?</figcaption>
+  <p class="dc-setup">Price ten deliveries on one lane. After a missed pickup, each carrier can offer a different arrival. Compare their extra charges using these example times and rates.</p>
+  <form>
+    <div class="dc-controls">
+      <fieldset>
+        <legend>Customer needs the freight by</legend>
+        <div class="dc-options">
+          {deadlines.map(hour => <label><input type="radio" name="delivery-deadline" value={hour} checked={hour === 14} />{hour}:00</label>)}
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Expected missed pickups out of ten</legend>
+        <div class="dc-options">
+          {misses.map(count => <label><input type="radio" name="delivery-misses" value={count} checked={count === 1} />{count}</label>)}
+        </div>
+      </fieldset>
+    </div>
+    <div class="dc-columns dc-headings" aria-hidden="true">
+      <strong>Recovery plan</strong>
+      <strong>Arrival after a miss</strong>
+      <strong>Extra cost over ten deliveries</strong>
+    </div>
+    <ul class="dc-plans">
+      {plans.map(plan => <li class="dc-columns dc-plan" data-best-at={quotes.filter(quote => quote.plans.includes(plan)).map(quote => quote.key).join(' ')}>
+        <div class="dc-name"><strong>{plan.name}</strong><span>{plan.terms}</span></div>
+        <div class="dc-arrival">
+          <span class="dc-mobile-label">Arrival after a miss</span>
+          <div class="dc-clock" style={`--dc-arrival:${100 * (plan.hour - 10) / 7}%`} aria-hidden="true">
+            <span class="dc-stem"></span><span class="dc-pin"></span>
+          </div>
+          <div class="dc-timing">
+            <b>{plan.hour}:00</b>
+            {deadlines.map(hour => <span data-due={hour}>{timing(plan.hour, hour)}</span>)}
+          </div>
+        </div>
+        <div class="dc-cost">
+          <span class="dc-mobile-label">Extra batch cost</span>
+          {misses.map(count => <div class="dc-cost-state" data-misses={count}>
+            <div class="dc-track" aria-hidden="true">
+              <span class="dc-booking" style={`width:${100 * plan.booking / costScale}%`}></span>
+              <span class="dc-use" style={`width:${100 * count * plan.rescue / costScale}%`}></span>
+            </div>
+            <b>${batchCost(plan,count)}</b>
+          </div>)}
+        </div>
+      </li>)}
+    </ul>
+    <div class="dc-key" aria-hidden="true">
+      <span><i class="dc-deadline-key"></i>Customer deadline</span>
+      <span><i class="dc-booking-key"></i>Booking fee</span>
+      <span><i class="dc-use-key"></i>Rescue charges</span>
+    </div>
+    <div class="dc-results" role="status" aria-atomic="true">
+      {deadlines.map(hour => <div data-due={hour}>
+        {quotes.filter(quote => quote.hour === hour).map(quote => {
+          const tied = quote.plans.length > 1;
+          const names = quote.plans.map((plan, index) => index ? plan.name.toLowerCase() : plan.name).join(' and ');
+          return <div class="dc-result" data-misses={quote.count}>
+            <span>{tied ? 'Lowest-cost plans' : 'Lowest-cost plan'} meeting {hour}:00</span>
+            <strong>{names}{tied ? ' tie' : ''}</strong>
+            <span>Budget an average of ${quote.cost / deliveries} per delivery for extra freight.</span>
+          </div>;
+        })}
+      </div>)}
+    </div>
+  </form>
+</figure>
+
+<style is:inline set:html={highlightRules} />
+<style is:inline>
+.dd-figure.delivery-cost {
+  container-type: inline-size;
+  font-family: var(--dd-figure-font);
+  --dc-due: 57.142857%;
+  &:has([name="delivery-deadline"][value="12"]:checked) { --dc-due: 28.571429%; }
+  &:has([name="delivery-deadline"][value="16"]:checked) { --dc-due: 85.714286%; }
+  .dc-setup { max-width: 64ch; margin: .5rem 0 1.2rem; font-size: 1rem; line-height: 1.5; }
+  & form, & fieldset, .dc-plans { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .dc-controls { display: flex; flex-wrap: wrap; gap: .85rem 2rem; margin-bottom: 1.4rem; }
+  .dc-controls legend { font-size: 1rem; font-weight: 600; line-height: 1.4; padding: 0; margin: 0 0 .4rem; }
+  .dc-options { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .dc-options label {
+    position: relative; display: grid; place-items: center; box-sizing: border-box;
+    min-height: 2.5rem; min-width: 2.65rem; padding: .4rem .7rem; cursor: pointer;
+    border: 1px solid var(--dd-figure-line); border-radius: .3rem; font-size: .9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .dc-options input { position: absolute; width: 1px; height: 1px; margin: 0; clip-path: inset(50%); }
+  .dc-options label:has(:checked) {
+    color: var(--dd-figure-selected-ink); background: var(--dd-figure-selected-surface);
+    border-color: var(--dd-figure-selected-surface);
+  }
+  .dc-options label:has(:focus-visible) { outline: 2px solid var(--dd-figure-ink); outline-offset: 2px; }
+  .dc-columns { display: grid; grid-template-columns: 1fr 1.35fr 1.15fr; column-gap: 1.25rem; }
+  .dc-headings { padding-bottom: .65rem; font-size: .875rem; line-height: 1.3; }
+  .dc-plans { list-style: none; }
+  .dc-plan { align-items: center; margin: 0; padding: .85rem 0; border-top: 1px solid var(--dd-figure-line); font-size: .9375rem; }
+  .dc-name>* { display: block; }
+  .dc-name, .dc-headings strong:first-child { padding-inline-start: .6rem; border-inline-start: 3px solid transparent; }
+  .dc-plan .dc-name { border-color: var(--dc-choice-mark, transparent); background-color: var(--dc-choice-fill, transparent); }
+  .dc-name strong { font-size: 1rem; }
+  .dc-name span { margin-top: .2rem; color: var(--dd-figure-muted); font-size: .875rem; line-height: 1.4; }
+  .dc-arrival, .dc-cost { min-width: 0; }
+  .dc-clock, .dc-track { position: relative; box-sizing: border-box; width: 100%; height: .75rem; margin: .3rem 0 .5rem; }
+  .dc-clock {
+    background: linear-gradient(to right, var(--dd-figure-surface) var(--dc-due), transparent var(--dc-due));
+    border-block-end: 1px solid var(--dd-figure-line);
+  }
+  .dc-clock::after {
+    content: ''; position: absolute; z-index: 2; left: var(--dc-due); top: -.25rem; bottom: -.2rem;
+    border-inline-start: 2px dashed var(--dd-figure-ink);
+  }
+  .dc-stem { position: absolute; inset: 50% auto auto 0; width: var(--dc-arrival); height: 2px; background: var(--dd-figure-ink); }
+  .dc-pin {
+    position: absolute; z-index: 3; top: 50%; left: var(--dc-arrival); transform: translate(-50%,-42%);
+    width: .55rem; height: .55rem; border-radius: 50%; background: var(--dd-figure-ink);
+  }
+  .dc-timing { display: flex; gap: .45rem; align-items: baseline; flex-wrap: wrap; line-height: 1.3; }
+  .dc-timing span { font-size: .875rem; color: var(--dd-figure-muted); }
+  .dc-cost b, .dc-timing b { font-variant-numeric: tabular-nums; }
+  .dc-track { display: flex; align-items: stretch; background: var(--dd-figure-surface); }
+  .dc-booking, .dc-booking-key { background: var(--dd-figure-ink); }
+  .dc-use, .dc-use-key { background: var(--dd-figure-accent); }
+  .dc-key { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1rem; padding-top: .35rem; font-size: .875rem; }
+  .dc-key span { display: inline-flex; align-items: center; gap: .4rem; }
+  .dc-key i { display: inline-block; box-sizing: border-box; }
+  .dc-deadline-key { height: 1.1rem; border-left: 2px dashed var(--dd-figure-ink); }
+  .dc-booking-key, .dc-use-key { width: .85rem; height: .6rem; }
+  .dc-results { border-top: 1px solid var(--dd-figure-line); margin-top: 1rem; padding-top: 1rem; }
+  .dc-result span, .dc-result strong { display: block; line-height: 1.4; }
+  .dc-result span:first-child { color: var(--dd-figure-muted); font-size: .875rem; }
+  .dc-result strong { font-size: 1.2rem; margin: .12rem 0; }
+  .dc-result span:last-child { font-size: 1rem; }
+  .dc-mobile-label, & [data-due], & [data-misses] { display: none; }
+  &:has([name="delivery-deadline"][value="12"]:checked) [data-due="12"],
+  &:has([name="delivery-deadline"][value="14"]:checked) [data-due="14"],
+  &:has([name="delivery-deadline"][value="16"]:checked) [data-due="16"],
+  &:has([name="delivery-misses"][value="1"]:checked) [data-misses="1"],
+  &:has([name="delivery-misses"][value="2"]:checked) [data-misses="2"],
+  &:has([name="delivery-misses"][value="4"]:checked) [data-misses="4"] { display: block; }
+  @container (max-width: 34rem) {
+    .dc-headings { display: none; }
+    .dc-plan { grid-template-columns: 1fr 1fr; gap: .6rem 1rem; }
+    .dc-name { grid-column: 1 / -1; }
+    .dc-name span { margin-top: .1rem; }
+    .dc-mobile-label { display: block; font-size: .875rem; font-weight: 600; }
+  }
+  @media (forced-colors: active) {
+    .dc-plan .dc-name { border-color: var(--dc-choice-mark, Canvas); forced-color-adjust: none; color: CanvasText; background: Canvas; }
+    .dc-name span { color: CanvasText; }
+    .dc-booking, .dc-stem, .dc-pin { background: CanvasText; forced-color-adjust: none; }
+    .dc-use { background: Highlight; forced-color-adjust: none; }
+    .dc-options label:has(:checked) { outline: 2px solid Highlight; }
+  }
+}
+</style>

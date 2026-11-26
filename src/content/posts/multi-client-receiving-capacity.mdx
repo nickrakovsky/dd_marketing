@@ -1,0 +1,59 @@
+---
+title: "Scheduling overlapping loads in a multi-client warehouse"
+author: "DataDocks Team"
+category: "Facility Operations"
+description: "Check which doors, people and forklifts two loads need before promising another client a receiving slot during a long container unload."
+pubDate: "2026-11-27T06:30:00-08:00"
+cardImage: "../../assets/blog-images/appointment-management-for-distribution-centers-cover.webp"
+cardAlt: "Distribution center dock with scheduled truck appointments and active loading."
+postType:
+  discriminant: article
+  value: {}
+---
+
+An 8 a.m. container is booked for three hours at the far end of the building. Another client’s carrier wants 9 a.m. for a pallet delivery. There’s an empty door on the receiving side. Can the desk give the carrier that time?
+
+A team in a DataDocks training session raised a version of this problem. A separate department handled its floor-loaded containers. The team wanted to know whether a long container unload had to count against the rest of the facility’s booking capacity. It’s a question worth settling even if every appointment in the building goes onto a spreadsheet. Block the whole morning and one client’s freight could sit outside while a crew stands ready. Open the second slot too readily and two departments can spend the morning waiting for the same lift.
+
+To decide about the 9 a.m. request, follow both loads past the dock door. At a multi-client site, equipment that appears to belong to receiving at eight may already be promised to shipping at ten.
+
+## What occupies the three hours?
+
+Take the container crew’s description of the job. Loose cartons come off the floor, get sorted and counted, and go onto pallets. Someone needs to take the full pallets away so the crew can keep working. With palletized freight, a suitable lift can often remove whole units. A similar number of cartons can occupy a door for quite a different length of time.
+
+Alexander Hagedorn recorded that variation in a Virginia Tech study of container handling. Among the operations in his tables, contracted crews unloading floor-loaded cartons took two to four hours per container. The examples of forklift crews unloading palletized freight ranged from about 20 minutes to two hours.<Cite id="1" title="The Effect of Pallets and Unitization on the Efficiency of Intercontinental Product Movement Using Ocean Freight Containers" citation="Hagedorn, 2009" /> For your own schedule, look up recent receipts with the same loading method, equipment and crew. That gives the desk a defensible starting duration for the next booking.
+
+At its Charleston transload facility, 3PL operator Performance Team assigned doors in advance according to the freight it expected. Some loads went straight into an outbound trailer. Others had to be scanned and sorted for ten destinations before the crew could reload them.<Cite id="2" title="Sharing the Load" citation="Inbound Logistics, 2013" /> If your client needs that sort, the desk needs to know who will do it and where the cartons can go before it promises the door.
+
+## Check what else needs the lift and operator
+
+Ask the container crew when it can spare the lift. It may have another hour of hand-unloading left, but once the finished pallets are out of the way, the lift can work another door. The person qualified to drive it has a schedule, too. Check with shipping before promising that operator to the second client.
+
+<SharedReceivingCapacity />
+
+Borrowing someone from the container crew changes the plan again. In their truck and workforce scheduling research, Giorgi Tadumadze and colleagues modelled unloading time as a function of how many workers were assigned to the job.<Cite id="3" title="Integrated truck and workforce scheduling to accelerate the unloading of trucks" citation="Tadumadze et al., 2019" /> If the site lends someone to the pallet door, the original three-hour estimate deserves another look. Start with the person the floor lead would actually send and identify the job that person would leave.
+
+## Follow the second load into the warehouse
+
+Before confirming a slot, check what the second client expects to happen after unloading. Suppose it needs six of the pallets available for an afternoon order. The first half-hour gets them onto the dock. A receiver still has to check them in, and a putaway operator has to get them to a location the pickers can use. If that operator is due to stage another client’s outbound trailer, promising the door settles only part of the request.
+
+This can be a short conversation between receiving and shipping. Which pallets does picking actually need, by what time, and who is available to move them? The answer may let the lead prioritize those six and put away the balance later. If putaway has to wait until after the outbound trailer is staged, the desk can tell the client while the carrier still has time to change its plan.
+
+There is a commercial reason to do this across accounts. Americold’s third-quarter 2026 results report warehouse services revenue per throughput pallet and storage revenue per occupied pallet.<Cite id="4" title="Americold Announces Third Quarter 2026 Results" citation="Americold, 2026" /> A facility can hold much the same inventory while doing a different volume of handling work. For a client on a bundled rate, the financial question may be whether the crew can meet the agreed turnaround on straight time. For an additional load that the site would otherwise turn away, the handling revenue and the incremental cost of doing the work both matter.
+
+## Give the desk a rule it can use again
+
+Take last week’s longest unload and lay it alongside the other accounts’ bookings. Write down the door, crew and lift each used during the overlap. Include the next commitment on any resource both jobs needed. A repeatable combination can go straight into the booking instructions. Where one shared forklift decides the answer, give the desk the name of the shift lead who can confirm it.
+
+In DataDocks, the warehouse can <SmartLink href="https://docs.datadocks.com/locations/current/advanced/product-categories/" anchorText="restrict a product category to suitable doors" title="Product Categories" snippet="DataDocks documentation" /> and set handling durations in tiers based on booked quantity or weight. That gives a client making a small pallet booking availability that reflects the work the team expects. Test it against the morning above, including the outbound work already on the board. The site team supplies the knowledge of when the people and lifts are free.
+
+The answer the carrier needs is a time the warehouse can keep. When receiving and shipping agree who will unload and put away the second client’s pallets, the desk can confirm the booking and protect the promise already made to the first client.
+
+## Bibliography
+
+<ul>
+  <BibliographyItem id="1">Alexander Job Hagedorn. 2009. “The Effect of Pallets and Unitization on the Efficiency of Intercontinental Product Movement Using Ocean Freight Containers.” Doctoral dissertation, Virginia Polytechnic Institute and State University. <a href="https://www.unitload.vt.edu/content/dam/unitload_vt_edu/graduate-research-and-subpages-pictures-and-docs/thesis-and-dissertations-/Hagedorn%20-%20ETD%20-%20The%20Effect%20of%20Pallets%20and%20Unitization%20on%20the%20Efficiency%20of%20Intercontinental%20Product%20Movement%20Using%20Ocean%20Freight%20Containers.pdf">View source</a></BibliographyItem>
+  <BibliographyItem id="2">Inbound Logistics. March 2013. “Sharing the Load.” <a href="https://www.inboundlogistics.com/articles/sharing-the-load/">View source</a></BibliographyItem>
+  <BibliographyItem id="3">Giorgi Tadumadze, Nils Boysen, Simon Emde and Felix Weidinger. 2019. “Integrated truck and workforce scheduling to accelerate the unloading of trucks.” European Journal of Operational Research 278(1), 343–362. Open version in chapter B of Tadumadze’s dissertation. <a href="https://tuprints.ulb.tu-darmstadt.de/server/api/core/bitstreams/83ca691c-3419-4e1b-ba64-e5b8eba504a8/content">View source</a></BibliographyItem>
+  <BibliographyItem id="4">Americold Realty Trust, Inc. November 5, 2026. “Americold Announces Third Quarter 2026 Results.” Investor Relations. <a href="https://ir.americold.com/press-releases/news-details/2026/Americold-Announces-Third-Quarter-2026-Results/default.aspx">View source</a></BibliographyItem>
+</ul>

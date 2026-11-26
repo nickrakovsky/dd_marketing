@@ -25,7 +25,7 @@ const isImageMetadata = typeof src === 'object';
     alt={alt || ''}
     widths={[360, 540, 720, 1024, 1600]}
     sizes="(max-width: 768px) calc(100vw - 2rem), (max-width: 1024px) 720px, 768px"
-    class="w-full h-auto rounded-xl object-contain drop-shadow-md transition-all duration-300"
+    class="w-full h-auto rounded-xl object-contain drop-shadow-md"
     {...rest}
     loading={isPriorityImage ? "eager" : "lazy"}
     fetchpriority={isPriorityImage ? "high" : "auto"}
@@ -34,7 +34,7 @@ const isImageMetadata = typeof src === 'object';
   <img 
     src={src as string} 
     alt={alt || ''} 
-    class="w-full h-auto rounded-xl object-contain drop-shadow-md transition-all duration-300" 
+    class="w-full h-auto rounded-xl object-contain drop-shadow-md"
     {...rest}
     loading={isPriorityImage ? "eager" : "lazy"}
     fetchpriority={isPriorityImage ? "high" : "auto"}

@@ -27,6 +27,20 @@ async function openSelector(page: Page) {
   return selector;
 }
 
+test('article screenshots apply outline styles without animating them', async ({ page }) => {
+  await page.goto('/posts/best-yard-management-options', { waitUntil: 'domcontentloaded' });
+  const screenshot = page.locator('article#content p > img').first();
+  const outlineTransitions = await screenshot.evaluate(image => {
+    // Apply the same kind of style change as the deferred typography stylesheet.
+    const offset = parseFloat(getComputedStyle(image).outlineOffset);
+    image.style.outlineOffset = `${offset + 2}px`;
+    return image.getAnimations().filter(animation =>
+      animation instanceof CSSTransition && animation.transitionProperty === 'outline-offset'
+    ).length;
+  });
+  expect(outlineTransitions).toBe(0);
+});
+
 for (const moduleName of ['YardTypeMatches', 'YardSystemDetailPanel']) {
   test(`category opens while ${moduleName} is still downloading`, async ({ page }) => {
     let release!: () => void;

@@ -41,6 +41,27 @@ describe('source links in the Keystatic editor', () => {
     expect(roundTrip(source)).toBe(source);
   });
 
+  it('keeps source-card metadata and links inside their numbered bibliography entries on save', () => {
+    const first = '<Cite id="1" anchorId="study-repeat" title="Receiving study" citation="Smith, 2026" />';
+    const second = '<Cite id="2" />';
+    const study = '<BibliographyItem id="1">A. Smith. <em>Receiving study.</em> <a href="https://example.com/study#page=8">View source</a></BibliographyItem>';
+    const terms = '<BibliographyItem id="2">Warehouse terms. <a href="https://example.com/terms">View source</a></BibliographyItem>';
+    const saved = roundTrip(`The study ${first} and the terms ${second} describe the handoff.
+
+<ul>
+  ${study}
+  ${terms}
+</ul>
+`);
+    expect(saved).toContain(first);
+    expect(saved).toContain(second);
+    expect(saved).toContain(study);
+    expect(saved).toContain(terms);
+    expect(saved.indexOf('<ul>')).toBeLessThan(saved.indexOf(study));
+    expect(saved.indexOf(terms)).toBeLessThan(saved.indexOf('</ul>'));
+    expect(roundTrip(saved)).toBe(saved);
+  });
+
   it('allows a source title without a custom description or glossary selection', () => {
     const source = 'Read <SmartLink href="https://example.com/research?a=1&amp;b=2" title="Research &amp; results" anchorText="the study" />.\n';
     const saved = roundTrip(source);
@@ -130,10 +151,13 @@ describe('scheduled blog articles in the Keystatic editor', () => {
     { slug: 'rollout-decisions', components: ['PostSixRevised'], sources: 2 },
     { slug: 'test-one-warehouse-process-change', components: ['lite-youtube', 'InspectionPointTrial', 'DemoCapture'], videoId: '7okrt6nLq6c', sources: 0 },
     { slug: 'give-warehouse-supervisors-clear-deadlines', components: ['lite-youtube', 'SupervisorWorkPlan', 'DemoCapture'], videoId: 'HX9y_PrCpfQ', sources: 0 },
+    { slug: 'forklift-breakdowns-beyond-repair-bill', components: ['lite-youtube', 'ForkliftDowntimeImpact', 'DemoCapture'], videoId: 'jZMQN9JKVfA', sources: 0 },
     { slug: 'truck-freight-in-house', components: ['FreightCoverage'], sources: 0 },
     { slug: 'agency-staffing-retention', components: ['AgencyContinuity'], sources: 0 },
     { slug: 'costs-arrive-with-the-load', components: ['IncomingLoadLoss'], sources: 0 },
     { slug: 'provider-dependence', components: ['ProviderDependence'], sources: 0 },
+    { slug: 'pricing-just-in-time-delivery', components: ['DeliveryPromiseCost'], sources: 0 },
+    { slug: 'shipping-during-a-wms-outage', components: ['OutageHandoff'], sources: 0 },
   ])('preserves all components and source fields in $slug', async ({ slug, components, videoId, sources }) => {
     const { content } = matter(readFileSync(resolve(process.cwd(), `src/content/posts/${slug}.mdx`), 'utf8'));
     const original = await componentMetadata(content);

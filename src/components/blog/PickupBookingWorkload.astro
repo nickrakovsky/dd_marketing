@@ -1,0 +1,68 @@
+---
+import controlsCss from "./controls.css?inline";
+---
+<style is:inline set:html={controlsCss} />
+<figure id="pickup" class="dd-figure t2-applet not-prose a6-figure" aria-labelledby="a6-title">
+  <h2 id="a6-title" class="dd-figure-title">Who handles carrier changes?</h2>
+  <p>Ten pickups move 100 pallets a week. The warehouse spends 2 minutes confirming each booking. A carrier change adds 8 minutes.</p>
+  <div class="a6-controls">
+    <fieldset>
+      <legend>Pickups needing a new carrier</legend>
+      <label><input id="a6-zero" type="radio" name="a6-frequency"> 0</label>
+      <label><input id="a6-three" type="radio" name="a6-frequency"> 3</label>
+      <label><input id="a6-six" type="radio" name="a6-frequency" checked> 6</label>
+    </fieldset>
+    <fieldset>
+      <legend>Who calls the new carrier?</legend>
+      <label><input id="a6-warehouse" type="radio" name="a6-owner" checked> Warehouse desk</label>
+      <label><input id="a6-client" type="radio" name="a6-owner"> Client’s transport desk</label>
+    </fieldset>
+  </div>
+  <div class="a6-board" aria-live="polite" aria-atomic="true">
+    <div class="a6-legend" aria-hidden="true"><span><i class="a6-key-routine"></i> Booking confirmations</span><span><i class="a6-key-change"></i> Carrier changes</span></div>
+    <div class="a6-row">
+      <div class="a6-label"><span>Warehouse desk</span><strong><span class="a6-value a6-w20">20</span><span class="a6-value a6-w44">44</span><span class="a6-value a6-w68">68</span> min</strong></div>
+      <div class="a6-track" aria-hidden="true"><i class="a6-routine"></i><i class="a6-change a6-at-warehouse"></i></div>
+    </div>
+    <div class="a6-row">
+      <div class="a6-label"><span>Client’s transport desk</span><strong><span class="a6-value a6-c0">0</span><span class="a6-value a6-c24">24</span><span class="a6-value a6-c48">48</span> min</strong></div>
+      <div class="a6-track" aria-hidden="true"><i class="a6-change a6-at-client"></i></div>
+    </div>
+    <div class="a6-axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80 min</span></div>
+  </div>
+  <p class="a6-release">Booking time excludes the warehouse’s check of the release reference at pickup.</p>
+</figure>
+
+<style is:inline>
+.a6-figure { --a6-change-width: 0%; }
+.a6-figure:has(#a6-three:checked) { --a6-change-width: 30%; }
+.a6-figure:has(#a6-six:checked) { --a6-change-width: 60%; }
+.a6-controls { display: grid; gap: .85rem; }
+.a6-board { margin-top: 1.2rem; }
+.a6-legend { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin-bottom: .85rem; font-size: .875rem; }
+.a6-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+.a6-legend i { display: inline-block; width: 1.25rem; height: .7rem; }
+.a6-key-routine, .a6-routine { background: var(--dd-figure-ink); }
+.a6-key-change, .a6-change { background: repeating-linear-gradient(135deg, var(--dd-figure-accent) 0 5px, var(--dd-figure-ink) 5px 6px); }
+.a6-row + .a6-row { margin-top: .7rem; }
+.a6-label { display: flex; align-items: baseline; justify-content: space-between; gap: .4rem; margin-bottom: .25rem; }
+.a6-label strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.a6-track { display: flex; height: 1.3rem; overflow: hidden; border: 1px solid var(--dd-figure-line); border-radius: .15rem; background-color: var(--dd-figure-surface); background-image: repeating-linear-gradient(to right, transparent 0 calc(25% - 1px), var(--dd-figure-line) calc(25% - 1px) 25%); }
+.a6-track i { display: block; }
+.a6-routine { width: 25%; }
+.a6-change { width: 0; }
+.a6-figure:has(#a6-warehouse:checked) .a6-at-warehouse,
+.a6-figure:has(#a6-client:checked) .a6-at-client { width: var(--a6-change-width); }
+.a6-axis { display: flex; justify-content: space-between; margin-top: .15rem; margin-bottom: .85rem; font-size: .875rem; font-variant-numeric: tabular-nums; color: var(--dd-figure-muted); }
+.a6-axis span { display: flex; justify-content: center; width: 0; white-space: nowrap; }
+.a6-axis span:first-child { justify-content: start; }
+.a6-axis span:last-child { justify-content: end; }
+.a6-value { display: none; }
+.a6-figure:has(#a6-zero:checked, #a6-client:checked) .a6-w20,
+.a6-figure:has(#a6-warehouse:checked):has(#a6-three:checked) .a6-w44,
+.a6-figure:has(#a6-warehouse:checked):has(#a6-six:checked) .a6-w68,
+.a6-figure:has(#a6-zero:checked, #a6-warehouse:checked) .a6-c0,
+.a6-figure:has(#a6-client:checked):has(#a6-three:checked) .a6-c24,
+.a6-figure:has(#a6-client:checked):has(#a6-six:checked) .a6-c48 { display: inline; }
+.a6-release { color: var(--dd-figure-muted); font-size: 1rem; }
+</style>

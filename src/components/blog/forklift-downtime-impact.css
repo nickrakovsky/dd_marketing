@@ -1,0 +1,46 @@
+.forklift-downtime-impact{padding:16px;font-family:var(--dd-figure-font);max-width:650px;margin:20px auto;container-type:inline-size}
+.forklift-downtime-impact *{box-sizing:border-box}
+.forklift-downtime-impact .fdi-heading h3{margin:0;font-size:24px;font-weight:400;line-height:1.15}
+.forklift-downtime-impact p{margin:0;color:var(--dd-figure-muted);font:400 16px/1.4 var(--dd-figure-font)}
+.forklift-downtime-impact .fdi-fleet{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 14px}
+.forklift-downtime-impact .fdi-truck{text-align:center;min-width:0}
+.forklift-downtime-impact .fdi-truck img{display:block;width:80px;max-width:100%;height:60px;object-fit:contain;margin:0 auto 2px}
+.forklift-downtime-impact .fdi-truck p{color:var(--dd-figure-ink);font-size:14px;line-height:1.2;white-space:nowrap}
+.forklift-downtime-impact .fdi-controls{min-width:0;margin:0;padding:0;border:0}
+.forklift-downtime-impact .fdi-slider-control{min-width:0;container:fdi-control / inline-size}
+.forklift-downtime-impact .fdi-slider-control+.fdi-slider-control{margin-top:10px}
+.forklift-downtime-impact .fdi-range-heading{display:flex;justify-content:space-between;align-items:center;gap:6px;min-height:22px}
+.forklift-downtime-impact label{display:block;color:var(--dd-figure-ink);font:600 14px/1.4 var(--dd-figure-font)}
+.forklift-downtime-impact output{color:var(--dd-figure-ink);font:600 14px/1.4 var(--dd-figure-font);font-variant-numeric:tabular-nums;white-space:nowrap}
+.forklift-downtime-impact output span{font-size:14px;font-weight:400}
+.forklift-downtime-impact .fdi-units-short{display:none}
+.forklift-downtime-impact .fdi-slider{padding:0 11px;position:relative}
+.forklift-downtime-impact input[type=range]{appearance:none;-webkit-appearance:none;display:block;width:100%;height:32px;margin:0;border:0;background:none;cursor:pointer;touch-action:pan-y}
+.forklift-downtime-impact input[type=range]::-webkit-slider-runnable-track{height:6px;border:1px solid var(--dd-figure-line);border-radius:6px;background:linear-gradient(to right,var(--dd-figure-ink) 0 var(--fdi-progress),var(--dd-figure-surface) var(--fdi-progress) 100%)}
+.forklift-downtime-impact input[type=range]::-moz-range-track{height:4px;border:1px solid var(--dd-figure-line);border-radius:6px;background:linear-gradient(to right,var(--dd-figure-ink) 0 var(--fdi-progress),var(--dd-figure-surface) var(--fdi-progress) 100%)}
+.forklift-downtime-impact input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border:2px solid var(--dd-figure-ink);border-radius:50%;background:var(--dd-figure-paper);box-shadow:inset 0 0 0 4px var(--dd-figure-paper),inset 0 0 0 6px var(--dd-figure-ink);transition:transform .15s ease}
+.forklift-downtime-impact input[type=range]::-moz-range-thumb{width:20px;height:20px;border:2px solid var(--dd-figure-ink);border-radius:50%;background:var(--dd-figure-paper);box-shadow:inset 0 0 0 4px var(--dd-figure-paper),inset 0 0 0 6px var(--dd-figure-ink)}
+.forklift-downtime-impact input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.08)}
+.forklift-downtime-impact input[type=range]:active::-webkit-slider-thumb{transform:scale(1.12)}
+.forklift-downtime-impact input:focus-visible{outline:2px solid var(--dd-figure-ink);outline-offset:3px;border-radius:5px}
+.forklift-downtime-impact .fdi-ticks{display:flex;justify-content:space-between;padding:0 11px;pointer-events:none}
+.forklift-downtime-impact .fdi-ticks span{height:3px;border-left:1px solid var(--dd-figure-line)}
+.forklift-downtime-impact .fdi-ticks .fdi-tick-threshold{height:4px;border-left:2px solid var(--dd-figure-ink)}
+.forklift-downtime-impact .fdi-range-labels{display:flex;justify-content:space-between;gap:8px;margin-top:3px;padding:0 22px;color:var(--dd-figure-muted);font:400 14px/1.2 var(--dd-figure-font)}
+.forklift-downtime-impact .fdi-demand-labels{position:relative;height:17px}
+.forklift-downtime-impact .fdi-demand-labels>span{position:absolute;top:0;left:22px;transform:translateX(-50%)}
+.forklift-downtime-impact .fdi-demand-labels>span:nth-child(2){left:calc(33.333333% + 7.333333px)}
+.forklift-downtime-impact .fdi-demand-labels>span:last-child{left:auto;right:22px;transform:translateX(50%)}
+.forklift-downtime-impact .fdi-result{margin-top:14px;padding-top:14px;border-top:1px solid var(--dd-figure-line)}
+.forklift-downtime-impact .fdi-metrics{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-bottom:10px}
+.forklift-downtime-impact .fdi-metrics strong{display:block;margin-bottom:3px;color:var(--dd-figure-ink);font:400 clamp(22px,3.5vw,26px)/1.2 var(--dd-figure-heading-font);font-variant-numeric:tabular-nums;letter-spacing:-.025em}
+.forklift-downtime-impact .fdi-metrics span{display:block;color:var(--dd-figure-muted);font:400 14px/1.35 var(--dd-figure-font)}
+.forklift-downtime-impact .fdi-explanation{min-height:67.2px;line-height:1.4}
+.forklift-downtime-impact .fdi-assumptions{margin-top:10px}
+.forklift-downtime-impact .fdi-assumptions summary{font-size:14px;line-height:1.4}
+.forklift-downtime-impact .fdi-assumptions p{margin-top:10px}
+.forklift-downtime-impact .fdi-static{margin-top:10px}
+@media(max-width:600px){.forklift-downtime-impact{padding:12px}.forklift-downtime-impact .fdi-heading h3{font-size:22px}.forklift-downtime-impact .fdi-fleet{margin:6px 0 8px}.forklift-downtime-impact .fdi-truck img{width:64px;height:48px}.forklift-downtime-impact .fdi-result{margin-top:12px;padding-top:12px}}
+@container(min-width:400px){.forklift-downtime-impact .fdi-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.forklift-downtime-impact .fdi-slider-control+.fdi-slider-control{margin-top:0}}
+@container fdi-control (max-width:249px){.forklift-downtime-impact .fdi-units-full{display:none}.forklift-downtime-impact .fdi-units-short{display:inline}}
+@media(prefers-reduced-motion:reduce){.forklift-downtime-impact input[type=range]::-webkit-slider-thumb{transition:none}}

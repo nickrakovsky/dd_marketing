@@ -8,6 +8,25 @@ This folder is the queue for future drafts. New posts remain undated until
 scheduling is authorized. Placing files here does not publish them. `internal/`
 must stay outside production imports and output.
 
+## Shared queue extension — November 25, 2026
+
+The shared branch for [PR #302](https://github.com/nickrakovsky/dd_marketing/pull/302) carries the following weekday releases at **14:30 UTC**. Nick Rakovsky’s just-in-time delivery article (C) follows the first pair of training posts (A), the forklift video (B) follows the second pair, and Nick’s WMS outage article (C) follows the third. Thursday, December 10 at 14:30 UTC is reserved for Nick’s third article. A subsequent PR will add it to the publication schedule once the draft is ready.
+
+| Schedule slot | Date | Source | Article |
+|---|---|---|---|
+| 50 | Thu 2026-11-26 | A | [Reporting carrier no-shows before they become client disputes](../../src/content/posts/3pl-carrier-no-shows.mdx) |
+| 51 | Fri 2026-11-27 | A | [Scheduling overlapping loads in a multi-client warehouse](../../src/content/posts/multi-client-receiving-capacity.mdx) |
+| 52 | Mon 2026-11-30 | C | [What does it cost to keep a just-in-time delivery promise?](../../src/content/posts/pricing-just-in-time-delivery.mdx) |
+| 53 | Tue 2026-12-01 | A | [Resolving damage claims with consistent receiving inspection records](../../src/content/posts/receiving-inspection-records.mdx) |
+| 54 | Wed 2026-12-02 | A | [How to price after-hours receiving at a 3PL](../../src/content/posts/after-hours-receiving-pricing.mdx) |
+| 55 | Thu 2026-12-03 | B | [Look beyond the repair bill when a forklift keeps breaking down](../../src/content/posts/forklift-breakdowns-beyond-repair-bill.mdx) |
+| 56 | Fri 2026-12-04 | A | [How 3PLs can use receiving records to bill for extra handling](../../src/content/posts/billing-extra-handling.mdx) |
+| 57 | Mon 2026-12-07 | A | [When a 3PL should manage a client’s pickup bookings](../../src/content/posts/client-pickup-bookings.mdx) |
+| 58 | Tue 2026-12-08 | C | [What can your warehouse ship while the WMS is down?](../../src/content/posts/shipping-during-a-wms-outage.mdx) |
+| 59 | Wed 2026-12-09 | A | [Reclaiming receiving time from repeat driver calls and yard trips](../../src/content/posts/driver-calls-yard-trips.mdx) |
+
+Read the [schedule](../../docs/daily-blog-schedule.json) before assigning a new date. The staging preview reads the scheduled production articles and components. Merge and deployment install this queue.
+
 ## Consolidated queue scheduled — October 23, 2026
 
 Continue queue management on `codex/blog-posts-queue`, based on current `main`.

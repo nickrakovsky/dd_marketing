@@ -1,0 +1,183 @@
+---
+const pickups = [
+  { order: 482, minute: 15, release: 'list' },
+  { order: 483, minute: 40, release: 'change' },
+  { order: 484, minute: 65, release: 'pending' },
+  { order: 485, minute: 95, release: 'list' },
+  { order: 486, minute: 125, release: 'change' },
+  { order: 487, minute: 145, release: 'list' },
+] as const;
+const recoveryTimes = [60, 105, 150];
+const releases = [
+  { value: 'list', label: 'Printed list' },
+  { value: 'changes', label: 'List + signed changes' },
+];
+const copies = [
+  { interval: 0, label: 'Each pickup' },
+  { interval: 60, label: 'Hourly' },
+  { interval: 120, label: 'Every 2 hours' },
+];
+const clock = (minutes: number) =>
+  `${String(8 + Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+const orderList = new Intl.ListFormat('en', { type: 'conjunction' });
+const restoreSelector = (time: number) => `.outage-handoff:has(.oh-time-${time}:checked)`;
+const rowSelector = (orders: typeof pickups[number][]) => `:is(${orders.map(p => `.oh-order-${p.order}`).join(',')})`;
+const viewRules: string[] = [];
+const summaries = [];
+
+for (const time of recoveryTimes) {
+  const attempted = pickups.filter(p => p.minute <= time);
+  const later = pickups.filter(p => p.minute > time);
+  if (later.length) {
+    viewRules.push(`${restoreSelector(time)} ${rowSelector(later)} {display:none}`);
+  }
+  for (const {interval} of copies) {
+    // Copies run from the outage start at 08:00. A copy due at recovery arrives in time.
+    const checkpoint = interval ? Math.floor(time / interval) * interval : time;
+    const recorded = attempted.filter(p => p.minute <= checkpoint);
+    const missing = attempted.filter(p => p.minute > checkpoint);
+    const copyTime = interval ? checkpoint : attempted[attempted.length - 1].minute;
+    const copyNote = copyTime ? `Last office copy at ${clock(copyTime)}.` : `First office copy due at ${clock(interval)}.`;
+    const handoff = missing.length
+      ? `${copyNote} Trace ${orderList.format(missing.map(p => '#' + p.order))} at the dock.`
+      : `As of ${clock(copyTime)}, the office has a slip for every pickup shown.`;
+    const officeSelector = `${restoreSelector(time)}:has(.oh-copy-${interval}:checked)`;
+    if (missing.length) {
+      viewRules.push(`${officeSelector} ${rowSelector(missing)} {--oh-saved:none;--oh-gap:block}`);
+      viewRules.push(`${officeSelector} .oh-order-${missing[0].order} .oh-next {border-block-start:2px dashed var(--dd-figure-muted)}`);
+    }
+    for (const {value} of releases) {
+      const departed = recorded.filter(p => p.release === 'list' || (p.release === 'change' && value === 'changes'));
+      const key = `${time}-${interval}-${value}`;
+      summaries.push({ key, post: departed.length, hold: recorded.length - departed.length, trace: missing.length, handoff });
+      viewRules.push(`${officeSelector}:has(.oh-release-${value}:checked) .oh-summary-${key} {display:block}`);
+    }
+  }
+}
+---
+
+<figure class="dd-figure not-prose outage-handoff">
+  <figcaption>
+    <h3 class="dd-figure-title">Can the next shift reconcile the open orders?</h3>
+    <p>The WMS stops at 08:00. Release papers tell the crew which trucks can leave. A dock slip records whether each truck left or stayed. The incoming shift has only the office copies.</p>
+  </figcaption>
+
+  <form class="oh-controls">
+    <fieldset>
+      <legend>WMS comes back</legend>
+      <div class="oh-options">
+        {recoveryTimes.map(time => <label><input class={`oh-time-${time}`} type="radio" name="outage-restore" value={time} checked={time === 105} /><span>{clock(time)}</span></label>)}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Release documents at the dock</legend>
+      <div class="oh-options">
+        {releases.map(option => <label><input class={`oh-release-${option.value}`} type="radio" name="outage-release" value={option.value} checked={option.value === 'list'} /><span>{option.label}</span></label>)}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Send slips to the office</legend>
+      <div class="oh-options">
+        {copies.map(option => <label><input class={`oh-copy-${option.interval}`} type="radio" name="outage-copies" value={option.interval} checked={option.interval === 60} /><span>{option.label}</span></label>)}
+      </div>
+    </fieldset>
+  </form>
+
+  <p class="oh-wms">At recovery, the WMS shows every order below as <strong>Open</strong>.</p>
+  <table class="oh-ledger">
+    <thead><tr><th scope="col">Pickup</th><th scope="col">Dock outcome</th><th scope="col">Next shift’s action</th></tr></thead>
+    <tbody>
+      {pickups.map(pickup =>
+        <tr class={`oh-order-${pickup.order}`} data-order={pickup.order} data-release={pickup.release}>
+          <th scope="row"><strong>#{pickup.order}</strong> <time>{clock(pickup.minute)}</time>
+            <span class="oh-document">{pickup.release === 'change'
+              ? <><span class="oh-if-held">Signed change missing</span><span class="oh-if-sent">Signed change at dock</span></>
+              : pickup.release === 'list' ? 'On printed list' : 'Awaiting approval'}</span>
+          </th>
+          <td>
+            <div class="oh-movement" aria-hidden="true">
+              <svg viewBox="0 0 94 22" focusable="false">
+                <path class="oh-bay" d="M2 18V3h9v15M5 8h6m-6 4h6m-6 4h6M2 20h87" />
+                <g class="oh-truck">
+                  <path class="oh-trailer" d="M14 6h25v10H14z" />
+                  <path class="oh-vehicle" d="M40 9h6l5 5v3H40z" />
+                  <circle cx="21" cy="18" r="2.2"/><circle cx="45" cy="18" r="2.2"/>
+                </g>
+              </svg>
+            </div>
+            <span class="oh-if-sent">Departed</span><span class="oh-if-held">Held</span>
+          </td>
+          <td class="oh-next">
+            <span class="oh-saved"><span class="oh-if-sent">Post shipment</span><span class="oh-if-held">Carry hold</span></span>
+            <span class="oh-gap"><strong>Trace pickup</strong><small>No office copy</small></span>
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+
+  <div class="oh-totals" role="status" aria-atomic="true">
+    {summaries.map(s => <div class={`oh-summary oh-summary-${s.key}`} data-case={s.key}>
+      <div class="oh-counts">
+        <span><b>{s.post}</b> to post</span><span><b>{s.hold}</b> known {s.hold === 1 ? 'hold' : 'holds'}</span><span><b>{s.trace}</b> to trace</span>
+      </div>
+      <p>{s.handoff}</p>
+    </div>)}
+  </div>
+</figure>
+<style is:inline set:html={viewRules.join('\n')} />
+<style is:inline>
+.dd-figure.outage-handoff {
+  font-family: var(--dd-figure-font); container-type: inline-size; min-inline-size: 0;
+  & :where(h3, p, fieldset) { margin: 0; }
+  & figcaption p, .oh-wms { font-size: 1rem; line-height: 1.5; }
+  & figcaption p { margin-top: .45rem; max-width: 65ch; }
+  .oh-controls { display: grid; gap: .8rem; margin: 1.2rem 0; }
+  .oh-controls fieldset { min-inline-size: 0; padding: 0; border: 0; }
+  .oh-controls legend { font-size: .9375rem; font-weight: 650; padding: 0; margin-bottom: .25rem; }
+  .oh-options { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .oh-options label { position: relative; cursor: pointer; }
+  .oh-options input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); }
+  .oh-options span { display: block; border: 1px solid var(--dd-figure-line); border-radius: .375rem;
+    padding: .45rem .65rem; font-size: .9375rem; font-weight: 550; line-height: 1.35; }
+  .oh-options input:checked + span { background: var(--dd-figure-selected-surface); color: var(--dd-figure-selected-ink); border-color: var(--dd-figure-selected-surface); }
+  .oh-options input:focus-visible + span { outline: 2px solid var(--dd-figure-ink); outline-offset: 2px; }
+  .oh-ledger { width: 100%; margin: 0; border-collapse: collapse; table-layout: fixed; font-size: .9375rem; line-height: 1.35; }
+  .oh-ledger th, .oh-ledger td { text-align: start; padding: .5rem .6rem; border: 0; border-bottom: 1px solid var(--dd-figure-line); vertical-align: middle; }
+  .oh-ledger thead th { font-weight: 650; background: var(--dd-figure-surface); }
+  .oh-ledger tbody { --oh-bay-offset: 0px; --oh-sent: none; --oh-held: inline; --oh-saved: block; --oh-gap: none; }
+  .oh-ledger tbody th { font-weight: 400; }
+  .oh-ledger time, .oh-document, .oh-gap small { color: var(--dd-figure-muted); font-size: .875rem; font-variant-numeric: tabular-nums; }
+  .oh-document, .oh-gap small { display: block; }
+  .oh-ledger [data-release="list"], &:has(.oh-release-changes:checked) [data-release="change"] { --oh-bay-offset: 35px; --oh-sent: inline; --oh-held: none; }
+  .oh-movement { max-width: 5.5rem; }
+  .oh-movement svg { display: block; width: 100%; height: auto; }
+  .oh-bay, .oh-vehicle, .oh-trailer { fill: none; stroke: var(--dd-figure-ink); stroke-width: 1.5; }
+  .oh-bay { stroke: var(--dd-figure-muted); }
+  .oh-truck { transform: translateX(var(--oh-bay-offset)); fill: var(--dd-figure-ink); }
+  .oh-trailer { fill: var(--dd-figure-accent); }
+  .oh-vehicle { fill: var(--dd-figure-paper); }
+  .oh-if-sent { display: var(--oh-sent); }
+  .oh-if-held { display: var(--oh-held); }
+  .oh-saved { display: var(--oh-saved); }
+  .oh-gap { display: var(--oh-gap); border-inline-start: 3px solid var(--dd-figure-accent); padding-inline-start: .5rem; }
+  .oh-totals { margin-top: .85rem; }
+  .oh-summary { display: none; }
+  .oh-counts { display: flex; flex-wrap: wrap; column-gap: 1.35rem; row-gap: .15rem; font-size: 1rem; }
+  .oh-counts b { font-variant-numeric: tabular-nums; font-size: 1.25rem; }
+  .oh-summary p { font-size: .875rem; line-height: 1.4; color: var(--dd-figure-muted); margin-top: .25rem; }
+  @container (min-width: 35rem) {
+    .oh-controls { grid-template-columns: 1fr 1fr; }
+    .oh-controls fieldset:nth-child(2) { grid-column: 1; }
+    .oh-controls fieldset:last-child { grid-row: 2; grid-column: 2; }
+  }
+  @container (max-width: 23rem) {
+    .oh-ledger th, .oh-ledger td { padding: .45rem .25rem; overflow-wrap: anywhere; }
+    .oh-ledger time { display: block; }
+    .oh-counts { column-gap: .7rem; }
+  }
+  @media (forced-colors: active) {
+    .oh-options input:checked + span { outline: 2px solid Highlight; }
+  }
+}
+</style>
