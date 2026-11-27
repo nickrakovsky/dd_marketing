@@ -10,7 +10,7 @@ must stay outside production imports and output.
 
 ## Shared queue extension — November 25, 2026
 
-The shared branch for [PR #302](https://github.com/nickrakovsky/dd_marketing/pull/302) carries the following weekday releases at **14:30 UTC**. Nick Rakovsky’s just-in-time delivery article (C) follows the first pair of training posts (A), the forklift video (B) follows the second pair, and Nick’s WMS outage article (C) follows the third. Thursday, December 10 at 14:30 UTC is reserved for Nick’s third article. A subsequent PR will add it to the publication schedule once the draft is ready.
+[PR #302](https://github.com/nickrakovsky/dd_marketing/pull/302) added slots 50–59 at **14:30 UTC** on weekdays. Nick Rakovsky’s just-in-time delivery article (C) follows the first pair of training posts (A), the forklift video (B) follows the second pair, and Nick’s WMS outage article (C) follows the third. Nick’s article on judging unload times takes the reserved Thursday, December 10 slot at 14:30 UTC.
 
 | Schedule slot | Date | Source | Article |
 |---|---|---|---|
@@ -24,6 +24,7 @@ The shared branch for [PR #302](https://github.com/nickrakovsky/dd_marketing/pul
 | 57 | Mon 2026-12-07 | A | [When a 3PL should manage a client’s pickup bookings](../../src/content/posts/client-pickup-bookings.mdx) |
 | 58 | Tue 2026-12-08 | C | [What can your warehouse ship while the WMS is down?](../../src/content/posts/shipping-during-a-wms-outage.mdx) |
 | 59 | Wed 2026-12-09 | A | [Reclaiming receiving time from repeat driver calls and yard trips](../../src/content/posts/driver-calls-yard-trips.mdx) |
+| 60 | Thu 2026-12-10 | C | [Before you judge an unloading crew’s pace, watch how the freight comes off](../../src/content/posts/judging-unload-times.mdx) |
 
 Read the [schedule](../../docs/daily-blog-schedule.json) before assigning a new date. The staging preview reads the scheduled production articles and components. Merge and deployment install this queue.
 

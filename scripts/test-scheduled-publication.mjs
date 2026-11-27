@@ -33,7 +33,10 @@ const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 await access(originalWorker).catch(() => {
   throw new Error(`No production Worker at ${originalWorker}. Run npm run build first.`);
 });
-assert.equal(slots.length, 59, 'Expected seven 3PL articles interleaved with the three existing queue entries');
+assert.equal(slots.length, 60, 'The unloading article uses the reserved December 10 slot');
+assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 59))),
+  '80e556871a8513885ac3164f4a1693468402b8cdeb0bffe2ffeda82381328764',
+  'Appending the unloading article must preserve the existing 59 schedule records');
 assert.equal(sha256(JSON.stringify(manifest.slots.slice(0, 49))),
   '041eaeb62e77bfeeac873c85a5193e5fa18d48fee2df2923797b1fe210ce27ad',
   'The first 49 scheduled articles must retain every field');
@@ -123,11 +126,12 @@ const mixedQueue = [
   ['client-pickup-bookings', '2026-12-07', 'A', 'training-session'],
   ['shipping-during-a-wms-outage', '2026-12-08', 'C', 'nick-audio'],
   ['driver-calls-yard-trips', '2026-12-09', 'A', 'training-session'],
+  ['judging-unload-times', '2026-12-10', 'C', 'nick-audio'],
 ];
 assert.deepEqual(slots.slice(49).map(slot => [slot.slot, slot.slug, slot.pubDate, slot.rotationGroup, slot.provenance]),
   mixedQueue.map(([slug, date, rotationGroup, provenance], index) =>
     [50 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance]),
-  'Publish the seven 3PL posts around the forklift and Nick articles on consecutive weekdays at the regular cutoff');
+  'Publish the shared queue on consecutive weekdays through December 10 at the regular cutoff');
 assert.ok(!slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The evergreen checklist must not occupy a daily slot');
 assert.equal(manifest.queueRotation.effectiveFromSlot, 28);
 assert.deepEqual(manifest.queueRotation.activePattern, ['A', 'B']);
@@ -205,6 +209,10 @@ function assertIntegratedContent(text, slot, label) {
   const expected = queueRenderExpectations.get(slot.slug);
   if (!expected) return;
   const document = JSDOM.fragment(text);
+  if (slot.slug === 'judging-unload-times') {
+    assert.equal(document.querySelector('.article-read-time')?.textContent.trim(), '2 min read',
+      'The unloading article should show the reading time for its prose');
+  }
   for (const { tag, classes } of expected.markers) {
     const requiredClasses = classes.split(/\s+/);
     const matches = [...document.querySelectorAll(tag)].some(element =>
@@ -369,7 +377,7 @@ export default {
   const yardGuide = await request('/posts/best-yard-management-options', Date.parse(manifest.previewAsOf));
   assert.equal(yardGuide.response.status, 200);
   const yardPage = JSDOM.fragment(yardGuide.text);
-  const articleOnlyStyles = /\.(?:t2-applet|a[1-7]-figure|delivery-cost|outage-handoff|forklift-downtime-impact)\b/;
+  const articleOnlyStyles = /\.(?:t2-applet|a[1-7]-figure|delivery-cost|outage-handoff|forklift-downtime-impact|uc-figure)\b/;
   const sheets = new Set([...yardPage.querySelectorAll('link[rel="stylesheet"], link[as="style"]')]
     .map(link => link.getAttribute('href')).filter(href => href?.startsWith('/_astro/')));
   for (const style of yardPage.querySelectorAll('style')) assert.doesNotMatch(style.textContent, articleOnlyStyles);

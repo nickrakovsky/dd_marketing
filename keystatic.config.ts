@@ -59,6 +59,10 @@ const mdxComponents = {
         label: 'Shipment handoff during a WMS outage',
         schema: {},
     }),
+    UnloadComparison: block({
+        label: 'LTL unloading timeline',
+        schema: {},
+    }),
     ForkliftDowntimeImpact: block({
         label: 'Forklift downtime and loading capacity',
         schema: {},
