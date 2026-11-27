@@ -70,7 +70,7 @@ test.beforeEach(async ({ page, baseURL }) => {
     if (request.resourceType() === 'stylesheet') return route.fulfill({ contentType: 'text/css', body: '' });
     return route.abort();
   });
-  expect(slots, 'The shared daily queue includes seven 3PL articles').toHaveLength(59);
+  expect(slots, 'The shared daily queue extends through December 10').toHaveLength(60);
   expect(slots.some(slot => slot.slug === 'warehouse-setup-checklist'), 'The checklist is evergreen, outside the daily schedule').toBe(false);
   expect(slots.slice(16, 26).map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString()])).toEqual(
     octoberBatch.map(([slug, date], index) => [17 + index, slug, `${date}T14:30:00.000Z`]),
@@ -88,7 +88,7 @@ test.beforeEach(async ({ page, baseURL }) => {
     novemberBatch.map(([slug, date, rotationGroup, provenance, author], index) =>
       [44 + index, slug, `${date}T14:30:00.000Z`, rotationGroup, provenance, author]),
   );
-  expect(slots.slice(49).map(slot => slot.rotationGroup)).toEqual(['A', 'A', 'C', 'A', 'A', 'B', 'A', 'A', 'C', 'A']);
+  expect(slots.slice(49).map(slot => slot.rotationGroup)).toEqual(['A', 'A', 'C', 'A', 'A', 'B', 'A', 'A', 'C', 'A', 'C']);
   expect(slots.slice(48).filter(slot => slot.provenance !== 'training-session')
     .map(slot => [slot.slot, slot.slug, new Date(slot.pubDate).toISOString(), slot.rotationGroup, slot.provenance, slot.author])).toEqual(
     [
@@ -96,6 +96,7 @@ test.beforeEach(async ({ page, baseURL }) => {
       [52, 'pricing-just-in-time-delivery', '2026-11-30T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
       [55, 'forklift-breakdowns-beyond-repair-bill', '2026-12-03T14:30:00.000Z', 'B', 'youtube-video', 'DataDocks Team'],
       [58, 'shipping-during-a-wms-outage', '2026-12-08T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
+      [60, 'judging-unload-times', '2026-12-10T14:30:00.000Z', 'C', 'nick-audio', 'Nick Rakovsky'],
     ],
   );
   expect(schedule.timezone).toBe('UTC-08:00');

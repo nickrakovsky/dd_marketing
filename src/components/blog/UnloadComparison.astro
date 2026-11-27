@@ -1,0 +1,699 @@
+---
+const plans = [
+  ['defer', 'Reschedule the delivery'],
+  ['stage', 'Stage all three pallets'],
+  ['aboard', 'Rearrange the pallets in the trailer'],
+];
+type InboundPallet = 'A' | 'B' | 'C';
+type Inbound = InboundPallet | 'frame';
+type Outbound = 'out-A' | 'out-B' | 'out-C';
+type Cargo = Inbound | Outbound;
+type P = { x:number; y:number; a:number };
+const at = (x:number,y:number,a=0):P => ({x,y,a});
+const names: Inbound[] = ['A','B','C','frame'];
+const pallets: InboundPallet[] = ['C','B','A'];
+const outbound: Outbound[] = ['out-C','out-B','out-A'];
+const cargoNames = [...names,...outbound];
+// Inch coordinates. Each reference point is the centre of the rear-facing lift
+// face; the frame's asymmetric footprint extends 17 inches above its fork line.
+const aboard: Record<Inbound,P> = { A:at(108,64), B:at(160,64), C:at(160,22), frame:at(104,21) };
+const spots: Record<Inbound,P> = { A:at(229,-24), B:at(229,130), C:at(229,179), frame:at(270,-111) };
+const palletLength = 48;
+const armLeadingEdge = -68;
+const frameShape = `M-90-17H0V17H${armLeadingEdge}V35H-90Z`;
+// The two oblique views use the same steel members and skid. Coordinates are
+// inches across the frame, back from its projecting end, and above the floor.
+type ProfilePoint = [number, number, number];
+type BeamFootprint = [number, number][];
+const rectangle = (x0:number,y0:number,x1:number,y1:number):BeamFootprint =>
+  [[x0,y0],[x1,y0],[x1,y1],[x0,y1]];
+const profileMembers: {footprint:BeamFootprint; low:number; high:number; skid:boolean}[] = [];
+function addMember(footprint:BeamFootprint, low:number, high:number, skid=false) {
+  profileMembers.push({footprint,low,high,skid});
+}
+for (const x of [2,28]) addMember(rectangle(x,0,x+4,90),0,3,true);
+const crossMemberPositions = [15,80];
+for (const y of crossMemberPositions) addMember(rectangle(0,y,34,y+5),3,4,true);
+for (const x of [1,29]) {
+  for (const y of crossMemberPositions) addMember(rectangle(x,y,x+4,y+5),4,20);
+  addMember(rectangle(x,2,x+4,88),20,24);
+}
+addMember(rectangle(5,84,29,88),20,24);
+for (const [y0,x0,y1,x1] of [[5,5,25,29],[26,29,47,5],[54,5,77,29]]) {
+  const brace:BeamFootprint = [[x0,y0],[x1,y1],[x1,y1+4],[x0,y0+4]];
+  addMember(x0<x1 ? brace : brace.reverse(),20,23);
+}
+// This U-shaped mounting arm bridges one end of the skid and projects 18 inches.
+const armLength = 90 + armLeadingEdge;
+for (const y of [1,armLength-6]) addMember(rectangle(5,y,52,y+6),19,24);
+addMember(rectangle(47,7,52,armLength-6),19,24);
+
+function frameProfile(armUp:boolean) {
+  // A quarter turn about the long axis puts the protruding arm overhead.
+  // The original 24-inch height is now the width across the trailer.
+  const orient = ([x,y,z]:ProfilePoint):ProfilePoint => armUp ? [24-z,y,x] : [x,y,z];
+  const project = ([x,y,z]:ProfilePoint) => [0.8*x+0.6*y,0.24*x-0.32*y-0.9165*z];
+  const surfaces = profileMembers.flatMap(({footprint,low,high,skid}) => {
+    const corners = (z:number) => footprint.map(([x,y]) => orient([x,y,z]));
+    const lower = corners(low), upper = corners(high);
+    const faces = [upper, [...lower].reverse(), ...lower.map((v,i) => {
+      const j = (i+1)%lower.length;
+      return [v,lower[j],upper[j],upper[i]];
+    })];
+    return faces.flatMap(vertices => {
+      const points = vertices.map(project);
+      const area = points.reduce((sum,[x,y],i) => {
+        const [nx,ny] = points[(i+1)%points.length];
+        return sum+x*ny-nx*y;
+      },0);
+      if (area >= 0) return [];
+      const depth = vertices.reduce((sum,[x,y,z]) => sum+0.55*x-0.7332*y+0.4*z,0) / vertices.length;
+      return [{points:points.map(pt=>pt.join(',')).join(' '),depth,skid}];
+    });
+  });
+  const armTip = project(orient([52,armLength/2,21.5]));
+  return {faces:surfaces.sort((a,b)=>a.depth-b.depth),armTip};
+}
+const endProfiles = [frameProfile(false),frameProfile(true)];
+const contactX = aboard.A.x - palletLength;
+const straightPull = contactX - (aboard.frame.x + armLeadingEdge);
+const d2r=(n:number)=>n*Math.PI/180;
+const r2d=(n:number)=>n*180/Math.PI;
+const round=(n:number)=>Math.round(n*100)/100;
+const faceToAxle = 11;
+const dockLine = 308;
+// Beyond the right edge of the apron, with even the long forks out of view.
+const adjoiningBay = 700;
+const outboundDoorY = 140;
+const awayFromDoor = -260;
+// The rear edge of the trailer is at x=170 when docked. The drawing starts
+// at x=-4. Keep the label at the door and fade it over the first visible 36 in.
+const trailerAtEdge = -174;
+const labelFullyVisible = trailerAtEdge+36;
+const outboundSlots: Record<Outbound,P> = {
+  'out-C':at(90,outboundDoorY+72), 'out-B':at(90,outboundDoorY+24), 'out-A':at(146,outboundDoorY+72),
+};
+const startingState = ():Record<Cargo,P> => ({
+  ...aboard,'out-A':spots.A,'out-B':spots.B,'out-C':spots.C,
+});
+const transform=(p:P)=>'translate('+round(p.x)+'px,'+round(p.y)+'px) rotate('+round(p.a)+'deg)';
+type Pose = { t:number; truck:P; freight:Record<Cargo,P>; shift:number; inboundTrailerX:number; outboundTrailerX:number };
+type Journey = { id:string; points:Pose[]; trace:string; emptyTrace:string; longForks:boolean };
+// Keep the actual poses continuous across successive pallet movements. Every
+// lane change occurs on the open apron with the whole load beyond the sill.
+let truck = at(dockLine,22);
+let inboundTrailerX = 0;
+let outboundTrailerX = awayFromDoor;
+let freight = startingState();
+let held:Cargo|null=null;
+let carriageOffset=0;
+let ticks=0;
+let log:Pose[]=[];
+let loadedPath:P[]=[];
+let emptyPaths:P[][]=[[]];
+const copyFreight = () => Object.fromEntries(cargoNames.map(n=>[n,{...freight[n]}])) as Record<Cargo,P>;
+function keypoint(p:P, dt:number) {
+  ticks+=dt; truck={...p};
+  if(held) {
+    const a=d2r(p.a);
+    freight[held]=at(p.x-faceToAxle*Math.cos(a)-carriageOffset*Math.sin(a),p.y-faceToAxle*Math.sin(a)+carriageOffset*Math.cos(a),p.a);
+    loadedPath.push({...p});
+  } else emptyPaths[emptyPaths.length-1].push({...p});
+  log.push({t:ticks,truck:{...p},freight:copyFreight(),shift:carriageOffset,inboundTrailerX,outboundTrailerX});
+}
+function drive(p:P) {
+  const length=Math.hypot(p.x-truck.x,p.y-truck.y);
+  if(length>0) keypoint(p,length);
+}
+function lineUp(y:number) {
+  const from=truck.y, dy=y-from;
+  if(Math.abs(dy)<0.01) return;
+  const gate=held==='frame'?348:dockLine;
+  drive(at(gate,from));
+  // Back along two tangent arcs with the steered rear wheels; the truck
+  // ends up parallel to its initial heading on a different approach line.
+  const radius=Math.max(84,Math.abs(dy)*.61);
+  const theta=Math.acos(1-Math.abs(dy)/(2*radius)), dx=2*radius*Math.sin(theta);
+  for(let i=1;i<=12;i++){
+    const t=i/12, first=t<=.5, a=2*theta*(first?t:1-t);
+    const partX=radius*Math.sin(a), partY=Math.sign(dy)*radius*(1-Math.cos(a));
+    drive(at(gate+(first?partX:dx-partX),first?from+partY:y-partY,Math.sign(dy)*r2d(a)));
+  }
+}
+function path(points:P[]) {
+  return points.map(p=>round(p.x)+','+round(p.y)).join(' ');
+}
+function startLog(){
+  log=[]; ticks=0; loadedPath=[]; emptyPaths=[[]]; keypoint(truck,0);
+}
+const journeys: Journey[]=[];
+function save(id:string,longForks=false) {
+  const trace=path(loadedPath), emptyTrace=emptyPaths.filter(p=>p.length>1).map(p=>'M'+path(p)).join(' ');
+  journeys.push({id,points:log,trace,emptyTrace,longForks});
+}
+function bringFrameForklift(key:string) {
+  startLog();
+  drive(at(dockLine,aboard.frame.y));
+  save(key,true);
+}
+function cargoMove(id:Cargo, target:P, nextLine:number, key:string, changeForklifts=false) {
+  startLog();
+  const p=freight[id];
+  lineUp(p.y); drive(at(p.x+faceToAxle,p.y));
+  keypoint(truck,34); held=id; keypoint(truck,28);
+  lineUp(target.y); drive(at(target.x+faceToAxle,target.y));
+  keypoint(truck,35); held=null; emptyPaths.push([]); keypoint(truck,26);
+  if(changeForklifts) {
+    // The empty forklift backs away from the freight and leaves the drawing.
+    // The other machine enters on its own approach line from the adjoining bay.
+    drive(at(adjoiningBay,truck.y));
+    keypoint(at(adjoiningBay,nextLine),1);
+  } else lineUp(nextLine);
+  save(key,id==='frame');
+}
+function moveOutboundTrailer(departing:boolean) {
+  startLog();
+  const stops=departing?[labelFullyVisible,trailerAtEdge,awayFromDoor]:[trailerAtEdge,labelFullyVisible,0];
+  for(const x of stops) {
+    const distance=x-outboundTrailerX;
+    if(departing) {
+      for(const id of outbound) freight[id]=at(freight[id].x+distance,freight[id].y);
+    }
+    outboundTrailerX=x;
+    keypoint(truck,Math.abs(distance));
+  }
+  save(departing?'pickup-leaves':'pickup-docks');
+}
+function releaseInbound(key:string) {
+  startLog();
+  inboundTrailerX=awayFromDoor;
+  for(const id of pallets) freight[id]=at(freight[id].x+inboundTrailerX,freight[id].y);
+  keypoint(truck,Math.abs(inboundTrailerX));
+  save(key);
+}
+startLog();save('parked');
+moveOutboundTrailer(false);
+cargoMove('out-C',outboundSlots['out-C'],spots.B.y,'clear-C');
+cargoMove('out-B',outboundSlots['out-B'],spots.A.y,'clear-B');
+cargoMove('out-A',outboundSlots['out-A'],aboard.C.y,'clear-A');
+moveOutboundTrailer(true);
+cargoMove('C',spots.C,aboard.B.y,'stage-C');
+cargoMove('B',spots.B,aboard.A.y,'stage-B');
+cargoMove('A',spots.A,aboard.frame.y,'stage-A',true);
+bringFrameForklift('stage-equipment');
+cargoMove('frame',spots.frame,spots.A.y,'receive',true);
+cargoMove('A',aboard.A,spots.B.y,'reload-A');
+cargoMove('B',aboard.B,spots.C.y,'reload-B');
+cargoMove('C',aboard.C,aboard.frame.y,'reload-C');
+startLog();save('done');
+releaseInbound('stage-leaves');
+// A single protected spot is reused. The truck has a five-inch powered
+// sideshift from centre. After each stroke the truck leaves the pallet planted,
+// clears it, recentres its carriage and approaches on the new pocket line.
+freight=startingState(); truck=at(dockLine,22); inboundTrailerX=0; outboundTrailerX=awayFromDoor;
+const buffer=spots.A, wallB=at(160,79);
+cargoMove('B',buffer,aboard.A.y,'swap-open');
+startLog();
+for(let stroke=0;stroke<3;stroke++){
+  const from=freight.A;
+  lineUp(from.y); drive(at(from.x+faceToAxle,from.y)); keypoint(truck,24);
+  held='A'; keypoint(truck,18);
+  carriageOffset=5; keypoint(truck,60);
+  held=null; emptyPaths.push([]); keypoint(truck,22);
+  drive(at(dockLine,truck.y)); carriageOffset=0; keypoint(truck,18);
+}
+lineUp(buffer.y);
+save('swap-shift');
+cargoMove('B',wallB,aboard.C.y,'swap-return');
+cargoMove('C',buffer,aboard.frame.y,'swap-swap',true);
+bringFrameForklift('swap-equipment');
+cargoMove('frame',spots.frame,buffer.y,'swap-frame',true);
+cargoMove('C',aboard.C,aboard.frame.y,'swap-finish');
+releaseInbound('swap-leaves');
+
+type Step = { scene:string; end:number; caption:string; hold?:boolean };
+type Phase = { label:string; kind:'checks'|'permission'|'pallets'|'equipment'|'frame'|'released'; steps:Step[] };
+type Model = { id:'stage'|'aboard'; phases:Phase[]; summary:string; conclusion:string };
+const endOfWindow = 180;
+const models: Model[] = [
+  { id:'stage',
+    summary:'The three pallets are for the other warehouse. With the shipper’s permission, our crew takes them off, unloads the frame and puts them back.',
+    conclusion:'The receipt shows one frame in three hours. Watch the other customer’s pallets cross the trailer doors twice. Even with a clear path, the crew had to wait for the forklift that could lift the frame.',
+    phases:[
+      { label:'Check in', kind:'checks', steps:[
+        { scene:'parked', end:10, caption:'The driver identifies the three pallets. Receiving asks the operator in the other bay to bring the forklift with the long forks.' },
+      ] },
+      { label:'Get the shipper’s clearance', kind:'permission', steps:[
+        { scene:'parked', end:40, caption:'Dispatch calls the shipper for permission to move the pallets. The driver and receiving lead record the pallet IDs and any visible damage.' },
+        { scene:'pickup-docks', end:45, caption:'As the shipper confirms we can move the pallets, the outbound driver backs into the next door for the three cross-strapped pallets.' },
+      ] },
+      { label:'Clear floor space', kind:'pallets', steps:[
+        { scene:'clear-C', end:49, caption:'With both trailers ready, the forklift takes the first outbound pallet across to the pickup and backs out empty.' },
+        { scene:'clear-B', end:53, caption:'The second outbound pallet goes alongside the first. Two floor spaces are clear.' },
+        { scene:'clear-A', end:57, caption:'The forklift loads the last outbound pallet at the doors, then returns empty to our inbound trailer.' },
+        { scene:'pickup-leaves', end:60, caption:'The floor is clear. The outbound driver pulls away with all three pallets.' },
+      ] },
+      { label:'Stage the pallets', kind:'pallets', steps:[
+        { scene:'stage-C', end:68, caption:'The driver checks C as it comes off. Receiving records its condition and where it will wait.' },
+        { scene:'stage-B', end:76, caption:'The crew checks B and sets it in the second space. The forklift now has a straight approach to A.' },
+        { scene:'stage-A', end:84, caption:'The crew checks A into the last space. The frame’s projecting arm has a clear path.' },
+      ] },
+      { label:'Prepare the frame lift', kind:'equipment', steps:[
+        { scene:'stage-A', hold:true, end:110, caption:'The pallet forks fall short of the skid’s marked supports. The second forklift is still working in the other bay.' },
+        { scene:'stage-equipment', end:114, caption:'The second forklift arrives from the other bay. Its long forks can reach the marked supports.' },
+        { scene:'stage-equipment', hold:true, end:120, caption:'The operator checks the load chart for the frame’s weight and load center, then confirms where the forks will support the skid.' },
+      ] },
+      { label:'Receive the frame', kind:'frame', steps:[
+        { scene:'receive', end:141, caption:'The long forks support the skid as the operator backs the frame clear of the trailer and lowers it onto the stand.' },
+        { scene:'receive', hold:true, end:147, caption:'The frame is on the stand. Receiving checks the projecting arm and the mounting feet for damage.' },
+      ] },
+      { label:'Reload the pallets', kind:'pallets', steps:[
+        { scene:'reload-A', end:154, caption:'The pallet forklift puts A back while its space is still accessible.' },
+        { scene:'reload-B', end:161, caption:'B goes back in front of A.' },
+        { scene:'reload-C', end:167, caption:'C goes back beside B, ready for the other warehouse.' },
+      ] },
+      { label:'Release the trailer', kind:'checks', steps:[
+        { scene:'done', end:178, caption:'The driver and receiver check the pallet IDs and condition again. The driver secures them and updates dispatch. Receiving signs for the frame alone.' },
+        { scene:'stage-leaves', end:endOfWindow, caption:'The driver pulls away with all three pallets for the other warehouse. The frame stays on our stand.' },
+      ] },
+    ] },
+  { id:'aboard',
+    summary:'With one clear space on the dock, the crew takes B off and shifts A toward the trailer wall. B goes back on, and C takes its place on the dock.',
+    conclusion:'From the office, shifting one pallet sounds like one move. At the dock it took three approaches. The driver left after 2 hours 47 minutes, saving 13 minutes because only one pallet had to go back after the frame came off.',
+    phases:[
+      { label:'Check in', kind:'checks', steps:[
+        { scene:'parked', end:10, caption:'The driver identifies the pallets. Receiving calls the other bay for the forklift with the long forks.' },
+      ] },
+      { label:'Get the shipper’s clearance', kind:'permission', steps:[
+        { scene:'parked', end:45, caption:'The shipper confirms in writing that our crew can rearrange the pallets for the next delivery.' },
+      ] },
+      { label:'Open a lane', kind:'pallets', steps:[
+        { scene:'swap-open', end:53, caption:'The driver and receiver note pallet IDs and condition in case of a claim. B comes out onto the one clear space.' },
+      ] },
+      { label:'Restow A and B', kind:'pallets', steps:[
+        { scene:'swap-open', hold:true, end:54, caption:'With B out of the way, the crew finds pallet A is too heavy to shift by hand.' },
+        { scene:'swap-shift', end:65, caption:'The forklift shifts A toward the wall in three approaches. The operator sets the pallet down and backs clear each time.' },
+        { scene:'swap-return', end:72, caption:'B goes back in line with A. That frees the only space on the dock.' },
+      ] },
+      { label:'Clear the frame’s exit', kind:'pallets', steps:[
+        { scene:'swap-swap', end:80, caption:'C takes the space B just freed. The forklift can now approach the skid, and the mounting arm can pass A.' },
+      ] },
+      { label:'Prepare the frame lift', kind:'equipment', steps:[
+        { scene:'swap-swap', hold:true, end:110, caption:'The pallet forks fall short of the skid’s marked supports. The crew waits for the second forklift.' },
+        { scene:'swap-equipment', end:114, caption:'The second forklift arrives from the other bay with forks long enough to reach the marked supports.' },
+        { scene:'swap-equipment', hold:true, end:120, caption:'The operator checks the load chart for the frame’s weight and load center and confirms the skid’s support points.' },
+      ] },
+      { label:'Receive the frame', kind:'frame', steps:[
+        { scene:'swap-frame', end:141, caption:'The second forklift brings the frame out upright and lands it on the stand.' },
+        { scene:'swap-frame', hold:true, end:147, caption:'Receiving checks the mounting arm and feet before signing for the frame.' },
+      ] },
+      { label:'Reload the pallet', kind:'pallets', steps:[
+        { scene:'swap-finish', end:154, caption:'The pallet forklift puts C back aboard for the next warehouse.' },
+      ] },
+      { label:'Release the trailer', kind:'checks', steps:[
+        { scene:'swap-finish', hold:true, end:165, caption:'The driver and receiver recheck IDs and pallet condition. The driver secures the new arrangement and confirms it with dispatch.' },
+        { scene:'swap-leaves', end:167, caption:'The driver pulls away with the three pallets. The frame stays on the receiving stand.' },
+      ] },
+      { label:'Door free', kind:'released', steps:[
+        { scene:'swap-leaves', hold:true, end:endOfWindow, caption:'The trailer left at 10:47. Receiving can use this door for another delivery.' },
+      ] },
+    ] },
+];
+const stepsFor = (model:Model) => model.phases.flatMap(phase=>phase.steps.map(step=>({...step, phase})));
+const timedPlans = models.map(model=>{
+  let start=0;
+  const intervals=model.phases.map(phase=>{
+    const end=phase.steps[phase.steps.length-1].end;
+    const interval={phase,start,end};
+    start=end;
+    return interval;
+  });
+  return {...model,steps:stepsFor(model),intervals};
+});
+const clockTime = (minute:number) => String(8+Math.floor(minute/60)).padStart(2,'0')+':'+String(minute%60).padStart(2,'0');
+const actors = [...cargoNames,'truck','carriage','inboundTrailer','outboundTrailer'] as const;
+type Actor = typeof actors[number];
+const actorAt = (p:Pose, n:Actor) => n==='truck' ? p.truck : n==='carriage' ? at(0,p.shift) : n==='inboundTrailer' ? at(p.inboundTrailerX,0) : n==='outboundTrailer' ? at(p.outboundTrailerX,0) : p.freight[n];
+const deck = 'M0 0H170V100H0Z';
+const css:string[] = [];
+function addMotion(name:string, frames:{pct:number;rule:string}[]) {
+  const kept=frames.filter((f,i)=>i===0 || i===frames.length-1 || f.rule!==frames[i-1].rule || f.rule!==frames[i+1].rule);
+  css.push('@keyframes '+name+'{'+kept.map(f=>f.pct+'%{'+f.rule+'}').join('')+'}');
+}
+for (const model of timedPlans) {
+  const steps=model.steps;
+  const duration=endOfWindow;
+  const moments: { pct:number; pose:Pose }[] = [];
+  let start=0;
+  for (const [i,step] of steps.entries()) {
+    const j=journeys.find(j=>j.id===step.scene)!;
+    const last=j.points[j.points.length-1];
+    const from=100*start/duration, to=100*step.end/duration;
+    const percent=(v:number)=>Math.round(v*100000)/100000;
+    if(!step.hold && last.t>0) {
+      for(const p of j.points) moments.push({pct:percent(from+(to-from)*p.t/last.t),pose:p});
+    } else {
+      moments.push({pct:percent(from),pose:last},{pct:percent(to),pose:last});
+    }
+    if(step.scene==='stage-C') {
+      css.push('@keyframes uc-inbound-spots{0%{visibility:hidden}'+percent(from)+'%,100%{visibility:visible}}');
+    }
+    const cue='uc-'+model.id+'-cue-'+i;
+    const keys=(from>0?'0%{visibility:hidden}':'')+percent(from)+'%{visibility:visible}'+
+      (i<steps.length-1?percent(to)+'%,100%{visibility:hidden}':'100%{visibility:visible}');
+    css.push('@keyframes '+cue+'{'+keys+'}');
+    const panel='.uc-figure [data-plan="'+model.id+'"]';
+    css.push(panel+' [data-cue="'+i+'"]{--uc-motion:'+cue+';}');
+    start=step.end;
+  }
+  for(const n of actors) {
+    if(model.id==='aboard' && (n==='outboundTrailer' || n.startsWith('out-'))) continue;
+    addMotion('uc-'+model.id+'-'+n,moments.map(m=>({pct:m.pct,rule:'transform:'+transform(actorAt(m.pose,n))})));
+  }
+  if(model.id==='stage') {
+    addMotion('uc-door-visit',moments.map(({pct,pose})=>{
+      const opacity=Math.min(1,Math.max(0,(pose.outboundTrailerX-trailerAtEdge)/(labelFullyVisible-trailerAtEdge)));
+      return {pct,rule:'opacity:'+opacity+';visibility:'+(opacity?'visible':'hidden')};
+    }));
+  }
+}
+---
+<figure class="dd-figure not-prose uc-figure">
+  <figcaption class="dd-figure-title">How could one LTL receipt take 3 hours?</figcaption>
+  <svg class="uc-defs" aria-hidden="true" width="0" height="0" focusable="false"><defs>
+    <g id="uc-van">
+      <path class="uc-floor" d={deck} />
+      <g aria-hidden="true"><path class="uc-carton" d="M-4 3H8V43H-4m0 6H8V89H-4"/><path class="uc-seam" d="M2 4v38m0 8v38"/></g>
+      <path class="uc-rail" d="M0-3h168l2 3H0zm0 106h168l2-3H0z"/><path class="uc-sill" d="M170 0v100"/>
+      {[14,40,66,92,118,144].map(x=><path class="uc-rivet" d={'M'+x+' -2v.6m0 103v.6'}/>)}
+    </g>
+    <g id="uc-pallet"><rect class="uc-skid" x={-palletLength} y="-20" width={palletLength} height="40" rx=".5"/>
+      <path class="uc-carton" d="M-46.5-18.5h21.7v17.7h-21.7zm23.4 0h21.7v17.7h-21.7zm-23.4 19.3h21.7v17.7h-21.7zm23.4 0h21.7v17.7h-21.7z"/>
+      <path class="uc-seam" d="M-36-18v16m24-16v16m-24 4v16m24-16v16"/>
+      <path class="uc-strap" d="M-48-14H0v2h-48zm0 25H0v2h-48z"/>
+    </g>
+    <g id="uc-out-pallet">
+      <rect class="uc-skid" x="-48" y="-20" width="48" height="40" rx=".5"/>
+      <rect class="uc-out-unit" x="-48" y="-20" width="48" height="40" rx=".5"/>
+      <path class="uc-out-straps" d="m-46-18 44 36m0-36-44 36"/>
+      <path class="uc-out-mark" d="M-42-15h9v6h-9Z"/>
+    </g>
+    <g id="uc-frame"><path class="uc-skid" d={frameShape}/><path class="uc-seam" d="M-88-4h85m-85 11h85m-85 19h17"/>
+      <path class="uc-steel" d="M-88-16h86v4h-86zm0 28h86v4h-86zm3-24h4l20 23h-4zm24 23 21-23h4l-21 23zm26-22h4l23 22h-5z"/>
+      <path class="uc-steel" d="M-89-13h7v43h8v-43h6v48h-21z"/><path class="uc-forks" d="M-.4-10v5m0 10v5"/>
+    </g>
+    <g id="uc-tines"><path class="uc-tine" d="M-11-10h-42v3.8h42zm0 15h-42v3.8h42z"/></g>
+    <g id="uc-long-tines"><path class="uc-tine" d="M-11-10h-76v3.8h76zm0 15h-76v3.8h76z"/></g>
+    <g id="uc-truck">
+      <path class="uc-rail" d="M-4-18h11v4H-4zm0 32H7v4H-4zm51-30h10v4H47zm0 28h10v4H47z"/>
+      <path class="uc-carton" d="M-9-15h47q18 0 22 8V7q-4 8-22 8H-9Z"/><rect class="uc-skid" x="4" y="-12" width="28" height="24" rx="2"/>
+      <path class="uc-seam" d="M-10-17v34m20-28v22m15-22v22m14-17h12m-12 5h12"/>
+    </g>
+    {pallets.map(id=><g id={'uc-load-'+id}><use href="#uc-pallet"/><text class="uc-code" x="-24" y="1">{id}</text></g>)}
+  </defs></svg>
+
+  <section class="uc-door-check" aria-label="The load at the doors">
+    <div class="uc-door-plans">
+      <div>
+        <p class="uc-view-label">At the doors</p>
+        <svg viewBox="-5 -6 196 112" class="uc-door-svg" aria-hidden="true">
+          <use href="#uc-van"/>
+          <g transform={'translate('+aboard.frame.x+' '+aboard.frame.y+')'}><use href="#uc-frame"/></g>
+          {pallets.map(id=><g transform={'translate('+aboard[id].x+' '+aboard[id].y+')'}><use href={'#uc-load-'+id}/></g>)}
+          <path class="uc-route-empty" d="M189 22H165m24 42h-24"/>
+          <path class="uc-gauge" d="m169 19-4 3 4 3m0 36-4 3 4 3"/>
+        </svg>
+        <p>The two pallets at the doors block the forklift.</p>
+      </div>
+      <div>
+        <p class="uc-view-label">With the two door pallets off</p>
+        <svg viewBox="-5 -6 196 112" class="uc-door-svg" aria-hidden="true">
+          <use href="#uc-van"/>
+          <g transform={'translate('+aboard.frame.x+' '+aboard.frame.y+')'}>
+            <path class="uc-guide" d={frameShape}/>
+            <g transform={'translate('+straightPull+' 0)'}><use href="#uc-frame"/></g>
+          </g>
+          <g transform={'translate('+aboard.A.x+' '+aboard.A.y+')'}><use href="#uc-load-A"/></g>
+          <g transform={'translate('+contactX+' 50)'}><circle class="uc-halo" r="5"/><circle class="uc-ring" r="5"/></g>
+        </svg>
+        <p>The forks can reach the skid now. The frame’s arm would still catch pallet A.</p>
+      </div>
+    </div>
+  </section>
+  <details class="uc-orientation">
+    <summary class="dd-disclosure">Could the crew unload the frame on its side?<svg class="dd-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+    <div class="uc-profiles">
+      {endProfiles.map(({faces,armTip},index)=><div>
+        <svg viewBox="-8 -78 101 92" aria-hidden="true" focusable="false">
+          <path class="uc-profile-floor" d="M-5 0 52-30 85-20 28 10Z"/>
+          {faces.map(({points,skid})=><polygon class={skid?'uc-profile-skid':'uc-profile-steel'} points={points}/>)}
+          <g class="uc-arm-marker" transform={'translate('+armTip.join(' ')+')'}>
+            {index===1&&<path d="M0 0l-5-6h-8"/>}
+            <circle r="1.4"/>
+          </g>
+        </svg>
+        <b>{index?'Frame on its side':'Frame upright'}</b>
+        <span>{index?'24 inches across the trailer':'52 inches across the trailer'}</span>
+      </div>)}
+    </div>
+    <p>With the frame upright, the long forks reach both marked supports beneath the skid. On its side, the skid would rest on the narrow ends of its crosspieces, with no marked lift points for the forks.</p>
+    <p>The fixed arm makes one side heavier. If the load’s center of gravity passes the edge supporting it during the turn, the frame can roll and pin someone against the trailer wall. A tie-down strap around the frame and skid would roll with them. This dock has no rated equipment to control that turn, so the frame has to come out upright.</p>
+  </details>
+
+  <div class="uc-plans">
+    <fieldset class="uc-options"><legend>Receiving plan</legend>
+      <div class="uc-buttons">{plans.map(([key,label])=><label><input type="radio" name="unload-plan" value={key} checked={key==='defer'}/><span>{label}</span></label>)}</div>
+    </fieldset>
+    <div class="uc-model" style={'--uc-minutes:'+endOfWindow}>
+      {models.map(model=><p class="uc-summary" data-for-plan={model.id}>{model.summary}</p>)}
+      <div class="uc-dynamic">
+        <div class="uc-control-head">
+          <span class="uc-control-label"><label for="uc-time">Drag through the unload</label><span class="uc-scroll-label">Scroll through the unload</span></span>
+          <output class="uc-position uc-clock" for="uc-time" aria-hidden="true"></output>
+        </div>
+        <div class="uc-control">
+          <div class="uc-phase-band" aria-hidden="true">
+            {timedPlans.map(model=><div data-for-plan={model.id}><div class="uc-phase-segments">
+              {model.intervals.map(({phase,start,end})=><i data-kind={phase.kind} style={'width:'+100*(end-start)/endOfWindow+'%'}/>)}
+            </div></div>)}
+          </div>
+          <input id="uc-time" class="uc-range" type="range" min="0" max={endOfWindow} step="any" value="0" aria-label="Minutes since the trailer arrived at 08:00"/>
+          {/* eslint-disable-next-line astro/jsx-a11y/no-noninteractive-tabindex -- Keyboard focus lets readers scroll the timeline with the arrow keys when the range control is unavailable. */}
+          <div class="uc-scroll" tabindex="0" role="region" aria-label="Scroll through the unload from 08:00 to 11:00"><span></span></div>
+        </div>
+        <div class="uc-axis" aria-hidden="true">
+          <span>08:00</span><span>{clockTime(endOfWindow/2)}</span><span>{clockTime(endOfWindow)}</span>
+        </div>
+        {timedPlans.map(model=>{
+          const staged=model.id==='stage';
+          const steps=model.steps;
+          const palletSpots=staged?pallets:['A'] as InboundPallet[];
+          return <section class="uc-plan-panel" data-plan={model.id} aria-label={plans.find(p=>p[0]===model.id)![1]}>
+          <div class="uc-current" aria-live="polite" aria-atomic="true">
+            {steps.map((step,i)=><p class="uc-cue" data-cue={i}>
+              <strong><i aria-hidden="true" data-kind={step.phase.kind}/>{step.phase.label}</strong>{step.caption}
+            </p>)}
+          </div>
+          <svg viewBox={staged?'-4 -166 584 416':'-4 -166 584 301'} class="uc-scene" aria-hidden="true">
+            <path class="uc-apron" d={staged?'M171-165H579V249H171Z':'M171-165H579V134H171Z'}/>
+            <g class="uc-actor" data-inbound-trailer="" style={'--uc-motion:uc-'+model.id+'-inboundTrailer'}><use href="#uc-van"/></g>
+            {staged&&<g transform={'translate(0 '+outboundDoorY+')'}>
+              <g class="uc-actor" data-outbound-trailer="" style="--uc-motion:uc-stage-outboundTrailer">
+                <path class="uc-floor" d="M-250 0H170V100H-250Z"/>
+                <path class="uc-rail" d="M-250-3H168l2 3h-420zm0 106H168l2-3h-420z"/>
+                <path class="uc-sill" d="M170 0v100"/>
+              </g>
+              <path class="uc-door-jamb" d="M175-5h-5v5m0 100v5h5"/>
+              <text x="4" y="-8" class="uc-door-name uc-actor" data-outbound-label="" style="--uc-motion:uc-door-visit">Outbound<tspan class="uc-door-word"> door</tspan></text>
+            </g>}
+            {palletSpots.map(id=><g transform={'translate('+spots[id].x+' '+spots[id].y+')'}>
+              <rect class="uc-space" x="-50" y="-22" width="52" height="44" rx="1"/>
+              {staged&&<text x="-58" y="0" class="uc-spot-label uc-cue" style="--uc-motion:uc-inbound-spots">{id}</text>}
+            </g>)}
+            <g transform={'translate('+spots.frame.x+' '+spots.frame.y+')'}>
+              <rect class="uc-stand" x="-93" y="-20" width="96" height="58"/><path class="uc-standmark" d="M-91-16l7-4m75 56 10-7"/>
+            </g>
+            {steps.map((s,i)=>{
+              const j=journeys.find(j=>j.id===s.scene)!;
+              return !s.hold&&j.trace&&<g class="uc-cue" data-cue={i}>
+                <path class="uc-route-empty" d={j.emptyTrace}/><polyline class="uc-route-load" points={j.id==='swap-shift'?'84,64 84,79':j.trace}/>
+              </g>;
+            })}
+            <g class="uc-actor" data-truck="forklift" style={'--uc-motion:uc-'+model.id+'-truck'}>
+              <g class="uc-actor" style={'--uc-motion:uc-'+model.id+'-carriage'}>
+                <use href="#uc-tines"/>
+                {steps.map((step,i)=>journeys.find(j=>j.id===step.scene)!.longForks&&<g class="uc-cue" data-cue={i}><use href="#uc-long-tines"/></g>)}
+              </g><use href="#uc-truck"/>
+            </g>
+            {staged&&outbound.map(n=><g class="uc-actor" data-cargo={n} style={'--uc-motion:uc-stage-'+n}><use href="#uc-out-pallet"/></g>)}
+            {names.map(n=><g class="uc-actor" data-cargo={n} style={'--uc-motion:uc-'+model.id+'-'+n}><use href={n==='frame'?'#uc-frame':'#uc-load-'+n}/></g>)}
+          </svg>
+          <p class="uc-key"><span><i></i>Loaded forklift</span><span><i></i>Empty forklift</span></p>
+        </section>;
+        })}
+      </div>
+      <div class="uc-fallback">
+        {timedPlans.map(model=><dl data-for-plan={model.id}>{model.intervals.map(({phase,start,end})=><div>
+          <dt>{clockTime(start)+'–'+clockTime(end)}</dt>
+          <dd><strong>{phase.label}. </strong>{phase.steps.map(step=>step.caption).join(' ')}</dd>
+        </div>)}</dl>)}
+      </div>
+      {models.map(model=><p class="uc-conclusion" data-for-plan={model.id}>{model.conclusion}</p>)}
+    </div>
+    <section class="uc-plan-panel" data-plan="defer" aria-label="Reschedule the delivery">
+      <p>The frame stays aboard. Dispatch confirms the other warehouse can receive its pallets at noon. Our crew leaves at 11:30, so dispatch books a return appointment for the frame.</p>
+    </section>
+  </div>
+</figure>
+<style is:inline set:html={css.join('\n')} />
+
+<style is:inline>
+  .uc-figure { font-family:var(--dd-figure-font,Inter,sans-serif); min-inline-size:0; container-type:inline-size; }
+  .uc-figure p { font-size:1rem; line-height:1.48; margin:.45rem 0; }
+  .uc-door-plans {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.7rem,3%,1.4rem);margin:.8rem 0;}
+  .uc-door-plans>div {min-width:0;}
+  .uc-figure .uc-view-label {font-size:.93rem;font-weight:650;}
+  .uc-door-svg {width:100%;height:auto;display:block;--uc-letter:13px;}
+  .uc-door-svg circle {fill:none;vector-effect:non-scaling-stroke;}
+  .uc-halo {stroke:var(--dd-figure-paper);stroke-width:5;}
+  .uc-ring {stroke:var(--dd-figure-ink);stroke-width:2;}
+  .uc-plans {border-top:1px solid var(--dd-figure-line);margin-top:.2rem;padding-top:.35rem;}
+  .uc-figure fieldset { border:0;padding:0;min-inline-size:0;margin:.85rem 0; }
+  .uc-figure legend { padding:0;font-size:.94rem;font-weight:650;margin:0 0 .35rem; }
+  .uc-buttons { display:flex;flex-wrap:wrap;gap:.32rem; }
+  .uc-buttons label { position:relative;display:inline-flex;cursor:pointer; }
+  .uc-buttons input { position:absolute;clip-path:inset(50%);width:1px;height:1px;margin:0; }
+  .uc-buttons span { display:flex;align-items:center;min-height:2.5rem;box-sizing:border-box;border:1px solid var(--dd-figure-line);padding:.3rem .66rem;border-radius:.35rem;font-size:.94rem;line-height:1.22; }
+  .uc-buttons label:has(:checked) span {background:var(--dd-figure-selected-surface);color:var(--dd-figure-selected-ink);border-color:var(--dd-figure-selected-surface);}
+  .uc-buttons label:has(:focus-visible) { outline:2px solid var(--dd-figure-ink);outline-offset:2px;border-radius:.35rem; }
+  .uc-figure svg :is(path,rect,polyline) {vector-effect:non-scaling-stroke;}
+  .uc-floor,.uc-skid { fill:var(--dd-figure-paper); }
+  .uc-apron,.uc-carton {fill:var(--dd-figure-surface);}
+  .uc-rail,.uc-forks,.uc-strap,.uc-detailfeet {fill:var(--dd-figure-ink);}
+  .uc-forks {stroke:var(--dd-figure-ink);stroke-width:2;}
+  .uc-rivet {stroke:var(--dd-figure-paper);stroke-width:1.4;stroke-linecap:round;}
+  .uc-skid,.uc-carton,.uc-steel,.uc-stand,.uc-space {stroke:var(--dd-figure-ink);stroke-width:1;stroke-linejoin:round;}
+  .uc-steel {fill:var(--dd-figure-accent);}
+  .uc-tine {fill:var(--dd-figure-muted);}
+  .uc-seam,.uc-sill,.uc-guide,.uc-standmark,.uc-gauge,.uc-route-empty,.uc-route-load {fill:none;}
+  .uc-seam,.uc-sill,.uc-guide,.uc-standmark {stroke:var(--dd-figure-muted);stroke-width:1;}
+  .uc-sill,.uc-space,.uc-guide {stroke-dasharray:4 3;}
+  .uc-route-empty,.uc-route-load,.uc-gauge {stroke:var(--dd-figure-ink);stroke-width:1.4;}
+  .uc-route-empty {stroke-dasharray:2 4;stroke-linecap:round;}
+  .uc-route-load {stroke:var(--dd-figure-muted);stroke-width:1.5;}
+  .uc-space,.uc-stand {fill:var(--dd-figure-paper);}
+  .uc-out-unit {fill:var(--dd-figure-line);stroke:var(--dd-figure-ink);stroke-width:1.5;}
+  .uc-out-straps {fill:none;stroke:var(--dd-figure-ink);stroke-width:2.5;}
+  .uc-out-mark {fill:var(--dd-figure-paper);}
+  .uc-door-jamb {stroke:var(--dd-figure-muted);fill:none;stroke-width:2;}
+  .uc-door-name {opacity:0;visibility:hidden;font-family:var(--dd-figure-font,Inter,sans-serif);font-size:var(--uc-letter,16px);font-weight:600;fill:var(--dd-figure-muted);}
+  .uc-code,.uc-spot-label {font-family:var(--dd-figure-font);font-size:var(--uc-letter,16px);font-weight:700;fill:var(--dd-figure-ink);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--dd-figure-surface);stroke-width:3;}
+  .uc-spot-label {font-size:var(--uc-letter,16px);fill:var(--dd-figure-muted);stroke:var(--dd-figure-paper);}
+  .uc-orientation {border-top:1px solid var(--dd-figure-line);margin-top:.9rem;}
+  .uc-orientation summary {padding:.65rem 0;}
+  .uc-orientation summary:focus-visible {outline:2px solid var(--dd-figure-ink);outline-offset:2px;}
+  .uc-profiles {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin:.15rem 0 .8rem;text-align:center;}
+  .uc-profiles svg {display:block;width:100%;height:auto;max-height:14.5rem;margin:0 auto .2rem;}
+  .uc-profile-floor {fill:var(--dd-figure-surface);}
+  .uc-profile-skid,.uc-profile-steel {stroke:var(--dd-figure-ink);stroke-width:.85;stroke-linejoin:round;vector-effect:non-scaling-stroke;}
+  .uc-profile-skid {fill:var(--dd-figure-line);}
+  .uc-profile-steel {fill:var(--dd-figure-accent);}
+  .uc-arm-marker {fill:none;stroke:var(--dd-figure-ink);stroke-linecap:round;stroke-linejoin:round;}
+  .uc-arm-marker circle {fill:var(--dd-figure-paper);vector-effect:non-scaling-stroke;}
+  .uc-profiles b,.uc-profiles span {display:block;font-family:var(--dd-figure-font);font-size:.875rem;line-height:1.35;}
+  .uc-profiles b {font-size:1rem;}
+  .uc-profiles span,.uc-figure .uc-key {color:var(--dd-figure-muted);}
+  .uc-figure .uc-key {font-size:.875rem;}
+  .uc-key {display:flex;align-items:center;gap:.75rem;justify-content:flex-start;flex-wrap:wrap;color:var(--dd-figure-muted);}
+  .uc-key span {display:inline-flex;align-items:center;gap:.3rem;}
+  .uc-key i {width:1.5rem;display:inline-block;border-top:2px solid var(--dd-figure-muted);}
+  .uc-key span+span i {border-top:2px dotted var(--dd-figure-ink);}
+
+  :where(.uc-figure) [data-plan],:where(.uc-figure) [data-for-plan],.uc-plans:has([value="defer"]:checked) .uc-model {display:none;}
+  .uc-figure:has([name="unload-plan"][value="stage"]:checked) :is([data-plan="stage"],[data-for-plan="stage"]),
+  .uc-figure:has([name="unload-plan"][value="aboard"]:checked) :is([data-plan="aboard"],[data-for-plan="aboard"]),
+  .uc-figure:has([name="unload-plan"][value="defer"]:checked) [data-plan="defer"] {display:block;}
+  .uc-plan-panel {position:relative;}
+  .uc-figure .uc-summary {margin:.5rem 0 1rem;}
+  .uc-figure .uc-conclusion {margin:1rem 0 0;max-width:65ch;}
+  .uc-dynamic {display:none;}
+  .uc-fallback {display:block;}
+  .uc-control-label .uc-scroll-label {display:block;}
+  .uc-control-label label {display:none;}
+  .uc-fallback dl,.uc-fallback dd {margin:0;}
+  .uc-fallback dl>div {margin:.75rem 0;}
+  .uc-fallback dt {font-weight:650;}
+  /* Probe the actual thumb timeline, not just syntax support. Keep the thumb
+     laid out so an engine can resolve its progress while it is initially hidden.
+     Technique: https://css-tip.com/css-variables-range-slider/ */
+  .uc-model {container-name:uc-probe;timeline-scope:--uc-thumb,--uc-scroll;}
+  @supports (animation-timeline:scroll(inline)) and (timeline-scope:--uc-scroll) {
+    .uc-model {animation:uc-probe linear both;animation-timeline:--uc-thumb;}
+    .uc-dynamic {display:block;}
+    .uc-fallback {display:none;}
+  }
+  @property --uc-fraction {syntax:"<number>";inherits:true;initial-value:0;}
+  @keyframes uc-probe {from,to {--uc-native:yes;}}
+  @keyframes uc-count {from {--uc-fraction:0;} to {--uc-fraction:1;}}
+  .uc-control-head,.uc-axis {display:flex;align-items:center;justify-content:space-between;gap:.6rem;}
+  .uc-control-label {font-weight:650;}
+  .uc-position {font-variant-numeric:tabular-nums;font-weight:700;font-size:1.04rem;}
+  .uc-clock {--uc-m:round(down,calc(var(--uc-minutes) * var(--uc-fraction) + .001),1);counter-reset:uc-hour calc(8 + round(down,calc(var(--uc-m) / 60),1)) uc-minute mod(var(--uc-m),60);}
+  .uc-clock::after {content:counter(uc-hour,decimal-leading-zero) ":" counter(uc-minute,decimal-leading-zero);}
+  .uc-control {position:relative;--uc-knob:22px;display:grid;align-items:center;}
+  .uc-phase-band {position:absolute;inset-inline:calc(var(--uc-knob)/2);top:5px;height:8px;display:flex;border-radius:99px;overflow:hidden;pointer-events:none;}
+  .uc-phase-band>[data-for-plan] {width:100%;height:100%;}
+  .uc-phase-segments {display:flex;height:100%;}
+  .uc-phase-band i {flex:none;}
+  .uc-phase-band i+i {box-shadow:inset 1px 0 var(--dd-figure-paper);}
+  :where(.uc-figure) [data-kind="checks"] {background:var(--dd-figure-ink);}
+  :where(.uc-figure) [data-kind="permission"] {background:repeating-linear-gradient(135deg,var(--dd-figure-muted) 0 2px,var(--dd-figure-surface) 2px 6px);}
+  :where(.uc-figure) [data-kind="released"] {background:repeating-linear-gradient(90deg,var(--dd-figure-line) 0 3px,transparent 3px 7px);}
+  :where(.uc-figure) [data-kind="pallets"] {background:var(--dd-figure-muted);}
+  :where(.uc-figure) [data-kind="equipment"] {background:repeating-linear-gradient(135deg,var(--dd-figure-accent) 0 3px,var(--dd-figure-surface) 3px 6px);}
+  :where(.uc-figure) [data-kind="frame"] {background:var(--dd-figure-accent);}
+  .uc-range {visibility:hidden;position:relative;display:block;width:100%;height:40px;box-sizing:border-box;overflow:hidden;margin:0;padding:0;border:0;appearance:none;background:transparent;cursor:pointer;border-radius:0;touch-action:pan-y;}
+  .uc-scroll {position:absolute;inset:0;overflow-x:scroll;overflow-y:hidden;scroll-timeline:--uc-scroll inline;overscroll-behavior-x:contain;}
+  .uc-scroll>span {display:block;width:2800%;height:1px;}
+  .uc-scroll::-webkit-scrollbar {height:22px;}
+  .uc-scroll::-webkit-scrollbar-track {background:var(--dd-figure-surface);border-radius:12px;}
+  .uc-scroll::-webkit-scrollbar-thumb {background:var(--dd-figure-ink);border:3px solid var(--dd-figure-paper);border-radius:12px;}
+  .uc-scroll:focus-visible {outline:2px solid var(--dd-figure-ink);}
+  .uc-range::-webkit-slider-runnable-track {appearance:none;background:transparent;height:var(--uc-knob);}
+  .uc-range::-webkit-slider-thumb {appearance:none;box-sizing:border-box;width:var(--uc-knob);height:var(--uc-knob);border:3px solid var(--dd-figure-paper);border-radius:50%;background:var(--dd-figure-ink);box-shadow:0 0 0 1px var(--dd-figure-ink);cursor:grab;view-timeline:--uc-thumb inline;}
+  .uc-range:active::-webkit-slider-thumb {cursor:grabbing;}
+  .uc-range:focus-visible {outline:2px solid var(--dd-figure-ink);outline-offset:2px;}
+  .uc-axis {position:relative;margin:0 calc(var(--uc-knob,22px)/2);color:var(--dd-figure-muted);font-size:.875rem;font-variant-numeric:tabular-nums;}
+  .uc-current {display:grid;margin:.7rem 0 .1rem;}
+  .uc-figure .uc-current p {grid-area:1/1;margin:0;line-height:1.4;align-self:start;}
+  .uc-current strong {display:flex;align-items:center;gap:.45rem;font-weight:650;margin-bottom:.15rem;}
+  .uc-current i {display:inline-block;flex:none;width:1.15rem;height:.5rem;border-radius:2px;}
+  .uc-scene {display:block;width:100%;height:auto;}
+  .uc-position {--uc-motion:uc-count;}
+  .uc-actor,.uc-cue,.uc-position {animation:var(--uc-motion) linear both;animation-timeline:--uc-scroll;}
+  @container uc-probe style(--uc-native:yes) {
+    .uc-phase-band {top:50%;transform:translateY(-50%);}
+    .uc-range {visibility:visible;}
+    .uc-scroll {visibility:hidden;}
+    .uc-control-label label {display:block;}
+    .uc-control-label .uc-scroll-label {display:none;}
+    .uc-actor,.uc-cue,.uc-position {animation-timeline:--uc-thumb;animation-range:entry 100% exit 0%;animation-direction:reverse;}
+  }
+  .uc-actor {transform-origin:0 0;}
+  .uc-cue {animation-timing-function:steps(1,end);}
+  .uc-defs {position:absolute;width:0;height:0;}
+  @container (max-width:35rem) {.uc-door-word {display:none;} .uc-door-svg {--uc-letter:17px;} .uc-scene {--uc-letter:22px;}}
+  @container (max-width:25rem) {.uc-scene {--uc-letter:30px;}}
+  @container (max-width:18rem) {
+    .uc-scene {--uc-letter:36px;}
+    .uc-door-plans {grid-template-columns:1fr;gap:.55rem;}
+    .uc-door-plans>div {display:grid;grid-template-columns:1.2fr 1fr;gap:.3rem .7rem;align-items:center;}
+    .uc-door-plans .uc-view-label {grid-column:1/-1;margin:0;}
+    .uc-door-svg {--uc-letter:21px;}
+  }
+  @media(forced-colors:active) {
+    .uc-buttons label:has(:checked){outline:2px solid Highlight;}
+    .uc-range{forced-color-adjust:none;} .uc-range::-webkit-slider-thumb{background:Highlight;border-color:Canvas;box-shadow:0 0 0 1px CanvasText;}
+    .uc-phase-band i,.uc-current i{background:CanvasText;} .uc-steel{fill:Highlight;} .uc-route-load,.uc-route-empty{stroke:CanvasText;}
+  }
+</style>
